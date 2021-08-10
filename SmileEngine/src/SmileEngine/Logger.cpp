@@ -1,3 +1,4 @@
+#include "smpch.h"
 #include "Logger.h"
 
 namespace Smile

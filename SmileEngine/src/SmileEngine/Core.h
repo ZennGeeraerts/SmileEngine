@@ -9,3 +9,6 @@
 #else
 #error SmileEngine only supports Windows
 #endif
+
+#define	BIT(x) (1 << x)
+#define SAFE_DELETE(p) if (p) { delete (p); (p) = nullptr; }

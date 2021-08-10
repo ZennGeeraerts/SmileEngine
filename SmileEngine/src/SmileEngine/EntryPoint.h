@@ -2,14 +2,14 @@
 
 #ifdef SM_PLATFORM_WINDOWS
 
-extern Smile::Application* Smile::CreateApplication();
+extern Smile::SmileGame* Smile::CreateGame();
 
 void main(int argc, char** argv)
 {
 	SM_WARNING("Initialized engine");
 	SM_INFO("Creating application");
 
-	Smile::Application* pApp = Smile::CreateApplication();
+	Smile::SmileGame* pApp = Smile::CreateGame();
 
 	SM_WARNING("Application created");
 	SM_WARNING("Running Application");

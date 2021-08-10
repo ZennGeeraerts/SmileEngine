@@ -3,16 +3,16 @@
 
 namespace Smile
 {
-	class SMILE_API Application
+	class SMILE_API SmileGame
 	{
 	public:
-		Application();
-		virtual ~Application();
+		SmileGame();
+		virtual ~SmileGame();
 
 		void Run();
 	};
 
 	// To be defined in client
-	Application* CreateApplication();
+	SmileGame* CreateGame();
 }
 

@@ -18,7 +18,7 @@
     <ClInclude Include="src\SmileEngine\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Application.h">
+    <ClInclude Include="src\SmileEngine\SmileGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine.h">
@@ -30,12 +30,30 @@
     <ClInclude Include="src\SmileEngine\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SmileEngine\Events\Event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Events\KeyEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Events\MouseEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Events\ApplicationEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smpch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\SmileEngine\Application.cpp">
+    <ClCompile Include="src\SmileEngine\SmileGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smpch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

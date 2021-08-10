@@ -19,15 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\SmileEngine\Events\Event.h" />
+    <ClInclude Include="src\SmileEngine\Events\KeyEvent.h" />
+    <ClInclude Include="src\SmileEngine\Events\MouseEvent.h" />
     <ClInclude Include="src\SmileEngine\Logger.h" />
     <ClInclude Include="src\SmileEngine.h" />
-    <ClInclude Include="src\SmileEngine\Application.h" />
+    <ClInclude Include="src\SmileEngine\SmileGame.h" />
     <ClInclude Include="src\SmileEngine\Core.h" />
     <ClInclude Include="src\SmileEngine\EntryPoint.h" />
+    <ClInclude Include="src\smpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SmileEngine\Logger.cpp" />
-    <ClCompile Include="src\SmileEngine\Application.cpp" />
+    <ClCompile Include="src\SmileEngine\SmileGame.cpp" />
+    <ClCompile Include="src\smpch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -85,21 +96,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,11 +122,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -121,6 +142,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +152,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -135,11 +162,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -149,6 +182,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +192,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
