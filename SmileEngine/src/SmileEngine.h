@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include "SmileEngine/Application.h"
+#include "SmileEngine/Logger.h"
 
 /* ---Entry point--- */
 #include "SmileEngine/EntryPoint.h"

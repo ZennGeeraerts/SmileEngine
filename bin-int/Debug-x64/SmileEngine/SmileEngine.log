@@ -1,2 +1,4 @@
-﻿  Application.cpp
+﻿  Logger.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(72,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
   SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.dll

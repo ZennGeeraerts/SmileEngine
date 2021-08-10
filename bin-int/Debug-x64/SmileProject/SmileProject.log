@@ -1,3 +1,5 @@
 ﻿  SandboxApp.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(72,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\EntryPoint.h(8,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
   SmileProject.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exe

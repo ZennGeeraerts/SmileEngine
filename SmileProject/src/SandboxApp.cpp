@@ -1,6 +1,6 @@
 #include <SmileEngine.h>
 
-class Sandbox : public Smile::Application
+class Sandbox final : public Smile::Application
 {
 public:
 	Sandbox()
