@@ -41,10 +41,13 @@ namespace Smile
 			return GetName();
 		}
 
+#pragma warning(push)
+#pragma warning(disable: 26812)
 		inline bool IsInCategory(EventCategory category)
 		{
 			return GetCategoryFlags() & category;
 		}
+#pragma warning(pop)
 
 	protected:
 		bool m_bHandled = false;

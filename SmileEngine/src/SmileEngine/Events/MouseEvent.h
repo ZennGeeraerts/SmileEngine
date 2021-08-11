@@ -59,8 +59,56 @@ namespace Smile
 		EVENT_CLASS_TYPE(eMouseScrolled)
 		EVENT_CLASS_CATEGORY(eEventCategoryMouse | eEventCategoryInput)
 	private:
-		float m_OffsetX;
 		// To support horizontal scrolling on some mice
+		float m_OffsetX;
 		float m_OffsetY;
+	};
+
+	class SMILE_API MouseButtonEvent : public Event
+	{
+	public:
+		inline int GetMouseButton() const { return m_Button; }
+
+		EVENT_CLASS_CATEGORY(eEventCategoryMouse | eEventCategoryInput)
+	protected:
+		MouseButtonEvent(int button)
+			: m_Button{ button }
+		{}
+
+		int m_Button;
+	};
+
+	class SMILE_API MouseButtonPressedEvent final : public MouseButtonEvent
+	{
+	public:
+		MouseButtonPressedEvent(int button)
+			: MouseButtonEvent(button)
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss{};
+			ss << "MouseButtonPressedEvent: " << m_Button;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(eMouseButtonPressed)
+	};
+
+	class SMILE_API MouseButtonReleasedEvent final : public MouseButtonEvent
+	{
+	public:
+		MouseButtonReleasedEvent(int button)
+			: MouseButtonEvent(button)
+		{}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss{};
+			ss << "MouseButtonReleasedEvent: " << m_Button;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(eMouseButtonReleased)
 	};
 }

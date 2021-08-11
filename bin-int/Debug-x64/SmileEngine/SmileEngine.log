@@ -1,9 +1,11 @@
-﻿  Logger.cpp
+﻿  WindowsWindow.cpp
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(88,1): warning C4005: 'SM_DEBUG': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winuser.h(7228): message : see previous definition of 'SM_DEBUG'
   SmileGame.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(21,35): warning C4251: 'Smile::SmileGame::m_Window': class 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(21): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(88,1): warning C4005: 'SM_DEBUG': macro redefinition

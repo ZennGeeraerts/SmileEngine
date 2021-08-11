@@ -1,9 +1,10 @@
-c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.pch
 c:\dev\smileengine\bin-int\debug-x64\smileengine\vc142.pdb
 c:\dev\smileengine\bin-int\debug-x64\smileengine\vc142.idb
-c:\dev\smileengine\bin-int\debug-x64\smileengine\smpch.obj
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smilegame.obj
 c:\dev\smileengine\bin-int\debug-x64\smileengine\logger.obj
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.pch
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smpch.obj
+c:\dev\smileengine\bin-int\debug-x64\smileengine\windowswindow.obj
 c:\dev\smileengine\bin\debug-x64\smileengine\smileengine.dll
 c:\dev\smileengine\bin\debug-x64\smileengine\smileengine.ilk
 c:\dev\smileengine\bin\debug-x64\smileengine\smileengine.pdb
@@ -12,7 +13,12 @@ c:\dev\smileengine\bin\debug-x64\smileengine\smileengine.exp
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\cl.command.1.tlog
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\cl.read.1.tlog
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\cl.write.1.tlog
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.22448.delete.1.tlog
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.29856.delete.1.tlog
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.31784.delete.1.tlog
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.9944.delete.1.tlog
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.command.1.tlog
+c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.delete.1.tlog
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.read.1.tlog
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\link.write.1.tlog
 c:\dev\smileengine\bin-int\debug-x64\smileengine\smileengine.tlog\smileengine.write.1u.tlog

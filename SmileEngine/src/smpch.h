@@ -16,4 +16,5 @@
 // Platform specific headers
 #ifdef SM_PLATFORM_WINDOWS
 	#include <Windows.h>
+	#include <windowsx.h>
 #endif

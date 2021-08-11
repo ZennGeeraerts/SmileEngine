@@ -1,0 +1,45 @@
+#pragma once
+#include "smpch.h"
+#include "SmileEngine/Core.h"
+#include "SmileEngine/Events/Event.h"
+
+namespace Smile
+{
+	struct WindowSettings
+	{
+		WindowSettings(const std::string& title = "Smile Engine",
+			unsigned int width = 1280,
+			unsigned int height = 720)
+			: Title{ title }
+			, Width{ width }
+			, Height{ height }
+		{
+		}
+
+		std::string Title;
+		unsigned int Width;
+		unsigned int Height;
+	};
+
+	// Window interface for desktop platforms
+	class SMILE_API Window
+	{
+	public:
+		using EventCallbackFunction = std::function<void(Event&)>;
+
+		virtual ~Window() {}
+
+		virtual void Update() = 0;
+
+		virtual unsigned int GetWidth() const = 0;
+		virtual unsigned int GetHeight() const = 0;
+
+		// Window attributes
+		virtual void SetEventCallback(const EventCallbackFunction& callback) = 0;
+		virtual void SetVSync(bool bEnabled) = 0;
+		virtual bool IsVSync() const = 0;
+
+		static Window* Create(const WindowSettings& settings = WindowSettings{});
+	};
+}
+

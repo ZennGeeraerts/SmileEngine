@@ -2,23 +2,20 @@
 
 #ifdef SM_PLATFORM_WINDOWS
 
+#include <Windows.h>
+
 extern Smile::SmileGame* Smile::CreateGame();
 
 void main(int argc, char** argv)
 {
-	SM_WARNING("Initialized engine");
-	SM_INFO("Creating application");
-
-	Smile::SmileGame* pApp = Smile::CreateGame();
-
-	SM_WARNING("Application created");
-	SM_WARNING("Running Application");
-
-	pApp->Run();
-
-	SM_WARNING("Application stopped");
-
-	delete pApp;
+	WinMain(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
 }
 
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow)
+{
+	Smile::SmileGame* pGame = Smile::CreateGame();
+	pGame->Run();
+	delete pGame;
+	return 0;
+}
 #endif
