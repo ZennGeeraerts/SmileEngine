@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\LayerStack.h" />
+    <ClInclude Include="src\SmileEngine\Layer.h" />
     <ClInclude Include="src\SmileEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\SmileEngine\Events\Event.h" />
     <ClInclude Include="src\SmileEngine\Events\KeyEvent.h" />
@@ -33,6 +35,8 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\LayerStack.cpp" />
+    <ClCompile Include="src\SmileEngine\Layer.cpp" />
     <ClCompile Include="src\SmileEngine\Logger.cpp" />
     <ClCompile Include="src\SmileEngine\SmileGame.cpp" />
     <ClCompile Include="src\smpch.cpp">
@@ -128,6 +132,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,6 +173,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

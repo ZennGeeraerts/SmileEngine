@@ -1,6 +1,20 @@
 ﻿  MainGame.cpp
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(21,35): warning C4251: 'Smile::SmileGame::m_Window': class 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(21): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(22,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(24,32): warning C4251: 'Smile::LayerStack::m_pLayers': class 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(19): message : see declaration of 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(25,46): warning C4251: 'Smile::LayerStack::m_LayerInsert': class 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'
+          with
+          [
+              _Ty=Smile::Layer *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\vector(443): message : see declaration of 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>'
+          with
+          [
+              _Ty=Smile::Layer *
+          ]
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(28,35): warning C4251: 'Smile::SmileGame::m_Window': class 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(28): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(88,1): warning C4005: 'SM_DEBUG': macro redefinition

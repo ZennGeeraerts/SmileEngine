@@ -9,7 +9,7 @@ Smile::SmileGame* Smile::CreateGame()
 
 MainGame::MainGame()
 {
-
+	PushLayer(new ExampleLayer());
 }
 
 MainGame::~MainGame()

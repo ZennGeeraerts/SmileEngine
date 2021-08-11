@@ -22,19 +22,39 @@ namespace Smile
 
 	}
 
+	void SmileGame::PushLayer(Layer* pLayer)
+	{
+		m_LayerStack.PushLayer(pLayer);
+	}
+
+	void SmileGame::PushOverlay(Layer* pOverlay)
+	{
+		m_LayerStack.PushOverlay(pOverlay);
+	}
+
 	void SmileGame::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher{ e };
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
 
 		SM_TRACE("%s", e.ToString().c_str());
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			(*--it)->OnEvent(e);
+			if (e.m_bHandled)
+				break;
+		}
 	}
 
 	void SmileGame::Run()
 	{
 		while (m_bRunning)
 		{
-			m_Window->Update();
+			for (Layer* pLayer : m_LayerStack)
+				pLayer->OnUpdate();
+
+			m_Window->OnUpdate();
 		}
 	}
 

@@ -30,6 +30,7 @@ namespace Smile
 
 	void WindowsWindow::Init(const WindowSettings& settings)
 	{
+		m_Message = { 0 };
 		m_Data.Title = settings.Title;
 		m_Data.Height = settings.Height;
 		m_Data.Width = settings.Width;
@@ -84,16 +85,18 @@ namespace Smile
 		bInitialized = true;
 	}
 
-	void WindowsWindow::Update()
+	void WindowsWindow::OnUpdate()
 	{
-		MSG msg{ 0 };
-		while (msg.message != WM_QUIT)
+		if (!bInitialized)
+			return;
+
+		if (m_Message.message != WM_QUIT)
 		{
 			// If there are window messages then process them
-			if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+			if (PeekMessage(&m_Message, 0, 0, 0, PM_REMOVE))
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				TranslateMessage(&m_Message);
+				DispatchMessage(&m_Message);
 			}
 		}
 	}
@@ -135,10 +138,10 @@ namespace Smile
 		{
 		case WM_CLOSE:
 		{
-			PostQuitMessage(0);
 			WindowCloseEvent event{};
 			pWindow->m_Data.EventCallback(event);
-			break;
+			PostQuitMessage(0);
+			return 0;
 		}
 
 		case WM_SIZE:

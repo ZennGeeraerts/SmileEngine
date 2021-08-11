@@ -12,7 +12,7 @@ namespace Smile
 		WindowsWindow(const WindowSettings& settings);
 		virtual ~WindowsWindow();
 
-		void Update() override;
+		void OnUpdate() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
@@ -41,6 +41,7 @@ namespace Smile
 
 		WindowData m_Data;
 		HWND m_WindowHandle;
+		MSG m_Message;
 		bool bInitialized = false;
 	};
 }

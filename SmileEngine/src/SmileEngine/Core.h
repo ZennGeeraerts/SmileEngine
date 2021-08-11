@@ -7,7 +7,7 @@
 		#define SMILE_API __declspec(dllimport)
 	#endif
 #else
-#error SmileEngine only supports Windows
+	#error SmileEngine only supports Windows
 #endif
 
 #ifdef SM_ENABLE_ASSERTS

@@ -31,6 +31,7 @@ namespace Smile
 	class SMILE_API Event
 	{
 		friend class EventDispatcher;
+		friend class SmileGame;
 	public:
 		// GetName and ToString is not optimal and should only be used for debugging, not in the actual game
 		virtual EventType GetEventType() const = 0;
