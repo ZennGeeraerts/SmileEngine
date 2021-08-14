@@ -1,6 +1,9 @@
 #pragma once
 
 #include "SmileEngine/Window.h"
+#include "SmileEngine/Renderer/RenderingContext.h"
+
+class RenderingContext;
 
 #define HINSTANCE() GetModuleHandle(NULL) // this function returns the hInstance
 
@@ -16,6 +19,8 @@ namespace Smile
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
+		inline RenderingContext* GetRenderingContext() const { return m_pContext; }
+		inline HWND GetWindowHandle() const { return m_WindowHandle; }
 
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_Data.EventCallback = callback; }
@@ -26,10 +31,16 @@ namespace Smile
 		virtual void Init(const WindowSettings& settings);
 		virtual void ShutDown();
 
-		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+		static LRESULT CALLBACK WindowsProcedureStatic(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		LRESULT WindowsProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+		
+		void PollEvents();
 
 	private:
+		HWND m_WindowHandle;
+		MSG m_Message;
+		RenderingContext* m_pContext;
+
 		struct WindowData
 		{
 			std::string Title{};
@@ -40,9 +51,7 @@ namespace Smile
 		};
 
 		WindowData m_Data;
-		HWND m_WindowHandle;
-		MSG m_Message;
-		bool bInitialized = false;
+		bool m_bInitialized = false;
 	};
 }
 

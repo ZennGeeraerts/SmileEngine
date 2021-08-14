@@ -18,12 +18,14 @@ namespace Smile
 	void LayerStack::PushLayer(Layer* pLayer)
 	{
 		m_LayerInsert = m_pLayers.emplace(m_LayerInsert, pLayer);
+		pLayer->OnAttach();
 	}
 
 	// Overlays get pushed at the back of the vector
 	void LayerStack::PushOverlay(Layer* pOverlay)
 	{
 		m_pLayers.emplace_back(pOverlay);
+		pOverlay->OnAttach();
 	}
 
 	void LayerStack::PopLayer(Layer* pLayer)

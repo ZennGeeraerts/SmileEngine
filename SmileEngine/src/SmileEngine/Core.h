@@ -18,3 +18,4 @@
 
 #define	BIT(x) (1 << x)
 #define SAFE_DELETE(p) if (p) { delete (p); (p) = nullptr; }
+#define SAFE_RELEASE(r) if (r) { r->Release(); (r) = nullptr; }

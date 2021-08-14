@@ -22,12 +22,18 @@ namespace Smile
 		void PushLayer(Layer* pLayer);
 		void PushOverlay(Layer* pOverlay);
 
+		inline static SmileGame& GetInstance() { return *m_pInstance; };
+		inline Window& GetWindow() const { return *m_Window; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
+	private:
 		std::unique_ptr<Window> m_Window;
 		bool m_bRunning;
 		LayerStack m_LayerStack;
+
+		static SmileGame* m_pInstance;
 	};
 
 	// To be defined in client

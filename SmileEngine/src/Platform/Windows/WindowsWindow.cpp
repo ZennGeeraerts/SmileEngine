@@ -6,6 +6,10 @@
 #include "SmileEngine/Events/MouseEvent.h"
 #include "SmileEngine/Events/KeyEvent.h"
 
+#include "SmileEngine/Renderer/RenderingContext.h"
+// For now using only DirectX11
+#include "Platform/DirectX11/DirectX11Context.h"
+
 namespace Smile
 {
 	Window* Window::Create(const WindowSettings& settings)
@@ -26,16 +30,18 @@ namespace Smile
 	void WindowsWindow::ShutDown()
 	{
 		DestroyWindow(m_WindowHandle);
+		delete m_pContext;
 	}
 
 	void WindowsWindow::Init(const WindowSettings& settings)
 	{
-		m_Message = { 0 };
 		m_Data.Title = settings.Title;
 		m_Data.Height = settings.Height;
 		m_Data.Width = settings.Width;
 
-		SM_INFO("Creating window: %s (%d, %d)", settings.Title.c_str(), settings.Width, settings.Height);
+		m_Message = { 0 };
+
+		SM_INFO("WindowsWindow::Init > Creating window: %s (%d, %d)", settings.Title.c_str(), settings.Width, settings.Height);
 
 		// Create window class
 
@@ -56,7 +62,7 @@ namespace Smile
 		windowClass.lpszMenuName = nullptr;
 
 		windowClass.hInstance = HINSTANCE();
-		windowClass.lpfnWndProc = HandleMsgSetup;
+		windowClass.lpfnWndProc = WindowsProcedureStatic;
 
 		int success = RegisterClassEx(&windowClass);
 		SM_ASSERT(success, "Could not register window class!")
@@ -76,20 +82,29 @@ namespace Smile
 				HINSTANCE(),
 				this);
 
-		SM_ASSERT(m_WindowHandle, "Could not create window!")
+		SM_ASSERT(m_WindowHandle, "WindowsWindow::Init > Could not create window!")
 		
 		ShowWindow(m_WindowHandle, SW_SHOW);
-		SM_INFO("Window '%s' created", settings.Title.c_str());
+		SM_INFO("WindowsWindow::Init > Window '%s' created", settings.Title.c_str());
+
+		m_pContext = new DirectX11Context{ &m_WindowHandle };
+		m_pContext->Init();
 
 		SetVSync(true);
-		bInitialized = true;
+		m_bInitialized = true;
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
-		if (!bInitialized)
+		if (!m_bInitialized)
 			return;
 
+		PollEvents();
+		m_pContext->SwapBuffers();
+	}
+
+	void WindowsWindow::PollEvents()
+	{
 		if (m_Message.message != WM_QUIT)
 		{
 			// If there are window messages then process them
@@ -111,7 +126,7 @@ namespace Smile
 		return m_Data.bVSync;
 	}
 
-	LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK WindowsWindow::WindowsProcedureStatic(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (msg == WM_NCCREATE)
 		{
@@ -122,14 +137,14 @@ namespace Smile
 		{
 			WindowsWindow* const pWindow = reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 			if (pWindow)
-				return pWindow->HandleMsg(hWnd, msg, wParam, lParam);
+				return pWindow->WindowsProcedure(hWnd, msg, wParam, lParam);
 		}
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+	LRESULT WindowsWindow::WindowsProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
-		if(!bInitialized)
+		if(!m_bInitialized)
 			return DefWindowProc(hWnd, msg, wParam, lParam);
 
 		WindowsWindow* const pWindow = reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));

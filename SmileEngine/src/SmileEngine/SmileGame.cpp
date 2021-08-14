@@ -7,19 +7,24 @@
 
 namespace Smile
 {
+	SmileGame* SmileGame::m_pInstance = nullptr;
 
 #define BIND_EVENT_FN(x) std::bind(&SmileGame::x, this, std::placeholders::_1)
 
 	SmileGame::SmileGame()
 		: m_bRunning{ true }
 	{
+		SM_ASSERT(!m_pInstance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1");
+		m_pInstance = this;
+
+		Logger::SetPriority(LogPriority::eWarning);
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 	}
 
 	SmileGame::~SmileGame()
 	{
-
+		
 	}
 
 	void SmileGame::PushLayer(Layer* pLayer)
@@ -49,8 +54,15 @@ namespace Smile
 
 	void SmileGame::Run()
 	{
+		SmTime& time = SmTime::GetInstance();
+		time.Run();
+
 		while (m_bRunning)
 		{
+			time.OnUpdate();
+
+			SM_INFO("%d", time.GetFPS());
+
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnUpdate();
 

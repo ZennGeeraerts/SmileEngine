@@ -9,7 +9,8 @@ Smile::SmileGame* Smile::CreateGame()
 
 MainGame::MainGame()
 {
-	PushLayer(new ExampleLayer());
+	PushLayer(new ExampleLayer{});
+	PushOverlay(new Smile::ImGuiLayer{});
 }
 
 MainGame::~MainGame()

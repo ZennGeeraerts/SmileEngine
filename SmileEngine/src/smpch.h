@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "SmileEngine/SmTime.h"
+
 // Platform specific headers
 #ifdef SM_PLATFORM_WINDOWS
 	#include <Windows.h>
