@@ -14,7 +14,7 @@ namespace Smile
 
 	void RenderTarget::CleanUp()
 	{
-		SAFE_RELEASE(m_pColor);
+		//SafeRelease(m_pColor);
 		SAFE_RELEASE(m_pDepth);
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pColorShaderResourceView);
@@ -63,7 +63,7 @@ namespace Smile
 
 		if (m_Desc.bEnableColorBuffer)
 		{
-			if (m_pColor == nullptr)
+			if (!m_pColor)
 			{
 				//RESOURCE
 				D3D11_TEXTURE2D_DESC textureDesc;
@@ -129,7 +129,7 @@ namespace Smile
 			resourceFormat = DXGI_FORMAT::DXGI_FORMAT_R32G8X24_TYPELESS;
 			break;
 		default:
-			SM_ERROR("RenderTarget::GetDepthResourceFormat(...) > Format not supported!");
+			SM_LOG_ERROR("RenderTarget::GetDepthResourceFormat(...) > Format not supported!");
 			break;
 		}
 
@@ -154,7 +154,7 @@ namespace Smile
 			srvFormat = DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
 			break;
 		default:
-			SM_ERROR("RenderTarget::GetDepthSRVFormat(...) > Format not supported!");
+			SM_LOG_ERROR("RenderTarget::GetDepthSRVFormat(...) > Format not supported!");
 			break;
 		}
 
@@ -243,7 +243,7 @@ namespace Smile
 	ID3D11ShaderResourceView* RenderTarget::GetShaderResourceView() const
 	{
 		if (!m_Desc.bEnableColorSRV)
-			SM_ERROR("RenderTarget::GetShaderResourceView(...) > No COLOR SRV created during Creation. (Make sure to enable \'EnableColorSRV\' during RT Creation)");
+			SM_LOG_ERROR("RenderTarget::GetShaderResourceView(...) > No COLOR SRV created during Creation. (Make sure to enable \'EnableColorSRV\' during RT Creation)");
 
 		return m_pColorShaderResourceView;
 	}
@@ -251,7 +251,7 @@ namespace Smile
 	ID3D11ShaderResourceView* RenderTarget::GetDepthShaderResourceView() const
 	{
 		if (!m_Desc.bEnableDepthSRV)
-			SM_ERROR("RenderTarget::GetDepthShaderResourceView(...) > No DEPTH SRV created during Creation. (Make sure to enable \'EnableDepthSRV\' during RT Creation)");
+			SM_LOG_ERROR("RenderTarget::GetDepthShaderResourceView(...) > No DEPTH SRV created during Creation. (Make sure to enable \'EnableDepthSRV\' during RT Creation)");
 
 		return m_pDepthShaderResourceView;
 	}

@@ -20,6 +20,9 @@ namespace Smile
 
 	ImGuiLayer::~ImGuiLayer()
 	{
+		ImGui_ImplDX11_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
 	}
 
 	void ImGuiLayer::OnAttach()
@@ -57,23 +60,15 @@ namespace Smile
 		io.KeyMap[ImGuiKey_Z] = 'Z';
 
 		Window& window = SmileGame::GetInstance().GetWindow();
-		try 
-		{
-			WindowsWindow& windowsWindow = dynamic_cast<WindowsWindow&>(window);
-			ImGui_ImplWin32_Init(windowsWindow.GetWindowHandle());
+		ImGui_ImplWin32_Init(window.GetNativeWindow());
 
-			RenderingContext* pRenderingContext = windowsWindow.GetRenderingContext();
-			DirectX11Context* pD11Context = dynamic_cast<DirectX11Context*>(pRenderingContext);
+		RenderingContext* pRenderingContext = window.GetRenderingContext();
+		DirectX11Context* pD11Context = dynamic_cast<DirectX11Context*>(pRenderingContext);
 
-			if (pD11Context)
-				ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
-			else
-				SM_ERROR("ImGuiLayer::OnAttach > ImGuiLayer currently only supports DirectX11");	
-		}
-		catch (const std::bad_cast& exc) 
-		{
-			SM_ERROR("ImGuiLayer::OnAttach > The current window is not a WindowsWindow");
-		}
+		if (pD11Context)
+			ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
+		else
+			SM_LOG_ERROR("ImGuiLayer::OnAttach > ImGuiLayer currently only supports DirectX11");
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -101,6 +96,88 @@ namespace Smile
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
+		EventDispatcher dispatcher{ event };
+		dispatcher.Dispatch<MouseButtonPressedEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressed));
+		dispatcher.Dispatch<MouseButtonReleasedEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleased));
+		dispatcher.Dispatch<MouseMovedEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnMouseMoved));
+		dispatcher.Dispatch<MouseScrolledEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolled));
+		dispatcher.Dispatch<KeyPressedEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnKeyPressed));
+		dispatcher.Dispatch<KeyReleasedEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnKeyReleased));
+		dispatcher.Dispatch<KeyTypedEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnKeyTyped));
+		dispatcher.Dispatch<WindowResizeEvent>(SM_BIND_EVENT_FN(ImGuiLayer::OnWindowResize));
+	}
 
+	bool ImGuiLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[e.GetMouseButton()] = true;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[e.GetMouseButton()] = false;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseMoved(MouseMovedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MousePos = ImVec2{ e.GetX(), e.GetY() };
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnMouseScrolled(MouseScrolledEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheel += e.GetOffsetX();
+		io.MouseWheelH += e.GetOffsetY();
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysDown[e.GetKeyCode()] = true;
+
+		io.KeyCtrl = io.KeysDown[VK_LCONTROL] || io.KeysDown[VK_RCONTROL];
+		io.KeyShift = io.KeysDown[VK_LSHIFT] || io.KeysDown[VK_RSHIFT];
+		io.KeyAlt = io.KeysDown[VK_LMENU] || io.KeysDown[VK_RMENU];
+		io.KeySuper = io.KeysDown[VK_LWIN] || io.KeysDown[VK_RWIN];
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyReleased(KeyReleasedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysDown[e.GetKeyCode()] = false;
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnKeyTyped(KeyTypedEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		int keycode = e.GetKeyCode();
+		if ((keycode > 0) && (keycode < 0x10000))
+			io.AddInputCharacter(static_cast<unsigned short>(keycode));
+
+		return false;
+	}
+
+	bool ImGuiLayer::OnWindowResize(WindowResizeEvent& e)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2{ static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()) };
+		io.DisplayFramebufferScale = ImVec2{ 1.f, 1.f };
+
+		// TODO: Update window size and DirectXContext
+
+		return false;
 	}
 }

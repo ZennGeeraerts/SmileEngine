@@ -8,7 +8,7 @@ namespace Smile
 	{
 		eNone = 0,
 		eWindowClose, eWindowResize, eWindowFocus, eWindowLostFocus, eWindowMoved,
-		eKeyPressed, eKeyReleased,
+		eKeyPressed, eKeyReleased, eKeyTyped,
 		eMouseButtonPressed, eMouseButtonReleased, eMouseMoved, eMouseScrolled
 	};
 

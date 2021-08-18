@@ -5,6 +5,10 @@
 #include "SmileEngine/SmileGame.h"
 #include "SmileEngine/Layer.h"
 #include "SmileEngine/Logger.h"
+
+#include "SmileEngine/Input.h"
+#include "SmileEngine/KeyCodes.h"
+
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
 /* ---Entry point--- */

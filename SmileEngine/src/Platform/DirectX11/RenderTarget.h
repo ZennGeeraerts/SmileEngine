@@ -47,31 +47,31 @@ namespace Smile
 			, bDepthBufferSupplied{ false }
 #pragma warning(push)
 #pragma warning(disable:26812)
-			, DepthFormat(DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT)
-			, ColorFormat(DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM)
+			, DepthFormat{ DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT }
+			, ColorFormat{ DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM }
 #pragma warning(pop)
-			, pColor(nullptr)
-			, pDepth(nullptr)
+			, pColor{ nullptr }
+			, pDepth{ nullptr }
 		{}
 
 		void IsValid()
 		{
 			if (!(pColor || pDepth) && (Width <= 0 || Height <= 0))
-				SM_ERROR("RenderTarget::IsValid() > Invalid Width and/or Height!");
+				SM_LOG_ERROR("RenderTarget::IsValid() > Invalid Width and/or Height!");
 
 			if (!(bEnableColorBuffer || bEnableDepthBuffer))
-				SM_ERROR("RenderTarget::IsValid() > Rendertarget must contain at least one buffer! (Color AND/OR Depth)");
+				SM_LOG_ERROR("RenderTarget::IsValid() > Rendertarget must contain at least one buffer! (Color AND/OR Depth)");
 
 			if (bEnableDepthSRV && !bEnableDepthBuffer)
 			{
 				bEnableDepthBuffer = true;
-				SM_WARNING("RenderTarget::IsValid() > Forced \'bEnableDepthBuffer\' flag because \'bEnableDepthSRV\' is enabled by user.");
+				SM_LOG_WARNING("RenderTarget::IsValid() > Forced \'bEnableDepthBuffer\' flag because \'bEnableDepthSRV\' is enabled by user.");
 			}
 
 			if (bEnableColorSRV && !bEnableColorBuffer)
 			{
 				bEnableColorBuffer = true;
-				SM_WARNING("RenderTarget::IsValid() > Forced \'bEnableColorBuffer\' flag because \'bEnableColorSRV\' is enabled by user.");
+				SM_LOG_WARNING("RenderTarget::IsValid() > Forced \'bEnableColorBuffer\' flag because \'bEnableColorSRV\' is enabled by user.");
 			}
 		}
 	};

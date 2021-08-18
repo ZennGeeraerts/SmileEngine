@@ -11,12 +11,19 @@ public:
 
 	void OnUpdate() override
 	{
-		SM_INFO("ExampleLayer::Update");
+		//SM_INFO("ExampleLayer::Update");
+
+		if (Smile::Input::IsKeyPressed(SM_TAB))
+			SM_LOG_TRACE("Tab key is pressed!");
 	}
 
 	void OnEvent(Smile::Event& event) override
 	{
-		SM_TRACE("%s", event.ToString().c_str());
+		if (event.GetEventType() == Smile::EventType::eKeyPressed)
+		{
+			Smile::KeyPressedEvent& e = static_cast<Smile::KeyPressedEvent&>(event);
+			SM_LOG_TRACE("%c", static_cast<unsigned char>(e.GetKeyCode()));
+		}
 	}
 };
 

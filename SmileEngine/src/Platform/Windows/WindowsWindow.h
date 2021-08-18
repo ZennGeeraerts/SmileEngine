@@ -15,17 +15,23 @@ namespace Smile
 		WindowsWindow(const WindowSettings& settings);
 		virtual ~WindowsWindow();
 
+		WindowsWindow(const WindowsWindow&) = delete;
+		WindowsWindow(WindowsWindow&&) = delete;
+		WindowsWindow& operator=(const WindowsWindow&) = delete;
+		WindowsWindow& operator=(WindowsWindow&&) = delete;
+
 		void OnUpdate() override;
 
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }
-		inline RenderingContext* GetRenderingContext() const { return m_pContext; }
-		inline HWND GetWindowHandle() const { return m_WindowHandle; }
+		inline RenderingContext* GetRenderingContext() const override { return m_pContext; }
 
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_Data.EventCallback = callback; }
 		void SetVSync(bool bEnabled) override;
 		bool IsVSync() const override;
+
+		inline virtual void* GetNativeWindow() const override { return m_WindowHandle; }
 
 	private:
 		virtual void Init(const WindowSettings& settings);

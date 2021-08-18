@@ -11,6 +11,11 @@ namespace Smile
 		LayerStack();
 		~LayerStack();
 
+		LayerStack(const LayerStack&) = delete;
+		LayerStack(LayerStack&&) = delete;
+		LayerStack& operator=(const LayerStack&) = delete;
+		LayerStack& operator=(LayerStack&&) = delete;
+
 		void PushLayer(Layer* pLayer);
 		void PushOverlay(Layer* pOverlay);
 		void PopLayer(Layer* pLayer);

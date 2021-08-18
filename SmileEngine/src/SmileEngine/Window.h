@@ -21,6 +21,8 @@ namespace Smile
 		unsigned int Height;
 	};
 
+	class RenderingContext;
+
 	// Window interface for desktop platforms
 	class SMILE_API Window
 	{
@@ -33,11 +35,15 @@ namespace Smile
 
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
+		virtual RenderingContext* GetRenderingContext() const = 0;
 
 		// Window attributes
 		virtual void SetEventCallback(const EventCallbackFunction& callback) = 0;
 		virtual void SetVSync(bool bEnabled) = 0;
 		virtual bool IsVSync() const = 0;
+
+		// Returns the child window 
+		virtual void* GetNativeWindow() const = 0;
 
 		static Window* Create(const WindowSettings& settings = WindowSettings{});
 	};

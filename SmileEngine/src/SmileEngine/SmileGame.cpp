@@ -4,12 +4,13 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "Logger.h"
+#include "SmileEngine/Renderer/RenderingContext.h"
+
+#include "Input.h"
 
 namespace Smile
 {
 	SmileGame* SmileGame::m_pInstance = nullptr;
-
-#define BIND_EVENT_FN(x) std::bind(&SmileGame::x, this, std::placeholders::_1)
 
 	SmileGame::SmileGame()
 		: m_bRunning{ true }
@@ -17,14 +18,15 @@ namespace Smile
 		SM_ASSERT(!m_pInstance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1");
 		m_pInstance = this;
 
-		Logger::SetPriority(LogPriority::eWarning);
+		Logger::SetPriority(LogPriority::eTrace);
+
 		m_Window = std::unique_ptr<Window>(Window::Create());
-		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window->SetEventCallback(SM_BIND_EVENT_FN(SmileGame::OnEvent));
 	}
 
 	SmileGame::~SmileGame()
 	{
-		
+		delete Input::GetInstance();
 	}
 
 	void SmileGame::PushLayer(Layer* pLayer)
@@ -40,9 +42,9 @@ namespace Smile
 	void SmileGame::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher{ e };
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+		dispatcher.Dispatch<WindowCloseEvent>(SM_BIND_EVENT_FN(SmileGame::OnWindowClose));
 
-		SM_TRACE("%s", e.ToString().c_str());
+		//SM_TRACE("%s", e.ToString().c_str());
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -59,14 +61,18 @@ namespace Smile
 
 		while (m_bRunning)
 		{
+			RenderingContext* pRenderingContext = m_Window->GetRenderingContext();
+			pRenderingContext->ClearBackbuffer();
+			
 			time.OnUpdate();
 
-			SM_INFO("%d", time.GetFPS());
+			//SM_INFO("%d", time.GetFPS());
 
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnUpdate();
 
 			m_Window->OnUpdate();
+			pRenderingContext->PresentBackbuffer();
 		}
 	}
 

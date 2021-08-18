@@ -2,16 +2,14 @@
 #include "DirectX11Context.h"
 #include "RenderTarget.h"
 
-#include "SmileEngine/SmileGame.h"
-
+#include "SmileEngine/Window.h"
 #include "SmileEngine/Core.h"
 
 namespace Smile
 {
-	DirectX11Context::DirectX11Context(HWND* pWindowHandle)
-		: m_pWindowHandle{ pWindowHandle }
+	DirectX11Context::DirectX11Context(Window* pWindow)
+		: m_pWindow{ pWindow }
 	{
-
 	}
 
 	DirectX11Context::~DirectX11Context()
@@ -27,7 +25,7 @@ namespace Smile
 			SAFE_RELEASE(m_pDeviceContext);
 		}
 
-		SAFE_RELEASE(m_pDevice);		
+		SAFE_RELEASE(m_pDevice);
 	}
 
 	void DirectX11Context::Init()
@@ -41,7 +39,7 @@ namespace Smile
 		HRESULT result = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, 0, createDeviceFlags, 0, 0, D3D11_SDK_VERSION, &m_pDevice, &featureLevel, &m_pDeviceContext);
 		if (FAILED(result))
 		{
-			SM_ERROR("DirectXContext::Init > Failed to create D3D11Device");
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create D3D11Device");
 			return;
 		}
 
@@ -49,14 +47,13 @@ namespace Smile
 		result = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&m_pDXGIFactory));
 		if (FAILED(result))
 		{
-			SM_ERROR("DirectXContext::Init > Failed to create DXGIFactory");
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create DXGIFactory");
 			return;
 		}
 
 		// TODO: Get width and height from window
-		Window& window = SmileGame::GetInstance().GetWindow();
-		const unsigned int width = 0;
-		const unsigned int height = 0;
+		const unsigned int width = /*m_pWindow->GetWidth()*/ 0;
+		const unsigned int height = /*m_pWindow->GetHeight()*/ 0;
 
 		// Create SwapChain Descriptor
 		DXGI_SWAP_CHAIN_DESC swapChainDesc{};
@@ -75,13 +72,13 @@ namespace Smile
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 		swapChainDesc.Flags = 0;
 
-		swapChainDesc.OutputWindow = (*m_pWindowHandle);
+		swapChainDesc.OutputWindow = static_cast<HWND>(m_pWindow->GetNativeWindow());
 
 		// Create SwapChain and hook it into the handle of the SDL window
 		result = m_pDXGIFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapChain);
 		if (FAILED(result))
 		{
-			SM_ERROR("DirectXContext::Init > Failed to create swap chain");
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create swap chain");
 			return;
 		}
 
@@ -92,7 +89,7 @@ namespace Smile
 		result = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackbuffer));
 		if (FAILED(result))
 		{
-			SM_ERROR("DirectXContext::Init > Failed to get buffer from swap chain");
+			SM_LOG_ERROR("DirectXContext::Init > Failed to get buffer from swap chain");
 			return;
 		}
 
@@ -101,7 +98,7 @@ namespace Smile
 		result = m_pDefaultRenderTarget->Create(rtDesc);
 		if (FAILED(result))
 		{
-			SM_ERROR("DirectXContext::Init > Failed to create render target");
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create render target");
 			return;
 		}
 
@@ -163,10 +160,15 @@ namespace Smile
 		m_pDeviceContext->RSSetViewports(1, &viewPort);
 	}
 
-	void DirectX11Context::SwapBuffers()
+	void DirectX11Context::ClearBackbuffer()
 	{
-		/*const float clearColor[]{ 0, 0, 0.3f, 1.f };
-		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget->GetRenderTargetView(), clearColor);*/
+		const float clearColor[]{ 0, 0, 0.3f, 1.f };
+		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget->GetRenderTargetView(), clearColor);
+		m_pDeviceContext->ClearDepthStencilView(m_pCurrentRenderTarget->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+	}
+
+	void DirectX11Context::PresentBackbuffer()
+	{
 		m_pSwapChain->Present(0, 0);
 	}
 

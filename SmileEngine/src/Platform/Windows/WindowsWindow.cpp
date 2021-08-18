@@ -10,6 +10,10 @@
 // For now using only DirectX11
 #include "Platform/DirectX11/DirectX11Context.h"
 
+//#include "backends/imgui_impl_win32.h"
+
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace Smile
 {
 	Window* Window::Create(const WindowSettings& settings)
@@ -41,7 +45,7 @@ namespace Smile
 
 		m_Message = { 0 };
 
-		SM_INFO("WindowsWindow::Init > Creating window: %s (%d, %d)", settings.Title.c_str(), settings.Width, settings.Height);
+		SM_LOG_INFO("WindowsWindow::Init > Creating window: %s (%d, %d)", settings.Title.c_str(), settings.Width, settings.Height);
 
 		// Create window class
 
@@ -85,9 +89,10 @@ namespace Smile
 		SM_ASSERT(m_WindowHandle, "WindowsWindow::Init > Could not create window!")
 		
 		ShowWindow(m_WindowHandle, SW_SHOW);
-		SM_INFO("WindowsWindow::Init > Window '%s' created", settings.Title.c_str());
+		SM_LOG_INFO("WindowsWindow::Init > Window '%s' created", settings.Title.c_str());
 
-		m_pContext = new DirectX11Context{ &m_WindowHandle };
+		// Init context
+		m_pContext = new DirectX11Context{ this };
 		m_pContext->Init();
 
 		SetVSync(true);
@@ -100,7 +105,6 @@ namespace Smile
 			return;
 
 		PollEvents();
-		m_pContext->SwapBuffers();
 	}
 
 	void WindowsWindow::PollEvents()
@@ -144,8 +148,11 @@ namespace Smile
 
 	LRESULT WindowsWindow::WindowsProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 	{
-		if(!m_bInitialized)
+		if (!m_bInitialized)
 			return DefWindowProc(hWnd, msg, wParam, lParam);
+
+		/*if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+			return true;*/
 
 		WindowsWindow* const pWindow = reinterpret_cast<WindowsWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
@@ -186,17 +193,29 @@ namespace Smile
 		}
 
 		case WM_LBUTTONDOWN:
+		{
+			MouseButtonPressedEvent event{ 0 };
+			pWindow->m_Data.EventCallback(event);
+			break;
+		}
+
 		case WM_RBUTTONDOWN:
 		{
-			MouseButtonPressedEvent event{ static_cast<unsigned char>(wParam) };
+			MouseButtonPressedEvent event{ 1 };
 			pWindow->m_Data.EventCallback(event);
 			break;
 		}
 
 		case WM_LBUTTONUP:
+		{
+			MouseButtonReleasedEvent event{ 0 };
+			pWindow->m_Data.EventCallback(event);
+			break;
+		}
+
 		case WM_RBUTTONUP:
 		{
-			MouseButtonReleasedEvent event{ static_cast<unsigned char>(wParam) };
+			MouseButtonReleasedEvent event{ 1 };
 			pWindow->m_Data.EventCallback(event);
 			break;
 		}
@@ -204,7 +223,7 @@ namespace Smile
 		case WM_MOUSEWHEEL:
 		{
 			float zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-			MouseScrolledEvent event{ 0, zDelta };
+			MouseScrolledEvent event{ zDelta, 0 };
 			pWindow->m_Data.EventCallback(event);
 			break;
 		}
@@ -216,6 +235,12 @@ namespace Smile
 			MouseMovedEvent event{ xPos, yPos };
 			pWindow->m_Data.EventCallback(event);
 			break;
+		}
+
+		case WM_CHAR:
+		{
+			KeyTypedEvent event{ static_cast<int>(wParam) };
+			pWindow->m_Data.EventCallback(event);
 		}
 
 		default:

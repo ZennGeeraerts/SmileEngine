@@ -65,4 +65,22 @@ namespace Smile
 
 		EVENT_CLASS_TYPE(eKeyReleased);
 	};
+
+	class SMILE_API KeyTypedEvent final : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keyCode)
+			: KeyEvent(keyCode)
+		{
+		}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss{};
+			ss << "KeyTypedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(eKeyTyped);
+	};
 }
