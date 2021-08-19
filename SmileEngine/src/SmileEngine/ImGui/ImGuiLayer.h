@@ -7,18 +7,23 @@
 
 namespace Smile
 {
-	class SMILE_API ImGuiLayer final : public Layer
+	class ImGuiLayer final : public Layer
 	{
 	public:
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnAttach() override;
-		void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& event) override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
+		virtual void OnEvent(Event& event) override;
+
+		void Begin();
+		void End();
 
 	private:
+		void ShutDown();
+
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
@@ -29,6 +34,7 @@ namespace Smile
 		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
+		bool m_bInitialized = false;
 	};
 }
 

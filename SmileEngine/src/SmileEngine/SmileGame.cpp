@@ -20,8 +20,11 @@ namespace Smile
 
 		Logger::SetPriority(LogPriority::eTrace);
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
-		m_Window->SetEventCallback(SM_BIND_EVENT_FN(SmileGame::OnEvent));
+		m_pWindow = std::unique_ptr<Window>(Window::Create());
+		m_pWindow->SetEventCallback(SM_BIND_EVENT_FN(SmileGame::OnEvent));
+
+		m_pImGuiLayer = new ImGuiLayer{};
+		PushOverlay(m_pImGuiLayer);
 	}
 
 	SmileGame::~SmileGame()
@@ -61,7 +64,7 @@ namespace Smile
 
 		while (m_bRunning)
 		{
-			RenderingContext* pRenderingContext = m_Window->GetRenderingContext();
+			RenderingContext* pRenderingContext = m_pWindow->GetRenderingContext();
 			pRenderingContext->ClearBackbuffer();
 			
 			time.OnUpdate();
@@ -71,7 +74,12 @@ namespace Smile
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnUpdate();
 
-			m_Window->OnUpdate();
+			m_pImGuiLayer->Begin();
+			for (Layer* pLayer : m_LayerStack)
+				pLayer->OnImGuiRender();
+			m_pImGuiLayer->End();
+			
+			m_pWindow->OnUpdate();
 			pRenderingContext->PresentBackbuffer();
 		}
 	}

@@ -15,6 +15,8 @@
 
 #include "SmileEngine/SmTime.h"
 
+#include <DirectXMath.h>
+
 // Platform specific headers
 #ifdef SM_PLATFORM_WINDOWS
 	#include <Windows.h>

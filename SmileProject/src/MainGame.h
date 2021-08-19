@@ -1,6 +1,8 @@
 #pragma once
 #include <SmileEngine.h>
 
+#include "SmileEngine/ImGui/imgui.h"
+
 class ExampleLayer : public Smile::Layer
 {
 public:
@@ -9,7 +11,7 @@ public:
 	{
 	}
 
-	void OnUpdate() override
+	virtual void OnUpdate() override
 	{
 		//SM_INFO("ExampleLayer::Update");
 
@@ -17,13 +19,20 @@ public:
 			SM_LOG_TRACE("Tab key is pressed!");
 	}
 
-	void OnEvent(Smile::Event& event) override
+	virtual void OnEvent(Smile::Event& event) override
 	{
 		if (event.GetEventType() == Smile::EventType::eKeyPressed)
 		{
 			Smile::KeyPressedEvent& e = static_cast<Smile::KeyPressedEvent&>(event);
 			SM_LOG_TRACE("%c", static_cast<unsigned char>(e.GetKeyCode()));
 		}
+	}
+
+	virtual void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello world");
+		ImGui::End();
 	}
 };
 

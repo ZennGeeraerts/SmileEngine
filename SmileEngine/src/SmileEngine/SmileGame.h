@@ -7,6 +7,8 @@
 #include "SmileEngine/Events/Event.h"
 #include "SmileEngine/Events/ApplicationEvent.h"
 
+#include "SmileEngine/ImGui/ImGuiLayer.h"
+
 namespace Smile
 {
 	class SMILE_API SmileGame
@@ -23,13 +25,14 @@ namespace Smile
 		void PushOverlay(Layer* pOverlay);
 
 		inline static SmileGame& GetInstance() { return *m_pInstance; };
-		inline Window& GetWindow() const { return *m_Window; }
+		inline Window& GetWindow() const { return *m_pWindow; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
 	private:
-		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<Window> m_pWindow;
+		ImGuiLayer* m_pImGuiLayer;
 		bool m_bRunning;
 		LayerStack m_LayerStack;
 

@@ -10,8 +10,8 @@
 // For now using only DirectX11
 #include "Platform/DirectX11/DirectX11Context.h"
 
-//#include "backends/imgui_impl_win32.h"
-
+//#include "SmileEngine/ImGui/imgui_impl_win32.h"
+//
 //extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace Smile
@@ -34,6 +34,7 @@ namespace Smile
 	void WindowsWindow::ShutDown()
 	{
 		DestroyWindow(m_WindowHandle);
+		//UnregisterClass(wc.lpszClassName, wc.hInstance);
 		delete m_pContext;
 	}
 
@@ -76,7 +77,7 @@ namespace Smile
 		auto windowTitle = std::wstring{ settings.Title.begin(), settings.Title.end() };
 		m_WindowHandle = CreateWindow(className,
 				windowTitle.c_str(),
-				WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+				WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
 				CW_USEDEFAULT,
 				CW_USEDEFAULT,
 				settings.Width,
@@ -87,13 +88,14 @@ namespace Smile
 				this);
 
 		SM_ASSERT(m_WindowHandle, "WindowsWindow::Init > Could not create window!")
-		
-		ShowWindow(m_WindowHandle, SW_SHOW);
-		SM_LOG_INFO("WindowsWindow::Init > Window '%s' created", settings.Title.c_str());
 
 		// Init context
 		m_pContext = new DirectX11Context{ this };
 		m_pContext->Init();
+
+		ShowWindow(m_WindowHandle, SW_SHOW);
+		UpdateWindow(m_WindowHandle);
+		SM_LOG_INFO("WindowsWindow::Init > Window '%s' created", settings.Title.c_str());
 
 		SetVSync(true);
 		m_bInitialized = true;
@@ -174,7 +176,6 @@ namespace Smile
 			pWindow->m_Data.EventCallback(event);
 			pWindow->m_Data.Width = width;
 			pWindow->m_Data.Height = height;
-		
 			break;
 		}
 

@@ -5,7 +5,6 @@ namespace Smile
 {
 	LayerStack::LayerStack()
 	{
-		m_LayerInsert = m_pLayers.begin();
 	}
 
 	LayerStack::~LayerStack()
@@ -17,7 +16,8 @@ namespace Smile
 	// Insert at m_LayerInsert
 	void LayerStack::PushLayer(Layer* pLayer)
 	{
-		m_LayerInsert = m_pLayers.emplace(m_LayerInsert, pLayer);
+		m_pLayers.emplace(m_pLayers.begin() + m_LayerInsertIndex, pLayer);
+		++m_LayerInsertIndex;
 		pLayer->OnAttach();
 	}
 
@@ -34,7 +34,7 @@ namespace Smile
 		if (it != m_pLayers.end())
 		{
 			m_pLayers.erase(it);
-			m_LayerInsert--;
+			--m_LayerInsertIndex;
 		}
 	}
 

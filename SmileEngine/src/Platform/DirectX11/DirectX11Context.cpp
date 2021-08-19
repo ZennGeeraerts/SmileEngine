@@ -162,6 +162,7 @@ namespace Smile
 
 	void DirectX11Context::ClearBackbuffer()
 	{
+		SetRenderTarget(nullptr);
 		const float clearColor[]{ 0, 0, 0.3f, 1.f };
 		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget->GetRenderTargetView(), clearColor);
 		m_pDeviceContext->ClearDepthStencilView(m_pCurrentRenderTarget->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);

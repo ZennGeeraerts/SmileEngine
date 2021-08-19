@@ -27,7 +27,7 @@ namespace Smile
 	private:
 		// Vector is used because we iterate over it every frame
 		std::vector<Layer*> m_pLayers;
-		std::vector<Layer*>::iterator m_LayerInsert;
+		unsigned int m_LayerInsertIndex = 0;
 	};
 }
 

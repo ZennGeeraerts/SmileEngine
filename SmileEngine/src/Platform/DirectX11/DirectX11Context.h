@@ -20,9 +20,9 @@ namespace Smile
 		DirectX11Context& operator=(const DirectX11Context&) = delete;
 		DirectX11Context& operator=(DirectX11Context&&) = delete;
 
-		void Init() override;
-		void ClearBackbuffer() override;
-		void PresentBackbuffer() override;
+		virtual void Init() override;
+		virtual void ClearBackbuffer() override;
+		virtual void PresentBackbuffer() override;
 
 		inline ID3D11Device* GetDevice() const { return m_pDevice; }
 		inline ID3D11DeviceContext* GetDeviceContext() const { return m_pDeviceContext; }
