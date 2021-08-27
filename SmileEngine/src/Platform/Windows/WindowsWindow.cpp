@@ -107,6 +107,7 @@ namespace Smile
 			return;
 
 		PollEvents();
+		m_pContext->PresentBackbuffer();
 	}
 
 	void WindowsWindow::PollEvents()
@@ -160,10 +161,21 @@ namespace Smile
 
 		switch (msg)
 		{
+		case WM_ACTIVATE:
+		{
+			return 0;
+		}
+
 		case WM_CLOSE:
 		{
 			WindowCloseEvent event{};
 			pWindow->m_Data.EventCallback(event);
+			DestroyWindow(m_WindowHandle);
+			return 0;
+		}
+
+		case WM_DESTROY:
+		{
 			PostQuitMessage(0);
 			return 0;
 		}

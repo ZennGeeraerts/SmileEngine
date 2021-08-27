@@ -1,6 +1,5 @@
 #pragma once
 
-#include <d3d11.h>
 #include "SmileEngine/Logger.h"
 
 namespace Smile

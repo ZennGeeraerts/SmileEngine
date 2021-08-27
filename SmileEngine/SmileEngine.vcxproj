@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\DirectX11\DirectX11Shader.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11ShaderLayouts.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
     <ClInclude Include="src\SmileEngine\ImGui\imconfig.h" />
     <ClInclude Include="src\SmileEngine\ImGui\imgui.h" />
     <ClInclude Include="src\SmileEngine\ImGui\imgui_impl_dx11.h" />
@@ -40,6 +45,7 @@
     <ClInclude Include="src\SmileEngine\Events\MouseEvent.h" />
     <ClInclude Include="src\SmileEngine\Logger.h" />
     <ClInclude Include="src\SmileEngine.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\Buffer.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RenderingContext.h" />
     <ClInclude Include="src\SmileEngine\SmileGame.h" />
     <ClInclude Include="src\SmileEngine\Core.h" />
@@ -51,6 +57,10 @@
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DirectX11\DirectX11Shader.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -93,6 +103,7 @@
     <ClCompile Include="src\SmileEngine\LayerStack.cpp" />
     <ClCompile Include="src\SmileEngine\Layer.cpp" />
     <ClCompile Include="src\SmileEngine\Logger.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\SmileGame.cpp" />
     <ClCompile Include="src\SmileEngine\SmTime.cpp" />
     <ClCompile Include="src\smpch.cpp">
@@ -160,29 +171,29 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\dx11effects\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\dx11effects\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\dx11effects\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>C:\dev\SmileEngine\SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\dx11effects\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -194,13 +205,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;dx11effects.lib;dx11effects_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)/lib/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
@@ -217,15 +228,15 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;dx11effects.lib;dx11effects_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)/lib/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
@@ -241,13 +252,13 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;dx11effects.lib;dx11effects_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)/lib/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
@@ -264,15 +275,15 @@
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;dx11effects.lib;dx11effects_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)/lib/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>

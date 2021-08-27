@@ -1,0 +1,78 @@
+﻿  smpch.cpp
+  DirectX11Buffer.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  DirectX11Context.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  DirectX11Shader.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  RenderTarget.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  WindowsInput.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(23,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(29,32): warning C4251: 'Smile::LayerStack::m_pLayers': class 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(24): message : see declaration of 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(36,36): warning C4251: 'Smile::SmileGame::m_pWindow': class 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(36): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(43,45): warning C4251: 'Smile::SmileGame::m_pShader': class 'std::unique_ptr<Smile::DirectX11Shader,std::default_delete<Smile::DirectX11Shader>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(43): message : see declaration of 'std::unique_ptr<Smile::DirectX11Shader,std::default_delete<Smile::DirectX11Shader>>'
+  WindowsWindow.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  ImGuiLayer.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(23,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(29,32): warning C4251: 'Smile::LayerStack::m_pLayers': class 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(24): message : see declaration of 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(36,36): warning C4251: 'Smile::SmileGame::m_pWindow': class 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(36): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(43,45): warning C4251: 'Smile::SmileGame::m_pShader': class 'std::unique_ptr<Smile::DirectX11Shader,std::default_delete<Smile::DirectX11Shader>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(43): message : see declaration of 'std::unique_ptr<Smile::DirectX11Shader,std::default_delete<Smile::DirectX11Shader>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  Layer.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(23,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  LayerStack.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(23,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(29,32): warning C4251: 'Smile::LayerStack::m_pLayers': class 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(24): message : see declaration of 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>'
+  Logger.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  Buffer.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+  Renderer.cpp
+  Shader.cpp
+  SmTime.cpp
+  SmileGame.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(23,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(29,32): warning C4251: 'Smile::LayerStack::m_pLayers': class 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(24): message : see declaration of 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(36,36): warning C4251: 'Smile::SmileGame::m_pWindow': class 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(36): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(43,45): warning C4251: 'Smile::SmileGame::m_pShader': class 'std::unique_ptr<Smile::DirectX11Shader,std::default_delete<Smile::DirectX11Shader>>' needs to have dll-interface to be used by clients of class 'Smile::SmileGame'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(43): message : see declaration of 'std::unique_ptr<Smile::DirectX11Shader,std::default_delete<Smile::DirectX11Shader>>'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+     Creating library C:\dev\SmileEngine\bin\Release-x64\SmileEngine\SmileEngine.lib and object C:\dev\SmileEngine\bin\Release-x64\SmileEngine\SmileEngine.exp
+  Generating code
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 3166 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+dx11effects.lib(d3dxGlobal.obj) : warning LNK4099: PDB 'Effects11.pdb' was not found with 'dx11effects.lib(d3dxGlobal.obj)' or at 'C:\dev\SmileEngine\bin\Release-x64\SmileEngine\Effects11.pdb'; linking object as if no debug info
+dx11effects.lib(EffectAPI.obj) : warning LNK4099: PDB '' was not found with 'dx11effects.lib(EffectAPI.obj)' or at ''; linking object as if no debug info
+dx11effects.lib(EffectLoad.obj) : warning LNK4099: PDB 'Effects11.pdb' was not found with 'dx11effects.lib(EffectLoad.obj)' or at 'C:\dev\SmileEngine\bin\Release-x64\SmileEngine\Effects11.pdb'; linking object as if no debug info
+dx11effects.lib(EffectNonRuntime.obj) : warning LNK4099: PDB 'Effects11.pdb' was not found with 'dx11effects.lib(EffectNonRuntime.obj)' or at 'C:\dev\SmileEngine\bin\Release-x64\SmileEngine\Effects11.pdb'; linking object as if no debug info
+dx11effects.lib(EffectReflection.obj) : warning LNK4099: PDB 'Effects11.pdb' was not found with 'dx11effects.lib(EffectReflection.obj)' or at 'C:\dev\SmileEngine\bin\Release-x64\SmileEngine\Effects11.pdb'; linking object as if no debug info
+dx11effects.lib(EffectRuntime.obj) : warning LNK4099: PDB 'Effects11.pdb' was not found with 'dx11effects.lib(EffectRuntime.obj)' or at 'C:\dev\SmileEngine\bin\Release-x64\SmileEngine\Effects11.pdb'; linking object as if no debug info
+  SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Release-x64\SmileEngine\SmileEngine.dll
+  C:\dev\SmileEngine\bin\Release-x64\SmileEngine\SmileEngine.dll
+  1 File(s) copied

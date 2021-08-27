@@ -1,9 +1,11 @@
 #include "smpch.h"
 #include "DirectX11Context.h"
-#include "RenderTarget.h"
 
 #include "SmileEngine/Window.h"
 #include "SmileEngine/Core.h"
+#include "SmileEngine/Logger.h"
+
+#include "DirectX11Buffer.h"
 
 namespace Smile
 {
@@ -14,7 +16,10 @@ namespace Smile
 
 	DirectX11Context::~DirectX11Context()
 	{
-		SAFE_DELETE(m_pDefaultRenderTarget);
+		SAFE_RELEASE(m_pDepthStencilBuffer);
+		SAFE_RELEASE(m_pRenderTargetBuffer);
+		SAFE_RELEASE(m_pCurrentRenderTarget);
+		SAFE_RELEASE(m_pDepthStencilView);
 		SAFE_RELEASE(m_pDXGIFactory);
 		SAFE_RELEASE(m_pSwapChain);
 
@@ -52,8 +57,8 @@ namespace Smile
 		}
 
 		// TODO: Get width and height from window
-		const unsigned int width = /*m_pWindow->GetWidth()*/ 0;
-		const unsigned int height = /*m_pWindow->GetHeight()*/ 0;
+		const unsigned int width = m_pWindow->GetWidth();
+		const unsigned int height = m_pWindow->GetHeight();
 
 		// Create SwapChain Descriptor
 		DXGI_SWAP_CHAIN_DESC swapChainDesc{};
@@ -82,72 +87,57 @@ namespace Smile
 			return;
 		}
 
-		// Create render target
-		m_pDefaultRenderTarget = new RenderTarget{ m_pDevice };
+		/*------------------------------------- Render Target Code -------------------------------------*/
+		// Create the Depth/Stencil Buffer and View
+		D3D11_TEXTURE2D_DESC depthStencilDesc{};
+		depthStencilDesc.Width = width;
+		depthStencilDesc.Height = height;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags = 0;
+		depthStencilDesc.MiscFlags = 0;
 
-		ID3D11Texture2D* pBackbuffer = nullptr;
-		result = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackbuffer));
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+		depthStencilViewDesc.Format = depthStencilDesc.Format;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+		result = m_pDevice->CreateTexture2D(&depthStencilDesc, 0, &m_pDepthStencilBuffer);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create depth stencil buffer");
+			return;
+		}
+
+		result = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create depth stencil view");
+			return;
+		}
+
+		// Create the RenderTargetView
+		result = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pRenderTargetBuffer));
 		if (FAILED(result))
 		{
 			SM_LOG_ERROR("DirectXContext::Init > Failed to get buffer from swap chain");
 			return;
 		}
 
-		RENDERTARGET_DESC rtDesc{};
-		rtDesc.pColor = pBackbuffer;
-		result = m_pDefaultRenderTarget->Create(rtDesc);
+		result = m_pDevice->CreateRenderTargetView(m_pRenderTargetBuffer, 0, &m_pCurrentRenderTarget);
 		if (FAILED(result))
 		{
-			SM_LOG_ERROR("DirectXContext::Init > Failed to create render target");
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create render target view");
 			return;
 		}
 
-		// Set default render target
-		SetRenderTarget(nullptr);
-
-		pBackbuffer->Release();
-
-		/*------------------------------------- Render Target Code -------------------------------------*/
-		// Create the Depth/Stencil Buffer and View
-		//D3D11_TEXTURE2D_DESC depthStencilDesc{};
-		//depthStencilDesc.Width = 0;
-		//depthStencilDesc.Height = 0;
-		//depthStencilDesc.MipLevels = 1;
-		//depthStencilDesc.ArraySize = 1;
-		//depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		//depthStencilDesc.SampleDesc.Count = 1;
-		//depthStencilDesc.SampleDesc.Quality = 0;
-		//depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-		//depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		//depthStencilDesc.CPUAccessFlags = 0;
-		//depthStencilDesc.MiscFlags = 0;
-
-		//D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-		//depthStencilViewDesc.Format = depthStencilDesc.Format;
-		//depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		//depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-		//ID3D11Texture2D* pDepthStencilBuffer{};
-		//result = m_pDevice->CreateTexture2D(&depthStencilDesc, 0, &pDepthStencilBuffer);
-		//if (FAILED(result))
-		//	return;
-
-		//ID3D11DepthStencilView* pDepthStencilView{};
-		//result = m_pDevice->CreateDepthStencilView(pDepthStencilBuffer, &depthStencilViewDesc, &pDepthStencilView);
-		//if (FAILED(result))
-		//	return;
-
-		//// Create the RenderTargetView
-		//ID3D11Resource* pRenderTargetBuffer{};
-		//result = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pRenderTargetBuffer));
-		//if (FAILED(result))
-		//	return;
-
-		//ID3D11RenderTargetView* pRenderTargetView{};
-		//result = m_pDevice->CreateRenderTargetView(pRenderTargetBuffer, 0, &pRenderTargetView);
-		//if (FAILED(result))
-		//	return;
-		/*------------------------------------- Render Target Code -------------------------------------*/
+		m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, m_pDepthStencilView);
+		/*------------------------------------- Render Target Code End -------------------------------------*/
 
 		// Set the Viewport
 		D3D11_VIEWPORT viewPort{};
@@ -160,28 +150,17 @@ namespace Smile
 		m_pDeviceContext->RSSetViewports(1, &viewPort);
 	}
 
-	void DirectX11Context::ClearBackbuffer()
+	void DirectX11Context::ClearBuffer()
 	{
-		SetRenderTarget(nullptr);
+		m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, m_pDepthStencilView);
+
 		const float clearColor[]{ 0, 0, 0.3f, 1.f };
-		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget->GetRenderTargetView(), clearColor);
-		m_pDeviceContext->ClearDepthStencilView(m_pCurrentRenderTarget->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget, clearColor);
+		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	}
 
 	void DirectX11Context::PresentBackbuffer()
 	{
 		m_pSwapChain->Present(0, 0);
-	}
-
-	void DirectX11Context::SetRenderTarget(RenderTarget* pRenderTarget)
-	{
-		if (!pRenderTarget)
-			pRenderTarget = m_pDefaultRenderTarget;
-
-		auto pRtView = pRenderTarget->GetRenderTargetView();
-		// Bind the Views to the Output Merger Stage
-		m_pDeviceContext->OMSetRenderTargets(1, &pRtView, pRenderTarget->GetDepthStencilView());
-
-		m_pCurrentRenderTarget = pRenderTarget;
 	}
 }

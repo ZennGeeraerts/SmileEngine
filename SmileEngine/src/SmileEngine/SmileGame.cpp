@@ -4,7 +4,9 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "Logger.h"
-#include "SmileEngine/Renderer/RenderingContext.h"
+
+#include "SmileEngine/Renderer/RenderingContext.h" // temp
+#include "Platform/DirectX11/DirectX11Context.h"
 
 #include "Input.h"
 
@@ -25,6 +27,22 @@ namespace Smile
 
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
+
+		float vertices[18]
+		{
+			0.f, 0.5f, 0.5f,	
+			0.5f, -0.5f, 0.5f,	
+			-0.5f, -0.5f, 0.5f, 
+			1.f, 0.0f, 0.f,
+			0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f
+		};
+		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 18));
+
+		uint32_t indices[]{ 0, 1, 2 };
+		m_pIndexBuffer.reset(IndexBuffer::Create(m_pWindow->GetRenderingContext(), indices, 3));
+
+		m_pShader.reset(new DirectX11Shader{ static_cast<DirectX11Context*>(m_pWindow->GetRenderingContext()), "../SmileProject/Resources/shaders/Color.fx" });
 	}
 
 	SmileGame::~SmileGame()
@@ -65,11 +83,22 @@ namespace Smile
 		while (m_bRunning)
 		{
 			RenderingContext* pRenderingContext = m_pWindow->GetRenderingContext();
-			pRenderingContext->ClearBackbuffer();
+			pRenderingContext->ClearBuffer();
 			
 			time.OnUpdate();
 
-			//SM_INFO("%d", time.GetFPS());
+			m_pVertexBuffer->Bind();
+			m_pIndexBuffer->Bind();
+			m_pShader->Bind();
+			static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+			D3DX11_TECHNIQUE_DESC techDesc{};
+			m_pShader->GetEffect()->GetTechniqueByIndex(0)->GetDesc(&techDesc);
+			for (UINT p{}; p < techDesc.Passes; ++p)
+			{
+				m_pShader->GetEffect()->GetTechniqueByIndex(0)->GetPassByIndex(p)->Apply(0, static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext());
+				static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->DrawIndexed(3, 0, 0);
+			}
 
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnUpdate();
@@ -80,7 +109,6 @@ namespace Smile
 			m_pImGuiLayer->End();
 			
 			m_pWindow->OnUpdate();
-			pRenderingContext->PresentBackbuffer();
 		}
 	}
 

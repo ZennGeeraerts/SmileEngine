@@ -22,3 +22,13 @@
 	#include <Windows.h>
 	#include <windowsx.h>
 #endif
+
+#include <dxgi.h>
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#include <d3dx11effect.h>
+#if defined(DEBUG) || defined(_DEBUG)
+#pragma comment(lib, "dx11effects_d.lib")
+#else 
+#pragma comment(lib, "dx11effects.lib")
+#endif
