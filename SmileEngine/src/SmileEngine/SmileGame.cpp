@@ -36,7 +36,7 @@ namespace Smile
 			{ XMFLOAT3{ 0.5f, -0.5f, 0.5f }, XMFLOAT3{ 0.f, 1.f, 0.f } },
 			{ XMFLOAT3{ -0.5f, -0.5f, 0.5f }, XMFLOAT3{ 0.f, 0.f, 1.f } }
 		};
-		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 3));
+		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 3, sizeof(PosColVertex)));
 
 		uint32_t indices[]{ 0, 1, 2 };
 		m_pIndexBuffer.reset(IndexBuffer::Create(m_pWindow->GetRenderingContext(), indices, 3));

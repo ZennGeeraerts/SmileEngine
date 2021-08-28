@@ -3,7 +3,6 @@
 
 #include "SmileEngine/Logger.h"
 #include "Platform/DirectX11/DirectX11Context.h"
-#include "DirectX11DataStructs.h"
 
 namespace Smile
 {
@@ -11,14 +10,14 @@ namespace Smile
 	//*----------------------------------------- Vertex buffer -----------------------------------------*//
 	//*------------------------------------------------------------------------------------------------*//
 
-	DirectX11VertexBuffer::DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t count)
+	DirectX11VertexBuffer::DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t count, uint32_t stride)
 		: m_pDirectX11Context{ pDirectX11Context }
 	{
-		m_Stride = sizeof(PosColVertex);
+		m_Stride = stride;
 
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
-		bd.ByteWidth = m_Stride * count;
+		bd.ByteWidth = stride * count;
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;

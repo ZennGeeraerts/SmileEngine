@@ -5,8 +5,6 @@
 #include "SmileEngine/Core.h"
 #include "SmileEngine/Logger.h"
 
-#include "DirectX11Buffer.h"
-
 namespace Smile
 {
 	DirectX11Context::DirectX11Context(Window* pWindow)
