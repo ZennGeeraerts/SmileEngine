@@ -152,8 +152,8 @@ namespace Smile
 	{
 		m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, m_pDepthStencilView);
 
-		const float clearColor[]{ 0, 0, 0.3f, 1.f };
-		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget, clearColor);
+		const float* pClearColor = reinterpret_cast<const float*>(&DirectX::Colors::DodgerBlue);
+		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget, pClearColor);
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	}
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "SmileEngine/Renderer/Shader.h"
+#include "SmileEngine/Renderer/Buffer.h"
 
 namespace Smile
 {
@@ -8,7 +9,7 @@ namespace Smile
 	class DirectX11Shader : public Shader
 	{
 	public:
-		DirectX11Shader(DirectX11Context* pDirectX11Context, const std::string& assetFile, const std::string& techniqueName = "");
+		DirectX11Shader(DirectX11Context* pDirectX11Context, const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName = "");
 		virtual ~DirectX11Shader();
 
 		virtual void Bind() const override;
@@ -21,7 +22,8 @@ namespace Smile
 
 	private:
 		bool LoadEffect(ID3D11Device* pDevice, const std::string& assetFile);
-		void BuildInputLayout(D3D11_INPUT_ELEMENT_DESC* pLayoutDesc, uint32_t count);
+		void BuildInputLayout(const BufferLayout& layout);
+		DXGI_FORMAT ShaderDataTypeToDirectXBaseType(ShaderDataType type);
 
 	private:
 		DirectX11Context* m_pDirectX11Context;
@@ -35,8 +37,6 @@ namespace Smile
 		ID3DX11EffectMatrixVariable* m_pWorldViewProjMatrixVariable;
 
 		ID3D11InputLayout* m_pInputLayout;
-		uint32_t m_InputLayoutSize;
-		uint32_t m_InputLayoutID;
 	};
 }
 

@@ -32,3 +32,7 @@
 #else 
 #pragma comment(lib, "dx11effects.lib")
 #endif
+#include <DirectXMath.h>
+#include <DirectXColors.h>
+#include <DirectXPackedVector.h>
+#include <DirectXCollision.h>

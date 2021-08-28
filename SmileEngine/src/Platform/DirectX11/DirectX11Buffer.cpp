@@ -10,14 +10,13 @@ namespace Smile
 	//*----------------------------------------- Vertex buffer -----------------------------------------*//
 	//*------------------------------------------------------------------------------------------------*//
 
-	DirectX11VertexBuffer::DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t count, uint32_t stride)
+	DirectX11VertexBuffer::DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t count, const BufferLayout& layout)
 		: m_pDirectX11Context{ pDirectX11Context }
+		, m_Layout{ layout }
 	{
-		m_Stride = stride;
-
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_IMMUTABLE;
-		bd.ByteWidth = stride * count;
+		bd.ByteWidth = layout.GetStride() * count;
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
@@ -41,7 +40,8 @@ namespace Smile
 	void DirectX11VertexBuffer::Bind() const
 	{
 		uint32_t offset{ 0 };
-		m_pDirectX11Context->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &m_Stride, &offset);
+		uint32_t stride{ m_Layout.GetStride() };
+		m_pDirectX11Context->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	}
 
 	void DirectX11VertexBuffer::Unbind() const

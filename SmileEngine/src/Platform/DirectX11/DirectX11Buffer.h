@@ -8,16 +8,19 @@ namespace Smile
 	class DirectX11VertexBuffer final : public VertexBuffer
 	{
 	public:
-		DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t stride, uint32_t count);
+		DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t count, const BufferLayout& layout);
 		virtual ~DirectX11VertexBuffer();
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
+		virtual void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
+		virtual const BufferLayout& GetLayout() const override { return m_Layout; }
+
 	private:
 		DirectX11Context* m_pDirectX11Context;
 		ID3D11Buffer* m_pVertexBuffer;
-		uint32_t m_Stride;
+		BufferLayout m_Layout;
 	};
 
 	class DirectX11IndexBuffer final : public IndexBuffer

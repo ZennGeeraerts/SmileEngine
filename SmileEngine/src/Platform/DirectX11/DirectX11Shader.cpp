@@ -3,11 +3,10 @@
 
 #include "DirectX11Context.h"
 #include "SmileEngine/Logger.h"
-#include "DirectX11DataStructs.h"
 
 namespace Smile
 {
-	DirectX11Shader::DirectX11Shader(DirectX11Context* pDirectX11Context, const std::string& assetFile, const std::string& techniqueName)
+	DirectX11Shader::DirectX11Shader(DirectX11Context* pDirectX11Context, const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName)
 		: m_pDirectX11Context{ pDirectX11Context }
 	{
 		if (!LoadEffect(m_pDirectX11Context->GetDevice(), assetFile))
@@ -24,7 +23,7 @@ namespace Smile
 		if (!m_pTechnique->IsValid())
 			SM_LOG_WARNING("DirectX11Shader > Invalid technique");
 
-		BuildInputLayout(ShaderLayouts::m_PosColLayout, 2);
+		BuildInputLayout(layout);
 
 		auto pEffectVariable = m_pEffect->GetVariableBySemantic("World");
 		m_pWorldMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
@@ -107,13 +106,47 @@ namespace Smile
 		return true;
 	}
 
-	void DirectX11Shader::BuildInputLayout(D3D11_INPUT_ELEMENT_DESC* pLayoutDesc, uint32_t count)
+	void DirectX11Shader::BuildInputLayout(const BufferLayout& layout)
 	{
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputDescs{};
+		for (const auto& element : layout)
+		{
+			inputDescs.push_back(
+				D3D11_INPUT_ELEMENT_DESC
+				{ 
+					element.Name.c_str(), 0, ShaderDataTypeToDirectXBaseType(element.Type), 0, element.Offset, D3D11_INPUT_PER_VERTEX_DATA, 0 
+				});
+		}
+
+		uint32_t count{ static_cast<uint32_t>(inputDescs.size()) };
+
 		D3DX11_PASS_DESC passDesc{};
 		m_pTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
-		HRESULT result = m_pDirectX11Context->GetDevice()->CreateInputLayout(pLayoutDesc, count, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
+		HRESULT result = m_pDirectX11Context->GetDevice()->CreateInputLayout(inputDescs.data(), count, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
 
 		if (FAILED(result))
 			SM_LOG_ERROR("DirectX11Shader::BuildInputLayout > Failed to create input layout");
+	}
+
+	DXGI_FORMAT DirectX11Shader::ShaderDataTypeToDirectXBaseType(ShaderDataType type)
+	{
+		switch (type)
+		{
+		case ShaderDataType::eFloat:	return DXGI_FORMAT_R32_FLOAT;
+		case ShaderDataType::eFloat2:	return DXGI_FORMAT_R32G32_FLOAT;
+		case ShaderDataType::eFloat3:	return DXGI_FORMAT_R32G32B32_FLOAT;
+		case ShaderDataType::eFloat4:	return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case ShaderDataType::eMat3:
+		case ShaderDataType::eMat4:
+		case ShaderDataType::eInt:
+		case ShaderDataType::eInt2:
+		case ShaderDataType::eInt3:
+		case ShaderDataType::eInt4:
+		case ShaderDataType::eBool:
+		default:
+			SM_ASSERT(false, "ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType");
+			return DXGI_FORMAT_UNKNOWN;
+			break;
+		}
 	}
 }

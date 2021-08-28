@@ -7,7 +7,6 @@
 
 #include "SmileEngine/Renderer/RenderingContext.h" // temp
 #include "Platform/DirectX11/DirectX11Context.h"
-#include "Platform/DirectX11/DirectX11DataStructs.h"
 
 #include "Input.h"
 
@@ -30,18 +29,26 @@ namespace Smile
 		PushOverlay(m_pImGuiLayer);
 
 		using namespace DirectX;
-		PosColVertex vertices[3]
+
+		float vertices[]
 		{
-			{ XMFLOAT3{ 0.f, 0.5f, 0.5f }, XMFLOAT3{ 1.f, 0.f, 0.f } },
-			{ XMFLOAT3{ 0.5f, -0.5f, 0.5f }, XMFLOAT3{ 0.f, 1.f, 0.f } },
-			{ XMFLOAT3{ -0.5f, -0.5f, 0.5f }, XMFLOAT3{ 0.f, 0.f, 1.f } }
+			0.f, 0.5f, 0.5f,		0.8f, 0.2f, 0.8f,
+			0.5f, -0.5f, 0.5f,		0.2f, 0.8f, 0.8f,
+			-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
 		};
-		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 3, sizeof(PosColVertex)));
+
+		BufferLayout bufferLayout
+		{
+			{ ShaderDataType::eFloat3, "Position" },
+			{ ShaderDataType::eFloat3, "Color" }
+		};
+
+		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 3, bufferLayout));
 
 		uint32_t indices[]{ 0, 1, 2 };
 		m_pIndexBuffer.reset(IndexBuffer::Create(m_pWindow->GetRenderingContext(), indices, 3));
 
-		m_pShader.reset(new DirectX11Shader{ static_cast<DirectX11Context*>(m_pWindow->GetRenderingContext()), "../SmileProject/Resources/shaders/Color.fx" });
+		m_pShader.reset(new DirectX11Shader{ static_cast<DirectX11Context*>(m_pWindow->GetRenderingContext()), "../SmileProject/Resources/shaders/PosCol.fx", bufferLayout });
 	}
 
 	SmileGame::~SmileGame()
