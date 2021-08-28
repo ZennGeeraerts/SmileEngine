@@ -3,7 +3,7 @@
 
 #include "DirectX11Context.h"
 #include "SmileEngine/Logger.h"
-#include "DirectX11ShaderLayouts.h"
+#include "DirectX11DataStructs.h"
 
 namespace Smile
 {

@@ -12,7 +12,7 @@
 
 namespace Smile
 {
-	VertexBuffer* VertexBuffer::Create(RenderingContext* pRenderingContext, float* pVertices, uint32_t count)
+	VertexBuffer* VertexBuffer::Create(RenderingContext* pRenderingContext, void* pVertices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{

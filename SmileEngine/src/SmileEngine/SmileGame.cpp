@@ -7,6 +7,7 @@
 
 #include "SmileEngine/Renderer/RenderingContext.h" // temp
 #include "Platform/DirectX11/DirectX11Context.h"
+#include "Platform/DirectX11/DirectX11DataStructs.h"
 
 #include "Input.h"
 
@@ -28,16 +29,14 @@ namespace Smile
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
 
-		float vertices[18]
+		using namespace DirectX;
+		PosColVertex vertices[3]
 		{
-			0.f, 0.5f, 0.5f,	
-			0.5f, -0.5f, 0.5f,	
-			-0.5f, -0.5f, 0.5f, 
-			1.f, 0.0f, 0.f,
-			0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 1.0f
+			{ XMFLOAT3{ 0.f, 0.5f, 0.5f }, XMFLOAT3{ 1.f, 0.f, 0.f } },
+			{ XMFLOAT3{ 0.5f, -0.5f, 0.5f }, XMFLOAT3{ 0.f, 1.f, 0.f } },
+			{ XMFLOAT3{ -0.5f, -0.5f, 0.5f }, XMFLOAT3{ 0.f, 0.f, 1.f } }
 		};
-		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 18));
+		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 3));
 
 		uint32_t indices[]{ 0, 1, 2 };
 		m_pIndexBuffer.reset(IndexBuffer::Create(m_pWindow->GetRenderingContext(), indices, 3));

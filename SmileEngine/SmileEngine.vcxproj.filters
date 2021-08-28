@@ -126,7 +126,7 @@
     <ClInclude Include="src\Platform\DirectX11\DirectX11Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11ShaderLayouts.h">
+    <ClInclude Include="src\Platform\DirectX11\DirectX11DataStructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -195,6 +195,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\DirectX11Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX11\DirectX11DataStructs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

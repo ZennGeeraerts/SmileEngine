@@ -12,7 +12,7 @@ namespace Smile
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		static VertexBuffer* Create(RenderingContext* pRenderingContext, float* pVertices, uint32_t count);
+		static VertexBuffer* Create(RenderingContext* pRenderingContext, void* pVertices, uint32_t count);
 	};
 
 	class IndexBuffer

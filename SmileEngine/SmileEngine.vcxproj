@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\DirectX11\DirectX11Shader.h" />
-    <ClInclude Include="src\Platform\DirectX11\DirectX11ShaderLayouts.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11DataStructs.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
@@ -57,6 +57,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DirectX11\DirectX11DataStructs.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp" />
