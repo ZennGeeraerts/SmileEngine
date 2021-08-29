@@ -139,6 +139,7 @@ namespace Smile
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
+		virtual uint32_t GetCount() const = 0;
 
 		static IndexBuffer* Create(RenderingContext* pRenderingContext, uint32_t* pIndices, uint32_t count);
 	};

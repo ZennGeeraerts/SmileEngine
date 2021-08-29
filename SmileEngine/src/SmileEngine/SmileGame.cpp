@@ -1,14 +1,11 @@
 #include "smpch.h"
 #include "SmileGame.h"
 
-#include "Events/Event.h"
-#include "Events/ApplicationEvent.h"
-#include "Logger.h"
-
 #include "SmileEngine/Renderer/RenderingContext.h" // temp
 #include "Platform/DirectX11/DirectX11Context.h"
+#include "Platform/DirectX11/DirectX11Shader.h"
 
-#include "Input.h"
+#include "Renderer/Renderer.h"
 
 namespace Smile
 {
@@ -27,8 +24,6 @@ namespace Smile
 
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
-
-		using namespace DirectX;
 
 		float vertices[]
 		{
@@ -53,7 +48,6 @@ namespace Smile
 
 	SmileGame::~SmileGame()
 	{
-		delete Input::GetInstance();
 	}
 
 	void SmileGame::PushLayer(Layer* pLayer)
@@ -71,8 +65,6 @@ namespace Smile
 		EventDispatcher dispatcher{ e };
 		dispatcher.Dispatch<WindowCloseEvent>(SM_BIND_EVENT_FN(SmileGame::OnWindowClose));
 
-		//SM_TRACE("%s", e.ToString().c_str());
-
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);
@@ -89,14 +81,17 @@ namespace Smile
 		while (m_bRunning)
 		{
 			RenderingContext* pRenderingContext = m_pWindow->GetRenderingContext();
-			pRenderingContext->ClearBuffer();
 			
+			RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
+			RenderCommand::Clear(pRenderingContext);
+
+			Renderer::BeginScene();
+			Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader);
+			Renderer::EndScene();
+
 			time.OnUpdate();
 
-			m_pVertexBuffer->Bind();
-			m_pIndexBuffer->Bind();
-			m_pShader->Bind();
-			static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			/*static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 			D3DX11_TECHNIQUE_DESC techDesc{};
 			m_pShader->GetEffect()->GetTechniqueByIndex(0)->GetDesc(&techDesc);
@@ -104,7 +99,7 @@ namespace Smile
 			{
 				m_pShader->GetEffect()->GetTechniqueByIndex(0)->GetPassByIndex(p)->Apply(0, static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext());
 				static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->DrawIndexed(3, 0, 0);
-			}
+			}*/
 
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnUpdate();

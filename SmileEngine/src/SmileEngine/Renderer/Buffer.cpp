@@ -1,13 +1,10 @@
 #include "smpch.h"
 #include "Buffer.h"
 
-#include "SmileEngine/Core.h"
-#include "SmileEngine/Logger.h"
 #include "Renderer.h"
 
 #ifdef SM_PLATFORM_WINDOWS
 	#include "Platform/DirectX11/DirectX11Buffer.h"
-	#include "Platform/DirectX11/DirectX11Context.h"
 #endif
 
 namespace Smile
@@ -16,12 +13,12 @@ namespace Smile
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::eNone:
+		case RendererAPI::API::eNone:
 			SM_ASSERT(false, "VertexBuffer::Create > return nullptr, no renderer api selected");
 			return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::eDirectX11:
+		case RendererAPI::API::eDirectX11:
 			return new DirectX11VertexBuffer(static_cast<DirectX11Context*>(pRenderingContext), pVertices, count, layout);
 #endif
 		}
@@ -34,12 +31,12 @@ namespace Smile
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::eNone:
+		case RendererAPI::API::eNone:
 			SM_ASSERT(false, "IndexBuffer::Create > return nullptr, no renderer api selected");
 			return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::eDirectX11:
+		case RendererAPI::API::eDirectX11:
 			return new DirectX11IndexBuffer(static_cast<DirectX11Context*>(pRenderingContext), pIndices, count);
 #endif
 		}

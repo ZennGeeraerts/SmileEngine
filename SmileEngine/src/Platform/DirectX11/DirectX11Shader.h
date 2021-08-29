@@ -16,6 +16,7 @@ namespace Smile
 		virtual void Unbind() const override;
 
 		inline ID3DX11Effect* GetEffect() const { return m_pEffect; }
+		inline ID3DX11EffectTechnique* GetTechnique() const { return m_pTechnique; }
 
 	protected:
 		virtual void LoadEffectVariables() {};

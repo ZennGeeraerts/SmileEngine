@@ -1,20 +1,20 @@
 #pragma once
 
+#include "RenderCommand.h"
+#include "Buffer.h"
+#include "Shader.h"
+
 namespace Smile
 {
-	enum class RendererAPI
-	{
-		eNone = 0,
-		eDirectX11
-	};
-
 	class Renderer final
 	{
 	public:
-		inline static RendererAPI GetAPI() { return m_RenderAPI; }
+		static void BeginScene();
+		static void EndScene();
 
-	private:
-		static RendererAPI m_RenderAPI;
+		static void Submit(RenderingContext* pRenderingContext, const std::shared_ptr<VertexBuffer>& pVertexBuffer, const std::shared_ptr<IndexBuffer>& pIndexBuffer, const std::shared_ptr<Shader>& pShader);
+
+		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 	};
 }
 

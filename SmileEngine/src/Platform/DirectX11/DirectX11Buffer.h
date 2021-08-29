@@ -1,10 +1,9 @@
 #pragma once
 #include "SmileEngine/Renderer/Buffer.h"
+#include "DirectX11Context.h"
 
 namespace Smile
 {
-	class DirectX11Context;
-
 	class DirectX11VertexBuffer final : public VertexBuffer
 	{
 	public:
@@ -31,11 +30,12 @@ namespace Smile
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+		virtual uint32_t GetCount() const override { return m_Count; }
 
 	private:
 		DirectX11Context* m_pDirectX11Context;
 		ID3D11Buffer* m_pIndexBuffer;
-		uint32_t m_AmountIndices;
+		uint32_t m_Count;
 	};
 }
 

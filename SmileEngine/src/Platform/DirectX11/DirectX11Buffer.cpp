@@ -1,9 +1,6 @@
 #include "smpch.h"
 #include "DirectX11Buffer.h"
 
-#include "SmileEngine/Logger.h"
-#include "Platform/DirectX11/DirectX11Context.h"
-
 namespace Smile
 {
 	//*------------------------------------------------------------------------------------------------*//
@@ -56,7 +53,7 @@ namespace Smile
 	DirectX11IndexBuffer::DirectX11IndexBuffer(DirectX11Context* pDirectX11Context, uint32_t* pIndices, uint32_t count)
 		: m_pDirectX11Context{ pDirectX11Context }
 	{
-		m_AmountIndices = count;
+		m_Count = count;
 
 		D3D11_BUFFER_DESC bd = {};
 		bd.Usage = D3D11_USAGE_IMMUTABLE;

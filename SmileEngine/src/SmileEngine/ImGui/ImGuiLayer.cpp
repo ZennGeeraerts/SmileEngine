@@ -108,9 +108,10 @@ namespace Smile
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		static bool bShow = true;
-		ImGui::ShowDemoWindow(&bShow);
+		/*static bool bShow = true;
+		ImGui::ShowDemoWindow(&bShow);*/
 	}
+
 	void ImGuiLayer::OnEvent(Event& event)
 	{
 		EventDispatcher dispatcher{ event };

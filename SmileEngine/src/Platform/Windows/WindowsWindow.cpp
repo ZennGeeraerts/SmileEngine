@@ -18,7 +18,7 @@ namespace Smile
 {
 	Window* Window::Create(const WindowSettings& settings)
 	{
-		return new WindowsWindow(settings);
+		return new WindowsWindow{ settings };
 	}
 
 	WindowsWindow::WindowsWindow(const WindowSettings& settings)
@@ -107,7 +107,7 @@ namespace Smile
 			return;
 
 		PollEvents();
-		m_pContext->PresentBackbuffer();
+		m_pContext->Present();
 	}
 
 	void WindowsWindow::PollEvents()

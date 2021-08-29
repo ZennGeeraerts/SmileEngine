@@ -17,11 +17,12 @@ namespace Smile
 		DirectX11Context& operator=(DirectX11Context&&) = delete;
 
 		virtual void Init() override;
-		virtual void ClearBuffer() override;
-		virtual void PresentBackbuffer() override;
+		virtual void Present() override;
 
 		inline ID3D11Device* GetDevice() const { return m_pDevice; }
 		inline ID3D11DeviceContext* GetDeviceContext() const { return m_pDeviceContext; }
+		inline ID3D11RenderTargetView* GetRenderTargetView() const { return m_pCurrentRenderTarget; }
+		inline ID3D11DepthStencilView* GetDepthStencilView() const { return m_pDepthStencilView; }
 
 	private:
 		Window* m_pWindow = nullptr;

@@ -148,16 +148,7 @@ namespace Smile
 		m_pDeviceContext->RSSetViewports(1, &viewPort);
 	}
 
-	void DirectX11Context::ClearBuffer()
-	{
-		m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, m_pDepthStencilView);
-
-		const float* pClearColor = reinterpret_cast<const float*>(&DirectX::Colors::DodgerBlue);
-		m_pDeviceContext->ClearRenderTargetView(m_pCurrentRenderTarget, pClearColor);
-		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-	}
-
-	void DirectX11Context::PresentBackbuffer()
+	void DirectX11Context::Present()
 	{
 		m_pSwapChain->Present(0, 0);
 	}

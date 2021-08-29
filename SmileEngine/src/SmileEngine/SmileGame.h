@@ -9,8 +9,8 @@
 
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
-#include "Platform/DirectX11/DirectX11Shader.h"
-#include "Platform/DirectX11/DirectX11Buffer.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
 
 namespace Smile
 {
@@ -41,9 +41,9 @@ namespace Smile
 
 		static SmileGame* m_pInstance;
 
-		std::unique_ptr<DirectX11Shader> m_pShader;
-		std::unique_ptr<VertexBuffer> m_pVertexBuffer;
-		std::unique_ptr<IndexBuffer> m_pIndexBuffer;
+		std::shared_ptr<Shader> m_pShader;
+		std::shared_ptr<VertexBuffer> m_pVertexBuffer;
+		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
 	};
 
 	// To be defined in client
