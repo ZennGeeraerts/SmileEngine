@@ -15,11 +15,13 @@ namespace Smile
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
+		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) override;
+
 		inline ID3DX11Effect* GetEffect() const { return m_pEffect; }
 		inline ID3DX11EffectTechnique* GetTechnique() const { return m_pTechnique; }
 
 	protected:
-		virtual void LoadEffectVariables() {};
+		virtual void LoadEffectVariables() override {};
 
 	private:
 		bool LoadEffect(ID3D11Device* pDevice, const std::string& assetFile);
@@ -32,10 +34,10 @@ namespace Smile
 		ID3DX11Effect* m_pEffect;
 		ID3DX11EffectTechnique* m_pTechnique;
 
-		ID3DX11EffectMatrixVariable* m_pWorldMatrixVariable;
+		/*ID3DX11EffectMatrixVariable* m_pWorldMatrixVariable;
 		ID3DX11EffectMatrixVariable* m_pViewMatrixVariable;
 		ID3DX11EffectMatrixVariable* m_pViewInverseMatrixVariable;
-		ID3DX11EffectMatrixVariable* m_pWorldViewProjMatrixVariable;
+		ID3DX11EffectMatrixVariable* m_pWorldViewProjMatrixVariable;*/
 
 		ID3D11InputLayout* m_pInputLayout;
 	};

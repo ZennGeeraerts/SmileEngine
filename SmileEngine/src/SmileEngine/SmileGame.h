@@ -9,9 +9,6 @@
 
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
-#include "Renderer/Buffer.h"
-#include "Renderer/Shader.h"
-
 namespace Smile
 {
 	class SMILE_API SmileGame
@@ -40,10 +37,6 @@ namespace Smile
 		LayerStack m_LayerStack;
 
 		static SmileGame* m_pInstance;
-
-		std::shared_ptr<Shader> m_pShader;
-		std::shared_ptr<VertexBuffer> m_pVertexBuffer;
-		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
 	};
 
 	// To be defined in client

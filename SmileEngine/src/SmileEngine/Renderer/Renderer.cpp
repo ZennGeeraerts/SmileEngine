@@ -1,11 +1,19 @@
 #include "smpch.h"
 #include "Renderer.h"
-#include "Buffer.h"
+
 namespace Smile
 {
-	void Renderer::BeginScene()
-	{
+	Renderer::SceneData* Renderer::m_pSceneData = new Renderer::SceneData{};
 
+	void Renderer::CleanUp()
+	{
+		SAFE_DELETE(m_pSceneData);
+		RenderCommand::CleanUp();
+	}
+
+	void Renderer::BeginScene(OrthographicCamera& camera)
+	{
+		m_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -18,6 +26,7 @@ namespace Smile
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pShader->Bind();
+		pShader->UploadMat4("WorldViewProjection", m_pSceneData->ViewProjectionMatrix);
 		RenderCommand::DrawIndexed(pRenderingContext, pIndexBuffer->GetCount(), pShader);
 	}
 }

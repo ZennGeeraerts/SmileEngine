@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11RendererAPI.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RenderCommand.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RendererAPI.h" />
@@ -60,6 +61,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11RendererAPI.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\RendererAPI.cpp" />

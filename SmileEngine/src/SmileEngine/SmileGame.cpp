@@ -1,10 +1,8 @@
 #include "smpch.h"
 #include "SmileGame.h"
 
-#include "SmileEngine/Renderer/RenderingContext.h" // temp
-#include "Platform/DirectX11/DirectX11Context.h"
-#include "Platform/DirectX11/DirectX11Shader.h"
-
+#include "Logger.h"
+#include "Input.h"
 #include "Renderer/Renderer.h"
 
 namespace Smile
@@ -24,30 +22,12 @@ namespace Smile
 
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
-
-		float vertices[]
-		{
-			0.f, 0.5f, 0.5f,		0.8f, 0.2f, 0.8f,
-			0.5f, -0.5f, 0.5f,		0.2f, 0.8f, 0.8f,
-			-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
-		};
-
-		BufferLayout bufferLayout
-		{
-			{ ShaderDataType::eFloat3, "Position" },
-			{ ShaderDataType::eFloat3, "Color" }
-		};
-
-		m_pVertexBuffer.reset(VertexBuffer::Create(m_pWindow->GetRenderingContext(), vertices, 3, bufferLayout));
-
-		uint32_t indices[]{ 0, 1, 2 };
-		m_pIndexBuffer.reset(IndexBuffer::Create(m_pWindow->GetRenderingContext(), indices, 3));
-
-		m_pShader.reset(new DirectX11Shader{ static_cast<DirectX11Context*>(m_pWindow->GetRenderingContext()), "../SmileProject/Resources/shaders/PosCol.fx", bufferLayout });
 	}
 
 	SmileGame::~SmileGame()
 	{
+		delete Input::GetInstance();
+		Renderer::CleanUp();
 	}
 
 	void SmileGame::PushLayer(Layer* pLayer)
@@ -80,26 +60,7 @@ namespace Smile
 
 		while (m_bRunning)
 		{
-			RenderingContext* pRenderingContext = m_pWindow->GetRenderingContext();
-			
-			RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
-			RenderCommand::Clear(pRenderingContext);
-
-			Renderer::BeginScene();
-			Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader);
-			Renderer::EndScene();
-
 			time.OnUpdate();
-
-			/*static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-			D3DX11_TECHNIQUE_DESC techDesc{};
-			m_pShader->GetEffect()->GetTechniqueByIndex(0)->GetDesc(&techDesc);
-			for (UINT p{}; p < techDesc.Passes; ++p)
-			{
-				m_pShader->GetEffect()->GetTechniqueByIndex(0)->GetPassByIndex(p)->Apply(0, static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext());
-				static_cast<DirectX11Context*>(pRenderingContext)->GetDeviceContext()->DrawIndexed(3, 0, 0);
-			}*/
 
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnUpdate();

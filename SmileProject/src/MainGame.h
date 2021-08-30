@@ -1,39 +1,25 @@
 #pragma once
 #include <SmileEngine.h>
 
-#include "SmileEngine/ImGui/imgui.h"
-
-class ExampleLayer : public Smile::Layer
+class ExampleLayer final : public Smile::Layer
 {
 public:
-	ExampleLayer()
-		: Layer("Example")
-	{
-	}
+	ExampleLayer();
 
-	virtual void OnUpdate() override
-	{
-		//SM_INFO("ExampleLayer::Update");
+	virtual void OnUpdate() override;
+	virtual void OnEvent(Smile::Event& event) override;
+	virtual void OnImGuiRender() override;
 
-		if (Smile::Input::IsKeyPressed(SM_TAB))
-			SM_LOG_TRACE("Tab key is pressed!");
-	}
+private:
+	std::shared_ptr<Smile::Shader> m_pShader;
+	std::shared_ptr<Smile::VertexBuffer> m_pVertexBuffer;
+	std::shared_ptr<Smile::IndexBuffer> m_pIndexBuffer;
 
-	virtual void OnEvent(Smile::Event& event) override
-	{
-		if (event.GetEventType() == Smile::EventType::eKeyPressed)
-		{
-			Smile::KeyPressedEvent& e = static_cast<Smile::KeyPressedEvent&>(event);
-			SM_LOG_TRACE("%c", static_cast<unsigned char>(e.GetKeyCode()));
-		}
-	}
-
-	virtual void OnImGuiRender() override
-	{
-		/*ImGui::Begin("Test");
-		ImGui::Text("Hello world");
-		ImGui::End();*/
-	}
+	Smile::OrthographicCamera m_Camera;
+	DirectX::XMFLOAT3 m_CameraPosition;
+	float m_CameraMoveSpeed = 0.001f;
+	float m_CameraRotation = 0.f;
+	float m_CameraRotationSpeed = 0.005f;
 };
 
 class MainGame final : public Smile::SmileGame

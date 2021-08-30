@@ -11,6 +11,14 @@
 
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
+/* ---Renderer--- */
+#include "SmileEngine/Renderer/Renderer.h"
+#include "SmileEngine/Renderer/RenderCommand.h"
+
+#include "SmileEngine/Renderer/Buffer.h"
+#include "SmileEngine/Renderer/Shader.h"
+
+#include "SmileEngine/Renderer/OrthographicCamera.h"
+
 /* ---Entry point--- */
 #include "SmileEngine/EntryPoint.h"
-/* ---Entry point--- */

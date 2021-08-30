@@ -25,24 +25,24 @@ namespace Smile
 
 		BuildInputLayout(layout);
 
-		auto pEffectVariable = m_pEffect->GetVariableBySemantic("World");
+		/*auto pEffectVariable = m_pEffect->GetVariableBySemantic("World");
 		m_pWorldMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
 		pEffectVariable = m_pEffect->GetVariableBySemantic("View");
 		m_pViewMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
 		pEffectVariable = m_pEffect->GetVariableBySemantic("ViewInverse");
 		m_pViewInverseMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
 		pEffectVariable = m_pEffect->GetVariableBySemantic("WorldViewProjection");
-		m_pWorldViewProjMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
+		m_pWorldViewProjMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;*/
 
 		LoadEffectVariables();
 	}
 
 	DirectX11Shader::~DirectX11Shader()
 	{
-		SAFE_RELEASE(m_pWorldMatrixVariable);
+		/*SAFE_RELEASE(m_pWorldMatrixVariable);
 		SAFE_RELEASE(m_pViewMatrixVariable);
 		SAFE_RELEASE(m_pViewInverseMatrixVariable);
-		SAFE_RELEASE(m_pWorldViewProjMatrixVariable);
+		SAFE_RELEASE(m_pWorldViewProjMatrixVariable);*/
 		SAFE_RELEASE(m_pInputLayout);
 		SAFE_RELEASE(m_pTechnique);
 		SAFE_RELEASE(m_pEffect);
@@ -56,6 +56,16 @@ namespace Smile
 	void DirectX11Shader::Unbind() const
 	{
 		m_pDirectX11Context->GetDeviceContext()->IASetInputLayout(nullptr);
+	}
+
+	void DirectX11Shader::UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix)
+	{
+		auto pEffectVariable = m_pEffect->GetVariableBySemantic(sementicName.c_str());
+		auto pMatrixVariable = pEffectVariable->AsMatrix();
+		if (pMatrixVariable)
+		{
+			pMatrixVariable->SetMatrix(&matrix._11);
+		}
 	}
 
 	bool DirectX11Shader::LoadEffect(ID3D11Device* pDevice, const std::string& assetFile)
@@ -146,7 +156,6 @@ namespace Smile
 		default:
 			SM_ASSERT(false, "ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType");
 			return DXGI_FORMAT_UNKNOWN;
-			break;
 		}
 	}
 }

@@ -1,12 +1,18 @@
 #pragma once
 
+#include "SmileEngine/Core.h"
 #include "RendererAPI.h"
 
 namespace Smile
 {
-	class RenderCommand final
+	class SMILE_API RenderCommand final
 	{
 	public:
+		inline static void CleanUp()
+		{
+			SAFE_DELETE(m_pRendererAPI);
+		}
+
 		inline static void SetClearColor(const DirectX::XMFLOAT4& color)
 		{
 			m_pRendererAPI->SetClearColor(color);

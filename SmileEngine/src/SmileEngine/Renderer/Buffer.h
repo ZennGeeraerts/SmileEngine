@@ -82,7 +82,7 @@ namespace Smile
 		bool bNormalized;
 	};
 
-	class BufferLayout final
+	class SMILE_API BufferLayout final
 	{
 	public:
 		BufferLayout() {}
@@ -118,7 +118,7 @@ namespace Smile
 		uint32_t m_Stride = 0;
 	};
 
-	class VertexBuffer
+	class SMILE_API VertexBuffer
 	{
 	public:
 		virtual ~VertexBuffer() = default;
@@ -132,7 +132,7 @@ namespace Smile
 		static VertexBuffer* Create(RenderingContext* pRenderingContext, void* pVertices, uint32_t count, const BufferLayout& layout);
 	};
 
-	class IndexBuffer
+	class SMILE_API IndexBuffer
 	{
 	public:
 		virtual ~IndexBuffer() = default;
