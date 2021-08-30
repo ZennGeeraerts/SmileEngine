@@ -78,7 +78,7 @@
     <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\SmTime.h">
+    <ClInclude Include="src\SmileEngine\Core\SmTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\KeyCodes.h">
@@ -141,6 +141,9 @@
     <ClInclude Include="src\SmileEngine\Renderer\OrthographicCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SmileEngine\Core\Timestep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SmileEngine\SmileGame.cpp">
@@ -170,7 +173,7 @@
     <ClCompile Include="src\SmileEngine\ImGui\ImGuiLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\SmTime.cpp">
+    <ClCompile Include="src\SmileEngine\Core\SmTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\ImGui\imgui_widgets.cpp">

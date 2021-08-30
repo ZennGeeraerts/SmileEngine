@@ -28,8 +28,8 @@ namespace Smile
 
 		// Window attributes
 		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_Data.EventCallback = callback; }
-		void SetVSync(bool bEnabled) override;
-		bool IsVSync() const override;
+		virtual void SetVSync(bool bEnabled) override;
+		virtual bool IsVSync() const override;
 
 		inline virtual void* GetNativeWindow() const override { return m_WindowHandle; }
 

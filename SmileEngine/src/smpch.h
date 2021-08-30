@@ -13,7 +13,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "SmileEngine/SmTime.h"
+
+#include "SmileEngine/Core/Timestep.h"
+#include "SmileEngine/Core/SmTime.h"
 
 #include <DirectXMath.h>
 

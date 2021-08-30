@@ -66,6 +66,8 @@ namespace Smile
 		{
 			pMatrixVariable->SetMatrix(&matrix._11);
 		}
+
+		SAFE_RELEASE(pMatrixVariable);
 	}
 
 	bool DirectX11Shader::LoadEffect(ID3D11Device* pDevice, const std::string& assetFile)

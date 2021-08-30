@@ -1,4 +1,12 @@
 ﻿  MainGame.cpp
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\SmTime.h(33,17): warning C4251: 'Smile::SmTime::m_Lag': class 'Smile::Timestep' needs to have dll-interface to be used by clients of class 'Smile::SmTime'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\Timestep.h(5): message : see declaration of 'Smile::Timestep'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\SmTime.h(34,29): warning C4251: 'Smile::SmTime::m_TotalTimePassed': class 'Smile::Timestep' needs to have dll-interface to be used by clients of class 'Smile::SmTime'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\Timestep.h(5): message : see declaration of 'Smile::Timestep'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\SmTime.h(35,23): warning C4251: 'Smile::SmTime::m_DeltaTime': class 'Smile::Timestep' needs to have dll-interface to be used by clients of class 'Smile::SmTime'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\Timestep.h(5): message : see declaration of 'Smile::Timestep'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\SmTime.h(37,51): warning C4251: 'Smile::SmTime::m_LastTime': class 'std::chrono::time_point<std::chrono::steady_clock,std::chrono::nanoseconds>' needs to have dll-interface to be used by clients of class 'Smile::SmTime'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\chrono(602): message : see declaration of 'std::chrono::time_point<std::chrono::steady_clock,std::chrono::nanoseconds>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Layer.h(23,26): warning C4251: 'Smile::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Smile::Layer'
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\xstring(4648): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\LayerStack.h(29,32): warning C4251: 'Smile::LayerStack::m_pLayers': class 'std::vector<Smile::Layer *,std::allocator<Smile::Layer *>>' needs to have dll-interface to be used by clients of class 'Smile::LayerStack'

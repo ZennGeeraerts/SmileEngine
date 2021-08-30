@@ -37,21 +37,24 @@ ExampleLayer::ExampleLayer()
 	m_pShader.reset(Smile::Shader::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), "../SmileProject/Resources/shaders/PosCol3D.fx", bufferLayout));
 }
 
-void ExampleLayer::OnUpdate()
+void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 {
+	SM_LOG_TRACE("Delta time: %.6f (%.6f ms)", deltaTime.GetSeconds(), deltaTime.GetMilliseconds());
+	SM_LOG_TRACE("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
+
 	if(Smile::Input::IsKeyPressed(SM_LEFT))
-		m_CameraPosition.x -= m_CameraMoveSpeed;
+		m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed(SM_RIGHT))
-		m_CameraPosition.x += m_CameraMoveSpeed;
+		m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed(SM_DOWN))
-		m_CameraPosition.y -= m_CameraMoveSpeed;
+		m_CameraPosition.y -= m_CameraMoveSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed(SM_UP))
-		m_CameraPosition.y += m_CameraMoveSpeed;
+		m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
 
 	if (Smile::Input::IsKeyPressed('A'))
-		m_CameraRotation += m_CameraRotationSpeed;
+		m_CameraRotation += m_CameraRotationSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed('D'))
-		m_CameraRotation -= m_CameraRotationSpeed;
+		m_CameraRotation -= m_CameraRotationSpeed * deltaTime;
 
 	Smile::RenderingContext* pRenderingContext = Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext();
 

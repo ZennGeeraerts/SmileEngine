@@ -6,7 +6,7 @@ class ExampleLayer final : public Smile::Layer
 public:
 	ExampleLayer();
 
-	virtual void OnUpdate() override;
+	virtual void OnUpdate(Smile::Timestep deltaTime) override;
 	virtual void OnEvent(Smile::Event& event) override;
 	virtual void OnImGuiRender() override;
 
@@ -17,9 +17,9 @@ private:
 
 	Smile::OrthographicCamera m_Camera;
 	DirectX::XMFLOAT3 m_CameraPosition;
-	float m_CameraMoveSpeed = 0.001f;
+	float m_CameraMoveSpeed = 5.f;
 	float m_CameraRotation = 0.f;
-	float m_CameraRotationSpeed = 0.005f;
+	float m_CameraRotationSpeed = 180.f;
 };
 
 class MainGame final : public Smile::SmileGame

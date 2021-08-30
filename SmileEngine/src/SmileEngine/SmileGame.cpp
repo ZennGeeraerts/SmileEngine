@@ -19,6 +19,7 @@ namespace Smile
 
 		m_pWindow = std::unique_ptr<Window>(Window::Create());
 		m_pWindow->SetEventCallback(SM_BIND_EVENT_FN(SmileGame::OnEvent));
+		m_pWindow->SetVSync(false);
 
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
@@ -61,9 +62,10 @@ namespace Smile
 		while (m_bRunning)
 		{
 			time.OnUpdate();
+			Timestep deltaTime = time.GetDeltaTime();
 
 			for (Layer* pLayer : m_LayerStack)
-				pLayer->OnUpdate();
+				pLayer->OnUpdate(deltaTime);
 
 			m_pImGuiLayer->Begin();
 			for (Layer* pLayer : m_LayerStack)

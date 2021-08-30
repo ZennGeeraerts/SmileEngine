@@ -36,6 +36,7 @@ namespace Smile
 		bool m_bRunning;
 		LayerStack m_LayerStack;
 
+	private:
 		static SmileGame* m_pInstance;
 	};
 

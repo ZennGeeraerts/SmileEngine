@@ -150,6 +150,6 @@ namespace Smile
 
 	void DirectX11Context::Present()
 	{
-		m_pSwapChain->Present(0, 0);
+		m_pSwapChain->Present(m_pWindow->IsVSync(), 0);
 	}
 }

@@ -6,6 +6,8 @@
 #include "SmileEngine/Layer.h"
 #include "SmileEngine/Logger.h"
 
+#include "SmileEngine/Core/Timestep.h"
+
 #include "SmileEngine/Input.h"
 #include "SmileEngine/KeyCodes.h"
 
