@@ -42,7 +42,7 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	SM_LOG_TRACE("Delta time: %.6f (%.6f ms)", deltaTime.GetSeconds(), deltaTime.GetMilliseconds());
 	SM_LOG_TRACE("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
 
-	if(Smile::Input::IsKeyPressed(SM_LEFT))
+	if (Smile::Input::IsKeyPressed(SM_LEFT))
 		m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed(SM_RIGHT))
 		m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
@@ -65,7 +65,22 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	m_Camera.SetRotation(m_CameraRotation);
 
 	Smile::Renderer::BeginScene(m_Camera);
-	Smile::Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader);
+
+	static DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(0.1f, 0.1f, 1);
+
+	for (int i{}; i < 20; ++i)
+	{
+		for (int j{}; j < 20; ++j)
+		{
+			DirectX::XMFLOAT3 pos{ j * 0.11f, i * 0.11f, 0 };
+			DirectX::XMMATRIX worldTransformMat = DirectX::XMMatrixMultiply(scaleMat, DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z));
+			DirectX::XMFLOAT4X4 worldTransform{};
+			DirectX::XMStoreFloat4x4(&worldTransform, worldTransformMat);
+
+			Smile::Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader, worldTransform);
+		}
+	}
+
 	Smile::Renderer::EndScene();
 }
 

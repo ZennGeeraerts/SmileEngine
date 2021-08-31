@@ -1,3 +1,4 @@
+float4x4 gWorld : WORLD;
 float4x4 gWorldViewProjection : WORLDVIEWPROJECTION;
 
 struct VS_INPUT

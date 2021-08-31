@@ -28,7 +28,7 @@ namespace Smile
 
 	void OrthographicCamera::RecalculateViewMatrix()
 	{
-		XMMATRIX transform = XMMatrixRotationZ(XMConvertToRadians(m_Rotation)) * XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z);
+		XMMATRIX transform = XMMatrixMultiply( XMMatrixRotationZ(XMConvertToRadians(m_Rotation)), XMMatrixTranslation(m_Position.x, m_Position.y, m_Position.z) );
 		XMStoreFloat4x4(&m_ViewMatrix, XMMatrixInverse(nullptr, transform));
 
 		XMStoreFloat4x4(&m_ViewProjectionMatrix, XMLoadFloat4x4(&m_ViewMatrix) * XMLoadFloat4x4(&m_ProjectionMatrix));

@@ -16,7 +16,8 @@ namespace Smile
 		static void BeginScene(OrthographicCamera& camera);
 		static void EndScene();
 
-		static void Submit(RenderingContext* pRenderingContext, const std::shared_ptr<VertexBuffer>& pVertexBuffer, const std::shared_ptr<IndexBuffer>& pIndexBuffer, const std::shared_ptr<Shader>& pShader);
+		static void Submit(RenderingContext* pRenderingContext, const std::shared_ptr<VertexBuffer>& pVertexBuffer, const std::shared_ptr<IndexBuffer>& pIndexBuffer, const std::shared_ptr<Shader>& pShader, 
+			const DirectX::XMFLOAT4X4& worldTransform);
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 

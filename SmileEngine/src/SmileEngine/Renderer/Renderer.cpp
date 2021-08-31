@@ -21,12 +21,19 @@ namespace Smile
 
 	}
 
-	void Renderer::Submit(RenderingContext* pRenderingContext, const std::shared_ptr<VertexBuffer>& pVertexBuffer, const std::shared_ptr<IndexBuffer>& pIndexBuffer, const std::shared_ptr<Shader>& pShader)
+	void Renderer::Submit(RenderingContext* pRenderingContext, const std::shared_ptr<VertexBuffer>& pVertexBuffer, const std::shared_ptr<IndexBuffer>& pIndexBuffer, const std::shared_ptr<Shader>& pShader, 
+		const DirectX::XMFLOAT4X4& worldTransform)
 	{
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pShader->Bind();
-		pShader->UploadMat4("WorldViewProjection", m_pSceneData->ViewProjectionMatrix);
+
+		auto worldViewProjectionMatrixMat = DirectX::XMLoadFloat4x4(&worldTransform) * DirectX::XMLoadFloat4x4(&m_pSceneData->ViewProjectionMatrix);
+		DirectX::XMFLOAT4X4 worldViewProjectionMatrix{};
+		DirectX::XMStoreFloat4x4(&worldViewProjectionMatrix, worldViewProjectionMatrixMat);
+
+		pShader->UploadMat4("WorldViewProjection", worldViewProjectionMatrix);
+		pShader->UploadMat4("World", worldTransform);
 		RenderCommand::DrawIndexed(pRenderingContext, pIndexBuffer->GetCount(), pShader);
 	}
 }

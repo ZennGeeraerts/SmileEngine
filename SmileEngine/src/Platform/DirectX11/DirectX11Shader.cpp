@@ -67,6 +67,7 @@ namespace Smile
 			pMatrixVariable->SetMatrix(&matrix._11);
 		}
 
+		SAFE_RELEASE(pEffectVariable);
 		SAFE_RELEASE(pMatrixVariable);
 	}
 
