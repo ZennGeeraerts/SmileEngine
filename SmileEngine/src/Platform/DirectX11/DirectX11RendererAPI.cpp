@@ -27,7 +27,7 @@ namespace Smile
 		pDeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	}
 
-	void DirectX11RendererAPI::DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const std::shared_ptr<Shader>& pShader)
+	void DirectX11RendererAPI::DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const Ref<Shader>& pShader)
 	{
 		auto pDirectX11Context = static_cast<DirectX11Context*>(pRenderingContext);
 		SM_ASSERT(pDirectX11Context, "DirectX11RendererAPI::DrawIndexed > RenderingContext is not a DirectX11Context");

@@ -20,7 +20,7 @@ namespace Smile
 		virtual void SetClearColor(const DirectX::XMFLOAT4& color) = 0;
 		virtual void Clear(RenderingContext* pRenderingContext) = 0;
 
-		virtual void DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const std::shared_ptr<Shader>& pShader) = 0;
+		virtual void DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const Ref<Shader>& pShader) = 0;
 
 		inline static API GetAPI() { return m_API; }
 

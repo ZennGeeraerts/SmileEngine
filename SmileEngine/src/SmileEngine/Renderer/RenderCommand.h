@@ -23,7 +23,7 @@ namespace Smile
 			m_pRendererAPI->Clear(pRenderingContext);
 		}
 
-		inline static void DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const std::shared_ptr<Shader>& pShader)
+		inline static void DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const Ref<Shader>& pShader)
 		{
 			m_pRendererAPI->DrawIndexed(pRenderingContext, indexCount, pShader);
 		}

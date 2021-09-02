@@ -34,7 +34,6 @@ namespace Smile
 		pEffectVariable = m_pEffect->GetVariableBySemantic("WorldViewProjection");
 		m_pWorldViewProjMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;*/
 
-		LoadEffectVariables();
 	}
 
 	DirectX11Shader::~DirectX11Shader()
@@ -65,6 +64,19 @@ namespace Smile
 		if (pMatrixVariable)
 		{
 			pMatrixVariable->SetMatrix(&matrix._11);
+		}
+
+		SAFE_RELEASE(pEffectVariable);
+		SAFE_RELEASE(pMatrixVariable);
+	}
+
+	void DirectX11Shader::UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value)
+	{
+		auto pEffectVariable = m_pEffect->GetVariableBySemantic(sementicName.c_str());
+		auto pMatrixVariable = pEffectVariable->AsVector();
+		if (pMatrixVariable)
+		{
+			pMatrixVariable->SetFloatVector(&value.x);
 		}
 
 		SAFE_RELEASE(pEffectVariable);

@@ -16,12 +16,10 @@ namespace Smile
 		virtual void Unbind() const override;
 
 		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) override;
+		virtual void UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value) override;
 
 		inline ID3DX11Effect* GetEffect() const { return m_pEffect; }
 		inline ID3DX11EffectTechnique* GetTechnique() const { return m_pTechnique; }
-
-	protected:
-		virtual void LoadEffectVariables() override {};
 
 	private:
 		bool LoadEffect(ID3D11Device* pDevice, const std::string& assetFile);

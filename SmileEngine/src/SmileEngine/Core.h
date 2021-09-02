@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #ifdef SM_PLATFORM_WINDOWS
 	#ifdef  SM_BUILD_DLL
 		#define SMILE_API __declspec(dllexport)
@@ -24,3 +26,12 @@
 #define SM_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 #define SAFE_DELETE(p) if (p) { delete (p); (p) = nullptr; }
 #define SAFE_RELEASE(r) if (r) { r->Release(); (r) = nullptr; }
+
+namespace Smile
+{
+	template<typename Type>
+	using Scope = std::unique_ptr<Type>;
+
+	template<typename Type>
+	using Ref = std::shared_ptr<Type>;
+}

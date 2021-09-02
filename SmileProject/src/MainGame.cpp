@@ -1,4 +1,5 @@
 #include "MainGame.h"
+#include "SmileEngine/ImGui/imgui.h"
 
 Smile::SmileGame* Smile::CreateGame()
 {
@@ -31,7 +32,7 @@ ExampleLayer::ExampleLayer()
 
 	m_pVertexBuffer.reset(Smile::VertexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), vertices, 3, bufferLayout));
 
-	uint32_t indices[]{ 0, 1, 2 };
+	uint32_t indices[]{ 0, 1, 2, 4 };
 	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), indices, 3));
 
 	m_pShader.reset(Smile::Shader::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), "../SmileProject/Resources/shaders/PosCol3D.fx", bufferLayout));
@@ -77,6 +78,9 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 			DirectX::XMFLOAT4X4 worldTransform{};
 			DirectX::XMStoreFloat4x4(&worldTransform, worldTransformMat);
 
+			m_pShader->UploadFloat3("Color", m_TriangleColor);
+			
+
 			Smile::Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader, worldTransform);
 		}
 	}
@@ -91,7 +95,9 @@ void ExampleLayer::OnEvent(Smile::Event& event)
 
 void ExampleLayer::OnImGuiRender()
 {
-
+	ImGui::Begin("Settings");
+	ImGui::ColorEdit3("Triangle Color", &m_TriangleColor.x);
+	ImGui::End();
 }
 
 /*-----------------------------------------------------------------------------------------------------------*/

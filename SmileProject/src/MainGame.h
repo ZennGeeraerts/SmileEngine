@@ -11,15 +11,16 @@ public:
 	virtual void OnImGuiRender() override;
 
 private:
-	std::shared_ptr<Smile::Shader> m_pShader;
-	std::shared_ptr<Smile::VertexBuffer> m_pVertexBuffer;
-	std::shared_ptr<Smile::IndexBuffer> m_pIndexBuffer;
+	Smile::Ref<Smile::Shader> m_pShader;
+	Smile::Ref<Smile::VertexBuffer> m_pVertexBuffer;
+	Smile::Ref<Smile::IndexBuffer> m_pIndexBuffer;
 
 	Smile::OrthographicCamera m_Camera;
 	DirectX::XMFLOAT3 m_CameraPosition;
 	float m_CameraMoveSpeed = 5.f;
 	float m_CameraRotation = 0.f;
 	float m_CameraRotationSpeed = 180.f;
+	DirectX::XMFLOAT3 m_TriangleColor = { 0, 0, 0 };
 };
 
 class MainGame final : public Smile::SmileGame

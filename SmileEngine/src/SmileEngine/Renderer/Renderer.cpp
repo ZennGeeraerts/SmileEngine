@@ -21,7 +21,7 @@ namespace Smile
 
 	}
 
-	void Renderer::Submit(RenderingContext* pRenderingContext, const std::shared_ptr<VertexBuffer>& pVertexBuffer, const std::shared_ptr<IndexBuffer>& pIndexBuffer, const std::shared_ptr<Shader>& pShader, 
+	void Renderer::Submit(RenderingContext* pRenderingContext, const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 
 		const DirectX::XMFLOAT4X4& worldTransform)
 	{
 		pVertexBuffer->Bind();
