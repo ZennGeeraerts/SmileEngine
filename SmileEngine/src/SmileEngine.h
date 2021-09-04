@@ -13,6 +13,10 @@
 
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
+#include "SmileEngine/Scene/Scene.h"
+#include "SmileEngine/Scene/Entity.h"
+#include "SmileEngine/Scene/Components.h"
+
 /* ---Renderer--- */
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Renderer/RenderCommand.h"

@@ -84,28 +84,28 @@
     <ClInclude Include="src\SmileEngine\KeyCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imstb_rectpack.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imstb_textedit.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imstb_truetype.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imgui.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imgui_impl_dx11.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui_impl_dx11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imgui_impl_win32.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui_impl_win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imgui_internal.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\imconfig.h">
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Buffer.h">
@@ -144,6 +144,18 @@
     <ClInclude Include="src\SmileEngine\Core\Timestep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\entt\entt.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\Components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SmileEngine\SmileGame.cpp">
@@ -176,22 +188,22 @@
     <ClCompile Include="src\SmileEngine\Core\SmTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_demo.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_draw.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_impl_dx11.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_impl_win32.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_impl_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp">
@@ -225,6 +237,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\OrthographicCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

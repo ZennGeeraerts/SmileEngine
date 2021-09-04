@@ -1,5 +1,5 @@
 #include "MainGame.h"
-#include "SmileEngine/ImGui/imgui.h"
+#include "SmileEngine/ImGui/ImGui/imgui.h"
 
 Smile::SmileGame* Smile::CreateGame()
 {
@@ -36,12 +36,18 @@ ExampleLayer::ExampleLayer()
 	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), indices, 3));
 
 	m_pShader.reset(Smile::Shader::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), "../SmileProject/Resources/shaders/PosCol3D.fx", bufferLayout));
+
+	m_pActiveScene.reset(new Smile::Scene{});
+	auto entity = m_pActiveScene->CreateEntity("Test");
+	
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 {
 	SM_LOG_TRACE("Delta time: %.6f (%.6f ms)", deltaTime.GetSeconds(), deltaTime.GetMilliseconds());
 	SM_LOG_TRACE("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
+
+	m_pActiveScene->OnUpdate(deltaTime);
 
 	if (Smile::Input::IsKeyPressed(SM_LEFT))
 		m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;

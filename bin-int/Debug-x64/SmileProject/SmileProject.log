@@ -15,6 +15,8 @@ C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(34,36): warning C4251
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\SmileGame.h(34): message : see declaration of 'std::unique_ptr<Smile::Window,std::default_delete<Smile::Window>>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Scene\Scene.h(20,28): warning C4251: 'Smile::Scene::m_Registry': class 'entt::basic_registry<entt::entity>' needs to have dll-interface to be used by clients of class 'Smile::Scene'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Scene\entt\entt.hpp(5601): message : see declaration of 'entt::basic_registry<entt::entity>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Buffer.h(117,40): warning C4251: 'Smile::BufferLayout::m_Elements': class 'std::vector<Smile::BufferElement,std::allocator<Smile::BufferElement>>' needs to have dll-interface to be used by clients of class 'Smile::BufferLayout'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Buffer.h(95): message : see declaration of 'std::vector<Smile::BufferElement,std::allocator<Smile::BufferElement>>'
 C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\OrthographicCamera.h(25,41): warning C4251: 'Smile::OrthographicCamera::m_ProjectionMatrix': struct 'DirectX::XMFLOAT4X4' needs to have dll-interface to be used by clients of class 'Smile::OrthographicCamera'

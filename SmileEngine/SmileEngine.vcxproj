@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Scene\Entity.h" />
+    <ClInclude Include="src\SmileEngine\Scene\entt\entt.hpp" />
+    <ClInclude Include="src\SmileEngine\Scene\Components.h" />
+    <ClInclude Include="src\SmileEngine\Scene\Scene.h" />
     <ClInclude Include="src\SmileEngine\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11RendererAPI.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RenderCommand.h" />
@@ -28,14 +32,14 @@
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imconfig.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imgui.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imgui_internal.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imstb_textedit.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\imstb_truetype.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imconfig.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imgui_internal.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_textedit.h" />
+    <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_truetype.h" />
     <ClInclude Include="src\SmileEngine\KeyCodes.h" />
     <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h" />
@@ -62,6 +66,7 @@
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Scene\Scene.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11RendererAPI.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\RenderCommand.cpp" />
@@ -71,7 +76,7 @@
     <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp" />
-    <ClCompile Include="src\SmileEngine\ImGui\imgui.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -79,31 +84,31 @@
     </ClCompile>
     <ClCompile Include="src\SmileEngine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Context.cpp" />
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_demo.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_demo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_draw.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_impl_dx11.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_impl_win32.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_impl_win32.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="src\SmileEngine\ImGui\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -182,28 +187,28 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Libs\DX_Effects11\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -216,6 +221,7 @@
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -239,6 +245,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -263,6 +270,7 @@
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -286,6 +294,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

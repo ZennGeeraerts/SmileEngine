@@ -139,8 +139,8 @@ namespace Smile
 
 		// Set the Viewport
 		D3D11_VIEWPORT viewPort{};
-		viewPort.Width = width;
-		viewPort.Height = height;
+		viewPort.Width = static_cast<FLOAT>(width);
+		viewPort.Height = static_cast<FLOAT>(height);
 		viewPort.TopLeftX = 0.0f;
 		viewPort.TopLeftY = 0.0f;
 		viewPort.MinDepth = 0.0f;

@@ -14,6 +14,7 @@ private:
 	Smile::Ref<Smile::Shader> m_pShader;
 	Smile::Ref<Smile::VertexBuffer> m_pVertexBuffer;
 	Smile::Ref<Smile::IndexBuffer> m_pIndexBuffer;
+	Smile::Ref<Smile::Scene> m_pActiveScene;
 
 	Smile::OrthographicCamera m_Camera;
 	DirectX::XMFLOAT3 m_CameraPosition;
