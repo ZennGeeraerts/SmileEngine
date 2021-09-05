@@ -5,7 +5,7 @@
 
 namespace Smile
 {
-	class SMILE_API LayerStack final
+	class LayerStack final
 	{
 	public:
 		LayerStack();

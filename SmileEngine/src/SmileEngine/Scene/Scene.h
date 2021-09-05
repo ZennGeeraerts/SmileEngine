@@ -6,7 +6,7 @@ namespace Smile
 {
 	class Entity;
 
-	class SMILE_API Scene final
+	class Scene final
 	{
 	public:
 		Scene();

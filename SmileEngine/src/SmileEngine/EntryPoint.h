@@ -6,11 +6,16 @@
 
 extern Smile::SmileGame* Smile::CreateGame();
 
-void main(int argc, char** argv)
+#pragma warning( push )
+#pragma warning (disable: 6387)
+int main(int argc, char** argv)
 {
-	WinMain(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
+	return WinMain(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
 }
+#pragma warning (pop)
 
+#pragma warning( push )
+#pragma warning (disable: 28251)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow)
 {
 	Smile::SmileGame* pGame = Smile::CreateGame();
@@ -18,4 +23,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow
 	delete pGame;
 	return 0;
 }
+#pragma warning (pop)
 #endif

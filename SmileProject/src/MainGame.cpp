@@ -17,11 +17,23 @@ ExampleLayer::ExampleLayer()
 	, m_Camera{ -1.6f, 1.6f, -0.9f, 0.9f }
 	, m_CameraPosition{ 0.f, 0.f, 0.f }
 {
-	float vertices[]
+	/*float vertices[]
 	{
 		0.f, 0.5f, 0.5f,		0.8f, 0.2f, 0.8f,
 		0.5f, -0.5f, 0.5f,		0.2f, 0.8f, 0.8f,
 		-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
+	};*/
+
+	float vertices[]
+	{
+		-0.5f, 0.5f, 0.5f,		0, 0, 1,
+		0.5f, 0.5f, 0.5f,		0, 1, 0,
+		-0.5f, -0.5f, 0.5f,		1, 0, 0,
+		0.5f, -0.5f, 0.5f,		0, 1, 1,
+		-0.5f, 0.5f, 0.5f,		0, 0, 1,
+		0.5f, 0.5f, 0.5f,		1, 0, 0,
+		-0.5f, -0.5f, 0.5f,		0, 1, 0,
+		0.5f, -0.5f, 0.5f,		0, 1, 1
 	};
 
 	Smile::BufferLayout bufferLayout
@@ -30,25 +42,46 @@ ExampleLayer::ExampleLayer()
 		{ Smile::ShaderDataType::eFloat3, "Color" }
 	};
 
-	m_pVertexBuffer.reset(Smile::VertexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), vertices, 3, bufferLayout));
+	m_pVertexBuffer.reset(Smile::VertexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), vertices, 8, bufferLayout));
 
-	uint32_t indices[]{ 0, 1, 2, 4 };
-	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), indices, 3));
+	uint32_t indices[]
+	{ 
+		0, 1, 2,    // side 1
+		2, 1, 3,
+		4, 0, 6,    // side 2
+		6, 0, 2,
+		7, 5, 6,    // side 3
+		6, 5, 4,
+		3, 1, 7,    // side 4
+		7, 1, 5,
+		4, 5, 0,    // side 5
+		0, 5, 1,
+		3, 7, 2,    // side 6
+		2, 7, 6
+	};
+	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), indices, 36));
 
 	m_pShader.reset(Smile::Shader::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), "../SmileProject/Resources/shaders/PosCol3D.fx", bufferLayout));
 
 	m_pActiveScene.reset(new Smile::Scene{});
-	auto entity = m_pActiveScene->CreateEntity("Test");
-	
+	auto triangle = m_pActiveScene->CreateEntity("Triangle");
+
+	Smile::MeshRendererComponent::MeshRendererData meshRendererData{};
+	meshRendererData.pVertices = vertices;
+	meshRendererData.VertexCount = 3;
+	meshRendererData.pIndices = indices;
+	meshRendererData.IndexCount = 3;
+	meshRendererData.ShaderFilePath = "../SmileProject/Resources/shaders/PosCol3D.fx";
+	meshRendererData.BufferLayout = {
+		{ Smile::ShaderDataType::eFloat3, "Position" },
+		{ Smile::ShaderDataType::eFloat3, "Color" }
+	};
+
+	triangle.AddComponent<Smile::MeshRendererComponent>(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), meshRendererData);
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 {
-	SM_LOG_TRACE("Delta time: %.6f (%.6f ms)", deltaTime.GetSeconds(), deltaTime.GetMilliseconds());
-	SM_LOG_TRACE("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
-
-	m_pActiveScene->OnUpdate(deltaTime);
-
 	if (Smile::Input::IsKeyPressed(SM_LEFT))
 		m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed(SM_RIGHT))
@@ -73,7 +106,7 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 
 	Smile::Renderer::BeginScene(m_Camera);
 
-	static DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(0.1f, 0.1f, 1);
+	/*static DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(0.1f, 0.1f, 1);
 
 	for (int i{}; i < 20; ++i)
 	{
@@ -89,7 +122,9 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 
 			Smile::Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader, worldTransform);
 		}
-	}
+	}*/
+
+	m_pActiveScene->OnUpdate(deltaTime);
 
 	Smile::Renderer::EndScene();
 }

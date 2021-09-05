@@ -3,9 +3,11 @@
 
 namespace Smile
 {
-	class SMILE_API Entity final
+	class  Entity final
 	{
 	public:
+		Entity() = default;
+
 		Entity(entt::entity handle, Scene* pScene)
 			: m_EntityHandle{ handle }
 			, m_pScene{ pScene }

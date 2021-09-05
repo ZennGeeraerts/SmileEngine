@@ -81,7 +81,7 @@
     <ClInclude Include="src\SmileEngine\Core\SmTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\KeyCodes.h">
+    <ClInclude Include="src\SmileEngine\Keycodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_rectpack.h">
@@ -147,10 +147,22 @@
     <ClInclude Include="src\SmileEngine\Scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Scene\entt\entt.hpp">
+    <ClInclude Include="src\SmileEngine\Scene\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Scene\Components.h">
+    <ClInclude Include="src\SmileEngine\Scene\Components\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\Components\TagComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\Components\MeshRendererComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\entt\entt.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Scene\Entity.h">

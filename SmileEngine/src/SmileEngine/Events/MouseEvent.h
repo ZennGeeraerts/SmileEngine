@@ -4,7 +4,7 @@
 
 namespace Smile
 {
-	class SMILE_API MouseMovedEvent final : public Event
+	class  MouseMovedEvent final : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y)
@@ -37,7 +37,7 @@ namespace Smile
 		float m_MouseY;
 	};
 
-	class SMILE_API MouseScrolledEvent final : public Event
+	class  MouseScrolledEvent final : public Event
 	{
 	public:
 		MouseScrolledEvent(float offsetX, float offsetY)
@@ -64,7 +64,7 @@ namespace Smile
 		float m_OffsetY;
 	};
 
-	class SMILE_API MouseButtonEvent : public Event
+	class  MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetMouseButton() const { return m_Button; }
@@ -78,7 +78,7 @@ namespace Smile
 		int m_Button;
 	};
 
-	class SMILE_API MouseButtonPressedEvent final : public MouseButtonEvent
+	class  MouseButtonPressedEvent final : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -95,7 +95,7 @@ namespace Smile
 		EVENT_CLASS_TYPE(eMouseButtonPressed)
 	};
 
-	class SMILE_API MouseButtonReleasedEvent final : public MouseButtonEvent
+	class  MouseButtonReleasedEvent final : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button)

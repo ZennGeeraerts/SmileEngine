@@ -3,11 +3,15 @@
 #include <memory>
 
 #ifdef SM_PLATFORM_WINDOWS
+#if SM_DYNAMIC_LINK
 	#ifdef  SM_BUILD_DLL
 		#define SMILE_API __declspec(dllexport)
 	#else
 		#define SMILE_API __declspec(dllimport)
 	#endif
+#else
+	#define SMILE_API
+#endif
 #else
 	#error SmileEngine only supports Windows
 #endif

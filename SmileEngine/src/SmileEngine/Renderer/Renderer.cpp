@@ -36,4 +36,9 @@ namespace Smile
 		pShader->UploadMat4("World", worldTransform);
 		RenderCommand::DrawIndexed(pRenderingContext, pIndexBuffer->GetCount(), pShader);
 	}
+
+	void Renderer::Submit(MeshRendererComponent* pMeshRendererComponent, const DirectX::XMFLOAT4X4& worldTransform)
+	{
+		
+	}
 }

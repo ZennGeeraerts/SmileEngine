@@ -24,7 +24,7 @@ namespace Smile
 	class RenderingContext;
 
 	// Window interface for desktop platforms
-	class SMILE_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFunction = std::function<void(Event&)>;

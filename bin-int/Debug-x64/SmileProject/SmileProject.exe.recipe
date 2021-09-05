@@ -2,9 +2,6 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.dll</FullPath>
-    </ProjectOutput>
-    <ProjectOutput>
       <FullPath>C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>

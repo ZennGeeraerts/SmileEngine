@@ -44,7 +44,7 @@ namespace Smile
 
 	struct BufferElement final
 	{
-		BufferElement() {}
+		BufferElement() = default;
 		BufferElement(ShaderDataType type, const std::string& name, bool bNorm = false)
 			: Name{ name }
 			, Type{ type }
@@ -82,7 +82,7 @@ namespace Smile
 		bool bNormalized;
 	};
 
-	class SMILE_API BufferLayout final
+	class BufferLayout final
 	{
 	public:
 		BufferLayout() {}
@@ -118,7 +118,7 @@ namespace Smile
 		uint32_t m_Stride = 0;
 	};
 
-	class SMILE_API VertexBuffer
+	class VertexBuffer
 	{
 	public:
 		virtual ~VertexBuffer() = default;
@@ -132,7 +132,7 @@ namespace Smile
 		static VertexBuffer* Create(RenderingContext* pRenderingContext, void* pVertices, uint32_t count, const BufferLayout& layout);
 	};
 
-	class SMILE_API IndexBuffer
+	class IndexBuffer
 	{
 	public:
 		virtual ~IndexBuffer() = default;

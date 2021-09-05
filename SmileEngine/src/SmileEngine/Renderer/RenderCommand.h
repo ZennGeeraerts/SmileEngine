@@ -5,7 +5,7 @@
 
 namespace Smile
 {
-	class SMILE_API RenderCommand final
+	class RenderCommand final
 	{
 	public:
 		inline static void CleanUp()

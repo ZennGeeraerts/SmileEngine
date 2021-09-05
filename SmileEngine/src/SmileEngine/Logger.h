@@ -23,7 +23,7 @@ namespace Smile
 		eCriticalError
 	};
 
-	class SMILE_API Logger final
+	class Logger final
 	{
 	public:
 		static void SetPriority(LogPriority logPriority);

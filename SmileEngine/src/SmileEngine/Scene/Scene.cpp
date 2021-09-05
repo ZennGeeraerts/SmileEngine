@@ -3,6 +3,7 @@
 
 #include "Components.h"
 #include "SmileEngine/Renderer/Renderer.h"
+#include "SmileEngine/SmileGame.h"
 
 #include "Entity.h"
 
@@ -10,8 +11,7 @@ namespace Smile
 {
 	Scene::Scene()
 	{
-		entt::entity entity = m_Registry.create();
-		m_Registry.emplace<TransformComponent>(entity);
+
 	}
 
 	Scene::~Scene()
@@ -21,7 +21,7 @@ namespace Smile
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity = { m_Registry.create(), this };
+		Entity entity{ m_Registry.create(), this };
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(name);
 
@@ -39,6 +39,7 @@ namespace Smile
 		for (auto entity : group)
 		{
 			const auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
+			Renderer::Submit(SmileGame::GetInstance().GetWindow().GetRenderingContext(), mesh.pVertexBuffer, mesh.pIndexBuffer, mesh.pShader, transform.GetTransform());
 		}
 	}
 }

@@ -1,18 +1,17 @@
 ﻿  Scene.cpp
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Scene\Scene.h(20,28): warning C4251: 'Smile::Scene::m_Registry': class 'entt::basic_registry<entt::entity>' needs to have dll-interface to be used by clients of class 'Smile::Scene'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Scene\entt\entt.hpp(5601): message : see declaration of 'entt::basic_registry<entt::entity>'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Logger.h(82,28): warning C4251: 'Smile::Logger::m_Mutex': class 'std::mutex' needs to have dll-interface to be used by clients of class 'Smile::Logger'
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\include\mutex(87): message : see declaration of 'std::mutex'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Buffer.h(117,40): warning C4251: 'Smile::BufferLayout::m_Elements': class 'std::vector<Smile::BufferElement,std::allocator<Smile::BufferElement>>' needs to have dll-interface to be used by clients of class 'Smile::BufferLayout'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Buffer.h(95): message : see declaration of 'std::vector<Smile::BufferElement,std::allocator<Smile::BufferElement>>'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\OrthographicCamera.h(25,41): warning C4251: 'Smile::OrthographicCamera::m_ProjectionMatrix': struct 'DirectX::XMFLOAT4X4' needs to have dll-interface to be used by clients of class 'Smile::OrthographicCamera'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\DirectXMath.h(891): message : see declaration of 'DirectX::XMFLOAT4X4'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\OrthographicCamera.h(26,35): warning C4251: 'Smile::OrthographicCamera::m_ViewMatrix': struct 'DirectX::XMFLOAT4X4' needs to have dll-interface to be used by clients of class 'Smile::OrthographicCamera'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\DirectXMath.h(891): message : see declaration of 'DirectX::XMFLOAT4X4'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\OrthographicCamera.h(27,45): warning C4251: 'Smile::OrthographicCamera::m_ViewProjectionMatrix': struct 'DirectX::XMFLOAT4X4' needs to have dll-interface to be used by clients of class 'Smile::OrthographicCamera'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\DirectXMath.h(891): message : see declaration of 'DirectX::XMFLOAT4X4'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\OrthographicCamera.h(29,31): warning C4251: 'Smile::OrthographicCamera::m_Position': struct 'DirectX::XMFLOAT3' needs to have dll-interface to be used by clients of class 'Smile::OrthographicCamera'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\DirectXMath.h(593): message : see declaration of 'DirectX::XMFLOAT3'
-  SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.dll
-  C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.dll
-  1 File(s) copied
+  Shader.cpp
+  Renderer.cpp
+  Buffer.cpp
+  VertexArray.cpp
+  SmileGame.cpp
+  Generating Code...
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_dx11.cpp
+  imgui_impl_win32.cpp
+  imgui_widgets.cpp
+  Generating Code...
+d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+  SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.lib

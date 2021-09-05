@@ -11,7 +11,7 @@
 
 namespace Smile
 {
-	class SMILE_API SmileGame
+	class SmileGame
 	{
 	public:
 		SmileGame();

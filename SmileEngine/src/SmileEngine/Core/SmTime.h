@@ -6,7 +6,7 @@
 
 namespace Smile
 {
-	class SMILE_API SmTime final
+	class  SmTime final
 	{
 	public:
 		inline static SmTime& GetInstance()

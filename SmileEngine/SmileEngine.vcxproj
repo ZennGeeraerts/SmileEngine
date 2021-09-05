@@ -19,9 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Scene\Components\Component.h" />
+    <ClInclude Include="src\SmileEngine\Scene\Components\MeshRendererComponent.h" />
+    <ClInclude Include="src\SmileEngine\Scene\Components\TagComponent.h" />
+    <ClInclude Include="src\SmileEngine\Scene\Components.h" />
     <ClInclude Include="src\SmileEngine\Scene\Entity.h" />
     <ClInclude Include="src\SmileEngine\Scene\entt\entt.hpp" />
-    <ClInclude Include="src\SmileEngine\Scene\Components.h" />
     <ClInclude Include="src\SmileEngine\Scene\Scene.h" />
     <ClInclude Include="src\SmileEngine\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11RendererAPI.h" />
@@ -40,7 +43,7 @@
     <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_rectpack.h" />
     <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_textedit.h" />
     <ClInclude Include="src\SmileEngine\ImGui\ImGui\imstb_truetype.h" />
-    <ClInclude Include="src\SmileEngine\KeyCodes.h" />
+    <ClInclude Include="src\SmileEngine\Keycodes.h" />
     <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h" />
     <ClInclude Include="src\SmileEngine\Input.h" />
@@ -55,6 +58,7 @@
     <ClInclude Include="src\SmileEngine\Renderer\Buffer.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RenderingContext.h" />
     <ClInclude Include="src\SmileEngine\Renderer\VertexArray.h" />
+    <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h" />
     <ClInclude Include="src\SmileEngine\SmileGame.h" />
     <ClInclude Include="src\SmileEngine\Core.h" />
     <ClInclude Include="src\SmileEngine\EntryPoint.h" />
@@ -139,26 +143,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -230,8 +234,15 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -256,8 +267,15 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -279,8 +297,15 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -305,8 +330,15 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)SmileEngine.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\SmileProject\"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

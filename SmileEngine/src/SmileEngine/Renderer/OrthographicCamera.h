@@ -4,7 +4,7 @@
 
 namespace Smile
 {
-	class SMILE_API OrthographicCamera final
+	class OrthographicCamera final
 	{
 	public:
 		OrthographicCamera(float left, float right, float bottom, float top);

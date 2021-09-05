@@ -7,7 +7,7 @@ namespace Smile
 {
 	class RenderingContext;
 
-	class SMILE_API Shader
+	class Shader
 	{
 	public:
 		virtual ~Shader() = default;

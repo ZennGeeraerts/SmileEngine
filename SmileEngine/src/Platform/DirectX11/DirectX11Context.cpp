@@ -55,8 +55,8 @@ namespace Smile
 		}
 
 		// TODO: Get width and height from window
-		const unsigned int width = m_pWindow->GetWidth() - 17.5f;
-		const unsigned int height = m_pWindow->GetHeight() - 37.f;
+		const unsigned int width = static_cast<unsigned int>(m_pWindow->GetWidth() - 17.5f);
+		const unsigned int height = static_cast<unsigned int>(m_pWindow->GetHeight() - 37.f);
 
 		// Create SwapChain Descriptor
 		DXGI_SWAP_CHAIN_DESC swapChainDesc{};

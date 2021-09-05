@@ -4,7 +4,7 @@
 
 namespace Smile
 {
-	class SMILE_API VertexArray
+	class VertexArray
 	{
 	public:
 		virtual ~VertexArray() = default;

@@ -4,7 +4,7 @@
 
 namespace Smile
 {
-	class SMILE_API Input
+	class Input
 	{
 	public:
 		inline static Input* GetInstance() { return m_pInstance; }

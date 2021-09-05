@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "SmileEngine/Renderer/Shader.h"
 
 namespace Smile
 {
@@ -41,12 +42,27 @@ namespace Smile
 
 	struct MeshRendererComponent final
 	{
+		struct MeshRendererData final
+		{
+			void* pVertices = nullptr;
+			uint32_t VertexCount{};
+			uint32_t* pIndices = nullptr;
+			uint32_t IndexCount{};
+			BufferLayout BufferLayout{};
+			std::string ShaderFilePath{};
+		};
+
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;
-		MeshRendererComponent(const DirectX::XMFLOAT3& color)
-			: Color{ color }
-		{}
+		MeshRendererComponent(RenderingContext* pContext, const MeshRendererData& meshRendererData)
+		{
+			pVertexBuffer.reset(VertexBuffer::Create(pContext, meshRendererData.pVertices, meshRendererData.VertexCount, meshRendererData.BufferLayout));
+			pIndexBuffer.reset(IndexBuffer::Create(pContext, meshRendererData.pIndices, meshRendererData.IndexCount));
+			pShader.reset(Shader::Create(pContext, meshRendererData.ShaderFilePath, meshRendererData.BufferLayout));
+		}
 
-		DirectX::XMFLOAT3 Color{ 1.f, 1.f, 1.f };
+		Ref<VertexBuffer> pVertexBuffer = nullptr;
+		Ref<IndexBuffer> pIndexBuffer = nullptr;
+		Ref<Shader> pShader = nullptr;
 	};
 }

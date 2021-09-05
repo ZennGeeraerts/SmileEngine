@@ -3,7 +3,7 @@
 
 namespace Smile
 {
-	class SMILE_API WindowResizeEvent final : public Event
+	class  WindowResizeEvent final : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
@@ -29,7 +29,7 @@ namespace Smile
 		unsigned int m_Height;
 	};
 
-	class SMILE_API WindowCloseEvent final : public Event
+	class  WindowCloseEvent final : public Event
 	{
 	public:
 		WindowCloseEvent() {}

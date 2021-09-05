@@ -24,7 +24,7 @@ VS_OUTPUT VS(VS_INPUT input)
 
 float4 PS(VS_OUTPUT input) : SV_TARGET
 {
-    return float4(gColor, 1.f);
+    return float4(input.Color, 1.f);
 }
 
 technique11 DefaultTechnique

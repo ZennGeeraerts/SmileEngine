@@ -28,3 +28,9 @@
 
 /* ---Entry point--- */
 #include "SmileEngine/EntryPoint.h"
+
+/* --- DirectX --- */
+#include <DirectXMath.h>
+#include <DirectXColors.h>
+#include <DirectXPackedVector.h>
+#include <DirectXCollision.h>
