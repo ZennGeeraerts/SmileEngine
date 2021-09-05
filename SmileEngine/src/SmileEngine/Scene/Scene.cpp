@@ -35,11 +35,35 @@ namespace Smile
 
 	void Scene::OnUpdate(Timestep deltaTime)
 	{
-		auto group = m_Registry.group<TransformComponent>(entt::get<MeshRendererComponent>);
-		for (auto entity : group)
+		Camera* pMainCamera = nullptr;
+		DirectX::XMFLOAT4X4 cameraTransform;
 		{
-			const auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
-			Renderer::Submit(SmileGame::GetInstance().GetWindow().GetRenderingContext(), mesh.pVertexBuffer, mesh.pIndexBuffer, mesh.pShader, transform.GetTransform());
+			auto group = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : group)
+			{
+				const auto& [transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
+
+				if (camera.bPrimary)
+				{
+					pMainCamera = &camera.Camera;
+					cameraTransform = transform.GetTransform();
+					break;
+				}
+			}
+		}
+
+		if (pMainCamera)
+		{
+			Renderer::BeginScene(*pMainCamera, cameraTransform);
+
+			auto group = m_Registry.group<TransformComponent>(entt::get<MeshRendererComponent>);
+			for (auto entity : group)
+			{
+				const auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
+				Renderer::Submit(SmileGame::GetInstance().GetWindow().GetRenderingContext(), mesh.pVertexBuffer, mesh.pIndexBuffer, mesh.pShader, transform.GetTransform());
+			}
+
+			Renderer::EndScene();
 		}
 	}
 }

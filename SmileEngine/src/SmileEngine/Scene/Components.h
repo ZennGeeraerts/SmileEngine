@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include "SmileEngine/Renderer/Shader.h"
+#include "SmileEngine/Renderer/Camera.h"
 
 namespace Smile
 {
@@ -64,5 +65,20 @@ namespace Smile
 		Ref<VertexBuffer> pVertexBuffer = nullptr;
 		Ref<IndexBuffer> pIndexBuffer = nullptr;
 		Ref<Shader> pShader = nullptr;
+	};
+
+	struct CameraComponent final
+	{
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const DirectX::XMFLOAT4X4& projectionMatrix)
+			: Camera{ projectionMatrix }
+		{}
+		CameraComponent(const DirectX::XMMATRIX& projectionMatrix)
+			: Camera{ projectionMatrix }
+		{}
+
+		Smile::Camera Camera;
+		bool bPrimary = true;
 	};
 }

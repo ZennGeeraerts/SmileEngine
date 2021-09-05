@@ -14,7 +14,6 @@ Smile::SmileGame* Smile::CreateGame()
 
 ExampleLayer::ExampleLayer()
 	: Layer("Example")
-	, m_Camera{ -1.6f, 1.6f, -0.9f, 0.9f }
 	, m_CameraPosition{ 0.f, 0.f, 0.f }
 {
 	/*float vertices[]
@@ -78,33 +77,38 @@ ExampleLayer::ExampleLayer()
 	};
 
 	triangle.AddComponent<Smile::MeshRendererComponent>(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), meshRendererData);
+
+	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
+	m_CameraEntity.AddComponent<Smile::CameraComponent>(DirectX::XMMatrixPerspectiveFovLH(45, 16 / 9.f, 0.1f, 2500.f));
+
+	/*auto camera2 = m_pActiveScene->CreateEntity("Camera2");
+	camera2.AddComponent<Smile::CameraComponent>(DirectX::XMMatrixOrthographicOffCenterLH(-1.6f, 1.6f, -0.9f, 0.9f, 0.1f, 2500.f));*/
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 {
-	if (Smile::Input::IsKeyPressed(SM_LEFT))
-		m_CameraPosition.x -= m_CameraMoveSpeed * deltaTime;
-	if (Smile::Input::IsKeyPressed(SM_RIGHT))
-		m_CameraPosition.x += m_CameraMoveSpeed * deltaTime;
-	if (Smile::Input::IsKeyPressed(SM_DOWN))
-		m_CameraPosition.y -= m_CameraMoveSpeed * deltaTime;
-	if (Smile::Input::IsKeyPressed(SM_UP))
-		m_CameraPosition.y += m_CameraMoveSpeed * deltaTime;
-
+	auto& transform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
 	if (Smile::Input::IsKeyPressed('A'))
-		m_CameraRotation += m_CameraRotationSpeed * deltaTime;
+		transform.Translation.x -= m_CameraMoveSpeed * deltaTime;
 	if (Smile::Input::IsKeyPressed('D'))
-		m_CameraRotation -= m_CameraRotationSpeed * deltaTime;
+		transform.Translation.x += m_CameraMoveSpeed * deltaTime;
+	if (Smile::Input::IsKeyPressed('S'))
+		transform.Translation.z -= m_CameraMoveSpeed * deltaTime;
+	if (Smile::Input::IsKeyPressed('W'))
+		transform.Translation.z += m_CameraMoveSpeed * deltaTime;
+
+	if (Smile::Input::IsKeyPressed(SM_LEFT))
+		transform.Rotation.y -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_RIGHT))
+		transform.Rotation.y += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
 
 	Smile::RenderingContext* pRenderingContext = Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext();
 
 	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 	Smile::RenderCommand::Clear(pRenderingContext);
 
-	m_Camera.SetPosition(m_CameraPosition);
-	m_Camera.SetRotation(m_CameraRotation);
-
-	Smile::Renderer::BeginScene(m_Camera);
+	/*m_CameraEntity.GetComponent<Smile::CameraComponent>() .SetPosition(m_CameraPosition);
+	m_Camera.SetRotation(m_CameraRotation);*/
 
 	/*static DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(0.1f, 0.1f, 1);
 
@@ -125,8 +129,6 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	}*/
 
 	m_pActiveScene->OnUpdate(deltaTime);
-
-	Smile::Renderer::EndScene();
 }
 
 void ExampleLayer::OnEvent(Smile::Event& event)

@@ -4,7 +4,7 @@
 #include "Buffer.h"
 #include "Shader.h"
 
-#include "OrthographicCamera.h"
+#include "Camera.h"
 #include "SmileEngine/Scene/Components.h"
 
 namespace Smile
@@ -14,7 +14,7 @@ namespace Smile
 	public:
 		static void CleanUp();
 
-		static void BeginScene(OrthographicCamera& camera);
+		static void BeginScene(const Camera& camera, const DirectX::XMFLOAT4X4& cameraTransform);
 		static void EndScene();
 
 		static void Submit(RenderingContext* pRenderingContext, const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 

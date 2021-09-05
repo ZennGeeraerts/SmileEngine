@@ -16,7 +16,7 @@ private:
 	Smile::Ref<Smile::IndexBuffer> m_pIndexBuffer;
 	Smile::Ref<Smile::Scene> m_pActiveScene;
 
-	Smile::OrthographicCamera m_Camera;
+	Smile::Entity m_CameraEntity;
 	DirectX::XMFLOAT3 m_CameraPosition;
 	float m_CameraMoveSpeed = 5.f;
 	float m_CameraRotation = 0.f;

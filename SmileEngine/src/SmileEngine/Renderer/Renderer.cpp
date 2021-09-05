@@ -11,9 +11,13 @@ namespace Smile
 		RenderCommand::CleanUp();
 	}
 
-	void Renderer::BeginScene(OrthographicCamera& camera)
+	void Renderer::BeginScene(const Camera& camera, const DirectX::XMFLOAT4X4& cameraTransform)
 	{
-		m_pSceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		auto cameraTransformMat = DirectX::XMLoadFloat4x4(&cameraTransform);
+		auto projectionMatrixMat = DirectX::XMLoadFloat4x4(&camera.GetProjectionMatrix());
+		auto viewProjectionMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat) * projectionMatrixMat;
+
+		DirectX::XMStoreFloat4x4(&m_pSceneData->ViewProjectionMatrix, viewProjectionMatrixMat);
 	}
 
 	void Renderer::EndScene()

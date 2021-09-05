@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Renderer\Camera.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCamera.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\Component.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\MeshRendererComponent.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TagComponent.h" />
@@ -70,6 +72,7 @@
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCamera.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\Scene.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11RendererAPI.cpp" />
