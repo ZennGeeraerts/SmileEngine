@@ -9,7 +9,7 @@
 
 namespace Smile
 {
-	VertexBuffer* VertexBuffer::Create(RenderingContext* pRenderingContext, void* pVertices, uint32_t count, const BufferLayout& layout)
+	VertexBuffer* VertexBuffer::Create(const VertexBufferData& vertexBufferData)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -19,7 +19,7 @@ namespace Smile
 
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
-			return new DirectX11VertexBuffer(static_cast<DirectX11Context*>(pRenderingContext), pVertices, count, layout);
+			return new DirectX11VertexBuffer(vertexBufferData);
 #endif
 		}
 
@@ -27,7 +27,7 @@ namespace Smile
 		return nullptr;
 	}
 
-	IndexBuffer* IndexBuffer::Create(RenderingContext* pRenderingContext, uint32_t* pIndices, uint32_t count)
+	IndexBuffer* IndexBuffer::Create(const IndexBufferData& indexBufferData)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -37,7 +37,7 @@ namespace Smile
 
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
-			return new DirectX11IndexBuffer(static_cast<DirectX11Context*>(pRenderingContext), pIndices, count);
+			return new DirectX11IndexBuffer(indexBufferData);
 #endif
 		}
 

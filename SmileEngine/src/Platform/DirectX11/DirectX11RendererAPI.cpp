@@ -4,6 +4,8 @@
 #include "DirectX11Context.h"
 #include "DirectX11Shader.h"
 
+#include "SmileEngine/SmileGame.h"
+
 namespace Smile
 {
 	void DirectX11RendererAPI::SetClearColor(const DirectX::XMFLOAT4& color)
@@ -11,9 +13,9 @@ namespace Smile
 		m_ClearColor = color;
 	}
 
-	void DirectX11RendererAPI::Clear(RenderingContext* pRenderingContext)
+	void DirectX11RendererAPI::Clear()
 	{
-		auto pDirectX11Context = static_cast<DirectX11Context*>(pRenderingContext);
+		auto pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(pDirectX11Context, "DirectX11RendererAPI::Clear > RenderingContext is not a DirectX11Context");
 
 		auto pDeviceContext = pDirectX11Context->GetDeviceContext();
@@ -27,9 +29,9 @@ namespace Smile
 		pDeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	}
 
-	void DirectX11RendererAPI::DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const Ref<Shader>& pShader)
+	void DirectX11RendererAPI::DrawIndexed(int32_t indexCount, const Ref<Shader>& pShader)
 	{
-		auto pDirectX11Context = static_cast<DirectX11Context*>(pRenderingContext);
+		auto pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(pDirectX11Context, "DirectX11RendererAPI::DrawIndexed > RenderingContext is not a DirectX11Context");
 
 		auto pDeviceContext = pDirectX11Context->GetDeviceContext();

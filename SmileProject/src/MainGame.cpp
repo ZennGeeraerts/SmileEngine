@@ -25,10 +25,10 @@ ExampleLayer::ExampleLayer()
 
 	float vertices[]
 	{
-		-0.5f, 0.5f, 0.5f,		0, 0, 1,
-		0.5f, 0.5f, 0.5f,		0, 1, 0,
-		-0.5f, -0.5f, 0.5f,		1, 0, 0,
-		0.5f, -0.5f, 0.5f,		0, 1, 1,
+		-0.5f, 0.5f, -0.5f,		0, 0, 1,
+		0.5f, 0.5f, -0.5f,		0, 1, 0,
+		-0.5f, -0.5f, -0.5f,		1, 0, 0,
+		0.5f, -0.5f, -0.5f,		0, 1, 1,
 		-0.5f, 0.5f, 0.5f,		0, 0, 1,
 		0.5f, 0.5f, 0.5f,		1, 0, 0,
 		-0.5f, -0.5f, 0.5f,		0, 1, 0,
@@ -40,8 +40,6 @@ ExampleLayer::ExampleLayer()
 		{ Smile::ShaderDataType::eFloat3, "Position" },
 		{ Smile::ShaderDataType::eFloat3, "Color" }
 	};
-
-	m_pVertexBuffer.reset(Smile::VertexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), vertices, 8, bufferLayout));
 
 	uint32_t indices[]
 	{ 
@@ -58,25 +56,37 @@ ExampleLayer::ExampleLayer()
 		3, 7, 2,    // side 6
 		2, 7, 6
 	};
-	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), indices, 36));
 
-	m_pShader.reset(Smile::Shader::Create(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), "../SmileProject/Resources/shaders/PosCol3D.fx", bufferLayout));
-
-	m_pActiveScene.reset(new Smile::Scene{});
-	auto triangle = m_pActiveScene->CreateEntity("Triangle");
-
-	Smile::MeshRendererComponent::MeshRendererData meshRendererData{};
-	meshRendererData.pVertices = vertices;
-	meshRendererData.VertexCount = 3;
-	meshRendererData.pIndices = indices;
-	meshRendererData.IndexCount = 3;
-	meshRendererData.ShaderFilePath = "../SmileProject/Resources/shaders/PosCol3D.fx";
-	meshRendererData.BufferLayout = {
+	Smile::VertexBufferData vertexBufferData{};
+	vertexBufferData.pVertices = vertices;
+	vertexBufferData.Count = 8;
+	vertexBufferData.Usage = Smile::BufferUsage::eImmutable;
+	vertexBufferData.BufferLayout = {
 		{ Smile::ShaderDataType::eFloat3, "Position" },
 		{ Smile::ShaderDataType::eFloat3, "Color" }
 	};
 
-	triangle.AddComponent<Smile::MeshRendererComponent>(Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext(), meshRendererData);
+	Smile::IndexBufferData indexBufferData{};
+	indexBufferData.pIndices = indices;
+	indexBufferData.Count = 36;
+	indexBufferData.Usage = Smile::BufferUsage::eImmutable;
+
+	std::string shaderFilePath = "../SmileProject/Resources/Shaders/PosCol3D.fx";
+
+	m_pActiveScene.reset(new Smile::Scene{});
+
+	auto cube = m_pActiveScene->CreateEntity("Cube");
+	cube.AddComponent<Smile::MeshRendererComponent>(vertexBufferData, indexBufferData, shaderFilePath);
+	auto& cubeTransform = cube.GetComponent<Smile::TransformComponent>();
+	cubeTransform.Translation.x -= 10.f;
+	cubeTransform.Translation.z += 15.f;
+
+	auto mesh = m_pActiveScene->CreateEntity("Mesh");
+	mesh.AddComponent<Smile::StaticMeshComponent>("../SmileProject/Resources/Meshes/tuktuk.obj");
+	auto& meshTransform = mesh.GetComponent<Smile::TransformComponent>();
+	meshTransform.Translation.z += 15.f;
+	meshTransform.Translation.y -= 5.f;
+	meshTransform.Rotation.y = 65.f;
 
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 	m_CameraEntity.AddComponent<Smile::CameraComponent>(DirectX::XMMatrixPerspectiveFovLH(45, 16 / 9.f, 0.1f, 2500.f));
@@ -88,45 +98,46 @@ ExampleLayer::ExampleLayer()
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 {
 	auto& transform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
-	if (Smile::Input::IsKeyPressed('A'))
-		transform.Translation.x -= m_CameraMoveSpeed * deltaTime;
-	if (Smile::Input::IsKeyPressed('D'))
-		transform.Translation.x += m_CameraMoveSpeed * deltaTime;
-	if (Smile::Input::IsKeyPressed('S'))
-		transform.Translation.z -= m_CameraMoveSpeed * deltaTime;
-	if (Smile::Input::IsKeyPressed('W'))
-		transform.Translation.z += m_CameraMoveSpeed * deltaTime;
 
 	if (Smile::Input::IsKeyPressed(SM_LEFT))
 		transform.Rotation.y -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
 	if (Smile::Input::IsKeyPressed(SM_RIGHT))
 		transform.Rotation.y += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_UP))
+		transform.Rotation.x -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_DOWN))
+		transform.Rotation.x += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
 
-	Smile::RenderingContext* pRenderingContext = Smile::SmileGame::GetInstance().GetWindow().GetRenderingContext();
+	const auto forward = transform.GetForward();
+	const auto right = transform.GetRight();
+	DirectX::XMFLOAT3 dir{};
+
+	if (Smile::Input::IsKeyPressed('A'))
+		dir.x -= 1;
+	if (Smile::Input::IsKeyPressed('D'))
+		dir.x += 1;
+	if (Smile::Input::IsKeyPressed('S'))
+		dir.z -= 1;
+	if (Smile::Input::IsKeyPressed('W'))
+		dir.z += 1;
+	if (Smile::Input::IsKeyPressed(SM_SPACE))
+		dir.y += 1;
+	if (Smile::Input::IsKeyPressed(SM_LCONTROL))
+		dir.y -= 1;
+
+	dir.x = forward.x * dir.x + right.x * dir.x;
+	dir.y = forward.y * dir.y + right.y * dir.y;
+	dir.z = forward.z * dir.z + right.z * dir.z;
+
+	auto dirMat = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir));
+	DirectX::XMStoreFloat3(&dir, dirMat);
+
+	transform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
+	transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
+	transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
 
 	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
-	Smile::RenderCommand::Clear(pRenderingContext);
-
-	/*m_CameraEntity.GetComponent<Smile::CameraComponent>() .SetPosition(m_CameraPosition);
-	m_Camera.SetRotation(m_CameraRotation);*/
-
-	/*static DirectX::XMMATRIX scaleMat = DirectX::XMMatrixScaling(0.1f, 0.1f, 1);
-
-	for (int i{}; i < 20; ++i)
-	{
-		for (int j{}; j < 20; ++j)
-		{
-			DirectX::XMFLOAT3 pos{ j * 0.11f, i * 0.11f, 0 };
-			DirectX::XMMATRIX worldTransformMat = DirectX::XMMatrixMultiply(scaleMat, DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z));
-			DirectX::XMFLOAT4X4 worldTransform{};
-			DirectX::XMStoreFloat4x4(&worldTransform, worldTransformMat);
-
-			m_pShader->UploadFloat3("Color", m_TriangleColor);
-			
-
-			Smile::Renderer::Submit(pRenderingContext, m_pVertexBuffer, m_pIndexBuffer, m_pShader, worldTransform);
-		}
-	}*/
+	Smile::RenderCommand::Clear();
 
 	m_pActiveScene->OnUpdate(deltaTime);
 }

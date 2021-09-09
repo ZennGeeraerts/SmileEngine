@@ -10,7 +10,7 @@
 
 namespace Smile
 {
-	Shader* Shader::Create(RenderingContext* pRenderingContext, const std::string& filePath, const BufferLayout& bufferLayout)
+	Shader* Shader::Create(const std::string& filePath, const BufferLayout& bufferLayout)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -20,7 +20,7 @@ namespace Smile
 
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
-			return new DirectX11Shader(static_cast<DirectX11Context*>(pRenderingContext), filePath, bufferLayout);
+			return new DirectX11Shader(filePath, bufferLayout);
 #endif
 		}
 

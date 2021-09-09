@@ -118,6 +118,29 @@ namespace Smile
 		uint32_t m_Stride = 0;
 	};
 
+	enum class BufferUsage : uint8_t
+	{
+		eDefault = 0,
+		eImmutable,
+		eDynamic,
+		eStaging
+	};
+
+	struct VertexBufferData final
+	{
+		void* pVertices = nullptr;
+		uint32_t Count = 0;
+		BufferLayout BufferLayout = { { ShaderDataType::eFloat3, "Position" } };
+		BufferUsage Usage = BufferUsage::eDefault;
+	};
+
+	struct IndexBufferData final
+	{
+		uint32_t* pIndices = nullptr;
+		uint32_t Count = 0;
+		BufferUsage Usage = BufferUsage::eDefault;
+	};
+
 	class VertexBuffer
 	{
 	public:
@@ -129,7 +152,7 @@ namespace Smile
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 		virtual const BufferLayout& GetLayout() const = 0;
 
-		static VertexBuffer* Create(RenderingContext* pRenderingContext, void* pVertices, uint32_t count, const BufferLayout& layout);
+		static VertexBuffer* Create(const VertexBufferData& vertexBufferData);
 	};
 
 	class IndexBuffer
@@ -141,6 +164,6 @@ namespace Smile
 		virtual void Unbind() const = 0;
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create(RenderingContext* pRenderingContext, uint32_t* pIndices, uint32_t count);
+		static IndexBuffer* Create(const IndexBufferData& indexBufferData);
 	};
 }

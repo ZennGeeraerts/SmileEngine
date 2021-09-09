@@ -1,7 +1,13 @@
 #pragma once
 #include <DirectXMath.h>
+
+#include "SmileEngine/Renderer/Buffer.h"
 #include "SmileEngine/Renderer/Shader.h"
+
 #include "SmileEngine/Renderer/Camera.h"
+
+#include "SmileEngine/MeshLoader.h"
+#include "SmileEngine/Renderer/Mesh.h"
 
 namespace Smile
 {
@@ -36,35 +42,87 @@ namespace Smile
 			return transform;
 		}
 
+		DirectX::XMFLOAT3 GetForward()
+		{
+			/*DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(Rotation.x, Rotation.y, Rotation.z);
+			DirectX::XMFLOAT3 forward{};
+			DirectX::XMVECTOR forwardVec = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0, 0, 1, 0), rotationMat);
+			DirectX::XMStoreFloat3(&forward, forwardVec);
+			return forward;*/
+			DirectX::XMFLOAT3 forward{ 0, 0, 1 };
+			RotateVector(forward);
+			return forward;
+		}
+
+		DirectX::XMFLOAT3 GetRight()
+		{
+			/*DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(Rotation.x, Rotation.y, Rotation.z);
+			DirectX::XMFLOAT3 right{};
+			DirectX::XMVECTOR rightVec = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0, 0, 1, 0), rotationMat);
+			DirectX::XMStoreFloat3(&right, rightVec);
+			return right;*/
+			DirectX::XMFLOAT3 right{ 1, 0, 0 };
+			RotateVector(right);
+			return right;
+		}
+
 		DirectX::XMFLOAT3 Translation{ 0.f, 0.f, 0.f };
 		DirectX::XMFLOAT3 Rotation{ 0.f, 0.f, 0.f };
 		DirectX::XMFLOAT3 Scale{ 1.f, 1.f, 1.f };
+
+	private:
+		void RotateVector(DirectX::XMFLOAT3& v)
+		{
+			DirectX::XMVECTOR rotationVec = DirectX::XMQuaternionRotationRollPitchYaw(Rotation.x,
+				Rotation.y,
+				Rotation.z);
+			auto rotationMat = DirectX::XMMatrixRotationQuaternion(rotationVec);
+
+			DirectX::XMVECTOR vVec = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(v.x, v.y, v.z, 0), rotationMat);
+			DirectX::XMStoreFloat3(&v, vVec);
+		}
 	};
 
 	struct MeshRendererComponent final
 	{
-		struct MeshRendererData final
-		{
-			void* pVertices = nullptr;
-			uint32_t VertexCount{};
-			uint32_t* pIndices = nullptr;
-			uint32_t IndexCount{};
-			BufferLayout BufferLayout{};
-			std::string ShaderFilePath{};
-		};
-
 		MeshRendererComponent() = default;
 		MeshRendererComponent(const MeshRendererComponent&) = default;
-		MeshRendererComponent(RenderingContext* pContext, const MeshRendererData& meshRendererData)
+		MeshRendererComponent(const VertexBufferData& vertexBufferData, const IndexBufferData& indexBufferData, const std::string& shaderFilePath)
 		{
-			pVertexBuffer.reset(VertexBuffer::Create(pContext, meshRendererData.pVertices, meshRendererData.VertexCount, meshRendererData.BufferLayout));
-			pIndexBuffer.reset(IndexBuffer::Create(pContext, meshRendererData.pIndices, meshRendererData.IndexCount));
-			pShader.reset(Shader::Create(pContext, meshRendererData.ShaderFilePath, meshRendererData.BufferLayout));
+			pVertexBuffer.reset(VertexBuffer::Create(vertexBufferData));
+			pIndexBuffer.reset(IndexBuffer::Create(indexBufferData));
+			pShader.reset(Shader::Create(shaderFilePath, vertexBufferData.BufferLayout));
 		}
 
 		Ref<VertexBuffer> pVertexBuffer = nullptr;
 		Ref<IndexBuffer> pIndexBuffer = nullptr;
 		Ref<Shader> pShader = nullptr;
+	};
+
+	struct StaticMeshComponent final
+	{
+		StaticMeshComponent() = default;
+		StaticMeshComponent(const StaticMeshComponent&) = default;
+
+		StaticMeshComponent(const std::string& assetFile)
+			: StaticMeshComponent(assetFile, BufferLayout{
+				{ ShaderDataType::eFloat3, "Position" },
+				{ ShaderDataType::eFloat3, "Normal" }
+				})
+		{}
+
+		StaticMeshComponent(const std::string& assetFile, const BufferLayout& layout)
+		{
+			MeshLoader meshLoader{};
+			m_pMeshes = meshLoader.LoadObj(assetFile);
+
+			for (const auto& pMesh : m_pMeshes)
+			{
+				pMesh->Create(layout);
+			}
+		}
+
+		std::vector<Ref<Mesh>> m_pMeshes = {};
 	};
 
 	struct CameraComponent final

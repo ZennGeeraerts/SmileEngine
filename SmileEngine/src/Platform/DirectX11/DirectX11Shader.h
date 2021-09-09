@@ -9,7 +9,7 @@ namespace Smile
 	class DirectX11Shader : public Shader
 	{
 	public:
-		DirectX11Shader(DirectX11Context* pDirectX11Context, const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName = "");
+		DirectX11Shader(const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName = "");
 		virtual ~DirectX11Shader();
 
 		virtual void Bind() const override;

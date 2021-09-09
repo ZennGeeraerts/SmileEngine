@@ -17,10 +17,10 @@ namespace Smile
 		static void BeginScene(const Camera& camera, const DirectX::XMFLOAT4X4& cameraTransform);
 		static void EndScene();
 
-		static void Submit(RenderingContext* pRenderingContext, const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 
+		static void Submit(const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 
 			const DirectX::XMFLOAT4X4& worldTransform);
-
-		static void Submit(MeshRendererComponent* pMeshRendererComponent, const DirectX::XMFLOAT4X4& worldTransform);
+		static void Submit(const MeshRendererComponent& meshRendererComponent, const DirectX::XMFLOAT4X4& worldTransform);
+		static void Submit(const StaticMeshComponent& staticMeshComponent, const DirectX::XMFLOAT4X4& worldTransform);
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 

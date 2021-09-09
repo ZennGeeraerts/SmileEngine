@@ -3,7 +3,7 @@
 
 #include "Logger.h"
 #include "Input.h"
-#include "Renderer/Renderer.h"
+#include "SmileEngine/Renderer/Renderer.h"
 
 namespace Smile
 {

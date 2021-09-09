@@ -1,5 +1,6 @@
 #include "smpch.h"
 #include "DirectX11Buffer.h"
+#include "SmileEngine/SmileGame.h"
 
 namespace Smile
 {
@@ -7,21 +8,23 @@ namespace Smile
 	//*----------------------------------------- Vertex buffer -----------------------------------------*//
 	//*------------------------------------------------------------------------------------------------*//
 
-	DirectX11VertexBuffer::DirectX11VertexBuffer(DirectX11Context* pDirectX11Context, void* pVertices, uint32_t count, const BufferLayout& layout)
-		: m_pDirectX11Context{ pDirectX11Context }
-		, m_Layout{ layout }
+	DirectX11VertexBuffer::DirectX11VertexBuffer(const VertexBufferData& vertexBufferData)
+		: m_Layout{ vertexBufferData.BufferLayout }
 	{
+		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		SM_ASSERT(m_pDirectX11Context, "DirectX11VertexBuffer > Rendering context is not a DirectX 11 Rendering Context");
+
 		D3D11_BUFFER_DESC bd = {};
-		bd.Usage = D3D11_USAGE_IMMUTABLE;
-		bd.ByteWidth = layout.GetStride() * count;
+		bd.Usage = BufferUsageToDirectXType(vertexBufferData.Usage);
+		bd.ByteWidth = vertexBufferData.BufferLayout.GetStride() * vertexBufferData.Count;
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA initData = { 0 };
-		initData.pSysMem = pVertices;
+		initData.pSysMem = vertexBufferData.pVertices;
 
-		HRESULT result = pDirectX11Context->GetDevice()->CreateBuffer(&bd, &initData, &m_pVertexBuffer);
+		HRESULT result = m_pDirectX11Context->GetDevice()->CreateBuffer(&bd, &initData, &m_pVertexBuffer);
 		if (FAILED(result))
 		{
 			SM_LOG_ERROR("DirectX11VertexBuffer > Failed to create vertex buffer");
@@ -50,22 +53,24 @@ namespace Smile
 	//*----------------------------------------- Index buffer -----------------------------------------*//
 	//*------------------------------------------------------------------------------------------------*//
 
-	DirectX11IndexBuffer::DirectX11IndexBuffer(DirectX11Context* pDirectX11Context, uint32_t* pIndices, uint32_t count)
-		: m_pDirectX11Context{ pDirectX11Context }
+	DirectX11IndexBuffer::DirectX11IndexBuffer(const IndexBufferData& indexBufferData)
 	{
-		m_Count = count;
+		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		SM_ASSERT(m_pDirectX11Context, "DirectX11IndexBuffer > Rendering context is not a DirectX 11 Rendering Context");
+
+		m_Count = indexBufferData.Count;
 
 		D3D11_BUFFER_DESC bd = {};
-		bd.Usage = D3D11_USAGE_IMMUTABLE;
-		bd.ByteWidth = sizeof(uint32_t) * count;
+		bd.Usage = BufferUsageToDirectXType(indexBufferData.Usage);
+		bd.ByteWidth = sizeof(uint32_t) * indexBufferData.Count;
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA initData = { 0 };
-		initData.pSysMem = pIndices;
+		initData.pSysMem = indexBufferData.pIndices;
 
-		HRESULT result = pDirectX11Context->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
+		HRESULT result = m_pDirectX11Context->GetDevice()->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
 		if (FAILED(result))
 		{
 			SM_LOG_ERROR("DirectX11IndexBuffer > Failed to create index buffer");
@@ -86,5 +91,26 @@ namespace Smile
 	void DirectX11IndexBuffer::Unbind() const
 	{
 		m_pDirectX11Context->GetDeviceContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+	}
+
+	//*------------------------------------------------------------------------------------------------*//
+	//*--------------------------------------- Helper functions ---------------------------------------*//
+	//*------------------------------------------------------------------------------------------------*//
+
+	D3D11_USAGE BufferUsageToDirectXType(BufferUsage bufferUsage)
+	{
+		switch (bufferUsage)
+		{
+		case BufferUsage::eDefault:
+			return D3D11_USAGE_DEFAULT;
+		case BufferUsage::eImmutable:
+			return D3D11_USAGE_IMMUTABLE;
+		case BufferUsage::eDynamic:
+			return D3D11_USAGE_DYNAMIC;
+		case BufferUsage::eStaging:
+			return D3D11_USAGE_STAGING;
+		default:
+			return D3D11_USAGE_DEFAULT;
+		}
 	}
 }

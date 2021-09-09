@@ -21,6 +21,7 @@
 
 // Platform specific headers
 #ifdef SM_PLATFORM_WINDOWS
+	#define NOMINMAX
 	#include <Windows.h>
 	#include <windowsx.h>
 

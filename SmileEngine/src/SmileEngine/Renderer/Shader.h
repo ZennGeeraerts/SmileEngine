@@ -18,7 +18,7 @@ namespace Smile
 		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) = 0;
 		virtual void UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value) = 0;
 
-		static Shader* Create(RenderingContext* pRenderingContext, const std::string& filePath, const BufferLayout& bufferLayout);
+		static Shader* Create(const std::string& filePath, const BufferLayout& bufferLayout);
 	};
 }
 

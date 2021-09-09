@@ -25,24 +25,28 @@ namespace Smile
 
 	}
 
-	void Renderer::Submit(RenderingContext* pRenderingContext, const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 
+	void Renderer::Submit(const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 
 		const DirectX::XMFLOAT4X4& worldTransform)
 	{
 		pVertexBuffer->Bind();
 		pIndexBuffer->Bind();
 		pShader->Bind();
 
-		auto worldViewProjectionMatrixMat = DirectX::XMLoadFloat4x4(&worldTransform) * DirectX::XMLoadFloat4x4(&m_pSceneData->ViewProjectionMatrix);
-		DirectX::XMFLOAT4X4 worldViewProjectionMatrix{};
-		DirectX::XMStoreFloat4x4(&worldViewProjectionMatrix, worldViewProjectionMatrixMat);
-
-		pShader->UploadMat4("WorldViewProjection", worldViewProjectionMatrix);
+		pShader->UploadMat4("ViewProjection", m_pSceneData->ViewProjectionMatrix);
 		pShader->UploadMat4("World", worldTransform);
-		RenderCommand::DrawIndexed(pRenderingContext, pIndexBuffer->GetCount(), pShader);
+		RenderCommand::DrawIndexed(pIndexBuffer->GetCount(), pShader);
 	}
 
-	void Renderer::Submit(MeshRendererComponent* pMeshRendererComponent, const DirectX::XMFLOAT4X4& worldTransform)
+	void Renderer::Submit(const MeshRendererComponent& meshRendererComponent, const DirectX::XMFLOAT4X4& worldTransform)
 	{
-		
+		Submit(meshRendererComponent.pVertexBuffer, meshRendererComponent.pIndexBuffer, meshRendererComponent.pShader, worldTransform);
+	}
+
+	void Renderer::Submit(const StaticMeshComponent& staticMeshComponent, const DirectX::XMFLOAT4X4& worldTransform)
+	{
+		for (const auto& pMesh : staticMeshComponent.m_pMeshes)
+		{
+			Submit(pMesh->GetVertexBuffer(), pMesh->GetIndexBuffer(), pMesh->GetShader(), worldTransform);
+		}
 	}
 }

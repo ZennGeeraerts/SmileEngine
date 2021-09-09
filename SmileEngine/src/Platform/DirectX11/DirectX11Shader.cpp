@@ -3,12 +3,15 @@
 
 #include "DirectX11Context.h"
 #include "SmileEngine/Logger.h"
+#include "SmileEngine/SmileGame.h"
 
 namespace Smile
 {
-	DirectX11Shader::DirectX11Shader(DirectX11Context* pDirectX11Context, const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName)
-		: m_pDirectX11Context{ pDirectX11Context }
+	DirectX11Shader::DirectX11Shader(const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName)
 	{
+		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		SM_ASSERT(m_pDirectX11Context, "DirectX11Shader > Rendering context is not a DirectX 11 Rendering Context");
+
 		if (!LoadEffect(m_pDirectX11Context->GetDevice(), assetFile))
 		{
 			SAFE_RELEASE(m_pEffect);
@@ -163,11 +166,11 @@ namespace Smile
 		case ShaderDataType::eFloat4:	return DXGI_FORMAT_R32G32B32A32_FLOAT;
 		case ShaderDataType::eMat3:
 		case ShaderDataType::eMat4:
-		case ShaderDataType::eInt:
-		case ShaderDataType::eInt2:
-		case ShaderDataType::eInt3:
-		case ShaderDataType::eInt4:
-		case ShaderDataType::eBool:
+		case ShaderDataType::eInt:		return DXGI_FORMAT_R32_SINT;
+		case ShaderDataType::eInt2:		return DXGI_FORMAT_R32G32_SINT;
+		case ShaderDataType::eInt3:		return DXGI_FORMAT_R32G32B32_SINT;
+		case ShaderDataType::eInt4:		return DXGI_FORMAT_R32G32B32A32_SINT;
+		case ShaderDataType::eBool:		
 		default:
 			SM_ASSERT(false, "ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType");
 			return DXGI_FORMAT_UNKNOWN;

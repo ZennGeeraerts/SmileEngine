@@ -1,4 +1,16 @@
-﻿  Scene.cpp
+﻿  WindowsWindow.cpp
+  Buffer.cpp
+  Renderer.cpp
+  Shader.cpp
+  VertexArray.cpp
+  Scene.cpp
+  SmileGame.cpp
+  Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
   SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.lib
+  C:\dev\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\assimp\x64\zlib1.dll
+  1 File(s) copied

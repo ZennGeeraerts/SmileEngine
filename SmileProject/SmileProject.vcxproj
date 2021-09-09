@@ -105,6 +105,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,6 +129,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -141,6 +149,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -161,6 +173,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmileEngine\SmileEngine.vcxproj">

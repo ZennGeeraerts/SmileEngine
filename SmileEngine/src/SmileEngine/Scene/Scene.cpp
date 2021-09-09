@@ -38,10 +38,10 @@ namespace Smile
 		Camera* pMainCamera = nullptr;
 		DirectX::XMFLOAT4X4 cameraTransform;
 		{
-			auto group = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : group)
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
 			{
-				const auto& [transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
+				const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 				if (camera.bPrimary)
 				{
@@ -56,11 +56,21 @@ namespace Smile
 		{
 			Renderer::BeginScene(*pMainCamera, cameraTransform);
 
-			auto group = m_Registry.group<TransformComponent>(entt::get<MeshRendererComponent>);
-			for (auto entity : group)
 			{
-				const auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
-				Renderer::Submit(SmileGame::GetInstance().GetWindow().GetRenderingContext(), mesh.pVertexBuffer, mesh.pIndexBuffer, mesh.pShader, transform.GetTransform());
+				auto group = m_Registry.group<MeshRendererComponent>(entt::get<TransformComponent>);
+				for (auto entity : group)
+				{
+					const auto& [mesh, transform] = group.get<MeshRendererComponent, TransformComponent>(entity);
+					Renderer::Submit(mesh, transform.GetTransform());
+				}
+			}
+			{
+				auto group = m_Registry.group<StaticMeshComponent>(entt::get<TransformComponent>);
+				for (auto entity : group)
+				{
+					const auto& [mesh, transform] = group.get<StaticMeshComponent, TransformComponent>(entity);
+					Renderer::Submit(mesh, transform.GetTransform());
+				}
 			}
 
 			Renderer::EndScene();

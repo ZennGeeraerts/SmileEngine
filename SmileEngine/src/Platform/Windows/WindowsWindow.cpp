@@ -7,6 +7,8 @@
 #include "SmileEngine/Events/KeyEvent.h"
 
 #include "SmileEngine/Renderer/RenderingContext.h"
+#include "SmileEngine/Renderer/Renderer.h"
+#include "SmileEngine/Input.h"
 // For now using only DirectX11
 #include "Platform/DirectX11/DirectX11Context.h"
 

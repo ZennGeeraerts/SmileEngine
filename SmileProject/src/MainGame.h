@@ -11,9 +11,6 @@ public:
 	virtual void OnImGuiRender() override;
 
 private:
-	Smile::Ref<Smile::Shader> m_pShader;
-	Smile::Ref<Smile::VertexBuffer> m_pVertexBuffer;
-	Smile::Ref<Smile::IndexBuffer> m_pIndexBuffer;
 	Smile::Ref<Smile::Scene> m_pActiveScene;
 
 	Smile::Entity m_CameraEntity;

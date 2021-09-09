@@ -18,14 +18,14 @@ namespace Smile
 			m_pRendererAPI->SetClearColor(color);
 		}
 
-		inline static void Clear(RenderingContext* pRenderingContext)
+		inline static void Clear()
 		{
-			m_pRendererAPI->Clear(pRenderingContext);
+			m_pRendererAPI->Clear();
 		}
 
-		inline static void DrawIndexed(RenderingContext* pRenderingContext, int32_t indexCount, const Ref<Shader>& pShader)
+		inline static void DrawIndexed(int32_t indexCount, const Ref<Shader>& pShader)
 		{
-			m_pRendererAPI->DrawIndexed(pRenderingContext, indexCount, pShader);
+			m_pRendererAPI->DrawIndexed(indexCount, pShader);
 		}
 
 	private:
