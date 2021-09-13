@@ -8,7 +8,7 @@ namespace Smile
 	public:
 		MeshLoader() = default;
 
-		std::vector<Ref<Mesh>> LoadObj(const std::string& filePath);
+		std::vector<Ref<Mesh>> LoadMesh(const std::string& filePath);
 	};
 }
 

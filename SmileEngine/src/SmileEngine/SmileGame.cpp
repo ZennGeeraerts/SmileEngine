@@ -21,6 +21,8 @@ namespace Smile
 		m_pWindow->SetEventCallback(SM_BIND_EVENT_FN(SmileGame::OnEvent));
 		m_pWindow->SetVSync(false);
 
+		Renderer::Initialize();
+
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
 	}

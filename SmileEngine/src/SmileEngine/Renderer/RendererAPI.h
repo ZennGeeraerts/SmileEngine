@@ -17,6 +17,7 @@ namespace Smile
 	public:
 		virtual ~RendererAPI() = default;
 
+		virtual void Initialize() = 0;
 		virtual void SetClearColor(const DirectX::XMFLOAT4& color) = 0;
 		virtual void Clear() = 0;
 

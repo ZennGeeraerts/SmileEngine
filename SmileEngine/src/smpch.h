@@ -29,6 +29,7 @@
 	#include <d3d11.h>
 	#include <d3dcompiler.h>
 	#include <d3dx11effect.h>
+	#include <DirectXTex.h>
 	#if defined(DEBUG) || defined(_DEBUG)
 	#pragma comment(lib, "dx11effects_d.lib")
 	#else 

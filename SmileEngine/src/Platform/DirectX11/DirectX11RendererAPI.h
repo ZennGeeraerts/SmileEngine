@@ -1,12 +1,14 @@
 #pragma once
 
 #include "SmileEngine/Renderer/RendererAPI.h"
+#include "DirectX11Context.h"
 
 namespace Smile
 {
 	class DirectX11RendererAPI final : public RendererAPI
 	{
 	public:
+		virtual void Initialize() override;
 		virtual void SetClearColor(const DirectX::XMFLOAT4& color) override;
 		virtual void Clear() override;
 
@@ -14,6 +16,7 @@ namespace Smile
 
 	private:
 		DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
+		DirectX11Context* m_pDirectX11Context = nullptr;
 	};
 }
 

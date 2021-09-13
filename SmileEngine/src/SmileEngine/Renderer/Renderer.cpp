@@ -5,6 +5,11 @@ namespace Smile
 {
 	Renderer::SceneData* Renderer::m_pSceneData = new Renderer::SceneData{};
 
+	void Renderer::Initialize()
+	{
+		RenderCommand::Initalize();
+	}
+
 	void Renderer::CleanUp()
 	{
 		SAFE_DELETE(m_pSceneData);
@@ -15,9 +20,11 @@ namespace Smile
 	{
 		auto cameraTransformMat = DirectX::XMLoadFloat4x4(&cameraTransform);
 		auto projectionMatrixMat = DirectX::XMLoadFloat4x4(&camera.GetProjectionMatrix());
-		auto viewProjectionMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat) * projectionMatrixMat;
+		auto ViewMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat);
+		auto viewProjectionMatrixMat = ViewMatrixMat * projectionMatrixMat;
 
 		DirectX::XMStoreFloat4x4(&m_pSceneData->ViewProjectionMatrix, viewProjectionMatrixMat);
+		DirectX::XMStoreFloat4x4(&m_pSceneData->ViewInverseMatrix, cameraTransformMat);
 	}
 
 	void Renderer::EndScene()
@@ -34,6 +41,7 @@ namespace Smile
 
 		pShader->UploadMat4("ViewProjection", m_pSceneData->ViewProjectionMatrix);
 		pShader->UploadMat4("World", worldTransform);
+		pShader->UploadMat4("ViewInverse", m_pSceneData->ViewInverseMatrix);
 		RenderCommand::DrawIndexed(pIndexBuffer->GetCount(), pShader);
 	}
 

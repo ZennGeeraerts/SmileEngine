@@ -71,28 +71,42 @@ ExampleLayer::ExampleLayer()
 	indexBufferData.Count = 36;
 	indexBufferData.Usage = Smile::BufferUsage::eImmutable;
 
-	std::string shaderFilePath = "../SmileProject/Resources/Shaders/PosCol3D.fx";
-
 	m_pActiveScene.reset(new Smile::Scene{});
 
-	auto cube = m_pActiveScene->CreateEntity("Cube");
+	/*auto cube = m_pActiveScene->CreateEntity("Cube");
 	cube.AddComponent<Smile::MeshRendererComponent>(vertexBufferData, indexBufferData, shaderFilePath);
 	auto& cubeTransform = cube.GetComponent<Smile::TransformComponent>();
 	cubeTransform.Translation.x -= 10.f;
-	cubeTransform.Translation.z += 15.f;
+	cubeTransform.Translation.z += 15.f;*/
 
-	auto mesh = m_pActiveScene->CreateEntity("Mesh");
-	mesh.AddComponent<Smile::StaticMeshComponent>("../SmileProject/Resources/Meshes/tuktuk.obj");
-	auto& meshTransform = mesh.GetComponent<Smile::TransformComponent>();
-	meshTransform.Translation.z += 15.f;
-	meshTransform.Translation.y -= 5.f;
-	meshTransform.Rotation.y = 65.f;
+	m_Gun = m_pActiveScene->CreateEntity("Mesh");
+	auto staticMesh = m_Gun.AddComponent<Smile::StaticMeshComponent>("../SmileProject/Resources/Meshes/drakefire_pistol_low.obj");
+	auto& gunTransform = m_Gun.GetComponent<Smile::TransformComponent>();
+	gunTransform.Translation.z += 15.f;
+	gunTransform.Translation.y -= 2.f;
+	gunTransform.Translation.x -= 2.f;
+	gunTransform.Rotation.y = 90;
+	gunTransform.Scale.x *= 5.f;
+	gunTransform.Scale.y *= 5.f;
+	gunTransform.Scale.z *= 5.f;
 
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 	m_CameraEntity.AddComponent<Smile::CameraComponent>(DirectX::XMMatrixPerspectiveFovLH(45, 16 / 9.f, 0.1f, 2500.f));
+	
+	auto pAlbedoMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_albedo.jpg");
+	auto pNormalMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_normal.jpg");
+	auto pMetalnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_metallic.jpg");
+	auto pRoughnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_roughness.jpg");
+	auto pAOMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_AO.jpg");
 
-	/*auto camera2 = m_pActiveScene->CreateEntity("Camera2");
-	camera2.AddComponent<Smile::CameraComponent>(DirectX::XMMatrixOrthographicOffCenterLH(-1.6f, 1.6f, -0.9f, 0.9f, 0.1f, 2500.f));*/
+	for (auto& pMesh : staticMesh.m_pMeshes)
+	{
+		pMesh->GetShader()->UploadTexture2D("AlbedoMap", pAlbedoMap);
+		pMesh->GetShader()->UploadTexture2D("NormalMap", pNormalMap);
+		pMesh->GetShader()->UploadTexture2D("MetalnessMap", pMetalnessMap);
+		pMesh->GetShader()->UploadTexture2D("RoughnessMap", pRoughnessMap);
+		pMesh->GetShader()->UploadTexture2D("AOMap", pAOMap);
+	}
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
@@ -136,6 +150,9 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
 	transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
 
+	auto& gunTransform = m_Gun.GetComponent<Smile::TransformComponent>();
+	gunTransform.Rotation.y += 1.f * deltaTime;
+
 	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 	Smile::RenderCommand::Clear();
 
@@ -149,9 +166,9 @@ void ExampleLayer::OnEvent(Smile::Event& event)
 
 void ExampleLayer::OnImGuiRender()
 {
-	ImGui::Begin("Settings");
+	/*ImGui::Begin("Settings");
 	ImGui::ColorEdit3("Triangle Color", &m_TriangleColor.x);
-	ImGui::End();
+	ImGui::End();*/
 }
 
 /*-----------------------------------------------------------------------------------------------------------*/

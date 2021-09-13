@@ -8,6 +8,11 @@ namespace Smile
 	class RenderCommand final
 	{
 	public:
+		inline static void Initalize()
+		{
+			m_pRendererAPI->Initialize();
+		}
+
 		inline static void CleanUp()
 		{
 			SAFE_DELETE(m_pRendererAPI);

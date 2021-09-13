@@ -2,6 +2,7 @@
 
 #include "SmileEngine/Core.h"
 #include "Buffer.h"
+#include "Texture.h"
 
 namespace Smile
 {
@@ -17,6 +18,8 @@ namespace Smile
 
 		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) = 0;
 		virtual void UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value) = 0;
+		virtual void UploadInt(const std::string& sementicName, int value) = 0;
+		virtual void UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D) = 0;
 
 		static Shader* Create(const std::string& filePath, const BufferLayout& bufferLayout);
 	};

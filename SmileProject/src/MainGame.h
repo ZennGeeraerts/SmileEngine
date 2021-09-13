@@ -18,7 +18,8 @@ private:
 	float m_CameraMoveSpeed = 5.f;
 	float m_CameraRotation = 0.f;
 	float m_CameraRotationSpeed = 180.f;
-	DirectX::XMFLOAT3 m_TriangleColor = { 0, 0, 0 };
+
+	Smile::Entity m_Gun;
 };
 
 class MainGame final : public Smile::SmileGame

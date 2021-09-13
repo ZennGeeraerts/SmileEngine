@@ -27,24 +27,16 @@ namespace Smile
 			SM_LOG_WARNING("DirectX11Shader > Invalid technique");
 
 		BuildInputLayout(layout);
-
-		/*auto pEffectVariable = m_pEffect->GetVariableBySemantic("World");
-		m_pWorldMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
-		pEffectVariable = m_pEffect->GetVariableBySemantic("View");
-		m_pViewMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
-		pEffectVariable = m_pEffect->GetVariableBySemantic("ViewInverse");
-		m_pViewInverseMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;
-		pEffectVariable = m_pEffect->GetVariableBySemantic("WorldViewProjection");
-		m_pWorldViewProjMatrixVariable = (pEffectVariable->IsValid()) ? pEffectVariable->AsMatrix() : nullptr;*/
-
 	}
 
 	DirectX11Shader::~DirectX11Shader()
 	{
-		/*SAFE_RELEASE(m_pWorldMatrixVariable);
-		SAFE_RELEASE(m_pViewMatrixVariable);
-		SAFE_RELEASE(m_pViewInverseMatrixVariable);
-		SAFE_RELEASE(m_pWorldViewProjMatrixVariable);*/
+		for (auto& effectVar : m_EffectVariableMap)
+		{
+			SAFE_RELEASE(effectVar.second);
+		}
+		m_EffectVariableMap.clear();
+
 		SAFE_RELEASE(m_pInputLayout);
 		SAFE_RELEASE(m_pTechnique);
 		SAFE_RELEASE(m_pEffect);
@@ -62,28 +54,41 @@ namespace Smile
 
 	void DirectX11Shader::UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix)
 	{
-		auto pEffectVariable = m_pEffect->GetVariableBySemantic(sementicName.c_str());
-		auto pMatrixVariable = pEffectVariable->AsMatrix();
-		if (pMatrixVariable)
+		auto pMatrixVariable = GetEffectVariable(sementicName)->AsMatrix();
+		if (pMatrixVariable->IsValid())
 		{
 			pMatrixVariable->SetMatrix(&matrix._11);
 		}
-
-		SAFE_RELEASE(pEffectVariable);
-		SAFE_RELEASE(pMatrixVariable);
 	}
 
 	void DirectX11Shader::UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value)
 	{
-		auto pEffectVariable = m_pEffect->GetVariableBySemantic(sementicName.c_str());
-		auto pMatrixVariable = pEffectVariable->AsVector();
-		if (pMatrixVariable)
+		auto pVectorVariable = GetEffectVariable(sementicName)->AsVector();
+		if (pVectorVariable->IsValid())
 		{
-			pMatrixVariable->SetFloatVector(&value.x);
+			pVectorVariable->SetFloatVector(&value.x);
 		}
+	}
 
-		SAFE_RELEASE(pEffectVariable);
-		SAFE_RELEASE(pMatrixVariable);
+	void DirectX11Shader::UploadInt(const std::string& sementicName, int value)
+	{
+		auto pIntVariable = GetEffectVariable(sementicName)->AsScalar();
+		if (pIntVariable->IsValid())
+		{
+			pIntVariable->SetInt(value);
+		}
+	}
+
+	void DirectX11Shader::UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D)
+	{
+		auto pDirectX11Texture2D = std::dynamic_pointer_cast<DirectX11Texture2D>(pTexture2D);
+		SM_ASSERT(pDirectX11Texture2D, "DirectX11Shader::UploadTexture2D > Texture is not a DirectX11Texture");
+
+		auto pTextureVariable = GetEffectVariable(sementicName)->AsShaderResource();
+		if (pTextureVariable->IsValid())
+		{
+			pTextureVariable->SetResource(pDirectX11Texture2D->GetShaderResourceView());
+		}
 	}
 
 	bool DirectX11Shader::LoadEffect(ID3D11Device* pDevice, const std::string& assetFile)
@@ -127,8 +132,9 @@ namespace Smile
 			else
 			{
 				SM_LOG_ERROR("DirectX11Shader::LoadEffect > Failed to CreateEffectFromFile: %s", assetFile);
-				return false;
 			}
+
+			return false;
 		}
 
 		return true;
@@ -164,16 +170,32 @@ namespace Smile
 		case ShaderDataType::eFloat2:	return DXGI_FORMAT_R32G32_FLOAT;
 		case ShaderDataType::eFloat3:	return DXGI_FORMAT_R32G32B32_FLOAT;
 		case ShaderDataType::eFloat4:	return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case ShaderDataType::eMat3:
-		case ShaderDataType::eMat4:
+		case ShaderDataType::eMat3:		return DXGI_FORMAT_UNKNOWN;
+		case ShaderDataType::eMat4:		return DXGI_FORMAT_UNKNOWN;
 		case ShaderDataType::eInt:		return DXGI_FORMAT_R32_SINT;
 		case ShaderDataType::eInt2:		return DXGI_FORMAT_R32G32_SINT;
 		case ShaderDataType::eInt3:		return DXGI_FORMAT_R32G32B32_SINT;
 		case ShaderDataType::eInt4:		return DXGI_FORMAT_R32G32B32A32_SINT;
-		case ShaderDataType::eBool:		
+		case ShaderDataType::eBool:		return DXGI_FORMAT_UNKNOWN;
 		default:
 			SM_ASSERT(false, "ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType");
 			return DXGI_FORMAT_UNKNOWN;
 		}
+	}
+
+	ID3DX11EffectVariable* DirectX11Shader::GetEffectVariable(const std::string& sementicName)
+	{
+		if (m_EffectVariableMap.find(sementicName) != m_EffectVariableMap.end())
+			return m_EffectVariableMap[sementicName];
+
+		auto pEffectVariable = m_pEffect->GetVariableBySemantic(sementicName.c_str());
+		if (!pEffectVariable->IsValid())
+		{
+			SM_LOG_WARNING("DirectX11Shader::GetEffectVariable > Invalid effect variable: %s", sementicName);
+			return nullptr;
+		}
+
+		m_EffectVariableMap[sementicName] = pEffectVariable;
+		return pEffectVariable;
 	}
 }

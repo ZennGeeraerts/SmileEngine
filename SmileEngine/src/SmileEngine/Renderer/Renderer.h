@@ -12,6 +12,7 @@ namespace Smile
 	class Renderer final
 	{
 	public:
+		static void Initialize();
 		static void CleanUp();
 
 		static void BeginScene(const Camera& camera, const DirectX::XMFLOAT4X4& cameraTransform);
@@ -27,6 +28,7 @@ namespace Smile
 	private:
 		struct SceneData
 		{
+			DirectX::XMFLOAT4X4 ViewInverseMatrix;
 			DirectX::XMFLOAT4X4 ViewProjectionMatrix;
 		};
 

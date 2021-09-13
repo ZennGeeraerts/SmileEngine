@@ -107,14 +107,16 @@ namespace Smile
 		StaticMeshComponent(const std::string& assetFile)
 			: StaticMeshComponent(assetFile, BufferLayout{
 				{ ShaderDataType::eFloat3, "Position" },
-				{ ShaderDataType::eFloat3, "Normal" }
+				{ ShaderDataType::eFloat3, "Normal" },
+				{ ShaderDataType::eFloat2, "TexCoord" },
+				{ ShaderDataType::eFloat3, "Tangent" }
 				})
 		{}
 
 		StaticMeshComponent(const std::string& assetFile, const BufferLayout& layout)
 		{
 			MeshLoader meshLoader{};
-			m_pMeshes = meshLoader.LoadObj(assetFile);
+			m_pMeshes = meshLoader.LoadMesh(assetFile);
 
 			for (const auto& pMesh : m_pMeshes)
 			{
