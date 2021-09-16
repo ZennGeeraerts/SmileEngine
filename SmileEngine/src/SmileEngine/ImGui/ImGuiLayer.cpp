@@ -1,9 +1,9 @@
 #include "smpch.h"
 #include "ImGuiLayer.h"
 
-#include "ImGui/imgui.h"
-#include "SmileEngine/ImGui/ImGui/imgui_impl_win32.h"
-#include "SmileEngine/ImGui/ImGui/imgui_impl_dx11.h"
+#include "Libs/ImGui/imgui.h"
+#include "Libs/ImGui/imgui_impl_win32.h"
+#include "Libs/ImGui/imgui_impl_dx11.h"
 
 #include "SmileEngine/SmileGame.h"
 #include "Platform/Windows/WindowsWindow.h"

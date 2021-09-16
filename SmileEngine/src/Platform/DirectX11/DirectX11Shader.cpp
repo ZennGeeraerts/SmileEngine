@@ -27,6 +27,13 @@ namespace Smile
 			SM_LOG_WARNING("DirectX11Shader > Invalid technique");
 
 		BuildInputLayout(layout);
+
+		// Find name from asset path
+		auto lastSlash = assetFile.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = assetFile.rfind('.');
+		auto count = lastDot == std::string::npos ? assetFile.size() - lastSlash : lastDot - lastSlash;
+		m_Name = assetFile.substr(lastSlash, count);
 	}
 
 	DirectX11Shader::~DirectX11Shader()

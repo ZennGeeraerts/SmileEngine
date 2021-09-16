@@ -8,11 +8,6 @@ namespace Smile
 	DirectX::XMFLOAT3 Mesh::m_DefaultFloat3 = DirectX::XMFLOAT3{ 0, 0, 0 };
 	DirectX::XMFLOAT2 Mesh::m_DefaultFloat2 = DirectX::XMFLOAT2{ 0, 0 };
 
-	Mesh::Mesh()
-	{
-		
-	}
-
 	Mesh::~Mesh()
 	{
 		m_Positions.clear();
@@ -48,6 +43,8 @@ namespace Smile
 					memcpy(pDataLocation, bUseNormals ? &m_Normals[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "TexCoord")
 					memcpy(pDataLocation, bUseTexCoords ? &m_TexCoords[i] : &m_DefaultFloat2, element.Size);
+				else if (element.Name == "Tangent")
+					memcpy(pDataLocation, bUseTangents ? &m_Tangents[i] : &m_DefaultFloat3, element.Size);
 
 				pDataLocation = (char*)pDataLocation + element.Size;
 			}
@@ -62,6 +59,6 @@ namespace Smile
 
 		m_pVertexBuffer.reset(VertexBuffer::Create(vertexBufferData));
 		m_pIndexBuffer.reset(IndexBuffer::Create(indexBufferData));
-		m_pShader.reset(Shader::Create(shaderFilePath, layout));
+		m_pShader = Shader::Create(shaderFilePath, layout);
 	}
 }

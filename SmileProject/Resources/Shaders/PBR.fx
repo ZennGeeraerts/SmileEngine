@@ -14,6 +14,8 @@ Texture2D gAOMap : AOMap;
 
 float3 gAmbientColor = 1.f;
 
+TextureCube gEnvironmentMap : ENVIRONMENTMAP;
+
 float gPI = 3.141592f;
 float gEpsilon = 0.0001f;
 

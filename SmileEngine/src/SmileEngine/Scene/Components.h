@@ -91,7 +91,7 @@ namespace Smile
 		{
 			pVertexBuffer.reset(VertexBuffer::Create(vertexBufferData));
 			pIndexBuffer.reset(IndexBuffer::Create(indexBufferData));
-			pShader.reset(Shader::Create(shaderFilePath, vertexBufferData.BufferLayout));
+			pShader = Shader::Create(shaderFilePath, vertexBufferData.BufferLayout);
 		}
 
 		Ref<VertexBuffer> pVertexBuffer = nullptr;

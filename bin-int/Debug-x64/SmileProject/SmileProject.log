@@ -1,4 +1,10 @@
-﻿  MainGame.cpp
+﻿     Creating library C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.lib and object C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exp
+dx11effects_d.lib(d3dxGlobal.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(d3dxGlobal.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectAPI.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectAPI.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectLoad.obj) : warning LNK4099: PDB '' was not found with 'dx11effects_d.lib(EffectLoad.obj)' or at ''; linking object as if no debug info
+dx11effects_d.lib(EffectNonRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectNonRuntime.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectReflection.obj) : warning LNK4099: PDB '' was not found with 'dx11effects_d.lib(EffectReflection.obj)' or at ''; linking object as if no debug info
+dx11effects_d.lib(EffectRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectRuntime.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
   SmileProject.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exe
   C:\dev\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
   1 File(s) copied

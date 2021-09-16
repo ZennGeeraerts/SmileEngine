@@ -7,7 +7,7 @@ namespace Smile
 	class Mesh final
 	{
 	public:
-		Mesh();
+		Mesh() = default;
 		~Mesh();
 
 		void Create(const BufferLayout& layout);

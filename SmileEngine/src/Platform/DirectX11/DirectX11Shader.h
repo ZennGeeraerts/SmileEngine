@@ -16,6 +16,8 @@ namespace Smile
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
+		virtual const std::string& GetName() const override { return m_Name; }
+
 		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) override;
 		virtual void UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value) override;
 		virtual void UploadInt(const std::string& sementicName, int value) override;
@@ -31,6 +33,7 @@ namespace Smile
 		ID3DX11EffectVariable* GetEffectVariable(const std::string& sementicName);
 
 	private:
+		std::string m_Name;
 		std::unordered_map<std::string, ID3DX11EffectVariable*> m_EffectVariableMap;
 		DirectX11Context* m_pDirectX11Context;
 
