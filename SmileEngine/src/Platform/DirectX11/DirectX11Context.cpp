@@ -54,9 +54,8 @@ namespace Smile
 			return;
 		}
 
-		// TODO: Get width and height from window
-		const unsigned int width = static_cast<unsigned int>(m_pWindow->GetWidth() - 17.5f);
-		const unsigned int height = static_cast<unsigned int>(m_pWindow->GetHeight() - 37.f);
+		const unsigned int width = m_pWindow->GetWidth();
+		const unsigned int height = m_pWindow->GetHeight();
 
 		// Create SwapChain Descriptor
 		DXGI_SWAP_CHAIN_DESC swapChainDesc{};
@@ -151,5 +150,72 @@ namespace Smile
 	void DirectX11Context::Present()
 	{
 		m_pSwapChain->Present(m_pWindow->IsVSync(), 0);
+	}
+
+	void DirectX11Context::OnWindowResize(uint32_t width, uint32_t height)
+	{
+		if (!m_pSwapChain)
+			return;
+
+		m_pDeviceContext->OMSetRenderTargets(0, 0, 0);
+		SAFE_RELEASE(m_pCurrentRenderTarget);
+		SAFE_RELEASE(m_pDepthStencilView);
+		SAFE_RELEASE(m_pRenderTargetBuffer);
+		SAFE_RELEASE(m_pDepthStencilBuffer);
+
+		HRESULT result = m_pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::OnWindowResize > Failed to resize buffers");
+			return;
+		}
+
+		result = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pRenderTargetBuffer));
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::OnWindowResize > Failed to resize buffers");
+			return;
+		}
+
+		result = m_pDevice->CreateRenderTargetView(m_pRenderTargetBuffer, 0, &m_pCurrentRenderTarget);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::OnWindowResize > Failed to create render target view");
+			return;
+		}
+
+		D3D11_TEXTURE2D_DESC depthStencilDesc{};
+		depthStencilDesc.Width = width;
+		depthStencilDesc.Height = height;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags = 0;
+		depthStencilDesc.MiscFlags = 0;
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+		depthStencilViewDesc.Format = depthStencilDesc.Format;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
+		result = m_pDevice->CreateTexture2D(&depthStencilDesc, 0, &m_pDepthStencilBuffer);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::OnWindowResize > Failed to create depth stencil buffer");
+			return;
+		}
+
+		result = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::OnWindowResize > Failed to create depth stencil view");
+			return;
+		}
+
+		m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, m_pDepthStencilView);
+
 	}
 }

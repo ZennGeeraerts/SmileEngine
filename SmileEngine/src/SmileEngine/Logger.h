@@ -75,6 +75,7 @@ namespace Smile
 				printf("[%s]\t", logName);
 				printf(message, args...);
 				printf("\n");
+				printf("%s", SM_NRM);
 			}
 		}
 

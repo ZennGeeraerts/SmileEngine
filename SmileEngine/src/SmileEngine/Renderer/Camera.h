@@ -3,9 +3,14 @@
 
 namespace Smile
 {
-	class Camera
+	class Camera final
 	{
 	public:
+		Camera()
+		{
+			DirectX::XMStoreFloat4x4(&m_ProjectionMatrix, DirectX::XMMatrixIdentity());
+		}
+
 		Camera(const DirectX::XMFLOAT4X4& projectionMatrix)
 			: m_ProjectionMatrix{ projectionMatrix }
 		{}

@@ -11,6 +11,8 @@ public:
 	virtual void OnImGuiRender() override;
 
 private:
+	bool OnWindowResize(Smile::WindowResizeEvent& e);
+
 	Smile::Ref<Smile::Scene> m_pActiveScene;
 
 	Smile::Entity m_CameraEntity;

@@ -14,7 +14,6 @@ Smile::SmileGame* Smile::CreateGame()
 
 ExampleLayer::ExampleLayer()
 	: Layer("Example")
-	, m_CameraPosition{ 0.f, 0.f, 0.f }
 {
 	/*float vertices[]
 	{
@@ -139,9 +138,9 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	if (Smile::Input::IsKeyPressed(SM_LCONTROL))
 		dir.y -= 1;
 
-	dir.x = forward.x * dir.x + right.x * dir.x;
-	dir.y = forward.y * dir.y + right.y * dir.y;
-	dir.z = forward.z * dir.z + right.z * dir.z;
+	dir.x = forward.x * dir.z + right.x * dir.x;
+	//dir.y = forward.y * dir.z + right.y * dir.x;
+	dir.z = forward.z * dir.z + right.z * dir.x;
 
 	auto dirMat = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir));
 	DirectX::XMStoreFloat3(&dir, dirMat);
@@ -162,13 +161,27 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 void ExampleLayer::OnEvent(Smile::Event& event)
 {
 	Smile::EventDispatcher dispatcher{ event };
+	dispatcher.Dispatch<Smile::WindowResizeEvent>(SM_BIND_EVENT_FN(ExampleLayer::OnWindowResize));
 }
 
 void ExampleLayer::OnImGuiRender()
 {
-	/*ImGui::Begin("Settings");
-	ImGui::ColorEdit3("Triangle Color", &m_TriangleColor.x);
-	ImGui::End();*/
+	ImGui::Begin("Settings");
+	ImGui::ColorEdit3("Triangle Color", &m_CameraPosition.x);
+	ImGui::End();
+}
+
+bool ExampleLayer::OnWindowResize(Smile::WindowResizeEvent& e)
+{
+	const auto width = e.GetWidth();
+	const auto height = e.GetHeight();
+
+	if (width == 0 || height == 0)
+		return false;
+
+	auto& cameraComponent = m_CameraEntity.GetComponent<Smile::CameraComponent>();
+	cameraComponent = DirectX::XMMatrixPerspectiveFovLH(45, width / static_cast<float>(height), 0.1f, 2500.f);
+	return false;
 }
 
 /*-----------------------------------------------------------------------------------------------------------*/

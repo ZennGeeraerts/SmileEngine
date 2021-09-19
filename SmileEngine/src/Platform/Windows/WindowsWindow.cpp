@@ -51,7 +51,6 @@ namespace Smile
 		SM_LOG_INFO("WindowsWindow::Init > Creating window: %s (%d, %d)", settings.Title.c_str(), settings.Width, settings.Height);
 
 		// Create window class
-
 		const wchar_t* className = L"SmileWindowClass";
 		WNDCLASSEX windowClass;
 		windowClass.cbSize = sizeof(WNDCLASSEX);
@@ -72,18 +71,24 @@ namespace Smile
 		windowClass.lpfnWndProc = WindowsProcedureStatic;
 
 		int success = RegisterClassEx(&windowClass);
-		SM_ASSERT(success, "Could not register window class!")
+		SM_ASSERT(success, "Could not register window class!");
+
+		RECT windowRect{};
+		windowRect.left = 0;
+		windowRect.right = settings.Width + windowRect.left;
+		windowRect.top = 0;
+		windowRect.bottom = settings.Height + windowRect.top;
+		AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, FALSE);
 
 		// Create and display the window
-
 		auto windowTitle = std::wstring{ settings.Title.begin(), settings.Title.end() };
 		m_WindowHandle = CreateWindow(className,
 				windowTitle.c_str(),
 				WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
 				CW_USEDEFAULT,
 				CW_USEDEFAULT,
-				settings.Width,
-				settings.Height,
+				windowRect.right - windowRect.left,
+				windowRect.bottom - windowRect.top,
 				nullptr,
 				nullptr,
 				HINSTANCE(),
@@ -173,13 +178,13 @@ namespace Smile
 			WindowCloseEvent event{};
 			pWindow->m_Data.EventCallback(event);
 			DestroyWindow(m_WindowHandle);
-			return 0;
+			break;
 		}
 
 		case WM_DESTROY:
 		{
 			PostQuitMessage(0);
-			return 0;
+			break;
 		}
 
 		case WM_SIZE:
@@ -256,6 +261,7 @@ namespace Smile
 		{
 			KeyTypedEvent event{ static_cast<int>(wParam) };
 			pWindow->m_Data.EventCallback(event);
+			break;
 		}
 
 		default:

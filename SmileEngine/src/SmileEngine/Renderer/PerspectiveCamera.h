@@ -9,14 +9,14 @@ namespace Smile
 	public:
 		PerspectiveCamera(float fov, float aspectRatio);
 
-		virtual const DirectX::XMFLOAT3& GetPosition() const { return m_Position; }
-		virtual float GetRotation() const { return m_Rotation; }
-		virtual const DirectX::XMFLOAT4X4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
-		virtual const DirectX::XMFLOAT4X4& GetViewMatrix() const { return m_ViewMatrix; }
-		virtual const DirectX::XMFLOAT4X4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
+		void SetProjectionMatrix(float fov, float aspectRatio);
 
-		virtual void SetPosition(const DirectX::XMFLOAT3& position);
-		virtual void SetRotation(float rotation);
+		const DirectX::XMFLOAT4X4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
+		const DirectX::XMFLOAT4X4& GetViewMatrix() const { return m_ViewMatrix; }
+		const DirectX::XMFLOAT4X4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
+
+		void SetPosition(const DirectX::XMFLOAT3& position);
+		void SetRotation(const DirectX::XMFLOAT3& rotation);
 
 	private:
 		virtual void RecalculateViewMatrix();
@@ -26,8 +26,8 @@ namespace Smile
 		DirectX::XMFLOAT4X4 m_ViewMatrix;
 		DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
 
-		DirectX::XMFLOAT3 m_Position;
-		float m_Rotation = 0.0f;
+		DirectX::XMFLOAT3 m_Position = { 0.f, 0.f, 0.f };
+		DirectX::XMFLOAT3 m_Rotation = { 0.f, 0.f, 0.f };
 	};
 }
 

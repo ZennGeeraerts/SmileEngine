@@ -29,11 +29,13 @@ namespace Smile
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
 		std::unique_ptr<Window> m_pWindow;
 		ImGuiLayer* m_pImGuiLayer;
-		bool m_bRunning;
+		bool m_bRunning = true;
+		bool m_bMinimized = false;
 		LayerStack m_LayerStack;
 
 	private:

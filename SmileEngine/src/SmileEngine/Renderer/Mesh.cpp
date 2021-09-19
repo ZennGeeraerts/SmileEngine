@@ -45,6 +45,8 @@ namespace Smile
 					memcpy(pDataLocation, bUseTexCoords ? &m_TexCoords[i] : &m_DefaultFloat2, element.Size);
 				else if (element.Name == "Tangent")
 					memcpy(pDataLocation, bUseTangents ? &m_Tangents[i] : &m_DefaultFloat3, element.Size);
+				else if (element.Name == "Binormal")
+					memcpy(pDataLocation, bUseBinormals ? &m_Binormals[i] : &m_DefaultFloat3, element.Size);
 
 				pDataLocation = (char*)pDataLocation + element.Size;
 			}

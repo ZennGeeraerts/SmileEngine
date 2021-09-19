@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\PerspectiveCameraController.h" />
     <ClInclude Include="Libs\entt\entt.hpp" />
     <ClInclude Include="Libs\ImGui\imconfig.h" />
     <ClInclude Include="Libs\ImGui\imgui.h" />
@@ -50,7 +51,7 @@
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
-    <ClInclude Include="src\SmileEngine\Keycodes.h" />
+    <ClInclude Include="src\SmileEngine\KeyCodes.h" />
     <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h" />
     <ClInclude Include="src\SmileEngine\Input.h" />
@@ -78,6 +79,7 @@
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\PerspectiveCameraController.cpp" />
     <ClCompile Include="Libs\ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

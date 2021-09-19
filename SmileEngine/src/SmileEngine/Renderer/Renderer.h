@@ -15,6 +15,8 @@ namespace Smile
 		static void Initialize();
 		static void CleanUp();
 
+		static void OnWindowResize(uint32_t width, uint32_t height);
+
 		static void BeginScene(const Camera& camera, const DirectX::XMFLOAT4X4& cameraTransform);
 		static void EndScene();
 

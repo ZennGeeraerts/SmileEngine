@@ -10,7 +10,6 @@ namespace Smile
 	SmileGame* SmileGame::m_pInstance = nullptr;
 
 	SmileGame::SmileGame()
-		: m_bRunning{ true }
 	{
 		SM_ASSERT(!m_pInstance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1");
 		m_pInstance = this;
@@ -47,6 +46,7 @@ namespace Smile
 	{
 		EventDispatcher dispatcher{ e };
 		dispatcher.Dispatch<WindowCloseEvent>(SM_BIND_EVENT_FN(SmileGame::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(SM_BIND_EVENT_FN(SmileGame::OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -66,14 +66,17 @@ namespace Smile
 			time.OnUpdate();
 			Timestep deltaTime = time.GetDeltaTime();
 
-			for (Layer* pLayer : m_LayerStack)
-				pLayer->OnUpdate(deltaTime);
+			if (!m_bMinimized)
+			{
+				for (Layer* pLayer : m_LayerStack)
+					pLayer->OnUpdate(deltaTime);
+			}
 
 			m_pImGuiLayer->Begin();
 			for (Layer* pLayer : m_LayerStack)
 				pLayer->OnImGuiRender();
 			m_pImGuiLayer->End();
-			
+
 			m_pWindow->OnUpdate();
 		}
 	}
@@ -82,5 +85,15 @@ namespace Smile
 	{
 		m_bRunning = false;
 		return true;
+	}
+
+	bool SmileGame::OnWindowResize(WindowResizeEvent& e)
+	{
+		m_bMinimized = (e.GetWidth() == 0) || (e.GetHeight() == 0);
+
+		if (!m_bMinimized)
+			Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 }

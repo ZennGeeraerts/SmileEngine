@@ -28,6 +28,7 @@
 
 #include "SmileEngine/Renderer/OrthographicCamera.h"
 #include "SmileEngine/Renderer/PerspectiveCamera.h"
+#include "SmileEngine/PerspectiveCameraController.h"
 
 /* ---Entry point--- */
 #include "SmileEngine/EntryPoint.h"
