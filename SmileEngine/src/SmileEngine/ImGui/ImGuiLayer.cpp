@@ -194,8 +194,6 @@ namespace Smile
 		io.DisplaySize = ImVec2{ static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()) };
 		io.DisplayFramebufferScale = ImVec2{ 1.f, 1.f };
 
-		// TODO: Update window size and DirectXContext
-
 		return false;
 	}
 }

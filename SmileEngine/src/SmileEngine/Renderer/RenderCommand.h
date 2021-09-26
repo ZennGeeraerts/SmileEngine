@@ -18,9 +18,9 @@ namespace Smile
 			SAFE_DELETE(m_pRendererAPI);
 		}
 
-		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+		inline static void ResizeWindow(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 		{
-			m_pRendererAPI->SetViewport(x, y, width, height);
+			m_pRendererAPI->ResizeWindow(x, y, width, height);
 		}
 
 		inline static void SetClearColor(const DirectX::XMFLOAT4& color)

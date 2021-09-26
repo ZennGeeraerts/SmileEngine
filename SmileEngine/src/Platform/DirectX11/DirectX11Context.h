@@ -19,8 +19,6 @@ namespace Smile
 		virtual void Init() override;
 		virtual void Present() override;
 
-		void OnWindowResize(uint32_t width, uint32_t height);
-
 		inline ID3D11Device* GetDevice() const { return m_pDevice; }
 		inline ID3D11DeviceContext* GetDeviceContext() const { return m_pDeviceContext; }
 		inline ID3D11RenderTargetView* GetRenderTargetView() const { return m_pCurrentRenderTarget; }
@@ -38,5 +36,7 @@ namespace Smile
 
 		ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
 		ID3D11Resource* m_pRenderTargetBuffer = nullptr;
+
+		friend class DirectX11RendererAPI;
 	};
 }

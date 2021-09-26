@@ -1,8 +1,4 @@
 ﻿  DirectX11RendererAPI.cpp
-C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11RendererAPI.cpp(20,23): warning C4244: '=': conversion from 'uint32_t' to 'FLOAT', possible loss of data
-C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11RendererAPI.cpp(21,23): warning C4244: '=': conversion from 'uint32_t' to 'FLOAT', possible loss of data
-C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11RendererAPI.cpp(22,20): warning C4244: '=': conversion from 'uint32_t' to 'FLOAT', possible loss of data
-C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11RendererAPI.cpp(23,21): warning C4244: '=': conversion from 'uint32_t' to 'FLOAT', possible loss of data
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
