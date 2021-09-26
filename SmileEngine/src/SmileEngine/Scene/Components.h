@@ -6,7 +6,7 @@
 
 #include "SmileEngine/Renderer/Camera.h"
 
-#include "SmileEngine/MeshLoader.h"
+#include "SmileEngine/Core/MeshLoader.h"
 #include "SmileEngine/Renderer/Mesh.h"
 
 namespace Smile

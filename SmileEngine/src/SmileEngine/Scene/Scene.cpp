@@ -3,7 +3,7 @@
 
 #include "Components.h"
 #include "SmileEngine/Renderer/Renderer.h"
-#include "SmileEngine/SmileGame.h"
+#include "SmileEngine/Core/SmileGame.h"
 
 #include "Entity.h"
 

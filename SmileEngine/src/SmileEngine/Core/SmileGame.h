@@ -3,7 +3,7 @@
 #include "Core.h"
 
 #include "Window.h"
-#include "SmileEngine/LayerStack.h"
+#include "SmileEngine/Core/LayerStack.h"
 #include "SmileEngine/Events/Event.h"
 #include "SmileEngine/Events/ApplicationEvent.h"
 

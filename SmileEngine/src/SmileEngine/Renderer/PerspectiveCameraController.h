@@ -5,7 +5,7 @@
 #include "SmileEngine/Events/ApplicationEvent.h"
 #include "SmileEngine/Events/MouseEvent.h"
 
-#include "Scene/Components.h"
+#include "SmileEngine/Scene/Components.h"
 
 namespace Smile
 {

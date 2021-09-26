@@ -1,4 +1,43 @@
-﻿  DirectX11RendererAPI.cpp
+﻿  smpch.cpp
+  Layer.cpp
+  LayerStack.cpp
+  Logger.cpp
+  MeshLoader.cpp
+  SmileGame.cpp
+  DirectX11Material.cpp
+  Material.cpp
+  DirectX11Texture.cpp
+  Mesh.cpp
+  PerspectiveCamera.cpp
+  PerspectiveCameraController.cpp
+  Scene.cpp
+  OrthographicCamera.cpp
+  DirectX11RendererAPI.cpp
+  RenderCommand.cpp
+  RendererAPI.cpp
+  DirectX11DataStructs.cpp
+  DirectX11Shader.cpp
+  Shader.cpp
+  Renderer.cpp
+  Generating Code...
+  Compiling...
+  DirectX11Buffer.cpp
+  ImGuiLayer.cpp
+  DirectX11Context.cpp
+  Buffer.cpp
+  VertexArray.cpp
+  SmTime.cpp
+  WindowsWindow.cpp
+  WindowsInput.cpp
+  Texture.cpp
+  Generating Code...
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_dx11.cpp
+  imgui_impl_win32.cpp
+  imgui_widgets.cpp
+  Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

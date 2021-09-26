@@ -1,5 +1,5 @@
 #pragma once
-#include "SmileEngine/Logger.h"
+#include "SmileEngine/Core/Logger.h"
 
 namespace Smile
 {

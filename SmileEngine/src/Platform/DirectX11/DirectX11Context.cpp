@@ -1,9 +1,9 @@
 #include "smpch.h"
 #include "DirectX11Context.h"
 
-#include "SmileEngine/Window.h"
-#include "SmileEngine/Core.h"
-#include "SmileEngine/Logger.h"
+#include "SmileEngine/Core/Window.h"
+#include "SmileEngine/Core/Core.h"
+#include "SmileEngine/Core/Logger.h"
 
 namespace Smile
 {

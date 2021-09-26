@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "MeshLoader.h"
 
-#include "SmileEngine/Logger.h"
+#include "SmileEngine/Core/Logger.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>

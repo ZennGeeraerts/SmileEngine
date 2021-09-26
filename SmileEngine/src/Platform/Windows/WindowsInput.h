@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SmileEngine/Input.h"
+#include "SmileEngine/Core/Input.h"
 
 namespace Smile
 {

@@ -2,8 +2,8 @@
 #include "DirectX11Shader.h"
 
 #include "DirectX11Context.h"
-#include "SmileEngine/Logger.h"
-#include "SmileEngine/SmileGame.h"
+#include "SmileEngine/Core/Logger.h"
+#include "SmileEngine/Core/SmileGame.h"
 
 namespace Smile
 {

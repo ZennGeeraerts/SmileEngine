@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/Mesh.h"
+#include "SmileEngine/Renderer/Mesh.h"
 
 namespace Smile
 {

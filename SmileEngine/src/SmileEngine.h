@@ -2,14 +2,14 @@
 
 // Header file to include in Smile Engine applications
 
-#include "SmileEngine/SmileGame.h"
-#include "SmileEngine/Layer.h"
-#include "SmileEngine/Logger.h"
+#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Layer.h"
+#include "SmileEngine/Core/Logger.h"
 
 #include "SmileEngine/Core/Timestep.h"
 
-#include "SmileEngine/Input.h"
-#include "SmileEngine/KeyCodes.h"
+#include "SmileEngine/Core/Input.h"
+#include "SmileEngine/Core/KeyCodes.h"
 
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
@@ -28,10 +28,10 @@
 
 #include "SmileEngine/Renderer/OrthographicCamera.h"
 #include "SmileEngine/Renderer/PerspectiveCamera.h"
-#include "SmileEngine/PerspectiveCameraController.h"
+#include "SmileEngine/Renderer/PerspectiveCameraController.h"
 
 /* ---Entry point--- */
-#include "SmileEngine/EntryPoint.h"
+#include "SmileEngine/Core/EntryPoint.h"
 
 /* --- DirectX --- */
 #include <DirectXMath.h>

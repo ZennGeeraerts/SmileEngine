@@ -1,6 +1,6 @@
 #include "smpch.h"
 #include "WindowsInput.h"
-#include "SmileEngine/SmileGame.h"
+#include "SmileEngine/Core/SmileGame.h"
 
 namespace Smile
 {

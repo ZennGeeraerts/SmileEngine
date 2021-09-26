@@ -19,7 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\SmileEngine\PerspectiveCameraController.h" />
+    <ClInclude Include="src\SmileEngine\Core\Core.h" />
+    <ClInclude Include="src\SmileEngine\Core\EntryPoint.h" />
+    <ClInclude Include="src\SmileEngine\Core\Input.h" />
+    <ClInclude Include="src\SmileEngine\Core\KeyCodes.h" />
+    <ClInclude Include="src\SmileEngine\Core\Layer.h" />
+    <ClInclude Include="src\SmileEngine\Core\LayerStack.h" />
+    <ClInclude Include="src\SmileEngine\Core\Logger.h" />
+    <ClInclude Include="src\SmileEngine\Core\MeshLoader.h" />
+    <ClInclude Include="src\SmileEngine\Core\SmileGame.h" />
+    <ClInclude Include="src\SmileEngine\Core\Window.h" />
     <ClInclude Include="Libs\entt\entt.hpp" />
     <ClInclude Include="Libs\ImGui\imconfig.h" />
     <ClInclude Include="Libs\ImGui\imgui.h" />
@@ -33,9 +42,9 @@
     <ClInclude Include="src\SmileEngine\Renderer\Material.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Texture.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Mesh.h" />
-    <ClInclude Include="src\SmileEngine\MeshLoader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Camera.h" />
     <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCamera.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCameraController.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\Component.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\MeshRendererComponent.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TagComponent.h" />
@@ -51,35 +60,30 @@
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
-    <ClInclude Include="src\SmileEngine\KeyCodes.h" />
     <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h" />
-    <ClInclude Include="src\SmileEngine\Input.h" />
-    <ClInclude Include="src\SmileEngine\LayerStack.h" />
-    <ClInclude Include="src\SmileEngine\Layer.h" />
     <ClInclude Include="src\SmileEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\SmileEngine\Events\Event.h" />
     <ClInclude Include="src\SmileEngine\Events\KeyEvent.h" />
     <ClInclude Include="src\SmileEngine\Events\MouseEvent.h" />
-    <ClInclude Include="src\SmileEngine\Logger.h" />
     <ClInclude Include="src\SmileEngine.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Buffer.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RenderingContext.h" />
     <ClInclude Include="src\SmileEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h" />
-    <ClInclude Include="src\SmileEngine\SmileGame.h" />
-    <ClInclude Include="src\SmileEngine\Core.h" />
-    <ClInclude Include="src\SmileEngine\EntryPoint.h" />
     <ClInclude Include="src\SmileEngine\Core\SmTime.h" />
     <ClInclude Include="src\smpch.h" />
-    <ClInclude Include="src\SmileEngine\Window.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\SmileEngine\PerspectiveCameraController.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\Layer.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\LayerStack.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\Logger.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\MeshLoader.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\SmileGame.cpp" />
     <ClCompile Include="Libs\ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -120,8 +124,8 @@
     <ClCompile Include="src\SmileEngine\Renderer\Material.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Texture.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Mesh.cpp" />
-    <ClCompile Include="src\SmileEngine\MeshLoader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCamera.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\Scene.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11RendererAPI.cpp" />
@@ -134,12 +138,8 @@
     <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Context.cpp" />
-    <ClCompile Include="src\SmileEngine\LayerStack.cpp" />
-    <ClCompile Include="src\SmileEngine\Layer.cpp" />
-    <ClCompile Include="src\SmileEngine\Logger.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\SmileEngine\SmileGame.cpp" />
     <ClCompile Include="src\SmileEngine\Core\SmTime.cpp" />
     <ClCompile Include="src\smpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

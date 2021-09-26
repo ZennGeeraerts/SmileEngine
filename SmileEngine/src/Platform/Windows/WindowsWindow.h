@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SmileEngine/Window.h"
+#include "SmileEngine/Core/Window.h"
 #include "SmileEngine/Renderer/RenderingContext.h"
 
 class RenderingContext;

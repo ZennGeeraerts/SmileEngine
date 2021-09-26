@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SmileEngine/Core.h"
+#include "SmileEngine/Core/Core.h"
 #include <chrono>
 #include "Timestep.h"
 

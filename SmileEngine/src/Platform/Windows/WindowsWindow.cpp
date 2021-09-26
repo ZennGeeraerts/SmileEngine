@@ -1,6 +1,6 @@
 #include "smpch.h"
 #include "WindowsWindow.h"
-#include "SmileEngine/Logger.h"
+#include "SmileEngine/Core/Logger.h"
 
 #include "SmileEngine/Events/ApplicationEvent.h"
 #include "SmileEngine/Events/MouseEvent.h"
@@ -8,7 +8,7 @@
 
 #include "SmileEngine/Renderer/RenderingContext.h"
 #include "SmileEngine/Renderer/Renderer.h"
-#include "SmileEngine/Input.h"
+#include "SmileEngine/Core/Input.h"
 // For now using only DirectX11
 #include "Platform/DirectX11/DirectX11Context.h"
 

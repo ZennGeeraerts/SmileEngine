@@ -1,8 +1,8 @@
 #include "smpch.h"
 #include "PerspectiveCameraController.h"
 
-#include "SmileEngine/Input.h"
-#include "SmileEngine/Keycodes.h"
+#include "SmileEngine/Core/Input.h"
+#include "SmileEngine/Core/KeyCodes.h"
 
 namespace Smile
 {

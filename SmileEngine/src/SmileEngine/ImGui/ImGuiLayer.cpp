@@ -5,11 +5,11 @@
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
 
-#include "SmileEngine/SmileGame.h"
+#include "SmileEngine/Core/SmileGame.h"
 #include "Platform/Windows/WindowsWindow.h"
 #include "Platform/DirectX11/DirectX11Context.h"
 
-#include "SmileEngine/Logger.h"
+#include "SmileEngine/Core/Logger.h"
 
 namespace Smile
 {

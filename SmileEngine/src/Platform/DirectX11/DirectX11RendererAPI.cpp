@@ -2,7 +2,7 @@
 #include "DirectX11RendererAPI.h"
 
 #include "DirectX11Shader.h"
-#include "SmileEngine/SmileGame.h"
+#include "SmileEngine/Core/SmileGame.h"
 
 namespace Smile
 {
