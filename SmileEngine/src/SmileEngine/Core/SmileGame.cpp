@@ -81,6 +81,11 @@ namespace Smile
 		}
 	}
 
+	void SmileGame::ShutDown()
+	{
+		m_bRunning = false;
+	}
+
 	bool SmileGame::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_bRunning = false;

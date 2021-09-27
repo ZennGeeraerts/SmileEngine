@@ -1,7 +1,6 @@
 #pragma once
 #include "SmileEngine/Renderer/Shader.h"
 #include "SmileEngine/Renderer/Buffer.h"
-#include "DirectX11Texture.h"
 
 namespace Smile
 {

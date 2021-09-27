@@ -18,6 +18,7 @@ namespace Smile
 		virtual ~SmileGame();
 
 		void Run();
+		void ShutDown();
 
 		void OnEvent(Event& e);
 

@@ -22,6 +22,7 @@ private:
 	float m_CameraRotationSpeed = 180.f;
 
 	Smile::Entity m_Gun;
+	Smile::Ref<Smile::Texture2D> m_pTexture;
 };
 
 class MainGame final : public Smile::SmileGame

@@ -13,7 +13,7 @@ namespace Smile
 
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
-		ID3D11ShaderResourceView* GetShaderResourceView() const { return m_pShaderResourceView; }
+		virtual void* GetData() const override { return m_pShaderResourceView; }
 
 	private:
 		bool LoadTexture(const std::string& filePath);

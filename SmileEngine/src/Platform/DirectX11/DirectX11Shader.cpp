@@ -88,13 +88,10 @@ namespace Smile
 
 	void DirectX11Shader::UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D)
 	{
-		auto pDirectX11Texture2D = std::dynamic_pointer_cast<DirectX11Texture2D>(pTexture2D);
-		SM_ASSERT(pDirectX11Texture2D, "DirectX11Shader::UploadTexture2D > Texture is not a DirectX11Texture");
-
 		auto pTextureVariable = GetEffectVariable(sementicName)->AsShaderResource();
 		if (pTextureVariable->IsValid())
 		{
-			pTextureVariable->SetResource(pDirectX11Texture2D->GetShaderResourceView());
+			pTextureVariable->SetResource((ID3D11ShaderResourceView*)pTexture2D->GetData());
 		}
 	}
 
