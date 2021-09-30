@@ -9,7 +9,7 @@ namespace Smile
 	DirectX11Framebuffer::DirectX11Framebuffer(const FramebufferData& framebufferData)
 		: m_Data{ framebufferData }
 	{
-		m_pDirectX11Context = dynamic_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pDirectX11Context, "DirectX11Framebuffer::DirectX11Framebuffer > Rendering context is not a DirectX11RenderingContext");
 
 		Invalidate();

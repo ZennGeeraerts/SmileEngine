@@ -33,6 +33,8 @@ namespace Smile
 		friend class EventDispatcher;
 		friend class SmileGame;
 	public:
+		virtual ~Event() = default;
+
 		// GetName and ToString is not optimal and should only be used for debugging, not in the actual game
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;

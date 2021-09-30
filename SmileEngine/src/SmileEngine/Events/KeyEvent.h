@@ -4,9 +4,11 @@
 
 namespace Smile
 {
-	class  KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
+		virtual ~KeyEvent() = default;
+
 		inline int GetKeyCode() const
 		{
 			return m_KeyCode;
@@ -48,7 +50,7 @@ namespace Smile
 		int m_RepeatCount;
 	};
 
-	class  KeyReleasedEvent final : public KeyEvent
+	class KeyReleasedEvent final : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keyCode)
@@ -66,7 +68,7 @@ namespace Smile
 		EVENT_CLASS_TYPE(eKeyReleased);
 	};
 
-	class  KeyTypedEvent final : public KeyEvent
+	class KeyTypedEvent final : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keyCode)

@@ -67,12 +67,10 @@ namespace Smile
 		ImGui_ImplWin32_Init(window.GetNativeWindow());
 
 		RenderingContext* pRenderingContext = window.GetRenderingContext();
-		DirectX11Context* pD11Context = dynamic_cast<DirectX11Context*>(pRenderingContext);
+		DirectX11Context* pD11Context = static_cast<DirectX11Context*>(pRenderingContext);
 
-		if (pD11Context)
-			ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
-		else
-			SM_LOG_ERROR("ImGuiLayer::OnAttach > ImGuiLayer currently only supports DirectX11");
+		SM_ASSERT(pD11Context, "ImGuiLayer::OnAttach > ImGuiLayer currently only supports DirectX11");
+		ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
 
 		m_bInitialized = true;
 	}
