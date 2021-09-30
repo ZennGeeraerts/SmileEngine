@@ -134,4 +134,18 @@ namespace Smile
 		m_pDirectX11Context->GetDeviceContext()->ClearRenderTargetView(m_pRenderTargetView, pClearColor);
 		//m_pDirectX11Context->GetDeviceContext()->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	}
+
+	void DirectX11Framebuffer::Resize(uint32_t width, uint32_t height)
+	{
+		if ((width <= 0) || (height <= 0))
+		{ 
+			SM_LOG_WARNING("DirectX11Framebuffer::Resize > Invalid framebuffer size: %d, %d", width, height);
+			return;
+		}
+
+		m_Data.Width = width;
+		m_Data.Height = height;
+
+		Invalidate();
+	}
 }

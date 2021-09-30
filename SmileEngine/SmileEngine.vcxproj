@@ -77,6 +77,7 @@
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
+    <ClInclude Include="src\SmileEngine\Core\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Texture.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\Utils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

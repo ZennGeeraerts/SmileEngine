@@ -10,12 +10,13 @@ namespace Smile
 		DirectX11Framebuffer(const FramebufferData& framebufferData);
 		virtual ~DirectX11Framebuffer();
 
-		void Invalidate();
+		virtual void Invalidate() override;
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
 		virtual void SetClearColor(const DirectX::XMFLOAT4& color) override;
 		virtual void Clear() override;
+		virtual void Resize(uint32_t width, uint32_t height) override;
 
 		virtual const FramebufferData& GetData() const override { return m_Data; }
 		virtual void* GetColor() const override { return m_pColorShaderResourceView; }

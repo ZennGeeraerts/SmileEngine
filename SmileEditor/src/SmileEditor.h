@@ -29,6 +29,7 @@ namespace Smile
 		Entity m_GunEntity;
 
 		Ref<Framebuffer> m_pFramebuffer;
+		DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
 	};
 
 	class SmileEditorGame final : public SmileGame

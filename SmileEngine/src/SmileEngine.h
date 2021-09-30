@@ -11,6 +11,8 @@
 #include "SmileEngine/Core/Input.h"
 #include "SmileEngine/Core/KeyCodes.h"
 
+#include "SmileEngine/Core/Utils.h"
+
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
 #include "SmileEngine/Scene/Scene.h"

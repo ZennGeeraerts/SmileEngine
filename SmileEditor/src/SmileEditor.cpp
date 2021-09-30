@@ -127,78 +127,90 @@ namespace Smile
 
 	void SmileEditorLayer::OnImGuiRender()
 	{
-		static bool bDockSpaceOpen = true;
-		if (bDockSpaceOpen)
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (opt_fullscreen)
 		{
-			static bool opt_fullscreen = true;
-			static bool opt_padding = false;
-			static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-			// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-			// because it would be confusing to have two docking targets within each others.
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-			if (opt_fullscreen)
-			{
-				ImGuiViewport* viewport = ImGui::GetMainViewport();
-				ImGui::SetNextWindowPos(viewport->GetWorkPos());
-				ImGui::SetNextWindowSize(viewport->GetWorkSize());
-				ImGui::SetNextWindowViewport(viewport->ID);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-				window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-			}
-			else
-			{
-				dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-			}
-
-			// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-			// and handle the pass-thru hole, so we ask Begin() to not render a background.
-			if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-				window_flags |= ImGuiWindowFlags_NoBackground;
-
-			// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-			// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-			// all active windows docked into it will lose their parent and become undocked.
-			// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-			// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-			if (!opt_padding)
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-			ImGui::Begin("DockSpace Demo", &bDockSpaceOpen, window_flags);
-			if (!opt_padding)
-				ImGui::PopStyleVar();
-
-			if (opt_fullscreen)
-				ImGui::PopStyleVar(2);
-
-			// DockSpace
-			ImGuiIO& io = ImGui::GetIO();
-			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-			{
-				ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-			}
-
-			if (ImGui::BeginMenuBar())
-			{
-				if (ImGui::BeginMenu("File"))
-				{
-					if (ImGui::MenuItem("Exit"))
-						Smile::SmileGame::GetInstance().ShutDown();
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenuBar();
-			}
-
-			ImGui::Begin("Settings");
-			ImGui::Text("Text");
-			ImGui::Image(m_pFramebuffer->GetColor(), ImVec2{ 1280, 720 });
-			ImGui::End();
-
-			ImGui::End();
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->GetWorkPos());
+			ImGui::SetNextWindowSize(viewport->GetWorkSize());
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
+		else
+		{
+			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+		}
+
+		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+		// and handle the pass-thru hole, so we ask Begin() to not render a background.
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+		// all active windows docked into it will lose their parent and become undocked.
+		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+		if (!opt_padding)
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		static bool bDockSpaceOpen = true;
+		ImGui::Begin("DockSpace Demo", &bDockSpaceOpen, window_flags);
+		if (!opt_padding)
+			ImGui::PopStyleVar();
+
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
+
+		// DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Exit"))
+					Smile::SmileGame::GetInstance().ShutDown();
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
+
+		ImGui::Begin("Viewport");
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		if (!Utils::CompareFloats(viewportPanelSize.x, m_ViewportSize.x) || !Utils::CompareFloats(viewportPanelSize.y, m_ViewportSize.y))
+		{
+			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+
+			DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixPerspectiveFovLH(45, m_ViewportSize.x / m_ViewportSize.y, 0.1f, 2500.f);
+			DirectX::XMFLOAT4X4 projectionMatrix{};
+			DirectX::XMStoreFloat4x4(&projectionMatrix, projectionMatrixMat);
+			m_CameraEntity.GetComponent<CameraComponent>().Camera.SetProjectionMatrix(projectionMatrix);
+		}
+		ImGui::Image(m_pFramebuffer->GetColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
+		ImGui::End();
+
+		ImGui::PopStyleVar();
+
+		ImGui::End();
 	}
 
 	void SmileEditorLayer::OnEvent(Event& e)

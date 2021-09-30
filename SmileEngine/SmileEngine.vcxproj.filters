@@ -195,6 +195,9 @@
     <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SmileEngine\Core\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -303,6 +306,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Core\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
