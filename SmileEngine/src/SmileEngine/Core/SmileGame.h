@@ -14,7 +14,7 @@ namespace Smile
 	class SmileGame
 	{
 	public:
-		SmileGame();
+		SmileGame(const std::string& name = "Smile Game");
 		virtual ~SmileGame();
 
 		void Run();

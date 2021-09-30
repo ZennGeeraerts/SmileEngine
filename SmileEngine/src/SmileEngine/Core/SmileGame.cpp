@@ -9,14 +9,14 @@ namespace Smile
 {
 	SmileGame* SmileGame::m_pInstance = nullptr;
 
-	SmileGame::SmileGame()
+	SmileGame::SmileGame(const std::string& name)
 	{
 		SM_ASSERT(!m_pInstance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1");
 		m_pInstance = this;
 
 		Logger::SetPriority(LogPriority::eTrace);
 
-		m_pWindow = std::unique_ptr<Window>(Window::Create());
+		m_pWindow = std::unique_ptr<Window>(Window::Create(WindowSettings{ name }));
 		m_pWindow->SetEventCallback(SM_BIND_EVENT_FN(SmileGame::OnEvent));
 		m_pWindow->SetVSync(false);
 
