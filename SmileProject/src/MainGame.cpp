@@ -97,6 +97,7 @@ ExampleLayer::ExampleLayer()
 	auto pMetalnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_metallic.jpg");
 	auto pRoughnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_roughness.jpg");
 	auto pAOMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_AO.jpg");
+	auto pEnvironmentMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/Sunol_Cubemap.dds");
 	m_pTexture = Smile::Texture2D::Create("../SmileProject/Resources/Textures/uv_grid.png");
 
 	for (auto& pMesh : staticMesh.m_pMeshes)
@@ -106,7 +107,14 @@ ExampleLayer::ExampleLayer()
 		pMesh->GetShader()->UploadTexture2D("MetalnessMap", pMetalnessMap);
 		pMesh->GetShader()->UploadTexture2D("RoughnessMap", pRoughnessMap);
 		pMesh->GetShader()->UploadTexture2D("AOMap", pAOMap);
+		pMesh->GetShader()->UploadTexture2D("EnvironmentMap", pEnvironmentMap);
 	}
+
+	Smile::FramebufferData framebufferData{};
+	framebufferData.Width = 1280;
+	framebufferData.Height = 720;
+	m_pFramebuffer = Smile::Framebuffer::Create(framebufferData);
+	m_pFramebuffer->SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
@@ -124,24 +132,25 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 
 	const auto forward = transform.GetForward();
 	const auto right = transform.GetRight();
-	DirectX::XMFLOAT3 dir{};
+	DirectX::XMFLOAT3 move{};
 
 	if (Smile::Input::IsKeyPressed('A'))
-		dir.x -= 1;
+		move.x -= 1;
 	if (Smile::Input::IsKeyPressed('D'))
-		dir.x += 1;
+		move.x += 1;
 	if (Smile::Input::IsKeyPressed('S'))
-		dir.z -= 1;
+		move.z -= 1;
 	if (Smile::Input::IsKeyPressed('W'))
-		dir.z += 1;
+		move.z += 1;
 	if (Smile::Input::IsKeyPressed(SM_SPACE))
-		dir.y += 1;
+		move.y += 1;
 	if (Smile::Input::IsKeyPressed(SM_LCONTROL))
-		dir.y -= 1;
+		move.y -= 1;
 
-	dir.x = forward.x * dir.z + right.x * dir.x;
-	//dir.y = forward.y * dir.z + right.y * dir.x;
-	dir.z = forward.z * dir.z + right.z * dir.x;
+	DirectX::XMFLOAT3 dir{};
+	dir.x = forward.x * move.z + right.x * move.x;
+	//dir.y = forward.y * move.z + right.y * move.x;
+	dir.z = forward.z * move.z + right.z * move.x;
 
 	auto dirMat = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir));
 	DirectX::XMStoreFloat3(&dir, dirMat);
@@ -156,86 +165,93 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 	Smile::RenderCommand::Clear();
 
+	m_pFramebuffer->Bind();
+	m_pFramebuffer->Clear();
 	m_pActiveScene->OnUpdate(deltaTime);
+	m_pFramebuffer->Unbind();
 }
 
 void ExampleLayer::OnEvent(Smile::Event& event)
 {
 	Smile::EventDispatcher dispatcher{ event };
 	dispatcher.Dispatch<Smile::WindowResizeEvent>(SM_BIND_EVENT_FN(ExampleLayer::OnWindowResize));
+	dispatcher.Dispatch<Smile::MouseMovedEvent>(SM_BIND_EVENT_FN(ExampleLayer::OnMouseMovedEvent));
 }
 
 void ExampleLayer::OnImGuiRender()
 {
 	static bool bDockSpaceOpen = true;
-	static bool opt_fullscreen = true;
-	static bool opt_padding = false;
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-	// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-	// because it would be confusing to have two docking targets within each others.
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-	if (opt_fullscreen)
+	if (bDockSpaceOpen)
 	{
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->GetWorkPos());
-		ImGui::SetNextWindowSize(viewport->GetWorkSize());
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-	}
-	else
-	{
-		dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-	}
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-	// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-	// and handle the pass-thru hole, so we ask Begin() to not render a background.
-	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-		window_flags |= ImGuiWindowFlags_NoBackground;
-
-	// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-	// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-	// all active windows docked into it will lose their parent and become undocked.
-	// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-	// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-	if (!opt_padding)
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("DockSpace Demo", &bDockSpaceOpen, window_flags);
-	if (!opt_padding)
-		ImGui::PopStyleVar();
-
-	if (opt_fullscreen)
-		ImGui::PopStyleVar(2);
-
-	// DockSpace
-	ImGuiIO& io = ImGui::GetIO();
-	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	{
-		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-	}
-
-	if (ImGui::BeginMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (opt_fullscreen)
 		{
-			if (ImGui::MenuItem("Exit"))
-				Smile::SmileGame::GetInstance().ShutDown();
-			ImGui::EndMenu();
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->GetWorkPos());
+			ImGui::SetNextWindowSize(viewport->GetWorkSize());
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
+		else
+		{
+			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
 		}
 
-		ImGui::EndMenuBar();
+		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+		// and handle the pass-thru hole, so we ask Begin() to not render a background.
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+		// all active windows docked into it will lose their parent and become undocked.
+		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+		if (!opt_padding)
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace Demo", &bDockSpaceOpen, window_flags);
+		if (!opt_padding)
+			ImGui::PopStyleVar();
+
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
+
+		// DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Exit"))
+					Smile::SmileGame::GetInstance().ShutDown();
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::Begin("Settings");
+		ImGui::Text("Text");
+		ImGui::Image(m_pFramebuffer->GetColor(), ImVec2{ 1280, 720 });
+		ImGui::End();
+
+		ImGui::End();
 	}
-
-	ImGui::Begin("Settings");
-	ImGui::Text("Text");
-	ImGui::Image(m_pTexture->GetData(), ImVec2{ 64.f, 64.f });
-	ImGui::End();
-
-	ImGui::End();
 }
 
 bool ExampleLayer::OnWindowResize(Smile::WindowResizeEvent& e)
@@ -248,6 +264,28 @@ bool ExampleLayer::OnWindowResize(Smile::WindowResizeEvent& e)
 
 	auto& cameraComponent = m_CameraEntity.GetComponent<Smile::CameraComponent>();
 	cameraComponent = DirectX::XMMatrixPerspectiveFovLH(45, width / static_cast<float>(height), 0.1f, 2500.f);
+	return false;
+}
+
+bool ExampleLayer::OnMouseMovedEvent(Smile::MouseMovedEvent& e)
+{
+	/*if (m_bMouseStart)
+	{
+		m_PreviousMousePosX = e.GetX();
+		m_PreviousMousePosY = e.GetY();
+		m_bMouseStart = false;
+		return false;
+	}
+
+	auto& transform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
+	Smile::Timestep	deltaTime = Smile::SmTime::GetInstance().GetDeltaTime();
+
+	transform.Rotation.y += DirectX::XMConvertToRadians((e.GetX() - m_PreviousMousePosX) * m_CameraRotationSpeed * deltaTime);
+	transform.Rotation.x += DirectX::XMConvertToRadians((e.GetY() - m_PreviousMousePosY) * m_CameraRotationSpeed * deltaTime);
+
+	m_PreviousMousePosX = e.GetX();
+	m_PreviousMousePosY = e.GetY();*/
+
 	return false;
 }
 

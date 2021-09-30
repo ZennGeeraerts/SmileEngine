@@ -44,11 +44,6 @@ namespace Smile
 
 		DirectX::XMFLOAT3 GetForward()
 		{
-			/*DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(Rotation.x, Rotation.y, Rotation.z);
-			DirectX::XMFLOAT3 forward{};
-			DirectX::XMVECTOR forwardVec = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0, 0, 1, 0), rotationMat);
-			DirectX::XMStoreFloat3(&forward, forwardVec);
-			return forward;*/
 			DirectX::XMFLOAT3 forward{ 0, 0, 1 };
 			RotateVector(forward);
 			return forward;
@@ -56,11 +51,6 @@ namespace Smile
 
 		DirectX::XMFLOAT3 GetRight()
 		{
-			/*DirectX::XMMATRIX rotationMat = DirectX::XMMatrixRotationRollPitchYaw(Rotation.x, Rotation.y, Rotation.z);
-			DirectX::XMFLOAT3 right{};
-			DirectX::XMVECTOR rightVec = DirectX::XMVector3TransformCoord(DirectX::XMVectorSet(0, 0, 1, 0), rotationMat);
-			DirectX::XMStoreFloat3(&right, rightVec);
-			return right;*/
 			DirectX::XMFLOAT3 right{ 1, 0, 0 };
 			RotateVector(right);
 			return right;

@@ -1,0 +1,137 @@
+#include "smpch.h"
+#include "DirectX11Framebuffer.h"
+
+#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Logger.h"
+
+namespace Smile
+{
+	DirectX11Framebuffer::DirectX11Framebuffer(const FramebufferData& framebufferData)
+		: m_Data{ framebufferData }
+	{
+		m_pDirectX11Context = dynamic_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		SM_ASSERT(m_pDirectX11Context, "DirectX11Framebuffer::DirectX11Framebuffer > Rendering context is not a DirectX11RenderingContext");
+
+		Invalidate();
+	}
+
+	DirectX11Framebuffer::~DirectX11Framebuffer()
+	{
+		SAFE_RELEASE(m_pRenderTargetView);
+		SAFE_RELEASE(m_pColorBuffer);
+		SAFE_RELEASE(m_pColorShaderResourceView);
+		//SAFE_RELEASE(m_pDepthStencilBuffer);
+		//SAFE_RELEASE(m_pDepthStencilView);
+	}
+
+	void DirectX11Framebuffer::Invalidate()
+	{
+		SAFE_RELEASE(m_pRenderTargetView);
+		SAFE_RELEASE(m_pColorBuffer);
+		SAFE_RELEASE(m_pColorShaderResourceView);
+		//SAFE_RELEASE(m_pDepthStencilBuffer);
+		//SAFE_RELEASE(m_pDepthStencilView);
+
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = m_Data.Width;
+		textureDesc.Height = m_Data.Height;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+
+		HRESULT result = m_pDirectX11Context->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &m_pColorBuffer);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create Texture2D");
+			return;
+		}
+
+		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
+		renderTargetViewDesc.Format = textureDesc.Format;
+		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		renderTargetViewDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+
+		result = m_pDirectX11Context->GetDevice()->CreateRenderTargetView(m_pColorBuffer, &renderTargetViewDesc, &m_pRenderTargetView);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create render target view");
+			return;
+		}
+
+		result = m_pDirectX11Context->GetDevice()->CreateShaderResourceView(m_pColorBuffer, nullptr, &m_pColorShaderResourceView);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create shader resource view");
+			return;
+		}
+
+		/*D3D11_TEXTURE2D_DESC depthStencilDesc{};
+		depthStencilDesc.Width = m_Data.Width;
+		depthStencilDesc.Height = m_Data.Height;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		depthStencilDesc.CPUAccessFlags = 0;
+		depthStencilDesc.MiscFlags = 0;
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+		depthStencilViewDesc.Format = depthStencilDesc.Format;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;*/
+
+		/*result = m_pDirectX11Context->GetDevice()->CreateTexture2D(&depthStencilDesc, 0, &m_pDepthStencilBuffer);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create depth stencil buffer");
+			return;
+		}
+
+		result = m_pDirectX11Context->GetDevice()->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
+		if (FAILED(result))
+		{
+			SM_LOG_ERROR("DirectXContext::Init > Failed to create depth stencil view");
+			return;
+		}*/
+	}
+
+	void DirectX11Framebuffer::Bind()
+	{
+		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDirectX11Context->GetDepthStencilView());
+
+		D3D11_VIEWPORT viewPort{};
+		viewPort.Width = static_cast<float>(m_Data.Width);
+		viewPort.Height = static_cast<float>(m_Data.Height);
+		viewPort.MinDepth = 0.0f;
+		viewPort.MaxDepth = 1.0f;
+		viewPort.TopLeftX = 0.0f;
+		viewPort.TopLeftY = 0.0f;
+		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &viewPort);
+	}
+
+	void DirectX11Framebuffer::Unbind()
+	{
+		auto renderTargetView = m_pDirectX11Context->GetRenderTargetView();
+		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, m_pDirectX11Context->GetDepthStencilView());
+	}
+
+	void DirectX11Framebuffer::SetClearColor(const DirectX::XMFLOAT4& color)
+	{
+		m_ClearColor = color;
+	}
+
+	void DirectX11Framebuffer::Clear()
+	{
+		const float* pClearColor = reinterpret_cast<const float*>(&m_ClearColor);
+		m_pDirectX11Context->GetDeviceContext()->ClearRenderTargetView(m_pRenderTargetView, pClearColor);
+		//m_pDirectX11Context->GetDeviceContext()->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+	}
+}

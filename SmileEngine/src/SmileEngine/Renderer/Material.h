@@ -5,15 +5,24 @@
 
 namespace Smile
 {
-	class Material
+	class Material final
 	{
 	public:
+		enum class RenderingMode
+		{
+			eSpecular,
+			eMetallic
+		};
+
 		virtual ~Material() = default;
 
-		virtual void Bind() const = 0;
-		virtual void SetTexture2D(const std::string sementicName, const Ref<Texture2D>& pTexture) = 0;
+	private:
+		Ref<Texture2D> m_pAlbedoMap = nullptr;
+		Ref<Texture2D> m_pNormalMap = nullptr;
+		Ref<Texture2D> m_pAOMap = nullptr;
 
-		static Ref<Material> Create(const Ref<Shader>& pShader);
+		Ref<Texture2D> m_pSpecularMap = nullptr;
+		Ref<Texture2D> m_pMetalnessMap = nullptr;
 	};
 }
 

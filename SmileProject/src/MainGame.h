@@ -12,7 +12,9 @@ public:
 
 private:
 	bool OnWindowResize(Smile::WindowResizeEvent& e);
+	bool OnMouseMovedEvent(Smile::MouseMovedEvent& e);
 
+private:
 	Smile::Ref<Smile::Scene> m_pActiveScene;
 
 	Smile::Entity m_CameraEntity;
@@ -23,6 +25,11 @@ private:
 
 	Smile::Entity m_Gun;
 	Smile::Ref<Smile::Texture2D> m_pTexture;
+	Smile::Ref<Smile::Framebuffer> m_pFramebuffer;
+
+	bool m_bMouseStart = true;
+	float m_PreviousMousePosX = 0.0f;
+	float m_PreviousMousePosY = 0.0f;
 };
 
 class MainGame final : public Smile::SmileGame

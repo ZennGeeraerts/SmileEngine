@@ -1,8 +1,5 @@
-﻿  DirectX11Material.cpp
-  DirectX11RendererAPI.cpp
-  DirectX11Shader.cpp
-  Material.cpp
-  Shader.cpp
+﻿  DirectX11Framebuffer.cpp
+  Framebuffer.cpp
   Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

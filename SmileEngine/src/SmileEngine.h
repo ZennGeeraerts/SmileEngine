@@ -23,6 +23,7 @@
 
 #include "SmileEngine/Renderer/Buffer.h"
 #include "SmileEngine/Renderer/Shader.h"
+#include "SmileEngine/Renderer/Framebuffer.h"
 #include "SmileEngine/Renderer/Texture.h"
 #include "SmileEngine/Renderer/VertexArray.h"
 

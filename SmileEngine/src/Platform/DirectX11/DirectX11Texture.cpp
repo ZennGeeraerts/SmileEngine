@@ -42,7 +42,7 @@ namespace Smile
 		std::wstring filePathW = std::wstring{ filePath.begin(), filePath.end() };
 
 		HRESULT result{ S_OK };
-		if (!_strcmpi(filePath.c_str(), "dds"))
+		if (!_strcmpi(fileExtension.c_str(), "dds"))
 		{
 			result = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, &info, image);
 			if (FAILED(result))
@@ -51,7 +51,7 @@ namespace Smile
 				return false;
 			}
 		}
-		else if (!_strcmpi(filePath.c_str(), "tga"))
+		else if (!_strcmpi(fileExtension.c_str(), "tga"))
 		{
 			result = DirectX::LoadFromTGAFile(filePathW.c_str(), &info, image);
 			if (FAILED(result))

@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\Framebuffer.h" />
     <ClInclude Include="src\SmileEngine\Core\Core.h" />
     <ClInclude Include="src\SmileEngine\Core\EntryPoint.h" />
     <ClInclude Include="src\SmileEngine\Core\Input.h" />
@@ -38,7 +40,6 @@
     <ClInclude Include="Libs\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Libs\ImGui\imstb_textedit.h" />
     <ClInclude Include="Libs\ImGui\imstb_truetype.h" />
-    <ClInclude Include="src\Platform\DirectX11\DirectX11Material.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Material.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Texture.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Mesh.h" />
@@ -56,7 +57,6 @@
     <ClInclude Include="src\SmileEngine\Renderer\RenderCommand.h" />
     <ClInclude Include="src\SmileEngine\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Shader.h" />
-    <ClInclude Include="src\Platform\DirectX11\DirectX11DataStructs.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
@@ -79,6 +79,8 @@
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Layer.cpp" />
     <ClCompile Include="src\SmileEngine\Core\LayerStack.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Logger.cpp" />
@@ -120,7 +122,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11Material.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Material.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Texture.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Mesh.cpp" />
@@ -131,7 +132,6 @@
     <ClCompile Include="src\Platform\DirectX11\DirectX11RendererAPI.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="src\Platform\DirectX11\DirectX11DataStructs.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp" />

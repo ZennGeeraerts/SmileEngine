@@ -15,6 +15,9 @@ Texture2D gAOMap : AOMap;
 float3 gAmbientColor = 1.f;
 
 TextureCube gEnvironmentMap : ENVIRONMENTMAP;
+float gReflectionStrength = 0.5f;
+float gRefractionStrength = 0.2f;
+float gRefractionIndex = 0.3f;
 
 float gPI = 3.141592f;
 float gEpsilon = 0.0001f;
@@ -113,10 +116,14 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
     // Roughness
     float roughness = gRoughnessMap.Sample(gSamLinear, input.TexCoord).r;
     
+    // Cube environment
+    float3 reflected = reflect(viewDirection, bumpNormal);
+    float3 refracted = refract(viewDirection, bumpNormal, gRefractionIndex);
+    float3 environment = gEnvironmentMap.Sample(gSamLinear, reflected) * gReflectionStrength + gEnvironmentMap.Sample(gSamLinear, refracted) * gRefractionStrength;
+    environment = saturate(environment);
+    
     // Metalness
     float metalness = gMetalnessMap.Sample(gSamLinear, input.TexCoord).r;
-    
-    
     
     float3 baseReflectivity = 0.04f;
     baseReflectivity = lerp(baseReflectivity, albedo, metalness);
@@ -143,7 +150,7 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
         outgoingRadiance = (kD * albedo / gPI + specular) * radiance * max(dot(bumpNormal, gLightDirection), 0.0f);
     }
     
-    float3 ambient = gAmbientColor * albedo * ao;
+    float3 ambient = gAmbientColor * environment * albedo * ao;
     float3 color = ambient + outgoingRadiance;
     
     color = color / (color + 1.0f);
