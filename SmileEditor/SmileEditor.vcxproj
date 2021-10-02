@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\SmileEditor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="src\SmileEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -105,7 +107,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_PLATFORM_WINDOWSWIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_PLATFORM_WINDOWSWIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(SolutionDir)Libs\dx11effects\include;$(SolutionDir)Libs\dx11tex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -125,7 +127,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_PLATFORM_WINDOWSWIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_PLATFORM_WINDOWSWIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(SolutionDir)Libs\dx11effects\include;$(SolutionDir)Libs\dx11tex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -145,7 +147,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_PLATFORM_WINDOWS_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_PLATFORM_WINDOWS_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(SolutionDir)Libs\dx11effects\include;$(SolutionDir)Libs\dx11tex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -165,7 +167,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_PLATFORM_WINDOWSNDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_PLATFORM_WINDOWSNDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(SolutionDir)Libs\dx11effects\include;$(SolutionDir)Libs\dx11tex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -47,6 +47,10 @@ namespace Smile
 
 		// Check to see if entity is valid
 		operator bool() const { return m_EntityHandle != entt::null; }
+		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+
+		bool operator==(Entity other) const { return (m_EntityHandle == other.m_EntityHandle) && (m_pScene == other.m_pScene); }
+		bool operator!=(Entity other) const { return !(*this == other); }
 
 	private:
 		entt::entity m_EntityHandle = entt::null;

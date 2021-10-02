@@ -239,7 +239,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;SM_ENABLE_ASSERTS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_BUILD_DLL;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -271,7 +271,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_BUILD_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -302,7 +302,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;SM_ENABLE_ASSERTS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -334,7 +334,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SM_PLATFORM_WINDOWS;SM_C_DEBUG;SM_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SM_PLATFORM_WINDOWS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>

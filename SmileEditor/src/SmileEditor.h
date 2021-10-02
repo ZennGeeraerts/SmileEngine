@@ -1,5 +1,6 @@
 #pragma once
 #include <SmileEngine.h>
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Smile
 {
@@ -30,6 +31,9 @@ namespace Smile
 		DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
 		bool m_bViewportFocused = false;
 		bool m_bViewportHovered = false;
+
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 
 	class SmileEditorGame final : public SmileGame

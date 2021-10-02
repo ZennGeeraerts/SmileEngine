@@ -59,6 +59,8 @@ namespace Smile
 		framebufferData.Height = 720;
 		m_pFramebuffer = Framebuffer::Create(framebufferData);
 		m_pFramebuffer->SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
+
+		m_SceneHierarchyPanel.SetContext(m_pActiveScene);
 	}
 
 	void SmileEditorLayer::OnDetach()
@@ -203,8 +205,9 @@ namespace Smile
 			ImGui::EndMenuBar();
 		}
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
+		m_SceneHierarchyPanel.OnImGuiRender();
 
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
 		ImGui::Begin("Viewport");
 		m_bViewportFocused = ImGui::IsWindowFocused();
 		m_bViewportHovered = ImGui::IsWindowHovered();

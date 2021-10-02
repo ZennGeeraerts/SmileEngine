@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SmileEngine/Core/Timestep.h"
+
 #include "Libs/entt/entt.hpp"
 
 namespace Smile
@@ -22,6 +24,7 @@ namespace Smile
 		entt::registry m_Registry;
 
 		friend class Entity;
+		friend class SceneHierarchyPanel;
 	};
 }
 

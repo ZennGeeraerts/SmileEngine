@@ -18,9 +18,15 @@
     <ClInclude Include="src\SmileEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SmileEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

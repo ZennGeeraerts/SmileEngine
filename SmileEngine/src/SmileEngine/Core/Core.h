@@ -3,20 +3,25 @@
 #include <memory>
 
 #ifdef SM_PLATFORM_WINDOWS
-#if SM_DYNAMIC_LINK
-	#ifdef  SM_BUILD_DLL
-		#define SMILE_API __declspec(dllexport)
-	#else
-		#define SMILE_API __declspec(dllimport)
+	#if SM_DYNAMIC_LINK
+		#ifdef  SM_BUILD_DLL
+			#define SMILE_API __declspec(dllexport)
+		#else
+			#define SMILE_API __declspec(dllimport)
 	#endif
-#else
-	#define SMILE_API
-#endif
+	#else
+		#define SMILE_API
+	#endif
 #else
 	#error SmileEngine only supports Windows
 #endif
 
-#ifdef SM_LOG_DEBUG
+#ifdef SM_C_DEBUG
+	#ifdef SM_PLATFORM_WINDOWS
+		#define SM_DEBUGBREAK() __debugbreak()
+	#else
+		#error "Platform doesn't support debugbreak"
+	#endif
 	#define SM_ENABLE_ASSERTS
 #endif
 
