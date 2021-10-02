@@ -20,7 +20,7 @@ namespace Smile
 
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
-			return std::make_shared<DirectX11Shader>(filePath, bufferLayout);
+			return CreateRef<DirectX11Shader>(filePath, bufferLayout);
 #endif
 		}
 

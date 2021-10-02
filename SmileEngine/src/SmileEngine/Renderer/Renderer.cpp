@@ -57,7 +57,7 @@ namespace Smile
 
 	void Renderer::Submit(const StaticMeshComponent& staticMeshComponent, const DirectX::XMFLOAT4X4& worldTransform)
 	{
-		for (const auto& pMesh : staticMeshComponent.m_pMeshes)
+		for (const auto& pMesh : staticMeshComponent.pMeshes)
 		{
 			Submit(pMesh->GetVertexBuffer(), pMesh->GetIndexBuffer(), pMesh->GetShader(), worldTransform);
 		}

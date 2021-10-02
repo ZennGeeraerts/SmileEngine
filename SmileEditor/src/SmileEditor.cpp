@@ -4,12 +4,9 @@
 
 namespace Smile
 {
-	SmileGame* CreateGame()
-	{
-		// This application will get passed to the entry point of the engine
-		// and will be deleted once the engine closes
-		return new SmileEditorGame{};
-	}
+	/*-----------------------------------------------------------------------------------------------------------*/
+	/*---------------------------------------------- Editor Layer -----------------------------------------------*/
+	/*-----------------------------------------------------------------------------------------------------------*/
 
 	SmileEditorLayer::SmileEditorLayer()
 		: Layer("SmileEditorLayer")
@@ -25,7 +22,7 @@ namespace Smile
 
 		// Camera
 		m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
-		m_CameraEntity.AddComponent<CameraComponent>(DirectX::XMMatrixPerspectiveFovLH(45, 16 / 9.f, 0.1f, 2500.f));
+		m_CameraEntity.AddComponent<CameraComponent>();
 
 		// Gun
 		m_GunEntity = m_pActiveScene->CreateEntity("Gun");
@@ -46,7 +43,7 @@ namespace Smile
 		auto pAOMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_AO.jpg");
 		auto pEnvironmentMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/Sunol_Cubemap.dds");
 
-		for (auto& pMesh : staticMesh.m_pMeshes)
+		for (auto& pMesh : staticMesh.pMeshes)
 		{
 			pMesh->GetShader()->UploadTexture2D("AlbedoMap", pAlbedoMap);
 			pMesh->GetShader()->UploadTexture2D("NormalMap", pNormalMap);
@@ -71,6 +68,21 @@ namespace Smile
 
 	void SmileEditorLayer::OnUpdate(Timestep deltaTime)
 	{
+		auto framebufferData = m_pFramebuffer->GetData();
+		if ((!Utils::CompareFloats(m_ViewportSize.x, (float)framebufferData.Width) || !Utils::CompareFloats(m_ViewportSize.y, (float)framebufferData.Height))
+			&& (m_ViewportSize.x > 0) && (m_ViewportSize.y > 0))
+		{
+			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+
+			DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixPerspectiveFovLH(45, m_ViewportSize.x / m_ViewportSize.y, 0.1f, 2500.f);
+			DirectX::XMFLOAT4X4 projectionMatrix{};
+			DirectX::XMStoreFloat4x4(&projectionMatrix, projectionMatrixMat);
+			//m_CameraEntity.GetComponent<CameraComponent>().Camera.SetProjectionMatrix(projectionMatrix);
+
+			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		}
+
+		if (m_bViewportFocused)
 		{
 			auto& cameraTransform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
 
@@ -194,17 +206,12 @@ namespace Smile
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
 
 		ImGui::Begin("Viewport");
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (!Utils::CompareFloats(viewportPanelSize.x, m_ViewportSize.x) || !Utils::CompareFloats(viewportPanelSize.y, m_ViewportSize.y))
-		{
-			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_bViewportFocused = ImGui::IsWindowFocused();
+		m_bViewportHovered = ImGui::IsWindowHovered();
 
-			DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixPerspectiveFovLH(45, m_ViewportSize.x / m_ViewportSize.y, 0.1f, 2500.f);
-			DirectX::XMFLOAT4X4 projectionMatrix{};
-			DirectX::XMStoreFloat4x4(&projectionMatrix, projectionMatrixMat);
-			m_CameraEntity.GetComponent<CameraComponent>().Camera.SetProjectionMatrix(projectionMatrix);
-		}
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+		
 		ImGui::Image(m_pFramebuffer->GetColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
 		ImGui::End();
 
@@ -216,26 +223,19 @@ namespace Smile
 	void SmileEditorLayer::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher{ e };
-		dispatcher.Dispatch<WindowResizeEvent>(SM_BIND_EVENT_FN(SmileEditorLayer::OnWindowResize));
+		//dispatcher.Dispatch<WindowResizeEvent>(SM_BIND_EVENT_FN(SmileEditorLayer::OnWindowResize));
 	}
 
-	bool SmileEditorLayer::OnWindowResize(Smile::WindowResizeEvent& e)
+	/*-----------------------------------------------------------------------------------------------------------*/
+	/*----------------------------------------------- Editor Game -----------------------------------------------*/
+	/*-----------------------------------------------------------------------------------------------------------*/
+
+	SmileGame* CreateGame()
 	{
-		const auto width = e.GetWidth();
-		const auto height = e.GetHeight();
-
-		if (width == 0 || height == 0)
-			return false;
-
-		auto& cameraComponent = m_CameraEntity.GetComponent<Smile::CameraComponent>();
-		cameraComponent = DirectX::XMMatrixPerspectiveFovLH(45, width / static_cast<float>(height), 0.1f, 2500.f);
-		return false;
+		// This application will get passed to the entry point of the engine
+		// and will be deleted once the engine closes
+		return new SmileEditorGame{};
 	}
-
-
-	/*-----------------------------------------------------------------------------------------------------------*/
-	/*------------------------------------------------ Main Game ------------------------------------------------*/
-	/*-----------------------------------------------------------------------------------------------------------*/
 
 	SmileEditorGame::SmileEditorGame()
 		: SmileGame("Smile Editor")

@@ -29,9 +29,11 @@ namespace Smile
 		ID3D11Texture2D* m_pColorBuffer = nullptr;
 		ID3D11ShaderResourceView* m_pColorShaderResourceView = nullptr;
 
-		//ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
-		//ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
+		ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
+		ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
 
 		DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
+
+		static const uint32_t m_MaxFramebufferSize;
 	};
 }

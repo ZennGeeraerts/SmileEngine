@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Framebuffer.h" />
     <ClInclude Include="src\SmileEngine\Core\Core.h" />
@@ -80,6 +81,7 @@
     <ClInclude Include="src\SmileEngine\Core\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Layer.cpp" />

@@ -16,6 +16,7 @@ namespace Smile
 		Entity CreateEntity();
 
 		void OnUpdate(Timestep deltaTime);
+		void OnViewportResize(uint32_t width, uint32_t height);
 
 	private:
 		entt::registry m_Registry;

@@ -90,7 +90,7 @@ ExampleLayer::ExampleLayer()
 	gunTransform.Scale.z *= 5.f;
 
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
-	m_CameraEntity.AddComponent<Smile::CameraComponent>(DirectX::XMMatrixPerspectiveFovLH(45, 16 / 9.f, 0.1f, 2500.f));
+	m_CameraEntity.AddComponent<Smile::CameraComponent>();
 	
 	auto pAlbedoMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_albedo.jpg");
 	auto pNormalMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_normal.jpg");
@@ -100,7 +100,7 @@ ExampleLayer::ExampleLayer()
 	auto pEnvironmentMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/Sunol_Cubemap.dds");
 	m_pTexture = Smile::Texture2D::Create("../SmileProject/Resources/Textures/uv_grid.png");
 
-	for (auto& pMesh : staticMesh.m_pMeshes)
+	for (auto& pMesh : staticMesh.pMeshes)
 	{
 		pMesh->GetShader()->UploadTexture2D("AlbedoMap", pAlbedoMap);
 		pMesh->GetShader()->UploadTexture2D("NormalMap", pNormalMap);
@@ -187,7 +187,6 @@ bool ExampleLayer::OnWindowResize(Smile::WindowResizeEvent& e)
 		return false;
 
 	auto& cameraComponent = m_CameraEntity.GetComponent<Smile::CameraComponent>();
-	cameraComponent = DirectX::XMMatrixPerspectiveFovLH(45, width / static_cast<float>(height), 0.1f, 2500.f);
 	return false;
 }
 

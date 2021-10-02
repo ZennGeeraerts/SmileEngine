@@ -23,6 +23,7 @@ namespace Smile
 		inline ID3D11DeviceContext* GetDeviceContext() const { return m_pDeviceContext; }
 		inline ID3D11RenderTargetView* GetRenderTargetView() const { return m_pCurrentRenderTarget; }
 		inline ID3D11DepthStencilView* GetDepthStencilView() const { return m_pDepthStencilView; }
+		inline const D3D11_VIEWPORT& GetViewport() const { return m_Viewport; }
 
 	private:
 		Window* m_pWindow = nullptr;
@@ -36,6 +37,8 @@ namespace Smile
 
 		ID3D11Texture2D* m_pDepthStencilBuffer = nullptr;
 		ID3D11Resource* m_pRenderTargetBuffer = nullptr;
+
+		D3D11_VIEWPORT m_Viewport;
 
 		friend class DirectX11RendererAPI;
 	};

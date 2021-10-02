@@ -4,7 +4,7 @@
 #include "SmileEngine/Renderer/Buffer.h"
 #include "SmileEngine/Renderer/Shader.h"
 
-#include "SmileEngine/Renderer/Camera.h"
+#include "SmileEngine/Scene/SceneCamera.h"
 
 #include "SmileEngine/Core/MeshLoader.h"
 #include "SmileEngine/Renderer/Mesh.h"
@@ -106,29 +106,24 @@ namespace Smile
 		StaticMeshComponent(const std::string& assetFile, const BufferLayout& layout)
 		{
 			MeshLoader meshLoader{};
-			m_pMeshes = meshLoader.LoadMesh(assetFile);
+			pMeshes = meshLoader.LoadMesh(assetFile);
 
-			for (const auto& pMesh : m_pMeshes)
+			for (const auto& pMesh : pMeshes)
 			{
 				pMesh->Create(layout);
 			}
 		}
 
-		std::vector<Ref<Mesh>> m_pMeshes = {};
+		std::vector<Ref<Mesh>> pMeshes = {};
 	};
 
 	struct CameraComponent final
 	{
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const DirectX::XMFLOAT4X4& projectionMatrix)
-			: Camera{ projectionMatrix }
-		{}
-		CameraComponent(const DirectX::XMMATRIX& projectionMatrix)
-			: Camera{ projectionMatrix }
-		{}
 
-		Smile::Camera Camera;
+		SceneCamera Camera;
 		bool bPrimary = true;
+		bool bFixedAspectRatio = false;
 	};
 }

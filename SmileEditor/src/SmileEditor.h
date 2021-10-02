@@ -17,9 +17,6 @@ namespace Smile
 		virtual void OnEvent(Event& e) override;
 
 	private:
-		bool OnWindowResize(Smile::WindowResizeEvent& e);
-
-	private:
 		Ref<Scene> m_pActiveScene;
 
 		Entity m_CameraEntity;
@@ -29,7 +26,10 @@ namespace Smile
 		Entity m_GunEntity;
 
 		Ref<Framebuffer> m_pFramebuffer;
+
 		DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
+		bool m_bViewportFocused = false;
+		bool m_bViewportHovered = false;
 	};
 
 	class SmileEditorGame final : public SmileGame

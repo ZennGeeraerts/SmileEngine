@@ -6,6 +6,8 @@
 
 namespace Smile
 {
+	const uint32_t DirectX11Framebuffer::m_MaxFramebufferSize = 8192;
+
 	DirectX11Framebuffer::DirectX11Framebuffer(const FramebufferData& framebufferData)
 		: m_Data{ framebufferData }
 	{
@@ -20,8 +22,9 @@ namespace Smile
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pColorBuffer);
 		SAFE_RELEASE(m_pColorShaderResourceView);
-		//SAFE_RELEASE(m_pDepthStencilBuffer);
-		//SAFE_RELEASE(m_pDepthStencilView);
+
+		SAFE_RELEASE(m_pDepthStencilBuffer);
+		SAFE_RELEASE(m_pDepthStencilView);
 	}
 
 	void DirectX11Framebuffer::Invalidate()
@@ -29,8 +32,9 @@ namespace Smile
 		SAFE_RELEASE(m_pRenderTargetView);
 		SAFE_RELEASE(m_pColorBuffer);
 		SAFE_RELEASE(m_pColorShaderResourceView);
-		//SAFE_RELEASE(m_pDepthStencilBuffer);
-		//SAFE_RELEASE(m_pDepthStencilView);
+
+		SAFE_RELEASE(m_pDepthStencilBuffer);
+		SAFE_RELEASE(m_pDepthStencilView);
 
 		D3D11_TEXTURE2D_DESC textureDesc = {};
 		textureDesc.Width = m_Data.Width;
@@ -71,7 +75,7 @@ namespace Smile
 			return;
 		}
 
-		/*D3D11_TEXTURE2D_DESC depthStencilDesc{};
+		D3D11_TEXTURE2D_DESC depthStencilDesc{};
 		depthStencilDesc.Width = m_Data.Width;
 		depthStencilDesc.Height = m_Data.Height;
 		depthStencilDesc.MipLevels = 1;
@@ -86,41 +90,43 @@ namespace Smile
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
 		depthStencilViewDesc.Format = depthStencilDesc.Format;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;*/
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-		/*result = m_pDirectX11Context->GetDevice()->CreateTexture2D(&depthStencilDesc, 0, &m_pDepthStencilBuffer);
+		result = m_pDirectX11Context->GetDevice()->CreateTexture2D(&depthStencilDesc, 0, &m_pDepthStencilBuffer);
 		if (FAILED(result))
 		{
-			SM_LOG_ERROR("DirectXContext::Init > Failed to create depth stencil buffer");
+			SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create depth stencil buffer");
 			return;
 		}
 
 		result = m_pDirectX11Context->GetDevice()->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView);
 		if (FAILED(result))
 		{
-			SM_LOG_ERROR("DirectXContext::Init > Failed to create depth stencil view");
+			SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create depth stencil view");
 			return;
-		}*/
+		}
 	}
 
 	void DirectX11Framebuffer::Bind()
 	{
-		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDirectX11Context->GetDepthStencilView());
+		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
-		D3D11_VIEWPORT viewPort{};
-		viewPort.Width = static_cast<float>(m_Data.Width);
-		viewPort.Height = static_cast<float>(m_Data.Height);
-		viewPort.MinDepth = 0.0f;
-		viewPort.MaxDepth = 1.0f;
-		viewPort.TopLeftX = 0.0f;
-		viewPort.TopLeftY = 0.0f;
-		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &viewPort);
+		D3D11_VIEWPORT viewport{};
+		viewport.Width = static_cast<FLOAT>(m_Data.Width);
+		viewport.Height = static_cast<FLOAT>(m_Data.Height);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &viewport);
 	}
 
 	void DirectX11Framebuffer::Unbind()
 	{
 		auto renderTargetView = m_pDirectX11Context->GetRenderTargetView();
 		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, m_pDirectX11Context->GetDepthStencilView());
+		auto viewport = m_pDirectX11Context->GetViewport();
+		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &viewport);
 	}
 
 	void DirectX11Framebuffer::SetClearColor(const DirectX::XMFLOAT4& color)
@@ -132,12 +138,12 @@ namespace Smile
 	{
 		const float* pClearColor = reinterpret_cast<const float*>(&m_ClearColor);
 		m_pDirectX11Context->GetDeviceContext()->ClearRenderTargetView(m_pRenderTargetView, pClearColor);
-		//m_pDirectX11Context->GetDeviceContext()->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		m_pDirectX11Context->GetDeviceContext()->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	}
 
 	void DirectX11Framebuffer::Resize(uint32_t width, uint32_t height)
 	{
-		if ((width <= 0) || (height <= 0))
+		if ((width <= 0) || (height <= 0) || (width > m_MaxFramebufferSize) || (height > m_MaxFramebufferSize))
 		{ 
 			SM_LOG_WARNING("DirectX11Framebuffer::Resize > Invalid framebuffer size: %d, %d", width, height);
 			return;

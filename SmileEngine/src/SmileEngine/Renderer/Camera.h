@@ -3,7 +3,7 @@
 
 namespace Smile
 {
-	class Camera final
+	class Camera
 	{
 	public:
 		Camera()
@@ -22,10 +22,9 @@ namespace Smile
 
 		virtual ~Camera() = default;
 
-		void SetProjectionMatrix(const DirectX::XMFLOAT4X4& projectionMatrix) { m_ProjectionMatrix = projectionMatrix; }
 		const DirectX::XMFLOAT4X4& GetProjectionMatrix() const { return m_ProjectionMatrix; };
 
-	private:
+	protected:
 		DirectX::XMFLOAT4X4 m_ProjectionMatrix;
 	};
 }

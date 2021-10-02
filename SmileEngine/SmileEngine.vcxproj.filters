@@ -198,6 +198,9 @@
     <ClInclude Include="src\SmileEngine\Core\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -309,6 +312,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Core\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

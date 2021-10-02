@@ -16,7 +16,7 @@ namespace Smile
 
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
-			return std::make_shared<DirectX11Texture2D>(filePath);
+			return CreateRef<DirectX11Texture2D>(filePath);
 #endif
 		}
 

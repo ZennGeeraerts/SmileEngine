@@ -76,4 +76,17 @@ namespace Smile
 			Renderer::EndScene();
 		}
 	}
+
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.bFixedAspectRatio)
+			{
+				cameraComponent.Camera.SetViewportSize(width, height);
+			}
+		}
+	}
 }

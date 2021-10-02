@@ -137,14 +137,14 @@ namespace Smile
 		/*------------------------------------- Render Target Code End -------------------------------------*/
 
 		// Set the Viewport
-		D3D11_VIEWPORT viewPort{};
-		viewPort.Width = static_cast<FLOAT>(width);
-		viewPort.Height = static_cast<FLOAT>(height);
-		viewPort.TopLeftX = 0.0f;
-		viewPort.TopLeftY = 0.0f;
-		viewPort.MinDepth = 0.0f;
-		viewPort.MaxDepth = 1.0;
-		m_pDeviceContext->RSSetViewports(1, &viewPort);
+		m_Viewport = {};
+		m_Viewport.Width = static_cast<FLOAT>(width);
+		m_Viewport.Height = static_cast<FLOAT>(height);
+		m_Viewport.TopLeftX = 0.0f;
+		m_Viewport.TopLeftY = 0.0f;
+		m_Viewport.MinDepth = 0.0f;
+		m_Viewport.MaxDepth = 1.0;
+		m_pDeviceContext->RSSetViewports(1, &m_Viewport);
 	}
 
 	void DirectX11Context::Present()
