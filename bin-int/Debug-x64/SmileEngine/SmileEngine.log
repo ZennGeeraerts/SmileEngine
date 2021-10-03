@@ -1,4 +1,15 @@
-﻿  Scene.cpp
+﻿  WindowsWindow.cpp
+  SmileGame.cpp
+  Buffer.cpp
+  Framebuffer.cpp
+  PerspectiveCameraController.cpp
+  Renderer.cpp
+  Shader.cpp
+  Texture.cpp
+  VertexArray.cpp
+  Scene.cpp
+  SceneCamera.cpp
+  Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
