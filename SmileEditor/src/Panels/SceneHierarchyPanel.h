@@ -20,6 +20,8 @@ namespace Smile
 	private:
 		void DrawEntityNode(Entity entity);
 
+		void DrawComponents(Entity entity);
+
 	private:
 		Ref<Scene> m_pContext;
 		Entity m_SelectedEntity;
