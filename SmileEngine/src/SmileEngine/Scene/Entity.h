@@ -22,7 +22,9 @@ namespace Smile
 			SM_ASSERT(!HasComponent<ComponentType>(), "Entity::AddComponent > Entity already has component");
 
 			// forward the constructor arguments to entt
-			return m_pScene->m_Registry.emplace<ComponentType>(m_EntityHandle, std::forward<ConstructorArgs>(constructorArgs)...);
+			ComponentType& component = m_pScene->m_Registry.emplace<ComponentType>(m_EntityHandle, std::forward<ConstructorArgs>(constructorArgs)...);
+			m_pScene->OnComponentAdded<ComponentType>(*this, component);
+			return component;
 		}
 
 		template <typename ComponentType>
@@ -47,6 +49,7 @@ namespace Smile
 
 		// Check to see if entity is valid
 		operator bool() const { return m_EntityHandle != entt::null; }
+		operator entt::entity() const { return m_EntityHandle; }
 		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
 
 		bool operator==(Entity other) const { return (m_EntityHandle == other.m_EntityHandle) && (m_pScene == other.m_pScene); }

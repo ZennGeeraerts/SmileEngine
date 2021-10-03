@@ -11,7 +11,7 @@ namespace Smile
 {
 	Scene::Scene()
 	{
-
+		
 	}
 
 	Scene::~Scene()
@@ -31,6 +31,11 @@ namespace Smile
 	Entity Scene::CreateEntity() 
 	{ 
 		return CreateEntity("Entity"); 
+	}
+
+	void Scene::DestroyEntity(Entity entity)
+	{
+		m_Registry.destroy(entity);
 	}
 
 	void Scene::OnUpdate(Timestep deltaTime)
@@ -79,6 +84,9 @@ namespace Smile
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
@@ -88,5 +96,37 @@ namespace Smile
 				cameraComponent.Camera.SetViewportSize(width, height);
 			}
 		}
+	}
+
+	template <typename ComponentType>
+	void Scene::OnComponentAdded(Entity entity, ComponentType& component)
+	{
+		static_assert(false);
+	}
+
+	template <>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+	{
+		component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template <>
+	void Scene::OnComponentAdded<MeshRendererComponent>(Entity entity, MeshRendererComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<StaticMeshComponent>(Entity entity, StaticMeshComponent& component)
+	{
 	}
 }

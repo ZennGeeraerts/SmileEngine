@@ -75,12 +75,6 @@ namespace Smile
 			&& (m_ViewportSize.x > 0) && (m_ViewportSize.y > 0))
 		{
 			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-
-			DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixPerspectiveFovLH(45, m_ViewportSize.x / m_ViewportSize.y, 0.1f, 2500.f);
-			DirectX::XMFLOAT4X4 projectionMatrix{};
-			DirectX::XMStoreFloat4x4(&projectionMatrix, projectionMatrixMat);
-			//m_CameraEntity.GetComponent<CameraComponent>().Camera.SetProjectionMatrix(projectionMatrix);
-
 			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
 

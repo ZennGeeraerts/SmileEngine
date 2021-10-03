@@ -32,14 +32,38 @@ namespace Smile
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectedEntity = {};
 
+		// Right click on blank space
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+				m_pContext->CreateEntity();
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 
 		// Inspector Panel
 		ImGui::Begin("Inspector");
 
+		// Add Components
 		if (m_SelectedEntity)
 		{
 			DrawComponents(m_SelectedEntity);
+
+			if (ImGui::Button("Add Component"))
+				ImGui::OpenPopup("AddComponent");
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectedEntity.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
 		}
 
 		ImGui::End();
@@ -56,9 +80,25 @@ namespace Smile
 			m_SelectedEntity = entity;
 		}
 
+		bool bEntityDeleted = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+				bEntityDeleted = true;
+
+			ImGui::EndPopup();
+		}
+
 		if (bNodeExpanded)
 		{
 			ImGui::TreePop();
+		}
+
+		if (bEntityDeleted)
+		{
+			m_pContext->DestroyEntity(entity);
+			if (m_SelectedEntity == entity)
+				m_SelectedEntity = {};
 		}
 	}
 
@@ -136,7 +176,7 @@ namespace Smile
 		{
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-			static char tagBuffer[256];
+			char tagBuffer[256];
 			memset(tagBuffer, 0, sizeof(tagBuffer));
 			strcpy_s(tagBuffer, sizeof(tagBuffer), tag.c_str());
 
@@ -146,9 +186,13 @@ namespace Smile
 			}
 		}
 
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+
 		if (entity.HasComponent<TransformComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			bool bOpen = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), treeNodeFlags, "Transform");
+
+			if (bOpen)
 			{
 				auto& transformComponent = entity.GetComponent<TransformComponent>();
 
@@ -171,7 +215,26 @@ namespace Smile
 
 		if (entity.HasComponent<CameraComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4.f, 4.f });
+			bool bOpen = ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), treeNodeFlags, "Camera");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25.f);
+
+			if (ImGui::Button("+", ImVec2{ 20.f, 20.f }))
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+			ImGui::PopStyleVar();
+
+			bool bRemoveComponent = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (ImGui::MenuItem("RemoveComponent"))
+					bRemoveComponent = true;
+
+				ImGui::EndPopup();
+			}
+
+			if (bOpen)
 			{
 				auto& cameraComponent = entity.GetComponent<CameraComponent>();
 
@@ -238,6 +301,9 @@ namespace Smile
 
 				ImGui::TreePop();
 			}
+
+			if (bRemoveComponent)
+				entity.RemoveComponent<CameraComponent>();
 		}
 	}
 }
