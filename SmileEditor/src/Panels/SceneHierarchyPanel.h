@@ -20,7 +20,10 @@ namespace Smile
 	private:
 		void DrawEntityNode(Entity entity);
 
+		static void DrawVector3Control(const std::string& label, DirectX::XMFLOAT3& values, float resetValue = 0.0f, float columnWidth = 100.f);
+
 		void DrawComponents(Entity entity);
+		
 
 	private:
 		Ref<Scene> m_pContext;

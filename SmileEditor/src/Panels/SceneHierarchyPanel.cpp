@@ -1,6 +1,7 @@
 #include "SceneHierarchyPanel.h"
 
 #include <Libs/ImGui/imgui.h>
+#include <Libs/ImGui/imgui_internal.h>
 
 #include "SmileEngine/Scene/Components.h"
 
@@ -61,6 +62,74 @@ namespace Smile
 		}
 	}
 
+	void SceneHierarchyPanel::DrawVector3Control(const std::string& label, DirectX::XMFLOAT3& value, float resetValue, float columnWidth)
+	{
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+		ImVec2 buttonSize{ lineHeight + 3.0f, lineHeight };
+
+		// X
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f });
+
+		if (ImGui::Button("X", buttonSize))
+			value.x = resetValue;
+
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##X", &value.x, 0.03f);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		// Y
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+
+		if (ImGui::Button("Y", buttonSize))
+			value.y = resetValue;
+
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##Y", &value.y, 0.03f);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		// Z
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+
+		if (ImGui::Button("Z", buttonSize))
+			value.z = resetValue;
+
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##Z", &value.z, 0.03f);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PopStyleVar();
+
+		ImGui::Columns(1);
+
+		ImGui::PopID();
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		if (entity.HasComponent<TagComponent>())
@@ -83,14 +152,18 @@ namespace Smile
 			{
 				auto& transformComponent = entity.GetComponent<TransformComponent>();
 
-				auto& position = transformComponent.Translation;
-				ImGui::DragFloat3("Position", reinterpret_cast<float*>(&position), 0.03f);
+				DrawVector3Control("Position", transformComponent.Translation);
 
-				auto& rotation = transformComponent.Rotation;
-				ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&rotation), 0.03f);
+				DirectX::XMFLOAT3 rotationDegrees = {};
+				rotationDegrees.x = DirectX::XMConvertToDegrees(transformComponent.Rotation.x);
+				rotationDegrees.y = DirectX::XMConvertToDegrees(transformComponent.Rotation.y);
+				rotationDegrees.z = DirectX::XMConvertToDegrees(transformComponent.Rotation.z);
+				DrawVector3Control("Rotation", rotationDegrees);
+				transformComponent.Rotation.x = DirectX::XMConvertToRadians(rotationDegrees.x);
+				transformComponent.Rotation.y = DirectX::XMConvertToRadians(rotationDegrees.y);
+				transformComponent.Rotation.z = DirectX::XMConvertToRadians(rotationDegrees.z);
 
-				auto& scale = transformComponent.Scale;
-				ImGui::DragFloat3("Scale", reinterpret_cast<float*>(&scale), 0.03f);
+				DrawVector3Control("Scale", transformComponent.Scale, 1.0f);
 
 				ImGui::TreePop();
 			}
