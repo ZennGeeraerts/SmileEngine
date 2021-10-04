@@ -14,7 +14,6 @@ namespace Smile
 
 		Ref<VertexBuffer> GetVertexBuffer() const { return m_pVertexBuffer; }
 		Ref<IndexBuffer> GetIndexBuffer() const { return m_pIndexBuffer; }
-		Ref<Shader> GetShader() const { return m_pShader; }
 
 	private:
 		std::vector<DirectX::XMFLOAT3> m_Positions = {};
@@ -23,17 +22,16 @@ namespace Smile
 		std::vector<DirectX::XMFLOAT3> m_Binormals = {};
 		std::vector<DirectX::XMFLOAT2> m_TexCoords = {};
 
-		bool bUsePositions;
-		bool bUseNormals;
-		bool bUseTangents;
-		bool bUseBinormals;
-		bool bUseTexCoords;
+		bool m_bUsePositions;
+		bool m_bUseNormals;
+		bool m_bUseTangents;
+		bool m_bUseBinormals;
+		bool m_bUseTexCoords;
 
 		std::vector<uint32_t> m_Indices = {};
 
 		Ref<VertexBuffer> m_pVertexBuffer;
 		Ref<IndexBuffer> m_pIndexBuffer;
-		Ref<Shader> m_pShader;
 
 		uint32_t m_VertexCount;
 

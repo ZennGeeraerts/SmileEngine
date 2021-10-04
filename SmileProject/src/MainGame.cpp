@@ -78,37 +78,13 @@ ExampleLayer::ExampleLayer()
 	cubeTransform.Translation.x -= 10.f;
 	cubeTransform.Translation.z += 15.f;*/
 
-	m_GunEntity = m_pActiveScene->CreateEntity("Mesh");
-	auto staticMesh = m_GunEntity.AddComponent<Smile::StaticMeshComponent>("../SmileProject/Resources/Meshes/drakefire_pistol_low.obj");
-	auto& gunTransform = m_GunEntity.GetComponent<Smile::TransformComponent>();
-	gunTransform.Translation.z += 15.f;
-	gunTransform.Translation.y -= 2.f;
-	gunTransform.Translation.x -= 2.f;
-	gunTransform.Rotation.y = 90;
-	gunTransform.Scale.x *= 5.f;
-	gunTransform.Scale.y *= 5.f;
-	gunTransform.Scale.z *= 5.f;
+	
 
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 	m_CameraEntity.AddComponent<Smile::CameraComponent>();
-	
-	auto pAlbedoMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_albedo.jpg");
-	auto pNormalMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_normal.jpg");
-	auto pMetalnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_metallic.jpg");
-	auto pRoughnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_roughness.jpg");
-	auto pAOMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_AO.jpg");
-	auto pEnvironmentMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/Sunol_Cubemap.dds");
+
 	m_pTexture = Smile::Texture2D::Create("../SmileProject/Resources/Textures/uv_grid.png");
 
-	for (auto& pMesh : staticMesh.pMeshes)
-	{
-		pMesh->GetShader()->UploadTexture2D("AlbedoMap", pAlbedoMap);
-		pMesh->GetShader()->UploadTexture2D("NormalMap", pNormalMap);
-		pMesh->GetShader()->UploadTexture2D("MetalnessMap", pMetalnessMap);
-		pMesh->GetShader()->UploadTexture2D("RoughnessMap", pRoughnessMap);
-		pMesh->GetShader()->UploadTexture2D("AOMap", pAOMap);
-		pMesh->GetShader()->UploadTexture2D("EnvironmentMap", pEnvironmentMap);
-	}
 
 	Smile::FramebufferData framebufferData{};
 	framebufferData.Width = 1280;
@@ -156,9 +132,6 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	transform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
 	transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
 	transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
-
-	auto& gunTransform = m_GunEntity.GetComponent<Smile::TransformComponent>();
-	gunTransform.Rotation.y += 1.f * deltaTime;
 
 	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 	Smile::RenderCommand::Clear();

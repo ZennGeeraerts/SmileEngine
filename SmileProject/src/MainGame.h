@@ -23,7 +23,6 @@ private:
 	float m_CameraRotation = 0.f;
 	float m_CameraRotationSpeed = 180.f;
 
-	Smile::Entity m_GunEntity;
 	Smile::Ref<Smile::Texture2D> m_pTexture;
 
 	bool m_bMouseStart = true;

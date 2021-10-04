@@ -26,7 +26,6 @@ namespace Smile
 
 		// Gun
 		m_GunEntity = m_pActiveScene->CreateEntity("Gun");
-		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("../SmileEditor/Resources/Meshes/drakefire_pistol_low.obj");
 		auto& gunTransform = m_GunEntity.GetComponent<TransformComponent>();
 		gunTransform.Translation.z += 15.f;
 		gunTransform.Translation.y -= 2.f;
@@ -43,15 +42,18 @@ namespace Smile
 		auto pAOMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_AO.jpg");
 		auto pEnvironmentMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/Sunol_Cubemap.dds");
 
-		for (auto& pMesh : staticMesh.pMeshes)
-		{
-			pMesh->GetShader()->UploadTexture2D("AlbedoMap", pAlbedoMap);
-			pMesh->GetShader()->UploadTexture2D("NormalMap", pNormalMap);
-			pMesh->GetShader()->UploadTexture2D("MetalnessMap", pMetalnessMap);
-			pMesh->GetShader()->UploadTexture2D("RoughnessMap", pRoughnessMap);
-			pMesh->GetShader()->UploadTexture2D("AOMap", pAOMap);
-			pMesh->GetShader()->UploadTexture2D("EnvironmentMap", pEnvironmentMap);
-		}
+		m_pMaterial = CreateRef<Material>();
+		m_pMaterial->SetAlbedo(pAlbedoMap);
+		m_pMaterial->SetMetalness(pMetalnessMap);
+		m_pMaterial->SetRoughness(pRoughnessMap);
+		m_pMaterial->SetNormalMap(pNormalMap);
+		m_pMaterial->SetAOMap(pAOMap);
+
+		/*m_pMaterial->SetAlbedo(DirectX::XMFLOAT3{ 0.9f, 0.1f, 0.1f });
+		m_pMaterial->SetMetalness(1);
+		m_pMaterial->SetRoughness(0.5f);*/
+
+		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("../SmileEditor/Resources/Meshes/drakefire_pistol_low.obj", m_pMaterial);
 
 		// Framebuffer
 		FramebufferData framebufferData{};

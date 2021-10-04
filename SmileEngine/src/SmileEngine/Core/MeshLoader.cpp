@@ -36,28 +36,28 @@ namespace Smile
 				aiVector3D& vertex = pAiMesh->mVertices[v];
 				if (&vertex)
 				{
-					pMeshes[m]->bUsePositions = true;
+					pMeshes[m]->m_bUsePositions = true;
 					pMeshes[m]->m_Positions[v] = *reinterpret_cast<DirectX::XMFLOAT3*>(&vertex);
 				}
 
 				aiVector3D& normal = pAiMesh->mNormals[v];
 				if (&normal)
 				{
-					pMeshes[m]->bUseNormals = true;
+					pMeshes[m]->m_bUseNormals = true;
 					pMeshes[m]->m_Normals.push_back(*reinterpret_cast<DirectX::XMFLOAT3*>(&normal));
 				}
 
 				aiVector3D& texCoord = pAiMesh->mTextureCoords[0][v];
 				if (&texCoord)
 				{
-					pMeshes[m]->bUseTexCoords = true;
+					pMeshes[m]->m_bUseTexCoords = true;
 					pMeshes[m]->m_TexCoords.push_back({ texCoord.x, 1 - texCoord.y });
 				}
 
 				aiVector3D& tangent = pAiMesh->mTangents[v];
 				if (&tangent)
 				{
-					pMeshes[m]->bUseTangents = true;
+					pMeshes[m]->m_bUseTangents = true;
 					pMeshes[m]->m_Tangents.push_back(*reinterpret_cast<DirectX::XMFLOAT3*>(&tangent));
 				}
 			}

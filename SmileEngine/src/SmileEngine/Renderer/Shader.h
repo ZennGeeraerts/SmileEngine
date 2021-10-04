@@ -22,6 +22,8 @@ namespace Smile
 		virtual void UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value) = 0;
 		virtual void UploadInt(const std::string& sementicName, int value) = 0;
 		virtual void UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D) = 0;
+		virtual void UploadBool(const std::string& sementicName, bool value) = 0;
+		virtual void UploadFloat(const std::string& sementicName, float value) = 0;
 
 		static Ref<Shader> Create(const std::string& filePath, const BufferLayout& bufferLayout);
 	};

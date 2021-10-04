@@ -8,6 +8,7 @@
 
 #include "SmileEngine/Core/MeshLoader.h"
 #include "SmileEngine/Renderer/Mesh.h"
+#include "SmileEngine/Renderer/Material.h"
 
 namespace Smile
 {
@@ -94,27 +95,22 @@ namespace Smile
 		StaticMeshComponent() = default;
 		StaticMeshComponent(const StaticMeshComponent&) = default;
 
-		StaticMeshComponent(const std::string& assetFile)
-			: StaticMeshComponent(assetFile, BufferLayout{
-				{ ShaderDataType::eFloat3, "Position" },
-				{ ShaderDataType::eFloat3, "Normal" },
-				{ ShaderDataType::eFloat2, "TexCoord" },
-				{ ShaderDataType::eFloat3, "Tangent" }
-				})
-		{}
-
-		StaticMeshComponent(const std::string& assetFile, const BufferLayout& layout)
+		StaticMeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
 		{
+			pMaterials.push_back(pMaterial);
+
 			MeshLoader meshLoader{};
 			pMeshes = meshLoader.LoadMesh(assetFile);
 
 			for (const auto& pMesh : pMeshes)
 			{
-				pMesh->Create(layout);
+				const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
+				pMesh->Create(bufferLayout);
 			}
 		}
 
 		std::vector<Ref<Mesh>> pMeshes = {};
+		std::vector<Ref<Material>> pMaterials = {};
 	};
 
 	struct CameraComponent final

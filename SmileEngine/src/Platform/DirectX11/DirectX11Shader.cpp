@@ -95,6 +95,24 @@ namespace Smile
 		}
 	}
 
+	void DirectX11Shader::UploadBool(const std::string& sementicName, bool value)
+	{
+		auto pBoolVariable = GetEffectVariable(sementicName)->AsScalar();
+		if (pBoolVariable->IsValid())
+		{
+			pBoolVariable->SetBool(value);
+		}
+	}
+
+	void DirectX11Shader::UploadFloat(const std::string& sementicName, float value)
+	{
+		auto pFloatVariable = GetEffectVariable(sementicName)->AsScalar();
+		if (pFloatVariable->IsValid())
+		{
+			pFloatVariable->SetFloat(value);
+		}
+	}
+
 	bool DirectX11Shader::LoadEffect(ID3D11Device* pDevice, const std::string& assetFile)
 	{
 		HRESULT result{ S_OK };

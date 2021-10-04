@@ -27,6 +27,8 @@
 #include "SmileEngine/Renderer/Shader.h"
 #include "SmileEngine/Renderer/Framebuffer.h"
 #include "SmileEngine/Renderer/Texture.h"
+#include "SmileEngine/Renderer/Mesh.h"
+#include "SmileEngine/Renderer/Material.h"
 #include "SmileEngine/Renderer/VertexArray.h"
 
 #include "SmileEngine/Renderer/OrthographicCamera.h"

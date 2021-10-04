@@ -25,6 +25,7 @@ namespace Smile
 		float m_CameraRotationSpeed = 180.f;
 
 		Entity m_GunEntity;
+		Ref<Material> m_pMaterial = nullptr;
 
 		Ref<Framebuffer> m_pFramebuffer;
 

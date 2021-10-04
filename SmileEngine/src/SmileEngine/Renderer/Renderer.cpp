@@ -59,7 +59,7 @@ namespace Smile
 	{
 		for (const auto& pMesh : staticMeshComponent.pMeshes)
 		{
-			Submit(pMesh->GetVertexBuffer(), pMesh->GetIndexBuffer(), pMesh->GetShader(), worldTransform);
+			Submit(pMesh->GetVertexBuffer(), pMesh->GetIndexBuffer(), staticMeshComponent.pMaterials[0]->GetShader(), worldTransform);
 		}
 	}
 }

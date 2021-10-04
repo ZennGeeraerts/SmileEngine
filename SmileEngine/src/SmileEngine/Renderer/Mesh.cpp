@@ -38,15 +38,15 @@ namespace Smile
 			for (const BufferElement& element : layout)
 			{
 				if (element.Name == "Position")
-					memcpy(pDataLocation, bUsePositions ? &m_Positions[i] : &m_DefaultFloat3, element.Size);
+					memcpy(pDataLocation, m_bUsePositions ? &m_Positions[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "Normal")
-					memcpy(pDataLocation, bUseNormals ? &m_Normals[i] : &m_DefaultFloat3, element.Size);
+					memcpy(pDataLocation, m_bUseNormals ? &m_Normals[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "TexCoord")
-					memcpy(pDataLocation, bUseTexCoords ? &m_TexCoords[i] : &m_DefaultFloat2, element.Size);
+					memcpy(pDataLocation, m_bUseTexCoords ? &m_TexCoords[i] : &m_DefaultFloat2, element.Size);
 				else if (element.Name == "Tangent")
-					memcpy(pDataLocation, bUseTangents ? &m_Tangents[i] : &m_DefaultFloat3, element.Size);
+					memcpy(pDataLocation, m_bUseTangents ? &m_Tangents[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "Binormal")
-					memcpy(pDataLocation, bUseBinormals ? &m_Binormals[i] : &m_DefaultFloat3, element.Size);
+					memcpy(pDataLocation, m_bUseBinormals ? &m_Binormals[i] : &m_DefaultFloat3, element.Size);
 
 				pDataLocation = (char*)pDataLocation + element.Size;
 			}
@@ -57,10 +57,7 @@ namespace Smile
 		indexBufferData.Count = static_cast<uint32_t>(m_Indices.size());
 		indexBufferData.Usage = BufferUsage::eImmutable;
 
-		std::string shaderFilePath = "../SmileEditor/Resources/Shaders/PBR.fx";
-
 		m_pVertexBuffer.reset(VertexBuffer::Create(vertexBufferData));
 		m_pIndexBuffer.reset(IndexBuffer::Create(indexBufferData));
-		m_pShader = Shader::Create(shaderFilePath, layout);
 	}
 }

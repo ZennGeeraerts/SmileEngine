@@ -2,14 +2,27 @@ float4x4 gWorld : WORLD;
 float4x4 gViewProjection : VIEWPROJECTION;
 float4x4 gViewInverse : VIEWINVERSE;
 
-float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
+float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f) * -1;
 float3 gLightColor = float3(1.0f, 1.0f, 1.0f);
 float gLightIntensity = 3.f;
 
+bool gUseAlbedoMap : USEALBEDOMAP = false;
+float3 gAlbedoValue : ALBEDO = float3(0.0f, 0.0f, 0.0f);
 Texture2D gAlbedoMap : ALBEDOMAP;
+
+bool gUseNormalMap : USENORMALMAP = false;
 Texture2D gNormalMap : NORMALMAP;
+
+bool gUseMetalnessMap : USEMETALNESSMAP = false;
+float gMetalnessValue : METALNESS = 0.0f;
 Texture2D gMetalnessMap : METALNESSMAP;
+
+bool gUseRoughnessMap : USEROUGHNESSMAP = false;
+float gRoughnessValue : ROUGHNESS = 0.5f;
 Texture2D gRoughnessMap : ROUGHNESSMAP;
+
+bool gUseAOMap : USEAOMAP = false;
+float gAOValue = 1.0f;
 Texture2D gAOMap : AOMap;
 
 float3 gAmbientColor = 1.f;
@@ -101,29 +114,42 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
     float3 viewDirection = normalize(input.WorldPosition.xyz - gViewInverse[3].xyz);
     
     // Albedo
-    float3 albedo = pow(gAlbedoMap.Sample(gSamLinear, input.TexCoord).rgb, 2.2f);
+    float3 albedo = gAlbedoValue;
+    if (gUseAlbedoMap)
+        albedo = pow(gAlbedoMap.Sample(gSamLinear, input.TexCoord).rgb, 2.2f);
     
     // Normal
-    float3 binormal = cross(input.Normal, input.Tangent);
-    float3x3 localAxis = float3x3(input.Tangent, binormal, input.Normal);
-    float3 sampledNormal = gNormalMap.Sample(gSamLinear, input.TexCoord).rgb;
-    sampledNormal = 2.f * sampledNormal - 1.f;
-    float3 bumpNormal = normalize(mul(sampledNormal, localAxis));
+    float3 bumpNormal = input.Normal;
+    if (gUseNormalMap)
+    {
+        float3 binormal = cross(input.Normal, input.Tangent);
+        float3x3 localAxis = float3x3(input.Tangent, binormal, input.Normal);
+        float3 sampledNormal = gNormalMap.Sample(gSamLinear, input.TexCoord).rgb;
+        sampledNormal = 2.f * sampledNormal - 1.f;
+        bumpNormal = normalize(mul(sampledNormal, localAxis));
+    }
 
     // AO
-    float ao = gAOMap.Sample(gSamLinear, input.TexCoord).r;
+    float ao = gAOValue;
+    if (gUseAOMap)
+        ao = gAOMap.Sample(gSamLinear, input.TexCoord).r;
 	
     // Roughness
-    float roughness = gRoughnessMap.Sample(gSamLinear, input.TexCoord).r;
-    
-    // Cube environment
-    float3 reflected = reflect(viewDirection, bumpNormal);
-    float3 refracted = refract(viewDirection, bumpNormal, gRefractionIndex);
-    float3 environment = gEnvironmentMap.Sample(gSamLinear, reflected) * gReflectionStrength + gEnvironmentMap.Sample(gSamLinear, refracted) * gRefractionStrength;
-    environment = saturate(environment);
+    float roughness = gRoughnessValue;
+    if (gUseRoughnessMap)
+        gRoughnessMap.Sample(gSamLinear, input.TexCoord).r;
     
     // Metalness
-    float metalness = gMetalnessMap.Sample(gSamLinear, input.TexCoord).r;
+    float metalness = gMetalnessValue;
+    if (gUseMetalnessMap)
+        metalness = gMetalnessMap.Sample(gSamLinear, input.TexCoord).r;
+    
+    // Cube environment
+    float3 reflected = reflect(-viewDirection, bumpNormal);
+    float3 refracted = refract(-viewDirection, bumpNormal, gRefractionIndex);
+    float3 environment = gEnvironmentMap.Sample(gSamLinear, reflected) * gReflectionStrength + gEnvironmentMap.Sample(gSamLinear, refracted) * gRefractionStrength;
+    environment = saturate(environment);
+    environment = environment * (1 - roughness);
     
     float3 baseReflectivity = 0.04f;
     baseReflectivity = lerp(baseReflectivity, albedo, metalness);
@@ -151,11 +177,11 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
         outgoingRadiance = (kD * albedo / gPI + specular) * radiance * max(dot(bumpNormal, gLightDirection), 0.0f);
     }
     
-    float3 ambient = gAmbientColor * environment * albedo * ao;
+    float3 ambient = environment * albedo * ao;
     float3 color = ambient + outgoingRadiance;
     
-    color = color / (color + 1.0f);
-    color = pow(color, 1.0f / 2.2f);
+    color = color / (color + float3(1.0f, 1.0f, 1.0f));
+    color = pow(color, float3(1.0f / 2.2f, 1.0f / 2.2f, 1.0f / 2.2f));
     
     return float4(color, 1.f);
 }
