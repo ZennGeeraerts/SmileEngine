@@ -57,7 +57,7 @@ namespace Smile
 		indexBufferData.Count = static_cast<uint32_t>(m_Indices.size());
 		indexBufferData.Usage = BufferUsage::eImmutable;
 
-		std::string shaderFilePath = "../SmileProject/Resources/Shaders/PBR.fx";
+		std::string shaderFilePath = "../SmileEditor/Resources/Shaders/PBR.fx";
 
 		m_pVertexBuffer.reset(VertexBuffer::Create(vertexBufferData));
 		m_pIndexBuffer.reset(IndexBuffer::Create(indexBufferData));

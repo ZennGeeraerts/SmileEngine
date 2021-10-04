@@ -26,7 +26,7 @@ namespace Smile
 
 		// Gun
 		m_GunEntity = m_pActiveScene->CreateEntity("Gun");
-		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("../SmileProject/Resources/Meshes/drakefire_pistol_low.obj");
+		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("../SmileEditor/Resources/Meshes/drakefire_pistol_low.obj");
 		auto& gunTransform = m_GunEntity.GetComponent<TransformComponent>();
 		gunTransform.Translation.z += 15.f;
 		gunTransform.Translation.y -= 2.f;
@@ -36,12 +36,12 @@ namespace Smile
 		gunTransform.Scale.y *= 5.f;
 		gunTransform.Scale.z *= 5.f;
 
-		auto pAlbedoMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_albedo.jpg");
-		auto pNormalMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_normal.jpg");
-		auto pMetalnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_metallic.jpg");
-		auto pRoughnessMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_roughness.jpg");
-		auto pAOMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/base_AO.jpg");
-		auto pEnvironmentMap = Smile::Texture2D::Create("../SmileProject/Resources/Textures/Sunol_Cubemap.dds");
+		auto pAlbedoMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_albedo.jpg");
+		auto pNormalMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_normal.jpg");
+		auto pMetalnessMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_metallic.jpg");
+		auto pRoughnessMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_roughness.jpg");
+		auto pAOMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_AO.jpg");
+		auto pEnvironmentMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/Sunol_Cubemap.dds");
 
 		for (auto& pMesh : staticMesh.pMeshes)
 		{
@@ -181,11 +181,17 @@ namespace Smile
 
 		// DockSpace
 		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+		float standardWindowMinSize = style.WindowMinSize.x;
+		style.WindowMinSize.x = 350.f;
+
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+
+		style.WindowMinSize.x = standardWindowMinSize;
 
 		if (ImGui::BeginMenuBar())
 		{

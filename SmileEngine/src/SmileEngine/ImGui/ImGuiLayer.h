@@ -21,6 +21,8 @@ namespace Smile
 		void Begin();
 		void End();
 
+		void SetDarkThemeColors();
+
 	private:
 		void ShutDown();
 

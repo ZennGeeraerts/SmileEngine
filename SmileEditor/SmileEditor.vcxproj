@@ -31,6 +31,9 @@
       <Project>{495e5e4c-08d2-42be-8b9b-0dcf54f83425}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Icons\big-smile-smiley_icon-icons.com_57417.ico" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

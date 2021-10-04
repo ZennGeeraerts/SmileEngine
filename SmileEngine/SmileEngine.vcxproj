@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Framebuffer.h" />
@@ -154,6 +155,12 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Texture.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SmileEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Icons\logo.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

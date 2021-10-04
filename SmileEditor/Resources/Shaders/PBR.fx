@@ -4,7 +4,7 @@ float4x4 gViewInverse : VIEWINVERSE;
 
 float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 float3 gLightColor = float3(1.0f, 1.0f, 1.0f);
-float gLightIntensity = 3000.f;
+float gLightIntensity = 3.f;
 
 Texture2D gAlbedoMap : ALBEDOMAP;
 Texture2D gNormalMap : NORMALMAP;
@@ -15,9 +15,9 @@ Texture2D gAOMap : AOMap;
 float3 gAmbientColor = 1.f;
 
 TextureCube gEnvironmentMap : ENVIRONMENTMAP;
-float gReflectionStrength = 0.5f;
-float gRefractionStrength = 0.2f;
-float gRefractionIndex = 0.3f;
+float gReflectionStrength = 0.9f;
+float gRefractionStrength = 0.1f;
+float gRefractionIndex = 0.3000f;
 
 float gPI = 3.141592f;
 float gEpsilon = 0.0001f;
@@ -128,7 +128,8 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
     float3 baseReflectivity = 0.04f;
     baseReflectivity = lerp(baseReflectivity, albedo, metalness);
     
-    float3 radiance = mul(gLightColor, gLightIntensity);
+    float3 radianceColor = lerp(gLightColor, albedo, metalness);
+    float3 radiance = mul(radianceColor, gLightIntensity);
     
     // cooktorrence
     float3 outgoingRadiance = 0.0f;

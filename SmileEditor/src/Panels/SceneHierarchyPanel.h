@@ -23,7 +23,9 @@ namespace Smile
 		static void DrawVector3Control(const std::string& label, DirectX::XMFLOAT3& values, float resetValue = 0.0f, float columnWidth = 100.f);
 
 		void DrawComponents(Entity entity);
-		
+
+		template <typename ComponentType, typename UIFunction>
+		static void DrawComponent(const std::string& label, Entity entity, UIFunction uiFunction, bool bRemoveable = true);
 
 	private:
 		Ref<Scene> m_pContext;

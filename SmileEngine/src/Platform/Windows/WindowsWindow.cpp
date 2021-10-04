@@ -12,6 +12,8 @@
 // For now using only DirectX11
 #include "Platform/DirectX11/DirectX11Context.h"
 
+#include "../../../resource.h"
+
 //#include "SmileEngine/ImGui/imgui_impl_win32.h"
 //
 //extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -61,7 +63,13 @@ namespace Smile
 		windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		windowClass.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 
-		windowClass.hIcon = LoadIcon(0, IDI_APPLICATION);
+		windowClass.hIcon = static_cast<HICON>(LoadImage(HINSTANCE(),
+			MAKEINTRESOURCE(IDI_ICON1),
+			IMAGE_ICON,
+			256, 256,
+			LR_DEFAULTCOLOR));
+
+			/*LoadIcon(0, IDI_APPLICATION);*/
 		windowClass.hIconSm = LoadIcon(0, IDI_APPLICATION);
 
 		windowClass.lpszClassName = className;
