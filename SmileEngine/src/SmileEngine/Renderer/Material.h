@@ -26,6 +26,22 @@ namespace Smile
 		const BufferLayout& GetBufferLayout() const { return m_BufferLayout; }
 		const Ref<Shader>& GetShader() const { return m_pShader; }
 
+		void SetUseAlbedoMap(bool bUse);
+		void SetUseMetalnessMap(bool bUse);
+		void SetUseRoughnessMap(bool bUse);
+		void SetUseNormalMap(bool bUse);
+		void SetUseAOMap(bool bUse);
+
+		const DirectX::XMFLOAT3& GetAlbedoColor() const { return m_Albedo; }
+		float GetMetalness() const { return m_Metalness; }
+		float GetRoughness() const { return m_Roughness; }
+
+		bool GetUseAlbedoMap() const { return m_bUseAlbedoMap; }
+		bool GetUseMetalnessMap() const { return m_bUseMetalnessMap; }
+		bool GetUseRoughnessMap() const { return m_bUseRoughnessMap; }
+		bool GetUseNormalMap() const { return m_bUseNormalMap; }
+		bool GetUseAOMap() const { return m_bUseAOMap; }
+
 	private:
 		DirectX::XMFLOAT3 m_Albedo = { 0.f, 0.f, 0.f };
 		float m_Metalness = 0.0f;

@@ -43,10 +43,15 @@ namespace Smile
 		auto pEnvironmentMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/Sunol_Cubemap.dds");
 
 		m_pMaterial = CreateRef<Material>();
+		m_pMaterial->SetUseAlbedoMap(true);
 		m_pMaterial->SetAlbedo(pAlbedoMap);
+		m_pMaterial->SetUseMetalnessMap(true);
 		m_pMaterial->SetMetalness(pMetalnessMap);
+		m_pMaterial->SetUseRoughnessMap(true);
 		m_pMaterial->SetRoughness(pRoughnessMap);
+		m_pMaterial->SetUseNormalMap(true);
 		m_pMaterial->SetNormalMap(pNormalMap);
+		m_pMaterial->SetUseAOMap(true);
 		m_pMaterial->SetAOMap(pAOMap);
 
 		/*m_pMaterial->SetAlbedo(DirectX::XMFLOAT3{ 0.9f, 0.1f, 0.1f });

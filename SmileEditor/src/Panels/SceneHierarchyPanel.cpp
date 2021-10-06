@@ -281,6 +281,79 @@ namespace Smile
 				}
 				}
 			});
+
+		DrawComponent<StaticMeshComponent>("Static Mesh", entity, [](auto& staticMeshComponent)
+			{
+				if (staticMeshComponent.pMeshes[0])
+				{
+					ImGui::Text("Mesh File Path:");
+					ImGui::SameLine();
+
+					const auto& meshFilePath = staticMeshComponent.pMeshes[0]->GetFilePath();
+
+					char filePathBuffer[256];
+					memset(filePathBuffer, 0, sizeof(filePathBuffer));
+					strcpy_s(filePathBuffer, sizeof(filePathBuffer), meshFilePath.c_str());
+
+					if (ImGui::InputText("##MeshFilePath", filePathBuffer, sizeof(filePathBuffer)))
+					{
+
+					}
+				}
+
+				for (const auto& pMaterial : staticMeshComponent.pMaterials)
+				{
+					// Albedo
+					bool bUseAlbedoMap = pMaterial->GetUseAlbedoMap();
+					if (ImGui::Checkbox("Use Albedo Map", &bUseAlbedoMap))
+						pMaterial->SetUseAlbedoMap(bUseAlbedoMap);
+
+					auto albedoColor = pMaterial->GetAlbedoColor();
+					ImGui::ColorPicker3("Albedo Color", reinterpret_cast<float*>(&albedoColor));
+					pMaterial->SetAlbedo(albedoColor);
+
+					// Metalness
+					bool bUseMetalnessMap = pMaterial->GetUseMetalnessMap();
+					if (ImGui::Checkbox("Use Metalness Map", &bUseMetalnessMap))
+						pMaterial->SetUseMetalnessMap(bUseMetalnessMap);
+
+					auto metalnessValue = pMaterial->GetMetalness();
+					ImGui::SliderFloat("Metalness", &metalnessValue, 0, 1);
+					pMaterial->SetMetalness(metalnessValue);
+
+					// Roughness
+					bool bUseRoughnessMap = pMaterial->GetUseRoughnessMap();
+					if (ImGui::Checkbox("Use Roughness Map", &bUseRoughnessMap))
+						pMaterial->SetUseRoughnessMap(bUseRoughnessMap);
+
+					auto roughnessValue = pMaterial->GetRoughness();
+					ImGui::SliderFloat("Roughness", &roughnessValue, 0, 1);
+					pMaterial->SetRoughness(roughnessValue);
+
+					// Normal
+					bool bUseNormalMap = pMaterial->GetUseNormalMap();
+					if (ImGui::Checkbox("Use Normal Map", &bUseNormalMap))
+						pMaterial->SetUseNormalMap(bUseNormalMap);
+
+					// AO
+					bool bUseAOMap = pMaterial->GetUseAOMap();
+					if (ImGui::Checkbox("Use AO Map", &bUseAOMap))
+						pMaterial->SetUseAOMap(bUseAOMap);
+				}
+
+				/*DrawVector3Control("Position", transformComponent.Translation);
+
+				DirectX::XMFLOAT3 rotationDegrees = {};
+				rotationDegrees.x = DirectX::XMConvertToDegrees(transformComponent.Rotation.x);
+				rotationDegrees.y = DirectX::XMConvertToDegrees(transformComponent.Rotation.y);
+				rotationDegrees.z = DirectX::XMConvertToDegrees(transformComponent.Rotation.z);
+				DrawVector3Control("Rotation", rotationDegrees);
+				transformComponent.Rotation.x = DirectX::XMConvertToRadians(rotationDegrees.x);
+				transformComponent.Rotation.y = DirectX::XMConvertToRadians(rotationDegrees.y);
+				transformComponent.Rotation.z = DirectX::XMConvertToRadians(rotationDegrees.z);
+
+				DrawVector3Control("Scale", transformComponent.Scale, 1.0f);*/
+			});
 	}
 
 	template <typename ComponentType, typename UIFunction>

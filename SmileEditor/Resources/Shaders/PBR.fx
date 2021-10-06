@@ -137,7 +137,7 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
     // Roughness
     float roughness = gRoughnessValue;
     if (gUseRoughnessMap)
-        gRoughnessMap.Sample(gSamLinear, input.TexCoord).r;
+        roughness = gRoughnessMap.Sample(gSamLinear, input.TexCoord).r;
     
     // Metalness
     float metalness = gMetalnessValue;

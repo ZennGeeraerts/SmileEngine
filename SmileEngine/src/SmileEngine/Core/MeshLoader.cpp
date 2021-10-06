@@ -75,6 +75,8 @@ namespace Smile
 				pMeshes[m]->m_Indices[static_cast<size_t>(indexIdx) + 1] = index1;
 				pMeshes[m]->m_Indices[static_cast<size_t>(indexIdx) + 2] = index2;
 			}
+
+			pMeshes[m]->m_FilePath = filePath;
 		}
 
 		aiReleaseImport(pScene);

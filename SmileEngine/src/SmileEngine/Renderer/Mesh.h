@@ -14,6 +14,7 @@ namespace Smile
 
 		Ref<VertexBuffer> GetVertexBuffer() const { return m_pVertexBuffer; }
 		Ref<IndexBuffer> GetIndexBuffer() const { return m_pIndexBuffer; }
+		const std::string& GetFilePath() const { return m_FilePath; }
 
 	private:
 		std::vector<DirectX::XMFLOAT3> m_Positions = {};
@@ -22,18 +23,20 @@ namespace Smile
 		std::vector<DirectX::XMFLOAT3> m_Binormals = {};
 		std::vector<DirectX::XMFLOAT2> m_TexCoords = {};
 
-		bool m_bUsePositions;
-		bool m_bUseNormals;
-		bool m_bUseTangents;
-		bool m_bUseBinormals;
-		bool m_bUseTexCoords;
+		bool m_bUsePositions = false;
+		bool m_bUseNormals = false;
+		bool m_bUseTangents = false;
+		bool m_bUseBinormals = false;
+		bool m_bUseTexCoords = false;
 
 		std::vector<uint32_t> m_Indices = {};
 
-		Ref<VertexBuffer> m_pVertexBuffer;
-		Ref<IndexBuffer> m_pIndexBuffer;
+		Ref<VertexBuffer> m_pVertexBuffer = nullptr;
+		Ref<IndexBuffer> m_pIndexBuffer = nullptr;
 
-		uint32_t m_VertexCount;
+		uint32_t m_VertexCount = 0;
+
+		std::string m_FilePath = {};
 
 		static DirectX::XMFLOAT4 m_DefaultColor;
 		static DirectX::XMFLOAT4 m_DefaultFloat4;
