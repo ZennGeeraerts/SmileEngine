@@ -31,6 +31,7 @@ namespace Smile
 		uint32_t m_ViewportHeight = 0;
 
 		friend class Entity;
+		friend class SceneSerializer;
 		friend class SceneHierarchyPanel;
 	};
 }

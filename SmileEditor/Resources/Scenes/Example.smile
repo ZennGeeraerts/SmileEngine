@@ -1,0 +1,49 @@
+Scene: Untitled
+Entities:
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        FOV: 48.4500008
+        PerspectiveNearPlane: 0.100000001
+        PerspectiveFarPlane: 2500
+        Size: 10
+        OrthographicNearPlane: -1
+        OrthographicFarPlane: 1
+      bPrimary: true
+      bFixedAspectRatio: false
+    StaticMeshComponent:
+      Mesh: ""
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0.5
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun
+    TransformComponent:
+      Translation: [-2, -2, 15]
+      Rotation: [0, 90, 0]
+      Scale: [5, 5, 5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: Resources\Textures\base_albedo.jpg
+        AlbedoColor: [0.776061773, 0.113862343, 0.113862343]
+        MetalnessMap: Resources\Textures\base_metallic.jpg
+        Metalness: 0
+        RoughnessMap: Resources\Textures\base_roughness.jpg
+        Roughness: 0.5
+        NormalMap: Resources\Textures\base_normal.jpg
+        AOMap: Resources\Textures\base_AO.jpg

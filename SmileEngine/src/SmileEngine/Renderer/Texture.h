@@ -10,6 +10,7 @@ namespace Smile
 	public:
 		virtual ~Texture() = default;
 
+		virtual const std::string& GetFilePath() const = 0;
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 		virtual void* GetData() const = 0;

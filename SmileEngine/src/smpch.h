@@ -41,3 +41,9 @@
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
 #include <DirectXCollision.h>
+
+#if defined(DEBUG) || defined(_DEBUG)
+	#pragma comment(lib, "yaml-cppd.lib")
+#else 
+	#pragma comment(lib, "yaml-cpp.lib")
+#endif

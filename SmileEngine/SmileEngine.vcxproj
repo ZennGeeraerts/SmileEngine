@@ -19,7 +19,45 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Libs\yaml-cpp\anchor.h" />
+    <ClInclude Include="Libs\yaml-cpp\binary.h" />
+    <ClInclude Include="Libs\yaml-cpp\contrib\anchordict.h" />
+    <ClInclude Include="Libs\yaml-cpp\contrib\graphbuilder.h" />
+    <ClInclude Include="Libs\yaml-cpp\depthguard.h" />
+    <ClInclude Include="Libs\yaml-cpp\dll.h" />
+    <ClInclude Include="Libs\yaml-cpp\emitfromevents.h" />
+    <ClInclude Include="Libs\yaml-cpp\emitter.h" />
+    <ClInclude Include="Libs\yaml-cpp\emitterdef.h" />
+    <ClInclude Include="Libs\yaml-cpp\emittermanip.h" />
+    <ClInclude Include="Libs\yaml-cpp\emitterstyle.h" />
+    <ClInclude Include="Libs\yaml-cpp\eventhandler.h" />
+    <ClInclude Include="Libs\yaml-cpp\exceptions.h" />
+    <ClInclude Include="Libs\yaml-cpp\mark.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\convert.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\impl.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\iterator.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\iterator_fwd.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\memory.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\node.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\node_data.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\node_iterator.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\detail\node_ref.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\emit.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\impl.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\iterator.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\node.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\parse.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\ptr.h" />
+    <ClInclude Include="Libs\yaml-cpp\node\type.h" />
+    <ClInclude Include="Libs\yaml-cpp\noexcept.h" />
+    <ClInclude Include="Libs\yaml-cpp\null.h" />
+    <ClInclude Include="Libs\yaml-cpp\ostream_wrapper.h" />
+    <ClInclude Include="Libs\yaml-cpp\parser.h" />
+    <ClInclude Include="Libs\yaml-cpp\stlemitter.h" />
+    <ClInclude Include="Libs\yaml-cpp\traits.h" />
+    <ClInclude Include="Libs\yaml-cpp\yaml.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\SmileEngine\Scene\SceneSerializer.h" />
     <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Framebuffer.h" />
@@ -82,6 +120,7 @@
     <ClInclude Include="src\SmileEngine\Core\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Framebuffer.cpp" />
@@ -252,7 +291,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -269,7 +308,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -283,7 +322,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -302,7 +341,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -315,7 +354,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -332,7 +371,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -346,7 +385,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -365,7 +404,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

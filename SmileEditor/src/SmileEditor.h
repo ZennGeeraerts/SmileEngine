@@ -1,6 +1,7 @@
 #pragma once
 #include <SmileEngine.h>
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Smile
 {
@@ -35,6 +36,7 @@ namespace Smile
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 
 	class SmileEditorGame final : public SmileGame

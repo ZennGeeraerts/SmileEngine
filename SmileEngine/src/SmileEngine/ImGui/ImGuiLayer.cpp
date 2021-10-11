@@ -10,6 +10,7 @@
 #include "Platform/DirectX11/DirectX11Context.h"
 
 #include "SmileEngine/Core/Logger.h"
+#include "SmileEngine/Core/KeyCodes.h"
 
 namespace Smile
 {
@@ -51,8 +52,9 @@ namespace Smile
 		//io.ConfigDockingAlwaysTabBar = true;
 		//io.ConfigDockingTransparentPayload = true;
 
-		io.FontDefault = io.Fonts->AddFontFromFileTTF("Resources/Fonts/Heebo/Heebo-Regular.ttf", 18.f);
-		io.Fonts->AddFontFromFileTTF("Resources/Fonts/Heebo/Heebo-Bold.ttf", 18.f);
+		const float fontSize = 18.f;
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("Resources/Fonts/Heebo/Heebo-Regular.ttf", fontSize);
+		io.Fonts->AddFontFromFileTTF("Resources/Fonts/Heebo/Heebo-Bold.ttf", fontSize);
 
 		 // Setup Dear ImGui style
 		ImGui::StyleColorsDark();
@@ -166,10 +168,10 @@ namespace Smile
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeysDown[e.GetKeyCode()] = true;
 
-		io.KeyCtrl = io.KeysDown[VK_LCONTROL] || io.KeysDown[VK_RCONTROL];
-		io.KeyShift = io.KeysDown[VK_LSHIFT] || io.KeysDown[VK_RSHIFT];
-		io.KeyAlt = io.KeysDown[VK_LMENU] || io.KeysDown[VK_RMENU];
-		io.KeySuper = io.KeysDown[VK_LWIN] || io.KeysDown[VK_RWIN];
+		io.KeyCtrl = io.KeysDown[SM_LCONTROL] || io.KeysDown[SM_RCONTROL];
+		io.KeyShift = io.KeysDown[SM_LSHIFT] || io.KeysDown[SM_RSHIFT];
+		io.KeyAlt = io.KeysDown[SM_LMENU] || io.KeysDown[SM_RMENU];
+		io.KeySuper = io.KeysDown[SM_LWIN] || io.KeysDown[SM_RWIN];
 		return false;
 	}
 

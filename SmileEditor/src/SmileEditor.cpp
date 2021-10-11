@@ -1,5 +1,7 @@
 #include "SmileEditor.h"
 
+#include "SmileEngine/Scene/SceneSerializer.h"
+
 #include <Libs/ImGui/imgui.h>
 
 namespace Smile
@@ -7,6 +9,8 @@ namespace Smile
 	/*-----------------------------------------------------------------------------------------------------------*/
 	/*---------------------------------------------- Editor Layer -----------------------------------------------*/
 	/*-----------------------------------------------------------------------------------------------------------*/
+
+	extern const std::filesystem::path g_ResourcePath;
 
 	SmileEditorLayer::SmileEditorLayer()
 		: Layer("SmileEditorLayer")
@@ -18,8 +22,8 @@ namespace Smile
 	{
 		Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 
-		m_pActiveScene.reset(new Smile::Scene{});
-
+		m_pActiveScene = CreateRef<Scene>();
+#if 0
 		// Camera
 		m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 		m_CameraEntity.AddComponent<CameraComponent>();
@@ -35,12 +39,12 @@ namespace Smile
 		gunTransform.Scale.y *= 5.f;
 		gunTransform.Scale.z *= 5.f;
 
-		auto pAlbedoMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_albedo.jpg");
-		auto pNormalMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_normal.jpg");
-		auto pMetalnessMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_metallic.jpg");
-		auto pRoughnessMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_roughness.jpg");
-		auto pAOMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/base_AO.jpg");
-		auto pEnvironmentMap = Smile::Texture2D::Create("../SmileEditor/Resources/Textures/Sunol_Cubemap.dds");
+		auto pAlbedoMap = Texture2D::Create("Resources/Textures/base_albedo.jpg");
+		auto pNormalMap = Texture2D::Create("Resources/Textures/base_normal.jpg");
+		auto pMetalnessMap = Texture2D::Create("Resources/Textures/base_metallic.jpg");
+		auto pRoughnessMap = Texture2D::Create("Resources/Textures/base_roughness.jpg");
+		auto pAOMap = Texture2D::Create("Resources/Textures/base_AO.jpg");
+		auto pEnvironmentMap = Texture2D::Create("Resources/Textures/Sunol_Cubemap.dds");
 
 		m_pMaterial = CreateRef<Material>();
 		m_pMaterial->SetUseAlbedoMap(true);
@@ -58,8 +62,8 @@ namespace Smile
 		m_pMaterial->SetMetalness(1);
 		m_pMaterial->SetRoughness(0.5f);*/
 
-		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("../SmileEditor/Resources/Meshes/drakefire_pistol_low.obj", m_pMaterial);
-
+		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("Resources/Meshes/drakefire_pistol_low.obj", m_pMaterial);
+#endif
 		// Framebuffer
 		FramebufferData framebufferData{};
 		framebufferData.Width = 1280;
@@ -84,7 +88,7 @@ namespace Smile
 			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
-
+#if 0
 		if (m_bViewportFocused)
 		{
 			auto& cameraTransform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
@@ -132,7 +136,7 @@ namespace Smile
 			auto& gunTransform = m_GunEntity.GetComponent<TransformComponent>();
 			gunTransform.Rotation.y += 1.f * deltaTime;
 		}
-
+#endif
 		Smile::RenderCommand::Clear();
 		m_pFramebuffer->Bind();
 		m_pFramebuffer->Clear();
@@ -204,6 +208,18 @@ namespace Smile
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("Save"))
+				{
+					SceneSerializer sceneSerializer{ m_pActiveScene };
+					sceneSerializer.Serialize("Resources/Scenes/Example.smile");
+				}
+
+				if (ImGui::MenuItem("Load"))
+				{
+					SceneSerializer sceneSerializer{ m_pActiveScene };
+					sceneSerializer.Deserialize("Resources/Scenes/Example.smile");
+				}
+
 				if (ImGui::MenuItem("Exit"))
 					Smile::SmileGame::GetInstance().ShutDown();
 				ImGui::EndMenu();
@@ -213,6 +229,7 @@ namespace Smile
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
+		m_ContentBrowserPanel.OnImGuiRender();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{});
 		ImGui::Begin("Viewport");
@@ -223,6 +240,19 @@ namespace Smile
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		
 		ImGui::Image(m_pFramebuffer->GetColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (payload)
+			{
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				// OpenScene(std::filesystem::path{ g_ResourcePath } / path)
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 		ImGui::End();
 
 		ImGui::PopStyleVar();

@@ -92,7 +92,11 @@ namespace Smile
 
 	struct StaticMeshComponent final
 	{
-		StaticMeshComponent() = default;
+		StaticMeshComponent()
+		{
+			pMaterials.push_back(CreateRef<Material>());
+		}
+
 		StaticMeshComponent(const StaticMeshComponent&) = default;
 
 		StaticMeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)

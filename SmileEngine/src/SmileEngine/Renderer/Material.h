@@ -42,6 +42,12 @@ namespace Smile
 		bool GetUseNormalMap() const { return m_bUseNormalMap; }
 		bool GetUseAOMap() const { return m_bUseAOMap; }
 
+		const Ref<Texture2D>& GetAlbedoMap() const { return m_pAlbedoMap; }
+		const Ref<Texture2D>& GetMetalnessMap() const { return m_pMetalnessMap; }
+		const Ref<Texture2D>& GetRoughnessMap() const { return m_pRoughnessMap; }
+		const Ref<Texture2D>& GetNormalMap() const { return m_pNormalMap; }
+		const Ref<Texture2D>& GetAOMap() const { return m_pAOMap; }
+
 	private:
 		DirectX::XMFLOAT3 m_Albedo = { 0.f, 0.f, 0.f };
 		float m_Metalness = 0.0f;
