@@ -18,6 +18,7 @@ namespace Smile
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& pScene)
 	{
 		m_pContext = pScene;
+		m_SelectedEntity = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()

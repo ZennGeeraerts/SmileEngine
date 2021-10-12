@@ -1,0 +1,308 @@
+Scene: Untitled
+Entities:
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun15
+    TransformComponent:
+      Translation: [2.75, -1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun14
+    TransformComponent:
+      Translation: [0.899999976, -1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0.328999996
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun13
+    TransformComponent:
+      Translation: [-0.899999976, -1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0.662
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun12
+    TransformComponent:
+      Translation: [-2.75, -1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 1
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun11
+    TransformComponent:
+      Translation: [2.75, -0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.662
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun10
+    TransformComponent:
+      Translation: [0.899999976, -0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.662
+        RoughnessMap: ""
+        Roughness: 0.328999996
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun9
+    TransformComponent:
+      Translation: [-0.899999976, -0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.662
+        RoughnessMap: ""
+        Roughness: 0.662
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun8
+    TransformComponent:
+      Translation: [-2.75, -0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.662
+        RoughnessMap: ""
+        Roughness: 1
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun7
+    TransformComponent:
+      Translation: [2.75, 0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.328999996
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun6
+    TransformComponent:
+      Translation: [0.899999976, 0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.328999996
+        RoughnessMap: ""
+        Roughness: 0.328999996
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun5
+    TransformComponent:
+      Translation: [-0.899999976, 0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.328999996
+        RoughnessMap: ""
+        Roughness: 0.662
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun4
+    TransformComponent:
+      Translation: [-2.75, 0.449999988, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0.328999996
+        RoughnessMap: ""
+        Roughness: 1
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun3
+    TransformComponent:
+      Translation: [2.75, 1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        FOV: 45
+        PerspectiveNearPlane: 0.100000001
+        PerspectiveFarPlane: 2500
+        Size: 10
+        OrthographicNearPlane: -1
+        OrthographicFarPlane: 1
+      bPrimary: true
+      bFixedAspectRatio: false
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun
+    TransformComponent:
+      Translation: [-2.75, 1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 1
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun1
+    TransformComponent:
+      Translation: [-0.899999976, 1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0.662
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun2
+    TransformComponent:
+      Translation: [0.899999976, 1.5, 5]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.784313738, 0.0196078438, 0.0196078438]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0.328999996
+        NormalMap: ""
+        AOMap: ""

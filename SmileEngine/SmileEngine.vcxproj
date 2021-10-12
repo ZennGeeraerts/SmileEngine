@@ -112,12 +112,13 @@
     <ClInclude Include="src\SmileEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h" />
     <ClInclude Include="src\SmileEngine\Core\SmTime.h" />
+    <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h" />
     <ClInclude Include="src\smpch.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
-    <ClInclude Include="src\SmileEngine\Core\Utils.h" />
+    <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SmileEngine\Scene\SceneSerializer.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\SmileEngine\Core\SmTime.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\smpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -193,7 +195,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Texture.cpp" />
-    <ClCompile Include="src\SmileEngine\Core\Utils.cpp" />
+    <ClCompile Include="src\SmileEngine\Utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SmileEngine.rc" />

@@ -1,6 +1,7 @@
 #include "SmileEditor.h"
 
 #include "SmileEngine/Scene/SceneSerializer.h"
+#include "SmileEngine/Utils/PlatformUtils.h"
 
 #include <Libs/ImGui/imgui.h>
 
@@ -208,17 +209,14 @@ namespace Smile
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Save"))
-				{
-					SceneSerializer sceneSerializer{ m_pActiveScene };
-					sceneSerializer.Serialize("Resources/Scenes/Example.smile");
-				}
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+					NewScene();
 
-				if (ImGui::MenuItem("Load"))
-				{
-					SceneSerializer sceneSerializer{ m_pActiveScene };
-					sceneSerializer.Deserialize("Resources/Scenes/Example.smile");
-				}
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+					OpenScene();
+
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+					SaveSceneAs();
 
 				if (ImGui::MenuItem("Exit"))
 					Smile::SmileGame::GetInstance().ShutDown();
@@ -247,7 +245,7 @@ namespace Smile
 			if (payload)
 			{
 				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-				// OpenScene(std::filesystem::path{ g_ResourcePath } / path)
+				OpenScene(std::filesystem::path{ g_ResourcePath } / path);
 			}
 
 			ImGui::EndDragDropTarget();
@@ -263,7 +261,72 @@ namespace Smile
 	void SmileEditorLayer::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher{ e };
-		//dispatcher.Dispatch<WindowResizeEvent>(SM_BIND_EVENT_FN(SmileEditorLayer::OnWindowResize));
+		dispatcher.Dispatch<KeyPressedEvent>(SM_BIND_EVENT_FN(SmileEditorLayer::OnKeyPressed));
+	}
+
+	bool SmileEditorLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		if (e.GetRepeatCount() > 1)
+			return false;
+
+		bool bControlPressed = Input::IsKeyPressed(SM_LCONTROL) || Input::IsKeyPressed(SM_RCONTROL);
+		bool bShiftPressed = Input::IsKeyPressed(SM_LSHIFT) || Input::IsKeyPressed(SM_RSHIFT);
+
+		switch (e.GetKeyCode())
+		{
+		case 'S':
+			if (bControlPressed && bShiftPressed)
+				SaveSceneAs();
+			break;
+		case 'O':
+			if (bControlPressed)
+				OpenScene();
+			break;
+		case 'N':
+			if (bControlPressed)
+				NewScene();
+			break;
+		}
+
+		return false;
+	}
+
+	void SmileEditorLayer::SaveSceneAs()
+	{
+		std::string filePath = Utils::SaveFile("Smile Scene (*.smile)\0*.smile\0");
+		if (!filePath.empty())
+		{
+			SceneSerializer sceneSerializer{ m_pActiveScene };
+			sceneSerializer.Serialize(filePath);
+		}
+		else
+			SM_LOG_ERROR("SmileEditorLayer::SaveSceneAs > Failed to save scene. The file path was empty");
+	}
+
+	void SmileEditorLayer::OpenScene()
+	{
+		std::string filePath = Utils::OpenFile("Smile Scene (*.smile)\0*.smile\0");
+		OpenScene(filePath);
+	}
+
+	void SmileEditorLayer::OpenScene(const std::filesystem::path& filePath)
+	{
+		if (!filePath.empty())
+		{
+			m_pActiveScene = CreateRef<Scene>();
+			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_SceneHierarchyPanel.SetContext(m_pActiveScene);
+
+			SceneSerializer sceneSerializer{ m_pActiveScene };
+			sceneSerializer.Deserialize(filePath.string());
+		}
+	}
+
+	void SmileEditorLayer::NewScene()
+	{
+		m_pActiveScene = CreateRef<Scene>();
+		m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_SceneHierarchyPanel.SetContext(m_pActiveScene);
 	}
 
 	/*-----------------------------------------------------------------------------------------------------------*/

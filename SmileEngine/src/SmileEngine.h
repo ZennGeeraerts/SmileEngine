@@ -11,13 +11,13 @@
 #include "SmileEngine/Core/Input.h"
 #include "SmileEngine/Core/KeyCodes.h"
 
-#include "SmileEngine/Core/Utils.h"
-
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
 #include "SmileEngine/Scene/Scene.h"
 #include "SmileEngine/Scene/Entity.h"
 #include "SmileEngine/Scene/Components.h"
+
+#include "SmileEngine/Utils/Utils.h"
 
 /* ---Renderer--- */
 #include "SmileEngine/Renderer/Renderer.h"

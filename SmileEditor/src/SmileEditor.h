@@ -19,6 +19,14 @@ namespace Smile
 		virtual void OnEvent(Event& e) override;
 
 	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void SaveSceneAs();
+		void OpenScene();
+		void OpenScene(const std::filesystem::path& filePath);
+		void NewScene();
+
+	private:
 		Ref<Scene> m_pActiveScene;
 
 		Entity m_CameraEntity;

@@ -2,39 +2,10 @@ Scene: Untitled
 Entities:
   - Entity: 1283719283174164
     TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        FOV: 48.4500008
-        PerspectiveNearPlane: 0.100000001
-        PerspectiveFarPlane: 2500
-        Size: 10
-        OrthographicNearPlane: -1
-        OrthographicFarPlane: 1
-      bPrimary: true
-      bFixedAspectRatio: false
-    StaticMeshComponent:
-      Mesh: ""
-      Material:
-        AlbedoMap: ""
-        AlbedoColor: [0, 0, 0]
-        MetalnessMap: ""
-        Metalness: 0
-        RoughnessMap: ""
-        Roughness: 0.5
-        NormalMap: ""
-        AOMap: ""
-  - Entity: 1283719283174164
-    TagComponent:
       Tag: Gun
     TransformComponent:
-      Translation: [-2, -2, 15]
-      Rotation: [0, 90, 0]
+      Translation: [-5.55999994, 0, 20]
+      Rotation: [0, 1.57079637, 0]
       Scale: [5, 5, 5]
     StaticMeshComponent:
       Mesh: Resources\Meshes\drakefire_pistol_low.obj
@@ -47,3 +18,39 @@ Entities:
         Roughness: 0.5
         NormalMap: Resources\Textures\base_normal.jpg
         AOMap: Resources\Textures\base_AO.jpg
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        FOV: 45
+        PerspectiveNearPlane: 0.100000001
+        PerspectiveFarPlane: 2500
+        Size: 10
+        OrthographicNearPlane: -1
+        OrthographicFarPlane: 1
+      bPrimary: true
+      bFixedAspectRatio: false
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Character
+    TransformComponent:
+      Translation: [7.82999992, -7.44000006, 20]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [1, 1, 1]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\nanosuit.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.395061493, 0.148148164, 0.888888896]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
