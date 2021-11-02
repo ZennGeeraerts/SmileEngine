@@ -8,6 +8,31 @@ namespace Smile
 	class SmileEditorLayer final : public Layer
 	{
 	public:
+		enum class GizmoType
+		{
+			eNone = 0,
+			eTranslateX = (1u << 0),
+			eTranslateY = (1u << 1),
+			eTranslateZ = (1u << 2),
+			eRotateX = (1u << 3),
+			eRotateY = (1u << 4),
+			eRotateZ = (1u << 5),
+			eRotateScreen = (1u << 6),
+			eScaleX = (1u << 7),
+			eScaleY = (1u << 8),
+			eScaleZ = (1u << 9),
+			eBounds = (1u << 10),
+			eScaleXU = (1u << 11),
+			eScaleYU = (1u << 12),
+			eScaleZU = (1u << 13),
+
+			eTranslate = eTranslateX | eTranslateY | eTranslateZ,
+			eRotate = eRotateX | eRotateY | eRotateZ | eRotateScreen,
+			eScale = eScaleX | eScaleY | eScaleZ,
+			eScaleU = eScaleXU | eScaleYU | eScaleZU, // universal
+			eUniversal = eTranslate | eRotate | eScale
+		};
+
 		SmileEditorLayer();
 		virtual ~SmileEditorLayer() = default;
 
@@ -45,6 +70,8 @@ namespace Smile
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+		GizmoType m_GizmoType = GizmoType::eNone;
 	};
 
 	class SmileEditorGame final : public SmileGame

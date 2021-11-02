@@ -321,6 +321,12 @@
     <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Math\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -441,6 +447,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Math\Math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

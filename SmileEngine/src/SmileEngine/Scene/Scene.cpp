@@ -98,6 +98,18 @@ namespace Smile
 		}
 	}
 
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (cameraComponent.bPrimary)
+				return Entity{ entity, this };
+		}
+		return Entity{};
+	}
+
 	template <typename ComponentType>
 	void Scene::OnComponentAdded(Entity entity, ComponentType& component)
 	{

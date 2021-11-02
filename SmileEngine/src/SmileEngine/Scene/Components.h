@@ -99,6 +99,7 @@ namespace Smile
 
 		StaticMeshComponent(const StaticMeshComponent&) = default;
 
+		// For now, only support 1 material
 		StaticMeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
 		{
 			pMaterials.push_back(pMaterial);

@@ -184,6 +184,75 @@ namespace Smile
 			SM_LOG_ERROR("DirectX11Shader::BuildInputLayout > Failed to create input layout");
 	}
 
+	void DirectX11Shader::BuildInputLayout()
+	{
+		D3DX11_PASS_SHADER_DESC passShaderDesc{};
+		m_pTechnique->GetPassByIndex(0)->GetVertexShaderDesc(&passShaderDesc);
+
+		D3DX11_EFFECT_SHADER_DESC effectShaderDesc{};
+		passShaderDesc.pShaderVariable->GetShaderDesc(passShaderDesc.ShaderIndex, &effectShaderDesc);
+
+		D3D11_SIGNATURE_PARAMETER_DESC signatureParameterDesc{};
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputDescs{};
+		uint32_t stride = 0;
+
+		for (uint32_t i{}; i < effectShaderDesc.NumInputSignatureEntries; ++i)
+		{
+			passShaderDesc.pShaderVariable->GetInputSignatureElementDesc(passShaderDesc.ShaderIndex, i, &signatureParameterDesc);
+			
+			uint32_t offset = static_cast<uint32_t>(floor(log(signatureParameterDesc.Mask) / log(2)) + 1) * 4;
+			DXGI_FORMAT type{};
+
+			switch (signatureParameterDesc.ComponentType)
+			{
+			case D3D10_REGISTER_COMPONENT_FLOAT32:
+				if		(signatureParameterDesc.Mask == 1)	type = DXGI_FORMAT_R32_FLOAT;
+				else if (signatureParameterDesc.Mask == 3)	type = DXGI_FORMAT_R32G32_FLOAT;
+				else if (signatureParameterDesc.Mask == 7)	type = DXGI_FORMAT_R32G32B32_FLOAT;
+				else										type = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				break;
+			case D3D10_REGISTER_COMPONENT_UINT32:
+				if		(signatureParameterDesc.Mask == 1)	type = DXGI_FORMAT_R32_UINT;
+				else if (signatureParameterDesc.Mask == 3)	type = DXGI_FORMAT_R32G32_UINT;
+				else if (signatureParameterDesc.Mask == 7)	type = DXGI_FORMAT_R32G32B32_UINT;
+				else										type = DXGI_FORMAT_R32G32B32A32_UINT;
+				break;
+			case D3D10_REGISTER_COMPONENT_SINT32:
+				if		(signatureParameterDesc.Mask == 1)	type = DXGI_FORMAT_R32_SINT;
+				else if (signatureParameterDesc.Mask == 3)	type = DXGI_FORMAT_R32G32_SINT;
+				else if (signatureParameterDesc.Mask == 7)	type = DXGI_FORMAT_R32G32B32_SINT;
+				else										type = DXGI_FORMAT_R32G32B32A32_SINT;
+				break;
+			default:
+				SM_LOG_ERROR("DirectX11Shader::BuildInputLayout() > Unsupported Component Type");
+				break;
+			}
+
+			D3D11_INPUT_ELEMENT_DESC inputLayout = { 
+				signatureParameterDesc.SemanticName, 
+				signatureParameterDesc.SemanticIndex,
+				type, 
+				0, 
+				stride,
+				D3D11_INPUT_PER_VERTEX_DATA, 
+				0 
+			};
+
+			inputDescs.push_back(inputLayout);
+
+			stride += offset;
+		}
+
+		uint32_t count{ static_cast<uint32_t>(inputDescs.size()) };
+
+		D3DX11_PASS_DESC passDesc{};
+		m_pTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
+		HRESULT result = m_pDirectX11Context->GetDevice()->CreateInputLayout(inputDescs.data(), count, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout);
+
+		if (FAILED(result))
+			SM_LOG_ERROR("DirectX11Shader::BuildInputLayout > Failed to create input layout");
+	}
+
 	DXGI_FORMAT DirectX11Shader::ShaderDataTypeToDirectXBaseType(ShaderDataType type)
 	{
 		switch (type)

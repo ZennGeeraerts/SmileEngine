@@ -21,6 +21,8 @@ namespace Smile
 		void OnUpdate(Timestep deltaTime);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		Entity GetPrimaryCameraEntity();
+
 	private:
 		template <typename ComponentType>
 		void OnComponentAdded(Entity entity, ComponentType& component);

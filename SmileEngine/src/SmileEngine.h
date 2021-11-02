@@ -19,6 +19,8 @@
 
 #include "SmileEngine/Utils/Utils.h"
 
+#include "SmileEngine/Math/Math.h"
+
 /* ---Renderer--- */
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Renderer/RenderCommand.h"

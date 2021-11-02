@@ -4,6 +4,7 @@
 #include "SmileEngine/Utils/PlatformUtils.h"
 
 #include <Libs/ImGui/imgui.h>
+#include <Libs/ImGuizmo/ImGuizmo.h>
 
 namespace Smile
 {
@@ -249,6 +250,51 @@ namespace Smile
 			}
 
 			ImGui::EndDragDropTarget();
+		}
+
+		// Gizmos
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		m_GizmoType = GizmoType::eRotate;
+		if (selectedEntity && (m_GizmoType != GizmoType::eNone))
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			float windowWidth = static_cast<float>(ImGui::GetWindowWidth());
+			float windowHeight = static_cast<float>(ImGui::GetWindowHeight());
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+			auto cameraEntity = m_pActiveScene->GetPrimaryCameraEntity();
+			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+
+			// Camera
+			DirectX::XMFLOAT4X4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+			DirectX::XMMATRIX cameraTransformMat = DirectX::XMLoadFloat4x4(&cameraTransform);
+
+			const DirectX::XMFLOAT4X4& cameraProjectionMatrix = camera.GetProjectionMatrix();
+ 			DirectX::XMMATRIX cameraViewMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat);
+
+			// Entity
+			auto& entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();
+			auto entityTransform = entityTransformComponent.GetTransform();
+			
+			ImGuizmo::Manipulate(cameraViewMatrixMat.r->m128_f32, cameraProjectionMatrix.m[0], static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::MODE::LOCAL, entityTransform.m[0]);
+			
+			if (ImGuizmo::IsUsing())
+			{
+				DirectX::XMFLOAT3 translation{};
+				DirectX::XMFLOAT3 rotation{};
+				DirectX::XMFLOAT3 scale{};
+				Math::DecomposeMatrix(entityTransform, translation, rotation, scale);
+
+				entityTransformComponent.Translation = translation;
+
+				//DirectX::XMVECTOR currentRotationVec = DirectX::XMLoadFloat3(&entityTransformComponent.Rotation);
+				//DirectX::XMVECTOR deltaRotationVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&rotation), currentRotationVec);
+				//DirectX::XMVECTOR newRotationVec = DirectX::XMVectorAdd(currentRotationVec, deltaRotationVec);
+				//DirectX::XMStoreFloat3(&entityTransformComponent.Rotation, newRotationVec);
+				entityTransformComponent.Rotation = rotation;
+				entityTransformComponent.Scale = scale;
+			}
 		}
 
 		ImGui::End();

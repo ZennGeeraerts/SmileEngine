@@ -30,6 +30,7 @@ namespace Smile
 	private:
 		bool LoadEffect(ID3D11Device* pDevice, const std::string& assetFile);
 		void BuildInputLayout(const BufferLayout& layout);
+		void BuildInputLayout();
 		DXGI_FORMAT ShaderDataTypeToDirectXBaseType(ShaderDataType type);
 		ID3DX11EffectVariable* GetEffectVariable(const std::string& sementicName);
 

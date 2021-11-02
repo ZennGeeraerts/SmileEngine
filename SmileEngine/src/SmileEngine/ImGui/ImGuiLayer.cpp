@@ -4,6 +4,7 @@
 #include "Libs/ImGui/imgui.h"
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
+#include "Libs/ImGuizmo/ImGuizmo.h"
 
 #include "SmileEngine/Core/SmileGame.h"
 #include "Platform/Windows/WindowsWindow.h"
@@ -11,6 +12,7 @@
 
 #include "SmileEngine/Core/Logger.h"
 #include "SmileEngine/Core/KeyCodes.h"
+
 
 namespace Smile
 {
@@ -92,6 +94,7 @@ namespace Smile
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()
@@ -209,12 +212,12 @@ namespace Smile
 
 		// Headers
 		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.658f, 0.874f, 0.396f, 1.0f };
 		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
 		// Buttons
 		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.658f, 0.874f, 0.396f, 1.0f };
 		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 
 		// Frame BG
@@ -224,8 +227,8 @@ namespace Smile
 
 		// Tabs
 		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
-		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
-		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
+		colors[ImGuiCol_TabHovered] = ImVec4{ 0.658f, 0.874f, 0.396f, 1.0f };
+		colors[ImGuiCol_TabActive] = ImVec4{ 0.658f, 0.874f, 0.396f, 1.0f };
 		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
 

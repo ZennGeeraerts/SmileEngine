@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="Libs\yaml-cpp\anchor.h" />
     <ClInclude Include="Libs\yaml-cpp\binary.h" />
     <ClInclude Include="Libs\yaml-cpp\contrib\anchordict.h" />
@@ -56,6 +57,7 @@
     <ClInclude Include="Libs\yaml-cpp\stlemitter.h" />
     <ClInclude Include="Libs\yaml-cpp\traits.h" />
     <ClInclude Include="Libs\yaml-cpp\yaml.h" />
+    <ClInclude Include="src\SmileEngine\Math\Math.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\SmileEngine\Scene\SceneSerializer.h" />
     <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h" />
@@ -121,6 +123,17 @@
     <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Math\Math.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp" />
@@ -310,7 +323,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Debug;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -343,7 +356,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Release;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -373,7 +386,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Debug;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -406,7 +419,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Release;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
