@@ -269,7 +269,7 @@ namespace Smile
 		case ShaderDataType::eInt4:		return DXGI_FORMAT_R32G32B32A32_SINT;
 		case ShaderDataType::eBool:		return DXGI_FORMAT_UNKNOWN;
 		default:
-			SM_ASSERT(false, "ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType");
+			SM_ASSERT(false, "DirectX11Shader::ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType");
 			return DXGI_FORMAT_UNKNOWN;
 		}
 	}

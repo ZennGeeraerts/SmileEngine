@@ -41,7 +41,7 @@ namespace Smile
 	{
 		if (m_Lag >= m_MsPerFrame)
 		{
-			m_Lag -= (float)m_MsPerFrame;
+			m_Lag -= static_cast<float>(m_MsPerFrame);
 			return true;
 		}
 

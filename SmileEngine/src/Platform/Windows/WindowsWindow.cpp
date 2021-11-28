@@ -102,7 +102,7 @@ namespace Smile
 				HINSTANCE(),
 				this);
 
-		SM_ASSERT(m_WindowHandle, "WindowsWindow::Init > Could not create window!")
+		SM_ASSERT(m_WindowHandle, "WindowsWindow::Init > Could not create window!");
 
 		// Init context
 		m_pContext = new DirectX11Context{ this };

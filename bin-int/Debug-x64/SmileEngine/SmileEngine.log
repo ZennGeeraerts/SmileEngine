@@ -1,4 +1,42 @@
-﻿  Math.cpp
+﻿  smpch.cpp
+  DirectX11Buffer.cpp
+  DirectX11Context.cpp
+  DirectX11Framebuffer.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11Framebuffer.cpp(226,137): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
+  DirectX11RendererAPI.cpp
+  DirectX11Shader.cpp
+  DirectX11Texture.cpp
+  WindowsInput.cpp
+  WindowsPlatformUtils.cpp
+  WindowsWindow.cpp
+  Layer.cpp
+  LayerStack.cpp
+  Logger.cpp
+  MeshLoader.cpp
+  SmTime.cpp
+  SmileGame.cpp
+  ImGuiLayer.cpp
+  Math.cpp
+  Buffer.cpp
+  Framebuffer.cpp
+  Material.cpp
+  Generating Code...
+  Compiling...
+  Mesh.cpp
+  OrthographicCamera.cpp
+  PerspectiveCamera.cpp
+  PerspectiveCameraController.cpp
+  RenderCommand.cpp
+  Renderer.cpp
+  RendererAPI.cpp
+  Shader.cpp
+  Texture.cpp
+  VertexArray.cpp
+  Scene.cpp
+  SceneCamera.cpp
+  SceneSerializer.cpp
+  Utils.cpp
+  Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

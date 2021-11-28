@@ -59,6 +59,12 @@ struct VS_OUTPUT
     float3 Tangent : TANGENT;
 };
 
+struct PS_OUTPUT
+{
+    float4 Color0 : SV_TARGET0;
+    float4 Color1 : SV_TARGET1;
+};
+
 float TrowbridgeReitzGGX(float3 normal, float3 halfVector, float roughness)
 {
     float roughnessSqr = roughness * roughness;
@@ -109,7 +115,7 @@ VS_OUTPUT VS(VS_INPUT input)
     return output;
 }
 
-float4 PS(VS_OUTPUT input) : SV_TARGET
+PS_OUTPUT PS(VS_OUTPUT input) : SV_TARGET
 {
     float3 viewDirection = normalize(input.WorldPosition.xyz - gViewInverse[3].xyz);
     
@@ -183,7 +189,11 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
     color = color / (color + float3(1.0f, 1.0f, 1.0f));
     color = pow(color, float3(1.0f / 2.2f, 1.0f / 2.2f, 1.0f / 2.2f));
     
-    return float4(color, 1.f);
+    PS_OUTPUT output = (PS_OUTPUT)0;
+    output.Color0 = float4(color, 1.f);
+    output.Color1 = float4(0.9f, 0.2f, 0.3f, 1.0f);
+    
+    return output;
 }
 
 technique11 DefaultTechnique

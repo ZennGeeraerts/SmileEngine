@@ -70,6 +70,7 @@ namespace Smile
 		FramebufferData framebufferData{};
 		framebufferData.Width = 1280;
 		framebufferData.Height = 720;
+		framebufferData.Attachments = { { FramebufferTextureFormat::eRGBA8, true }, FramebufferTextureFormat::eDepth, { FramebufferTextureFormat::eRGBA8, true } };
 		m_pFramebuffer = Framebuffer::Create(framebufferData);
 		m_pFramebuffer->SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 
@@ -238,7 +239,7 @@ namespace Smile
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		
-		ImGui::Image(m_pFramebuffer->GetColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
+		ImGui::Image(m_pFramebuffer->GetColor(0), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
 
 		if (ImGui::BeginDragDropTarget())
 		{
