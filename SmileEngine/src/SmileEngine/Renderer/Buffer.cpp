@@ -13,12 +13,12 @@ namespace Smile
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::eNone:
+		case RendererAPI::API::None:
 			SM_ASSERT(false, "VertexBuffer::Create > return nullptr, no renderer api selected");
 			return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::eDirectX11:
+		case RendererAPI::API::DirectX11:
 			return new DirectX11VertexBuffer(vertexBufferData);
 #endif
 		}
@@ -31,12 +31,12 @@ namespace Smile
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::eNone:
+		case RendererAPI::API::None:
 			SM_ASSERT(false, "IndexBuffer::Create > return nullptr, no renderer api selected");
 			return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::eDirectX11:
+		case RendererAPI::API::DirectX11:
 			return new DirectX11IndexBuffer(indexBufferData);
 #endif
 		}

@@ -9,8 +9,6 @@
 #include "SmileEngine/Renderer/RenderingContext.h"
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Core/Input.h"
-// For now using only DirectX11
-#include "Platform/DirectX11/DirectX11Context.h"
 
 #include "../../../resource.h"
 
@@ -105,7 +103,7 @@ namespace Smile
 		SM_ASSERT(m_WindowHandle, "WindowsWindow::Init > Could not create window!");
 
 		// Init context
-		m_pContext = new DirectX11Context{ this };
+		m_pContext = RenderingContext::Create(this);
 		m_pContext->Init();
 
 		ShowWindow(m_WindowHandle, SW_SHOW);

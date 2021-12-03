@@ -9,12 +9,12 @@ namespace Smile
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::eNone:
+		case RendererAPI::API::None:
 			SM_ASSERT(false, "VertexArray::Create > return nullptr, no renderer api selected");
 			return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::eDirectX11:
+		case RendererAPI::API::DirectX11:
 			return nullptr;
 #endif
 		}

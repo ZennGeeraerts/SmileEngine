@@ -7,7 +7,9 @@
 #include "Libs/ImGuizmo/ImGuizmo.h"
 
 #include "SmileEngine/Core/SmileGame.h"
-#include "Platform/Windows/WindowsWindow.h"
+#include "SmileEngine/Core/Window.h"
+#include "SmileEngine/Renderer/RendererAPI.h"
+
 #include "Platform/DirectX11/DirectX11Context.h"
 
 #include "SmileEngine/Core/Logger.h"
@@ -73,13 +75,24 @@ namespace Smile
 		SetDarkThemeColors();
 
 		Window& window = SmileGame::GetInstance().GetWindow();
-		ImGui_ImplWin32_Init(window.GetNativeWindow());
-
 		RenderingContext* pRenderingContext = window.GetRenderingContext();
-		DirectX11Context* pD11Context = static_cast<DirectX11Context*>(pRenderingContext);
 
-		SM_ASSERT(pD11Context, "ImGuiLayer::OnAttach > ImGuiLayer currently only supports DirectX11");
-		ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
+		RendererAPI::API api = RendererAPI::GetAPI();
+		switch (api)
+		{
+		case RendererAPI::API::DirectX11:
+		{
+			ImGui_ImplWin32_Init(window.GetNativeWindow());
+
+			DirectX11Context* pD11Context = static_cast<DirectX11Context*>(pRenderingContext);
+			ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
+			break;
+		}
+		case RendererAPI::API::SmileRaster:
+			break;
+
+		default: break;
+		}
 
 		m_bInitialized = true;
 	}
@@ -91,8 +104,20 @@ namespace Smile
 
 	void ImGuiLayer::Begin()
 	{
-		ImGui_ImplDX11_NewFrame();
-		ImGui_ImplWin32_NewFrame();
+		RendererAPI::API api = RendererAPI::GetAPI();
+		switch (api)
+		{
+		case RendererAPI::API::DirectX11:
+			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			break;
+
+		case RendererAPI::API::SmileRaster:
+			return;
+
+		default: return;
+		}
+
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
 	}
@@ -103,8 +128,19 @@ namespace Smile
 		Window& window = SmileGame::GetInstance().GetWindow();
 		io.DisplaySize = ImVec2{ static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()) };
 
-		ImGui::Render();
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		RendererAPI::API api = RendererAPI::GetAPI();
+		switch (api)
+		{
+		case RendererAPI::API::DirectX11:
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			break;
+
+		case RendererAPI::API::SmileRaster:
+			return;
+
+		default: return;
+		}
 
 		// Update and Render additional Platform Windows
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

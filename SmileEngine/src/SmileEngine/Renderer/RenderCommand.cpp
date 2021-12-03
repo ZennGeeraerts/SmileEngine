@@ -2,6 +2,7 @@
 #include "RenderCommand.h"
 
 #include "Platform/DirectX11/DirectX11RendererAPI.h"
+#include "Platform/SmileRaster/SmileRasterRendererAPI.h"
 
 namespace Smile
 {

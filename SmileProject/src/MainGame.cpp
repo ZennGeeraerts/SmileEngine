@@ -26,7 +26,7 @@ ExampleLayer::ExampleLayer()
 	{
 		-0.5f, 0.5f, -0.5f,		0, 0, 1,
 		0.5f, 0.5f, -0.5f,		0, 1, 0,
-		-0.5f, -0.5f, -0.5f,		1, 0, 0,
+		-0.5f, -0.5f, -0.5f,	1, 0, 0,
 		0.5f, -0.5f, -0.5f,		0, 1, 1,
 		-0.5f, 0.5f, 0.5f,		0, 0, 1,
 		0.5f, 0.5f, 0.5f,		1, 0, 0,
@@ -78,13 +78,10 @@ ExampleLayer::ExampleLayer()
 	cubeTransform.Translation.x -= 10.f;
 	cubeTransform.Translation.z += 15.f;*/
 
-	
-
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 	m_CameraEntity.AddComponent<Smile::CameraComponent>();
 
-	m_pTexture = Smile::Texture2D::Create("../SmileProject/Resources/Textures/uv_grid.png");
-
+	//m_pTexture = Smile::Texture2D::Create("../SmileProject/Resources/Textures/uv_grid.png");
 
 	Smile::FramebufferData framebufferData{};
 	framebufferData.Width = 1280;

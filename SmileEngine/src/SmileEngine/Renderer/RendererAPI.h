@@ -10,8 +10,9 @@ namespace Smile
 	public:
 		enum class API
 		{
-			eNone = 0,
-			eDirectX11 = 1
+			None = 0,
+			DirectX11 = 1,
+			SmileRaster = 2
 		};
 
 	public:
