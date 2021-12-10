@@ -74,6 +74,18 @@ namespace Smile
 				for (auto entity : group)
 				{
 					const auto& [mesh, transform] = group.get<StaticMeshComponent, TransformComponent>(entity);
+
+					for (auto& animator : mesh.Animators)
+					{
+						animator.OnUpdate(deltaTime);
+						const auto& boneTransforms = animator.GetBoneTransforms();
+						for (const auto& pMaterial : mesh.pMaterials)
+						{
+							if (animator.IsPlaying())
+								pMaterial->GetShader()->UploadMat4Array("Bones", boneTransforms);
+						}
+					}
+
 					Renderer::Submit(mesh, transform.GetTransform());
 				}
 			}

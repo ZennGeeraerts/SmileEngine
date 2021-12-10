@@ -28,6 +28,8 @@ private:
 	bool m_bMouseStart = true;
 	float m_PreviousMousePosX = 0.0f;
 	float m_PreviousMousePosY = 0.0f;
+
+	Smile::Entity m_StormTrooper;
 };
 
 class MainGame final : public Smile::SmileGame

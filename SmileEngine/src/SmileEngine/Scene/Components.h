@@ -9,6 +9,7 @@
 #include "SmileEngine/Core/MeshLoader.h"
 #include "SmileEngine/Renderer/Mesh.h"
 #include "SmileEngine/Renderer/Material.h"
+#include "SmileEngine/Renderer/Animation/MeshAnimator.h"
 
 namespace Smile
 {
@@ -111,11 +112,17 @@ namespace Smile
 			{
 				const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
 				pMesh->Create(bufferLayout);
+
+				MeshAnimator animator{ pMesh };
+				/*animator.SetAnimation(0);
+				animator.Play();*/
+				Animators.push_back(animator);
 			}
 		}
 
 		std::vector<Ref<Mesh>> pMeshes = {};
 		std::vector<Ref<Material>> pMaterials = {};
+		std::vector<MeshAnimator> Animators = {};
 	};
 
 	struct CameraComponent final

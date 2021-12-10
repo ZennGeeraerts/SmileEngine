@@ -19,6 +19,7 @@ namespace Smile
 		virtual const std::string& GetName() const = 0;
 
 		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) = 0;
+		virtual void UploadMat4Array(const std::string& sementicName, const std::vector<DirectX::XMFLOAT4X4>& matArray) = 0;
 		virtual void UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value) = 0;
 		virtual void UploadInt(const std::string& sementicName, int value) = 0;
 		virtual void UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D) = 0;

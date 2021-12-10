@@ -54,8 +54,6 @@ namespace Smile
 		if (m_SelectedEntity)
 		{
 			DrawComponents(m_SelectedEntity);
-
-			
 		}
 
 		ImGui::End();
@@ -305,6 +303,10 @@ namespace Smile
 						staticMeshComponent.pMeshes.clear();
 						MeshLoader meshLoader{};
 						staticMeshComponent.pMeshes = meshLoader.LoadMesh(meshPath.string());
+						// temp
+						staticMeshComponent.Animators.push_back(MeshAnimator{ staticMeshComponent.pMeshes[0] });
+						staticMeshComponent.Animators[0].SetAnimation(0);
+						staticMeshComponent.Animators[0].Play();
 						for (const auto& pMesh : staticMeshComponent.pMeshes)
 						{
 							const auto& bufferLayout = staticMeshComponent.pMaterials[0]->GetBufferLayout();

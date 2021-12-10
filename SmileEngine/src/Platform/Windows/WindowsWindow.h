@@ -44,14 +44,15 @@ namespace Smile
 
 	private:
 		HWND m_WindowHandle;
+		WNDCLASSEX m_WindowClass;
 		MSG m_Message;
 		RenderingContext* m_pContext;
 
 		struct WindowData
 		{
 			std::string Title{};
-			unsigned int Width{};
-			unsigned int Height{};
+			uint32_t Width{};
+			uint32_t Height{};
 			bool bVSync{};
 			EventCallbackFunction EventCallback{};
 		};

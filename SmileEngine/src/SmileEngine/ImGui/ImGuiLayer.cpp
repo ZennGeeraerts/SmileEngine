@@ -80,7 +80,7 @@ namespace Smile
 		RendererAPI::API api = RendererAPI::GetAPI();
 		switch (api)
 		{
-		case RendererAPI::API::DirectX11:
+		case RendererAPI::API::eDirectX11:
 		{
 			ImGui_ImplWin32_Init(window.GetNativeWindow());
 
@@ -88,7 +88,7 @@ namespace Smile
 			ImGui_ImplDX11_Init(pD11Context->GetDevice(), pD11Context->GetDeviceContext());
 			break;
 		}
-		case RendererAPI::API::SmileRaster:
+		case RendererAPI::API::eSmileRaster:
 			break;
 
 		default: break;
@@ -107,12 +107,12 @@ namespace Smile
 		RendererAPI::API api = RendererAPI::GetAPI();
 		switch (api)
 		{
-		case RendererAPI::API::DirectX11:
+		case RendererAPI::API::eDirectX11:
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			break;
 
-		case RendererAPI::API::SmileRaster:
+		case RendererAPI::API::eSmileRaster:
 			return;
 
 		default: return;
@@ -131,12 +131,12 @@ namespace Smile
 		RendererAPI::API api = RendererAPI::GetAPI();
 		switch (api)
 		{
-		case RendererAPI::API::DirectX11:
+		case RendererAPI::API::eDirectX11:
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 			break;
 
-		case RendererAPI::API::SmileRaster:
+		case RendererAPI::API::eSmileRaster:
 			return;
 
 		default: return;

@@ -68,6 +68,15 @@ namespace Smile
 		}
 	}
 
+	void DirectX11Shader::UploadMat4Array(const std::string& sementicName, const std::vector<DirectX::XMFLOAT4X4>& matArray)
+	{
+		auto pMatArrayVariable = GetEffectVariable(sementicName)->AsMatrix();
+		if (pMatArrayVariable->IsValid())
+		{
+			pMatArrayVariable->SetMatrixArray(&matArray[0]._11, 0, matArray.size());
+		}
+	}
+
 	void DirectX11Shader::UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value)
 	{
 		auto pVectorVariable = GetEffectVariable(sementicName)->AsVector();

@@ -6,5 +6,5 @@
 
 namespace Smile
 {
-	RendererAPI* RenderCommand::m_pRendererAPI = new DirectX11RendererAPI{};
+	RendererAPI* RenderCommand::m_pRendererAPI = new SmileRasterRendererAPI{};
 }

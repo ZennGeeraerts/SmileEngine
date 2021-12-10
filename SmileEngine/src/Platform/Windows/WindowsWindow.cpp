@@ -36,7 +36,7 @@ namespace Smile
 	void WindowsWindow::ShutDown()
 	{
 		DestroyWindow(m_WindowHandle);
-		//UnregisterClass(wc.lpszClassName, wc.hInstance);
+		UnregisterClass(m_WindowClass.lpszClassName, m_WindowClass.hInstance);
 		delete m_pContext;
 	}
 
@@ -52,31 +52,31 @@ namespace Smile
 
 		// Create window class
 		const wchar_t* className = L"SmileWindowClass";
-		WNDCLASSEX windowClass;
-		windowClass.cbSize = sizeof(WNDCLASSEX);
-		windowClass.style = CS_HREDRAW | CS_VREDRAW;
-		windowClass.cbClsExtra = 0;
-		windowClass.cbWndExtra = 0;
+		m_WindowClass = {};
+		m_WindowClass.cbSize = sizeof(WNDCLASSEX);
+		m_WindowClass.style = CS_HREDRAW | CS_VREDRAW;
+		m_WindowClass.cbClsExtra = 0;
+		m_WindowClass.cbWndExtra = 0;
 
-		windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		windowClass.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
+		m_WindowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+		m_WindowClass.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 
-		windowClass.hIcon = static_cast<HICON>(LoadImage(HINSTANCE(),
+		m_WindowClass.hIcon = static_cast<HICON>(LoadImage(HINSTANCE(),
 			MAKEINTRESOURCE(IDI_ICON1),
 			IMAGE_ICON,
 			256, 256,
 			LR_DEFAULTCOLOR));
 
 			/*LoadIcon(0, IDI_APPLICATION);*/
-		windowClass.hIconSm = LoadIcon(0, IDI_APPLICATION);
+		m_WindowClass.hIconSm = LoadIcon(0, IDI_APPLICATION);
 
-		windowClass.lpszClassName = className;
-		windowClass.lpszMenuName = nullptr;
+		m_WindowClass.lpszClassName = className;
+		m_WindowClass.lpszMenuName = nullptr;
 
-		windowClass.hInstance = HINSTANCE();
-		windowClass.lpfnWndProc = WindowsProcedureStatic;
+		m_WindowClass.hInstance = HINSTANCE();
+		m_WindowClass.lpfnWndProc = WindowsProcedureStatic;
 
-		int success = RegisterClassEx(&windowClass);
+		int success = RegisterClassEx(&m_WindowClass);
 		SM_ASSERT(success, "Could not register window class!");
 
 		RECT windowRect{};

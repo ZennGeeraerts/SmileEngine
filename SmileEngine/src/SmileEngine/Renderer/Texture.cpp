@@ -10,12 +10,12 @@ namespace Smile
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:
+		case RendererAPI::API::eNone:
 			SM_ASSERT(false, "Shader::Create > return nullptr, no renderer api selected");
 			return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::DirectX11:
+		case RendererAPI::API::eDirectX11:
 			return CreateRef<DirectX11Texture2D>(filePath);
 #endif
 		}

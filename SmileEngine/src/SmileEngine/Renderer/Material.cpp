@@ -10,10 +10,12 @@ namespace Smile
 			{ ShaderDataType::eFloat3, "Position" },
 			{ ShaderDataType::eFloat3, "Normal" },
 			{ ShaderDataType::eFloat2, "TexCoord" },
-			{ ShaderDataType::eFloat3, "Tangent" }
+			{ ShaderDataType::eFloat3, "Tangent" },
+			{ ShaderDataType::eFloat4, "BlendIndices" },
+			{ ShaderDataType::eFloat4, "BlendWeights" }
 		};
 
-		m_pShader = Shader::Create("Resources/Shaders/PBR.fx", m_BufferLayout);
+		m_pShader = Shader::Create("Resources/Shaders/PBR_Skinned.fx", m_BufferLayout);
 
 		auto pEnvironmentMap = Texture2D::Create("Resources/Textures/Sunol_Cubemap.dds");
 		m_pShader->UploadTexture2D("EnvironmentMap", pEnvironmentMap);

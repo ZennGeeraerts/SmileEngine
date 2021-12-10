@@ -2,22 +2,40 @@ Scene: Untitled
 Entities:
   - Entity: 1283719283174164
     TagComponent:
-      Tag: Gun
+      Tag: StormTrooper
     TransformComponent:
-      Translation: [-5.55999994, 0, 20]
-      Rotation: [0, 1.57079637, 0]
-      Scale: [5, 5, 5]
+      Translation: [0, -5.55000019, 15.6800003]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [3, 3, 3]
     StaticMeshComponent:
-      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Mesh: Resources\Meshes\silly_dancing.fbx
       Material:
-        AlbedoMap: Resources\Textures\base_albedo.jpg
-        AlbedoColor: [0.776061773, 0.113862343, 0.113862343]
-        MetalnessMap: Resources\Textures\base_metallic.jpg
+        AlbedoMap: ""
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: ""
         Metalness: 0
-        RoughnessMap: Resources\Textures\base_roughness.jpg
+        RoughnessMap: ""
         Roughness: 0.5
-        NormalMap: Resources\Textures\base_normal.jpg
-        AOMap: Resources\Textures\base_AO.jpg
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Character
+    TransformComponent:
+      Translation: [7.82999992, -7.44000006, 20]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [1, 1, 1]
+    StaticMeshComponent:
+      Mesh: Resources\Meshes\nanosuit.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.395061493, 0.148148164, 0.888888896]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
   - Entity: 1283719283174164
     TagComponent:
       Tag: Camera
@@ -38,19 +56,19 @@ Entities:
       bFixedAspectRatio: false
   - Entity: 1283719283174164
     TagComponent:
-      Tag: Character
+      Tag: Gun
     TransformComponent:
-      Translation: [7.82999992, -7.44000006, 20]
-      Rotation: [0, 3.14159274, 0]
-      Scale: [1, 1, 1]
+      Translation: [-5.55999994, 0, 20]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [5, 5, 5]
     StaticMeshComponent:
-      Mesh: Resources\Meshes\nanosuit.obj
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
       Material:
-        AlbedoMap: ""
-        AlbedoColor: [0.395061493, 0.148148164, 0.888888896]
-        MetalnessMap: ""
-        Metalness: 1
-        RoughnessMap: ""
-        Roughness: 0
-        NormalMap: ""
-        AOMap: ""
+        AlbedoMap: Resources\Textures\base_albedo.jpg
+        AlbedoColor: [0.776061773, 0.113862343, 0.113862343]
+        MetalnessMap: Resources\Textures\base_metallic.jpg
+        Metalness: 0
+        RoughnessMap: Resources\Textures\base_roughness.jpg
+        Roughness: 0.5
+        NormalMap: Resources\Textures\base_normal.jpg
+        AOMap: Resources\Textures\base_AO.jpg

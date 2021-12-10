@@ -1,14 +1,14 @@
-﻿  SmileRasterBuffer.cpp
-  SmileRasterRendererAPI.cpp
-  SmileRasterContext.cpp
-  RenderingContext.cpp
-  RenderCommand.cpp
+﻿  RenderCommand.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterContext.h(8,32): warning C4099: 'Smile::SmileRasterDeviceContext': type name first seen using 'struct' now seen using 'class'
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cuh(5): message : see declaration of 'Smile::SmileRasterDeviceContext'
+  RendererAPI.cpp
   Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 SDL2.lib(SDL2.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+cudart.lib(cudart64_110.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
   SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.lib
   C:\dev\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
   1 File(s) copied

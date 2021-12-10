@@ -7,6 +7,7 @@ namespace Smile
 	DirectX::XMFLOAT4 Mesh::m_DefaultFloat4 = DirectX::XMFLOAT4{ 0, 0, 0, 0 };
 	DirectX::XMFLOAT3 Mesh::m_DefaultFloat3 = DirectX::XMFLOAT3{ 0, 0, 0 };
 	DirectX::XMFLOAT2 Mesh::m_DefaultFloat2 = DirectX::XMFLOAT2{ 0, 0 };
+	DirectX::XMFLOAT4 Mesh::m_DefaultIndices4 = DirectX::XMFLOAT4{ -1, -1, -1, -1 };
 
 	Mesh::~Mesh()
 	{
@@ -16,19 +17,23 @@ namespace Smile
 		m_Binormals.clear();
 		m_TexCoords.clear();
 		m_Indices.clear();
+		m_Colors.clear();
+		m_BlendIndices.clear();
+		m_BlendWeights.clear();
+		m_BoneMap.clear();
 	}
 
 	void Mesh::Create(const BufferLayout& layout)
 	{
-		void* pDataLocation = malloc(layout.GetStride() * m_VertexCount);
-		if (!pDataLocation)
+		m_pDataLocation = malloc(layout.GetStride() * m_VertexCount);
+		if (!m_pDataLocation)
 		{
 			SM_LOG_ERROR("Mesh::Create > Failed to allocate memory for the vertex buffer");
 			return;
 		}
 
 		VertexBufferData vertexBufferData{};
-		vertexBufferData.pVertices = pDataLocation;
+		vertexBufferData.pVertices = m_pDataLocation;
 		vertexBufferData.Count = m_VertexCount;
 		vertexBufferData.Usage = BufferUsage::eImmutable;
 		vertexBufferData.BufferLayout = layout;
@@ -38,17 +43,23 @@ namespace Smile
 			for (const BufferElement& element : layout)
 			{
 				if (element.Name == "Position")
-					memcpy(pDataLocation, m_bUsePositions ? &m_Positions[i] : &m_DefaultFloat3, element.Size);
+					memcpy(m_pDataLocation, m_bUsePositions ? &m_Positions[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "Normal")
-					memcpy(pDataLocation, m_bUseNormals ? &m_Normals[i] : &m_DefaultFloat3, element.Size);
+					memcpy(m_pDataLocation, m_bUseNormals ? &m_Normals[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "TexCoord")
-					memcpy(pDataLocation, m_bUseTexCoords ? &m_TexCoords[i] : &m_DefaultFloat2, element.Size);
+					memcpy(m_pDataLocation, m_bUseTexCoords ? &m_TexCoords[i] : &m_DefaultFloat2, element.Size);
 				else if (element.Name == "Tangent")
-					memcpy(pDataLocation, m_bUseTangents ? &m_Tangents[i] : &m_DefaultFloat3, element.Size);
+					memcpy(m_pDataLocation, m_bUseTangents ? &m_Tangents[i] : &m_DefaultFloat3, element.Size);
 				else if (element.Name == "Binormal")
-					memcpy(pDataLocation, m_bUseBinormals ? &m_Binormals[i] : &m_DefaultFloat3, element.Size);
+					memcpy(m_pDataLocation, m_bUseBinormals ? &m_Binormals[i] : &m_DefaultFloat3, element.Size);
+				else if (element.Name == "Color")
+					memcpy(m_pDataLocation, m_bUseColors ? &m_Colors[i] : &m_DefaultFloat4, element.Size);
+				else if (element.Name == "BlendIndices")
+					memcpy(m_pDataLocation, m_bUseBlendIndices ? &m_BlendIndices[i] : &m_DefaultIndices4, element.Size);
+				else if (element.Name == "BlendWeights")
+					memcpy(m_pDataLocation, m_bUseBlendWeights ? &m_BlendWeights[i] : &m_DefaultFloat4, element.Size);
 
-				pDataLocation = (char*)pDataLocation + element.Size;
+				m_pDataLocation = (char*)m_pDataLocation + element.Size;
 			}
 		}
 

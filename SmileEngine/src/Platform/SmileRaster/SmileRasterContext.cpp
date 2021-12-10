@@ -14,11 +14,13 @@ namespace Smile
 
 	SmileRasterContext::~SmileRasterContext()
 	{
-		SelectObject(m_DeviceContext, m_BitmapOld);
+		delete m_pDeviceContext;
+
+		SelectObject(m_HDC, m_BitmapOld);
 		DeleteObject(m_BitmapOld);
 
 		DeleteObject(m_Bitmap);
-		DeleteDC(m_DeviceContext);
+		DeleteDC(m_HDC);
 	}
 
 	void SmileRasterContext::Init()
@@ -26,6 +28,8 @@ namespace Smile
 		uint32_t width = m_pWindow->GetWidth();
 		uint32_t height = m_pWindow->GetHeight();
 		HWND handle = static_cast<HWND>(m_pWindow->GetNativeWindow());
+
+		m_pDeviceContext = new SmileRasterDeviceContext{ width, height };
 
 		BITMAPINFO bmpInfo{};
 		bmpInfo.bmiHeader.biBitCount = 24;
@@ -41,14 +45,14 @@ namespace Smile
 		bmpInfo.bmiHeader.biYPelsPerMeter = 0;
 
 		HDC hDC = GetDC(handle);
-		m_DeviceContext = CreateCompatibleDC(hDC);
+		m_HDC = CreateCompatibleDC(hDC);
 		ReleaseDC(handle, hDC);
 
-		m_Bitmap = CreateDIBSection(m_DeviceContext, &bmpInfo, DIB_RGB_COLORS, (void**)&m_pFrontBuffer, NULL, 0);
+		m_Bitmap = CreateDIBSection(m_HDC, &bmpInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_pScreenBuffer), NULL, 0);
 		SM_ASSERT(m_Bitmap, "SmileRasterContext::Init > Failed to create BitmapDIB");
 
-		m_BitmapOld = static_cast<HBITMAP>(SelectObject(m_DeviceContext, m_Bitmap));
-		memset(m_pFrontBuffer, 0, width * height * 3);
+		m_BitmapOld = static_cast<HBITMAP>(SelectObject(m_HDC, m_Bitmap));
+		memset(m_pScreenBuffer, 0, width * height * 3);
 	}
 
 	void SmileRasterContext::Present()
@@ -58,7 +62,7 @@ namespace Smile
 		HWND handle = static_cast<HWND>(m_pWindow->GetNativeWindow());
 
 		HDC hDC = GetDC(handle);
-		BitBlt(hDC, 0, 0, width, height, m_DeviceContext, 0, 0, SRCCOPY);
+		BitBlt(hDC, 0, 0, width, height, m_HDC, 0, 0, SRCCOPY);
 		ReleaseDC(handle, hDC);
 	}
 }

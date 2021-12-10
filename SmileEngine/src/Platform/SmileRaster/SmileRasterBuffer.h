@@ -8,7 +8,7 @@ namespace Smile
 	{
 	public:
 		SmileRasterVertexBuffer(const VertexBufferData& vertexBufferData);
-		virtual ~SmileRasterVertexBuffer();
+		virtual ~SmileRasterVertexBuffer() = default;
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
@@ -17,9 +17,26 @@ namespace Smile
 		virtual const BufferLayout& GetLayout() const override { return m_Layout; }
 
 	private:
-		SmileRasterContext* m_pSmileRasterContext;
-		ID3D11Buffer* m_pVertexBuffer;
+		SmileRasterContext* m_pSmileRasterContext = nullptr;
 		BufferLayout m_Layout;
+		void* m_pVertices = nullptr;
+		uint32_t m_Count;
+	};
+
+	class SmileRasterIndexBuffer final : public IndexBuffer
+	{
+	public:
+		SmileRasterIndexBuffer(const IndexBufferData& indexBufferData);
+		virtual ~SmileRasterIndexBuffer() = default;
+
+		virtual void Bind() const override;
+		virtual void Unbind() const override;
+		virtual uint32_t GetCount() const override { return m_Count; }
+
+	private:
+		SmileRasterContext* m_pSmileRasterContext = nullptr;
+		uint32_t* m_pIndices = nullptr;
+		uint32_t m_Count;
 	};
 }
 
