@@ -1,7 +1,16 @@
-﻿  RenderCommand.cpp
-C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterContext.h(8,32): warning C4099: 'Smile::SmileRasterDeviceContext': type name first seen using 'struct' now seen using 'class'
-C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cuh(5): message : see declaration of 'Smile::SmileRasterDeviceContext'
-  RendererAPI.cpp
+﻿  Compiling CUDA source file src\Platform\SmileRaster\SmileRasterDeviceContext.cu...
+  
+  C:\dev\SmileEngine\SmileEngine>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.28.29910\bin\HostX86\x64" -x cu   -IC:\dev\SmileEngine\Libs/dx11effects/include -IC:\dev\SmileEngine\Libs/assimp/include -IC:\dev\SmileEngine\Libs/dx11tex/include -I"C:\dev\SmileEngine\Libs/yaml-cpp/include" -I"C:\dev\SmileEngine\Libs/sdl2-2.0.9/include" -I"C:\dev\SmileEngine\Libs/sdl2_image-2.0.5/include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.5\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static --expt-relaxed-constexpr -g  -DSM_PLATFORM_WINDOWS -DSM_C_DEBUG -DSM_BUILD_DLL -D_DEBUG -D_CONSOLE -D_UNICODE -DUNICODE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /FdC:\dev\SmileEngine\bin-int\Debug-x64\SmileEngine\SmileEngine.pdb /FS /Zi /RTC1 /MDd /GR-" -o C:\dev\SmileEngine\bin-int\Debug-x64\SmileEngine\SmileRasterDeviceContext.cu.obj "C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cu" 
+  SmileRasterDeviceContext.cu
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cu(20): warning C4018: '<': signed/unsigned mismatch
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cu(23): warning C4018: '<': signed/unsigned mismatch
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cu(50): warning C4018: '<': signed/unsigned mismatch
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterDeviceContext.cu(82): warning C4018: '<': signed/unsigned mismatch
+  SmileRasterBuffer.cpp
+  SmileRasterContext.cpp
+  SmileRasterRendererAPI.cpp
+  RenderCommand.cpp
+  RenderingContext.cpp
   Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

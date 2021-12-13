@@ -13,19 +13,18 @@ namespace Smile
 		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterVertexBuffer > Rendering context is not a SmileRaster Rendering Context");
 
+		m_VertexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateVertexBuffer(vertexBufferData.pVertices, vertexBufferData.Count, vertexBufferData.BufferLayout.GetStride());
 		m_Layout = vertexBufferData.BufferLayout;
-		m_pVertices = vertexBufferData.pVertices;
-		m_Count = vertexBufferData.Count;
 	}
 
 	void SmileRasterVertexBuffer::Bind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(m_pVertices, m_Count, m_Layout.GetStride());
+		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(m_VertexBuffer);
 	}
 
 	void SmileRasterVertexBuffer::Unbind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(nullptr, 0, 0);
+		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(INVALID_SM_BUFFER_ID);
 	}
 
 	//*------------------------------------------------------------------------------------------------*//
@@ -37,17 +36,17 @@ namespace Smile
 		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterIndexBuffer > Rendering context is not a SmileRaster Rendering Context");
 		
-		m_pIndices = indexBufferData.pIndices;
+		m_IndexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateIndexBuffer(indexBufferData.pIndices, indexBufferData.Count);
 		m_Count = indexBufferData.Count;
 	}
 
 	void SmileRasterIndexBuffer::Bind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(m_pIndices, m_Count);
+		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(m_IndexBuffer);
 	}
 
 	void SmileRasterIndexBuffer::Unbind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(nullptr, 0);
+		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(INVALID_SM_BUFFER_ID);
 	}
 }

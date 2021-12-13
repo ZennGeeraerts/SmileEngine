@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SmileEngine", "SmileEngine\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SmileEditor", "SmileEditor\SmileEditor.vcxproj", "{95FE87EC-46DF-46B9-8DA3-990E75E82404}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SmileRaster", "SmileRaster\SmileRaster.vcxproj", "{A9D60AB2-78EA-4D7F-BD81-552E080E0401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{95FE87EC-46DF-46B9-8DA3-990E75E82404}.Release|x64.Build.0 = Release|x64
 		{95FE87EC-46DF-46B9-8DA3-990E75E82404}.Release|x86.ActiveCfg = Release|Win32
 		{95FE87EC-46DF-46B9-8DA3-990E75E82404}.Release|x86.Build.0 = Release|Win32
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Debug|x64.ActiveCfg = Debug|x64
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Debug|x64.Build.0 = Debug|x64
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Debug|x86.ActiveCfg = Debug|Win32
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Debug|x86.Build.0 = Debug|Win32
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Release|x64.ActiveCfg = Release|x64
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Release|x64.Build.0 = Release|x64
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Release|x86.ActiveCfg = Release|Win32
+		{A9D60AB2-78EA-4D7F-BD81-552E080E0401}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

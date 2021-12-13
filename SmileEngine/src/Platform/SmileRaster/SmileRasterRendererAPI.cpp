@@ -41,20 +41,7 @@ namespace Smile
 
 	void SmileRasterRendererAPI::Clear()
 	{
-		uint32_t width = m_pWindow->GetWidth();
-		uint32_t height = m_pWindow->GetHeight();
-
-		for (uint32_t y{}; y < height; ++y)
-		{
-			for (uint32_t x{}; x < width; ++x)
-			{
-				uint32_t currentPixel = (y * width + x) * 3;
-
-				m_pSmileRasterContext->m_pScreenBuffer[currentPixel] = static_cast<uint8_t>(m_ClearColor.z * 255.f);
-				m_pSmileRasterContext->m_pScreenBuffer[currentPixel + 1] = static_cast<uint8_t>(m_ClearColor.y * 255.f);
-				m_pSmileRasterContext->m_pScreenBuffer[currentPixel + 2] = static_cast<uint8_t>(m_ClearColor.x * 255.f);
-			}
-		}
+		m_pSmileRasterContext->m_pDeviceContext->Clear(DirectX::XMFLOAT3{ m_ClearColor.x, m_ClearColor.y, m_ClearColor.z });
 	}
 
 	void SmileRasterRendererAPI::DrawIndexed(int32_t indexCount, const Ref<Shader>& pShader)

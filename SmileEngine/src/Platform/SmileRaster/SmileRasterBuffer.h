@@ -18,9 +18,8 @@ namespace Smile
 
 	private:
 		SmileRasterContext* m_pSmileRasterContext = nullptr;
+		SMBufferID m_VertexBuffer;
 		BufferLayout m_Layout;
-		void* m_pVertices = nullptr;
-		uint32_t m_Count;
 	};
 
 	class SmileRasterIndexBuffer final : public IndexBuffer
@@ -35,7 +34,7 @@ namespace Smile
 
 	private:
 		SmileRasterContext* m_pSmileRasterContext = nullptr;
-		uint32_t* m_pIndices = nullptr;
+		SMBufferID m_IndexBuffer;
 		uint32_t m_Count;
 	};
 }

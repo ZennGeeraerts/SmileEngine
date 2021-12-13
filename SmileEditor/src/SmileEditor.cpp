@@ -85,7 +85,7 @@ namespace Smile
 	void SmileEditorLayer::OnUpdate(Timestep deltaTime)
 	{
 		auto framebufferData = m_pFramebuffer->GetData();
-		if ((!Utils::CompareFloats(m_ViewportSize.x, (float)framebufferData.Width) || !Utils::CompareFloats(m_ViewportSize.y, (float)framebufferData.Height))
+		if ((!Utils::CompareFloats(m_ViewportSize.x, static_cast<float>(framebufferData.Width)) || !Utils::CompareFloats(m_ViewportSize.y, static_cast<float>(framebufferData.Height)))
 			&& (m_ViewportSize.x > 0) && (m_ViewportSize.y > 0))
 		{
 			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));

@@ -29,8 +29,6 @@ namespace Smile
 		uint32_t height = m_pWindow->GetHeight();
 		HWND handle = static_cast<HWND>(m_pWindow->GetNativeWindow());
 
-		m_pDeviceContext = new SmileRasterDeviceContext{ width, height };
-
 		BITMAPINFO bmpInfo{};
 		bmpInfo.bmiHeader.biBitCount = 24;
 		bmpInfo.bmiHeader.biClrImportant = 0;
@@ -52,7 +50,14 @@ namespace Smile
 		SM_ASSERT(m_Bitmap, "SmileRasterContext::Init > Failed to create BitmapDIB");
 
 		m_BitmapOld = static_cast<HBITMAP>(SelectObject(m_HDC, m_Bitmap));
-		memset(m_pScreenBuffer, 0, width * height * 3);
+		memset(m_pScreenBuffer, 0, sizeof(uint8_t) * width * height * 3);
+
+		SmileRasterDeviceContextData deviceContextData{};
+		deviceContextData.Width = width;
+		deviceContextData.Height = height;
+		deviceContextData.pScreenBuffer = m_pScreenBuffer;
+
+		m_pDeviceContext = new SmileRasterDeviceContext{ deviceContextData };
 	}
 
 	void SmileRasterContext::Present()

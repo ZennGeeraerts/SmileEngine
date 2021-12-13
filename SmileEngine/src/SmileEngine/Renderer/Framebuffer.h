@@ -12,7 +12,7 @@ namespace Smile
 		eDepth = eDEPTH24STENCIL8
 	};
 
-	struct FramebufferTextureData
+	struct FramebufferTextureData final
 	{
 		FramebufferTextureData() = default;
 		FramebufferTextureData(FramebufferTextureFormat format, bool bUseShader = false)
@@ -25,7 +25,7 @@ namespace Smile
 		// TODO: filtering/wrap
 	};
 
-	struct FramebufferAttachmentData
+	struct FramebufferAttachmentData final
 	{
 		FramebufferAttachmentData() = default;
 		FramebufferAttachmentData(const std::initializer_list<FramebufferTextureData>& attachments)
@@ -35,7 +35,7 @@ namespace Smile
 		std::vector<FramebufferTextureData> Attachments;
 	};
 
-	struct FramebufferData
+	struct FramebufferData final
 	{
 		uint32_t Width = 0;
 		uint32_t Height = 0;

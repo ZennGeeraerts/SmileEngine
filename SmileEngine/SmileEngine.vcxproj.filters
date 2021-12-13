@@ -343,6 +343,7 @@
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\SmileRaster\SmileRasterUtils.cuh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -502,6 +503,6 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\Platform\SmileRaster\SmileRasterDeviceContext.cu" />
-    <CudaCompile Include="src\Platform\SmileRaster\Pipeline\VertexShader.cu" />
+    <CudaCompile Include="src\Platform\SmileRaster\SmileRasterRasterizer.cu" />
   </ItemGroup>
 </Project>

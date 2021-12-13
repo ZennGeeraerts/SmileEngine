@@ -54,8 +54,8 @@ namespace Smile
 			return;
 		}
 
-		const unsigned int width = m_pWindow->GetWidth();
-		const unsigned int height = m_pWindow->GetHeight();
+		const uint32_t width = m_pWindow->GetWidth();
+		const uint32_t height = m_pWindow->GetHeight();
 
 		// Create SwapChain Descriptor
 		DXGI_SWAP_CHAIN_DESC swapChainDesc{};

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\SmileRaster\SmileRasterUtils.cuh" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\Bone.h" />
     <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h" />
@@ -229,8 +230,8 @@
     <Image Include="Resources\Icons\logo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="src\Platform\SmileRaster\Pipeline\VertexShader.cu" />
     <CudaCompile Include="src\Platform\SmileRaster\SmileRasterDeviceContext.cu" />
+    <CudaCompile Include="src\Platform\SmileRaster\SmileRasterRasterizer.cu" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
