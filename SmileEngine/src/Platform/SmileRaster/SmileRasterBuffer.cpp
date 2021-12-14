@@ -24,7 +24,7 @@ namespace Smile
 
 	void SmileRasterVertexBuffer::Unbind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(INVALID_SM_BUFFER_ID);
+		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(SMR_INVALID_BUFFER_ID);
 	}
 
 	//*------------------------------------------------------------------------------------------------*//
@@ -47,6 +47,6 @@ namespace Smile
 
 	void SmileRasterIndexBuffer::Unbind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(INVALID_SM_BUFFER_ID);
+		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(SMR_INVALID_BUFFER_ID);
 	}
 }

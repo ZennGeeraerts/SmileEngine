@@ -1,11 +1,10 @@
 #pragma once
 #include "SmileEngine/Renderer/RenderingContext.h"
-#include "SmileRasterDeviceContext.cuh"
+#include <SmileRasterDeviceContext.cuh>
 
 namespace Smile
 {
 	class Window;
-	class SmileRasterDeviceContext;
 
 	class SmileRasterContext final : public RenderingContext
 	{
@@ -21,12 +20,12 @@ namespace Smile
 		virtual void Init() override;
 		virtual void Present() override;
 
-		SmileRasterDeviceContext* GetDeviceContext() const { return m_pDeviceContext; }
+		Raster::DeviceContext* GetDeviceContext() const { return m_pDeviceContext; }
 
 	private:
 		Window* m_pWindow = nullptr;
 
-		SmileRasterDeviceContext* m_pDeviceContext = nullptr;
+		Raster::DeviceContext* m_pDeviceContext = nullptr;
 		HDC m_HDC = nullptr;
 		HBITMAP m_Bitmap = nullptr;
 		HBITMAP m_BitmapOld = nullptr;

@@ -52,12 +52,12 @@ namespace Smile
 		m_BitmapOld = static_cast<HBITMAP>(SelectObject(m_HDC, m_Bitmap));
 		memset(m_pScreenBuffer, 0, sizeof(uint8_t) * width * height * 3);
 
-		SmileRasterDeviceContextData deviceContextData{};
+		Raster::DeviceContextData deviceContextData{};
 		deviceContextData.Width = width;
 		deviceContextData.Height = height;
 		deviceContextData.pScreenBuffer = m_pScreenBuffer;
 
-		m_pDeviceContext = new SmileRasterDeviceContext{ deviceContextData };
+		m_pDeviceContext = new Raster::DeviceContext{ deviceContextData };
 	}
 
 	void SmileRasterContext::Present()

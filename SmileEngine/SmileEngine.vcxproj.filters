@@ -336,14 +336,12 @@
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\SmileRaster\SmileRasterDeviceContext.cuh" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\Bone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\SmileRaster\SmileRasterUtils.cuh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -500,9 +498,5 @@
     <Image Include="Resources\Icons\logo.ico">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="src\Platform\SmileRaster\SmileRasterDeviceContext.cu" />
-    <CudaCompile Include="src\Platform\SmileRaster\SmileRasterRasterizer.cu" />
   </ItemGroup>
 </Project>
