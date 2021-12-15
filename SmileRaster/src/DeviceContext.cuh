@@ -1,4 +1,4 @@
-#include "Utils.cuh"
+#include <DirectXMath.h>
 
 namespace Smile
 {

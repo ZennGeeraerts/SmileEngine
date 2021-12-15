@@ -1,4 +1,5 @@
 #include "DeviceContext.cuh"
+#include "Utils.cuh"
 
 namespace Smile
 {

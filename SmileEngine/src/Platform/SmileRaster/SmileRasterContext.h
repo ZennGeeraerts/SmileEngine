@@ -1,6 +1,6 @@
 #pragma once
 #include "SmileEngine/Renderer/RenderingContext.h"
-#include <SmileRasterDeviceContext.cuh>
+#include <DeviceContext.cuh>
 
 namespace Smile
 {

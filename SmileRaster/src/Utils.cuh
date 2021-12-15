@@ -1,7 +1,6 @@
 #include <curand_kernel.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <vector>
 #include <DirectXMath.h>
 
 namespace Smile
