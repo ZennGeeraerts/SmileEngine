@@ -117,9 +117,6 @@
     <ClInclude Include="src\SmileEngine\Renderer\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -342,6 +339,9 @@
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\SmileEngine\Renderer\MeshFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -396,9 +396,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Texture.cpp">
@@ -486,6 +483,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Animation\MeshAnimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Renderer\MeshFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

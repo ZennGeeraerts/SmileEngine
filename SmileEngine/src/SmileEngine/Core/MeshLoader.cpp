@@ -30,15 +30,14 @@ namespace Smile
 		return converted;
 	}
 
-	std::vector<Ref<Mesh>> MeshLoader::LoadMesh(const std::string& filePath)
+	std::vector<Ref<MeshFilter>> MeshLoader::LoadMesh(const std::string& filePath)
 	{
 		const aiScene* pAiScene = aiImportFile(filePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
-
 		if (!pAiScene)
 		{
 			SM_LOG_WARNING("MeshLoader::LoadObj > Could not load file: %s: %s", filePath, aiGetErrorString());
 			aiReleaseImport(pAiScene);
-			return std::vector<Ref<Mesh>>{};
+			return std::vector<Ref<MeshFilter>>{};
 		}
 
 		DirectX::XMMATRIX inverseGlobalTransformMat = DirectX::XMMATRIX{ 
@@ -50,14 +49,14 @@ namespace Smile
 		DirectX::XMFLOAT4X4 inverseGlobalTransform{};
 		DirectX::XMStoreFloat4x4(&inverseGlobalTransform, inverseGlobalTransformMat);
 
-		std::vector<Ref<Mesh>> pMeshes{};
+		std::vector<Ref<MeshFilter>> pMeshes{};
 		pMeshes.resize(pAiScene->mNumMeshes);
 
 		for (uint32_t m{}; m < pAiScene->mNumMeshes; ++m)
 		{
 			aiMesh* pAiMesh = pAiScene->mMeshes[m];
 
-			pMeshes[m].reset(new Mesh{});
+			pMeshes[m].reset(new MeshFilter{});
 			pMeshes[m]->m_InverseGlobalTransform = inverseGlobalTransform;
 			pMeshes[m]->m_VertexCount = pAiMesh->mNumVertices;
 			pMeshes[m]->m_Positions.resize(pAiMesh->mNumVertices);
@@ -137,7 +136,7 @@ namespace Smile
 		return pMeshes;
 	}
 
-	void MeshLoader::LoadBones(const Ref<Mesh>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene)
+	void MeshLoader::LoadBones(const Ref<MeshFilter>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene)
 	{
 		for (uint32_t i{}; i < pAiMesh->mNumBones; ++i)
 		{
@@ -201,7 +200,7 @@ namespace Smile
 		}
 	}
 
-	void MeshLoader::LoadAnimations(const Ref<Mesh>& pMesh, const aiScene* pAiScene)
+	void MeshLoader::LoadAnimations(const Ref<MeshFilter>& pMesh, const aiScene* pAiScene)
 	{
 		pMesh->m_bHasAnimations = true;
 
@@ -215,6 +214,8 @@ namespace Smile
 				animClip.Duration = static_cast<float>(pAnim->mDuration);
 				animClip.TicksPerSecond = static_cast<float>(pAnim->mTicksPerSecond);
 				
+				LoadNodeHierarchy(animClip.RootNode, pAiScene->mRootNode);
+
 				for (uint32_t j{}; j < pAnim->mNumChannels; ++j)
 				{
 					aiNodeAnim* pChannel = pAnim->mChannels[j];
@@ -259,7 +260,6 @@ namespace Smile
 					}
 				}
 
-				LoadNodeHierarchy(animClip.RootNode, pAiScene->mRootNode);
 				pMesh->m_AnimationClips.push_back(animClip);
 			}
 		}
@@ -273,6 +273,7 @@ namespace Smile
 						src->mTransformation.a2, src->mTransformation.b2, src->mTransformation.c2, src->mTransformation.d2,
 						src->mTransformation.a3, src->mTransformation.b3, src->mTransformation.c3, src->mTransformation.d3,
 						src->mTransformation.a4, src->mTransformation.b4, src->mTransformation.c4, src->mTransformation.d4 };
+
 		dest.ChildrenCount = src->mNumChildren;
 
 		for (uint32_t i{}; i < src->mNumChildren; ++i)

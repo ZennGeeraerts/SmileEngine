@@ -1,12 +1,12 @@
 #pragma once
-#include "SmileEngine/Renderer/Mesh.h"
+#include "SmileEngine/Renderer/MeshFilter.h"
 
 namespace Smile
 {
 	class MeshAnimator final
 	{
 	public:
-		MeshAnimator(const Ref<Mesh>& pMesh);
+		MeshAnimator(const Ref<MeshFilter>& pMesh);
 		virtual ~MeshAnimator() = default;
 
 		void OnUpdate(Timestep deltaTime);
@@ -27,7 +27,7 @@ namespace Smile
 
 	private:
 		AnimationClip m_CurrentClip;
-		Ref<Mesh> m_pMesh;
+		Ref<MeshFilter> m_pMesh;
 		std::vector<DirectX::XMFLOAT4X4> m_Transforms;
 
 		float m_TickCount = 0.f;

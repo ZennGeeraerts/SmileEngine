@@ -70,10 +70,10 @@ namespace Smile
 				}
 			}
 			{
-				auto group = m_Registry.group<StaticMeshComponent>(entt::get<TransformComponent>);
+				auto group = m_Registry.group<MeshComponent>(entt::get<TransformComponent>);
 				for (auto entity : group)
 				{
-					const auto& [mesh, transform] = group.get<StaticMeshComponent, TransformComponent>(entity);
+					const auto& [mesh, transform] = group.get<MeshComponent, TransformComponent>(entity);
 
 					for (auto& animator : mesh.Animators)
 					{
@@ -150,7 +150,7 @@ namespace Smile
 	}
 
 	template <>
-	void Scene::OnComponentAdded<StaticMeshComponent>(Entity entity, StaticMeshComponent& component)
+	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
 	{
 	}
 }

@@ -199,9 +199,9 @@ namespace Smile
 				ImGui::CloseCurrentPopup();
 			}
 
-			if (ImGui::MenuItem("Static Mesh"))
+			if (ImGui::MenuItem("Mesh"))
 			{
-				m_SelectedEntity.AddComponent<StaticMeshComponent>();
+				m_SelectedEntity.AddComponent<MeshComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -290,7 +290,7 @@ namespace Smile
 				}
 			});
 
-		DrawComponent<StaticMeshComponent>("Static Mesh", entity, [](auto& staticMeshComponent)
+		DrawComponent<MeshComponent>("Mesh", entity, [](auto& meshComponent)
 			{
 				ImGui::Button("Mesh", { 100.f, 0.0f });
 				if (ImGui::BeginDragDropTarget())
@@ -300,24 +300,25 @@ namespace Smile
 					{
 						const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
 						std::filesystem::path meshPath = std::filesystem::path{ g_ResourcePath } / path;
-						staticMeshComponent.pMeshes.clear();
+						meshComponent.pMeshes.clear();
 						MeshLoader meshLoader{};
-						staticMeshComponent.pMeshes = meshLoader.LoadMesh(meshPath.string());
-						// temp
-						staticMeshComponent.Animators.push_back(MeshAnimator{ staticMeshComponent.pMeshes[0] });
-						staticMeshComponent.Animators[0].SetAnimation(0);
-						staticMeshComponent.Animators[0].Play();
-						for (const auto& pMesh : staticMeshComponent.pMeshes)
+						meshComponent.pMeshes = meshLoader.LoadMesh(meshPath.string());
+						for (const auto& pMesh : meshComponent.pMeshes)
 						{
-							const auto& bufferLayout = staticMeshComponent.pMaterials[0]->GetBufferLayout();
+							const auto& bufferLayout = meshComponent.pMaterials[0]->GetBufferLayout();
 							pMesh->Create(bufferLayout);
+
+							// temp
+							meshComponent.Animators.push_back(MeshAnimator{ pMesh });
+							meshComponent.Animators[meshComponent.Animators.size() - 1].SetAnimation(0);
+							meshComponent.Animators[meshComponent.Animators.size() - 1].Play();
 						}
 					}
 
 					ImGui::EndDragDropTarget();
 				}
 
-				for (const auto& pMaterial : staticMeshComponent.pMaterials)
+				for (const auto& pMaterial : meshComponent.pMaterials)
 				{
 					// Albedo
 					ImGui::Button("Albedo Map", { 100.f, 0.0f });

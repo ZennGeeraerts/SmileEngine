@@ -1,5 +1,5 @@
 #pragma once
-#include "SmileEngine/Renderer/Mesh.h"
+#include "SmileEngine/Renderer/MeshFilter.h"
 
 class aiMesh;
 class aiScene;
@@ -12,11 +12,11 @@ namespace Smile
 	public:
 		MeshLoader() = default;
 
-		std::vector<Ref<Mesh>> LoadMesh(const std::string& filePath);
+		std::vector<Ref<MeshFilter>> LoadMesh(const std::string& filePath);
 
 	private:
-		void LoadBones(const Ref<Mesh>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene);
-		void LoadAnimations(const Ref<Mesh>& pMesh, const aiScene* pAiScene);
+		void LoadBones(const Ref<MeshFilter>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene);
+		void LoadAnimations(const Ref<MeshFilter>& pMesh, const aiScene* pAiScene);
 		void LoadNodeHierarchy(AnimationNode& dest, const aiNode* src);
 	};
 }

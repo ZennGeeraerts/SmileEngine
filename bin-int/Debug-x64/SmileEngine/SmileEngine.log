@@ -1,13 +1,11 @@
-﻿  RenderCommand.cpp
-  RendererAPI.cpp
-  Generating Code...
+﻿  MeshAnimator.cpp
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 SDL2.lib(SDL2.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
-  SmileEngine.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.lib
-  C:\dev\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
+  SmileEngine.vcxproj -> C:\Users\Gebruiker\Documents\GitHub\SmileEngine\bin\Debug-x64\SmileEngine\SmileEngine.lib
+  C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
   1 File(s) copied
-  C:\dev\SmileEngine\Libs\assimp\x64\zlib1.dll
+  C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\x64\zlib1.dll
   1 File(s) copied

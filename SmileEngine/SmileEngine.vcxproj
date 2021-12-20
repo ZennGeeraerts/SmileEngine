@@ -89,7 +89,7 @@
     <ClInclude Include="Libs\ImGui\imstb_truetype.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Material.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Texture.h" />
-    <ClInclude Include="src\SmileEngine\Renderer\Mesh.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\MeshFilter.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Camera.h" />
     <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCamera.h" />
     <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCameraController.h" />
@@ -192,7 +192,7 @@
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Material.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Texture.cpp" />
-    <ClCompile Include="src\SmileEngine\Renderer\Mesh.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\MeshFilter.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCamera.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\Scene.cpp" />

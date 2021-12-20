@@ -163,18 +163,18 @@ namespace Smile
 			output << YAML::EndMap;
 		}
 
-		if (entity.HasComponent<StaticMeshComponent>())
+		if (entity.HasComponent<MeshComponent>())
 		{
-			output << YAML::Key << "StaticMeshComponent";
+			output << YAML::Key << "MeshComponent";
 			output << YAML::BeginMap;
 
-			auto& staticMeshComponent = entity.GetComponent<StaticMeshComponent>();
-			output << YAML::Key << "Mesh" << YAML::Value << ((staticMeshComponent.pMeshes.size() > 0) ? staticMeshComponent.pMeshes[0]->GetFilePath() : "");
+			auto& meshComponent = entity.GetComponent<MeshComponent>();
+			output << YAML::Key << "Mesh" << YAML::Value << ((meshComponent.pMeshes.size() > 0) ? meshComponent.pMeshes[0]->GetFilePath() : "");
 
 			output << YAML::Key << "Material";
 			output << YAML::BeginMap;
 
-			auto& pMaterial = staticMeshComponent.pMaterials[0];
+			auto& pMaterial = meshComponent.pMaterials[0];
 			output << YAML::Key << "AlbedoMap" << YAML::Value <<  (pMaterial->GetAlbedoMap() ? pMaterial->GetAlbedoMap()->GetFilePath() : "");
 			output << YAML::Key << "AlbedoColor" << YAML::Value << pMaterial->GetAlbedoColor();
 
@@ -258,12 +258,12 @@ namespace Smile
 					cc.bFixedAspectRatio = cameraComponent["bFixedAspectRatio"].as<bool>();
 				}
 
-				auto staticMeshComponent = entity["StaticMeshComponent"];
-				if (staticMeshComponent)
+				auto meshComponent = entity["MeshComponent"];
+				if (meshComponent)
 				{
-					auto& smc = deserializedEntity.AddComponent<StaticMeshComponent>();
+					auto& smc = deserializedEntity.AddComponent<MeshComponent>();
 
-					const auto& meshPath = staticMeshComponent["Mesh"].as<std::string>();
+					const auto& meshPath = meshComponent["Mesh"].as<std::string>();
 					if (!meshPath.empty())
 					{
 						MeshLoader meshLoader{};
@@ -276,7 +276,7 @@ namespace Smile
 						}
 					}
 
-					auto material = staticMeshComponent["Material"];
+					auto material = meshComponent["Material"];
 
 					const auto& albedoMap = material["AlbedoMap"].as<std::string>();
 					if (!albedoMap.empty())

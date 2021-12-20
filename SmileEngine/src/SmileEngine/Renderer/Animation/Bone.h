@@ -30,13 +30,13 @@ namespace Smile
         const std::string& GetName() const { return m_Name; }
 
     private:
-        void InterpolateTranslation(DirectX::XMFLOAT4X4& position, float animationTime);
+        void InterpolateTranslation(DirectX::XMFLOAT3& position, float animationTime);
         uint32_t GetTranslationIndex(float animationTime);
 
-        void InterpolateRotation(DirectX::XMFLOAT4X4& rotation, float animationTime);
+        void InterpolateRotation(DirectX::XMFLOAT4& rotation, float animationTime);
         uint32_t GetRotationIndex(float animationTime);
 
-        void InterpolateScale(DirectX::XMFLOAT4X4& scale, float animationTime);
+        void InterpolateScale(DirectX::XMFLOAT3& scale, float animationTime);
         uint32_t GetScaleIndex(float animationTime);
 
         float GetScaleFactor(float lastTick, float nextTick, float animationTime);

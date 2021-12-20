@@ -7,7 +7,7 @@
 #include "SmileEngine/Scene/SceneCamera.h"
 
 #include "SmileEngine/Core/MeshLoader.h"
-#include "SmileEngine/Renderer/Mesh.h"
+#include "SmileEngine/Renderer/MeshFilter.h"
 #include "SmileEngine/Renderer/Material.h"
 #include "SmileEngine/Renderer/Animation/MeshAnimator.h"
 
@@ -91,17 +91,17 @@ namespace Smile
 		Ref<Shader> pShader = nullptr;
 	};
 
-	struct StaticMeshComponent final
+	struct MeshComponent final
 	{
-		StaticMeshComponent()
+		MeshComponent()
 		{
 			pMaterials.push_back(CreateRef<Material>());
 		}
 
-		StaticMeshComponent(const StaticMeshComponent&) = default;
+		MeshComponent(const MeshComponent&) = default;
 
 		// For now, only support 1 material
-		StaticMeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
+		MeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
 		{
 			pMaterials.push_back(pMaterial);
 
@@ -120,7 +120,7 @@ namespace Smile
 			}
 		}
 
-		std::vector<Ref<Mesh>> pMeshes = {};
+		std::vector<Ref<MeshFilter>> pMeshes = {};
 		std::vector<Ref<Material>> pMaterials = {};
 		std::vector<MeshAnimator> Animators = {};
 	};

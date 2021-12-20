@@ -3,7 +3,7 @@
 
 namespace Smile
 {
-	MeshAnimator::MeshAnimator(const Ref<Mesh>& pMesh)
+	MeshAnimator::MeshAnimator(const Ref<MeshFilter>& pMesh)
 		: m_pMesh{ pMesh }
 	{
 		m_Transforms.resize(70);
