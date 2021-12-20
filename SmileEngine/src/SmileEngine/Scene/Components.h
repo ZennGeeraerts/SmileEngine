@@ -113,10 +113,11 @@ namespace Smile
 				const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
 				pMesh->Create(bufferLayout);
 
-				MeshAnimator animator{ pMesh };
-				/*animator.SetAnimation(0);
-				animator.Play();*/
-				Animators.push_back(animator);
+				if (pMesh->HasAnimations())
+				{
+					MeshAnimator animator{ pMesh };
+					Animators.push_back(animator);
+				}
 			}
 		}
 

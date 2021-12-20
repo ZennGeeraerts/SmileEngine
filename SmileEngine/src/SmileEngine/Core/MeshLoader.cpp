@@ -9,37 +9,20 @@
 
 namespace Smile
 {
-	DirectX::XMFLOAT4X4 ConvertMatrix(const aiMatrix4x4& aiMat)
-	{
-		DirectX::XMMATRIX transposedMat = DirectX::XMMATRIX{
-										aiMat.a1, aiMat.b1, aiMat.c1, aiMat.d1,
-										aiMat.a2, aiMat.b2, aiMat.c2, aiMat.d2,
-										aiMat.a3, aiMat.b3, aiMat.c3, aiMat.d3,
-										aiMat.a4, aiMat.b4, aiMat.c4, aiMat.d4 };
-		DirectX::XMMATRIX rotXMat = DirectX::XMMatrixRotationX(DirectX::XM_PIDIV2);
-		DirectX::XMMATRIX rotZMat = DirectX::XMMatrixRotationZ(DirectX::XM_PIDIV2);
-		DirectX::XMMATRIX flipYMat = DirectX::XMMATRIX{
-									1.f, 0.f, 0.f, 0.f,
-									0.f, 1.f, 0.f, 0.f,
-									0.f, 0.f, 1.f, 0.f,
-									0.f, 0.f, 0.f, 1.f };
-		DirectX::XMMATRIX convertedMat = transposedMat * rotXMat * rotZMat * flipYMat;
-		DirectX::XMFLOAT4X4 converted{};
-		DirectX::XMStoreFloat4x4(&converted, convertedMat);
-
-		return converted;
-	}
-
 	std::vector<Ref<MeshFilter>> MeshLoader::LoadMesh(const std::string& filePath)
 	{
-		const aiScene* pAiScene = aiImportFile(filePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
+		aiPropertyStore* pPropertyStore = aiCreatePropertyStore();
+		aiSetImportPropertyInteger(pPropertyStore, AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
+		
+		const aiScene* pAiScene = aiImportFileExWithProperties(filePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality, nullptr, pPropertyStore);
 		if (!pAiScene)
 		{
 			SM_LOG_WARNING("MeshLoader::LoadObj > Could not load file: %s: %s", filePath, aiGetErrorString());
 			aiReleaseImport(pAiScene);
+			aiReleasePropertyStore(pPropertyStore);
 			return std::vector<Ref<MeshFilter>>{};
 		}
-
+		
 		DirectX::XMMATRIX inverseGlobalTransformMat = DirectX::XMMATRIX{ 
 									pAiScene->mRootNode->mTransformation.a1, pAiScene->mRootNode->mTransformation.b1, pAiScene->mRootNode->mTransformation.c1, pAiScene->mRootNode->mTransformation.d1,
 									pAiScene->mRootNode->mTransformation.a2, pAiScene->mRootNode->mTransformation.b2, pAiScene->mRootNode->mTransformation.c2, pAiScene->mRootNode->mTransformation.d2,
@@ -57,7 +40,6 @@ namespace Smile
 			aiMesh* pAiMesh = pAiScene->mMeshes[m];
 
 			pMeshes[m].reset(new MeshFilter{});
-			pMeshes[m]->m_InverseGlobalTransform = inverseGlobalTransform;
 			pMeshes[m]->m_VertexCount = pAiMesh->mNumVertices;
 			pMeshes[m]->m_Positions.resize(pAiMesh->mNumVertices);
 
@@ -132,6 +114,7 @@ namespace Smile
 			LoadAnimations(pMeshes[0], pAiScene);
 
 		aiReleaseImport(pAiScene);
+		aiReleasePropertyStore(pPropertyStore);
 
 		return pMeshes;
 	}
@@ -146,7 +129,7 @@ namespace Smile
 				uint32_t boneID = -1;
 				std::string boneName = pBone->mName.C_Str();
 
-				if (pMesh->m_BoneMap.find(boneName) == pMesh->m_BoneMap.end())
+				if (pMesh->m_SkeletonMap.find(boneName) == pMesh->m_SkeletonMap.end())
 				{
 					BoneInfo boneInfo{};
 					boneInfo.ID = pMesh->m_BoneCount;
@@ -156,13 +139,13 @@ namespace Smile
 									pBone->mOffsetMatrix.a3, pBone->mOffsetMatrix.b3, pBone->mOffsetMatrix.c3, pBone->mOffsetMatrix.d3,
 									pBone->mOffsetMatrix.a4, pBone->mOffsetMatrix.b4, pBone->mOffsetMatrix.c4, pBone->mOffsetMatrix.d4 };
 
-					pMesh->m_BoneMap[boneName] = boneInfo;
+					pMesh->m_SkeletonMap[boneName] = boneInfo;
 					boneID = pMesh->m_BoneCount;
 					++pMesh->m_BoneCount;
 				}
 				else
 				{
-					boneID = pMesh->m_BoneMap[boneName].ID;
+					boneID = pMesh->m_SkeletonMap[boneName].ID;
 				}
 
 				SM_ASSERT(boneID != -1, "MeshLoader::LoadBones > Invalid bone ID");
@@ -222,8 +205,8 @@ namespace Smile
 					if (pChannel)
 					{
 						std::string boneName = pChannel->mNodeName.C_Str();
-						auto boneInfoMapIt = pMesh->m_BoneMap.find(boneName);
-						if (boneInfoMapIt != pMesh->m_BoneMap.end())
+						auto boneInfoMapIt = pMesh->m_SkeletonMap.find(boneName);
+						if (boneInfoMapIt != pMesh->m_SkeletonMap.end())
 						{
 							BoneInfo& boneInfo = (*boneInfoMapIt).second;
 							Bone bone{ boneName, boneInfo.ID };
@@ -241,7 +224,7 @@ namespace Smile
 							for (uint32_t k{}; k < pChannel->mNumRotationKeys; ++k)
 							{
 								KeyRotation keyRotation{};
-								keyRotation.Rotation = *reinterpret_cast<DirectX::XMFLOAT4*>(&pChannel->mRotationKeys[k].mValue);
+								keyRotation.Rotation = DirectX::XMFLOAT4{ pChannel->mRotationKeys[k].mValue.x, pChannel->mRotationKeys[k].mValue.y, pChannel->mRotationKeys[k].mValue.z, pChannel->mRotationKeys[k].mValue.w };
 								keyRotation.Tick = static_cast<float>(pChannel->mRotationKeys[k].mTime);
 								bone.m_Rotations.push_back(keyRotation);
 							}
@@ -268,11 +251,18 @@ namespace Smile
 	void MeshLoader::LoadNodeHierarchy(AnimationNode& dest, const aiNode* src)
 	{
 		dest.Name = src->mName.data;
-		dest.Transform = DirectX::XMFLOAT4X4{
-						src->mTransformation.a1, src->mTransformation.b1, src->mTransformation.c1, src->mTransformation.d1,
-						src->mTransformation.a2, src->mTransformation.b2, src->mTransformation.c2, src->mTransformation.d2,
-						src->mTransformation.a3, src->mTransformation.b3, src->mTransformation.c3, src->mTransformation.d3,
-						src->mTransformation.a4, src->mTransformation.b4, src->mTransformation.c4, src->mTransformation.d4 };
+		//if (src->mNumMeshes > 0)
+		{
+			dest.Transform = DirectX::XMFLOAT4X4{
+							src->mTransformation.a1, src->mTransformation.b1, src->mTransformation.c1, src->mTransformation.d1,
+							src->mTransformation.a2, src->mTransformation.b2, src->mTransformation.c2, src->mTransformation.d2,
+							src->mTransformation.a3, src->mTransformation.b3, src->mTransformation.c3, src->mTransformation.d3,
+							src->mTransformation.a4, src->mTransformation.b4, src->mTransformation.c4, src->mTransformation.d4 };
+		}
+		/*else
+		{
+			DirectX::XMStoreFloat4x4(&dest.Transform, DirectX::XMMatrixIdentity());
+		}*/
 
 		dest.ChildrenCount = src->mNumChildren;
 

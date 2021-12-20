@@ -5,28 +5,6 @@
 
 namespace Smile
 {
-	/*struct Bone final
-	{
-		Bone(const std::string& name, int id)
-			: Name{ name }
-			, ID{ id }
-		{
-			DirectX::XMStoreFloat4x4(&Offset, DirectX::XMMatrixIdentity());
-			DirectX::XMStoreFloat4x4(&NodeTransform, DirectX::XMMatrixIdentity());
-			DirectX::XMStoreFloat4x4(&BindTransform, DirectX::XMMatrixIdentity());
-			DirectX::XMStoreFloat4x4(&Transform, DirectX::XMMatrixIdentity());
-		}
-
-		std::string Name{};
-		int ID = -1;
-		DirectX::XMFLOAT4X4 Offset{};
-		DirectX::XMFLOAT4X4 NodeTransform{};
-		DirectX::XMFLOAT4X4 BindTransform{};
-		DirectX::XMFLOAT4X4 Transform{};
-
-		std::vector<int> ChildrenBoneIDs{};
-	};*/
-
 	struct BoneInfo final
 	{
 		uint32_t ID{};
@@ -75,9 +53,8 @@ namespace Smile
 
 		bool m_bHasAnimations = false;
 		std::vector<AnimationClip> m_AnimationClips{};
-		std::unordered_map<std::string, BoneInfo> m_BoneMap{};
+		std::unordered_map<std::string, BoneInfo> m_SkeletonMap{};
 		uint32_t m_BoneCount = 0;
-		DirectX::XMFLOAT4X4 m_InverseGlobalTransform{};
 
 		bool m_bUsePositions = false;
 		bool m_bUseNormals = false;

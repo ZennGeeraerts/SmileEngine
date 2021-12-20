@@ -295,12 +295,15 @@ namespace Smile
 				ImGui::Button("Mesh", { 100.f, 0.0f });
 				if (ImGui::BeginDragDropTarget())
 				{
-					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-					if (payload)
+					const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+					if (pPayload)
 					{
-						const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-						std::filesystem::path meshPath = std::filesystem::path{ g_ResourcePath } / path;
 						meshComponent.pMeshes.clear();
+						meshComponent.Animators.clear();
+
+						const wchar_t* path = static_cast<const wchar_t*>(pPayload->Data);
+						std::filesystem::path meshPath = std::filesystem::path{ g_ResourcePath } / path;
+
 						MeshLoader meshLoader{};
 						meshComponent.pMeshes = meshLoader.LoadMesh(meshPath.string());
 						for (const auto& pMesh : meshComponent.pMeshes)
@@ -308,10 +311,12 @@ namespace Smile
 							const auto& bufferLayout = meshComponent.pMaterials[0]->GetBufferLayout();
 							pMesh->Create(bufferLayout);
 
-							// temp
-							meshComponent.Animators.push_back(MeshAnimator{ pMesh });
-							meshComponent.Animators[meshComponent.Animators.size() - 1].SetAnimation(0);
-							meshComponent.Animators[meshComponent.Animators.size() - 1].Play();
+							if (pMesh->HasAnimations())
+							{
+								MeshAnimator animator{ pMesh };
+								meshComponent.Animators.push_back(animator);
+								meshComponent.Animators.back().SetAnimation(0);
+							}
 						}
 					}
 
@@ -411,6 +416,15 @@ namespace Smile
 
 						ImGui::EndDragDropTarget();
 					}
+				}
+
+				for (auto& animator : meshComponent.Animators)
+				{
+					ImGui::Text("Animator");
+					if (ImGui::Button("Play", { 100.f, 0.0f }))
+						animator.Play();
+					if (ImGui::Button("Pause", { 100.f, 0.0f }))
+						animator.Pause();
 				}
 			});
 	}

@@ -20,7 +20,7 @@ namespace Smile
 		m_Colors.clear();
 		m_BlendIndices.clear();
 		m_BlendWeights.clear();
-		m_BoneMap.clear();
+		m_SkeletonMap.clear();
 	}
 
 	void MeshFilter::Create(const BufferLayout& layout)

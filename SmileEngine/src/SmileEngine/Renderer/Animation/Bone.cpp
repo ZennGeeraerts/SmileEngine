@@ -20,14 +20,16 @@ namespace Smile
 		DirectX::XMFLOAT3 scale{};
 		InterpolateScale(scale, animationTime);
 
-		DirectX::XMMATRIX localTransformMat = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) 
-			* DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotation)) * DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
+		DirectX::XMMATRIX localTransformMat = DirectX::XMMatrixTransformation(DirectX::XMVectorZero(), DirectX::XMQuaternionIdentity(), DirectX::XMLoadFloat3(&scale), 
+			DirectX::XMVectorZero(), DirectX::XMLoadFloat4(&rotation), 
+			DirectX::XMLoadFloat3(&translation));
 
 		DirectX::XMStoreFloat4x4(&m_LocalTransform, localTransformMat);
 	}
 
 	void Bone::InterpolateTranslation(DirectX::XMFLOAT3& translation, float animationTime)
 	{
+		// TODO: handle when empty
 		if (m_TranslationCount == 1)
 		{
 			translation = { m_Translations[0].Translation.x,  m_Translations[0].Translation.y, m_Translations[0].Translation.z };
@@ -44,6 +46,7 @@ namespace Smile
 
 	uint32_t Bone::GetTranslationIndex(float animationTime)
 	{
+		// TODO: handle when empty
 		for (uint32_t i{}; i < (m_TranslationCount - 1); ++i)
 		{
 			if (animationTime < m_Translations[i + 1].Tick)
@@ -55,6 +58,7 @@ namespace Smile
 
 	void Bone::InterpolateRotation(DirectX::XMFLOAT4& rotation, float animationTime)
 	{
+		// TODO: handle when empty
 		if (m_RotationCount == 1)
 		{
 			DirectX::XMVECTOR rotationVec = DirectX::XMQuaternionNormalize(DirectX::XMLoadFloat4(&m_Rotations[0].Rotation));

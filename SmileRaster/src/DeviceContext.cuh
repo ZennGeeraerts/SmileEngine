@@ -36,6 +36,8 @@ namespace Smile
 			void Clear(const DirectX::XMFLOAT3& clearColor);
 			void DrawIndexed();
 
+			void Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer);
+
 		private:
 			// GPU
 			uint8_t* d_ScreenBuffer = nullptr;

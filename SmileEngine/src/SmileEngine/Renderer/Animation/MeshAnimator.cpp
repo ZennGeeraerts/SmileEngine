@@ -6,7 +6,7 @@ namespace Smile
 	MeshAnimator::MeshAnimator(const Ref<MeshFilter>& pMesh)
 		: m_pMesh{ pMesh }
 	{
-		m_Transforms.resize(70);
+		m_Transforms.resize(MAX_BONE_COUNT);
 	}
 
 	void MeshAnimator::OnUpdate(Timestep deltaTime)
@@ -57,10 +57,12 @@ namespace Smile
 		DirectX::XMFLOAT4X4 globalTransform{};
 		DirectX::XMStoreFloat4x4(&globalTransform, globalTransformMat);
 
-		if (m_pMesh->m_BoneMap.find(nodeName) != m_pMesh->m_BoneMap.end())
+		if (m_pMesh->m_SkeletonMap.find(nodeName) != m_pMesh->m_SkeletonMap.end())
 		{
-			uint32_t id = m_pMesh->m_BoneMap[nodeName].ID;
-			DirectX::XMMATRIX transformMat = DirectX::XMLoadFloat4x4(&m_pMesh->m_BoneMap[nodeName].Offset) * globalTransformMat;
+			uint32_t id = m_pMesh->m_SkeletonMap[nodeName].ID;
+			SM_ASSERT(id < MAX_BONE_COUNT, "MeshAnimator::CalculateBoneTransform > Max bone count reached");
+
+			DirectX::XMMATRIX transformMat = DirectX::XMLoadFloat4x4(&m_pMesh->m_SkeletonMap[nodeName].Offset) * globalTransformMat;
 			DirectX::XMStoreFloat4x4(&m_Transforms[id], transformMat);
 		}
 

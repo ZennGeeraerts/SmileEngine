@@ -1,6 +1,8 @@
 #pragma once
 #include "SmileEngine/Renderer/MeshFilter.h"
 
+#define MAX_BONE_COUNT 70
+
 namespace Smile
 {
 	class MeshAnimator final
