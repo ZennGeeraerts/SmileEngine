@@ -108,9 +108,9 @@ namespace Smile
 			MeshLoader meshLoader{};
 			pMeshes = meshLoader.LoadMesh(assetFile);
 
+			const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
 			for (const auto& pMesh : pMeshes)
 			{
-				const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
 				pMesh->Create(bufferLayout);
 
 				if (pMesh->HasAnimations())

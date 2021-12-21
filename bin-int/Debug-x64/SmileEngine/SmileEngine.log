@@ -1,17 +1,16 @@
-﻿  WindowsWindow.cpp
-  SmileGame.cpp
-  MeshAnimator.cpp
-  Buffer.cpp
-  Framebuffer.cpp
-  PerspectiveCameraController.cpp
-  Renderer.cpp
-  RenderingContext.cpp
-  Shader.cpp
-  Texture.cpp
-  VertexArray.cpp
-  Scene.cpp
-  SceneSerializer.cpp
-  Generating Code...
+﻿  MeshLoader.cpp
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\cimport.h(58,15): warning C4099: 'aiScene': type name first seen using 'class' now seen using 'struct'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.h(5): message : see declaration of 'aiScene'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\mesh.h(559,1): warning C4099: 'aiMesh': type name first seen using 'class' now seen using 'struct'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\mesh.h(558): message : see declaration of 'aiMesh'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\scene.h(80,1): warning C4099: 'aiNode': type name first seen using 'class' now seen using 'struct'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\scene.h(79): message : see declaration of 'aiNode'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\scene.h(242,1): warning C4099: 'aiScene': type name first seen using 'class' now seen using 'struct'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\Libs\assimp\include\assimp\scene.h(241): message : see declaration of 'aiScene'
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(162,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(167,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(172,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(177,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

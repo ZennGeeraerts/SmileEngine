@@ -55,11 +55,11 @@ namespace Smile
 		Submit(meshRendererComponent.pVertexBuffer, meshRendererComponent.pIndexBuffer, meshRendererComponent.pShader, worldTransform);
 	}
 
-	void Renderer::Submit(const MeshComponent& staticMeshComponent, const DirectX::XMFLOAT4X4& worldTransform)
+	void Renderer::Submit(const MeshComponent& meshComponent, const DirectX::XMFLOAT4X4& worldTransform)
 	{
-		for (const auto& pMesh : staticMeshComponent.pMeshes)
+		for (const auto& pMesh : meshComponent.pMeshes)
 		{
-			Submit(pMesh->GetVertexBuffer(), pMesh->GetIndexBuffer(), staticMeshComponent.pMaterials[0]->GetShader(), worldTransform);
+			Submit(pMesh->GetVertexBuffer(), pMesh->GetIndexBuffer(), meshComponent.pMaterials[0]->GetShader(), worldTransform);
 		}
 	}
 }

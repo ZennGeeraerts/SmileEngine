@@ -1,0 +1,74 @@
+Scene: Untitled
+Entities:
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Gun
+    TransformComponent:
+      Translation: [-5.55999994, 0, 20]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [5, 5, 5]
+    MeshComponent:
+      Mesh: Resources\Meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: Resources\Textures\base_albedo.jpg
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: Resources\Textures\base_metallic.jpg
+        Metalness: 0
+        RoughnessMap: Resources\Textures\base_roughness.jpg
+        Roughness: 0.5
+        NormalMap: Resources\Textures\base_normal.jpg
+        AOMap: Resources\Textures\base_AO.jpg
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, -10]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        FOV: 45
+        PerspectiveNearPlane: 0.100000001
+        PerspectiveFarPlane: 2500
+        Size: 10
+        OrthographicNearPlane: -1
+        OrthographicFarPlane: 1
+      bPrimary: true
+      bFixedAspectRatio: false
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Character
+    TransformComponent:
+      Translation: [7.82999992, -7.44000006, 20]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [1, 1, 1]
+    MeshComponent:
+      Mesh: Resources\Meshes\nanosuit.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.45780614, 0.116446137, 0.669565201]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0
+        NormalMap: ""
+        AOMap: ""
+  - Entity: 1283719283174164
+    TagComponent:
+      Tag: Cowboy
+    TransformComponent:
+      Translation: [0, -9, 20]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [1, 1, 1]
+    MeshComponent:
+      Mesh: Resources\Meshes\model.dae
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0.00979206059, 0.160869539, 0.032110285]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0.486000001
+        NormalMap: ""
+        AOMap: ""

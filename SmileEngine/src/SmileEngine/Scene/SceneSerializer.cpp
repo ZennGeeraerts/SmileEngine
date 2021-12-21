@@ -261,18 +261,25 @@ namespace Smile
 				auto meshComponent = entity["MeshComponent"];
 				if (meshComponent)
 				{
-					auto& smc = deserializedEntity.AddComponent<MeshComponent>();
+					auto& mc = deserializedEntity.AddComponent<MeshComponent>();
 
 					const auto& meshPath = meshComponent["Mesh"].as<std::string>();
 					if (!meshPath.empty())
 					{
 						MeshLoader meshLoader{};
-						smc.pMeshes = meshLoader.LoadMesh(meshPath);
+						mc.pMeshes = meshLoader.LoadMesh(meshPath);
 
-						for (const auto& pMesh : smc.pMeshes)
+						const auto& bufferLayout = mc.pMaterials[0]->GetBufferLayout();
+						for (const auto& pMesh : mc.pMeshes)
 						{
-							const auto& bufferLayout = smc.pMaterials[0]->GetBufferLayout();
 							pMesh->Create(bufferLayout);
+
+							if (pMesh->HasAnimations())
+							{
+								MeshAnimator animator{ pMesh };
+								mc.Animators.push_back(animator);
+								mc.Animators.back().SetAnimation(0);
+							}
 						}
 					}
 
@@ -281,39 +288,39 @@ namespace Smile
 					const auto& albedoMap = material["AlbedoMap"].as<std::string>();
 					if (!albedoMap.empty())
 					{
-						smc.pMaterials[0]->SetAlbedo(Texture2D::Create(albedoMap));
-						smc.pMaterials[0]->SetUseAlbedoMap(true);
+						mc.pMaterials[0]->SetAlbedo(Texture2D::Create(albedoMap));
+						mc.pMaterials[0]->SetUseAlbedoMap(true);
 					}
-					smc.pMaterials[0]->SetAlbedo(material["AlbedoColor"].as<DirectX::XMFLOAT3>());
+					mc.pMaterials[0]->SetAlbedo(material["AlbedoColor"].as<DirectX::XMFLOAT3>());
 
 					const auto& metalnessMap = material["MetalnessMap"].as<std::string>();
 					if (!metalnessMap.empty())
 					{
-						smc.pMaterials[0]->SetMetalness(Texture2D::Create(metalnessMap));
-						smc.pMaterials[0]->SetUseMetalnessMap(true);
+						mc.pMaterials[0]->SetMetalness(Texture2D::Create(metalnessMap));
+						mc.pMaterials[0]->SetUseMetalnessMap(true);
 					}
-					smc.pMaterials[0]->SetMetalness(material["Metalness"].as<float>());
+					mc.pMaterials[0]->SetMetalness(material["Metalness"].as<float>());
 
 					const auto& roughnessMap = material["RoughnessMap"].as<std::string>();
 					if (!roughnessMap.empty())
 					{
-						smc.pMaterials[0]->SetRoughness(Texture2D::Create(roughnessMap));
-						smc.pMaterials[0]->SetUseRoughnessMap(true);
+						mc.pMaterials[0]->SetRoughness(Texture2D::Create(roughnessMap));
+						mc.pMaterials[0]->SetUseRoughnessMap(true);
 					}
-					smc.pMaterials[0]->SetRoughness(material["Roughness"].as<float>());
+					mc.pMaterials[0]->SetRoughness(material["Roughness"].as<float>());
 
 					const auto& normalMap = material["NormalMap"].as<std::string>();
 					if (!normalMap.empty())
 					{
-						smc.pMaterials[0]->SetNormalMap(Texture2D::Create(normalMap));
-						smc.pMaterials[0]->SetUseNormalMap(true);
+						mc.pMaterials[0]->SetNormalMap(Texture2D::Create(normalMap));
+						mc.pMaterials[0]->SetUseNormalMap(true);
 					}
 
 					const auto& aoMap = material["AOMap"].as<std::string>();
 					if (!aoMap.empty())
 					{
-						smc.pMaterials[0]->SetAOMap(Texture2D::Create(aoMap));
-						smc.pMaterials[0]->SetUseAOMap(true);
+						mc.pMaterials[0]->SetAOMap(Texture2D::Create(aoMap));
+						mc.pMaterials[0]->SetUseAOMap(true);
 					}
 				}
 			}
