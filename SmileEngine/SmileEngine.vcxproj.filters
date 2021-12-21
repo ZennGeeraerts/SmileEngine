@@ -342,6 +342,9 @@
     <ClInclude Include="src\SmileEngine\Renderer\MeshFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\SmileRaster\SmileRasterShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -486,6 +489,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\MeshFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\SmileRaster\SmileRasterShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

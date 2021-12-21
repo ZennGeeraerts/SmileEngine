@@ -29,7 +29,9 @@ namespace Smile
 		HDC m_HDC = nullptr;
 		HBITMAP m_Bitmap = nullptr;
 		HBITMAP m_BitmapOld = nullptr;
+		BITMAPINFO m_BitmapInfo{};
 		uint8_t* m_pScreenBuffer{};
+		const uint8_t m_ColorChannelCount{ 3 };
 
 		friend class SmileRasterRendererAPI;
 	};

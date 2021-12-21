@@ -1,5 +1,6 @@
 #include "DeviceContext.cuh"
 #include "Utils.cuh"
+#include "Rasterizer.cu"
 
 namespace Smile
 {
@@ -95,10 +96,9 @@ namespace Smile
 								static_cast<uint32_t>(ceil(m_DCData.Height / static_cast<float>(m_DCData.TileSize))) };
 
 			ClearScreenBufferKernel << <gridSize, blockSize >> > (d_ScreenBuffer, m_DCData.Width, m_DCData.Height, clearColor);
-			//GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
-			/*size_t size = sizeof(uint8_t) * m_DCData.ColorChannelCount * m_DCData.Width * m_DCData.Height;
-			GPU_ERROR_CHECK(cudaMemcpy(m_DCData.pScreenBuffer, d_ScreenBuffer, size, cudaMemcpyDeviceToHost));*/
+			size_t size = sizeof(uint8_t) * m_DCData.ColorChannelCount * m_DCData.Width * m_DCData.Height;
+			GPU_ERROR_CHECK(cudaMemcpy(m_DCData.pScreenBuffer, d_ScreenBuffer, size, cudaMemcpyDeviceToHost));
 		}
 
 		void DeviceContext::DrawIndexed()
@@ -106,7 +106,8 @@ namespace Smile
 			dim3 blockSize = { m_DCData.TileSize, m_DCData.TileSize };
 			dim3 gridSize = { static_cast<uint32_t>(ceil(m_DCData.Width / static_cast<float>(m_DCData.TileSize))),
 							static_cast<uint32_t>(ceil(m_DCData.Height / static_cast<float>(m_DCData.TileSize))) };
-
+			
+			VertexShaderKernel << <gridSize, blockSize >> > ();
 		}
 
 		void DeviceContext::Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer)
