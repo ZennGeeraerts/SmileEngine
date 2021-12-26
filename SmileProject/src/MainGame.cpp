@@ -22,7 +22,7 @@ ExampleLayer::ExampleLayer()
 		-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
 	};*/
 
-	float vertices[]
+	/*float vertices[]
 	{
 		-0.5f, 0.5f, -0.5f,		0, 0, 1,
 		0.5f, 0.5f, -0.5f,		0, 1, 0,
@@ -32,12 +32,23 @@ ExampleLayer::ExampleLayer()
 		0.5f, 0.5f, 0.5f,		1, 0, 0,
 		-0.5f, -0.5f, 0.5f,		0, 1, 0,
 		0.5f, -0.5f, 0.5f,		0, 1, 1
+	};*/
+
+	float vertices[]
+	{
+		-0.5f, 0.5f, -0.5f,
+		0.5f, 0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f,
+		-0.5f, 0.5f, 0.5f,
+		0.5f, 0.5f, 0.5f,
+		-0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f
 	};
 
 	Smile::BufferLayout bufferLayout
 	{
-		{ Smile::ShaderDataType::eFloat3, "Position" },
-		{ Smile::ShaderDataType::eFloat3, "Color" }
+		{ Smile::ShaderDataType::eFloat3, "Position" }
 	};
 
 	uint32_t indices[]
@@ -60,15 +71,18 @@ ExampleLayer::ExampleLayer()
 	vertexBufferData.pVertices = vertices;
 	vertexBufferData.Count = 8;
 	vertexBufferData.Usage = Smile::BufferUsage::eImmutable;
-	vertexBufferData.BufferLayout = {
-		{ Smile::ShaderDataType::eFloat3, "Position" },
-		{ Smile::ShaderDataType::eFloat3, "Color" }
-	};
+	vertexBufferData.BufferLayout = bufferLayout;
+
+	m_pVertexBuffer.reset(Smile::VertexBuffer::Create(vertexBufferData));
 
 	Smile::IndexBufferData indexBufferData{};
 	indexBufferData.pIndices = indices;
 	indexBufferData.Count = 36;
 	indexBufferData.Usage = Smile::BufferUsage::eImmutable;
+
+	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
+
+	m_pShader = Smile::Shader::Create("", bufferLayout);
 
 	m_pActiveScene.reset(new Smile::Scene{});
 
@@ -87,10 +101,6 @@ ExampleLayer::ExampleLayer()
 
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 	m_CameraEntity.AddComponent<Smile::CameraComponent>().bPrimary = true;
-
-	Smile::FramebufferData framebufferData{};
-	framebufferData.Width = 1280;
-	framebufferData.Height = 720;
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
@@ -135,6 +145,9 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	//transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
 	//transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
 
+	DirectX::XMFLOAT4X4 transform{};
+	DirectX::XMStoreFloat4x4(&transform, DirectX::XMMatrixIdentity());
+	Smile::Renderer::Submit(m_pVertexBuffer, m_pIndexBuffer, m_pShader, transform);
 	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 	Smile::RenderCommand::Clear();
 

@@ -20,6 +20,9 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return CreateRef<DirectX11Framebuffer>(framebufferData);
+
+		case RendererAPI::API::eSmileRaster:
+			return nullptr;
 #endif
 		}
 

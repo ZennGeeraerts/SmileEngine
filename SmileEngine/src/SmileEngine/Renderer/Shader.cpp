@@ -4,8 +4,8 @@
 #include "Renderer.h"
 
 #ifdef SM_PLATFORM_WINDOWS
-#include "Platform/DirectX11/DirectX11Context.h"
 #include "Platform/DirectX11/DirectX11Shader.h"
+#include "Platform/SmileRaster/SmileRasterShader.h"
 #endif
 
 namespace Smile
@@ -21,6 +21,9 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return CreateRef<DirectX11Shader>(filePath, bufferLayout);
+
+		case RendererAPI::API::eSmileRaster:
+			return CreateRef<SmileRasterShader>();
 #endif
 		}
 

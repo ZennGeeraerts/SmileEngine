@@ -17,9 +17,13 @@
   <ItemGroup>
     <ClInclude Include="src\DeviceContext.cuh" />
     <ClInclude Include="src\Utils.cuh" />
+    <ClInclude Include="src\DataStructs.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\DeviceContext.cu" />
     <CudaCompile Include="src\Rasterizer.cu" />
+    <CudaCompile Include="src\VertexShader.cu" />
+    <CudaCompile Include="src\PixelShader.cu" />
+    <CudaCompile Include="src\InputAssembler.cu" />
   </ItemGroup>
 </Project>

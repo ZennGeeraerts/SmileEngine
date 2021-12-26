@@ -6,9 +6,6 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__global__ void VertexShaderKernel(void* pVertexBuffer)
-		{
-			uint32_t index = (blockIdx.x * blockDim.x) + threadIdx.x;
-		}
+		
 	}
 }

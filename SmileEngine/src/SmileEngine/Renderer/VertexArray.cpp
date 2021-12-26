@@ -16,6 +16,9 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return nullptr;
+
+		case RendererAPI::API::eSmileRaster:
+			return nullptr;
 #endif
 		}
 

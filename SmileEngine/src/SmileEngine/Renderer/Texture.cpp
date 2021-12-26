@@ -17,6 +17,9 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return CreateRef<DirectX11Texture2D>(filePath);
+
+		case RendererAPI::API::eSmileRaster:
+			return nullptr;
 #endif
 		}
 

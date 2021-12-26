@@ -23,13 +23,9 @@ private:
 	float m_CameraRotation = 0.f;
 	float m_CameraRotationSpeed = 180.f;
 
-	Smile::Ref<Smile::Texture2D> m_pTexture;
-
-	bool m_bMouseStart = true;
-	float m_PreviousMousePosX = 0.0f;
-	float m_PreviousMousePosY = 0.0f;
-
-	Smile::Entity m_StormTrooper;
+	Smile::Ref<Smile::VertexBuffer> m_pVertexBuffer = nullptr;
+	Smile::Ref<Smile::IndexBuffer> m_pIndexBuffer = nullptr;
+	Smile::Ref<Smile::Shader> m_pShader = nullptr;
 };
 
 class MainGame final : public Smile::SmileGame

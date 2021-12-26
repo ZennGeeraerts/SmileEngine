@@ -5,6 +5,7 @@
 
 #ifdef SM_PLATFORM_WINDOWS
 	#include "Platform/DirectX11/DirectX11Buffer.h"
+	#include "Platform/SmileRaster/SmileRasterBuffer.h"
 #endif
 
 namespace Smile
@@ -20,6 +21,9 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return new DirectX11VertexBuffer(vertexBufferData);
+
+		case RendererAPI::API::eSmileRaster:
+			return new SmileRasterVertexBuffer{ vertexBufferData };
 #endif
 		}
 
@@ -38,6 +42,9 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return new DirectX11IndexBuffer(indexBufferData);
+
+		case RendererAPI::API::eSmileRaster:
+			return new SmileRasterIndexBuffer{ indexBufferData };
 #endif
 		}
 

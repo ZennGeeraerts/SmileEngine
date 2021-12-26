@@ -182,14 +182,18 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\DataStructs.cuh" />
     <CudaCompile Include="src\DeviceContext.cu">
       <FileType>Document</FileType>
     </CudaCompile>
     <ClInclude Include="src\DeviceContext.cuh" />
+    <CudaCompile Include="src\InputAssembler.cu" />
+    <CudaCompile Include="src\PixelShader.cu" />
     <CudaCompile Include="src\Rasterizer.cu">
       <FileType>Document</FileType>
     </CudaCompile>
     <ClInclude Include="src\Utils.cuh" />
+    <CudaCompile Include="src\VertexShader.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

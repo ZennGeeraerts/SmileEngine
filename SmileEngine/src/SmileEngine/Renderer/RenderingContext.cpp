@@ -20,10 +20,10 @@ namespace Smile
 #ifdef SM_PLATFORM_WINDOWS
 		case RendererAPI::API::eDirectX11:
 			return new DirectX11Context{ pWindow };
-#endif
 
 		case RendererAPI::API::eSmileRaster:
 			return new SmileRasterContext{ pWindow };
+#endif
 		}
 
 		SM_ASSERT(false, "RenderingContext::Create > return nullptr, unknown renderer api or renderer api is not supported on this platform");

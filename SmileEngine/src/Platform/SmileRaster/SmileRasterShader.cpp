@@ -1,2 +1,64 @@
 #include "smpch.h"
 #include "SmileRasterShader.h"
+
+#include "SmileRasterContext.h"
+#include "SmileEngine/Core/SmileGame.h"
+
+namespace Smile
+{
+	SmileRasterShader::SmileRasterShader()
+	{
+		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		SM_ASSERT(m_pSmileRasterContext, "SmileRasterShader > Rendering context is not a SmileRaster Rendering Context");
+	}
+
+	void SmileRasterShader::Bind() const
+	{
+		m_pSmileRasterContext->GetDeviceContext()->SetShaderData(m_ViewProjectionMatrix, m_WorldMatrix, m_ViewInverseMatrix);
+	}
+
+	void SmileRasterShader::Unbind() const
+	{
+
+	}
+
+	void SmileRasterShader::UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix)
+	{
+		if (sementicName == "ViewProjection")
+			m_ViewProjectionMatrix = matrix;
+		else if (sementicName == "World")
+			m_WorldMatrix = matrix;
+		else if (sementicName == "ViewInverse")
+			m_ViewInverseMatrix = matrix;
+	}
+
+	void SmileRasterShader::UploadMat4Array(const std::string& sementicName, const std::vector<DirectX::XMFLOAT4X4>& matArray)
+	{
+
+	}
+
+	void SmileRasterShader::UploadFloat3(const std::string& sementicName, const DirectX::XMFLOAT3& value)
+	{
+
+	}
+
+	void SmileRasterShader::UploadInt(const std::string& sementicName, int value)
+	{
+
+	}
+
+	void SmileRasterShader::UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D)
+	{
+
+	}
+
+	void SmileRasterShader::UploadBool(const std::string& sementicName, bool value)
+	{
+
+	}
+
+	void SmileRasterShader::UploadFloat(const std::string& sementicName, float value)
+	{
+
+	}
+}

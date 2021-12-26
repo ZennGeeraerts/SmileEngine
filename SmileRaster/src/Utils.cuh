@@ -18,13 +18,13 @@ namespace Smile
 			}
 		}
 
-		__global__ inline void ClearScreenBufferKernel(uint8_t* pScreenBuffer, uint32_t width, uint32_t height, DirectX::XMFLOAT3 clearColor)
+		__global__ inline void ClearScreenBufferKernel(uint8_t* pScreenBuffer, uint32_t width, uint32_t height, DirectX::XMFLOAT3 clearColor, uint8_t colorChannelCount)
 		{
 			uint32_t pixelX = (blockIdx.x * blockDim.x) + threadIdx.x;
 			uint32_t pixelY = (blockIdx.y * blockDim.y) + threadIdx.y;
-			uint32_t bufferIndex = (pixelY * width + pixelX) * 3;
+			uint32_t bufferIndex = (pixelY * width + pixelX) * colorChannelCount;
 
-			if (bufferIndex < (width * height * 3))
+			if (bufferIndex < (width * height * colorChannelCount))
 			{
 				pScreenBuffer[bufferIndex] = static_cast<uint8_t>(clearColor.z * 255.f);
 				pScreenBuffer[bufferIndex + 1] = static_cast<uint8_t>(clearColor.y * 255.f);

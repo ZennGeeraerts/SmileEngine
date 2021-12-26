@@ -39,6 +39,6 @@ namespace Smile
 
 	void SmileRasterRendererAPI::DrawIndexed(int32_t indexCount, const Ref<Shader>& pShader)
 	{
-		
+		m_pSmileRasterContext->m_pDeviceContext->DrawIndexed();
 	}
 }
