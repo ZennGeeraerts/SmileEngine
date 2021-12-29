@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <DirectXMath.h>
+#include "../../SmileRaster/Libs/glm/glm.hpp"
 
 namespace Smile
 {
@@ -9,7 +10,8 @@ namespace Smile
 		struct VertexBuffer final
 		{
 			void* d_Vertices = nullptr;
-			uint32_t Stride = 0;
+			uint32_t Stride{ 0 };
+			uint32_t Count{ 0 };
 		};
 
 		struct IndexBuffer final
@@ -27,17 +29,26 @@ namespace Smile
 
 		struct VS_INPUT final
 		{
-			DirectX::XMFLOAT3 Position;
+			glm::vec3 Position{};
 		};
 
 		struct VS_OUTPUT final
 		{
-			DirectX::XMFLOAT3 Position;
+			glm::vec3 Position{};
 		};
 
 		struct Triangle final
 		{
-			VS_INPUT Vertices[3]{};
+			union
+			{
+				VS_INPUT Vertices[3]{};
+				struct
+				{
+					VS_INPUT Vertex0;
+					VS_INPUT Vertex1;
+					VS_INPUT Vertex2;
+				};
+			};
 		};
 	}
 }

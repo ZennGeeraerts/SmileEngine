@@ -48,7 +48,6 @@ namespace Smile
 			VertexBuffer m_VertexBuffers[SMR_MAX_BUFFER_COUNT];
 			IndexBuffer m_IndexBuffers[SMR_MAX_BUFFER_COUNT];
 			ShaderData* d_ShaderData = nullptr;
-			Triangle* d_Triangles = nullptr;
 
 			// CPU
 			uint32_t m_VertexBufferCount = 0;

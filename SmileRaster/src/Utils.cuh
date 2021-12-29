@@ -31,5 +31,15 @@ namespace Smile
 				pScreenBuffer[bufferIndex + 2] = static_cast<uint8_t>(clearColor.x * 255.f);
 			}
 		}
+
+		__global__ inline void ClearDepthBufferKernel(float* pDepthBuffer, uint32_t width, uint32_t height)
+		{
+			uint32_t pixelX = (blockIdx.x * blockDim.x) + threadIdx.x;
+			uint32_t pixelY = (blockIdx.y * blockDim.y) + threadIdx.y;
+			uint32_t bufferIndex = pixelY * width + pixelX;
+
+			if (bufferIndex < (width * height))
+				pDepthBuffer[bufferIndex] = FLT_MAX;
+		}
     }
 }

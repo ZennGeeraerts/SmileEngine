@@ -22,6 +22,18 @@ ExampleLayer::ExampleLayer()
 		-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
 	};*/
 
+	float vertices[]
+	{
+		0.f, 0.5f, 0.5f,
+		0.5f, -0.5f, 0.5f,
+		-0.5f, -0.5f, 0.5f
+	};
+
+	uint32_t indices[]
+	{
+		0, 1, 2
+	};
+
 	/*float vertices[]
 	{
 		-0.5f, 0.5f, -0.5f,		0, 0, 1,
@@ -34,7 +46,7 @@ ExampleLayer::ExampleLayer()
 		0.5f, -0.5f, 0.5f,		0, 1, 1
 	};*/
 
-	float vertices[]
+	/*float vertices[]
 	{
 		-0.5f, 0.5f, -0.5f,
 		0.5f, 0.5f, -0.5f,
@@ -44,28 +56,28 @@ ExampleLayer::ExampleLayer()
 		0.5f, 0.5f, 0.5f,
 		-0.5f, -0.5f, 0.5f,
 		0.5f, -0.5f, 0.5f
-	};
+	};*/
 
 	Smile::BufferLayout bufferLayout
 	{
 		{ Smile::ShaderDataType::eFloat3, "Position" }
 	};
 
-	uint32_t indices[]
-	{ 
-		0, 1, 2,    // side 1
-		2, 1, 3,
-		4, 0, 6,    // side 2
-		6, 0, 2,
-		7, 5, 6,    // side 3
-		6, 5, 4,
-		3, 1, 7,    // side 4
-		7, 1, 5,
-		4, 5, 0,    // side 5
-		0, 5, 1,
-		3, 7, 2,    // side 6
-		2, 7, 6
-	};
+	//uint32_t indices[]
+	//{ 
+	//	0, 1, 2,    // side 1
+	//	2, 1, 3,
+	//	4, 0, 6,    // side 2
+	//	6, 0, 2,
+	//	7, 5, 6,    // side 3
+	//	6, 5, 4,
+	//	3, 1, 7,    // side 4
+	//	7, 1, 5,
+	//	4, 5, 0,    // side 5
+	//	0, 5, 1,
+	//	3, 7, 2,    // side 6
+	//	2, 7, 6
+	//};
 
 	Smile::VertexBufferData vertexBufferData{};
 	vertexBufferData.pVertices = vertices;
@@ -77,7 +89,7 @@ ExampleLayer::ExampleLayer()
 
 	Smile::IndexBufferData indexBufferData{};
 	indexBufferData.pIndices = indices;
-	indexBufferData.Count = 36;
+	indexBufferData.Count = 3;
 	indexBufferData.Usage = Smile::BufferUsage::eImmutable;
 
 	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
