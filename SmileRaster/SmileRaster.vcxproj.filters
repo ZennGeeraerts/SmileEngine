@@ -882,7 +882,7 @@
     <CudaCompile Include="src\Pipeline\Rasterizer.cu" />
     <CudaCompile Include="src\Pipeline\VertexShader.cu" />
     <CudaCompile Include="src\Pipeline\PixelShader.cu" />
-    <CudaCompile Include="src\Pipeline\InputAssembler.cu" />
+    <CudaCompile Include="src\Pipeline\PrimitiveAssembler.cu" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\glm\detail\func_common.inl">

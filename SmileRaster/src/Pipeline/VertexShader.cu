@@ -7,16 +7,14 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__global__ void VertexShaderKernel(const VS_INPUT* pInput, VS_OUTPUT* pOutput, ShaderData* pShaderData, uint32_t width, uint32_t height, uint8_t colorChannelCount)
+		__global__ void VertexShaderKernel(const VS_INPUT* pInput, VS_OUTPUT* pOutput, ShaderData* pShaderData, uint32_t vertexBufferCount)
 		{
-			uint32_t pixelX = (blockIdx.x * blockDim.x) + threadIdx.x;
-			uint32_t pixelY = (blockIdx.y * blockDim.y) + threadIdx.y;
-			uint32_t bufferIndex = (pixelY * width + pixelX) * colorChannelCount;
+			uint32_t index = blockIdx.x * blockDim.x + threadIdx.x;
 
-			if (bufferIndex < (width * height * colorChannelCount))
+			if (index < vertexBufferCount)
 			{
-				const VS_INPUT& input = pInput[bufferIndex];
-				VS_OUTPUT& output = pOutput[bufferIndex];
+				const VS_INPUT& input = pInput[index];
+				VS_OUTPUT& output = pOutput[index];
 
 				glm::vec4 position{ input.Position, 1.0f };
 
@@ -24,7 +22,9 @@ namespace Smile
 				position.y /= position.w;
 				position.z /= position.w;*/
 
-				output.Position = input.Position;
+				output.Position = { input.Position, 1.f };
+				output.Color = input.Color;
+				//output.Color = input.Color;
 			}
 		}
 	}

@@ -21,20 +21,7 @@ namespace Smile
 			maxPoint.y = max(max(triangle.Vertex0.Position.y, triangle.Vertex1.Position.y), triangle.Vertex2.Position.y);
 		}
 
-		__host__ __device__ float CalculateSignedArea(const Triangle& triangle)
-		{
-			return 0.5f * ((triangle.Vertex2.Position.x - triangle.Vertex0.Position.x) * (triangle.Vertex1.Position.y - triangle.Vertex0.Position.y)
-				- (triangle.Vertex1.Position.x - triangle.Vertex0.Position.x) * (triangle.Vertex2.Position.y - triangle.Vertex0.Position.y));
-		}
-
-		/*__host__ __device__ bool InsideOutsideCheck(const glm::vec3& barycentricCoord) 
-		{
-			return barycentricCoord.x >= 0.0f && barycentricCoord.x <= 1.0f 
-				&& barycentricCoord.y >= 0.0f && barycentricCoord.y <= 1.0f 
-				&& barycentricCoord.z >= 0.0f && barycentricCoord.z <= 1.0f;
-		}*/
-
-		__global__ void RasterizerKernel(Triangle* pTriangles, uint32_t triangleCount, float* pDepthBuffer, uint32_t* pDepth, uint32_t width, uint32_t height, uint8_t* pScreenBuffer, uint8_t colorChannelCount)
+		__global__ void RasterizerKernel(Triangle* pTriangles, uint32_t triangleCount, VS_OUTPUT* pPixelData, float* pDepthBuffer, uint32_t* pPixelLock, uint32_t width, uint32_t height)
 		{
 			uint32_t triangleIndex = (blockIdx.x * blockDim.x) + threadIdx.x;
 
@@ -63,7 +50,6 @@ namespace Smile
 					{
 						uint32_t pixelIndex = y * width + x;
 						glm::vec2 pixel{ x, y };
-						//glm::vec3 barycentricCoord = CalculateBarycentricCoordinate(triangle, pixel);
 
 						// Calculate the edges of the triangle
 						const glm::vec3 a{ triangle.Vertex1.Position - triangle.Vertex0.Position };
@@ -80,24 +66,36 @@ namespace Smile
 						const float crossB{ b.x * bp.y - b.y * bp.x };
 						const float crossC{ c.x * cp.y - c.y * cp.x };
 
-						if (/*InsideOutsideCheck(barycentricCoord)*/ (crossA >= 0) && (crossB >= 0) && (crossC >= 0))
+						// Inside outside check
+						if ((crossA >= 0) && (crossB >= 0) && (crossC >= 0))
 						{
-							VS_INPUT vsInput{};
-							//vsInput.Position = GetPositionAtCoordinate(barycentricCoord, pTriangles[triangleIndex]);
+							const float area2{ a.x + b.y - a.y - b.x };
+							const float weight0{ crossB / area2 };
+							const float weight1{ crossC / area2 };
+							const float weight2{ crossA / area2 };
 
-							// Lock until its our turn to do a compare
-							while (!atomicCAS(&pDepth[pixelIndex], 0, 1))
+							const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
+
+							//vertexOutput.color = ((triangle.Vertex0.Color / transformedVertices[0].pos.w * weight0) + (transformedVertices[1].color / transformedVertices[1].pos.w * weight1) + (transformedVertices[2].color / transformedVertices[2].pos.w * weight2)) * wValue;
+
+							// Lock pixel
+							while (!atomicCAS(&pPixelLock[pixelIndex], 0, 1))
 								;
 
-							if (vsInput.Position.z < pDepthBuffer[pixelIndex])
-								pDepthBuffer[pixelIndex] = vsInput.Position.z;
+							// Depth test
+							if (depthValue < pDepthBuffer[pixelIndex])
+							{
+								pDepthBuffer[pixelIndex] = depthValue;
 
-							pScreenBuffer[pixelIndex * colorChannelCount] = 0;
-							pScreenBuffer[pixelIndex * colorChannelCount + 1] = 0;
-							pScreenBuffer[pixelIndex * colorChannelCount + 2] = 255.f;
+								const float wValue{ 1 / ((1 / triangle.Vertex0.Position.w * weight0) + (1 / triangle.Vertex1.Position.w * weight1) + (1 / triangle.Vertex2.Position.w * weight2)) };
+								pPixelData[pixelIndex].Position = { pixel.x, pixel.y, depthValue, wValue };
+								pPixelData[pixelIndex].Color = ((triangle.Vertex0.Color / triangle.Vertex0.Position.w * weight0) 
+									+ (triangle.Vertex1.Color / triangle.Vertex1.Position.w * weight1) 
+									+ (triangle.Vertex2.Color / triangle.Vertex2.Position.w * weight2)) * wValue;
+							}
 
 							// Release lock
-							pDepth[pixelIndex] = 0;
+							pPixelLock[pixelIndex] = 0;
 						}
 					}
 				}

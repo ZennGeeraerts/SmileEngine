@@ -3,9 +3,10 @@
 #include "Utils.cuh"
 
 // Pipeline
-#include "Pipeline/InputAssembler.cu"
 #include "Pipeline/VertexShader.cu"
+#include "Pipeline/PrimitiveAssembler.cu"
 #include "Pipeline/Rasterizer.cu"
+#include "Pipeline/PixelShader.cu"
 
 #include <iostream>
 
@@ -26,6 +27,12 @@ namespace Smile
 			GPU_ERROR_CHECK(cudaMalloc(&d_DepthBuffer, size));
 
 			GPU_ERROR_CHECK(cudaMalloc(&d_ShaderData, sizeof(ShaderData)));
+
+			size = sizeof(uint32_t) * data.Width * data.Height;
+			GPU_ERROR_CHECK(cudaMalloc(&d_PixelLock, size));
+
+			size = sizeof(VS_OUTPUT) * data.Width * data.Height;
+			GPU_ERROR_CHECK(cudaMalloc(&d_PixelData, size));
 		}
 
 		DeviceContext::~DeviceContext()
@@ -34,14 +41,22 @@ namespace Smile
 			GPU_ERROR_CHECK(cudaFree(d_DepthBuffer));
 
 			for (BufferID i{}; i < m_VertexBufferCount; ++i)
+			{
 				GPU_ERROR_CHECK(cudaFree(m_VertexBuffers[i].d_Vertices));
+				GPU_ERROR_CHECK(cudaFree(d_VertexShaderOutputs[i]));
+			}
 
 			for (BufferID i{}; i < m_IndexBufferCount; ++i)
+			{
 				GPU_ERROR_CHECK(cudaFree(m_IndexBuffers[i].d_Indices));
+				GPU_ERROR_CHECK(cudaFree(d_PrimitiveBuffers[i]));
+			}
 
 			GPU_ERROR_CHECK(cudaFree(d_ShaderData));
+			GPU_ERROR_CHECK(cudaFree(d_PixelLock));
 		}
 
+		// Buffer creation
 		BufferID DeviceContext::CreateVertexBuffer(void* pVertices, uint32_t count, uint32_t stride)
 		{
 			if (m_VertexBufferCount < SMR_MAX_BUFFER_COUNT)
@@ -51,6 +66,10 @@ namespace Smile
 				GPU_ERROR_CHECK(cudaMemcpy(m_VertexBuffers[m_VertexBufferCount].d_Vertices, pVertices, size, cudaMemcpyHostToDevice));
 				m_VertexBuffers[m_VertexBufferCount].Stride = stride;
 				m_VertexBuffers[m_VertexBufferCount].Count = count;
+
+				size = sizeof(VS_OUTPUT) * count;
+				GPU_ERROR_CHECK(cudaMalloc(&d_VertexShaderOutputs[m_VertexBufferCount], size));
+
 				++m_VertexBufferCount;
 
 				return m_VertexBufferCount - 1;
@@ -67,6 +86,10 @@ namespace Smile
 				GPU_ERROR_CHECK(cudaMalloc(&m_IndexBuffers[m_IndexBufferCount].d_Indices, size));
 				GPU_ERROR_CHECK(cudaMemcpy(m_IndexBuffers[m_IndexBufferCount].d_Indices, pIndices, size, cudaMemcpyHostToDevice));
 				m_IndexBuffers[m_IndexBufferCount].Count = count;
+
+				size = sizeof(Triangle) * count / 3;
+				GPU_ERROR_CHECK(cudaMalloc(&d_PrimitiveBuffers[m_IndexBufferCount], size));
+
 				++m_IndexBufferCount;
 
 				return m_IndexBufferCount - 1;
@@ -97,7 +120,31 @@ namespace Smile
 			return false;
 		}
 
-		bool bCleared = false;
+		// Clearing
+		__global__ void ClearScreenBufferKernel(uint8_t* pScreenBuffer, uint32_t width, uint32_t height, DirectX::XMFLOAT3 clearColor, uint8_t colorChannelCount)
+		{
+			uint32_t pixelX = (blockIdx.x * blockDim.x) + threadIdx.x;
+			uint32_t pixelY = (blockIdx.y * blockDim.y) + threadIdx.y;
+			uint32_t bufferIndex = (pixelY * width + pixelX) * colorChannelCount;
+
+			if (bufferIndex < (width * height * colorChannelCount))
+			{
+				pScreenBuffer[bufferIndex] = static_cast<uint8_t>(clearColor.z * 255.f);
+				pScreenBuffer[bufferIndex + 1] = static_cast<uint8_t>(clearColor.y * 255.f);
+				pScreenBuffer[bufferIndex + 2] = static_cast<uint8_t>(clearColor.x * 255.f);
+			}
+		}
+
+		__global__ void ClearDepthBufferKernel(float* pDepthBuffer, uint32_t width, uint32_t height)
+		{
+			uint32_t pixelX = (blockIdx.x * blockDim.x) + threadIdx.x;
+			uint32_t pixelY = (blockIdx.y * blockDim.y) + threadIdx.y;
+			uint32_t bufferIndex = pixelY * width + pixelX;
+
+			if (bufferIndex < (width * height))
+				pDepthBuffer[bufferIndex] = FLT_MAX;
+		}
+
 		void DeviceContext::Clear(const DirectX::XMFLOAT3& clearColor)
 		{
 			dim3 blockSize = { m_DCData.TileSize, m_DCData.TileSize };
@@ -106,28 +153,26 @@ namespace Smile
 
 			ClearScreenBufferKernel<<<gridSize, blockSize>>>(d_ScreenBuffer, m_DCData.Width, m_DCData.Height, clearColor, m_DCData.ColorChannelCount);
 			ClearDepthBufferKernel<<<gridSize, blockSize>>>(d_DepthBuffer, m_DCData.Width, m_DCData.Height);
-			bCleared = true;
 		}
 
+		// Rendering
 		void DeviceContext::DrawIndexed()
 		{
-			static bool bDraw = true;
-			if (!bDraw || !bCleared)
-				return;
-
 			if ((m_ActiveVertexBufferID == SMR_INVALID_BUFFER_ID) || (m_ActiveIndexBufferID == SMR_INVALID_BUFFER_ID))
 				return;
 
 			VertexBuffer& vertexBuffer = m_VertexBuffers[m_ActiveVertexBufferID];
 			IndexBuffer& indexBuffer = m_IndexBuffers[m_ActiveIndexBufferID];
 
-			// Input assembler
 			dim3 blockSize = { m_DCData.TileSize, m_DCData.TileSize };
-			uint32_t gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
-			
-			Triangle* d_Triangles = nullptr;
-			GPU_ERROR_CHECK(cudaMalloc(&d_Triangles, sizeof(Triangle) * indexBuffer.Count / 3));
-			InputAssemblerKernel<<<gridSize, blockSize>>>(d_Triangles, vertexBuffer.d_Vertices, indexBuffer.d_Indices, indexBuffer.Count);
+			uint32_t gridSize = static_cast<uint32_t>(ceil(vertexBuffer.Count / m_DCData.TileSize));
+
+			// VertexShader
+			VertexShaderKernel<<<gridSize, blockSize>>> (static_cast<VS_INPUT*>(vertexBuffer.d_Vertices), d_VertexShaderOutputs[m_ActiveVertexBufferID], d_ShaderData, vertexBuffer.Count);
+
+			// Input assembler	
+			gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
+			PrimitiveAssemblerKernel<<<gridSize, blockSize>>>(d_PrimitiveBuffers[m_ActiveIndexBufferID], d_VertexShaderOutputs[m_ActiveVertexBufferID], indexBuffer.d_Indices, indexBuffer.Count);
 
 			/*Triangle* pTriangles = (Triangle*)malloc(sizeof(Triangle) * indexBuffer.Count / 3);
 			GPU_ERROR_CHECK(cudaMemcpy(pTriangles, d_Triangles, sizeof(Triangle) * indexBuffer.Count / 3, cudaMemcpyDeviceToHost));
@@ -149,18 +194,9 @@ namespace Smile
 			std::cout << "minPoint: " << minPoint.x << ", " << minPoint.y << '\n';
 			std::cout << "maxPoint: " << maxPoint.x << ", " << maxPoint.y << '\n';*/
 
-			// VertexShader
-			gridSize = static_cast<uint32_t>(ceil(vertexBuffer.Count / 3.f / m_DCData.TileSize));
-			VS_OUTPUT* d_VSOutput = nullptr;
-			cudaMalloc(&d_VSOutput, sizeof(VS_OUTPUT) * vertexBuffer.Count);
-			VertexShaderKernel<<<gridSize, blockSize>>>(static_cast<VS_INPUT*>(vertexBuffer.d_Vertices), d_VSOutput, d_ShaderData, m_DCData.Width, m_DCData.Height, m_DCData.ColorChannelCount);
-
 			// Rasterization
 			gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
-			uint32_t* d_Depth = nullptr;
-			GPU_ERROR_CHECK(cudaMalloc(&d_Depth, sizeof(uint32_t) * m_DCData.Width * m_DCData.Height * m_DCData.ColorChannelCount));
-			RasterizerKernel << <gridSize, blockSize >> > (d_Triangles, indexBuffer.Count / 3, d_DepthBuffer, d_Depth, m_DCData.Width, m_DCData.Height, d_ScreenBuffer, m_DCData.ColorChannelCount);
-			
+			RasterizerKernel << <gridSize, blockSize >> > (d_PrimitiveBuffers[m_ActiveIndexBufferID], indexBuffer.Count / 3, d_PixelData, d_DepthBuffer, d_PixelLock, m_DCData.Width, m_DCData.Height);
 			/*float* pDepthBuffer = (float*)malloc(sizeof(float) * m_DCData.Width * m_DCData.Height);
 			GPU_ERROR_CHECK(cudaMemcpy(pDepthBuffer, d_DepthBuffer, sizeof(float) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost));
 			float* pEnd = pDepthBuffer + m_DCData.Width * m_DCData.Height;
@@ -170,11 +206,9 @@ namespace Smile
 			}
 			free(pDepthBuffer);*/
 
-			bDraw = false;
-
-			GPU_ERROR_CHECK(cudaFree(d_Triangles));
-			GPU_ERROR_CHECK(cudaFree(d_VSOutput));
-			GPU_ERROR_CHECK(cudaFree(d_Depth))
+			dim3 pixelShaderGridSize = { static_cast<uint32_t>(ceil(m_DCData.Width / static_cast<float>(m_DCData.TileSize))),
+								static_cast<uint32_t>(ceil(m_DCData.Height / static_cast<float>(m_DCData.TileSize))) };
+			PixelShaderKernel << <pixelShaderGridSize, blockSize >> > (d_PixelData, d_ScreenBuffer, d_DepthBuffer, m_DCData.Width, m_DCData.Height, m_DCData.ColorChannelCount);
 
 			size_t size = sizeof(uint8_t) * m_DCData.ColorChannelCount * m_DCData.Width * m_DCData.Height;
 			GPU_ERROR_CHECK(cudaMemcpy(m_DCData.pScreenBuffer, d_ScreenBuffer, size, cudaMemcpyDeviceToHost));
@@ -197,13 +231,20 @@ namespace Smile
 			GPU_ERROR_CHECK(cudaFree(d_DepthBuffer));
 			size = sizeof(float) * width * height;
 			GPU_ERROR_CHECK(cudaMalloc(&d_DepthBuffer, size));
+
+			GPU_ERROR_CHECK(cudaFree(d_PixelLock));
+			GPU_ERROR_CHECK(cudaMalloc(&d_PixelLock, sizeof(uint32_t) * width * height * m_DCData.ColorChannelCount));
 		}
 
-		void DeviceContext::SetShaderData(DirectX::XMFLOAT4X4 viewProjection, DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 viewInverse)
+		void DeviceContext::SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse)
 		{
-			/*d_ShaderData->ViewProjection = viewProjection;
-			d_ShaderData->World = world;
-			d_ShaderData->ViewInverse = viewInverse;*/
+			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewProjection, &viewProjection, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->World, &world, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewInverse, &viewInverse, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+
+			/*d_ShaderData->ViewProjection = glm::transpose(d_ShaderData->ViewProjection);
+			d_ShaderData->World = glm::transpose(d_ShaderData->World);
+			d_ShaderData->ViewInverse = glm::transpose(d_ShaderData->ViewInverse);*/
 		}
 	}
 }

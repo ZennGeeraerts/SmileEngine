@@ -26,6 +26,7 @@ namespace Smile
 	private:
 		SmileRasterContext* m_pSmileRasterContext = nullptr;
 
+		mutable std::unordered_map<std::string, DirectX::XMFLOAT4X4> m_Matrices{};
 		DirectX::XMFLOAT4X4 m_ViewProjectionMatrix{};
 		DirectX::XMFLOAT4X4 m_WorldMatrix{};
 		DirectX::XMFLOAT4X4 m_ViewInverseMatrix{};

@@ -15,19 +15,19 @@ Smile::SmileGame* Smile::CreateGame()
 ExampleLayer::ExampleLayer()
 	: Layer("Example")
 {
-	/*float vertices[]
+	float vertices[]
 	{
 		0.f, 0.5f, 0.5f,		0.8f, 0.2f, 0.8f,
 		0.5f, -0.5f, 0.5f,		0.2f, 0.8f, 0.8f,
 		-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
-	};*/
+	};
 
-	float vertices[]
+	/*float vertices[]
 	{
 		0.f, 0.5f, 0.5f,
 		0.5f, -0.5f, 0.5f,
 		-0.5f, -0.5f, 0.5f
-	};
+	};*/
 
 	uint32_t indices[]
 	{

@@ -22,31 +22,33 @@ namespace Smile
 
 		struct ShaderData final
 		{
-			DirectX::XMFLOAT4X4 ViewProjection{};
-			DirectX::XMFLOAT4X4 World{};
-			DirectX::XMFLOAT4X4 ViewInverse{};
+			glm::mat4 ViewProjection{ 1.0f };
+			glm::mat4 World{ 1.0f };
+			glm::mat4 ViewInverse{ 1.0f };
 		};
 
 		struct VS_INPUT final
 		{
 			glm::vec3 Position{};
+			glm::vec3 Color{};
 		};
 
 		struct VS_OUTPUT final
 		{
-			glm::vec3 Position{};
+			glm::vec4 Position{};
+			glm::vec3 Color{};
 		};
 
 		struct Triangle final
 		{
 			union
 			{
-				VS_INPUT Vertices[3]{};
+				VS_OUTPUT Vertices[3]{};
 				struct
 				{
-					VS_INPUT Vertex0;
-					VS_INPUT Vertex1;
-					VS_INPUT Vertex2;
+					VS_OUTPUT Vertex0;
+					VS_OUTPUT Vertex1;
+					VS_OUTPUT Vertex2;
 				};
 			};
 		};

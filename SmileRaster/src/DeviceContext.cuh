@@ -38,16 +38,21 @@ namespace Smile
 
 			void Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer);
 			
-			void SetShaderData(DirectX::XMFLOAT4X4 viewProjection, DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 viewInverse);
+			void SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse);
 
 		private:
 			// GPU
 			uint8_t* d_ScreenBuffer = nullptr;
 			float* d_DepthBuffer = nullptr;
+			VS_OUTPUT* d_PixelData = nullptr;
 
 			VertexBuffer m_VertexBuffers[SMR_MAX_BUFFER_COUNT];
+			VS_OUTPUT* d_VertexShaderOutputs[SMR_MAX_BUFFER_COUNT];
 			IndexBuffer m_IndexBuffers[SMR_MAX_BUFFER_COUNT];
+			Triangle* d_PrimitiveBuffers[SMR_MAX_BUFFER_COUNT];
 			ShaderData* d_ShaderData = nullptr;
+
+			uint32_t* d_PixelLock = nullptr;
 
 			// CPU
 			uint32_t m_VertexBufferCount = 0;

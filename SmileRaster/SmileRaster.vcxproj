@@ -485,7 +485,7 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <ClInclude Include="src\DeviceContext.cuh" />
-    <CudaCompile Include="src\Pipeline\InputAssembler.cu" />
+    <CudaCompile Include="src\Pipeline\PrimitiveAssembler.cu" />
     <CudaCompile Include="src\Pipeline\PixelShader.cu" />
     <CudaCompile Include="src\Pipeline\Rasterizer.cu">
       <FileType>Document</FileType>

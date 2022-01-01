@@ -14,7 +14,22 @@ namespace Smile
 
 	void SmileRasterShader::Bind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetShaderData(m_ViewProjectionMatrix, m_WorldMatrix, m_ViewInverseMatrix);
+		DirectX::XMFLOAT4X4 viewProjectionMatrix{};
+		DirectX::XMStoreFloat4x4(&viewProjectionMatrix, DirectX::XMMatrixIdentity());
+		if (m_Matrices.find("ViewProjection") != m_Matrices.end())
+			viewProjectionMatrix = m_Matrices["ViewProjection"];
+
+		DirectX::XMFLOAT4X4 worldMatrix{};
+		DirectX::XMStoreFloat4x4(&worldMatrix, DirectX::XMMatrixIdentity());
+		if (m_Matrices.find("World") != m_Matrices.end())
+			worldMatrix = m_Matrices["World"];
+
+		DirectX::XMFLOAT4X4 viewInverseMatrix{};
+		DirectX::XMStoreFloat4x4(&viewInverseMatrix, DirectX::XMMatrixIdentity());
+		if (m_Matrices.find("ViewInverse") != m_Matrices.end())
+			viewInverseMatrix = m_Matrices["ViewInverse"];
+
+		m_pSmileRasterContext->GetDeviceContext()->SetShaderData(viewProjectionMatrix, worldMatrix, viewInverseMatrix);
 	}
 
 	void SmileRasterShader::Unbind() const
@@ -24,12 +39,7 @@ namespace Smile
 
 	void SmileRasterShader::UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix)
 	{
-		if (sementicName == "ViewProjection")
-			m_ViewProjectionMatrix = matrix;
-		else if (sementicName == "World")
-			m_WorldMatrix = matrix;
-		else if (sementicName == "ViewInverse")
-			m_ViewInverseMatrix = matrix;
+		m_Matrices.insert(std::make_pair(sementicName, matrix));
 	}
 
 	void SmileRasterShader::UploadMat4Array(const std::string& sementicName, const std::vector<DirectX::XMFLOAT4X4>& matArray)
