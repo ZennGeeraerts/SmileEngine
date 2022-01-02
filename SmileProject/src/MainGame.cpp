@@ -15,12 +15,18 @@ Smile::SmileGame* Smile::CreateGame()
 ExampleLayer::ExampleLayer()
 	: Layer("Example")
 {
-	float vertices[]
+	
+}
+
+void ExampleLayer::OnAttach()
+{
+	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
+	/*float vertices[]
 	{
 		0.f, 0.5f, 0.5f,		0.8f, 0.2f, 0.8f,
 		0.5f, -0.5f, 0.5f,		0.2f, 0.8f, 0.8f,
 		-0.5f, -0.5f, 0.5f,		0.8f, 0.8f, 0.2f
-	};
+	};*/
 
 	/*float vertices[]
 	{
@@ -29,12 +35,12 @@ ExampleLayer::ExampleLayer()
 		-0.5f, -0.5f, 0.5f
 	};*/
 
-	uint32_t indices[]
+	/*uint32_t indices[]
 	{
 		0, 1, 2
-	};
+	};*/
 
-	/*float vertices[]
+	float vertices[]
 	{
 		-0.5f, 0.5f, -0.5f,		0, 0, 1,
 		0.5f, 0.5f, -0.5f,		0, 1, 0,
@@ -44,7 +50,7 @@ ExampleLayer::ExampleLayer()
 		0.5f, 0.5f, 0.5f,		1, 0, 0,
 		-0.5f, -0.5f, 0.5f,		0, 1, 0,
 		0.5f, -0.5f, 0.5f,		0, 1, 1
-	};*/
+	};
 
 	/*float vertices[]
 	{
@@ -60,24 +66,25 @@ ExampleLayer::ExampleLayer()
 
 	Smile::BufferLayout bufferLayout
 	{
-		{ Smile::ShaderDataType::eFloat3, "Position" }
+		{ Smile::ShaderDataType::eFloat3, "Position" },
+		{ Smile::ShaderDataType::eFloat3, "Color" }
 	};
 
-	//uint32_t indices[]
-	//{ 
-	//	0, 1, 2,    // side 1
-	//	2, 1, 3,
-	//	4, 0, 6,    // side 2
-	//	6, 0, 2,
-	//	7, 5, 6,    // side 3
-	//	6, 5, 4,
-	//	3, 1, 7,    // side 4
-	//	7, 1, 5,
-	//	4, 5, 0,    // side 5
-	//	0, 5, 1,
-	//	3, 7, 2,    // side 6
-	//	2, 7, 6
-	//};
+	uint32_t indices[]
+	{
+		0, 1, 2,    // side 1
+		2, 1, 3,
+		4, 0, 6,    // side 2
+		6, 0, 2,
+		7, 5, 6,    // side 3
+		6, 5, 4,
+		3, 1, 7,    // side 4
+		7, 1, 5,
+		4, 5, 0,    // side 5
+		0, 5, 1,
+		3, 7, 2,    // side 6
+		2, 7, 6
+	};
 
 	Smile::VertexBufferData vertexBufferData{};
 	vertexBufferData.pVertices = vertices;
@@ -85,16 +92,18 @@ ExampleLayer::ExampleLayer()
 	vertexBufferData.Usage = Smile::BufferUsage::eImmutable;
 	vertexBufferData.BufferLayout = bufferLayout;
 
-	m_pVertexBuffer.reset(Smile::VertexBuffer::Create(vertexBufferData));
+	Smile::Ref<Smile::VertexBuffer> pVertexBuffer{};
+	pVertexBuffer.reset(Smile::VertexBuffer::Create(vertexBufferData));
 
 	Smile::IndexBufferData indexBufferData{};
 	indexBufferData.pIndices = indices;
-	indexBufferData.Count = 3;
+	indexBufferData.Count = 36;
 	indexBufferData.Usage = Smile::BufferUsage::eImmutable;
 
-	m_pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
+	Smile::Ref<Smile::IndexBuffer> pIndexBuffer{};
+	pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
 
-	m_pShader = Smile::Shader::Create("", bufferLayout);
+	Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosCol.fx", bufferLayout);
 
 	m_pActiveScene.reset(new Smile::Scene{});
 
@@ -112,7 +121,19 @@ ExampleLayer::ExampleLayer()
 	m_StormTrooper.GetComponent<Smile::TransformComponent>().Scale = { 3, 3, 3 };*/
 
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
-	m_CameraEntity.AddComponent<Smile::CameraComponent>().bPrimary = true;
+	auto& camera = m_CameraEntity.AddComponent<Smile::CameraComponent>();
+	camera.bPrimary = true;
+
+	auto cube = m_pActiveScene->CreateEntity("Cube");
+	auto& meshRendererComp = cube.AddComponent<Smile::MeshRendererComponent>();
+	meshRendererComp.pVertexBuffer = pVertexBuffer;
+	meshRendererComp.pIndexBuffer = pIndexBuffer;
+	meshRendererComp.pShader = pShader;
+
+	cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, 0, 5 };
+	cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
+
+	m_pActiveScene->OnViewportResize(1280, 720);
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
@@ -157,12 +178,11 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	//transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
 	//transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
 
-	DirectX::XMFLOAT4X4 transform{};
+	/*DirectX::XMFLOAT4X4 transform{};
 	DirectX::XMStoreFloat4x4(&transform, DirectX::XMMatrixIdentity());
 	Smile::Renderer::Submit(m_pVertexBuffer, m_pIndexBuffer, m_pShader, transform);
-	Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
+	Smile::RenderCommand::Clear();*/
 	Smile::RenderCommand::Clear();
-
 	m_pActiveScene->OnUpdate(deltaTime);
 }
 
@@ -186,7 +206,7 @@ bool ExampleLayer::OnWindowResize(Smile::WindowResizeEvent& e)
 	if (width == 0 || height == 0)
 		return false;
 
-	auto& cameraComponent = m_CameraEntity.GetComponent<Smile::CameraComponent>();
+	m_pActiveScene->OnViewportResize(width, height);
 	return false;
 }
 

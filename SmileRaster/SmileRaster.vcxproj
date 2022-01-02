@@ -110,7 +110,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CudaRuntime>Static</CudaRuntime>
-      <CodeGeneration>compute_60,sm_60;compute_75,sm_75;%(CodeGeneration)</CodeGeneration>
+      <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
     <Lib>
@@ -136,7 +136,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CodeGeneration>compute_60,sm_60;compute_75,sm_75;%(CodeGeneration)</CodeGeneration>
+      <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
     <Lib>
@@ -159,7 +159,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CudaRuntime>Static</CudaRuntime>
-      <CodeGeneration>compute_60,sm_60;compute_75,sm_75;%(CodeGeneration)</CodeGeneration>
+      <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
     <Lib>
@@ -185,7 +185,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CodeGeneration>compute_60,sm_60;compute_75,sm_75;%(CodeGeneration)</CodeGeneration>
+      <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
     <Lib>

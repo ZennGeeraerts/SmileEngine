@@ -6,6 +6,7 @@ class ExampleLayer final : public Smile::Layer
 public:
 	ExampleLayer();
 
+	virtual void OnAttach() override;
 	virtual void OnUpdate(Smile::Timestep deltaTime) override;
 	virtual void OnEvent(Smile::Event& event) override;
 	virtual void OnImGuiRender() override;
@@ -22,10 +23,6 @@ private:
 	float m_CameraMoveSpeed = 5.f;
 	float m_CameraRotation = 0.f;
 	float m_CameraRotationSpeed = 180.f;
-
-	Smile::Ref<Smile::VertexBuffer> m_pVertexBuffer = nullptr;
-	Smile::Ref<Smile::IndexBuffer> m_pIndexBuffer = nullptr;
-	Smile::Ref<Smile::Shader> m_pShader = nullptr;
 };
 
 class MainGame final : public Smile::SmileGame

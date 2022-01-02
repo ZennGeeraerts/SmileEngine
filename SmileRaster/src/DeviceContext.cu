@@ -26,8 +26,6 @@ namespace Smile
 			size = sizeof(float) * data.Width * data.Height;
 			GPU_ERROR_CHECK(cudaMalloc(&d_DepthBuffer, size));
 
-			GPU_ERROR_CHECK(cudaMalloc(&d_ShaderData, sizeof(ShaderData)));
-
 			size = sizeof(uint32_t) * data.Width * data.Height;
 			GPU_ERROR_CHECK(cudaMalloc(&d_PixelLock, size));
 
@@ -52,7 +50,6 @@ namespace Smile
 				GPU_ERROR_CHECK(cudaFree(d_PrimitiveBuffers[i]));
 			}
 
-			GPU_ERROR_CHECK(cudaFree(d_ShaderData));
 			GPU_ERROR_CHECK(cudaFree(d_PixelLock));
 		}
 
@@ -168,12 +165,12 @@ namespace Smile
 			uint32_t gridSize = static_cast<uint32_t>(ceil(vertexBuffer.Count / m_DCData.TileSize));
 
 			// VertexShader
-			VertexShaderKernel<<<gridSize, blockSize>>> (static_cast<VS_INPUT*>(vertexBuffer.d_Vertices), d_VertexShaderOutputs[m_ActiveVertexBufferID], d_ShaderData, vertexBuffer.Count);
-
+			VertexShaderKernel<<<gridSize, blockSize>>> (static_cast<VS_INPUT*>(vertexBuffer.d_Vertices), d_VertexShaderOutputs[m_ActiveVertexBufferID], m_ShaderData, vertexBuffer.Count);
+			cudaDeviceSynchronize();
 			// Input assembler	
 			gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
 			PrimitiveAssemblerKernel<<<gridSize, blockSize>>>(d_PrimitiveBuffers[m_ActiveIndexBufferID], d_VertexShaderOutputs[m_ActiveVertexBufferID], indexBuffer.d_Indices, indexBuffer.Count);
-
+			cudaDeviceSynchronize();
 			/*Triangle* pTriangles = (Triangle*)malloc(sizeof(Triangle) * indexBuffer.Count / 3);
 			GPU_ERROR_CHECK(cudaMemcpy(pTriangles, d_Triangles, sizeof(Triangle) * indexBuffer.Count / 3, cudaMemcpyDeviceToHost));
 			Triangle* pEnd{ pTriangles + indexBuffer.Count / 3 };
@@ -197,6 +194,7 @@ namespace Smile
 			// Rasterization
 			gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
 			RasterizerKernel << <gridSize, blockSize >> > (d_PrimitiveBuffers[m_ActiveIndexBufferID], indexBuffer.Count / 3, d_PixelData, d_DepthBuffer, d_PixelLock, m_DCData.Width, m_DCData.Height);
+			cudaDeviceSynchronize();
 			/*float* pDepthBuffer = (float*)malloc(sizeof(float) * m_DCData.Width * m_DCData.Height);
 			GPU_ERROR_CHECK(cudaMemcpy(pDepthBuffer, d_DepthBuffer, sizeof(float) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost));
 			float* pEnd = pDepthBuffer + m_DCData.Width * m_DCData.Height;
@@ -209,6 +207,7 @@ namespace Smile
 			dim3 pixelShaderGridSize = { static_cast<uint32_t>(ceil(m_DCData.Width / static_cast<float>(m_DCData.TileSize))),
 								static_cast<uint32_t>(ceil(m_DCData.Height / static_cast<float>(m_DCData.TileSize))) };
 			PixelShaderKernel << <pixelShaderGridSize, blockSize >> > (d_PixelData, d_ScreenBuffer, d_DepthBuffer, m_DCData.Width, m_DCData.Height, m_DCData.ColorChannelCount);
+			cudaDeviceSynchronize();
 
 			size_t size = sizeof(uint8_t) * m_DCData.ColorChannelCount * m_DCData.Width * m_DCData.Height;
 			GPU_ERROR_CHECK(cudaMemcpy(m_DCData.pScreenBuffer, d_ScreenBuffer, size, cudaMemcpyDeviceToHost));
@@ -238,13 +237,13 @@ namespace Smile
 
 		void DeviceContext::SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse)
 		{
-			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewProjection, &viewProjection, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+			/*GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewProjection, &viewProjection, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
 			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->World, &world, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
-			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewInverse, &viewInverse, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewInverse, &viewInverse, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));*/
 
-			/*d_ShaderData->ViewProjection = glm::transpose(d_ShaderData->ViewProjection);
-			d_ShaderData->World = glm::transpose(d_ShaderData->World);
-			d_ShaderData->ViewInverse = glm::transpose(d_ShaderData->ViewInverse);*/
+			m_ShaderData.ViewProjection = ConvertToGLMMat(viewProjection);
+			m_ShaderData.World = ConvertToGLMMat(world);
+			m_ShaderData.ViewInverse = ConvertToGLMMat(viewInverse);
 		}
 	}
 }

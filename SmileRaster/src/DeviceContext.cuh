@@ -50,7 +50,6 @@ namespace Smile
 			VS_OUTPUT* d_VertexShaderOutputs[SMR_MAX_BUFFER_COUNT];
 			IndexBuffer m_IndexBuffers[SMR_MAX_BUFFER_COUNT];
 			Triangle* d_PrimitiveBuffers[SMR_MAX_BUFFER_COUNT];
-			ShaderData* d_ShaderData = nullptr;
 
 			uint32_t* d_PixelLock = nullptr;
 
@@ -62,6 +61,8 @@ namespace Smile
 
 			BufferID m_ActiveVertexBufferID = SMR_INVALID_BUFFER_ID;
 			BufferID m_ActiveIndexBufferID = SMR_INVALID_BUFFER_ID;
+
+			ShaderData m_ShaderData{};
 		};
 	}
 }

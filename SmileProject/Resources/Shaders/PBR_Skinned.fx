@@ -121,6 +121,11 @@ VS_OUTPUT VS(VS_INPUT input)
     {
         if (input.BlendIndices[i] > -1)
         {
+            if (input.BlendIndices[i] >= 70)
+            {
+                transformedPosition = originalPosition;
+                break;
+            }
             transformedPosition += input.BlendWeights[i] * mul(originalPosition, gBones[input.BlendIndices[i]]);
             transformedNormal += input.BlendWeights[i] * mul(input.Normal, (float3x3) gBones[input.BlendIndices[i]]);
             transformedPosition.w = 1.f;

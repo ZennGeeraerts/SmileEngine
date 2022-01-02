@@ -12,7 +12,7 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__host__ __device__ void FindAABB(const Triangle& triangle, glm::vec2& minPoint, glm::vec2& maxPoint)
+		__device__ void FindAABB(const Triangle& triangle, glm::vec2& minPoint, glm::vec2& maxPoint)
 		{
 			minPoint.x = min(min(triangle.Vertex0.Position.x, triangle.Vertex1.Position.x), triangle.Vertex2.Position.x);
 			minPoint.y = min(min(triangle.Vertex0.Position.y, triangle.Vertex1.Position.y), triangle.Vertex2.Position.y);
@@ -76,11 +76,9 @@ namespace Smile
 
 							const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
 
-							//vertexOutput.color = ((triangle.Vertex0.Color / transformedVertices[0].pos.w * weight0) + (transformedVertices[1].color / transformedVertices[1].pos.w * weight1) + (transformedVertices[2].color / transformedVertices[2].pos.w * weight2)) * wValue;
-
 							// Lock pixel
-							while (!atomicCAS(&pPixelLock[pixelIndex], 0, 1))
-								;
+							/*while (!atomicCAS(&pPixelLock[pixelIndex], 0, 1))
+								;*/
 
 							// Depth test
 							if (depthValue < pDepthBuffer[pixelIndex])
@@ -95,7 +93,7 @@ namespace Smile
 							}
 
 							// Release lock
-							pPixelLock[pixelIndex] = 0;
+							//pPixelLock[pixelIndex] = 0;
 						}
 					}
 				}
