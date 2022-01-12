@@ -107,19 +107,6 @@ void ExampleLayer::OnAttach()
 
 	m_pActiveScene.reset(new Smile::Scene{});
 
-	/*auto cube = m_pActiveScene->CreateEntity("Cube");
-	cube.AddComponent<Smile::MeshRendererComponent>(vertexBufferData, indexBufferData, shaderFilePath);
-	auto& cubeTransform = cube.GetComponent<Smile::TransformComponent>();
-	cubeTransform.Translation.x -= 10.f;
-	cubeTransform.Translation.z += 15.f;*/
-
-	/*m_StormTrooper = m_pActiveScene->CreateEntity("StormTrooper");
-	Smile::Ref<Smile::Material> pMaterial = Smile::CreateRef<Smile::Material>();
-	m_StormTrooper.AddComponent<Smile::StaticMeshComponent>("Resources/Meshes/silly_dancing.fbx", pMaterial);
-	m_StormTrooper.GetComponent<Smile::TransformComponent>().Translation = { 0.f, -5.0f, 15.f };
-	m_StormTrooper.GetComponent<Smile::TransformComponent>().Rotation = { 0.f, -180.f, 0.f };
-	m_StormTrooper.GetComponent<Smile::TransformComponent>().Scale = { 3, 3, 3 };*/
-
 	m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
 	auto& camera = m_CameraEntity.AddComponent<Smile::CameraComponent>();
 	camera.bPrimary = true;
@@ -133,55 +120,59 @@ void ExampleLayer::OnAttach()
 	cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, 0, 5 };
 	cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
 
+	/*auto pMaterial = Smile::CreateRef<Smile::Material>();
+
+	auto model = m_pActiveScene->CreateEntity("Model");
+	auto& meshComponent = model.AddComponent<Smile::MeshComponent>("Resources/Meshes/nanosuit.obj", pMaterial);
+	model.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, 0, 5 };*/
+
 	m_pActiveScene->OnViewportResize(1280, 720);
 }
 
 void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 {
-	//auto& transform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
+	auto& transform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
 
-	//if (Smile::Input::IsKeyPressed(SM_LEFT))
-	//	transform.Rotation.y -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-	//if (Smile::Input::IsKeyPressed(SM_RIGHT))
-	//	transform.Rotation.y += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-	//if (Smile::Input::IsKeyPressed(SM_UP))
-	//	transform.Rotation.x -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-	//if (Smile::Input::IsKeyPressed(SM_DOWN))
-	//	transform.Rotation.x += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_LEFT))
+		transform.Rotation.y -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_RIGHT))
+		transform.Rotation.y += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_UP))
+		transform.Rotation.x -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
+	if (Smile::Input::IsKeyPressed(SM_DOWN))
+		transform.Rotation.x += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
 
-	//const auto forward = transform.GetForward();
-	//const auto right = transform.GetRight();
-	//DirectX::XMFLOAT3 move{};
+	const auto forward = transform.GetForward();
+	const auto right = transform.GetRight();
+	DirectX::XMFLOAT3 move{};
 
-	//if (Smile::Input::IsKeyPressed('A'))
-	//	move.x -= 1;
-	//if (Smile::Input::IsKeyPressed('D'))
-	//	move.x += 1;
-	//if (Smile::Input::IsKeyPressed('S'))
-	//	move.z -= 1;
-	//if (Smile::Input::IsKeyPressed('W'))
-	//	move.z += 1;
-	//if (Smile::Input::IsKeyPressed(SM_SPACE))
-	//	move.y += 1;
-	//if (Smile::Input::IsKeyPressed(SM_LCONTROL))
-	//	move.y -= 1;
+	if (Smile::Input::IsKeyPressed('A'))
+		move.x -= 1;
+	if (Smile::Input::IsKeyPressed('D'))
+		move.x += 1;
+	if (Smile::Input::IsKeyPressed('S'))
+		move.z -= 1;
+	if (Smile::Input::IsKeyPressed('W'))
+		move.z += 1;
+	if (Smile::Input::IsKeyPressed(SM_SPACE))
+		move.y += 1;
+	if (Smile::Input::IsKeyPressed(SM_LCONTROL))
+		move.y -= 1;
 
-	//DirectX::XMFLOAT3 dir{};
-	//dir.x = forward.x * move.z + right.x * move.x;
-	////dir.y = forward.y * move.z + right.y * move.x;
-	//dir.z = forward.z * move.z + right.z * move.x;
+	DirectX::XMFLOAT3 dir{};
+	dir.x = forward.x * move.z + right.x * move.x;
+	//dir.y = forward.y * move.z + right.y * move.x;
+	dir.z = forward.z * move.z + right.z * move.x;
 
-	//auto dirMat = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir));
-	//DirectX::XMStoreFloat3(&dir, dirMat);
+	auto dirMat = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir));
+	DirectX::XMStoreFloat3(&dir, dirMat);
 
-	//transform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
-	//transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
-	//transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
+	transform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
+	transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
+	transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
 
-	/*DirectX::XMFLOAT4X4 transform{};
-	DirectX::XMStoreFloat4x4(&transform, DirectX::XMMatrixIdentity());
-	Smile::Renderer::Submit(m_pVertexBuffer, m_pIndexBuffer, m_pShader, transform);
-	Smile::RenderCommand::Clear();*/
+	Smile::Logger::LogInfo("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
+
 	Smile::RenderCommand::Clear();
 	m_pActiveScene->OnUpdate(deltaTime);
 }
@@ -190,7 +181,6 @@ void ExampleLayer::OnEvent(Smile::Event& event)
 {
 	Smile::EventDispatcher dispatcher{ event };
 	dispatcher.Dispatch<Smile::WindowResizeEvent>(SM_BIND_EVENT_FN(ExampleLayer::OnWindowResize));
-	dispatcher.Dispatch<Smile::MouseMovedEvent>(SM_BIND_EVENT_FN(ExampleLayer::OnMouseMovedEvent));
 }
 
 void ExampleLayer::OnImGuiRender()
@@ -207,28 +197,6 @@ bool ExampleLayer::OnWindowResize(Smile::WindowResizeEvent& e)
 		return false;
 
 	m_pActiveScene->OnViewportResize(width, height);
-	return false;
-}
-
-bool ExampleLayer::OnMouseMovedEvent(Smile::MouseMovedEvent& e)
-{
-	/*if (m_bMouseStart)
-	{
-		m_PreviousMousePosX = e.GetX();
-		m_PreviousMousePosY = e.GetY();
-		m_bMouseStart = false;
-		return false;
-	}
-
-	auto& transform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
-	Smile::Timestep	deltaTime = Smile::SmTime::GetInstance().GetDeltaTime();
-
-	transform.Rotation.y += DirectX::XMConvertToRadians((e.GetX() - m_PreviousMousePosX) * m_CameraRotationSpeed * deltaTime);
-	transform.Rotation.x += DirectX::XMConvertToRadians((e.GetY() - m_PreviousMousePosY) * m_CameraRotationSpeed * deltaTime);
-
-	m_PreviousMousePosX = e.GetX();
-	m_PreviousMousePosY = e.GetY();*/
-
 	return false;
 }
 

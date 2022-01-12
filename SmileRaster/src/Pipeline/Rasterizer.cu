@@ -1,4 +1,5 @@
 #include "DataStructs.cuh"
+#include "Queue.cu"
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
@@ -21,9 +22,88 @@ namespace Smile
 			maxPoint.y = max(max(triangle.Vertex0.Position.y, triangle.Vertex1.Position.y), triangle.Vertex2.Position.y);
 		}
 
-		__global__ void RasterizerKernel(Triangle* pTriangles, uint32_t triangleCount, VS_OUTPUT* pPixelData, float* pDepthBuffer, uint32_t* pPixelLock, uint32_t width, uint32_t height)
+		__device__ bool RectangleOverlap(const glm::vec2& min1, const glm::vec2& max1, const glm::vec2& min2, const glm::vec2& max2)
 		{
-			uint32_t triangleIndex = (blockIdx.x * blockDim.x) + threadIdx.x;
+			if ((max1.x < min2.x) || (max2.x < min1.x))
+				return false;
+
+			if ((min1.y > max2.y) || (min2.y > max1.y))
+				return false;
+
+			return true;
+		}
+
+		//__global__ void InsideOutsideCheck(const Triangle& triangle, const glm::vec2& boundingBoxMin, const glm::vec2& boundingBoxMax, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c,
+		//	uint32_t width, VS_OUTPUT* pPixelData, uint32_t* pPixelLock, float* pDepthBuffer)
+		//{
+		//	uint32_t x = (blockIdx.x * blockDim.x) + threadIdx.x + boundingBoxMin.x;
+		//	uint32_t y = (blockIdx.y * blockDim.y) + threadIdx.y + boundingBoxMin.y;
+
+		//	if ((x < boundingBoxMax.x) && (y < boundingBoxMax.y))
+		//	{
+		//		uint32_t pixelIndex = y * width + x;
+		//		glm::vec2 pixel{ x, y };
+
+		//		// Get the vector from each vertex to the pixel
+		//		const glm::vec2 ap{ pixel - glm::vec2{ triangle.Vertex0.Position } };
+		//		const glm::vec2 bp{ pixel - glm::vec2{ triangle.Vertex1.Position } };
+		//		const glm::vec2 cp{ pixel - glm::vec2{ triangle.Vertex2.Position } };
+
+		//		// Get the cross product between each edge and the previous calculated vector
+		//		const float crossA{ a.x * ap.y - a.y * ap.x };
+		//		const float crossB{ b.x * bp.y - b.y * bp.x };
+		//		const float crossC{ c.x * cp.y - c.y * cp.x };
+
+		//		// Inside outside check
+		//		if ((crossA >= 0) && (crossB >= 0) && (crossC >= 0))
+		//		{
+		//			const float area2{ a.x + b.y - a.y - b.x };
+		//			const float weight0{ crossB / area2 };
+		//			const float weight1{ crossC / area2 };
+		//			const float weight2{ crossA / area2 };
+
+		//			const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
+
+		//			// Lock pixel
+		//			while (!atomicCAS(&pPixelLock[pixelIndex], 0, 1))
+		//				;
+
+		//			// Depth test
+		//			if (depthValue < pDepthBuffer[pixelIndex])
+		//			{
+		//				pDepthBuffer[pixelIndex] = depthValue;
+
+		//				const float wValue{ 1 / ((1 / triangle.Vertex0.Position.w * weight0) + (1 / triangle.Vertex1.Position.w * weight1) + (1 / triangle.Vertex2.Position.w * weight2)) };
+		//				pPixelData[pixelIndex].Position = { pixel.x, pixel.y, depthValue, wValue };
+		//				pPixelData[pixelIndex].Color = ((triangle.Vertex0.Color / triangle.Vertex0.Position.w * weight0)
+		//					+ (triangle.Vertex1.Color / triangle.Vertex1.Position.w * weight1)
+		//					+ (triangle.Vertex2.Color / triangle.Vertex2.Position.w * weight2)) * wValue;
+		//			}
+
+		//			// Release lock
+		//			pPixelLock[pixelIndex] = 0;
+		//		}
+		//	}
+		//}
+
+		__global__ void RasterizerKernel(Triangle* pTriangles, uint32_t triangleCount, Segment* pBins, uint32_t binCountX, uint32_t binCountY, uint32_t binWidth, uint32_t binHeight, uint32_t width, uint32_t height)
+		{
+			//uint32_t triangleIndex = blockIdx.x * blockDim.x + threadIdx.x;
+
+			//if (triangleIndex < triangleCount)
+			//{
+			//	const Triangle& triangle = pTriangles[triangleIndex];
+			//	
+			//	for (uint32_t i{}; i < (binWidth * binHeight); ++i)
+			//	{
+			//		uint32_t binX = b % width, binY = (b - binX) / width;
+
+			//		glm::vec2 binMin{ threadIdx.x * binWidth, threadIdx.y * binHeight };
+			//		//	glm::vec2 binMax{ binMin.x + binWidth, binMin.y + binHeight };
+			//	}
+			//}
+			
+			uint32_t triangleIndex = blockIdx.x * blockDim.x + threadIdx.x;
 
 			if (triangleIndex < triangleCount)
 			{
@@ -35,8 +115,8 @@ namespace Smile
 					triangle.Vertices[i].Position.y = (1.0f - triangle.Vertices[i].Position.y) * 0.5f * height;
 				}
 
-				glm::vec2 boundingBoxMin{};
-				glm::vec2 boundingBoxMax{};
+				glm::vec2 boundingBoxMin{ 0.f, 0.f };
+				glm::vec2 boundingBoxMax{ width, height };
 				FindAABB(triangle, boundingBoxMin, boundingBoxMax);
 
 				boundingBoxMin.x = max(boundingBoxMin.x, 0.0f);
@@ -44,59 +124,91 @@ namespace Smile
 				boundingBoxMax.x = min(boundingBoxMax.x, static_cast<float>(width));
 				boundingBoxMax.y = min(boundingBoxMax.y, static_cast<float>(height));
 
-				for (uint32_t y = static_cast<uint32_t>(std::floor(boundingBoxMin.y)); y < static_cast<uint32_t>(std::ceil(boundingBoxMax.y)); ++y)
+				for (uint32_t binY{}; binY < binCountY; ++binY)
 				{
-					for (uint32_t x = static_cast<uint32_t>(std::floor(boundingBoxMin.x)); x < static_cast<uint32_t>(std::ceil(boundingBoxMax.x)); ++x)
+					for (uint32_t binX{}; binX < binCountX; ++binX)
 					{
-						uint32_t pixelIndex = y * width + x;
-						glm::vec2 pixel{ x, y };
+						glm::vec2 binMin{ binX * binWidth, binY * binHeight };
+						glm::vec2 binMax{ binMin.x + binWidth, binMin.y + binHeight };
 
-						// Calculate the edges of the triangle
-						const glm::vec3 a{ triangle.Vertex1.Position - triangle.Vertex0.Position };
-						const glm::vec3 b{ triangle.Vertex2.Position - triangle.Vertex1.Position };
-						const glm::vec3 c{ triangle.Vertex0.Position - triangle.Vertex2.Position };
-
-						// Get the vector from each vertex to the pixel
-						const glm::vec2 ap{ pixel - glm::vec2{ triangle.Vertex0.Position } };
-						const glm::vec2 bp{ pixel - glm::vec2{ triangle.Vertex1.Position } };
-						const glm::vec2 cp{ pixel - glm::vec2{ triangle.Vertex2.Position } };
-
-						// Get the cross product between each edge and the previous calculated vector
-						const float crossA{ a.x * ap.y - a.y * ap.x };
-						const float crossB{ b.x * bp.y - b.y * bp.x };
-						const float crossC{ c.x * cp.y - c.y * cp.x };
-
-						// Inside outside check
-						if ((crossA >= 0) && (crossB >= 0) && (crossC >= 0))
+						if (RectangleOverlap(boundingBoxMin, boundingBoxMax, binMin, binMax))
 						{
-							const float area2{ a.x + b.y - a.y - b.x };
-							const float weight0{ crossB / area2 };
-							const float weight1{ crossC / area2 };
-							const float weight2{ crossA / area2 };
+							Segment& bin{ pBins[binY * binCountX + binX] };
 
-							const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
+							Push(bin, triangleIndex);
 
-							// Lock pixel
-							/*while (!atomicCAS(&pPixelLock[pixelIndex], 0, 1))
-								;*/
+							// Lock the bin
+							//__syncthreads();
+							
 
-							// Depth test
-							if (depthValue < pDepthBuffer[pixelIndex])
-							{
-								pDepthBuffer[pixelIndex] = depthValue;
-
-								const float wValue{ 1 / ((1 / triangle.Vertex0.Position.w * weight0) + (1 / triangle.Vertex1.Position.w * weight1) + (1 / triangle.Vertex2.Position.w * weight2)) };
-								pPixelData[pixelIndex].Position = { pixel.x, pixel.y, depthValue, wValue };
-								pPixelData[pixelIndex].Color = ((triangle.Vertex0.Color / triangle.Vertex0.Position.w * weight0) 
-									+ (triangle.Vertex1.Color / triangle.Vertex1.Position.w * weight1) 
-									+ (triangle.Vertex2.Color / triangle.Vertex2.Position.w * weight2)) * wValue;
-							}
-
-							// Release lock
-							//pPixelLock[pixelIndex] = 0;
+							//__syncthreads();
+							// Unlock the bin
+							//bin.Lock = 0;
 						}
 					}
 				}
+
+				// Calculate the edges of the triangle
+				/*const glm::vec3 a{ triangle.Vertex1.Position - triangle.Vertex0.Position };
+				const glm::vec3 b{ triangle.Vertex2.Position - triangle.Vertex1.Position };
+				const glm::vec3 c{ triangle.Vertex0.Position - triangle.Vertex2.Position };*/
+
+				/*dim3 gridSize{ static_cast<uint32_t>(ceil(boundingBoxMax.x)) - static_cast<uint32_t>(floor(boundingBoxMin.x)),
+					static_cast<uint32_t>(ceil(boundingBoxMax.y)) - static_cast<uint32_t>(floor(boundingBoxMin.y)) };
+				dim3 blockSize{ 1 };*/
+				//InsideOutsideCheck << <gridSize, blockSize >> > (triangle, boundingBoxMin, boundingBoxMax, a, b, c, width, pPixelData, pPixelLock, pDepthBuffer);
+				//cudaThreadSynchronize();
+
+
+
+				//for (uint32_t y = static_cast<uint32_t>(floor(boundingBoxMin.y)); y < static_cast<uint32_t>(ceil(boundingBoxMax.y)); ++y)
+				//{
+				//	for (uint32_t x = static_cast<uint32_t>(floor(boundingBoxMin.x)); x < static_cast<uint32_t>(ceil(boundingBoxMax.x)); ++x)
+				//	{
+				//		uint32_t pixelIndex = y * width + x;
+				//		glm::vec2 pixel{ x, y };
+
+				//		// Get the vector from each vertex to the pixel
+				//		const glm::vec2 ap{ pixel - glm::vec2{ triangle.Vertex0.Position } };
+				//		const glm::vec2 bp{ pixel - glm::vec2{ triangle.Vertex1.Position } };
+				//		const glm::vec2 cp{ pixel - glm::vec2{ triangle.Vertex2.Position } };
+
+				//		// Get the cross product between each edge and the previous calculated vector
+				//		const float crossA{ a.x * ap.y - a.y * ap.x };
+				//		const float crossB{ b.x * bp.y - b.y * bp.x };
+				//		const float crossC{ c.x * cp.y - c.y * cp.x };
+
+				//		// Inside outside check
+				//		if ((crossA >= 0) && (crossB >= 0) && (crossC >= 0))
+				//		{
+				//			const float area2{ a.x + b.y - a.y - b.x };
+				//			const float weight0{ crossB / area2 };
+				//			const float weight1{ crossC / area2 };
+				//			const float weight2{ crossA / area2 };
+
+				//			const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
+
+				//			// Lock pixel
+				//			while (!atomicCAS(&pPixelLock[pixelIndex], 0, 1))
+				//				;
+
+				//			// Depth test
+				//			if (depthValue < pDepthBuffer[pixelIndex])
+				//			{
+				//				pDepthBuffer[pixelIndex] = depthValue;
+
+				//				const float wValue{ 1 / ((1 / triangle.Vertex0.Position.w * weight0) + (1 / triangle.Vertex1.Position.w * weight1) + (1 / triangle.Vertex2.Position.w * weight2)) };
+				//				pPixelData[pixelIndex].Position = { pixel.x, pixel.y, depthValue, wValue };
+				//				pPixelData[pixelIndex].Color = ((triangle.Vertex0.Color / triangle.Vertex0.Position.w * weight0)
+				//					+ (triangle.Vertex1.Color / triangle.Vertex1.Position.w * weight1)
+				//					+ (triangle.Vertex2.Color / triangle.Vertex2.Position.w * weight2)) * wValue;
+				//			}
+
+				//			// Release lock
+				//			pPixelLock[pixelIndex] = 0;
+				//		}
+				//	}
+				//}
 			}
 		}
 	}

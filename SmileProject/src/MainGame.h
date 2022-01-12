@@ -13,15 +13,12 @@ public:
 
 private:
 	bool OnWindowResize(Smile::WindowResizeEvent& e);
-	bool OnMouseMovedEvent(Smile::MouseMovedEvent& e);
 
 private:
 	Smile::Ref<Smile::Scene> m_pActiveScene;
 
 	Smile::Entity m_CameraEntity;
-	DirectX::XMFLOAT3 m_CameraPosition;
 	float m_CameraMoveSpeed = 5.f;
-	float m_CameraRotation = 0.f;
 	float m_CameraRotationSpeed = 180.f;
 };
 

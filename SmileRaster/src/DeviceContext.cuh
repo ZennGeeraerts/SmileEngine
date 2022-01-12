@@ -7,6 +7,11 @@ namespace Smile
 		#define SMR_MAX_BUFFER_COUNT 10
 		#define SMR_INVALID_BUFFER_ID -1
 
+		#define SMR_BIN_COUNT_X 64
+		#define SMR_BIN_COUNT_Y 64
+		#define SMR_TILE_COUNT_X 8
+		#define SMR_TILE_COUNT_Y 8
+
 		typedef int BufferID;
 
 		struct DeviceContextData final
@@ -24,8 +29,6 @@ namespace Smile
 		public:
 			DeviceContext(const DeviceContextData& data);
 			~DeviceContext();
-
-			uint8_t* GetScreenBuffer() const { return d_ScreenBuffer; }
 
 			BufferID CreateVertexBuffer(void* pVertices, uint32_t count, uint32_t stride);
 			BufferID CreateIndexBuffer(uint32_t* pIndices, uint32_t count);
@@ -52,6 +55,8 @@ namespace Smile
 			Triangle* d_PrimitiveBuffers[SMR_MAX_BUFFER_COUNT];
 
 			uint32_t* d_PixelLock = nullptr;
+			
+			Segment* d_Bins = nullptr;
 
 			// CPU
 			uint32_t m_VertexBufferCount = 0;
@@ -63,6 +68,9 @@ namespace Smile
 			BufferID m_ActiveIndexBufferID = SMR_INVALID_BUFFER_ID;
 
 			ShaderData m_ShaderData{};
+
+			uint32_t m_BinWidth{};
+			uint32_t m_BinHeight{};
 		};
 	}
 }

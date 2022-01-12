@@ -112,11 +112,15 @@
       <CudaRuntime>Static</CudaRuntime>
       <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
+      <GenerateRelocatableDeviceCode>false</GenerateRelocatableDeviceCode>
     </CudaCompile>
     <Lib>
       <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CudaToolkitLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <CudaLink>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -138,11 +142,15 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
+      <GenerateRelocatableDeviceCode>false</GenerateRelocatableDeviceCode>
     </CudaCompile>
     <Lib>
       <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CudaToolkitLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <CudaLink>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -161,11 +169,15 @@
       <CudaRuntime>Static</CudaRuntime>
       <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
+      <GenerateRelocatableDeviceCode>false</GenerateRelocatableDeviceCode>
     </CudaCompile>
     <Lib>
       <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CudaToolkitLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <CudaLink>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -187,11 +199,15 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CodeGeneration>%(CodeGeneration)</CodeGeneration>
       <AdditionalOptions>--expt-relaxed-constexpr %(AdditionalOptions)</AdditionalOptions>
+      <GenerateRelocatableDeviceCode>false</GenerateRelocatableDeviceCode>
     </CudaCompile>
     <Lib>
       <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CudaToolkitLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <CudaLink>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </CudaLink>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Libs\glm\common.hpp" />
@@ -485,6 +501,7 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <ClInclude Include="src\DeviceContext.cuh" />
+    <CudaCompile Include="src\Pipeline\FineRasterizer.cu" />
     <CudaCompile Include="src\Pipeline\PrimitiveAssembler.cu" />
     <CudaCompile Include="src\Pipeline\PixelShader.cu" />
     <CudaCompile Include="src\Pipeline\Rasterizer.cu">
@@ -492,6 +509,7 @@
     </CudaCompile>
     <ClInclude Include="src\Utils.cuh" />
     <CudaCompile Include="src\Pipeline\VertexShader.cu" />
+    <CudaCompile Include="src\Queue.cu" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\glm\detail\func_common.inl" />

@@ -6,6 +6,7 @@
 #include "Pipeline/VertexShader.cu"
 #include "Pipeline/PrimitiveAssembler.cu"
 #include "Pipeline/Rasterizer.cu"
+#include "Pipeline/FineRasterizer.cu"
 #include "Pipeline/PixelShader.cu"
 
 #include <iostream>
@@ -31,6 +32,10 @@ namespace Smile
 
 			size = sizeof(VS_OUTPUT) * data.Width * data.Height;
 			GPU_ERROR_CHECK(cudaMalloc(&d_PixelData, size));
+
+			m_BinWidth = { static_cast<uint32_t>(ceil(static_cast<float>(data.Width) / SMR_BIN_COUNT_X)) };
+			m_BinHeight = { static_cast<uint32_t>(ceil(static_cast<float>(data.Height) / SMR_BIN_COUNT_Y)) };
+			GPU_ERROR_CHECK(cudaMalloc(&d_Bins, sizeof(Bin) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y));
 		}
 
 		DeviceContext::~DeviceContext()
@@ -51,6 +56,8 @@ namespace Smile
 			}
 
 			GPU_ERROR_CHECK(cudaFree(d_PixelLock));
+
+			GPU_ERROR_CHECK(cudaFree(d_Bins));
 		}
 
 		// Buffer creation
@@ -142,6 +149,16 @@ namespace Smile
 				pDepthBuffer[bufferIndex] = FLT_MAX;
 		}
 
+		__global__ void ClearBinKernel(Segment* pBins, uint32_t binCountX, uint32_t binCountY)
+		{
+			uint32_t binX = (blockIdx.x * blockDim.x) + threadIdx.x;
+			uint32_t binY = (blockIdx.y * blockDim.y) + threadIdx.y;
+			uint32_t binIndex = binY * binCountX + binX;
+
+			if (binIndex < (binCountX * binCountY))
+				Clear(pBins[binIndex]);
+		}
+
 		void DeviceContext::Clear(const DirectX::XMFLOAT3& clearColor)
 		{
 			dim3 blockSize = { m_DCData.TileSize, m_DCData.TileSize };
@@ -150,6 +167,11 @@ namespace Smile
 
 			ClearScreenBufferKernel<<<gridSize, blockSize>>>(d_ScreenBuffer, m_DCData.Width, m_DCData.Height, clearColor, m_DCData.ColorChannelCount);
 			ClearDepthBufferKernel<<<gridSize, blockSize>>>(d_DepthBuffer, m_DCData.Width, m_DCData.Height);
+			
+			gridSize = { static_cast<uint32_t>(ceil(SMR_BIN_COUNT_X / static_cast<float>(m_DCData.TileSize))),
+								static_cast<uint32_t>(ceil(SMR_BIN_COUNT_Y / static_cast<float>(m_DCData.TileSize))) };
+
+			ClearBinKernel << <gridSize, blockSize >> > (d_Bins, SMR_BIN_COUNT_X, SMR_BIN_COUNT_Y);
 		}
 
 		// Rendering
@@ -162,52 +184,70 @@ namespace Smile
 			IndexBuffer& indexBuffer = m_IndexBuffers[m_ActiveIndexBufferID];
 
 			dim3 blockSize = { m_DCData.TileSize, m_DCData.TileSize };
-			uint32_t gridSize = static_cast<uint32_t>(ceil(vertexBuffer.Count / m_DCData.TileSize));
+			uint32_t gridSize = static_cast<uint32_t>(ceil(static_cast<float>(vertexBuffer.Count) / m_DCData.TileSize));
 
 			// VertexShader
 			VertexShaderKernel<<<gridSize, blockSize>>> (static_cast<VS_INPUT*>(vertexBuffer.d_Vertices), d_VertexShaderOutputs[m_ActiveVertexBufferID], m_ShaderData, vertexBuffer.Count);
-			cudaDeviceSynchronize();
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());
+
 			// Input assembler	
 			gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
 			PrimitiveAssemblerKernel<<<gridSize, blockSize>>>(d_PrimitiveBuffers[m_ActiveIndexBufferID], d_VertexShaderOutputs[m_ActiveVertexBufferID], indexBuffer.d_Indices, indexBuffer.Count);
-			cudaDeviceSynchronize();
-			/*Triangle* pTriangles = (Triangle*)malloc(sizeof(Triangle) * indexBuffer.Count / 3);
-			GPU_ERROR_CHECK(cudaMemcpy(pTriangles, d_Triangles, sizeof(Triangle) * indexBuffer.Count / 3, cudaMemcpyDeviceToHost));
-			Triangle* pEnd{ pTriangles + indexBuffer.Count / 3 };
-			for (Triangle* p{ pTriangles }; p != pEnd; ++p)
-			{
-				std::cout << (*p).Vertex0.Position.x << "\n";
-			}
-
-			for (uint32_t i{}; i < 3; ++i)
-			{
-				pTriangles[0].Vertices[i].Position.x = (pTriangles[0].Vertices[i].Position.x + 1.0f) * 0.5f * m_DCData.Width;
-				pTriangles[0].Vertices[i].Position.y = (1.0f - pTriangles[0].Vertices[i].Position.y) * 0.5f * m_DCData.Height;
-			}
-
-			glm::vec2 minPoint{};
-			glm::vec2 maxPoint{};
-			FindAABB(pTriangles[0], minPoint, maxPoint);
-			std::cout << "minPoint: " << minPoint.x << ", " << minPoint.y << '\n';
-			std::cout << "maxPoint: " << maxPoint.x << ", " << maxPoint.y << '\n';*/
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
 			// Rasterization
-			gridSize = static_cast<uint32_t>(ceil(indexBuffer.Count / 3.f / m_DCData.TileSize));
-			RasterizerKernel << <gridSize, blockSize >> > (d_PrimitiveBuffers[m_ActiveIndexBufferID], indexBuffer.Count / 3, d_PixelData, d_DepthBuffer, d_PixelLock, m_DCData.Width, m_DCData.Height);
-			cudaDeviceSynchronize();
-			/*float* pDepthBuffer = (float*)malloc(sizeof(float) * m_DCData.Width * m_DCData.Height);
-			GPU_ERROR_CHECK(cudaMemcpy(pDepthBuffer, d_DepthBuffer, sizeof(float) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost));
-			float* pEnd = pDepthBuffer + m_DCData.Width * m_DCData.Height;
-			for (float* p{ pDepthBuffer }; p != pEnd; ++p)
+			RasterizerKernel << <gridSize, blockSize >> > (d_PrimitiveBuffers[m_ActiveIndexBufferID], indexBuffer.Count / 3, d_Bins, SMR_BIN_COUNT_X, SMR_BIN_COUNT_Y,
+				m_BinWidth, m_BinHeight, m_DCData.Width, m_DCData.Height);
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());
+
+			/*Segment* pBins = (Segment*)malloc(sizeof(Segment) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y);
+			cudaMemcpy(pBins, d_Bins, sizeof(Segment) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y, cudaMemcpyDeviceToHost);
+			for (uint32_t y{}; y < SMR_BIN_COUNT_Y; ++y)
 			{
-				std::cout << *p << "\n";
+				for (uint32_t x{}; x < SMR_BIN_COUNT_X; ++x)
+				{
+					std::cout << pBins[y * SMR_BIN_COUNT_X + x].QueueSize / sizeof(unsigned long long int);
+				}
+
+				std::cout << "\n";
 			}
-			free(pDepthBuffer);*/
+			free(pBins);*/
+
+			dim3 binRasterizerGridSize = { static_cast<uint32_t>(ceil(SMR_BIN_COUNT_X / static_cast<float>(m_DCData.TileSize))), 
+			static_cast<uint32_t>(ceil(SMR_BIN_COUNT_Y / static_cast<float>(m_DCData.TileSize))) };
+
+			FineRasterizerKernel << <binRasterizerGridSize, blockSize >> > (d_Bins, d_PrimitiveBuffers[m_ActiveIndexBufferID], SMR_BIN_COUNT_X, SMR_BIN_COUNT_Y, m_BinWidth, m_BinHeight, d_PixelData, d_PixelLock, d_DepthBuffer, m_DCData.Width);
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());
+
+			/*Bin* pBins{ (Bin*)malloc(sizeof(Bin) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y) };
+			cudaMemcpy(pBins, d_Bins, sizeof(Bin) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y, cudaMemcpyDeviceToHost);
+			VS_OUTPUT* pPixelData = (VS_OUTPUT*)malloc(sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height);
+			float* pDepthBuffer = (float*)malloc(sizeof(float) * m_DCData.Width * m_DCData.Height);
+			cudaMemcpy(pDepthBuffer, d_DepthBuffer, sizeof(float) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost);
+			FineRasterizer(pBins, SMR_BIN_COUNT_X, SMR_BIN_COUNT_Y, binWidth, binHeight, pPixelData, pDepthBuffer, m_DCData.Width);
+			free(pDepthBuffer);
+			free(pBins);
+			free(pPixelData);*/
+
+			/*VS_OUTPUT* pOutput = (VS_OUTPUT*)malloc(sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height);
+			GPU_ERROR_CHECK(cudaMemcpy(pOutput, d_PixelData, sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost));
+			for (uint32_t y{}; y < m_DCData.Height / 10; ++y)
+			{
+				for (uint32_t x{}; x < m_DCData.Width / 10; ++x)
+				{
+					if (glm::length(pOutput[y * 10 * m_DCData.Width + x * 10].Color) > 0.0f)
+						std::cout << '1';
+					else
+						std::cout << '0';
+				}
+				std::cout << '\n';
+			}
+			free(pOutput);*/
 
 			dim3 pixelShaderGridSize = { static_cast<uint32_t>(ceil(m_DCData.Width / static_cast<float>(m_DCData.TileSize))),
 								static_cast<uint32_t>(ceil(m_DCData.Height / static_cast<float>(m_DCData.TileSize))) };
 			PixelShaderKernel << <pixelShaderGridSize, blockSize >> > (d_PixelData, d_ScreenBuffer, d_DepthBuffer, m_DCData.Width, m_DCData.Height, m_DCData.ColorChannelCount);
-			cudaDeviceSynchronize();
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
 			size_t size = sizeof(uint8_t) * m_DCData.ColorChannelCount * m_DCData.Width * m_DCData.Height;
 			GPU_ERROR_CHECK(cudaMemcpy(m_DCData.pScreenBuffer, d_ScreenBuffer, size, cudaMemcpyDeviceToHost));

@@ -52,5 +52,18 @@ namespace Smile
 				};
 			};
 		};
+
+		struct Bin final
+		{
+			Triangle Triangles[150]{};
+			uint32_t TriangleCount{ 0 };
+			uint32_t Lock{ 0 };
+		};
+
+		struct Segment final
+		{
+			uint32_t Queue[1024]{};
+			uint32_t QueueSize = 0;
+		};
 	}
 }
