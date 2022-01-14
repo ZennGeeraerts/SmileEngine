@@ -29,7 +29,7 @@ namespace Smile
 		uint32_t height = m_pWindow->GetHeight();
 		HWND handle = static_cast<HWND>(m_pWindow->GetNativeWindow());
 
-		m_BitmapInfo.bmiHeader.biBitCount = sizeof(uint8_t) * 8 * m_ColorChannelCount;
+		m_BitmapInfo.bmiHeader.biBitCount = sizeof(uint8_t) * 8 * 3;
 		m_BitmapInfo.bmiHeader.biClrImportant = 0;
 		m_BitmapInfo.bmiHeader.biClrUsed = 0;
 		m_BitmapInfo.bmiHeader.biCompression = BI_RGB;
@@ -37,7 +37,7 @@ namespace Smile
 		m_BitmapInfo.bmiHeader.biHeight = -static_cast<int>(height);
 		m_BitmapInfo.bmiHeader.biPlanes = 1;
 		m_BitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFO);
-		m_BitmapInfo.bmiHeader.biSizeImage = width * height * m_ColorChannelCount;
+		m_BitmapInfo.bmiHeader.biSizeImage = width * height * 3;
 		m_BitmapInfo.bmiHeader.biXPelsPerMeter = 0;
 		m_BitmapInfo.bmiHeader.biYPelsPerMeter = 0;
 
@@ -45,20 +45,17 @@ namespace Smile
 		m_HDC = CreateCompatibleDC(hDC);
 		ReleaseDC(handle, hDC);
 
-		m_Bitmap = CreateDIBSection(m_HDC, &m_BitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_pScreenBuffer), NULL, 0);
+		m_Bitmap = CreateDIBSection(m_HDC, &m_BitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_pColorBuffer), NULL, 0);
 		SM_ASSERT(m_Bitmap, "SmileRasterContext::Init > Failed to create BitmapDIB");
 
 		m_BitmapOld = static_cast<HBITMAP>(SelectObject(m_HDC, m_Bitmap));
 
-		memset(m_pScreenBuffer, 0, sizeof(uint8_t) * width * height * m_ColorChannelCount);
+		memset(m_pColorBuffer, 0, sizeof(uint8_t) * width * height * 3);
 
-		Raster::DeviceContextData deviceContextData{};
-		deviceContextData.Width = width;
-		deviceContextData.Height = height;
-		deviceContextData.pScreenBuffer = m_pScreenBuffer;
-		deviceContextData.ColorChannelCount = m_ColorChannelCount;
-
-		m_pDeviceContext = new Raster::DeviceContext{ deviceContextData };
+		Raster::RenderConfig renderConfig{};
+		m_pDeviceContext = new Raster::DeviceContext{ renderConfig };
+		m_Framebuffer = m_pDeviceContext->CreateFramebuffer(m_pColorBuffer, width, height, Raster::ColorbufferFormat::eRGB);
+		m_pDeviceContext->BindFramebuffer(m_Framebuffer);
 	}
 
 	void SmileRasterContext::Present()

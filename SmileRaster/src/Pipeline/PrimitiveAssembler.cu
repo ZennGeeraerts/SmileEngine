@@ -7,20 +7,19 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__global__ void PrimitiveAssemblerKernel(Triangle* pTriangles, VS_OUTPUT* pVSOutputs, uint32_t* pIndices, uint32_t indexCount)
+		__global__ void PrimitiveAssemblerKernel(Triangle* pPrimitives, uint32_t primitiveCount, VertexShaderOutput* pVertexOutput, uint32_t* pIndices)
 		{
 			uint32_t triangleIndex = (blockIdx.x * blockDim.x) + threadIdx.x;
-			const uint32_t triangleCount = indexCount / 3;
 
-			if (triangleIndex < triangleCount)
+			if (triangleIndex < primitiveCount)
 			{
                 uint32_t vertexIndex0 = pIndices[3 * triangleIndex];
                 uint32_t vertexIndex1 = pIndices[3 * triangleIndex + 1];
                 uint32_t vertexIndex2 = pIndices[3 * triangleIndex + 2];
 
-				pTriangles[triangleIndex].Vertices[0] = pVSOutputs[vertexIndex0];
-				pTriangles[triangleIndex].Vertices[1] = pVSOutputs[vertexIndex1];
-				pTriangles[triangleIndex].Vertices[2] = pVSOutputs[vertexIndex2];
+				pPrimitives[triangleIndex].Vertices[0] = pVertexOutput[vertexIndex0];
+				pPrimitives[triangleIndex].Vertices[1] = pVertexOutput[vertexIndex1];
+				pPrimitives[triangleIndex].Vertices[2] = pVertexOutput[vertexIndex2];
 			}
 		}
 	}

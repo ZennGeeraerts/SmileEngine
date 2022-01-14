@@ -7,18 +7,21 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__device__ void Push(Segment& segment, uint32_t triangleID)
+		namespace BinQueue
 		{
-			int writeID = atomicAdd(&segment.QueueSize, 1);
-			if (writeID < 1024)
+			__device__ void Push(Bin& bin, uint32_t triangleIndex)
 			{
-				segment.Queue[writeID] = triangleID;
+				int writeID = atomicAdd(&bin.QueueSize, 1);
+				if (writeID < 1024)
+				{
+					bin.Queue[writeID] = triangleIndex;
+				}
 			}
-		}
 
-		__device__ void Clear(Segment& segment)
-		{
-			atomicExch(&segment.QueueSize, 0);
+			__device__ void Clear(Bin& bin)
+			{
+				atomicExch(&bin.QueueSize, 0);
+			}
 		}
 	}
 }

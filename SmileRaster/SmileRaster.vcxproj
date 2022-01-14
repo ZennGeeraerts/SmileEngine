@@ -504,12 +504,14 @@
     <CudaCompile Include="src\Pipeline\FineRasterizer.cu" />
     <CudaCompile Include="src\Pipeline\PrimitiveAssembler.cu" />
     <CudaCompile Include="src\Pipeline\PixelShader.cu" />
-    <CudaCompile Include="src\Pipeline\Rasterizer.cu">
+    <CudaCompile Include="src\Pipeline\BinRasterizer.cu">
       <FileType>Document</FileType>
     </CudaCompile>
+    <ClInclude Include="src\Rasterizer.cuh" />
     <ClInclude Include="src\Utils.cuh" />
     <CudaCompile Include="src\Pipeline\VertexShader.cu" />
     <CudaCompile Include="src\Queue.cu" />
+    <CudaCompile Include="src\Rasterizer.cu" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\glm\detail\func_common.inl" />

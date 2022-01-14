@@ -7,19 +7,19 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__global__ void PixelShaderKernel(const VS_OUTPUT* pInput, uint8_t* pScreenBuffer, float* pDepthBuffer, uint32_t width, uint32_t height, uint8_t colorChannelCount)
+		__global__ void PixelShaderKernel(Framebuffer framebuffer)
 		{
 			uint32_t pixelX = (blockIdx.x * blockDim.x) + threadIdx.x;
 			uint32_t pixelY = (blockIdx.y * blockDim.y) + threadIdx.y;
-			uint32_t pixelIndex = pixelY * width + pixelX;
+			uint32_t pixelIndex = pixelY * framebuffer.Width + pixelX;
 
-			if (pixelIndex < (width * height))
+			if (pixelIndex < (framebuffer.Width * framebuffer.Height))
 			{
-				if (pDepthBuffer[pixelIndex] < FLT_MAX)
+				if (framebuffer.d_Depthbuffer[pixelIndex] < FLT_MAX)
 				{
-					pScreenBuffer[pixelIndex * colorChannelCount] = pInput[pixelIndex].Color.b * 255.f;
-					pScreenBuffer[pixelIndex * colorChannelCount + 1] = pInput[pixelIndex].Color.g * 255.f;
-					pScreenBuffer[pixelIndex * colorChannelCount + 2] = pInput[pixelIndex].Color.r * 255.f;
+					framebuffer.d_Colorbuffer[pixelIndex * framebuffer.ColorChannelCount] = framebuffer.d_PixelData[pixelIndex].Color.b * 255.f;
+					framebuffer.d_Colorbuffer[pixelIndex * framebuffer.ColorChannelCount + 1] = framebuffer.d_PixelData[pixelIndex].Color.g * 255.f;
+					framebuffer.d_Colorbuffer[pixelIndex * framebuffer.ColorChannelCount + 2] = framebuffer.d_PixelData[pixelIndex].Color.r * 255.f;
 				}
 			}
 		}

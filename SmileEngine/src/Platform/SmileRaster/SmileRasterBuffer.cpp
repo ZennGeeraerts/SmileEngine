@@ -13,18 +13,18 @@ namespace Smile
 		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterVertexBuffer > Rendering context is not a SmileRaster Rendering Context");
 
-		m_VertexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateVertexBuffer(vertexBufferData.pVertices, vertexBufferData.Count, vertexBufferData.BufferLayout.GetStride());
+		m_VertexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateVertexBuffer(vertexBufferData.pVertices, vertexBufferData.Count, vertexBufferData.BufferLayout.GetStride() * vertexBufferData.Count);
 		m_Layout = vertexBufferData.BufferLayout;
 	}
 
 	void SmileRasterVertexBuffer::Bind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(m_VertexBuffer);
+		m_pSmileRasterContext->GetDeviceContext()->BindVertexBuffer(m_VertexBuffer, m_Layout.GetStride());
 	}
 
 	void SmileRasterVertexBuffer::Unbind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetVertexBuffer(SMR_INVALID_BUFFER_ID);
+		m_pSmileRasterContext->GetDeviceContext()->BindVertexBuffer(SMR_INVALID_BUFFER_ID, 0);
 	}
 
 	//*------------------------------------------------------------------------------------------------*//
@@ -42,11 +42,11 @@ namespace Smile
 
 	void SmileRasterIndexBuffer::Bind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(m_IndexBuffer);
+		m_pSmileRasterContext->GetDeviceContext()->BindIndexBuffer(m_IndexBuffer);
 	}
 
 	void SmileRasterIndexBuffer::Unbind() const
 	{
-		m_pSmileRasterContext->GetDeviceContext()->SetIndexBuffer(SMR_INVALID_BUFFER_ID);
+		m_pSmileRasterContext->GetDeviceContext()->BindIndexBuffer(SMR_INVALID_BUFFER_ID);
 	}
 }

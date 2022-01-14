@@ -7,18 +7,19 @@ namespace Smile
 {
 	namespace Raster
 	{
-		struct VertexBuffer final
+		struct VertexShaderInput final
 		{
-			void* d_Vertices = nullptr;
-			uint32_t Stride{ 0 };
-			uint32_t Count{ 0 };
+			glm::vec3 Position{};
+			glm::vec3 Color{};
 		};
 
-		struct IndexBuffer final
+		struct VertexShaderOutput final
 		{
-			uint32_t* d_Indices = nullptr;
-			uint32_t Count = 0;
+			glm::vec4 Position{};
+			glm::vec3 Color{};
 		};
+
+		using InterpolatedAttributes = VertexShaderOutput;
 
 		struct ShaderData final
 		{
@@ -27,40 +28,52 @@ namespace Smile
 			glm::mat4 ViewInverse{ 1.0f };
 		};
 
-		struct VS_INPUT final
+		enum class ColorbufferFormat
 		{
-			glm::vec3 Position{};
-			glm::vec3 Color{};
+			eRGB,
+			eRGBA
 		};
 
-		struct VS_OUTPUT final
+		struct Framebuffer final
 		{
-			glm::vec4 Position{};
-			glm::vec3 Color{};
+			uint8_t* d_Colorbuffer{ nullptr };
+			float* d_Depthbuffer{ nullptr };
+			InterpolatedAttributes* d_PixelData{ nullptr };
+
+			uint32_t Width = 0;
+			uint32_t Height = 0;
+			uint8_t ColorChannelCount = 3;
+			uint8_t* pOutput{ nullptr };
+		};
+
+		struct VertexBuffer final
+		{
+			void* d_Vertices = nullptr;
+			uint32_t ByteWidth = 0;
+
+			VertexShaderOutput* d_VertexShaderOutput = nullptr;
+		};
+
+		struct IndexBuffer final
+		{
+			uint32_t* d_Indices = nullptr;
 		};
 
 		struct Triangle final
 		{
 			union
 			{
-				VS_OUTPUT Vertices[3]{};
+				VertexShaderOutput Vertices[3]{};
 				struct
 				{
-					VS_OUTPUT Vertex0;
-					VS_OUTPUT Vertex1;
-					VS_OUTPUT Vertex2;
+					VertexShaderOutput Vertex0;
+					VertexShaderOutput Vertex1;
+					VertexShaderOutput Vertex2;
 				};
 			};
 		};
 
 		struct Bin final
-		{
-			Triangle Triangles[150]{};
-			uint32_t TriangleCount{ 0 };
-			uint32_t Lock{ 0 };
-		};
-
-		struct Segment final
 		{
 			uint32_t Queue[1024]{};
 			uint32_t QueueSize = 0;

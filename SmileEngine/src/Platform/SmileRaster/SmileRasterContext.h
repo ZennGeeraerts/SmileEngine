@@ -26,12 +26,14 @@ namespace Smile
 		Window* m_pWindow = nullptr;
 
 		Raster::DeviceContext* m_pDeviceContext = nullptr;
+
 		HDC m_HDC = nullptr;
 		HBITMAP m_Bitmap = nullptr;
 		HBITMAP m_BitmapOld = nullptr;
 		BITMAPINFO m_BitmapInfo{};
-		uint8_t* m_pScreenBuffer{};
-		const uint8_t m_ColorChannelCount{ 3 };
+
+		uint8_t* m_pColorBuffer{};
+		Raster::BufferID m_Framebuffer;
 
 		friend class SmileRasterRendererAPI;
 	};
