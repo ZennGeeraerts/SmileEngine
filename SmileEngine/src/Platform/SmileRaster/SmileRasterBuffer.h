@@ -18,7 +18,7 @@ namespace Smile
 
 	private:
 		SmileRasterContext* m_pSmileRasterContext = nullptr;
-		Raster::BufferID m_VertexBuffer;
+		Raster::BufferID m_VertexBuffer = SMR_INVALID_BUFFER_ID;
 		BufferLayout m_Layout;
 	};
 
@@ -34,7 +34,7 @@ namespace Smile
 
 	private:
 		SmileRasterContext* m_pSmileRasterContext = nullptr;
-		Raster::BufferID m_IndexBuffer;
+		Raster::BufferID m_IndexBuffer = SMR_INVALID_BUFFER_ID;
 		uint32_t m_Count;
 	};
 }

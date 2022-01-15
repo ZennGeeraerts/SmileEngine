@@ -1,12 +1,25 @@
 #pragma once
 #include <stdint.h>
 #include <DirectXMath.h>
-#include "../../SmileRaster/Libs/glm/glm.hpp"
+#include <../../SmileRaster/Libs/glm/glm.hpp>
+#include <unordered_map>
 
 namespace Smile
 {
 	namespace Raster
 	{
+		/*struct InputDescriptor final
+		{
+			uint32_t Size{};
+			char Name[256]{};
+		};
+
+		struct InputLayout final
+		{
+			InputDescriptor Descriptors[16]{};
+			uint32_t DescriptorCount{ 0 };
+		};*/
+
 		struct VertexShaderInput final
 		{
 			glm::vec3 Position{};
@@ -21,11 +34,12 @@ namespace Smile
 
 		using InterpolatedAttributes = VertexShaderOutput;
 
-		struct ShaderData final
+		struct Shader final
 		{
-			glm::mat4 ViewProjection{ 1.0f };
-			glm::mat4 World{ 1.0f };
-			glm::mat4 ViewInverse{ 1.0f };
+			std::unordered_map<std::string, glm::mat4> Mat4Data{
+			{ "ViewProjection", glm::mat4{ 1.0f } },
+			{ "World", glm::mat4{ 1.0f } },
+			{ "ViewInverse", glm::mat4{ 1.0f } } };
 		};
 
 		enum class ColorbufferFormat
@@ -36,22 +50,22 @@ namespace Smile
 
 		struct Framebuffer final
 		{
-			uint8_t* d_Colorbuffer{ nullptr };
-			float* d_Depthbuffer{ nullptr };
+			uint8_t* d_ColorBuffer{ nullptr };
+			float* d_DepthBuffer{ nullptr };
 			InterpolatedAttributes* d_PixelData{ nullptr };
 
 			uint32_t Width = 0;
 			uint32_t Height = 0;
 			uint8_t ColorChannelCount = 3;
-			uint8_t* pOutput{ nullptr };
+			uint8_t* pHostOutput{ nullptr };
 		};
 
 		struct VertexBuffer final
 		{
 			void* d_Vertices = nullptr;
-			uint32_t ByteWidth = 0;
-
+			VertexShaderInput* d_VertexShaderInput = nullptr;
 			VertexShaderOutput* d_VertexShaderOutput = nullptr;
+			uint32_t ByteWidth = 0;
 		};
 
 		struct IndexBuffer final

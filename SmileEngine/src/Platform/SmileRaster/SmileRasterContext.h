@@ -33,7 +33,7 @@ namespace Smile
 		BITMAPINFO m_BitmapInfo{};
 
 		uint8_t* m_pColorBuffer{};
-		Raster::BufferID m_Framebuffer;
+		Raster::BufferID m_Framebuffer = SMR_INVALID_BUFFER_ID;
 
 		friend class SmileRasterRendererAPI;
 	};

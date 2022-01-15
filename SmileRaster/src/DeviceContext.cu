@@ -1,9 +1,9 @@
 #include "DeviceContext.cuh"
 
+#include "Utils.cuh"
+
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-
-#include "Utils.cuh"
 
 namespace Smile
 {
@@ -21,14 +21,15 @@ namespace Smile
 
 			for (BufferID i{}; i < m_FramebufferCount; ++i)
 			{
-				GPU_ERROR_CHECK(cudaFree(m_Framebuffers[i].d_Colorbuffer));
-				GPU_ERROR_CHECK(cudaFree(m_Framebuffers[i].d_Depthbuffer));
+				GPU_ERROR_CHECK(cudaFree(m_Framebuffers[i].d_ColorBuffer));
+				GPU_ERROR_CHECK(cudaFree(m_Framebuffers[i].d_DepthBuffer));
 				GPU_ERROR_CHECK(cudaFree(m_Framebuffers[i].d_PixelData));
 			}
 
 			for (BufferID i{}; i < m_VertexBufferCount; ++i)
 			{
 				GPU_ERROR_CHECK(cudaFree(m_VertexBuffers[i].d_Vertices));
+				GPU_ERROR_CHECK(cudaFree(m_VertexBuffers[i].d_VertexShaderInput));
 				GPU_ERROR_CHECK(cudaFree(m_VertexBuffers[i].d_VertexShaderOutput));
 			}
 
@@ -58,13 +59,13 @@ namespace Smile
 
 				framebuffer.Width = width;
 				framebuffer.Height = height;
-				framebuffer.pOutput = pBuffer;
+				framebuffer.pHostOutput = pBuffer;
 
 				size_t size = sizeof(uint8_t) * framebuffer.ColorChannelCount * width * height;
-				GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_Colorbuffer, size));
+				GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_ColorBuffer, size));
 
 				size = sizeof(float) * width * height;
-				GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_Depthbuffer, size));
+				GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_DepthBuffer, size));
 
 				size = sizeof(InterpolatedAttributes) * width * height;
 				GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_PixelData, size));
@@ -86,7 +87,9 @@ namespace Smile
 				GPU_ERROR_CHECK(cudaMemcpy(vertexBuffer.d_Vertices, pVertices, byteWidth, cudaMemcpyHostToDevice));
 				vertexBuffer.ByteWidth = byteWidth;
 
-				size_t size = sizeof(VertexShaderOutput) * count;
+				size_t size = sizeof(VertexShaderInput) * count;
+				GPU_ERROR_CHECK(cudaMalloc(&vertexBuffer.d_VertexShaderInput, size));
+				size = sizeof(VertexShaderOutput) * count;
 				GPU_ERROR_CHECK(cudaMalloc(&vertexBuffer.d_VertexShaderOutput, size));
 
 				++m_VertexBufferCount;
@@ -163,15 +166,15 @@ namespace Smile
 
 			if (bufferIndex < (framebuffer.Width * framebuffer.Height))
 			{
-				framebuffer.d_Colorbuffer[bufferIndex * framebuffer.ColorChannelCount] = static_cast<uint8_t>(clearColor.z * 255.f);
-				framebuffer.d_Colorbuffer[bufferIndex * framebuffer.ColorChannelCount + 1] = static_cast<uint8_t>(clearColor.y * 255.f);
-				framebuffer.d_Colorbuffer[bufferIndex * framebuffer.ColorChannelCount + 2] = static_cast<uint8_t>(clearColor.x * 255.f);
+				framebuffer.d_ColorBuffer[bufferIndex * framebuffer.ColorChannelCount] = static_cast<uint8_t>(clearColor.z * 255.f);
+				framebuffer.d_ColorBuffer[bufferIndex * framebuffer.ColorChannelCount + 1] = static_cast<uint8_t>(clearColor.y * 255.f);
+				framebuffer.d_ColorBuffer[bufferIndex * framebuffer.ColorChannelCount + 2] = static_cast<uint8_t>(clearColor.x * 255.f);
 
 				if (framebuffer.ColorChannelCount > 3)
-					framebuffer.d_Colorbuffer[bufferIndex * framebuffer.ColorChannelCount + 3] = static_cast<uint8_t>(clearColor.w * 255.f);
+					framebuffer.d_ColorBuffer[bufferIndex * framebuffer.ColorChannelCount + 3] = static_cast<uint8_t>(clearColor.w * 255.f);
 
 				if (bClearDepth)
-					framebuffer.d_Depthbuffer[bufferIndex] = FLT_MAX;
+					framebuffer.d_DepthBuffer[bufferIndex] = FLT_MAX;
 			}
 		}
 
@@ -216,15 +219,22 @@ namespace Smile
 			//GPU_ERROR_CHECK(cudaMalloc(&d_PixelLock, sizeof(uint32_t) * width * height * m_DCData.ColorChannelCount));
 		}
 
-		void DeviceContext::SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse)
-		{
-			/*GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewProjection, &viewProjection, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
-			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->World, &world, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
-			GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewInverse, &viewInverse, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));*/
+		//void DeviceContext::SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse)
+		//{
+		//	/*GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewProjection, &viewProjection, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+		//	GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->World, &world, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));
+		//	GPU_ERROR_CHECK(cudaMemcpy(&d_ShaderData->ViewInverse, &viewInverse, sizeof(DirectX::XMFLOAT4X4), cudaMemcpyHostToDevice));*/
 
-			m_pRasterizer->m_ShaderData.ViewProjection = ConvertToGLMMat(viewProjection);
-			m_pRasterizer->m_ShaderData.World = ConvertToGLMMat(world);
-			m_pRasterizer->m_ShaderData.ViewInverse = ConvertToGLMMat(viewInverse);
+		//	m_pRasterizer->m_Shader.ViewProjection = ConvertToGLMMat(viewProjection);
+		//	m_pRasterizer->m_Shader.World = ConvertToGLMMat(world);
+		//	m_pRasterizer->m_Shader.ViewInverse = ConvertToGLMMat(viewInverse);
+		//}
+
+		void DeviceContext::UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& mat)
+		{
+			auto it = m_pRasterizer->m_Shader.Mat4Data.find(sementicName);
+			if (it != m_pRasterizer->m_Shader.Mat4Data.end())
+				(*it).second = ConvertToGLMMat(mat);
 		}
 	}
 }

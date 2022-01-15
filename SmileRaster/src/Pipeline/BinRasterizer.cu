@@ -1,13 +1,8 @@
 #include "DataStructs.cuh"
-#include "Queue.cu"
+#include "BinQueue.cu"
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-
-#include <cuda_d3d11_interop.h>
-
-#include <algorithm>
-#include <cmath>
 
 namespace Smile
 {

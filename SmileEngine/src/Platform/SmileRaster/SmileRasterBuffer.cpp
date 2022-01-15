@@ -9,12 +9,12 @@ namespace Smile
 	//*------------------------------------------------------------------------------------------------*//
 
 	SmileRasterVertexBuffer::SmileRasterVertexBuffer(const VertexBufferData& vertexBufferData)
+		: m_Layout{ vertexBufferData.BufferLayout  }
 	{
 		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterVertexBuffer > Rendering context is not a SmileRaster Rendering Context");
 
 		m_VertexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateVertexBuffer(vertexBufferData.pVertices, vertexBufferData.Count, vertexBufferData.BufferLayout.GetStride() * vertexBufferData.Count);
-		m_Layout = vertexBufferData.BufferLayout;
 	}
 
 	void SmileRasterVertexBuffer::Bind() const

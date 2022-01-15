@@ -7,7 +7,7 @@ namespace Smile
 {
 	namespace Raster
 	{
-		__global__ void VertexShaderKernel(const VertexShaderInput* pInput, VertexShaderOutput* pOutput, ShaderData shaderData, uint32_t vertexBufferCount)
+		__global__ void VertexShaderKernel(const VertexShaderInput* pInput, VertexShaderOutput* pOutput, uint32_t vertexBufferCount, glm::mat4 viewProjection, glm::mat4 world)
 		{
 			uint32_t index = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -16,7 +16,7 @@ namespace Smile
 				const VertexShaderInput& input = pInput[index];
 				VertexShaderOutput& output = pOutput[index];
 
-				glm::mat4 worldViewProjectionMatrix = shaderData.ViewProjection * shaderData.World;
+				glm::mat4 worldViewProjectionMatrix = viewProjection * world;
 
 				output.Position = worldViewProjectionMatrix * glm::vec4{ input.Position, 1.f };
 				output.Color = input.Color;

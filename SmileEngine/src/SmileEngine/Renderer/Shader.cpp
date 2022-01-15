@@ -23,7 +23,7 @@ namespace Smile
 			return CreateRef<DirectX11Shader>(filePath, bufferLayout);
 
 		case RendererAPI::API::eSmileRaster:
-			return CreateRef<SmileRasterShader>();
+			return CreateRef<SmileRasterShader>(filePath, bufferLayout);
 #endif
 		}
 

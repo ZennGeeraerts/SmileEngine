@@ -1,12 +1,4 @@
 ﻿  SmileRasterBuffer.cpp
-  SmileRasterContext.cpp
-  SmileRasterRendererAPI.cpp
-  SmileRasterShader.cpp
-  Buffer.cpp
-  RenderCommand.cpp
-  RenderingContext.cpp
-  Generating Code...
-C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.h(16): warning C4172: returning address of local variable or temporary
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

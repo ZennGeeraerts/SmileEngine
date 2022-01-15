@@ -28,7 +28,7 @@ namespace Smile
 
 			void Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer);
 			
-			void SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse);
+			void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& mat);
 
 		private:
 			Rasterizer* m_pRasterizer = nullptr;

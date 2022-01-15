@@ -84,6 +84,13 @@ namespace Smile
 		//	}
 		//}
 
+		template <typename AttributeType>
+		__device__ AttributeType InterpolateAttribute(const AttributeType& attribute0, const AttributeType& attribute1, const AttributeType& attribute2, float weight0, float weight1, float weight2,
+			float w0, float w1, float w2, float wValue)
+		{
+			return ((attribute0 / w0 * weight0) + (attribute1 / w1 * weight1) + (attribute2 / w2 * weight2)) * wValue;
+		}
+
 		__global__ void FineRasterizerKernel(Bin* pBins, const Triangle* pTriangles, uint32_t binCountX, uint32_t binCountY, uint32_t binWidth, uint32_t binHeight, VertexShaderOutput* pPixelData, float* pDepthBuffer, uint32_t width)
 		{
 			uint32_t binX = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -140,9 +147,8 @@ namespace Smile
 
 									const float wValue{ 1 / ((1 / triangle.Vertex0.Position.w * weight0) + (1 / triangle.Vertex1.Position.w * weight1) + (1 / triangle.Vertex2.Position.w * weight2)) };
 									pPixelData[pixelIndex].Position = { pixel.x, pixel.y, depthValue, wValue };
-									pPixelData[pixelIndex].Color = ((triangle.Vertex0.Color / triangle.Vertex0.Position.w * weight0)
-										+ (triangle.Vertex1.Color / triangle.Vertex1.Position.w * weight1)
-										+ (triangle.Vertex2.Color / triangle.Vertex2.Position.w * weight2)) * wValue;
+									pPixelData[pixelIndex].Color = InterpolateAttribute(triangle.Vertex0.Color, triangle.Vertex1.Color, triangle.Vertex2.Color, weight0, weight1, weight2, 
+										triangle.Vertex0.Position.w, triangle.Vertex1.Position.w, triangle.Vertex2.Position.w, wValue);
 								}
 							}
 						}

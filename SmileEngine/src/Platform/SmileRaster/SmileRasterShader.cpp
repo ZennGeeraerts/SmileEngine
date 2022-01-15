@@ -6,30 +6,22 @@
 
 namespace Smile
 {
-	SmileRasterShader::SmileRasterShader()
+	SmileRasterShader::SmileRasterShader(const std::string& assetFile, const BufferLayout& layout)
 	{
 		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterShader > Rendering context is not a SmileRaster Rendering Context");
+
+		// Find name from asset path
+		auto lastSlash = assetFile.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = assetFile.rfind('.');
+		auto count = lastDot == std::string::npos ? assetFile.size() - lastSlash : lastDot - lastSlash;
+		m_Name = assetFile.substr(lastSlash, count);
 	}
 
 	void SmileRasterShader::Bind() const
 	{
-		DirectX::XMFLOAT4X4 viewProjectionMatrix{};
-		DirectX::XMStoreFloat4x4(&viewProjectionMatrix, DirectX::XMMatrixIdentity());
-		if (m_Matrices.find("ViewProjection") != m_Matrices.end())
-			viewProjectionMatrix = m_Matrices["ViewProjection"];
 
-		DirectX::XMFLOAT4X4 worldMatrix{};
-		DirectX::XMStoreFloat4x4(&worldMatrix, DirectX::XMMatrixIdentity());
-		if (m_Matrices.find("World") != m_Matrices.end())
-			worldMatrix = m_Matrices["World"];
-
-		DirectX::XMFLOAT4X4 viewInverseMatrix{};
-		DirectX::XMStoreFloat4x4(&viewInverseMatrix, DirectX::XMMatrixIdentity());
-		if (m_Matrices.find("ViewInverse") != m_Matrices.end())
-			viewInverseMatrix = m_Matrices["ViewInverse"];
-
-		m_pSmileRasterContext->GetDeviceContext()->SetShaderData(viewProjectionMatrix, worldMatrix, viewInverseMatrix);
 	}
 
 	void SmileRasterShader::Unbind() const
@@ -39,7 +31,7 @@ namespace Smile
 
 	void SmileRasterShader::UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix)
 	{
-		m_Matrices.insert(std::make_pair(sementicName, matrix));
+		m_pSmileRasterContext->GetDeviceContext()->UploadMat4(sementicName, matrix);
 	}
 
 	void SmileRasterShader::UploadMat4Array(const std::string& sementicName, const std::vector<DirectX::XMFLOAT4X4>& matArray)

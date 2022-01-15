@@ -15,11 +15,11 @@ namespace Smile
 
 			if (pixelIndex < (framebuffer.Width * framebuffer.Height))
 			{
-				if (framebuffer.d_Depthbuffer[pixelIndex] < FLT_MAX)
+				if (framebuffer.d_DepthBuffer[pixelIndex] < FLT_MAX)
 				{
-					framebuffer.d_Colorbuffer[pixelIndex * framebuffer.ColorChannelCount] = framebuffer.d_PixelData[pixelIndex].Color.b * 255.f;
-					framebuffer.d_Colorbuffer[pixelIndex * framebuffer.ColorChannelCount + 1] = framebuffer.d_PixelData[pixelIndex].Color.g * 255.f;
-					framebuffer.d_Colorbuffer[pixelIndex * framebuffer.ColorChannelCount + 2] = framebuffer.d_PixelData[pixelIndex].Color.r * 255.f;
+					framebuffer.d_ColorBuffer[pixelIndex * framebuffer.ColorChannelCount] = framebuffer.d_PixelData[pixelIndex].Color.b * 255.f;
+					framebuffer.d_ColorBuffer[pixelIndex * framebuffer.ColorChannelCount + 1] = framebuffer.d_PixelData[pixelIndex].Color.g * 255.f;
+					framebuffer.d_ColorBuffer[pixelIndex * framebuffer.ColorChannelCount + 2] = framebuffer.d_PixelData[pixelIndex].Color.r * 255.f;
 				}
 			}
 		}

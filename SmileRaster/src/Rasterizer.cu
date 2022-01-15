@@ -3,6 +3,7 @@
 #include "Utils.cuh"
 
 // Pipeline
+#include "Pipeline/InputAssembler.cu"
 #include "Pipeline/VertexShader.cu"
 #include "Pipeline/PrimitiveAssembler.cu"
 #include "Pipeline/BinRasterizer.cu"
@@ -47,9 +48,13 @@ namespace Smile
 			uint32_t vertexCount = static_cast<uint32_t>(ceil(m_pVertexBuffer->ByteWidth / static_cast<float>(m_VertexStride)));
 			dim3 blockSize = { m_RenderConfig.BlockSize, m_RenderConfig.BlockSize };
 
-			// VertexShader
+			// Input assembler
 			dim3 gridSize = static_cast<uint32_t>(ceil(vertexCount / static_cast<float>(m_RenderConfig.BlockSize)));
-			VertexShaderKernel << <gridSize, blockSize >> > (static_cast<VertexShaderInput*>(m_pVertexBuffer->d_Vertices), m_pVertexBuffer->d_VertexShaderOutput, m_ShaderData, vertexCount);
+			InputAssemblerKernel << <gridSize, blockSize >> > (m_pVertexBuffer->d_Vertices, vertexCount, m_pVertexBuffer->d_VertexShaderInput, m_VertexStride);
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());
+
+			// VertexShader
+			VertexShaderKernel << <gridSize, blockSize >> > (m_pVertexBuffer->d_VertexShaderInput, m_pVertexBuffer->d_VertexShaderOutput, vertexCount, m_Shader.Mat4Data["ViewProjection"], m_Shader.Mat4Data["World"]);
 			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
 			// Primitive assembler	
@@ -78,7 +83,7 @@ namespace Smile
 			// Fine Rasterizer
 			gridSize = { static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeX / static_cast<float>(m_RenderConfig.BlockSize))),
 				static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeY / static_cast<float>(m_RenderConfig.BlockSize))) };
-			FineRasterizerKernel << <gridSize, blockSize >> > (d_Bins, d_PrimitiveBuffer, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_BinWidth, m_BinHeight, m_pFramebuffer->d_PixelData, m_pFramebuffer->d_Depthbuffer, m_pFramebuffer->Width);
+			FineRasterizerKernel << <gridSize, blockSize >> > (d_Bins, d_PrimitiveBuffer, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_BinWidth, m_BinHeight, m_pFramebuffer->d_PixelData, m_pFramebuffer->d_DepthBuffer, m_pFramebuffer->Width);
 			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
 			/*Bin* pBins{ (Bin*)malloc(sizeof(Bin) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y) };
@@ -112,8 +117,9 @@ namespace Smile
 			PixelShaderKernel << <gridSize, blockSize >> > (*m_pFramebuffer);
 			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
+			// Copy data to host buffer
 			size_t size = sizeof(uint8_t) * m_pFramebuffer->ColorChannelCount * m_pFramebuffer->Width * m_pFramebuffer->Height;
-			GPU_ERROR_CHECK(cudaMemcpy(m_pFramebuffer->pOutput, m_pFramebuffer->d_Colorbuffer, size, cudaMemcpyDeviceToHost));
+			GPU_ERROR_CHECK(cudaMemcpy(m_pFramebuffer->pHostOutput, m_pFramebuffer->d_ColorBuffer, size, cudaMemcpyDeviceToHost));
 		}
 	}
 }

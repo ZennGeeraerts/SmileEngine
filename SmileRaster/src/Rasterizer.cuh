@@ -28,7 +28,7 @@ namespace Smile
 			uint32_t m_VertexStride = 0;
 			IndexBuffer* m_pIndexBuffer = nullptr;
 			Triangle* d_PrimitiveBuffer = nullptr;
-			ShaderData m_ShaderData{};
+			Shader m_Shader{};
 
 			Bin* d_Bins = nullptr;
 			uint32_t m_BinWidth{};

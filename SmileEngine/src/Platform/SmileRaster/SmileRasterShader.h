@@ -8,12 +8,12 @@ namespace Smile
 	class SmileRasterShader final : public Shader
 	{
 	public:
-		SmileRasterShader();
+		SmileRasterShader(const std::string& assetFile, const BufferLayout& layout);
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
-		virtual const std::string& GetName() const override { return "SmileRasterShader"; }
+		virtual const std::string& GetName() const override { return m_Name; }
 
 		virtual void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& matrix) override;
 		virtual void UploadMat4Array(const std::string& sementicName, const std::vector<DirectX::XMFLOAT4X4>& matArray) override;
@@ -25,11 +25,7 @@ namespace Smile
 
 	private:
 		SmileRasterContext* m_pSmileRasterContext = nullptr;
-
-		mutable std::unordered_map<std::string, DirectX::XMFLOAT4X4> m_Matrices{};
-		DirectX::XMFLOAT4X4 m_ViewProjectionMatrix{};
-		DirectX::XMFLOAT4X4 m_WorldMatrix{};
-		DirectX::XMFLOAT4X4 m_ViewInverseMatrix{};
+		std::string m_Name{};
 	};
 }
 
