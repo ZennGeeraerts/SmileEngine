@@ -3,6 +3,7 @@
 
 #include "Renderer.h"
 #include "Platform/DirectX11/DirectX11Texture.h"
+#include "Platform/SmileRaster/SmileRasterTexture.h"
 
 namespace Smile
 {
@@ -19,7 +20,7 @@ namespace Smile
 			return CreateRef<DirectX11Texture2D>(filePath);
 
 		case RendererAPI::API::eSmileRaster:
-			return nullptr;
+			return CreateRef<SmileRasterTexture2D>(filePath);
 #endif
 		}
 

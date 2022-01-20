@@ -20,6 +20,8 @@ private:
 	Smile::Entity m_CameraEntity;
 	float m_CameraMoveSpeed = 5.f;
 	float m_CameraRotationSpeed = 180.f;
+
+	Smile::Entity m_ModelEntity;
 };
 
 class MainGame final : public Smile::SmileGame

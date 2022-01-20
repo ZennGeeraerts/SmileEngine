@@ -19,7 +19,9 @@ namespace Smile
 				glm::mat4 worldViewProjectionMatrix = viewProjection * world;
 
 				output.Position = worldViewProjectionMatrix * glm::vec4{ input.Position, 1.f };
-				output.Color = input.Color;
+				output.Normal = input.Normal;
+				output.Tangent = input.Tangent;
+				output.TexCoord = input.TexCoord;
 
 				output.Position.x /= output.Position.w;
 				output.Position.y /= output.Position.w;

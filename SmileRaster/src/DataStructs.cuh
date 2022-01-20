@@ -8,38 +8,46 @@ namespace Smile
 {
 	namespace Raster
 	{
-		/*struct InputDescriptor final
-		{
-			uint32_t Size{};
-			char Name[256]{};
-		};
-
-		struct InputLayout final
-		{
-			InputDescriptor Descriptors[16]{};
-			uint32_t DescriptorCount{ 0 };
-		};*/
-
 		struct VertexShaderInput final
 		{
 			glm::vec3 Position{};
-			glm::vec3 Color{};
+			glm::vec3 Normal{};
+			glm::vec2 TexCoord{};
+			glm::vec3 Tangent{};
+			glm::vec4 BlendIndices{};
+			glm::vec4 BlendWeights{};
 		};
 
 		struct VertexShaderOutput final
 		{
 			glm::vec4 Position{};
-			glm::vec3 Color{};
+			glm::vec3 Normal{};
+			glm::vec2 TexCoord{};
+			glm::vec3 Tangent{};
+			glm::vec4 BlendIndices{};
+			glm::vec4 BlendWeights{};
 		};
 
 		using InterpolatedAttributes = VertexShaderOutput;
 
+		struct Texture2D final
+		{
+			uint8_t* d_Pixels = nullptr;
+			uint32_t Width{};
+			uint32_t Height{};
+		};
+
 		struct Shader final
 		{
 			std::unordered_map<std::string, glm::mat4> Mat4Data{
-			{ "ViewProjection", glm::mat4{ 1.0f } },
-			{ "World", glm::mat4{ 1.0f } },
-			{ "ViewInverse", glm::mat4{ 1.0f } } };
+				{ "ViewProjection", glm::mat4{ 1.0f } },
+				{ "World", glm::mat4{ 1.0f } },
+				{ "ViewInverse", glm::mat4{ 1.0f } } 
+			};
+
+			std::unordered_map<std::string, Texture2D> Texture2DData{ 
+				{ "AlbedoMap", {} } 
+			};
 		};
 
 		enum class ColorbufferFormat
@@ -89,7 +97,8 @@ namespace Smile
 
 		struct Bin final
 		{
-			uint32_t Queue[1024]{};
+			#define SMR_BIN_QUEUE_SIZE 4096
+			uint32_t Queue[SMR_BIN_QUEUE_SIZE]{};
 			uint32_t QueueSize = 0;
 		};
 	}

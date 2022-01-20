@@ -12,7 +12,7 @@ namespace Smile
 			__device__ void Push(Bin& bin, uint32_t triangleIndex)
 			{
 				int writeID = atomicAdd(&bin.QueueSize, 1);
-				if (writeID < 1024)
+				if (writeID < SMR_BIN_QUEUE_SIZE)
 				{
 					bin.Queue[writeID] = triangleIndex;
 				}

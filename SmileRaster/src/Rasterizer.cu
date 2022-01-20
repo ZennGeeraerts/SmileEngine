@@ -86,15 +86,17 @@ namespace Smile
 			FineRasterizerKernel << <gridSize, blockSize >> > (d_Bins, d_PrimitiveBuffer, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_BinWidth, m_BinHeight, m_pFramebuffer->d_PixelData, m_pFramebuffer->d_DepthBuffer, m_pFramebuffer->Width);
 			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
-			/*Bin* pBins{ (Bin*)malloc(sizeof(Bin) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y) };
-			cudaMemcpy(pBins, d_Bins, sizeof(Bin) * SMR_BIN_COUNT_X * SMR_BIN_COUNT_Y, cudaMemcpyDeviceToHost);
-			VS_OUTPUT* pPixelData = (VS_OUTPUT*)malloc(sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height);
-			float* pDepthBuffer = (float*)malloc(sizeof(float) * m_DCData.Width * m_DCData.Height);
-			cudaMemcpy(pDepthBuffer, d_DepthBuffer, sizeof(float) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost);
-			FineRasterizer(pBins, SMR_BIN_COUNT_X, SMR_BIN_COUNT_Y, binWidth, binHeight, pPixelData, pDepthBuffer, m_DCData.Width);
-			free(pDepthBuffer);
+			/*Bin* pBins = (Bin*)malloc(sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.BinSizeY);
+			cudaMemcpy(pBins, d_Bins, sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.BinSizeY, cudaMemcpyDeviceToHost);
+			Triangle* pTriangles = (Triangle*)malloc(sizeof(Triangle) * primitiveCount);
+			cudaMemcpy(pTriangles, d_PrimitiveBuffer, sizeof(Triangle) * primitiveCount, cudaMemcpyDeviceToHost);
+			InterpolatedAttributes* pPixelData = (InterpolatedAttributes*)malloc(sizeof(InterpolatedAttributes) * m_pFramebuffer->Width * m_pFramebuffer->Height);
+			float* pDepthBuffer = (float*)malloc(sizeof(float) * m_pFramebuffer->Width * m_pFramebuffer->Height);
+			FineRasterizer(pBins, pTriangles, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_BinWidth, m_BinHeight, pPixelData, pDepthBuffer, m_pFramebuffer->Width);
 			free(pBins);
-			free(pPixelData);*/
+			free(pTriangles);
+			free(pPixelData);
+			free(pDepthBuffer);*/
 
 			/*VS_OUTPUT* pOutput = (VS_OUTPUT*)malloc(sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height);
 			GPU_ERROR_CHECK(cudaMemcpy(pOutput, d_PixelData, sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost));
@@ -114,7 +116,7 @@ namespace Smile
 			// Pixel Shader
 			gridSize = { static_cast<uint32_t>(ceil(m_pFramebuffer->Width / static_cast<float>(m_RenderConfig.BlockSize))),
 								static_cast<uint32_t>(ceil(m_pFramebuffer->Height / static_cast<float>(m_RenderConfig.BlockSize))) };
-			PixelShaderKernel << <gridSize, blockSize >> > (*m_pFramebuffer);
+			PixelShaderKernel << <gridSize, blockSize >> > (*m_pFramebuffer, m_Shader.Texture2DData["AlbedoMap"]);
 			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
 			// Copy data to host buffer

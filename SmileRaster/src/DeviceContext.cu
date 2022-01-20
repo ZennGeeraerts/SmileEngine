@@ -119,9 +119,28 @@ namespace Smile
 			return SMR_INVALID_BUFFER_ID;
 		}
 
+		TextureID DeviceContext::CreateTexture2D(uint8_t* pPixels, uint32_t width, uint32_t height)
+		{
+			if (m_TextureCount < SMR_MAX_TEXTURE_COUNT)
+			{
+				Texture2D& texture = m_Textures[m_TextureCount];
+				texture.Width = width;
+				texture.Height = height;
+
+				size_t size = sizeof(uint8_t) * 4 * width * height;
+				GPU_ERROR_CHECK(cudaMalloc(&texture.d_Pixels, size));
+				GPU_ERROR_CHECK(cudaMemcpy(texture.d_Pixels, pPixels, size, cudaMemcpyHostToDevice));
+
+				++m_TextureCount;
+				return m_TextureCount - 1;
+			}
+
+			return SMR_INVALID_TEXTURE_ID;
+		}
+
 		bool DeviceContext::BindFramebuffer(BufferID id)
 		{
-			if ((id < static_cast<int>(m_FramebufferCount)) && (id >= SMR_INVALID_BUFFER_ID))
+			if ((id < static_cast<int>(m_FramebufferCount)) && (id > SMR_INVALID_BUFFER_ID))
 			{
 				m_pRasterizer->SetFramebuffer(&m_Framebuffers[id]);
 				return true;
@@ -133,7 +152,7 @@ namespace Smile
 
 		bool DeviceContext::BindVertexBuffer(BufferID id, uint32_t stride)
 		{
-			if ((id < static_cast<int>(m_VertexBufferCount)) && (id >= SMR_INVALID_BUFFER_ID))
+			if ((id < static_cast<int>(m_VertexBufferCount)) && (id > SMR_INVALID_BUFFER_ID))
 			{
 				m_pRasterizer->m_pVertexBuffer = &m_VertexBuffers[id];
 				m_pRasterizer->m_VertexStride = stride;
@@ -146,7 +165,7 @@ namespace Smile
 
 		bool DeviceContext::BindIndexBuffer(BufferID id)
 		{
-			if ((id < static_cast<int>(m_IndexBufferCount)) && (id >= SMR_INVALID_BUFFER_ID))
+			if ((id < static_cast<int>(m_IndexBufferCount)) && (id > SMR_INVALID_BUFFER_ID))
 			{
 				m_pRasterizer->m_pIndexBuffer = &m_IndexBuffers[id];
 				m_pRasterizer->d_PrimitiveBuffer = d_PrimitiveBuffers[id];
@@ -235,6 +254,16 @@ namespace Smile
 			auto it = m_pRasterizer->m_Shader.Mat4Data.find(sementicName);
 			if (it != m_pRasterizer->m_Shader.Mat4Data.end())
 				(*it).second = ConvertToGLMMat(mat);
+		}
+
+		void DeviceContext::UploadTexture2D(const std::string& sementicName, TextureID texture)
+		{
+			auto it = m_pRasterizer->m_Shader.Texture2DData.find(sementicName);
+			if ((it != m_pRasterizer->m_Shader.Texture2DData.end()) 
+				&& (texture > SMR_INVALID_TEXTURE_ID) && (texture < static_cast<int>(m_TextureCount)))
+			{
+				(*it).second = m_Textures[texture];
+			}
 		}
 	}
 }

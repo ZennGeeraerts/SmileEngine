@@ -40,7 +40,7 @@ void ExampleLayer::OnAttach()
 		0, 1, 2
 	};*/
 
-	float vertices[]
+	/*float vertices[]
 	{
 		-0.5f, 0.5f, -0.5f,		0, 0, 1,
 		0.5f, 0.5f, -0.5f,		0, 1, 0,
@@ -50,9 +50,9 @@ void ExampleLayer::OnAttach()
 		0.5f, 0.5f, 0.5f,		1, 0, 0,
 		-0.5f, -0.5f, 0.5f,		0, 1, 0,
 		0.5f, -0.5f, 0.5f,		0, 1, 1
-	};
+	};*/
 
-	/*float vertices[]
+	float vertices[]
 	{
 		-0.5f, 0.5f, -0.5f,
 		0.5f, 0.5f, -0.5f,
@@ -62,12 +62,12 @@ void ExampleLayer::OnAttach()
 		0.5f, 0.5f, 0.5f,
 		-0.5f, -0.5f, 0.5f,
 		0.5f, -0.5f, 0.5f
-	};*/
+	};
 
 	Smile::BufferLayout bufferLayout
 	{
-		{ Smile::ShaderDataType::eFloat3, "Position" },
-		{ Smile::ShaderDataType::eFloat3, "Color" }
+		{ Smile::ShaderDataType::eFloat3, "Position" }/*,
+		{ Smile::ShaderDataType::eFloat3, "TexCoord" }*/
 	};
 
 	uint32_t indices[]
@@ -111,20 +111,23 @@ void ExampleLayer::OnAttach()
 	auto& camera = m_CameraEntity.AddComponent<Smile::CameraComponent>();
 	camera.bPrimary = true;
 
-	auto cube = m_pActiveScene->CreateEntity("Cube");
+	/*auto cube = m_pActiveScene->CreateEntity("Cube");
 	auto& meshRendererComp = cube.AddComponent<Smile::MeshRendererComponent>();
 	meshRendererComp.pVertexBuffer = pVertexBuffer;
 	meshRendererComp.pIndexBuffer = pIndexBuffer;
 	meshRendererComp.pShader = pShader;
 
-	cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, 0, 5 };
-	cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
+	cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
+	cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
-	/*auto pMaterial = Smile::CreateRef<Smile::Material>();
+	auto pMaterial = Smile::CreateRef<Smile::Material>();
+	Smile::Ref<Smile::Texture2D> pAlbedo = Smile::Texture2D::Create("Resources/Textures/tuktuk.png");
+	pMaterial->SetAlbedo(pAlbedo);
 
-	auto model = m_pActiveScene->CreateEntity("Model");
-	auto& meshComponent = model.AddComponent<Smile::MeshComponent>("Resources/Meshes/nanosuit.obj", pMaterial);
-	model.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, 0, 5 };*/
+	m_ModelEntity = m_pActiveScene->CreateEntity("Model");
+	auto& meshComponent = m_ModelEntity.AddComponent<Smile::MeshComponent>("Resources/Meshes/tuktuk.obj", pMaterial);
+	m_ModelEntity.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, -2, 10 };
+	m_ModelEntity.GetComponent<Smile::TransformComponent>().Scale = DirectX::XMFLOAT3{ 0.5f, 0.5f, 0.5f };
 
 	m_pActiveScene->OnViewportResize(1280, 720);
 }
@@ -170,6 +173,8 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	transform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
 	transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
 	transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
+
+	//m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation.y += 1.f * deltaTime;
 
 	Smile::Logger::LogInfo("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
 

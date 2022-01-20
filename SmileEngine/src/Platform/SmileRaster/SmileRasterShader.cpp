@@ -51,7 +51,8 @@ namespace Smile
 
 	void SmileRasterShader::UploadTexture2D(const std::string& sementicName, const Ref<Texture2D>& pTexture2D)
 	{
-
+		Raster::TextureID textureID = reinterpret_cast<uint32_t>(pTexture2D->GetData());
+		m_pSmileRasterContext->GetDeviceContext()->UploadTexture2D(sementicName, textureID);
 	}
 
 	void SmileRasterShader::UploadBool(const std::string& sementicName, bool value)

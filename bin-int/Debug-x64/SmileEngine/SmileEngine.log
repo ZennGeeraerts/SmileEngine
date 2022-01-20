@@ -1,4 +1,17 @@
 ﻿  SmileRasterBuffer.cpp
+  SmileRasterContext.cpp
+  SmileRasterRendererAPI.cpp
+  SmileRasterShader.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.cpp(54,1): warning C4311: 'reinterpret_cast': pointer truncation from 'void *' to 'uint32_t'
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.cpp(54,1): warning C4302: 'reinterpret_cast': truncation from 'void *' to 'uint32_t'
+  SmileRasterTexture.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(18,42): warning C4312: 'reinterpret_cast': conversion from 'const Smile::Raster::TextureID' to 'void *' of greater size
+  Buffer.cpp
+  RenderCommand.cpp
+  RenderingContext.cpp
+  Texture.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(18,42): warning C4312: 'reinterpret_cast': conversion from 'const Smile::Raster::TextureID' to 'void *' of greater size
+  Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

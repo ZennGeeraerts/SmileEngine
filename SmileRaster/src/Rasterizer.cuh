@@ -6,7 +6,7 @@ namespace Smile
 	{
 		struct RenderConfig final
 		{
-			uint32_t BlockSize = 8;
+			uint32_t BlockSize = 1;
 			uint32_t BinSizeX = 64;
 			uint32_t BinSizeY = 64;
 		};

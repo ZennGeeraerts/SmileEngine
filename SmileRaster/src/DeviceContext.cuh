@@ -6,8 +6,12 @@ namespace Smile
 	{
 		#define SMR_MAX_BUFFER_COUNT 10
 		#define SMR_INVALID_BUFFER_ID -1
+		
+		#define SMR_MAX_TEXTURE_COUNT 7
+		#define SMR_INVALID_TEXTURE_ID -1
 
 		typedef int BufferID;
+		typedef int TextureID;
 
 		class DeviceContext final
 		{
@@ -18,6 +22,7 @@ namespace Smile
 			BufferID CreateFramebuffer(uint8_t* pBuffer, uint32_t width, uint32_t height, ColorbufferFormat colorFormat);
 			BufferID CreateVertexBuffer(void* pVertices, uint32_t count, uint32_t byteWidth);
 			BufferID CreateIndexBuffer(uint32_t* pIndices, uint32_t count);
+			TextureID CreateTexture2D(uint8_t* pPixels, uint32_t width, uint32_t height);
 
 			bool BindFramebuffer(BufferID id);
 			bool BindVertexBuffer(BufferID id, uint32_t stride);
@@ -29,6 +34,7 @@ namespace Smile
 			void Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer);
 			
 			void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& mat);
+			void UploadTexture2D(const std::string& sementicName, TextureID texture);
 
 		private:
 			Rasterizer* m_pRasterizer = nullptr;
@@ -37,10 +43,12 @@ namespace Smile
 			VertexBuffer m_VertexBuffers[SMR_MAX_BUFFER_COUNT];
 			IndexBuffer m_IndexBuffers[SMR_MAX_BUFFER_COUNT];
 			Triangle* d_PrimitiveBuffers[SMR_MAX_BUFFER_COUNT];
-			
+			Texture2D m_Textures[SMR_MAX_TEXTURE_COUNT];
+
 			uint32_t m_FramebufferCount = 0;
 			uint32_t m_VertexBufferCount = 0;
 			uint32_t m_IndexBufferCount = 0;
+			uint32_t m_TextureCount = 0;
 		};
 	}
 }

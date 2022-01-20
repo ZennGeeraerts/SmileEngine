@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\SmileRaster\SmileRasterTexture.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterShader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\Bone.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\SmileRaster\SmileRasterTexture.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterShader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Animation\MeshAnimator.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Animation\Bone.cpp" />
