@@ -24,7 +24,7 @@ namespace Smile
 		m_pSmileRasterContext->m_BitmapOld = static_cast<HBITMAP>(SelectObject(m_pSmileRasterContext->m_HDC, m_pSmileRasterContext->m_Bitmap));
 		memset(m_pSmileRasterContext->m_pColorBuffer, 0, width * height * 3);
 
-		m_pSmileRasterContext->m_pDeviceContext->Resize(width, height, m_pSmileRasterContext->m_pColorBuffer);
+		m_pSmileRasterContext->m_pDeviceContext->Resize(m_pSmileRasterContext->m_Framebuffer, width, height, m_pSmileRasterContext->m_pColorBuffer);
 	}
 
 	void SmileRasterRendererAPI::SetClearColor(const DirectX::XMFLOAT4& color)

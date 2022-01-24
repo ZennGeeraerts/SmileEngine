@@ -2,7 +2,7 @@ float4x4 gWorld : WORLD;
 float4x4 gViewProjection : VIEWPROJECTION;
 float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 
-Texture2D gDiffuseMap : DIFFUSE;
+Texture2D gDiffuseMap : AlbedoMap;
 SamplerState SamLinear
 {
     Filter = MIN_MAG_MIP_LINEAR;

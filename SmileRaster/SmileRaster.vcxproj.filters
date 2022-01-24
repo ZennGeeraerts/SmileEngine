@@ -877,6 +877,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Rasterizer.cuh" />
+    <ClInclude Include="src\BinQueue.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\DeviceContext.cu" />
@@ -885,7 +886,6 @@
     <CudaCompile Include="src\Pipeline\PixelShader.cu" />
     <CudaCompile Include="src\Pipeline\PrimitiveAssembler.cu" />
     <CudaCompile Include="src\Pipeline\FineRasterizer.cu" />
-    <CudaCompile Include="src\BinQueue.cu" />
     <CudaCompile Include="src\Rasterizer.cu" />
     <CudaCompile Include="src\Pipeline\InputAssembler.cu" />
   </ItemGroup>

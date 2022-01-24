@@ -496,6 +496,7 @@
     <ClInclude Include="Libs\glm\vec3.hpp" />
     <ClInclude Include="Libs\glm\vec4.hpp" />
     <ClInclude Include="Libs\glm\vector_relational.hpp" />
+    <ClInclude Include="src\BinQueue.cuh" />
     <ClInclude Include="src\DataStructs.cuh" />
     <CudaCompile Include="src\DeviceContext.cu">
       <FileType>Document</FileType>
@@ -511,7 +512,6 @@
     <ClInclude Include="src\Rasterizer.cuh" />
     <ClInclude Include="src\Utils.cuh" />
     <CudaCompile Include="src\Pipeline\VertexShader.cu" />
-    <CudaCompile Include="src\BinQueue.cu" />
     <CudaCompile Include="src\Rasterizer.cu" />
   </ItemGroup>
   <ItemGroup>

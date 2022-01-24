@@ -11,10 +11,10 @@ namespace Smile
 		{
 			uint32_t index = blockIdx.x * blockDim.x + threadIdx.x;
 
-			if ((index < vertexBufferCount) && (vertexStride <= sizeof(VertexShaderInput)))
+			if (index < vertexBufferCount)
 			{
 				const void* d_DataLocation = (uint8_t*)d_Vertices + vertexStride * index;
-				memcpy(&d_VertexShaderInput[index], d_DataLocation, vertexStride);
+				memcpy(&d_VertexShaderInput[index], d_DataLocation, min(vertexStride, static_cast<uint32_t>(sizeof(VertexShaderInput))));
 			}
 		}
 	}

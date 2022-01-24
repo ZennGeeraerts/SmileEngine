@@ -216,26 +216,34 @@ namespace Smile
 			m_pRasterizer->Draw(indexCount / 3);
 		}
 
-		void DeviceContext::Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer)
+		void DeviceContext::Resize(BufferID framebufferID, uint32_t width, uint32_t height, uint8_t* pScreenBuffer)
 		{
-			// Update device context data
-			//m_DCData.Width = width;
-			//m_DCData.Height = height;
-			//m_DCData.pScreenBuffer = pScreenBuffer;
+			if ((framebufferID >= static_cast<int>(m_FramebufferCount)) || (framebufferID <= SMR_INVALID_BUFFER_ID))
+				return;
 
-			//// Reallocate the screen buffer in device memory
-			//GPU_ERROR_CHECK(cudaFree(d_ScreenBuffer));
-			//size_t size = sizeof(uint8_t) * m_DCData.ColorChannelCount * width * height;
-			//GPU_ERROR_CHECK(cudaMalloc(&d_ScreenBuffer, size));
-			//GPU_ERROR_CHECK(cudaMemcpy(d_ScreenBuffer, pScreenBuffer, size, cudaMemcpyHostToDevice));
+			Framebuffer& framebuffer = m_Framebuffers[framebufferID];
 
-			//// Reallocate the depth buffer in device memory
-			//GPU_ERROR_CHECK(cudaFree(d_DepthBuffer));
-			//size = sizeof(float) * width * height;
-			//GPU_ERROR_CHECK(cudaMalloc(&d_DepthBuffer, size));
+			GPU_ERROR_CHECK(cudaFree(framebuffer.d_ColorBuffer));
+			GPU_ERROR_CHECK(cudaFree(framebuffer.d_DepthBuffer));
+			GPU_ERROR_CHECK(cudaFree(framebuffer.d_PixelData));
 
-			//GPU_ERROR_CHECK(cudaFree(d_PixelLock));
-			//GPU_ERROR_CHECK(cudaMalloc(&d_PixelLock, sizeof(uint32_t) * width * height * m_DCData.ColorChannelCount));
+			framebuffer.Width = width;
+			framebuffer.Height = height;
+			framebuffer.pHostOutput = pScreenBuffer;
+
+			size_t size = sizeof(uint8_t) * framebuffer.ColorChannelCount * width * height;
+			GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_ColorBuffer, size));
+
+			size = sizeof(float) * width * height;
+			GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_DepthBuffer, size));
+
+			size = sizeof(InterpolatedAttributes) * width * height;
+			GPU_ERROR_CHECK(cudaMalloc(&framebuffer.d_PixelData, size));
+
+			m_pRasterizer->m_BinWidth = { static_cast<uint32_t>(ceil(static_cast<float>(width) / m_pRasterizer->m_RenderConfig.BinSizeX)) };
+			m_pRasterizer->m_BinHeight = { static_cast<uint32_t>(ceil(static_cast<float>(height) / m_pRasterizer->m_RenderConfig.BinSizeY)) };
+			m_pRasterizer->m_TileWidth = m_pRasterizer->m_BinWidth / m_pRasterizer->m_RenderConfig.TileSizeX;
+			m_pRasterizer->m_TileHeight = m_pRasterizer->m_BinWidth / m_pRasterizer->m_RenderConfig.TileSizeY;
 		}
 
 		//void DeviceContext::SetShaderData(const DirectX::XMFLOAT4X4& viewProjection, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4X4& viewInverse)

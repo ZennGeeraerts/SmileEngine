@@ -21,11 +21,15 @@ namespace Smile
 		{
 			size_t size{ sizeof(Bin) * renderCfg.BinSizeX * renderCfg.BinSizeY };
 			GPU_ERROR_CHECK(cudaMalloc(&d_Bins, size));
+
+			size = sizeof(Bin) * renderCfg.BinSizeX * renderCfg.TileSizeX * renderCfg.BinSizeX * renderCfg.TileSizeY;
+			GPU_ERROR_CHECK(cudaMalloc(&d_Tiles, size));
 		}
 
 		Rasterizer::~Rasterizer()
 		{
 			GPU_ERROR_CHECK(cudaFree(d_Bins));
+			GPU_ERROR_CHECK(cudaFree(d_Tiles));
 		}
 
 		void Rasterizer::SetFramebuffer(Framebuffer* pFramebuffer)
@@ -34,10 +38,23 @@ namespace Smile
 			{
 				m_BinWidth = { static_cast<uint32_t>(ceil(static_cast<float>(pFramebuffer->Width) / m_RenderConfig.BinSizeX)) };
 				m_BinHeight = { static_cast<uint32_t>(ceil(static_cast<float>(pFramebuffer->Height) / m_RenderConfig.BinSizeY)) };
+				m_TileWidth = m_BinWidth / m_RenderConfig.TileSizeX;
+				m_TileHeight = m_BinWidth / m_RenderConfig.TileSizeY;
 			}
 
 			m_pFramebuffer = pFramebuffer;
 		}
+
+		/*__global__ void ClearBinsKernel(Bin* d_Bins, uint32_t binCountX, uint32_t binCountY)
+		{
+			uint32_t binX = (blockIdx.x * blockDim.x) + threadIdx.x;
+			uint32_t binY = (blockIdx.y * blockDim.y) + threadIdx.y;
+
+			if ((binX < binCountX) && (binY < binCountY))
+			{
+				d_Bins[binY * binCountX + binCountY].QueueSize = 0;
+			}
+		}*/
 
 		void Rasterizer::Draw(uint32_t primitiveCount)
 		{
@@ -80,36 +97,56 @@ namespace Smile
 			}
 			free(pBins);*/
 
+			// Coarse Rasterizer
+			/*gridSize = { static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeX / static_cast<float>(m_RenderConfig.BlockSize))),
+			static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeY / static_cast<float>(m_RenderConfig.BlockSize))) };
+			CoarseRasterizerKernel << <gridSize, blockSize >> > (d_Bins, d_Tiles, d_PrimitiveBuffer, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_RenderConfig.TileSizeX, m_RenderConfig.TileSizeY, m_TileWidth, m_TileHeight);
+			GPU_ERROR_CHECK(cudaDeviceSynchronize());*/
+
+			/*Bin* pTiles = (Bin*)malloc(sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.TileSizeX * m_RenderConfig.BinSizeY * m_RenderConfig.TileSizeY);
+			cudaMemcpy(pTiles, d_Tiles, sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.TileSizeX * m_RenderConfig.BinSizeY * m_RenderConfig.TileSizeY, cudaMemcpyDeviceToHost);
+			for (uint32_t y{}; y < m_RenderConfig.BinSizeY; ++y)
+			{
+				for (uint32_t x{}; x < m_RenderConfig.BinSizeX; ++x)
+				{
+					std::cout << pTiles[y * 4 * (m_RenderConfig.BinSizeX * m_RenderConfig.TileSizeX) + x * 4].QueueSize / sizeof(unsigned long long int);
+				}
+
+				std::cout << "\n";
+			}
+			free(pTiles);*/
+
 			// Fine Rasterizer
-			gridSize = { static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeX / static_cast<float>(m_RenderConfig.BlockSize))),
-				static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeY / static_cast<float>(m_RenderConfig.BlockSize))) };
-			FineRasterizerKernel << <gridSize, blockSize >> > (d_Bins, d_PrimitiveBuffer, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_BinWidth, m_BinHeight, m_pFramebuffer->d_PixelData, m_pFramebuffer->d_DepthBuffer, m_pFramebuffer->Width);
+			gridSize = { static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeX /** m_RenderConfig.TileSizeX*/ / static_cast<float>(m_RenderConfig.BlockSize))),
+				static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeY /** m_RenderConfig.TileSizeY*/ / static_cast<float>(m_RenderConfig.BlockSize))) };
+			FineRasterizerKernel << <gridSize, blockSize >> > (d_Bins, d_PrimitiveBuffer, m_RenderConfig.BinSizeX/* * m_RenderConfig.TileSizeX*/, m_RenderConfig.BinSizeY /** m_RenderConfig.TileSizeY*/, m_BinWidth, m_BinHeight, m_pFramebuffer->d_PixelData, m_pFramebuffer->d_DepthBuffer, m_pFramebuffer->Width);
 			GPU_ERROR_CHECK(cudaDeviceSynchronize());
 
-			/*Bin* pBins = (Bin*)malloc(sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.BinSizeY);
-			cudaMemcpy(pBins, d_Bins, sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.BinSizeY, cudaMemcpyDeviceToHost);
+			/*gridSize = { static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeX / static_cast<float>(m_RenderConfig.BlockSize))),
+				static_cast<uint32_t>(ceil(m_RenderConfig.BinSizeY / static_cast<float>(m_RenderConfig.BlockSize))) };
+			ClearBinsKernel << <gridSize, blockSize >> > (d_Bins, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY);*/
+
+			/*Bin* pBins = (Bin*)malloc(sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.TileSizeX * m_RenderConfig.BinSizeY * m_RenderConfig.TileSizeY);
+			cudaMemcpy(pBins, d_Tiles, sizeof(Bin) * m_RenderConfig.BinSizeX * m_RenderConfig.TileSizeX * m_RenderConfig.BinSizeY * m_RenderConfig.TileSizeY, cudaMemcpyDeviceToHost);
 			Triangle* pTriangles = (Triangle*)malloc(sizeof(Triangle) * primitiveCount);
 			cudaMemcpy(pTriangles, d_PrimitiveBuffer, sizeof(Triangle) * primitiveCount, cudaMemcpyDeviceToHost);
 			InterpolatedAttributes* pPixelData = (InterpolatedAttributes*)malloc(sizeof(InterpolatedAttributes) * m_pFramebuffer->Width * m_pFramebuffer->Height);
 			float* pDepthBuffer = (float*)malloc(sizeof(float) * m_pFramebuffer->Width * m_pFramebuffer->Height);
-			FineRasterizer(pBins, pTriangles, m_RenderConfig.BinSizeX, m_RenderConfig.BinSizeY, m_BinWidth, m_BinHeight, pPixelData, pDepthBuffer, m_pFramebuffer->Width);
+			FineRasterizer(pBins, pTriangles, m_RenderConfig.BinSizeX * m_RenderConfig.TileSizeX, m_RenderConfig.BinSizeY * m_RenderConfig.TileSizeY, m_TileWidth, m_TileHeight, pPixelData, pDepthBuffer, m_pFramebuffer->Width);
 			free(pBins);
 			free(pTriangles);
 			free(pPixelData);
 			free(pDepthBuffer);*/
 
-			/*VS_OUTPUT* pOutput = (VS_OUTPUT*)malloc(sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height);
-			GPU_ERROR_CHECK(cudaMemcpy(pOutput, d_PixelData, sizeof(VS_OUTPUT) * m_DCData.Width * m_DCData.Height, cudaMemcpyDeviceToHost));
-			for (uint32_t y{}; y < m_DCData.Height / 10; ++y)
+			/*VertexShaderOutput* pOutput = (VertexShaderOutput*)malloc(sizeof(VertexShaderOutput) * m_pFramebuffer->Width * m_pFramebuffer->Height);
+			GPU_ERROR_CHECK(cudaMemcpy(pOutput, m_pFramebuffer->d_PixelData, sizeof(VertexShaderOutput) * m_pFramebuffer->Width * m_pFramebuffer->Height, cudaMemcpyDeviceToHost));
+			for (uint32_t y{}; y < m_pFramebuffer->Height; ++y)
 			{
-				for (uint32_t x{}; x < m_DCData.Width / 10; ++x)
+				for (uint32_t x{}; x < m_pFramebuffer->Width; ++x)
 				{
-					if (glm::length(pOutput[y * 10 * m_DCData.Width + x * 10].Color) > 0.0f)
-						std::cout << '1';
-					else
-						std::cout << '0';
+					if (glm::length(pOutput[y * m_pFramebuffer->Width + x].Normal) > 0.0f)
+						std::cout << pOutput[y * m_pFramebuffer->Width + x].Normal.x << ", " << pOutput[y * m_pFramebuffer->Width + x].Normal.y << ", " << pOutput[y * m_pFramebuffer->Width + x].Normal.z << '\n';
 				}
-				std::cout << '\n';
 			}
 			free(pOutput);*/
 

@@ -93,11 +93,14 @@ namespace Smile
 					VertexShaderOutput Vertex2;
 				};
 			};
+
+			glm::vec2 AABBMinPoint{};
+			glm::vec2 AABBMaxPoint{};
 		};
 
 		struct Bin final
 		{
-			#define SMR_BIN_QUEUE_SIZE 4096
+			#define SMR_BIN_QUEUE_SIZE 512
 			uint32_t Queue[SMR_BIN_QUEUE_SIZE]{};
 			uint32_t QueueSize = 0;
 		};

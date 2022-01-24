@@ -9,7 +9,7 @@ namespace Smile
 	{
 		namespace BinQueue
 		{
-			__device__ void Push(Bin& bin, uint32_t triangleIndex)
+			__device__ inline void Push(Bin& bin, uint32_t triangleIndex)
 			{
 				int writeID = atomicAdd(&bin.QueueSize, 1);
 				if (writeID < SMR_BIN_QUEUE_SIZE)
@@ -18,7 +18,7 @@ namespace Smile
 				}
 			}
 
-			__device__ void Clear(Bin& bin)
+			__device__ inline void Clear(Bin& bin)
 			{
 				atomicExch(&bin.QueueSize, 0);
 			}

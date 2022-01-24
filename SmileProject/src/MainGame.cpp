@@ -66,8 +66,9 @@ void ExampleLayer::OnAttach()
 
 	Smile::BufferLayout bufferLayout
 	{
-		{ Smile::ShaderDataType::eFloat3, "Position" }/*,
-		{ Smile::ShaderDataType::eFloat3, "TexCoord" }*/
+		{ Smile::ShaderDataType::eFloat3, "Position" },
+		{ Smile::ShaderDataType::eFloat3, "Normal" },
+		{ Smile::ShaderDataType::eFloat3, "TexCoord" }
 	};
 
 	uint32_t indices[]
@@ -103,7 +104,7 @@ void ExampleLayer::OnAttach()
 	Smile::Ref<Smile::IndexBuffer> pIndexBuffer{};
 	pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
 
-	Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosCol.fx", bufferLayout);
+	Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", bufferLayout);
 
 	m_pActiveScene.reset(new Smile::Scene{});
 
@@ -127,6 +128,7 @@ void ExampleLayer::OnAttach()
 	m_ModelEntity = m_pActiveScene->CreateEntity("Model");
 	auto& meshComponent = m_ModelEntity.AddComponent<Smile::MeshComponent>("Resources/Meshes/tuktuk.obj", pMaterial);
 	m_ModelEntity.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, -2, 10 };
+	m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 0.f, 180.f, 0.f };
 	m_ModelEntity.GetComponent<Smile::TransformComponent>().Scale = DirectX::XMFLOAT3{ 0.5f, 0.5f, 0.5f };
 
 	m_pActiveScene->OnViewportResize(1280, 720);
@@ -176,7 +178,12 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 
 	//m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation.y += 1.f * deltaTime;
 
-	Smile::Logger::LogInfo("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
+	m_PrintTimer += Smile::SmTime::GetInstance().GetDeltaTime();
+	if (m_PrintTimer >= 1.f)
+	{
+		m_PrintTimer = 0.f;
+		Smile::Logger::LogInfo("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
+	}
 
 	Smile::RenderCommand::Clear();
 	m_pActiveScene->OnUpdate(deltaTime);

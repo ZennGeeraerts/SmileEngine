@@ -18,11 +18,11 @@ namespace Smile
 
 		void FineRasterizer(Bin* pBins, const Triangle* pTriangles, uint32_t binCountX, uint32_t binCountY, uint32_t binWidth, uint32_t binHeight, VertexShaderOutput* pPixelData, float* pDepthBuffer, uint32_t width)
 		{
-			for (uint32_t binY{}; binY < binCountY; ++binY)
+			for (uint32_t binX{}; binX < binCountX; ++binX)
 			{
-				for (uint32_t binX{}; binX < binCountX; ++binX)
+				for (uint32_t binY{}; binY < binCountY; ++binY)
 				{
-					if ((binX <= binCountX) && (binY < binCountY))
+					if ((binX < binCountX) && (binY < binCountY))
 					{
 						Bin& bin{ pBins[binY * binCountX + binX] };
 
@@ -31,7 +31,7 @@ namespace Smile
 						uint32_t maxX = minX + binWidth;
 						uint32_t maxY = minY + binHeight;
 
-						bin.QueueSize = std::min(bin.QueueSize, 4096u);
+						bin.QueueSize = std::min(bin.QueueSize, static_cast<uint32_t>(SMR_BIN_QUEUE_SIZE));
 
 						for (uint32_t t{}; t < bin.QueueSize; ++t)
 						{
@@ -40,6 +40,15 @@ namespace Smile
 							const glm::vec3 a{ triangle.Vertex1.Position - triangle.Vertex0.Position };
 							const glm::vec3 b{ triangle.Vertex2.Position - triangle.Vertex1.Position };
 							const glm::vec3 c{ triangle.Vertex0.Position - triangle.Vertex2.Position };
+
+							/*glm::vec2 minPoint{};
+							glm::vec2 maxPoint{};
+							FindAABB2(triangle, minPoint, maxPoint);*/
+
+							/*minX = glm::max(static_cast<int>(floor(triangle.AABBMinPoint.x)), static_cast<int>(minX));
+							minY = glm::max(static_cast<int>(floor(triangle.AABBMinPoint.y)), static_cast<int>(minY));*/
+							/*maxX = glm::clamp(static_cast<int>(ceil(maxPoint.x)), static_cast<int>(minX), static_cast<int>(maxX));
+							maxY = glm::clamp(static_cast<int>(ceil(maxPoint.y)), static_cast<int>(minY), static_cast<int>(maxY));*/
 
 							for (uint32_t y{ minY }; y < maxY; ++y)
 							{
@@ -66,7 +75,7 @@ namespace Smile
 										const float weight1{ crossC / area2 };
 										const float weight2{ crossA / area2 };
 
-										float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
+										const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
 
 										//atomicMin(reinterpret_cast<int*>(&pDepthBuffer[pixelIndex]), static_cast<int>(depthValue));
 										// Depth test
@@ -108,15 +117,24 @@ namespace Smile
 				uint32_t maxX = minX + binWidth;
 				uint32_t maxY = minY + binHeight;
 
-				bin.QueueSize = min(bin.QueueSize, 4096);
+				bin.QueueSize = min(bin.QueueSize, SMR_BIN_QUEUE_SIZE);
 
 				for (uint32_t t{}; t < bin.QueueSize; ++t)
 				{
 					const Triangle& triangle{ pTriangles[bin.Queue[t]] };
-
+					
 					const glm::vec3 a{ triangle.Vertex1.Position - triangle.Vertex0.Position };
 					const glm::vec3 b{ triangle.Vertex2.Position - triangle.Vertex1.Position };
 					const glm::vec3 c{ triangle.Vertex0.Position - triangle.Vertex2.Position };
+
+					/*glm::vec2 minPoint{};
+					glm::vec2 maxPoint{};
+					FindAABB2(triangle, minPoint, maxPoint);*/
+
+					/*minX = glm::max(static_cast<int>(floor(triangle.AABBMinPoint.x)), static_cast<int>(minX));
+					minY = glm::max(static_cast<int>(floor(triangle.AABBMinPoint.y)), static_cast<int>(minY));*/
+					/*maxX = glm::clamp(static_cast<int>(ceil(maxPoint.x)), static_cast<int>(minX), static_cast<int>(maxX));
+					maxY = glm::clamp(static_cast<int>(ceil(maxPoint.y)), static_cast<int>(minY), static_cast<int>(maxY));*/
 
 					for (uint32_t y{ minY }; y < maxY; ++y)
 					{
@@ -143,7 +161,7 @@ namespace Smile
 								const float weight1{ crossC / area2 };
 								const float weight2{ crossA / area2 };
 
-								float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
+								const float depthValue{ 1 / ((1 / triangle.Vertex0.Position.z * weight0) + (1 / triangle.Vertex1.Position.z * weight1) + (1 / triangle.Vertex2.Position.z * weight2)) };
 
 								//atomicMin(reinterpret_cast<int*>(&pDepthBuffer[pixelIndex]), static_cast<int>(depthValue));
 								// Depth test

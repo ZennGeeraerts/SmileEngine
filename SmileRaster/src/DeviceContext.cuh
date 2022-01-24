@@ -19,6 +19,11 @@ namespace Smile
 			DeviceContext(const RenderConfig& renderCfg);
 			~DeviceContext();
 
+			DeviceContext(const DeviceContext&) = delete;
+			DeviceContext(DeviceContext&&) = delete;
+			DeviceContext& operator=(const DeviceContext&) = delete;
+			DeviceContext& operator=(const DeviceContext&&) = delete;
+
 			BufferID CreateFramebuffer(uint8_t* pBuffer, uint32_t width, uint32_t height, ColorbufferFormat colorFormat);
 			BufferID CreateVertexBuffer(void* pVertices, uint32_t count, uint32_t byteWidth);
 			BufferID CreateIndexBuffer(uint32_t* pIndices, uint32_t count);
@@ -31,7 +36,7 @@ namespace Smile
 			void Clear(BufferID framebufferID, const DirectX::XMFLOAT4& clearColor, bool bClearDepth);
 			void DrawIndexed(uint32_t indexCount);
 
-			void Resize(uint32_t width, uint32_t height, uint8_t* pScreenBuffer);
+			void Resize(BufferID framebufferID, uint32_t width, uint32_t height, uint8_t* pScreenBuffer);
 			
 			void UploadMat4(const std::string& sementicName, const DirectX::XMFLOAT4X4& mat);
 			void UploadTexture2D(const std::string& sementicName, TextureID texture);

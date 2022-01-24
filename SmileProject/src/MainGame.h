@@ -22,6 +22,8 @@ private:
 	float m_CameraRotationSpeed = 180.f;
 
 	Smile::Entity m_ModelEntity;
+
+	float m_PrintTimer = 0.f;
 };
 
 class MainGame final : public Smile::SmileGame

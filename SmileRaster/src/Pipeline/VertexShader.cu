@@ -19,10 +19,11 @@ namespace Smile
 				glm::mat4 worldViewProjectionMatrix = viewProjection * world;
 
 				output.Position = worldViewProjectionMatrix * glm::vec4{ input.Position, 1.f };
-				output.Normal = input.Normal;
+				output.Normal = glm::normalize((glm::mat3)world * input.Normal);
 				output.Tangent = input.Tangent;
 				output.TexCoord = input.TexCoord;
 
+				// Perspective divide
 				output.Position.x /= output.Position.w;
 				output.Position.y /= output.Position.w;
 				output.Position.z /= output.Position.w;
