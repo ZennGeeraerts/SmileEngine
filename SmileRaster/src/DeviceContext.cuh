@@ -47,7 +47,7 @@ namespace Smile
 			Framebuffer m_Framebuffers[SMR_MAX_BUFFER_COUNT];
 			VertexBuffer m_VertexBuffers[SMR_MAX_BUFFER_COUNT];
 			IndexBuffer m_IndexBuffers[SMR_MAX_BUFFER_COUNT];
-			Triangle* d_PrimitiveBuffers[SMR_MAX_BUFFER_COUNT];
+			Triangle* m_DevPrimitiveBuffers[SMR_MAX_BUFFER_COUNT];
 			Texture2D m_Textures[SMR_MAX_TEXTURE_COUNT];
 
 			uint32_t m_FramebufferCount = 0;

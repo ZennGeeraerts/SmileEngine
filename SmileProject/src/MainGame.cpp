@@ -122,14 +122,14 @@ void ExampleLayer::OnAttach()
 	cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
 	auto pMaterial = Smile::CreateRef<Smile::Material>();
-	Smile::Ref<Smile::Texture2D> pAlbedo = Smile::Texture2D::Create("Resources/Textures/tuktuk.png");
+	Smile::Ref<Smile::Texture2D> pAlbedo = Smile::Texture2D::Create("Resources/Textures/uv_grid.png");
 	pMaterial->SetAlbedo(pAlbedo);
 
 	m_ModelEntity = m_pActiveScene->CreateEntity("Model");
-	auto& meshComponent = m_ModelEntity.AddComponent<Smile::MeshComponent>("Resources/Meshes/tuktuk.obj", pMaterial);
-	m_ModelEntity.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, -2, 10 };
-	m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 0.f, 180.f, 0.f };
-	m_ModelEntity.GetComponent<Smile::TransformComponent>().Scale = DirectX::XMFLOAT3{ 0.5f, 0.5f, 0.5f };
+	auto& meshComponent = m_ModelEntity.AddComponent<Smile::MeshComponent>("Resources/Meshes/bunny.obj", pMaterial);
+	m_ModelEntity.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
+	m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
+	m_ModelEntity.GetComponent<Smile::TransformComponent>().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
 	m_pActiveScene->OnViewportResize(1280, 720);
 }

@@ -888,6 +888,7 @@
     <CudaCompile Include="src\Pipeline\FineRasterizer.cu" />
     <CudaCompile Include="src\Rasterizer.cu" />
     <CudaCompile Include="src\Pipeline\InputAssembler.cu" />
+    <CudaCompile Include="src\Pipeline\RasterizerStage.cu" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\glm\detail\func_common.inl">

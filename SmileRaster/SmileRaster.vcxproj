@@ -511,6 +511,7 @@
     </CudaCompile>
     <ClInclude Include="src\Rasterizer.cuh" />
     <ClInclude Include="src\Utils.cuh" />
+    <CudaCompile Include="src\Pipeline\RasterizerStage.cu" />
     <CudaCompile Include="src\Pipeline\VertexShader.cu" />
     <CudaCompile Include="src\Rasterizer.cu" />
   </ItemGroup>

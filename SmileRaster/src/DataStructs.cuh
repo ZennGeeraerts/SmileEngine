@@ -32,7 +32,7 @@ namespace Smile
 
 		struct Texture2D final
 		{
-			uint8_t* d_Pixels = nullptr;
+			uint8_t* DevPixels = nullptr;
 			uint32_t Width{};
 			uint32_t Height{};
 		};
@@ -58,9 +58,9 @@ namespace Smile
 
 		struct Framebuffer final
 		{
-			uint8_t* d_ColorBuffer{ nullptr };
-			float* d_DepthBuffer{ nullptr };
-			InterpolatedAttributes* d_PixelData{ nullptr };
+			uint8_t* DevColorBuffer{ nullptr };
+			float* DevDepthBuffer{ nullptr };
+			InterpolatedAttributes* DevPixelData{ nullptr };
 
 			uint32_t Width = 0;
 			uint32_t Height = 0;
@@ -70,15 +70,15 @@ namespace Smile
 
 		struct VertexBuffer final
 		{
-			void* d_Vertices = nullptr;
-			VertexShaderInput* d_VertexShaderInput = nullptr;
-			VertexShaderOutput* d_VertexShaderOutput = nullptr;
+			void* DevVertices = nullptr;
+			VertexShaderInput* DevVertexShaderInput = nullptr;
+			VertexShaderOutput* DevVertexShaderOutput = nullptr;
 			uint32_t ByteWidth = 0;
 		};
 
 		struct IndexBuffer final
 		{
-			uint32_t* d_Indices = nullptr;
+			uint32_t* DevIndices = nullptr;
 		};
 
 		struct Triangle final

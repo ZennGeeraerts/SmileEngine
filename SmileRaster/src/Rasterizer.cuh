@@ -4,13 +4,18 @@ namespace Smile
 {
 	namespace Raster
 	{
+		enum class RasterizerTechnique
+		{
+			eObjectSpace,
+			eScreenSpace
+		};
+
 		struct RenderConfig final
 		{
-			uint32_t BlockSize = 1;
-			uint32_t BinSizeX = 128;
-			uint32_t BinSizeY = 128;
-			uint32_t TileSizeX = 2;
-			uint32_t TileSizeY = 2;
+			uint32_t BlockSize = 2;
+			uint32_t BinSizeX = 512;
+			uint32_t BinSizeY = 256;
+			RasterizerTechnique RasterTech = RasterizerTechnique::eScreenSpace;
 		};
 
 		class Rasterizer final
@@ -29,15 +34,12 @@ namespace Smile
 			VertexBuffer* m_pVertexBuffer = nullptr;
 			uint32_t m_VertexStride = 0;
 			IndexBuffer* m_pIndexBuffer = nullptr;
-			Triangle* d_PrimitiveBuffer = nullptr;
+			Triangle* m_DevPrimitiveBuffer = nullptr;
 			Shader m_Shader{};
 
-			Bin* d_Bins = nullptr;
-			Bin* d_Tiles = nullptr;
+			Bin* m_DevBins = nullptr;
 			uint32_t m_BinWidth{};
 			uint32_t m_BinHeight{};
-			uint32_t m_TileWidth{};
-			uint32_t m_TileHeight{};
 
 			friend class DeviceContext;
 		};

@@ -1,79 +1,17 @@
-﻿  smpch.cpp
-  SmileRasterTexture.cpp
-C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(18,42): warning C4312: 'reinterpret_cast': conversion from 'const Smile::Raster::TextureID' to 'void *' of greater size
+﻿  SmileRasterBuffer.cpp
+  SmileRasterContext.cpp
+  SmileRasterRendererAPI.cpp
   SmileRasterShader.cpp
 C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.cpp(54,1): warning C4311: 'reinterpret_cast': pointer truncation from 'void *' to 'uint32_t'
 C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.cpp(54,1): warning C4302: 'reinterpret_cast': truncation from 'void *' to 'uint32_t'
-  MeshAnimator.cpp
-  Bone.cpp
-  SmileRasterBuffer.cpp
-  SmileRasterRendererAPI.cpp
-  SmileRasterContext.cpp
-  Math.cpp
-  RenderingContext.cpp
-  SceneSerializer.cpp
-  SceneCamera.cpp
-  DirectX11Framebuffer.cpp
-C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11Framebuffer.cpp(226,137): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-  Framebuffer.cpp
-  Layer.cpp
-  LayerStack.cpp
-  Logger.cpp
-  MeshLoader.cpp
-C:\dev\SmileEngine\Libs\assimp\include\assimp\cimport.h(58,15): warning C4099: 'aiScene': type name first seen using 'class' now seen using 'struct'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.h(5): message : see declaration of 'aiScene'
-C:\dev\SmileEngine\Libs\assimp\include\assimp\mesh.h(559,1): warning C4099: 'aiMesh': type name first seen using 'class' now seen using 'struct'
-C:\dev\SmileEngine\Libs\assimp\include\assimp\mesh.h(558): message : see declaration of 'aiMesh'
-C:\dev\SmileEngine\Libs\assimp\include\assimp\scene.h(80,1): warning C4099: 'aiNode': type name first seen using 'class' now seen using 'struct'
-C:\dev\SmileEngine\Libs\assimp\include\assimp\scene.h(79): message : see declaration of 'aiNode'
-C:\dev\SmileEngine\Libs\assimp\include\assimp\scene.h(242,1): warning C4099: 'aiScene': type name first seen using 'class' now seen using 'struct'
-C:\dev\SmileEngine\Libs\assimp\include\assimp\scene.h(241): message : see declaration of 'aiScene'
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(162,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(167,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(172,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Core\MeshLoader.cpp(177,52): warning C4244: '=': conversion from 'uint32_t' to 'float', possible loss of data
-  SmileGame.cpp
-  Material.cpp
-  DirectX11Texture.cpp
-  Generating Code...
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Animation\Bone.cpp(61): warning C4715: 'Smile::Bone::GetTranslationIndex': not all control paths return a value
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Animation\Bone.cpp(96): warning C4715: 'Smile::Bone::GetRotationIndex': not all control paths return a value
-C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Animation\Bone.cpp(128): warning C4715: 'Smile::Bone::GetScaleIndex': not all control paths return a value
-  Compiling...
-  MeshFilter.cpp
-  PerspectiveCamera.cpp
-  PerspectiveCameraController.cpp
-  Scene.cpp
-  OrthographicCamera.cpp
-  DirectX11RendererAPI.cpp
+  SmileRasterTexture.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(18,42): warning C4312: 'reinterpret_cast': conversion from 'const Smile::Raster::TextureID' to 'void *' of greater size
+  Buffer.cpp
   RenderCommand.cpp
   RendererAPI.cpp
-  DirectX11Shader.cpp
-C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11Shader.cpp(76,74): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-  Shader.cpp
-  Renderer.cpp
-  DirectX11Buffer.cpp
-  ImGuiLayer.cpp
-  DirectX11Context.cpp
-  Buffer.cpp
-  VertexArray.cpp
-  SmTime.cpp
-  WindowsPlatformUtils.cpp
-  WindowsWindow.cpp
-  WindowsInput.cpp
-  Generating Code...
-  Compiling...
+  RenderingContext.cpp
   Texture.cpp
 C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(18,42): warning C4312: 'reinterpret_cast': conversion from 'const Smile::Raster::TextureID' to 'void *' of greater size
-  Utils.cpp
-  Generating Code...
-  ImGuizmo.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_dx11.cpp
-  imgui_impl_win32.cpp
-  imgui_widgets.cpp
   Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored

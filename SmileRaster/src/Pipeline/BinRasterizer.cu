@@ -17,13 +17,13 @@ namespace Smile
 			maxPoint.y = max(max(triangle.Vertex0.Position.y, triangle.Vertex1.Position.y), triangle.Vertex2.Position.y);
 		}
 
-		__global__ void BinRasterizerKernel(Triangle* pTriangles, uint32_t triangleCount, Bin* pBins, uint32_t binCountX, uint32_t binCountY, uint32_t binWidth, uint32_t binHeight, uint32_t width, uint32_t height)
+		__global__ void BinRasterizerKernel(Triangle* devTriangles, uint32_t triangleCount, Bin* devBins, uint32_t binCountX, uint32_t binCountY, uint32_t binWidth, uint32_t binHeight, uint32_t width, uint32_t height)
 		{
 			uint32_t triangleIndex = blockIdx.x * blockDim.x + threadIdx.x;
 
 			if (triangleIndex < triangleCount)
 			{
-				Triangle& triangle = pTriangles[triangleIndex];
+				Triangle& triangle = devTriangles[triangleIndex];
 
 				for (uint32_t i{}; i < 3; ++i)
 				{
@@ -58,7 +58,7 @@ namespace Smile
 				{
 					for (uint32_t binX{ minBinX }; binX < maxBinX; ++binX)
 					{
-						Bin& bin{ pBins[binY * binCountX + binX] };
+						Bin& bin{ devBins[binY * binCountX + binX] };
 						BinQueue::Push(bin, triangleIndex);
 					}
 				}

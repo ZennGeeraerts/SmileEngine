@@ -1,7 +1,13 @@
 ﻿  MainGame.cpp
      Creating library C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.lib and object C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exp
-SmileRaster.lib(DeviceContext.cu.obj) : error LNK2019: unresolved external symbol "public: __cdecl Smile::Raster::Rasterizer::Rasterizer(struct Smile::Raster::RenderConfig const &)" (??0Rasterizer@Raster@Smile@@QEAA@AEBURenderConfig@12@@Z) referenced in function "public: __cdecl Smile::Raster::DeviceContext::DeviceContext(struct Smile::Raster::RenderConfig const &)" (??0DeviceContext@Raster@Smile@@QEAA@AEBURenderConfig@12@@Z)
-SmileRaster.lib(DeviceContext.cu.obj) : error LNK2019: unresolved external symbol "public: __cdecl Smile::Raster::Rasterizer::~Rasterizer(void)" (??1Rasterizer@Raster@Smile@@QEAA@XZ) referenced in function "public: void * __cdecl Smile::Raster::Rasterizer::`scalar deleting destructor'(unsigned int)" (??_GRasterizer@Raster@Smile@@QEAAPEAXI@Z)
-SmileRaster.lib(DeviceContext.cu.obj) : error LNK2019: unresolved external symbol "public: void __cdecl Smile::Raster::Rasterizer::SetFramebuffer(struct Smile::Raster::Framebuffer *)" (?SetFramebuffer@Rasterizer@Raster@Smile@@QEAAXPEAUFramebuffer@23@@Z) referenced in function "public: bool __cdecl Smile::Raster::DeviceContext::BindFramebuffer(int)" (?BindFramebuffer@DeviceContext@Raster@Smile@@QEAA_NH@Z)
-SmileRaster.lib(DeviceContext.cu.obj) : error LNK2019: unresolved external symbol "public: void __cdecl Smile::Raster::Rasterizer::Draw(unsigned int)" (?Draw@Rasterizer@Raster@Smile@@QEAAXI@Z) referenced in function "public: void __cdecl Smile::Raster::DeviceContext::DrawIndexed(unsigned int)" (?DrawIndexed@DeviceContext@Raster@Smile@@QEAAXI@Z)
-C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exe : fatal error LNK1120: 4 unresolved externals
+dx11effects_d.lib(d3dxGlobal.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(d3dxGlobal.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectAPI.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectAPI.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectLoad.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectLoad.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectNonRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectNonRuntime.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectReflection.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectReflection.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectRuntime.obj)' or at 'C:\dev\SmileEngine\bin\Debug-x64\SmileProject\Effects11d.pdb'; linking object as if no debug info
+  SmileProject.vcxproj -> C:\dev\SmileEngine\bin\Debug-x64\SmileProject\SmileProject.exe
+  C:\dev\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\assimp\x64\zlib1.dll
+  1 File(s) copied
