@@ -7,6 +7,8 @@
 
 namespace Smile
 {
+	class Material;
+
 	class SceneHierarchyPanel final
 	{
 	public:
@@ -28,6 +30,8 @@ namespace Smile
 
 		template <typename ComponentType, typename UIFunction>
 		static void DrawComponent(const std::string& label, Entity entity, UIFunction uiFunction, bool bRemoveable = true);
+		
+		static void DrawMaterial(const Ref<Material>& pMaterial);
 
 	private:
 		Ref<Scene> m_pContext;

@@ -1,5 +1,6 @@
 #pragma once
-#include "SmileEngine/Renderer/MeshFilter.h"
+#include "SmileEngine/Renderer/StaticMeshFilter.h"
+#include "SmileEngine/Renderer/SkinnedMeshFilter.h"
 
 class aiMesh;
 class aiScene;
@@ -10,14 +11,14 @@ namespace Smile
 	class MeshLoader final
 	{
 	public:
-		MeshLoader() = default;
-
-		std::vector<Ref<MeshFilter>> LoadMesh(const std::string& filePath);
+		static std::vector<Ref<StaticMeshFilter>> LoadStaticMesh(const std::string& filePath);
+		static std::vector<Ref<SkinnedMeshFilter>> LoadSkinnedMesh(const std::string& filePath);
 
 	private:
-		void LoadBones(const Ref<MeshFilter>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene);
-		void LoadAnimations(const Ref<MeshFilter>& pMesh, const aiScene* pAiScene);
-		void LoadNodeHierarchy(AnimationNode& dest, const aiNode* src);
+		static void LoadVertices(const Ref<StaticMeshFilter>& pMesh, aiMesh* pAiMesh);
+		static void LoadBones(const Ref<SkinnedMeshFilter>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene);
+		static void LoadAnimations(const Ref<SkinnedMeshFilter>& pMesh, const aiScene* pAiScene);
+		static void LoadNodeHierarchy(AnimationNode& dest, const aiNode* src);
 	};
 }
 

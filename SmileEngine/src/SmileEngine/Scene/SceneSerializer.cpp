@@ -163,12 +163,41 @@ namespace Smile
 			output << YAML::EndMap;
 		}
 
-		if (entity.HasComponent<MeshComponent>())
+		if (entity.HasComponent<StaticMeshComponent>())
 		{
-			output << YAML::Key << "MeshComponent";
+			output << YAML::Key << "SkinnedMeshComponent";
 			output << YAML::BeginMap;
 
-			auto& meshComponent = entity.GetComponent<MeshComponent>();
+			auto& meshComponent = entity.GetComponent<StaticMeshComponent>();
+			output << YAML::Key << "Mesh" << YAML::Value << ((meshComponent.pMeshes.size() > 0) ? meshComponent.pMeshes[0]->GetFilePath() : "");
+
+			output << YAML::Key << "Material";
+			output << YAML::BeginMap;
+
+			auto& pMaterial = meshComponent.pMaterials[0];
+			output << YAML::Key << "AlbedoMap" << YAML::Value << (pMaterial->GetAlbedoMap() ? pMaterial->GetAlbedoMap()->GetFilePath() : "");
+			output << YAML::Key << "AlbedoColor" << YAML::Value << pMaterial->GetAlbedoColor();
+
+			output << YAML::Key << "MetalnessMap" << YAML::Value << (pMaterial->GetMetalnessMap() ? pMaterial->GetMetalnessMap()->GetFilePath() : "");
+			output << YAML::Key << "Metalness" << YAML::Value << pMaterial->GetMetalness();
+
+			output << YAML::Key << "RoughnessMap" << YAML::Value << (pMaterial->GetRoughnessMap() ? pMaterial->GetRoughnessMap()->GetFilePath() : "");
+			output << YAML::Key << "Roughness" << YAML::Value << pMaterial->GetRoughness();
+
+			output << YAML::Key << "NormalMap" << YAML::Value << (pMaterial->GetNormalMap() ? pMaterial->GetNormalMap()->GetFilePath() : "");
+			output << YAML::Key << "AOMap" << YAML::Value << (pMaterial->GetAOMap() ? pMaterial->GetAOMap()->GetFilePath() : "");
+
+			output << YAML::EndMap;
+
+			output << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<SkinnedMeshComponent>())
+		{
+			output << YAML::Key << "SkinnedMeshComponent";
+			output << YAML::BeginMap;
+
+			auto& meshComponent = entity.GetComponent<SkinnedMeshComponent>();
 			output << YAML::Key << "Mesh" << YAML::Value << ((meshComponent.pMeshes.size() > 0) ? meshComponent.pMeshes[0]->GetFilePath() : "");
 
 			output << YAML::Key << "Material";
@@ -258,69 +287,124 @@ namespace Smile
 					cc.bFixedAspectRatio = cameraComponent["bFixedAspectRatio"].as<bool>();
 				}
 
-				auto meshComponent = entity["MeshComponent"];
-				if (meshComponent)
+				auto staticMeshComponent = entity["StaticMeshComponent"];
+				if (staticMeshComponent)
 				{
-					auto& mc = deserializedEntity.AddComponent<MeshComponent>();
+					auto& smc = deserializedEntity.AddComponent<StaticMeshComponent>();
 
-					const auto& meshPath = meshComponent["Mesh"].as<std::string>();
+					const auto& meshPath = staticMeshComponent["Mesh"].as<std::string>();
 					if (!meshPath.empty())
 					{
-						MeshLoader meshLoader{};
-						mc.pMeshes = meshLoader.LoadMesh(meshPath);
+						smc.pMeshes = MeshLoader::LoadStaticMesh(meshPath);
+						const auto& bufferLayout = smc.pMaterials[0]->GetBufferLayout();
+						for (const auto& pMesh : smc.pMeshes)
+						{
+							pMesh->Create(bufferLayout);
+						}
+					}
 
-						const auto& bufferLayout = mc.pMaterials[0]->GetBufferLayout();
-						for (const auto& pMesh : mc.pMeshes)
+					auto material = staticMeshComponent["Material"];
+
+					const auto& albedoMap = material["AlbedoMap"].as<std::string>();
+					if (!albedoMap.empty())
+					{
+						smc.pMaterials[0]->SetAlbedo(Texture2D::Create(albedoMap));
+						smc.pMaterials[0]->SetUseAlbedoMap(true);
+					}
+					smc.pMaterials[0]->SetAlbedo(material["AlbedoColor"].as<DirectX::XMFLOAT3>());
+
+					const auto& metalnessMap = material["MetalnessMap"].as<std::string>();
+					if (!metalnessMap.empty())
+					{
+						smc.pMaterials[0]->SetMetalness(Texture2D::Create(metalnessMap));
+						smc.pMaterials[0]->SetUseMetalnessMap(true);
+					}
+					smc.pMaterials[0]->SetMetalness(material["Metalness"].as<float>());
+
+					const auto& roughnessMap = material["RoughnessMap"].as<std::string>();
+					if (!roughnessMap.empty())
+					{
+						smc.pMaterials[0]->SetRoughness(Texture2D::Create(roughnessMap));
+						smc.pMaterials[0]->SetUseRoughnessMap(true);
+					}
+					smc.pMaterials[0]->SetRoughness(material["Roughness"].as<float>());
+
+					const auto& normalMap = material["NormalMap"].as<std::string>();
+					if (!normalMap.empty())
+					{
+						smc.pMaterials[0]->SetNormalMap(Texture2D::Create(normalMap));
+						smc.pMaterials[0]->SetUseNormalMap(true);
+					}
+
+					const auto& aoMap = material["AOMap"].as<std::string>();
+					if (!aoMap.empty())
+					{
+						smc.pMaterials[0]->SetAOMap(Texture2D::Create(aoMap));
+						smc.pMaterials[0]->SetUseAOMap(true);
+					}
+				}
+
+				auto skinnedMeshComponent = entity["SkinnedMeshComponent"];
+				if (skinnedMeshComponent)
+				{
+					auto& smc = deserializedEntity.AddComponent<SkinnedMeshComponent>();
+
+					const auto& meshPath = skinnedMeshComponent["Mesh"].as<std::string>();
+					if (!meshPath.empty())
+					{
+						smc.pMeshes = MeshLoader::LoadSkinnedMesh(meshPath);
+						const auto& bufferLayout = smc.pMaterials[0]->GetBufferLayout();
+						for (const auto& pMesh : smc.pMeshes)
 						{
 							pMesh->Create(bufferLayout);
 
 							if (pMesh->HasAnimations())
 							{
 								MeshAnimator animator{ pMesh };
-								mc.Animators.push_back(animator);
-								mc.Animators.back().SetAnimation(0);
+								smc.Animators.push_back(animator);
+								smc.Animators.back().SetAnimation(0);
 							}
 						}
 					}
 
-					auto material = meshComponent["Material"];
+					auto material = skinnedMeshComponent["Material"];
 
 					const auto& albedoMap = material["AlbedoMap"].as<std::string>();
 					if (!albedoMap.empty())
 					{
-						mc.pMaterials[0]->SetAlbedo(Texture2D::Create(albedoMap));
-						mc.pMaterials[0]->SetUseAlbedoMap(true);
+						smc.pMaterials[0]->SetAlbedo(Texture2D::Create(albedoMap));
+						smc.pMaterials[0]->SetUseAlbedoMap(true);
 					}
-					mc.pMaterials[0]->SetAlbedo(material["AlbedoColor"].as<DirectX::XMFLOAT3>());
+					smc.pMaterials[0]->SetAlbedo(material["AlbedoColor"].as<DirectX::XMFLOAT3>());
 
 					const auto& metalnessMap = material["MetalnessMap"].as<std::string>();
 					if (!metalnessMap.empty())
 					{
-						mc.pMaterials[0]->SetMetalness(Texture2D::Create(metalnessMap));
-						mc.pMaterials[0]->SetUseMetalnessMap(true);
+						smc.pMaterials[0]->SetMetalness(Texture2D::Create(metalnessMap));
+						smc.pMaterials[0]->SetUseMetalnessMap(true);
 					}
-					mc.pMaterials[0]->SetMetalness(material["Metalness"].as<float>());
+					smc.pMaterials[0]->SetMetalness(material["Metalness"].as<float>());
 
 					const auto& roughnessMap = material["RoughnessMap"].as<std::string>();
 					if (!roughnessMap.empty())
 					{
-						mc.pMaterials[0]->SetRoughness(Texture2D::Create(roughnessMap));
-						mc.pMaterials[0]->SetUseRoughnessMap(true);
+						smc.pMaterials[0]->SetRoughness(Texture2D::Create(roughnessMap));
+						smc.pMaterials[0]->SetUseRoughnessMap(true);
 					}
-					mc.pMaterials[0]->SetRoughness(material["Roughness"].as<float>());
+					smc.pMaterials[0]->SetRoughness(material["Roughness"].as<float>());
 
 					const auto& normalMap = material["NormalMap"].as<std::string>();
 					if (!normalMap.empty())
 					{
-						mc.pMaterials[0]->SetNormalMap(Texture2D::Create(normalMap));
-						mc.pMaterials[0]->SetUseNormalMap(true);
+						smc.pMaterials[0]->SetNormalMap(Texture2D::Create(normalMap));
+						smc.pMaterials[0]->SetUseNormalMap(true);
 					}
 
 					const auto& aoMap = material["AOMap"].as<std::string>();
 					if (!aoMap.empty())
 					{
-						mc.pMaterials[0]->SetAOMap(Texture2D::Create(aoMap));
-						mc.pMaterials[0]->SetUseAOMap(true);
+						smc.pMaterials[0]->SetAOMap(Texture2D::Create(aoMap));
+						smc.pMaterials[0]->SetUseAOMap(true);
 					}
 				}
 			}

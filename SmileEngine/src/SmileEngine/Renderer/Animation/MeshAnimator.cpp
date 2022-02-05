@@ -3,8 +3,8 @@
 
 namespace Smile
 {
-	MeshAnimator::MeshAnimator(const Ref<MeshFilter>& pMesh)
-		: m_pMesh{ pMesh }
+	MeshAnimator::MeshAnimator(const Ref<SkinnedMeshFilter>& pMesh)
+		: m_pSkinnedMesh{ pMesh }
 	{
 		m_Transforms.resize(MAX_BONE_COUNT);
 	}
@@ -57,12 +57,12 @@ namespace Smile
 		DirectX::XMFLOAT4X4 globalTransform{};
 		DirectX::XMStoreFloat4x4(&globalTransform, globalTransformMat);
 
-		if (m_pMesh->m_SkeletonMap.find(nodeName) != m_pMesh->m_SkeletonMap.end())
+		if (m_pSkinnedMesh->m_SkeletonMap.find(nodeName) != m_pSkinnedMesh->m_SkeletonMap.end())
 		{
-			uint32_t id = m_pMesh->m_SkeletonMap[nodeName].ID;
+			uint32_t id = m_pSkinnedMesh->m_SkeletonMap[nodeName].ID;
 			SM_ASSERT(id < MAX_BONE_COUNT, "MeshAnimator::CalculateBoneTransform > Max bone count reached");
 
-			DirectX::XMMATRIX transformMat = DirectX::XMLoadFloat4x4(&m_pMesh->m_SkeletonMap[nodeName].Offset) * globalTransformMat;
+			DirectX::XMMATRIX transformMat = DirectX::XMLoadFloat4x4(&m_pSkinnedMesh->m_SkeletonMap[nodeName].Offset) * globalTransformMat;
 			DirectX::XMStoreFloat4x4(&m_Transforms[id], transformMat);
 		}
 
@@ -74,13 +74,13 @@ namespace Smile
 	{
 		m_bClipSet = false;
 
-		auto it = std::find_if(m_pMesh->m_AnimationClips.begin(), m_pMesh->m_AnimationClips.end(),
+		auto it = std::find_if(m_pSkinnedMesh->m_AnimationClips.begin(), m_pSkinnedMesh->m_AnimationClips.end(),
 			[clipName] (const AnimationClip& clip)
 			{
 				return clip.Name == clipName;
 			});
 
-		if (it != m_pMesh->m_AnimationClips.end())
+		if (it != m_pSkinnedMesh->m_AnimationClips.end())
 			SetAnimation(*it);
 		else
 		{
@@ -91,9 +91,9 @@ namespace Smile
 
 	void MeshAnimator::SetAnimation(uint32_t clipID)
 	{
-		if (clipID < m_pMesh->m_AnimationClips.size())
+		if (clipID < m_pSkinnedMesh->m_AnimationClips.size())
 		{
-			AnimationClip& animationClip = m_pMesh->m_AnimationClips[clipID];
+			AnimationClip& animationClip = m_pSkinnedMesh->m_AnimationClips[clipID];
 			SetAnimation(animationClip);
 		}
 		else

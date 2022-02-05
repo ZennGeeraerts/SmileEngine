@@ -199,9 +199,15 @@ namespace Smile
 				ImGui::CloseCurrentPopup();
 			}
 
-			if (ImGui::MenuItem("Mesh"))
+			if (ImGui::MenuItem("Static Mesh"))
 			{
-				m_SelectedEntity.AddComponent<MeshComponent>();
+				m_SelectedEntity.AddComponent<StaticMeshComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Skinned Mesh"))
+			{
+				m_SelectedEntity.AddComponent<SkinnedMeshComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -290,7 +296,7 @@ namespace Smile
 				}
 			});
 
-		DrawComponent<MeshComponent>("Mesh", entity, [](auto& meshComponent)
+		DrawComponent<StaticMeshComponent>("Static Mesh", entity, [](auto& staticMeshComponent)
 			{
 				ImGui::Button("Mesh", { 100.f, 0.0f });
 				if (ImGui::BeginDragDropTarget())
@@ -298,24 +304,53 @@ namespace Smile
 					const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
 					if (pPayload)
 					{
-						meshComponent.pMeshes.clear();
-						meshComponent.Animators.clear();
+						staticMeshComponent.pMeshes.clear();
 
 						const wchar_t* path = static_cast<const wchar_t*>(pPayload->Data);
 						std::filesystem::path meshPath = std::filesystem::path{ g_ResourcePath } / path;
 
-						MeshLoader meshLoader{};
-						meshComponent.pMeshes = meshLoader.LoadMesh(meshPath.string());
-						const auto& bufferLayout = meshComponent.pMaterials[0]->GetBufferLayout();
-						for (const auto& pMesh : meshComponent.pMeshes)
+						staticMeshComponent.pMeshes = MeshLoader::LoadStaticMesh(meshPath.string());
+						const auto& bufferLayout = staticMeshComponent.pMaterials[0]->GetBufferLayout();
+						for (const auto& pMesh : staticMeshComponent.pMeshes)
+						{
+							pMesh->Create(bufferLayout);
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				for (const auto& pMaterial : staticMeshComponent.pMaterials)
+				{
+					DrawMaterial(pMaterial);
+				}
+			});
+
+		DrawComponent<SkinnedMeshComponent>("Skinned Mesh", entity, [](auto& skinnedMeshComponent)
+			{
+				ImGui::Button("Mesh", { 100.f, 0.0f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+					if (pPayload)
+					{
+						skinnedMeshComponent.pMeshes.clear();
+						skinnedMeshComponent.Animators.clear();
+
+						const wchar_t* path = static_cast<const wchar_t*>(pPayload->Data);
+						std::filesystem::path meshPath = std::filesystem::path{ g_ResourcePath } / path;
+
+						skinnedMeshComponent.pMeshes = MeshLoader::LoadSkinnedMesh(meshPath.string());
+						const auto& bufferLayout = skinnedMeshComponent.pMaterials[0]->GetBufferLayout();
+						for (const auto& pMesh : skinnedMeshComponent.pMeshes)
 						{
 							pMesh->Create(bufferLayout);
 
 							if (pMesh->HasAnimations())
 							{
 								MeshAnimator animator{ pMesh };
-								meshComponent.Animators.push_back(animator);
-								meshComponent.Animators.back().SetAnimation(0);
+								skinnedMeshComponent.Animators.push_back(animator);
+								skinnedMeshComponent.Animators.back().SetAnimation(0);
 							}
 						}
 					}
@@ -323,102 +358,12 @@ namespace Smile
 					ImGui::EndDragDropTarget();
 				}
 
-				for (const auto& pMaterial : meshComponent.pMaterials)
+				for (const auto& pMaterial : skinnedMeshComponent.pMaterials)
 				{
-					// Albedo
-					ImGui::Button("Albedo Map", { 100.f, 0.0f });
-					if (ImGui::BeginDragDropTarget())
-					{
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-						if (payload)
-						{
-							const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-							std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
-							pMaterial->SetUseAlbedoMap(true);
-							pMaterial->SetAlbedo(Texture2D::Create(texturePath.string()));
-						}
-
-						ImGui::EndDragDropTarget();
-					}
-
-					auto albedoColor = pMaterial->GetAlbedoColor();
-					ImGui::ColorPicker3("Albedo Color", reinterpret_cast<float*>(&albedoColor));
-					pMaterial->SetAlbedo(albedoColor);
-
-					// Metalness
-					ImGui::Button("Metalness Map", { 100.f, 0.0f });
-					if (ImGui::BeginDragDropTarget())
-					{
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-						if (payload)
-						{
-							const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-							std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
-							pMaterial->SetUseMetalnessMap(true);
-							pMaterial->SetMetalness(Texture2D::Create(texturePath.string()));
-						}
-
-						ImGui::EndDragDropTarget();
-					}
-
-					auto metalnessValue = pMaterial->GetMetalness();
-					ImGui::SliderFloat("Metalness", &metalnessValue, 0, 1);
-					pMaterial->SetMetalness(metalnessValue);
-
-					// Roughness
-					ImGui::Button("Roughness Map", { 100.f, 0.0f });
-					if (ImGui::BeginDragDropTarget())
-					{
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-						if (payload)
-						{
-							const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-							std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
-							pMaterial->SetUseRoughnessMap(true);
-							pMaterial->SetRoughness(Texture2D::Create(texturePath.string()));
-						}
-
-						ImGui::EndDragDropTarget();
-					}
-
-					auto roughnessValue = pMaterial->GetRoughness();
-					ImGui::SliderFloat("Roughness", &roughnessValue, 0, 1);
-					pMaterial->SetRoughness(roughnessValue);
-
-					// Normal
-					ImGui::Button("Normal Map", { 100.f, 0.0f });
-					if (ImGui::BeginDragDropTarget())
-					{
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-						if (payload)
-						{
-							const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-							std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
-							pMaterial->SetUseNormalMap(true);
-							pMaterial->SetNormalMap(Texture2D::Create(texturePath.string()));
-						}
-
-						ImGui::EndDragDropTarget();
-					}
-
-					// AO
-					ImGui::Button("Ambient Occlusion Map", { 100.f, 0.0f });
-					if (ImGui::BeginDragDropTarget())
-					{
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-						if (payload)
-						{
-							const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
-							std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
-							pMaterial->SetUseAOMap(true);
-							pMaterial->SetAOMap(Texture2D::Create(texturePath.string()));
-						}
-
-						ImGui::EndDragDropTarget();
-					}
+					DrawMaterial(pMaterial);
 				}
 
-				for (auto& animator : meshComponent.Animators)
+				for (auto& animator : skinnedMeshComponent.Animators)
 				{
 					ImGui::Text("Animator");
 					if (ImGui::Button("Play", { 100.f, 0.0f }))
@@ -471,5 +416,100 @@ namespace Smile
 
 		if (bRemoveable && bRemoveComponent)
 			entity.RemoveComponent<ComponentType>();
+	}
+
+	void SceneHierarchyPanel::DrawMaterial(const Ref<Material>& pMaterial)
+	{
+		// Albedo
+		ImGui::Button("Albedo Map", { 100.f, 0.0f });
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (payload)
+			{
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
+				pMaterial->SetUseAlbedoMap(true);
+				pMaterial->SetAlbedo(Texture2D::Create(texturePath.string()));
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		auto albedoColor = pMaterial->GetAlbedoColor();
+		ImGui::ColorPicker3("Albedo Color", reinterpret_cast<float*>(&albedoColor));
+		pMaterial->SetAlbedo(albedoColor);
+
+		// Metalness
+		ImGui::Button("Metalness Map", { 100.f, 0.0f });
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (payload)
+			{
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
+				pMaterial->SetUseMetalnessMap(true);
+				pMaterial->SetMetalness(Texture2D::Create(texturePath.string()));
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		auto metalnessValue = pMaterial->GetMetalness();
+		ImGui::SliderFloat("Metalness", &metalnessValue, 0, 1);
+		pMaterial->SetMetalness(metalnessValue);
+
+		// Roughness
+		ImGui::Button("Roughness Map", { 100.f, 0.0f });
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (payload)
+			{
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
+				pMaterial->SetUseRoughnessMap(true);
+				pMaterial->SetRoughness(Texture2D::Create(texturePath.string()));
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		auto roughnessValue = pMaterial->GetRoughness();
+		ImGui::SliderFloat("Roughness", &roughnessValue, 0, 1);
+		pMaterial->SetRoughness(roughnessValue);
+
+		// Normal
+		ImGui::Button("Normal Map", { 100.f, 0.0f });
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (payload)
+			{
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
+				pMaterial->SetUseNormalMap(true);
+				pMaterial->SetNormalMap(Texture2D::Create(texturePath.string()));
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		// AO
+		ImGui::Button("Ambient Occlusion Map", { 100.f, 0.0f });
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (payload)
+			{
+				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				std::filesystem::path texturePath = std::filesystem::path{ g_ResourcePath } / path;
+				pMaterial->SetUseAOMap(true);
+				pMaterial->SetAOMap(Texture2D::Create(texturePath.string()));
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 	}
 }

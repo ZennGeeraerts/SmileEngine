@@ -7,7 +7,7 @@ Entities:
       Translation: [-5.55999994, 0, 20]
       Rotation: [0, 1.57079637, 0]
       Scale: [5, 5, 5]
-    MeshComponent:
+    SkinnedMeshComponent:
       Mesh: Resources\Meshes\drakefire_pistol_low.obj
       Material:
         AlbedoMap: Resources\Textures\base_albedo.jpg
@@ -43,7 +43,7 @@ Entities:
       Translation: [7.82999992, -7.44000006, 20]
       Rotation: [0, 3.14159274, 0]
       Scale: [1, 1, 1]
-    MeshComponent:
+    SkinnedMeshComponent:
       Mesh: Resources\Meshes\nanosuit.obj
       Material:
         AlbedoMap: ""
@@ -61,7 +61,7 @@ Entities:
       Translation: [0, -9, 20]
       Rotation: [0, 3.14159274, 0]
       Scale: [1, 1, 1]
-    MeshComponent:
+    SkinnedMeshComponent:
       Mesh: Resources\Meshes\model.dae
       Material:
         AlbedoMap: ""

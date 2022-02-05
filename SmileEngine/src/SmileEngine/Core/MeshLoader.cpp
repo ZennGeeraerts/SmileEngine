@@ -9,7 +9,39 @@
 
 namespace Smile
 {
-	std::vector<Ref<MeshFilter>> MeshLoader::LoadMesh(const std::string& filePath)
+	std::vector<Ref<StaticMeshFilter>> MeshLoader::LoadStaticMesh(const std::string& filePath)
+	{
+		aiPropertyStore* pPropertyStore = aiCreatePropertyStore();
+		aiSetImportPropertyInteger(pPropertyStore, AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
+
+		const aiScene* pAiScene = aiImportFileExWithProperties(filePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality, nullptr, pPropertyStore);
+		if (!pAiScene)
+		{
+			SM_LOG_WARNING("MeshLoader::LoadStaticMesh > Could not load file: %s: %s", filePath, aiGetErrorString());
+			aiReleaseImport(pAiScene);
+			aiReleasePropertyStore(pPropertyStore);
+			return std::vector<Ref<StaticMeshFilter>>{};
+		}
+
+		std::vector<Ref<StaticMeshFilter>> pStaticMeshes{};
+		pStaticMeshes.resize(pAiScene->mNumMeshes);
+
+		for (uint32_t m{}; m < pAiScene->mNumMeshes; ++m)
+		{
+			aiMesh* pAiMesh = pAiScene->mMeshes[m];
+			pStaticMeshes[m].reset(new StaticMeshFilter{});
+
+			LoadVertices(pStaticMeshes[m], pAiMesh);
+			pStaticMeshes[m]->m_FilePath = filePath;
+		}
+
+		aiReleaseImport(pAiScene);
+		aiReleasePropertyStore(pPropertyStore);
+
+		return pStaticMeshes;
+	}
+
+	std::vector<Ref<SkinnedMeshFilter>> MeshLoader::LoadSkinnedMesh(const std::string& filePath)
 	{
 		aiPropertyStore* pPropertyStore = aiCreatePropertyStore();
 		aiSetImportPropertyInteger(pPropertyStore, AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
@@ -17,109 +49,111 @@ namespace Smile
 		const aiScene* pAiScene = aiImportFileExWithProperties(filePath.c_str(), aiProcessPreset_TargetRealtime_MaxQuality, nullptr, pPropertyStore);
 		if (!pAiScene)
 		{
-			SM_LOG_WARNING("MeshLoader::LoadObj > Could not load file: %s: %s", filePath, aiGetErrorString());
+			SM_LOG_WARNING("MeshLoader::LoadSkinnedMesh > Could not load file: %s: %s", filePath, aiGetErrorString());
 			aiReleaseImport(pAiScene);
 			aiReleasePropertyStore(pPropertyStore);
-			return std::vector<Ref<MeshFilter>>{};
+			return std::vector<Ref<SkinnedMeshFilter>>{};
 		}
 		
-		DirectX::XMMATRIX inverseGlobalTransformMat = DirectX::XMMATRIX{ 
+		/*DirectX::XMMATRIX inverseGlobalTransformMat = DirectX::XMMATRIX{ 
 									pAiScene->mRootNode->mTransformation.a1, pAiScene->mRootNode->mTransformation.b1, pAiScene->mRootNode->mTransformation.c1, pAiScene->mRootNode->mTransformation.d1,
 									pAiScene->mRootNode->mTransformation.a2, pAiScene->mRootNode->mTransformation.b2, pAiScene->mRootNode->mTransformation.c2, pAiScene->mRootNode->mTransformation.d2,
 									pAiScene->mRootNode->mTransformation.a3, pAiScene->mRootNode->mTransformation.b3, pAiScene->mRootNode->mTransformation.c3, pAiScene->mRootNode->mTransformation.d3,
 									pAiScene->mRootNode->mTransformation.a4, pAiScene->mRootNode->mTransformation.b4, pAiScene->mRootNode->mTransformation.c4, pAiScene->mRootNode->mTransformation.d4 };
 		inverseGlobalTransformMat = DirectX::XMMatrixInverse(nullptr, inverseGlobalTransformMat);
 		DirectX::XMFLOAT4X4 inverseGlobalTransform{};
-		DirectX::XMStoreFloat4x4(&inverseGlobalTransform, inverseGlobalTransformMat);
+		DirectX::XMStoreFloat4x4(&inverseGlobalTransform, inverseGlobalTransformMat);*/
 
-		std::vector<Ref<MeshFilter>> pMeshes{};
-		pMeshes.resize(pAiScene->mNumMeshes);
+		std::vector<Ref<SkinnedMeshFilter>> pSkinnedMeshes{};
+		pSkinnedMeshes.resize(pAiScene->mNumMeshes);
 
 		for (uint32_t m{}; m < pAiScene->mNumMeshes; ++m)
 		{
 			aiMesh* pAiMesh = pAiScene->mMeshes[m];
+			pSkinnedMeshes[m].reset(new SkinnedMeshFilter{});
 
-			pMeshes[m].reset(new MeshFilter{});
-			pMeshes[m]->m_VertexCount = pAiMesh->mNumVertices;
-			pMeshes[m]->m_Positions.resize(pAiMesh->mNumVertices);
-
-			for (uint32_t v{}; v < pAiMesh->mNumVertices; ++v)
-			{
-				aiVector3D& vertex = pAiMesh->mVertices[v];
-				if (&vertex)
-				{
-					pMeshes[m]->m_bUsePositions = true;
-					pMeshes[m]->m_Positions[v] = *reinterpret_cast<DirectX::XMFLOAT3*>(&vertex);
-				}
-
-				aiVector3D& normal = pAiMesh->mNormals[v];
-				if (&normal)
-				{
-					pMeshes[m]->m_bUseNormals = true;
-					pMeshes[m]->m_Normals.push_back(*reinterpret_cast<DirectX::XMFLOAT3*>(&normal));
-				}
-
-				aiVector3D& texCoord = pAiMesh->mTextureCoords[0][v];
-				if (&texCoord)
-				{
-					pMeshes[m]->m_bUseTexCoords = true;
-					pMeshes[m]->m_TexCoords.push_back({ texCoord.x, 1 - texCoord.y });
-				}
-
-				aiVector3D& tangent = pAiMesh->mTangents[v];
-				if (&tangent)
-				{
-					pMeshes[m]->m_bUseTangents = true;
-					pMeshes[m]->m_Tangents.push_back(*reinterpret_cast<DirectX::XMFLOAT3*>(&tangent));
-				}
-
-				/*aiColor4D* pColor = pAiMesh->mColors[v];
-				if (pColor)
-				{
-					pMeshes[m]->m_bUseColors = true;
-					pMeshes[m]->m_Colors.push_back(*reinterpret_cast<DirectX::XMFLOAT4*>(pColor));
-				}*/
-			}
-
-			pMeshes[m]->m_Indices.resize(static_cast<size_t>(pAiMesh->mNumFaces) * 3);
-
-			for (uint32_t f{}; f < pAiMesh->mNumFaces; ++f)
-			{
-				uint32_t index0 = pAiMesh->mFaces[f].mIndices[0];
-				uint32_t index1 = pAiMesh->mFaces[f].mIndices[1];
-				uint32_t index2 = pAiMesh->mFaces[f].mIndices[2];
-
-				uint32_t indexIdx = static_cast<size_t>(f) * 3;
-				pMeshes[m]->m_Indices[indexIdx] = index0;
-				pMeshes[m]->m_Indices[static_cast<size_t>(indexIdx) + 1] = index1;
-				pMeshes[m]->m_Indices[static_cast<size_t>(indexIdx) + 2] = index2;
-			}
+			LoadVertices(pSkinnedMeshes[m], pAiMesh);
 
 			if (pAiMesh->HasBones())
 			{
-				pMeshes[m]->m_bUseBlendIndices = true;
-				pMeshes[m]->m_bUseBlendWeights = true;
+				pSkinnedMeshes[m]->m_bUseBlendIndices = true;
+				pSkinnedMeshes[m]->m_bUseBlendWeights = true;
 
-				pMeshes[m]->m_BlendIndices.resize(pAiMesh->mNumVertices);
-				pMeshes[m]->m_BlendWeights.resize(pAiMesh->mNumVertices);
-				std::fill(pMeshes[m]->m_BlendIndices.begin(), pMeshes[m]->m_BlendIndices.end(), DirectX::XMFLOAT4{ -1, -1, -1, -1 });
+				pSkinnedMeshes[m]->m_BlendIndices.resize(pAiMesh->mNumVertices);
+				pSkinnedMeshes[m]->m_BlendWeights.resize(pAiMesh->mNumVertices);
+				std::fill(pSkinnedMeshes[m]->m_BlendIndices.begin(), pSkinnedMeshes[m]->m_BlendIndices.end(), DirectX::XMFLOAT4{ -1, -1, -1, -1 });
 
-				LoadBones(pMeshes[m], pAiMesh, pAiScene);
+				LoadBones(pSkinnedMeshes[m], pAiMesh, pAiScene);
 			}
 
-			pMeshes[m]->m_FilePath = filePath;
+			pSkinnedMeshes[m]->m_FilePath = filePath;
 		}
 
 		if (pAiScene->HasAnimations())
-			LoadAnimations(pMeshes[0], pAiScene);
+			LoadAnimations(pSkinnedMeshes[0], pAiScene);
 
 		aiReleaseImport(pAiScene);
 		aiReleasePropertyStore(pPropertyStore);
 
-		return pMeshes;
+		return pSkinnedMeshes;
 	}
 
-	void MeshLoader::LoadBones(const Ref<MeshFilter>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene)
+	void MeshLoader::LoadVertices(const Ref<StaticMeshFilter>& pMesh, aiMesh* pAiMesh)
+	{
+		pMesh->m_VertexCount = pAiMesh->mNumVertices;
+		pMesh->m_Positions.resize(pAiMesh->mNumVertices);
+
+		for (uint32_t v{}; v < pAiMesh->mNumVertices; ++v)
+		{
+			aiVector3D& vertex = pAiMesh->mVertices[v];
+			pMesh->m_bUsePositions = true;
+			pMesh->m_Positions[v] = *reinterpret_cast<DirectX::XMFLOAT3*>(&vertex);
+
+			if (pAiMesh->HasNormals())
+			{
+				aiVector3D& normal = pAiMesh->mNormals[v];
+				pMesh->m_bUseNormals = true;
+				pMesh->m_Normals.push_back(*reinterpret_cast<DirectX::XMFLOAT3*>(&normal));
+			}
+
+			if (pAiMesh->HasTextureCoords(0))
+			{
+				aiVector3D& texCoord = pAiMesh->mTextureCoords[0][v];
+				pMesh->m_bUseTexCoords = true;
+				pMesh->m_TexCoords.push_back({ texCoord.x, 1 - texCoord.y });
+			}
+
+			if (pAiMesh->HasTangentsAndBitangents())
+			{
+				aiVector3D& tangent = pAiMesh->mTangents[v];
+				pMesh->m_bUseTangents = true;
+				pMesh->m_Tangents.push_back(*reinterpret_cast<DirectX::XMFLOAT3*>(&tangent));
+			}
+
+			if (pAiMesh->HasVertexColors(0))
+			{
+				aiColor4D& color = pAiMesh->mColors[0][v];
+				pMesh->m_bUseColors = true;
+				pMesh->m_Colors.push_back(*reinterpret_cast<DirectX::XMFLOAT4*>(&color));
+			}
+		}
+
+		pMesh->m_Indices.resize(static_cast<size_t>(pAiMesh->mNumFaces) * 3);
+
+		for (uint32_t f{}; f < pAiMesh->mNumFaces; ++f)
+		{
+			uint32_t index0 = pAiMesh->mFaces[f].mIndices[0];
+			uint32_t index1 = pAiMesh->mFaces[f].mIndices[1];
+			uint32_t index2 = pAiMesh->mFaces[f].mIndices[2];
+
+			uint32_t indexIdx = static_cast<size_t>(f) * 3;
+			pMesh->m_Indices[indexIdx] = index0;
+			pMesh->m_Indices[static_cast<size_t>(indexIdx) + 1] = index1;
+			pMesh->m_Indices[static_cast<size_t>(indexIdx) + 2] = index2;
+		}
+	}
+
+	void MeshLoader::LoadBones(const Ref<SkinnedMeshFilter>& pMesh, aiMesh* pAiMesh, const aiScene* pAiScene)
 	{
 		for (uint32_t i{}; i < pAiMesh->mNumBones; ++i)
 		{
@@ -183,7 +217,7 @@ namespace Smile
 		}
 	}
 
-	void MeshLoader::LoadAnimations(const Ref<MeshFilter>& pMesh, const aiScene* pAiScene)
+	void MeshLoader::LoadAnimations(const Ref<SkinnedMeshFilter>& pMesh, const aiScene* pAiScene)
 	{
 		pMesh->m_bHasAnimations = true;
 

@@ -8,7 +8,7 @@ namespace Smile
 	class Material final
 	{
 	public:
-		Material();
+		Material(bool bSkinned = false);
 		virtual ~Material() = default;
 
 		void SetAlbedo(const DirectX::XMFLOAT3& albedo);

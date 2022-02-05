@@ -70,10 +70,18 @@ namespace Smile
 				}
 			}
 			{
-				auto group = m_Registry.group<MeshComponent>(entt::get<TransformComponent>);
+				auto group = m_Registry.group<StaticMeshComponent>(entt::get<TransformComponent>);
 				for (auto entity : group)
 				{
-					const auto& [mesh, transform] = group.get<MeshComponent, TransformComponent>(entity);
+					const auto& [mesh, transform] = group.get<StaticMeshComponent, TransformComponent>(entity);
+					Renderer::Submit(mesh, transform.GetTransform());
+				}
+			}
+			{
+				auto group = m_Registry.group<SkinnedMeshComponent>(entt::get<TransformComponent>);
+				for (auto entity : group)
+				{
+					const auto& [mesh, transform] = group.get<SkinnedMeshComponent, TransformComponent>(entity);
 
 					for (auto& animator : mesh.Animators)
 					{
@@ -150,7 +158,12 @@ namespace Smile
 	}
 
 	template <>
-	void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
+	void Scene::OnComponentAdded<StaticMeshComponent>(Entity entity, StaticMeshComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<SkinnedMeshComponent>(Entity entity, SkinnedMeshComponent& component)
 	{
 	}
 }

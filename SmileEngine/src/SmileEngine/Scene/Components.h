@@ -7,7 +7,8 @@
 #include "SmileEngine/Scene/SceneCamera.h"
 
 #include "SmileEngine/Core/MeshLoader.h"
-#include "SmileEngine/Renderer/MeshFilter.h"
+#include "SmileEngine/Renderer/StaticMeshFilter.h"
+#include "SmileEngine/Renderer/SkinnedMeshFilter.h"
 #include "SmileEngine/Renderer/Material.h"
 #include "SmileEngine/Renderer/Animation/MeshAnimator.h"
 
@@ -91,23 +92,47 @@ namespace Smile
 		Ref<Shader> pShader = nullptr;
 	};
 
-	struct MeshComponent final
+	struct StaticMeshComponent final
 	{
-		MeshComponent()
+		StaticMeshComponent()
 		{
 			pMaterials.push_back(CreateRef<Material>());
 		}
 
-		MeshComponent(const MeshComponent&) = default;
+		StaticMeshComponent(const StaticMeshComponent&) = default;
 
 		// For now, only support 1 material
-		MeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
+		StaticMeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
 		{
 			pMaterials.push_back(pMaterial);
 
-			MeshLoader meshLoader{};
-			pMeshes = meshLoader.LoadMesh(assetFile);
+			pMeshes = MeshLoader::LoadStaticMesh(assetFile);
+			const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
+			for (const auto& pMesh : pMeshes)
+			{
+				pMesh->Create(bufferLayout);
+			}
+		}
 
+		std::vector<Ref<StaticMeshFilter>> pMeshes = {};
+		std::vector<Ref<Material>> pMaterials = {};
+	};
+
+	struct SkinnedMeshComponent final
+	{
+		SkinnedMeshComponent()
+		{
+			pMaterials.push_back(CreateRef<Material>(true));
+		}
+
+		SkinnedMeshComponent(const SkinnedMeshComponent&) = default;
+
+		// For now, only support 1 material
+		SkinnedMeshComponent(const std::string& assetFile, const Ref<Material>& pMaterial)
+		{
+			pMaterials.push_back(pMaterial);
+
+			pMeshes = MeshLoader::LoadSkinnedMesh(assetFile);
 			const auto& bufferLayout = pMaterials[0]->GetBufferLayout();
 			for (const auto& pMesh : pMeshes)
 			{
@@ -121,7 +146,7 @@ namespace Smile
 			}
 		}
 
-		std::vector<Ref<MeshFilter>> pMeshes = {};
+		std::vector<Ref<SkinnedMeshFilter>> pMeshes = {};
 		std::vector<Ref<Material>> pMaterials = {};
 		std::vector<MeshAnimator> Animators = {};
 	};

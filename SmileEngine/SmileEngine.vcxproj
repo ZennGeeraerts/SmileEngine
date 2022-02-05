@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Renderer\SkinnedMeshFilter.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterTexture.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterShader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h" />
@@ -91,7 +92,7 @@
     <ClInclude Include="Libs\ImGui\imstb_truetype.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Material.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Texture.h" />
-    <ClInclude Include="src\SmileEngine\Renderer\MeshFilter.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\StaticMeshFilter.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Camera.h" />
     <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCamera.h" />
     <ClInclude Include="src\SmileEngine\Renderer\PerspectiveCameraController.h" />
@@ -130,6 +131,7 @@
     <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Renderer\SkinnedMeshFilter.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterTexture.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterShader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Animation\MeshAnimator.cpp" />
@@ -196,7 +198,7 @@
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Material.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Texture.cpp" />
-    <ClCompile Include="src\SmileEngine\Renderer\MeshFilter.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\StaticMeshFilter.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCamera.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\PerspectiveCameraController.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\Scene.cpp" />

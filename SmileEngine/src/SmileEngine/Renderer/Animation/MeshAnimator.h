@@ -1,5 +1,5 @@
 #pragma once
-#include "SmileEngine/Renderer/MeshFilter.h"
+#include "SmileEngine/Renderer/SkinnedMeshFilter.h"
 
 #define MAX_BONE_COUNT 70
 
@@ -8,7 +8,7 @@ namespace Smile
 	class MeshAnimator final
 	{
 	public:
-		MeshAnimator(const Ref<MeshFilter>& pMesh);
+		MeshAnimator(const Ref<SkinnedMeshFilter>& pMesh);
 		virtual ~MeshAnimator() = default;
 
 		void OnUpdate(Timestep deltaTime);
@@ -29,7 +29,7 @@ namespace Smile
 
 	private:
 		AnimationClip m_CurrentClip;
-		Ref<MeshFilter> m_pMesh;
+		Ref<SkinnedMeshFilter> m_pSkinnedMesh;
 		std::vector<DirectX::XMFLOAT4X4> m_Transforms;
 
 		float m_TickCount = 0.f;

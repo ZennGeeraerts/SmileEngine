@@ -87,7 +87,7 @@ void ExampleLayer::OnAttach()
 		2, 7, 6
 	};
 
-	Smile::VertexBufferData vertexBufferData{};
+	/*Smile::VertexBufferData vertexBufferData{};
 	vertexBufferData.pVertices = vertices;
 	vertexBufferData.Count = 8;
 	vertexBufferData.Usage = Smile::BufferUsage::eImmutable;
@@ -104,7 +104,7 @@ void ExampleLayer::OnAttach()
 	Smile::Ref<Smile::IndexBuffer> pIndexBuffer{};
 	pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
 
-	Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", bufferLayout);
+	Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", bufferLayout);*/
 
 	m_pActiveScene.reset(new Smile::Scene{});
 
@@ -126,7 +126,7 @@ void ExampleLayer::OnAttach()
 	pMaterial->SetAlbedo(pAlbedo);
 
 	m_ModelEntity = m_pActiveScene->CreateEntity("Model");
-	auto& meshComponent = m_ModelEntity.AddComponent<Smile::MeshComponent>("Resources/Meshes/bunny.obj", pMaterial);
+	auto& meshComponent = m_ModelEntity.AddComponent<Smile::SkinnedMeshComponent>("Resources/Meshes/bunny.obj", pMaterial);
 	m_ModelEntity.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
 	m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
 	m_ModelEntity.GetComponent<Smile::TransformComponent>().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };

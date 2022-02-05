@@ -339,13 +339,16 @@
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\MeshFilter.h">
+    <ClInclude Include="src\SmileEngine\Renderer\StaticMeshFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Renderer\SkinnedMeshFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -491,13 +494,16 @@
     <ClCompile Include="src\SmileEngine\Renderer\Animation\MeshAnimator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\MeshFilter.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\StaticMeshFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Renderer\SkinnedMeshFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

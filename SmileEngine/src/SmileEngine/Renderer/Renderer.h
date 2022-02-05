@@ -23,7 +23,8 @@ namespace Smile
 		static void Submit(const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 
 			const DirectX::XMFLOAT4X4& worldTransform);
 		static void Submit(const MeshRendererComponent& meshRendererComponent, const DirectX::XMFLOAT4X4& worldTransform);
-		static void Submit(const MeshComponent& meshComponent, const DirectX::XMFLOAT4X4& worldTransform);
+		static void Submit(const StaticMeshComponent& staticMeshComponent, const DirectX::XMFLOAT4X4& worldTransform);
+		static void Submit(const SkinnedMeshComponent& skinnedMeshComponent, const DirectX::XMFLOAT4X4& worldTransform);
 
 		static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
