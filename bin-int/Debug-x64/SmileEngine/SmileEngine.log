@@ -1,9 +1,8 @@
 ﻿  WindowsWindow.cpp
   SmileGame.cpp
   Buffer.cpp
+  EditorCamera.cpp
   Framebuffer.cpp
-  Material.cpp
-  PerspectiveCameraController.cpp
   Renderer.cpp
   RenderingContext.cpp
   Shader.cpp

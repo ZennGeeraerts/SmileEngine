@@ -186,7 +186,7 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 	}
 
 	Smile::RenderCommand::Clear();
-	m_pActiveScene->OnUpdate(deltaTime);
+	m_pActiveScene->OnUpdateRuntime(deltaTime);
 }
 
 void ExampleLayer::OnEvent(Smile::Event& event)

@@ -38,7 +38,7 @@ namespace Smile
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(Timestep deltaTime)
+	void Scene::OnUpdateRuntime(Timestep deltaTime)
 	{
 		Camera* pMainCamera = nullptr;
 		DirectX::XMFLOAT4X4 cameraTransform;
@@ -100,6 +100,50 @@ namespace Smile
 
 			Renderer::EndScene();
 		}
+	}
+
+	void Scene::OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera)
+	{
+		Renderer::BeginScene(editorCamera);
+
+		{
+			auto group = m_Registry.group<MeshRendererComponent>(entt::get<TransformComponent>);
+			for (auto entity : group)
+			{
+				const auto& [mesh, transform] = group.get<MeshRendererComponent, TransformComponent>(entity);
+				Renderer::Submit(mesh, transform.GetTransform());
+			}
+		}
+		{
+			auto group = m_Registry.group<StaticMeshComponent>(entt::get<TransformComponent>);
+			for (auto entity : group)
+			{
+				const auto& [mesh, transform] = group.get<StaticMeshComponent, TransformComponent>(entity);
+				Renderer::Submit(mesh, transform.GetTransform());
+			}
+		}
+		{
+			auto group = m_Registry.group<SkinnedMeshComponent>(entt::get<TransformComponent>);
+			for (auto entity : group)
+			{
+				const auto& [mesh, transform] = group.get<SkinnedMeshComponent, TransformComponent>(entity);
+
+				for (auto& animator : mesh.Animators)
+				{
+					animator.OnUpdate(deltaTime);
+					const auto& boneTransforms = animator.GetBoneTransforms();
+					for (const auto& pMaterial : mesh.pMaterials)
+					{
+						if (animator.IsPlaying())
+							pMaterial->GetShader()->UploadMat4Array("Bones", boneTransforms);
+					}
+				}
+
+				Renderer::Submit(mesh, transform.GetTransform());
+			}
+		}
+
+		Renderer::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

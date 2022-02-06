@@ -1,8 +1,9 @@
 #pragma once
 
 #include "SmileEngine/Core/Timestep.h"
+#include "SmileEngine/Renderer/EditorCamera.h"
 
-#include "Libs/entt/entt.hpp"
+#include <Libs/entt/entt.hpp>
 
 namespace Smile
 {
@@ -18,7 +19,8 @@ namespace Smile
 		Entity CreateEntity();
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(Timestep deltaTime);
+		void OnUpdateRuntime(Timestep deltaTime);
+		void OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();

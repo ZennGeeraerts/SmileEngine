@@ -3,6 +3,8 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 
+#include "SmileEngine/Renderer/EditorCamera.h"
+
 namespace Smile
 {
 	class SmileEditorLayer final : public Layer
@@ -53,13 +55,7 @@ namespace Smile
 
 	private:
 		Ref<Scene> m_pActiveScene;
-
-		Entity m_CameraEntity;
-		float m_CameraMoveSpeed = 5.f;
-		float m_CameraRotationSpeed = 180.f;
-
-		Entity m_GunEntity;
-		Ref<Material> m_pMaterial = nullptr;
+		EditorCamera m_EditorCamera;
 
 		Ref<Framebuffer> m_pFramebuffer;
 

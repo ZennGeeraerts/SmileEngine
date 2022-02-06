@@ -25,6 +25,7 @@ namespace Smile
 		Smile::RenderCommand::SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 
 		m_pActiveScene = CreateRef<Scene>();
+		m_EditorCamera = EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 #if 0
 		// Camera
 		m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
@@ -89,8 +90,12 @@ namespace Smile
 			&& (m_ViewportSize.x > 0) && (m_ViewportSize.y > 0))
 		{
 			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
+
+		if (m_bViewportFocused)
+			m_EditorCamera.OnUpdate(deltaTime);
 #if 0
 		if (m_bViewportFocused)
 		{
@@ -143,7 +148,7 @@ namespace Smile
 		Smile::RenderCommand::Clear();
 		m_pFramebuffer->Bind();
 		m_pFramebuffer->Clear();
-		m_pActiveScene->OnUpdate(deltaTime);
+		m_pActiveScene->OnUpdateEditor(deltaTime, m_EditorCamera);
 		m_pFramebuffer->Unbind();
 	}
 
@@ -264,40 +269,44 @@ namespace Smile
 			float windowHeight = static_cast<float>(ImGui::GetWindowHeight());
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-			auto cameraEntity = m_pActiveScene->GetPrimaryCameraEntity();
-			if (cameraEntity)
+			//// Runtime camera
+			//auto cameraEntity = m_pActiveScene->GetPrimaryCameraEntity();
+			//if (cameraEntity)
+			// {
+			//const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+
+			//// Camera
+			//DirectX::XMFLOAT4X4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
+			//DirectX::XMMATRIX cameraTransformMat = DirectX::XMLoadFloat4x4(&cameraTransform);
+
+			//const DirectX::XMFLOAT4X4& cameraProjectionMatrix = camera.GetProjectionMatrix();
+			//DirectX::XMMATRIX cameraViewMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat);
+
+			// Editor camera
+			const DirectX::XMFLOAT4X4& cameraProjectionMatrix = m_EditorCamera.GetProjectionMatrix();
+			DirectX::XMFLOAT4X4 cameraViewMatrix = m_EditorCamera.GetViewMatrix();
+
+			// Entity
+			auto& entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();
+			auto entityTransform = entityTransformComponent.GetTransform();
+
+			ImGuizmo::Manipulate(cameraViewMatrix.m[0], cameraProjectionMatrix.m[0], static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::MODE::LOCAL, entityTransform.m[0]);
+
+			if (ImGuizmo::IsUsing())
 			{
-				const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+				DirectX::XMFLOAT3 translation{};
+				DirectX::XMFLOAT3 rotation{};
+				DirectX::XMFLOAT3 scale{};
+				Math::DecomposeMatrix(entityTransform, translation, rotation, scale);
 
-				// Camera
-				DirectX::XMFLOAT4X4 cameraTransform = cameraEntity.GetComponent<TransformComponent>().GetTransform();
-				DirectX::XMMATRIX cameraTransformMat = DirectX::XMLoadFloat4x4(&cameraTransform);
+				entityTransformComponent.Translation = translation;
 
-				const DirectX::XMFLOAT4X4& cameraProjectionMatrix = camera.GetProjectionMatrix();
-				DirectX::XMMATRIX cameraViewMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat);
-
-				// Entity
-				auto& entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();
-				auto entityTransform = entityTransformComponent.GetTransform();
-
-				ImGuizmo::Manipulate(cameraViewMatrixMat.r->m128_f32, cameraProjectionMatrix.m[0], static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::MODE::LOCAL, entityTransform.m[0]);
-
-				if (ImGuizmo::IsUsing())
-				{
-					DirectX::XMFLOAT3 translation{};
-					DirectX::XMFLOAT3 rotation{};
-					DirectX::XMFLOAT3 scale{};
-					Math::DecomposeMatrix(entityTransform, translation, rotation, scale);
-
-					entityTransformComponent.Translation = translation;
-
-					//DirectX::XMVECTOR currentRotationVec = DirectX::XMLoadFloat3(&entityTransformComponent.Rotation);
-					//DirectX::XMVECTOR deltaRotationVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&rotation), currentRotationVec);
-					//DirectX::XMVECTOR newRotationVec = DirectX::XMVectorAdd(currentRotationVec, deltaRotationVec);
-					//DirectX::XMStoreFloat3(&entityTransformComponent.Rotation, newRotationVec);
-					entityTransformComponent.Rotation = rotation;
-					entityTransformComponent.Scale = scale;
-				}
+				//DirectX::XMVECTOR currentRotationVec = DirectX::XMLoadFloat3(&entityTransformComponent.Rotation);
+				//DirectX::XMVECTOR deltaRotationVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&rotation), currentRotationVec);
+				//DirectX::XMVECTOR newRotationVec = DirectX::XMVectorAdd(currentRotationVec, deltaRotationVec);
+				//DirectX::XMStoreFloat3(&entityTransformComponent.Rotation, newRotationVec);
+				entityTransformComponent.Rotation = rotation;
+				entityTransformComponent.Scale = scale;
 			}
 		}
 
@@ -310,6 +319,9 @@ namespace Smile
 
 	void SmileEditorLayer::OnEvent(Event& e)
 	{
+		if (m_bViewportHovered)
+			m_EditorCamera.OnEvent(e);
+
 		EventDispatcher dispatcher{ e };
 		dispatcher.Dispatch<KeyPressedEvent>(SM_BIND_EVENT_FN(SmileEditorLayer::OnKeyPressed));
 	}
@@ -365,6 +377,7 @@ namespace Smile
 		{
 			m_pActiveScene = CreateRef<Scene>();
 			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_pActiveScene);
 
 			SceneSerializer sceneSerializer{ m_pActiveScene };
@@ -376,6 +389,7 @@ namespace Smile
 	{
 		m_pActiveScene = CreateRef<Scene>();
 		m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+		m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_pActiveScene);
 	}
 

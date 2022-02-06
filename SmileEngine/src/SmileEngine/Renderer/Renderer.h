@@ -5,6 +5,8 @@
 #include "Shader.h"
 
 #include "Camera.h"
+#include "EditorCamera.h"
+
 #include "SmileEngine/Scene/Components.h"
 
 namespace Smile
@@ -18,6 +20,7 @@ namespace Smile
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(const Camera& camera, const DirectX::XMFLOAT4X4& cameraTransform);
+		static void BeginScene(const EditorCamera& editorCamera);
 		static void EndScene();
 
 		static void Submit(const Ref<VertexBuffer>& pVertexBuffer, const Ref<IndexBuffer>& pIndexBuffer, const Ref<Shader>& pShader, 

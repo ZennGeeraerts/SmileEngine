@@ -11,8 +11,8 @@ namespace Smile
 		inline static bool IsKeyPressed(int keycode) { return m_pInstance->IsKeyPressedImpl(keycode); }
 		inline static bool IsMouseButtonPressed(int button) { return m_pInstance->IsMouseButtonPressedImpl(button); }
 		inline static std::pair<float, float> GetMousePosition() { return m_pInstance->GetMousePositionImpl(); }
-		inline static bool GetMouseX() { return m_pInstance->GetMouseXImpl(); }
-		inline static bool GetMouseY() { return m_pInstance->GetMouseYImpl(); }
+		inline static float GetMouseX() { return m_pInstance->GetMouseXImpl(); }
+		inline static float GetMouseY() { return m_pInstance->GetMouseYImpl(); }
 
 	protected:
 		virtual bool IsKeyPressedImpl(int keycode) = 0;

@@ -32,6 +32,15 @@ namespace Smile
 		DirectX::XMStoreFloat4x4(&m_pSceneData->ViewInverseMatrix, cameraTransformMat);
 	}
 
+	void Renderer::BeginScene(const EditorCamera& editorCamera)
+	{
+		m_pSceneData->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
+
+		DirectX::XMFLOAT4X4 viewMatrix = editorCamera.GetViewMatrix();
+		auto viewMatrixMat = DirectX::XMLoadFloat4x4(&viewMatrix);
+		DirectX::XMStoreFloat4x4(&m_pSceneData->ViewInverseMatrix, DirectX::XMMatrixInverse(nullptr, viewMatrixMat));
+	}
+
 	void Renderer::EndScene()
 	{
 
