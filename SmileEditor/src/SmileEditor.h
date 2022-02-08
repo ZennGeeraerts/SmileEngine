@@ -53,6 +53,12 @@ namespace Smile
 		void OpenScene(const std::filesystem::path& filePath);
 		void NewScene();
 
+		void OnScenePlay();
+		void OnSceneStop();
+
+		// UI Panels
+		void DrawToolbar();
+
 	private:
 		Ref<Scene> m_pActiveScene;
 		EditorCamera m_EditorCamera;
@@ -63,11 +69,22 @@ namespace Smile
 		bool m_bViewportFocused = false;
 		bool m_bViewportHovered = false;
 
+		GizmoType m_GizmoType = GizmoType::eNone;
+
+		enum class SceneState
+		{
+			eEdit = 0,
+			ePlay = 1
+		};
+		SceneState m_SceneState = SceneState::eEdit;
+
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
 
-		GizmoType m_GizmoType = GizmoType::eNone;
+		// Editor resources
+		Ref<Texture2D> m_pIconPlay = nullptr;
+		Ref<Texture2D> m_pIconStop = nullptr;
 	};
 
 	class SmileEditorGame final : public SmileGame

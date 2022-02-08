@@ -329,7 +329,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -341,7 +341,9 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\glut32.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\PhysXDevice64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -367,7 +369,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -381,7 +383,9 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\glut32.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\PhysXDevice64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -406,7 +410,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -418,7 +422,9 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\glut32.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\PhysXDevice64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -444,7 +450,7 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -458,7 +464,9 @@ xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y</Command>
+xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\glut32.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Libs\PhysX\bin\$(Configuration)\PhysXDevice64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>

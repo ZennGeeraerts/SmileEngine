@@ -26,47 +26,11 @@ namespace Smile
 
 		m_pActiveScene = CreateRef<Scene>();
 		m_EditorCamera = EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
-#if 0
-		// Camera
-		m_CameraEntity = m_pActiveScene->CreateEntity("Camera");
-		m_CameraEntity.AddComponent<CameraComponent>();
 
-		// Gun
-		m_GunEntity = m_pActiveScene->CreateEntity("Gun");
-		auto& gunTransform = m_GunEntity.GetComponent<TransformComponent>();
-		gunTransform.Translation.z += 15.f;
-		gunTransform.Translation.y -= 2.f;
-		gunTransform.Translation.x -= 2.f;
-		gunTransform.Rotation.y = 90;
-		gunTransform.Scale.x *= 5.f;
-		gunTransform.Scale.y *= 5.f;
-		gunTransform.Scale.z *= 5.f;
+		// Icon
+		m_pIconPlay = Texture2D::Create("EditorResources/Icons/PlayButton.png");
+		m_pIconStop = Texture2D::Create("EditorResources/Icons/StopButton.png");
 
-		auto pAlbedoMap = Texture2D::Create("Resources/Textures/base_albedo.jpg");
-		auto pNormalMap = Texture2D::Create("Resources/Textures/base_normal.jpg");
-		auto pMetalnessMap = Texture2D::Create("Resources/Textures/base_metallic.jpg");
-		auto pRoughnessMap = Texture2D::Create("Resources/Textures/base_roughness.jpg");
-		auto pAOMap = Texture2D::Create("Resources/Textures/base_AO.jpg");
-		auto pEnvironmentMap = Texture2D::Create("Resources/Textures/Sunol_Cubemap.dds");
-
-		m_pMaterial = CreateRef<Material>();
-		m_pMaterial->SetUseAlbedoMap(true);
-		m_pMaterial->SetAlbedo(pAlbedoMap);
-		m_pMaterial->SetUseMetalnessMap(true);
-		m_pMaterial->SetMetalness(pMetalnessMap);
-		m_pMaterial->SetUseRoughnessMap(true);
-		m_pMaterial->SetRoughness(pRoughnessMap);
-		m_pMaterial->SetUseNormalMap(true);
-		m_pMaterial->SetNormalMap(pNormalMap);
-		m_pMaterial->SetUseAOMap(true);
-		m_pMaterial->SetAOMap(pAOMap);
-
-		/*m_pMaterial->SetAlbedo(DirectX::XMFLOAT3{ 0.9f, 0.1f, 0.1f });
-		m_pMaterial->SetMetalness(1);
-		m_pMaterial->SetRoughness(0.5f);*/
-
-		auto staticMesh = m_GunEntity.AddComponent<StaticMeshComponent>("Resources/Meshes/drakefire_pistol_low.obj", m_pMaterial);
-#endif
 		// Framebuffer
 		FramebufferData framebufferData{};
 		framebufferData.Width = 1280;
@@ -94,61 +58,27 @@ namespace Smile
 			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
 
-		if (m_bViewportFocused)
-			m_EditorCamera.OnUpdate(deltaTime);
-#if 0
-		if (m_bViewportFocused)
-		{
-			auto& cameraTransform = m_CameraEntity.GetComponent<Smile::TransformComponent>();
-
-			if (Smile::Input::IsKeyPressed(SM_LEFT))
-				cameraTransform.Rotation.y -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-			if (Smile::Input::IsKeyPressed(SM_RIGHT))
-				cameraTransform.Rotation.y += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-			if (Smile::Input::IsKeyPressed(SM_UP))
-				cameraTransform.Rotation.x -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-			if (Smile::Input::IsKeyPressed(SM_DOWN))
-				cameraTransform.Rotation.x += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-
-			const auto forward = cameraTransform.GetForward();
-			const auto right = cameraTransform.GetRight();
-			DirectX::XMFLOAT3 move{};
-
-			if (Smile::Input::IsKeyPressed('A'))
-				move.x -= 1;
-			if (Smile::Input::IsKeyPressed('D'))
-				move.x += 1;
-			if (Smile::Input::IsKeyPressed('S'))
-				move.z -= 1;
-			if (Smile::Input::IsKeyPressed('W'))
-				move.z += 1;
-			if (Smile::Input::IsKeyPressed(SM_SPACE))
-				move.y += 1;
-			if (Smile::Input::IsKeyPressed(SM_LCONTROL))
-				move.y -= 1;
-
-			DirectX::XMFLOAT3 dir{};
-			dir.x = forward.x * move.z + right.x * move.x;
-			//dir.y = forward.y * move.z + right.y * move.x;
-			dir.z = forward.z * move.z + right.z * move.x;
-
-			auto dirMat = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&dir));
-			DirectX::XMStoreFloat3(&dir, dirMat);
-
-			cameraTransform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
-			cameraTransform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
-			cameraTransform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
-		}
-
-		{
-			auto& gunTransform = m_GunEntity.GetComponent<TransformComponent>();
-			gunTransform.Rotation.y += 1.f * deltaTime;
-		}
-#endif
 		Smile::RenderCommand::Clear();
 		m_pFramebuffer->Bind();
 		m_pFramebuffer->Clear();
-		m_pActiveScene->OnUpdateEditor(deltaTime, m_EditorCamera);
+
+		switch (m_SceneState)
+		{
+		case SceneState::eEdit:
+		{
+			if (m_bViewportFocused)
+				m_EditorCamera.OnUpdate(deltaTime);
+
+			m_pActiveScene->OnUpdateEditor(deltaTime, m_EditorCamera);
+			break;
+		}
+		case SceneState::ePlay:
+		{
+			m_pActiveScene->OnUpdateRuntime(deltaTime);
+			break;
+		}
+		}
+
 		m_pFramebuffer->Unbind();
 	}
 
@@ -248,10 +178,10 @@ namespace Smile
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
-			if (payload)
+			const ImGuiPayload* pPayload = ImGui::AcceptDragDropPayload("ContentBrowserItem");
+			if (pPayload)
 			{
-				const wchar_t* path = static_cast<const wchar_t*>(payload->Data);
+				const wchar_t* path = static_cast<const wchar_t*>(pPayload->Data);
 				OpenScene(std::filesystem::path{ g_ResourcePath } / path);
 			}
 
@@ -260,8 +190,7 @@ namespace Smile
 
 		// Gizmos
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		m_GizmoType = GizmoType::eRotate;
-		if (selectedEntity && (m_GizmoType != GizmoType::eNone))
+		if (selectedEntity && (m_GizmoType != GizmoType::eNone) && (m_SceneState == SceneState::eEdit))
 		{
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
@@ -289,24 +218,23 @@ namespace Smile
 			// Entity
 			auto& entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();
 			auto entityTransform = entityTransformComponent.GetTransform();
+			auto entityRotation = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees(entityTransformComponent.Rotation.x), 
+				DirectX::XMConvertToDegrees(entityTransformComponent.Rotation.y), DirectX::XMConvertToDegrees(entityTransformComponent.Rotation.z) };
 
-			ImGuizmo::Manipulate(cameraViewMatrix.m[0], cameraProjectionMatrix.m[0], static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::MODE::LOCAL, entityTransform.m[0]);
+			// Snapping
+			bool bSnapping = Input::IsKeyPressed(SM_LCONTROL);
+			float snapValue = 0.5f;
+			if (m_GizmoType == GizmoType::eRotate)
+				snapValue = 45.f;
+			float snapValues[3]{ snapValue, snapValue, snapValue };
+
+			ImGuizmo::RecomposeMatrixFromComponents(&entityTransformComponent.Translation.x, &entityRotation.x, &entityTransformComponent.Scale.x, *entityTransform.m);
+			ImGuizmo::Manipulate(*cameraViewMatrix.m, *cameraProjectionMatrix.m, static_cast<ImGuizmo::OPERATION>(m_GizmoType), ImGuizmo::MODE::LOCAL, *entityTransform.m, nullptr, bSnapping ? snapValues : nullptr);
 
 			if (ImGuizmo::IsUsing())
 			{
-				DirectX::XMFLOAT3 translation{};
-				DirectX::XMFLOAT3 rotation{};
-				DirectX::XMFLOAT3 scale{};
-				Math::DecomposeMatrix(entityTransform, translation, rotation, scale);
-
-				entityTransformComponent.Translation = translation;
-
-				//DirectX::XMVECTOR currentRotationVec = DirectX::XMLoadFloat3(&entityTransformComponent.Rotation);
-				//DirectX::XMVECTOR deltaRotationVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&rotation), currentRotationVec);
-				//DirectX::XMVECTOR newRotationVec = DirectX::XMVectorAdd(currentRotationVec, deltaRotationVec);
-				//DirectX::XMStoreFloat3(&entityTransformComponent.Rotation, newRotationVec);
-				entityTransformComponent.Rotation = rotation;
-				entityTransformComponent.Scale = scale;
+				ImGuizmo::DecomposeMatrixToComponents(*entityTransform.m, &entityTransformComponent.Translation.x, &entityRotation.x, &entityTransformComponent.Scale.x);
+				entityTransformComponent.Rotation = { DirectX::XMConvertToRadians(entityRotation.x), DirectX::XMConvertToRadians(entityRotation.y), DirectX::XMConvertToRadians(entityRotation.z) };
 			}
 		}
 
@@ -314,6 +242,38 @@ namespace Smile
 
 		ImGui::PopStyleVar();
 
+		DrawToolbar();
+
+		ImGui::End();
+	}
+
+	void SmileEditorLayer::DrawToolbar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 2 });
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0, 0 });
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 });
+
+		const auto& colors = ImGui::GetStyle().Colors;
+		const auto& buttonHoveredColor = colors[ImGuiCol_ButtonHovered];
+		const auto& buttonActiveColor = colors[ImGuiCol_ButtonActive];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ buttonHoveredColor.x, buttonHoveredColor.y, buttonHoveredColor.z, 0.5f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ buttonActiveColor.x, buttonActiveColor.y, buttonActiveColor.z, 0.5f });
+
+		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		
+		Ref<Texture2D> pStateIcon = (m_SceneState == SceneState::eEdit) ? m_pIconPlay : m_pIconStop;
+		float iconSize{ ImGui::GetWindowHeight() - 4.f };
+		ImGui::SetCursorPosX((ImGui::GetContentRegionMax().x * 0.5f) - (iconSize * 0.5f));
+		if (ImGui::ImageButton(static_cast<ImTextureID>(pStateIcon->GetData()), ImVec2{ iconSize, iconSize }, ImVec2{ 0, 0 }, ImVec2{ 1, 1 }, 0))
+		{
+			if (m_SceneState == SceneState::eEdit)
+				OnScenePlay();
+			else if (m_SceneState == SceneState::ePlay)
+				OnSceneStop();
+		}
+		
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
 		ImGui::End();
 	}
 
@@ -347,6 +307,20 @@ namespace Smile
 		case 'N':
 			if (bControlPressed)
 				NewScene();
+			break;
+
+		// Gizmos
+		case 'Q':
+			m_GizmoType = GizmoType::eNone;
+			break;
+		case 'W':
+			m_GizmoType = GizmoType::eTranslate;
+			break;
+		case 'E':
+			m_GizmoType = GizmoType::eRotate;
+			break;
+		case 'R':
+			m_GizmoType = GizmoType::eScale;
 			break;
 		}
 
@@ -391,6 +365,16 @@ namespace Smile
 		m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_pActiveScene);
+	}
+
+	void SmileEditorLayer::OnScenePlay()
+	{
+		m_SceneState = SceneState::ePlay;
+	}
+
+	void SmileEditorLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::eEdit;
 	}
 
 	/*-----------------------------------------------------------------------------------------------------------*/

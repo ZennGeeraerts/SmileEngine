@@ -1,15 +1,4 @@
-﻿  WindowsWindow.cpp
-  SmileGame.cpp
-  Buffer.cpp
-  EditorCamera.cpp
-  Framebuffer.cpp
-  Renderer.cpp
-  RenderingContext.cpp
-  Shader.cpp
-  Texture.cpp
-C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(18,42): warning C4312: 'reinterpret_cast': conversion from 'const Smile::Raster::TextureID' to 'void *' of greater size
-  VertexArray.cpp
-  Scene.cpp
+﻿  Scene.cpp
   SceneSerializer.cpp
   Generating Code...
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
@@ -21,4 +10,8 @@ SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR alrea
   C:\dev\SmileEngine\Libs\assimp\x64\assimp-vc140-mt.dll
   1 File(s) copied
   C:\dev\SmileEngine\Libs\assimp\x64\zlib1.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\bin\Debug\glut32.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\bin\Debug\PhysXDevice64.dll
   1 File(s) copied
