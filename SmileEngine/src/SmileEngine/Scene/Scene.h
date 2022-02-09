@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SmileEngine/Core/UUID.h"
 #include "SmileEngine/Core/Timestep.h"
 #include "SmileEngine/Renderer/EditorCamera.h"
 
@@ -15,8 +16,9 @@ namespace Smile
 		Scene();
 		~Scene();
 
-		Entity CreateEntity(const std::string& name);
 		Entity CreateEntity();
+		Entity CreateEntity(const std::string& name);
+		Entity CreateEntity(UUID uuid, const std::string& name);
 		void DestroyEntity(Entity entity);
 
 		void OnUpdateRuntime(Timestep deltaTime);

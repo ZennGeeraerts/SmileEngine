@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SmileEngine\Core\UUID.h" />
     <ClInclude Include="src\SmileEngine\Renderer\EditorCamera.h" />
     <ClInclude Include="src\SmileEngine\Renderer\SkinnedMeshFilter.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterTexture.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEngine\Core\UUID.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\SkinnedMeshFilter.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterTexture.cpp" />

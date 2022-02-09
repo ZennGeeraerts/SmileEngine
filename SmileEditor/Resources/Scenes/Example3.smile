@@ -1,24 +1,13 @@
 Scene: Untitled
 Entities:
-  - Entity: 1283719283174164
+  - Entity: 10377547828637058634
     TagComponent:
-      Tag: Gun
+      Tag: Character
     TransformComponent:
-      Translation: [-5.55999994, 0, 20]
-      Rotation: [0, 1.57079637, 0]
-      Scale: [5, 5, 5]
-    MeshComponent:
-      Mesh: Resources\Meshes\drakefire_pistol_low.obj
-      Material:
-        AlbedoMap: Resources\Textures\base_albedo.jpg
-        AlbedoColor: [0, 0, 0]
-        MetalnessMap: Resources\Textures\base_metallic.jpg
-        Metalness: 0
-        RoughnessMap: Resources\Textures\base_roughness.jpg
-        Roughness: 0.5
-        NormalMap: Resources\Textures\base_normal.jpg
-        AOMap: Resources\Textures\base_AO.jpg
-  - Entity: 1283719283174164
+      Translation: [7.82999992, -7.44000006, 20]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [1, 1, 1]
+  - Entity: 6390693642420582121
     TagComponent:
       Tag: Camera
     TransformComponent:
@@ -36,21 +25,10 @@ Entities:
         OrthographicFarPlane: 1
       bPrimary: true
       bFixedAspectRatio: false
-  - Entity: 1283719283174164
+  - Entity: 8058317717610920182
     TagComponent:
-      Tag: Character
+      Tag: Gun
     TransformComponent:
-      Translation: [7.82999992, -7.44000006, 20]
-      Rotation: [0, 3.14159274, 0]
-      Scale: [1, 1, 1]
-    MeshComponent:
-      Mesh: Resources\Meshes\nanosuit.obj
-      Material:
-        AlbedoMap: ""
-        AlbedoColor: [0.45780614, 0.116446137, 0.669565201]
-        MetalnessMap: ""
-        Metalness: 1
-        RoughnessMap: ""
-        Roughness: 0
-        NormalMap: ""
-        AOMap: ""
+      Translation: [-5.55999994, 0, 20]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [5, 5, 5]

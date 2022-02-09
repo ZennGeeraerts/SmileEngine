@@ -1,9 +1,14 @@
 #pragma once
-#include "smpch.h"
+
+#include "SmileEngine/Core/UUID.h"
+#include "Scene.h"
+#include "Components.h"
+
+#include <Libs/entt/entt.hpp>
 
 namespace Smile
 {
-	class  Entity final
+	class Entity final
 	{
 	public:
 		Entity() = default;
@@ -36,10 +41,13 @@ namespace Smile
 		template <typename ComponentType>
 		ComponentType& GetComponent() const
 		{
-			SM_ASSERT(HasComponent<ComponentType>(), "Entity::AddComponent > Entity does not have component");
+			SM_ASSERT(HasComponent<ComponentType>(), "Entity::GetComponent > Entity does not have component");
 
 			return m_pScene->m_Registry.get<ComponentType>(m_EntityHandle);
 		}
+
+		UUID GetUUID() const { return GetComponent<IDComponent>().ID; }
+		DirectX::XMFLOAT4X4 GetTransform() const { return GetComponent<TransformComponent>().GetTransform(); }
 
 		template <typename ComponentType>
 		bool HasComponent() const

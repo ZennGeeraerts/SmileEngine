@@ -1,6 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 1283719283174164
+  - Entity: 3695277775814804186
     TagComponent:
       Tag: Gun
     TransformComponent:
@@ -18,7 +18,7 @@ Entities:
         Roughness: 0.5
         NormalMap: Resources\Textures\base_normal.jpg
         AOMap: Resources\Textures\base_AO.jpg
-  - Entity: 1283719283174164
+  - Entity: 13124759877461113829
     TagComponent:
       Tag: Camera
     TransformComponent:
@@ -36,7 +36,7 @@ Entities:
         OrthographicFarPlane: 1
       bPrimary: true
       bFixedAspectRatio: false
-  - Entity: 1283719283174164
+  - Entity: 9567634026291593274
     TagComponent:
       Tag: Character
     TransformComponent:
@@ -54,7 +54,7 @@ Entities:
         Roughness: 0
         NormalMap: ""
         AOMap: ""
-  - Entity: 1283719283174164
+  - Entity: 12316792503961140116
     TagComponent:
       Tag: Cowboy
     TransformComponent:

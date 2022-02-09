@@ -1,6 +1,5 @@
 #pragma once
-#include <DirectXMath.h>
-
+#include "SmileEngine/Core/UUID.h"
 #include "SmileEngine/Renderer/Buffer.h"
 #include "SmileEngine/Renderer/Shader.h"
 
@@ -12,8 +11,18 @@
 #include "SmileEngine/Renderer/Material.h"
 #include "SmileEngine/Renderer/Animation/MeshAnimator.h"
 
+#include <DirectXMath.h>
+
 namespace Smile
 {
+	struct IDComponent
+	{
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+
+		UUID ID;
+	};
+
 	struct TagComponent
 	{
 		TagComponent() = default;

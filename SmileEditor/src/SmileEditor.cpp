@@ -213,7 +213,7 @@ namespace Smile
 
 			// Editor camera
 			const DirectX::XMFLOAT4X4& cameraProjectionMatrix = m_EditorCamera.GetProjectionMatrix();
-			DirectX::XMFLOAT4X4 cameraViewMatrix = m_EditorCamera.GetViewMatrix();
+			const DirectX::XMFLOAT4X4& cameraViewMatrix = m_EditorCamera.GetViewMatrix();
 
 			// Entity
 			auto& entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();

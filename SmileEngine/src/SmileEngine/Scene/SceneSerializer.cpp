@@ -110,8 +110,10 @@ namespace Smile
 
 	static void SerializeEntity(YAML::Emitter& output, Entity entity)
 	{
+		SM_ASSERT(entity.HasComponent<IDComponent>(), "SceneSerializer::SerializeScene > Entity does not have an IDComponent");
+
 		output << YAML::BeginMap;
-		output << YAML::Key << "Entity" << YAML::Value << "1283719283174164";
+		output << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -256,7 +258,7 @@ namespace Smile
 
 				SM_LOG_TRACE("Deserialized entity with ID: %d, name: %s", uuid, name.c_str());
 
-				Entity deserializedEntity = m_pScene->CreateEntity(name);
+				Entity deserializedEntity = m_pScene->CreateEntity(uuid, name);
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)

@@ -19,18 +19,24 @@ namespace Smile
 
 	}
 
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity()
 	{
-		Entity entity{ m_Registry.create(), this };
-		entity.AddComponent<TransformComponent>();
-		entity.AddComponent<TagComponent>(name);
-
-		return entity;
+		return CreateEntity("Entity");
 	}
 
-	Entity Scene::CreateEntity() 
-	{ 
-		return CreateEntity("Entity"); 
+	Entity Scene::CreateEntity(const std::string& name)
+	{
+		return CreateEntity(UUID{}, name);
+	}
+
+	Entity Scene::CreateEntity(UUID uuid, const std::string& name)
+	{
+		Entity entity{ m_Registry.create(), this };
+		entity.AddComponent<IDComponent>(uuid);
+		entity.AddComponent<TagComponent>(name);
+		entity.AddComponent<TransformComponent>();
+
+		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
@@ -178,6 +184,11 @@ namespace Smile
 	void Scene::OnComponentAdded(Entity entity, ComponentType& component)
 	{
 		static_assert(false);
+	}
+
+	template <>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
 	}
 
 	template <>
