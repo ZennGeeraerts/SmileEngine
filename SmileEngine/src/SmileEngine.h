@@ -37,9 +37,6 @@
 #include "SmileEngine/Renderer/PerspectiveCamera.h"
 #include "SmileEngine/Renderer/PerspectiveCameraController.h"
 
-/* ---Entry point--- */
-#include "SmileEngine/Core/EntryPoint.h"
-
 /* --- DirectX --- */
 #include <DirectXMath.h>
 #include <DirectXColors.h>

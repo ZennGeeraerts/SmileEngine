@@ -256,7 +256,7 @@ namespace Smile
 				if (tagComponent)
 					name = tagComponent["Tag"].as<std::string>();
 
-				SM_LOG_TRACE("Deserialized entity with ID: %d, name: %s", uuid, name.c_str());
+				SM_LOG_TRACE("Deserialized entity with ID: %llu, name: %s", uuid, name.c_str());
 
 				Entity deserializedEntity = m_pScene->CreateEntity(uuid, name);
 

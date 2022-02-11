@@ -21,11 +21,18 @@ namespace Smile
 		Entity CreateEntity(UUID uuid, const std::string& name);
 		void DestroyEntity(Entity entity);
 
+		void OnRuntimeStart();
+		void OnRuntimeStop();
+
 		void OnUpdateRuntime(Timestep deltaTime);
 		void OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();
+
+		static Ref<Scene> Copy(const Ref<Scene>& pScene);
+
+		void DuplicateEntity(Entity entity);
 
 	private:
 		template <typename ComponentType>

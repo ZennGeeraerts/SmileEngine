@@ -207,10 +207,10 @@ namespace Smile
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeysDown[e.GetKeyCode()] = true;
 
-		io.KeyCtrl = io.KeysDown[SM_LCONTROL] || io.KeysDown[SM_RCONTROL];
-		io.KeyShift = io.KeysDown[SM_LSHIFT] || io.KeysDown[SM_RSHIFT];
-		io.KeyAlt = io.KeysDown[SM_LMENU] || io.KeysDown[SM_RMENU];
-		io.KeySuper = io.KeysDown[SM_LWIN] || io.KeysDown[SM_RWIN];
+		io.KeyCtrl = io.KeysDown[Key::eLeftControl] || io.KeysDown[Key::eRightControl];
+		io.KeyShift = io.KeysDown[Key::eLeftShift] || io.KeysDown[Key::eRightShift];
+		io.KeyAlt = io.KeysDown[Key::eLeftAlt] || io.KeysDown[Key::eRightAlt];
+		io.KeySuper = io.KeysDown[Key::eLeftWindows] || io.KeysDown[Key::eRightWindows];
 		return false;
 	}
 

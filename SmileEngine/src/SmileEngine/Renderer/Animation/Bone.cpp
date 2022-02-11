@@ -58,6 +58,7 @@ namespace Smile
 		}
 		
 		SM_ASSERT(false, "Bone::GetTranslationIndex > Translation index is 0");
+		return 0;
 	}
 
 	void Bone::InterpolateRotation(DirectX::XMFLOAT4& rotation, float animationTime)
@@ -93,6 +94,7 @@ namespace Smile
 		}
 
 		SM_ASSERT(false, "Bone::GetRotationIndex > Rotation index is 0");
+		return 0;
 	}
 
 	void Bone::InterpolateScale(DirectX::XMFLOAT3& scale, float animationTime)
@@ -125,6 +127,7 @@ namespace Smile
 		}
 
 		SM_ASSERT(false, "Bone::GetScaleIndex > Scale index is 0");
+		return 0;
 	}
 
 	float Bone::GetScaleFactor(float lastTick, float nextTick, float animationTime)

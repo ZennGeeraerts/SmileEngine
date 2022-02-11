@@ -23,9 +23,9 @@ namespace std
 	template<>
 	struct hash<Smile::UUID>
 	{
-		size_t operator()(const Smile::UUID& uuid)
+		size_t operator()(const Smile::UUID& uuid) const
 		{
-			return hash<uint64_t>()(uuid);
+			return hash<uint64_t>()(static_cast<uint64_t>(uuid));
 		}
 	};
 }

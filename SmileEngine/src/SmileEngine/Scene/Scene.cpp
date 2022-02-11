@@ -44,6 +44,16 @@ namespace Smile
 		m_Registry.destroy(entity);
 	}
 
+	void Scene::OnRuntimeStart()
+	{
+
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+
+	}
+
 	void Scene::OnUpdateRuntime(Timestep deltaTime)
 	{
 		Camera* pMainCamera = nullptr;
@@ -178,6 +188,69 @@ namespace Smile
 				return Entity{ entity, this };
 		}
 		return Entity{};
+	}
+
+	template <typename ComponentType>
+	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		auto view = src.view<ComponentType>();
+		for (auto entity : view)
+		{
+			UUID uuid = src.get<IDComponent>(entity).ID;
+			SM_ASSERT(enttMap.find(uuid) != enttMap.end(), "Scene > CopyComponent > uuid not found int enttMap");
+			entt::entity dstEnttID = enttMap.at(uuid);
+
+			auto& component = src.get<ComponentType>(entity);
+			dst.emplace_or_replace<ComponentType>(dstEnttID, component);
+		}
+	}
+
+	template <typename ComponentType>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<ComponentType>())
+			dst.AddOrReplaceComponent<ComponentType>(src.GetComponent<ComponentType>());
+	}
+
+	Ref<Scene> Scene::Copy(const Ref<Scene>& pScene)
+	{
+		Ref<Scene> pNewScene = CreateRef<Scene>();
+
+		pNewScene->m_ViewportWidth = pScene->m_ViewportWidth;
+		pNewScene->m_ViewportHeight = pScene->m_ViewportHeight;
+
+		std::unordered_map<UUID, entt::entity> enttMap{};
+
+		auto& srcSceneRegistry = pScene->m_Registry;
+		auto& dstSceneRegistry = pNewScene->m_Registry;
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		for (auto entity : idView)
+		{
+			auto uuid = srcSceneRegistry.get<IDComponent>(entity).ID;
+			const auto& name = srcSceneRegistry.get<TagComponent>(entity).Tag;
+			Entity newEntity = pNewScene->CreateEntity(uuid, name);
+			enttMap[uuid] = static_cast<entt::entity>(newEntity);
+		}
+
+		// Copy components except IDComponent and TagComponent
+		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<StaticMeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SkinnedMeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		return pNewScene;
+	}
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.GetName());
+
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<MeshRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<StaticMeshComponent>(newEntity, entity);
+		CopyComponentIfExists<SkinnedMeshComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 	}
 
 	template <typename ComponentType>

@@ -16,13 +16,13 @@ namespace Smile
 
 	void PerspectiveCameraController::OnUpdate(Timestep deltaTime)
 	{
-		if (Input::IsKeyPressed(SM_LEFT))
+		if (Input::IsKeyPressed(Key::eLeft))
 			m_CameraRotation.y -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-		if (Input::IsKeyPressed(SM_RIGHT))
+		if (Input::IsKeyPressed(Key::eRight))
 			m_CameraRotation.y += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-		if (Input::IsKeyPressed(SM_UP))
+		if (Input::IsKeyPressed(Key::eUp))
 			m_CameraRotation.x -= DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
-		if (Input::IsKeyPressed(SM_DOWN))
+		if (Input::IsKeyPressed(Key::eDown))
 			m_CameraRotation.x += DirectX::XMConvertToRadians(m_CameraRotationSpeed * deltaTime);
 
 		const DirectX::XMFLOAT3 forward = { 0.f, 0.f, 1.f };
@@ -37,9 +37,9 @@ namespace Smile
 			dir.z -= 1;
 		if (Smile::Input::IsKeyPressed('W'))
 			dir.z += 1;
-		if (Smile::Input::IsKeyPressed(SM_SPACE))
+		if (Smile::Input::IsKeyPressed(Key::eSpace))
 			dir.y += 1;
-		if (Smile::Input::IsKeyPressed(SM_LCONTROL))
+		if (Smile::Input::IsKeyPressed(Key::eLeftControl))
 			dir.y -= 1;
 
 		dir.x = forward.x * dir.z + right.x * dir.x;

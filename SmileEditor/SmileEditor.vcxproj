@@ -21,12 +21,13 @@
   <ItemGroup>
     <ClInclude Include="src\Panels\ContentBrowserPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
-    <ClInclude Include="src\SmileEditor.h" />
+    <ClInclude Include="src\SmileEditorLayer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SmileEditor.cpp" />
     <ClCompile Include="src\Panels\ContentBrowserPanel.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
-    <ClCompile Include="src\SmileEditor.cpp" />
+    <ClCompile Include="src\SmileEditorLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmileEngine\SmileEngine.vcxproj">

@@ -25,24 +25,27 @@ namespace Smile
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_pContext->m_Registry.each(
-			[&] (auto entityID)
-			{
-				Entity entity{ entityID, m_pContext.get() };
-				DrawEntityNode(entity);
-			});
-
-		// Deselect entities
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectedEntity = {};
-
-		// Right click on blank space
-		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		if (m_pContext)
 		{
-			if (ImGui::MenuItem("Create Empty Entity"))
-				m_pContext->CreateEntity();
+			m_pContext->m_Registry.each(
+				[&](auto entityID)
+				{
+					Entity entity{ entityID, m_pContext.get() };
+					DrawEntityNode(entity);
+				});
 
-			ImGui::EndPopup();
+			// Deselect entities
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_SelectedEntity = {};
+
+			// Right click on blank space
+			if (ImGui::BeginPopupContextWindow(0, 1, false))
+			{
+				if (ImGui::MenuItem("Create Empty Entity"))
+					m_pContext->CreateEntity();
+
+				ImGui::EndPopup();
+			}
 		}
 
 		ImGui::End();

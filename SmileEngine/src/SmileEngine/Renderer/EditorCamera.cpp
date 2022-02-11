@@ -3,6 +3,7 @@
 
 #include "SmileEngine/Core/Input.h"
 #include "SmileEngine/Core/KeyCodes.h"
+#include "SmileEngine/Core/MouseCodes.h"
 
 #include "SmileEngine/Math/Math.h"
 
@@ -20,7 +21,7 @@ namespace Smile
 
 	void EditorCamera::OnUpdate(Timestep deltaTime)
 	{
-		if (Input::IsKeyPressed(SM_MENU))
+		if (Input::IsKeyPressed(Key::eAlt))
 		{
 			DirectX::XMFLOAT2 mousePosition{ Input::GetMouseX(), Input::GetMouseY() };
 			auto mousePositionVec = DirectX::XMLoadFloat2(&mousePosition);
@@ -32,11 +33,11 @@ namespace Smile
 			DirectX::XMFLOAT2 delta{};
 			DirectX::XMStoreFloat2(&delta, deltaVec);
 
-			if (Input::IsMouseButtonPressed(SM_MMOUSEBUTTON))
+			if (Input::IsMouseButtonPressed(Mouse::eButtonMiddle))
 				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(SM_LMOUSEBUTTON))
+			else if (Input::IsMouseButtonPressed(Mouse::eButtonLeft))
 				MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(SM_RMOUSEBUTTON))
+			else if (Input::IsMouseButtonPressed(Mouse::eButtonRight))
 				MouseZoom(delta.y);
 		}
 

@@ -65,10 +65,10 @@ Entities:
       Mesh: Resources\Meshes\model.dae
       Material:
         AlbedoMap: ""
-        AlbedoColor: [0.00979206059, 0.160869539, 0.032110285]
+        AlbedoColor: [0.14549537, 0.17467986, 0.626262665]
         MetalnessMap: ""
-        Metalness: 0
+        Metalness: 1
         RoughnessMap: ""
-        Roughness: 0.486000001
+        Roughness: 0
         NormalMap: ""
         AOMap: ""

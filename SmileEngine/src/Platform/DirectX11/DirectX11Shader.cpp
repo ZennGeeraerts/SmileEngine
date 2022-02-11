@@ -73,7 +73,7 @@ namespace Smile
 		auto pMatArrayVariable = GetEffectVariable(sementicName)->AsMatrix();
 		if (pMatArrayVariable->IsValid())
 		{
-			pMatArrayVariable->SetMatrixArray(&matArray[0]._11, 0, matArray.size());
+			pMatArrayVariable->SetMatrixArray(&matArray[0]._11, 0, static_cast<uint32_t>(matArray.size()));
 		}
 	}
 

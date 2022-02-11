@@ -32,6 +32,15 @@ namespace Smile
 			return component;
 		}
 
+		template <typename ComponentType, typename... ConstructorArgs>
+		ComponentType& AddOrReplaceComponent(ConstructorArgs&&... constructorArgs)
+		{
+			// forward the constructor arguments to entt
+			ComponentType& component = m_pScene->m_Registry.emplace_or_replace<ComponentType>(m_EntityHandle, std::forward<ConstructorArgs>(constructorArgs)...);
+			m_pScene->OnComponentAdded<ComponentType>(*this, component);
+			return component;
+		}
+
 		template <typename ComponentType>
 		void RemoveComponent()
 		{
@@ -47,6 +56,7 @@ namespace Smile
 		}
 
 		UUID GetUUID() const { return GetComponent<IDComponent>().ID; }
+		const std::string& GetName() const { return GetComponent<TagComponent>().Tag; }
 		DirectX::XMFLOAT4X4 GetTransform() const { return GetComponent<TransformComponent>().GetTransform(); }
 
 		template <typename ComponentType>

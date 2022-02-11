@@ -193,22 +193,22 @@ namespace Smile
 
 						if (pMesh->m_BlendIndices[weight.mVertexId].x < 0)
 						{
-							pMesh->m_BlendIndices[weight.mVertexId].x = boneID;
+							pMesh->m_BlendIndices[weight.mVertexId].x = static_cast<float>(boneID);
 							pMesh->m_BlendWeights[weight.mVertexId].x = weight.mWeight;
 						}
 						else if (pMesh->m_BlendIndices[weight.mVertexId].y < 0)
 						{
-							pMesh->m_BlendIndices[weight.mVertexId].y = boneID;
+							pMesh->m_BlendIndices[weight.mVertexId].y = static_cast<float>(boneID);
 							pMesh->m_BlendWeights[weight.mVertexId].y = weight.mWeight;
 						}
 						else if (pMesh->m_BlendIndices[weight.mVertexId].z < 0)
 						{
-							pMesh->m_BlendIndices[weight.mVertexId].z = boneID;
+							pMesh->m_BlendIndices[weight.mVertexId].z = static_cast<float>(boneID);
 							pMesh->m_BlendWeights[weight.mVertexId].z = weight.mWeight;
 						}
 						else if (pMesh->m_BlendIndices[weight.mVertexId].w < 0)
 						{
-							pMesh->m_BlendIndices[weight.mVertexId].w = boneID;
+							pMesh->m_BlendIndices[weight.mVertexId].w = static_cast<float>(boneID);
 							pMesh->m_BlendWeights[weight.mVertexId].w = weight.mWeight;
 						}
 					}
