@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-
 #include "SmileEngine/Core/Timestep.h"
 #include "SmileEngine/Core/SmTime.h"
 
@@ -47,3 +46,12 @@
 #else 
 	#pragma comment(lib, "yaml-cpp.lib")
 #endif
+
+// Physics
+#pragma comment(lib, "PhysX_64.lib")
+#pragma comment(lib, "PhysXCharacterKinematic_static_64.lib")
+#pragma comment(lib, "PhysXCommon_64.lib")
+#pragma comment(lib, "PhysXCooking_64.lib")
+#pragma comment(lib, "PhysXExtensions_static_64.lib")
+#pragma comment(lib, "PhysXFoundation_64.lib")
+#pragma comment(lib, "PhysXPvdSDK_static_64.lib")

@@ -25,7 +25,7 @@ namespace Smile
 		void OnRuntimeStop();
 
 		void OnUpdateRuntime(Timestep deltaTime);
-		void OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera);
+		void OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera, bool bSimmulate = false);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCameraEntity();

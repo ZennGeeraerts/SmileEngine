@@ -10,3 +10,11 @@ dx11effects_d.lib(EffectRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was
   1 File(s) copied
   C:\dev\SmileEngine\Libs\assimp\x64\zlib1.dll
   1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysX_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysXCommon_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysXCooking_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysXFoundation_64.dll
+  1 File(s) copied

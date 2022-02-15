@@ -1,6 +1,4 @@
-﻿  EditorCamera.cpp
-  PerspectiveCameraController.cpp
-  Generating Code...
+﻿  SceneSerializer.cpp
 d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
 assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
@@ -11,7 +9,11 @@ SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR alrea
   1 File(s) copied
   C:\dev\SmileEngine\Libs\assimp\x64\zlib1.dll
   1 File(s) copied
-  C:\dev\SmileEngine\Libs\PhysX\bin\Debug\glut32.dll
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysX_64.dll
   1 File(s) copied
-  C:\dev\SmileEngine\Libs\PhysX\bin\Debug\PhysXDevice64.dll
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysXCommon_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysXCooking_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Libs\PhysX\lib\Debug\PhysXFoundation_64.dll
   1 File(s) copied

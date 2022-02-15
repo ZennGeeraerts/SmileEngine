@@ -214,6 +214,30 @@ namespace Smile
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Rigid Body"))
+			{
+				m_SelectedEntity.AddComponent<RigidbodyComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Box Collider"))
+			{
+				m_SelectedEntity.AddComponent<BoxColliderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Sphere Collider"))
+			{
+				m_SelectedEntity.AddComponent<SphereColliderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Capsule Collider"))
+			{
+				m_SelectedEntity.AddComponent<CapsuleColliderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 
@@ -374,6 +398,96 @@ namespace Smile
 					if (ImGui::Button("Pause", { 100.f, 0.0f }))
 						animator.Pause();
 				}
+			});
+
+		DrawComponent<RigidbodyComponent>("Rigidbody", entity, [](auto& rigidbodyComponent)
+			{
+				const uint32_t bodyTypeCount = 2;
+				const char* bodyTypeStrs[bodyTypeCount]{ "Static", "Dynamic" };
+				const char* currentBodyTypeStr = bodyTypeStrs[static_cast<uint32_t>(rigidbodyComponent.Type)];
+				if (ImGui::BeginCombo("Body Type", currentBodyTypeStr))
+				{
+					for (uint32_t i{}; i < bodyTypeCount; ++i)
+					{
+						bool bSelected = currentBodyTypeStr == bodyTypeStrs[i];
+						if (ImGui::Selectable(bodyTypeStrs[i], bSelected))
+						{
+							currentBodyTypeStr = bodyTypeStrs[i];
+							rigidbodyComponent.Type = static_cast<RigidbodyComponent::BodyType>(i);
+						}
+
+						if (bSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+
+				const uint32_t collisionDetectionCount = 2;
+				const char* collisionDetectionStrs[collisionDetectionCount]{ "Discrete", "Continuous" };
+				const char* currentCollisionDetectionStr = collisionDetectionStrs[static_cast<uint32_t>(rigidbodyComponent.CollisionDetection)];
+				if (ImGui::BeginCombo("Collision Detection Mode", currentCollisionDetectionStr))
+				{
+					for (uint32_t i{}; i < collisionDetectionCount; ++i)
+					{
+						bool bSelected = currentCollisionDetectionStr == collisionDetectionStrs[i];
+						if (ImGui::Selectable(collisionDetectionStrs[i], bSelected))
+						{
+							currentCollisionDetectionStr = collisionDetectionStrs[i];
+							rigidbodyComponent.CollisionDetection = static_cast<RigidbodyComponent::CollisionDetectionType>(i);
+						}
+
+						if (bSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+
+				// TODO: Physics Material
+
+				ImGui::DragFloat("Mass", &rigidbodyComponent.Mass, 0.03f);
+				ImGui::DragFloat("Linear Drag", &rigidbodyComponent.LinearDrag, 0.01f);
+				ImGui::DragFloat("Angular Drag", &rigidbodyComponent.AngularDrag, 0.01f);
+				ImGui::Checkbox("Disable Gravity", &rigidbodyComponent.bDisableGravity);
+				ImGui::Checkbox("Kinematic", &rigidbodyComponent.bKinematic);
+
+				ImGui::Separator();
+
+				ImGui::Checkbox("Lock Position X", &rigidbodyComponent.bLockPositionX);
+				ImGui::Checkbox("Lock Position Y", &rigidbodyComponent.bLockPositionY);
+				ImGui::Checkbox("Lock Position Z", &rigidbodyComponent.bLockPositionZ);
+
+				ImGui::Separator();
+
+				ImGui::Checkbox("Lock Rotation X", &rigidbodyComponent.bLockRotationX);
+				ImGui::Checkbox("Lock Rotation Y", &rigidbodyComponent.bLockRotationY);
+				ImGui::Checkbox("Lock Rotation Z", &rigidbodyComponent.bLockRotationZ);
+			});
+
+		DrawComponent<BoxColliderComponent>("Box Collider", entity, [](auto& boxColliderComponent)
+			{
+				ImGui::DragFloat3("Size", &boxColliderComponent.Size.x, 0.03f);
+				ImGui::DragFloat3("Offset", &boxColliderComponent.Offset.x, 0.03f);
+				ImGui::Checkbox("Trigger", &boxColliderComponent.bTrigger);
+				ImGui::Checkbox("Show Collider Bounds", &boxColliderComponent.bShowColliderBounds);
+
+				// TODO: Physics Material
+			});
+
+		DrawComponent<SphereColliderComponent>("Sphere Collider", entity, [](auto& sphereColliderComponent)
+		{
+				ImGui::DragFloat("Radius", &sphereColliderComponent.Radius, 0.03f);
+				ImGui::Checkbox("Trigger", &sphereColliderComponent.bTrigger);
+				ImGui::Checkbox("Show Collider Bounds", &sphereColliderComponent.bShowColliderBounds);
+		});
+
+		DrawComponent<CapsuleColliderComponent>("Capsule Collider", entity, [](auto& capsuleColliderComponent)
+			{
+				ImGui::DragFloat("Radius", &capsuleColliderComponent.Radius, 0.03f);
+				ImGui::DragFloat("Height", &capsuleColliderComponent.Height, 0.03f);
+				ImGui::Checkbox("Trigger", &capsuleColliderComponent.bTrigger);
+				ImGui::Checkbox("Show Collider Bounds", &capsuleColliderComponent.bShowColliderBounds);
 			});
 	}
 

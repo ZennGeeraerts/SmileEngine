@@ -4,6 +4,7 @@
 #include "Components.h"
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Physics/PhysicsEngine.h"
 
 #include "Entity.h"
 
@@ -16,7 +17,7 @@ namespace Smile
 
 	Scene::~Scene()
 	{
-
+		m_Registry.clear();
 	}
 
 	Entity Scene::CreateEntity()
@@ -46,16 +47,28 @@ namespace Smile
 
 	void Scene::OnRuntimeStart()
 	{
+		PhysicsEngine::CreateScene();
 
+		// Create physisc actors
+		{
+			const auto& view = m_Registry.view<RigidbodyComponent>();
+			for (auto& e : view)
+			{
+				Entity entity = { e, this };
+				PhysicsEngine::CreateActor(entity);
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
-
+		PhysicsEngine::DestroyScene();
 	}
 
 	void Scene::OnUpdateRuntime(Timestep deltaTime)
 	{
+		PhysicsEngine::Simulate(deltaTime);
+
 		Camera* pMainCamera = nullptr;
 		DirectX::XMFLOAT4X4 cameraTransform;
 		{
@@ -118,8 +131,11 @@ namespace Smile
 		}
 	}
 
-	void Scene::OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera)
+	void Scene::OnUpdateEditor(Timestep deltaTime, EditorCamera& editorCamera, bool bSimmulate)
 	{
+		if (bSimmulate)
+			PhysicsEngine::Simulate(deltaTime);
+
 		Renderer::BeginScene(editorCamera);
 
 		{
@@ -238,6 +254,10 @@ namespace Smile
 		CopyComponent<StaticMeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SkinnedMeshComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<RigidbodyComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxColliderComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SphereColliderComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CapsuleColliderComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return pNewScene;
 	}
@@ -251,6 +271,10 @@ namespace Smile
 		CopyComponentIfExists<StaticMeshComponent>(newEntity, entity);
 		CopyComponentIfExists<SkinnedMeshComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<RigidbodyComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxColliderComponent>(newEntity, entity);
+		CopyComponentIfExists<SphereColliderComponent>(newEntity, entity);
+		CopyComponentIfExists<CapsuleColliderComponent>(newEntity, entity);
 	}
 
 	template <typename ComponentType>
@@ -292,6 +316,26 @@ namespace Smile
 
 	template <>
 	void Scene::OnComponentAdded<SkinnedMeshComponent>(Entity entity, SkinnedMeshComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<RigidbodyComponent>(Entity entity, RigidbodyComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<BoxColliderComponent>(Entity entity, BoxColliderComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<SphereColliderComponent>(Entity entity, SphereColliderComponent& component)
+	{
+	}
+
+	template <>
+	void Scene::OnComponentAdded<CapsuleColliderComponent>(Entity entity, CapsuleColliderComponent& component)
 	{
 	}
 }

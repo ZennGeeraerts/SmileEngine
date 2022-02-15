@@ -1,0 +1,18 @@
+#pragma once
+
+#include <PxPhysicsAPI.h>
+
+namespace Smile::PhysicsUtils
+{
+	physx::PxVec3 ConvertToPhysXVector(const DirectX::XMFLOAT3& vector);
+	physx::PxQuat ConvertToPhysxQuat(const DirectX::XMFLOAT4& quat);
+	physx::PxTransform ConvertToPhysXTransform(const DirectX::XMFLOAT4X4& transform);
+
+	DirectX::XMFLOAT3 ConvertToDirectXVector(const physx::PxVec3& vector);
+	DirectX::XMFLOAT4 ConvertToDirectXQuat(const physx::PxQuat& quat);
+
+	physx::PxFilterFlags SmileSimulationFilterShader(
+		physx::PxFilterObjectAttributes attribute0, physx::PxFilterData filterData0,
+		physx::PxFilterObjectAttributes attribute1, physx::PxFilterData filterData1,
+		physx::PxPairFlags& pairFlags, const void* pConstantBlock, physx::PxU32 constantBlockSize);
+}

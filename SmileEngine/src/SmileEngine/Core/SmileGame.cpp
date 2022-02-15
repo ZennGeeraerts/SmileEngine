@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Input.h"
 #include "SmileEngine/Renderer/Renderer.h"
+#include "SmileEngine/Physics/PhysicsEngine.h"
 
 namespace Smile
 {
@@ -21,6 +22,7 @@ namespace Smile
 		m_pWindow->SetVSync(false);
 
 		Renderer::Initialize();
+		PhysicsEngine::Initialize();
 
 		m_pImGuiLayer = new ImGuiLayer{};
 		PushOverlay(m_pImGuiLayer);
@@ -30,6 +32,7 @@ namespace Smile
 	{
 		delete Input::GetInstance();
 		Renderer::CleanUp();
+		PhysicsEngine::ShutDown();
 	}
 
 	void SmileGame::PushLayer(Layer* pLayer)

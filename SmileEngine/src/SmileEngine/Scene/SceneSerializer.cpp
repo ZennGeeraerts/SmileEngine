@@ -223,6 +223,93 @@ namespace Smile
 			output << YAML::EndMap;
 		}
 
+		if (entity.HasComponent<RigidbodyComponent>())
+		{
+			output << YAML::Key << "RigidbodyComponent";
+			output << YAML::BeginMap;
+
+			auto& rigidbodyComponent = entity.GetComponent<RigidbodyComponent>();
+			output << YAML::Key << "BodyType" << YAML::Value << static_cast<uint32_t>(rigidbodyComponent.Type);
+			output << YAML::Key << "CollisionDetectionType" << YAML::Value << static_cast<uint32_t>(rigidbodyComponent.CollisionDetection);
+
+			output << YAML::Key << "PhysicsMaterial";
+			output << YAML::BeginMap;
+
+			/*auto& pPhysicsMaterial = rigidbodyComponent.pPhysicsMaterial;
+			output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
+			output << YAML::Key << "DynamicFriction" << YAML::Value << pPhysicsMaterial->DynamicFriction;
+			output << YAML::Key << "Bounciness" << YAML::Value << pPhysicsMaterial->Bounciness;*/
+
+			output << YAML::EndMap;
+
+			output << YAML::Key << "Mass" << YAML::Value << rigidbodyComponent.Mass;
+			output << YAML::Key << "LinearDrag" << YAML::Value << rigidbodyComponent.LinearDrag;
+			output << YAML::Key << "AngularDrag" << YAML::Value << rigidbodyComponent.AngularDrag;
+			output << YAML::Key << "bDisableGravity" << YAML::Value << rigidbodyComponent.bDisableGravity;
+			output << YAML::Key << "bKinematic" << YAML::Value << rigidbodyComponent.bKinematic;
+
+			output << YAML::Key << "bLockPositionX" << YAML::Value << rigidbodyComponent.bLockPositionX;
+			output << YAML::Key << "bLockPositionY" << YAML::Value << rigidbodyComponent.bLockPositionY;
+			output << YAML::Key << "bLockPositionZ" << YAML::Value << rigidbodyComponent.bLockPositionZ;
+
+			output << YAML::Key << "bLockRotationX" << YAML::Value << rigidbodyComponent.bLockRotationX;
+			output << YAML::Key << "bLockRotationY" << YAML::Value << rigidbodyComponent.bLockRotationY;
+			output << YAML::Key << "bLockRotationZ" << YAML::Value << rigidbodyComponent.bLockRotationZ;
+
+			output << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<BoxColliderComponent>())
+		{
+			output << YAML::Key << "BoxColliderComponent";
+			output << YAML::BeginMap;
+
+			auto& boxColliderComponent = entity.GetComponent<BoxColliderComponent>();
+			output << YAML::Key << "Size" << YAML::Value << boxColliderComponent.Size;
+			output << YAML::Key << "Offset" << YAML::Value << boxColliderComponent.Offset;
+			output << YAML::Key << "bTrigger" << YAML::Value << boxColliderComponent.bTrigger;
+			output << YAML::Key << "bShowColliderBounds" << YAML::Value << boxColliderComponent.bShowColliderBounds;
+
+			/*auto& pPhysicsMaterial = boxColliderComponent.pPhysicsMaterial;
+			output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
+			output << YAML::Key << "DynamicFriction" << YAML::Value << pPhysicsMaterial->DynamicFriction;
+			output << YAML::Key << "Bounciness" << YAML::Value << pPhysicsMaterial->Bounciness;*/
+
+			output << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<SphereColliderComponent>())
+		{
+			output << YAML::Key << "SphereColliderComponent";
+			output << YAML::BeginMap;
+
+			auto& sphereColliderComponent = entity.GetComponent<SphereColliderComponent>();
+			output << YAML::Key << "Radius" << YAML::Value << sphereColliderComponent.Radius;
+			output << YAML::Key << "bTrigger" << YAML::Value << sphereColliderComponent.bTrigger;
+			output << YAML::Key << "bShowColliderBounds" << YAML::Value << sphereColliderComponent.bShowColliderBounds;
+
+			/*auto& pPhysicsMaterial = sphereColliderComponent.pPhysicsMaterial;
+			output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
+			output << YAML::Key << "DynamicFriction" << YAML::Value << pPhysicsMaterial->DynamicFriction;
+			output << YAML::Key << "Bounciness" << YAML::Value << pPhysicsMaterial->Bounciness;*/
+
+			output << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<CapsuleColliderComponent>())
+		{
+			output << YAML::Key << "CapsuleColliderComponent";
+			output << YAML::BeginMap;
+
+			auto& capsuleColliderComponent = entity.GetComponent<CapsuleColliderComponent>();
+			output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.Radius;
+			output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.Height;
+			output << YAML::Key << "bTrigger" << YAML::Value << capsuleColliderComponent.bTrigger;
+			output << YAML::Key << "bShowColliderBounds" << YAML::Value << capsuleColliderComponent.bShowColliderBounds;
+
+			output << YAML::EndMap;
+		}
+
 		output << YAML::EndMap;
 	}
 
@@ -408,6 +495,77 @@ namespace Smile
 						smc.pMaterials[0]->SetAOMap(Texture2D::Create(aoMap));
 						smc.pMaterials[0]->SetUseAOMap(true);
 					}
+				}
+
+				auto rigidbodyComponent = entity["RigidbodyComponent"];
+				if (rigidbodyComponent)
+				{
+					auto& rbc = deserializedEntity.AddComponent<RigidbodyComponent>();
+
+					rbc.Type = static_cast<RigidbodyComponent::BodyType>(rigidbodyComponent["BodyType"].as<int>());
+					rbc.CollisionDetection = static_cast<RigidbodyComponent::CollisionDetectionType>(rigidbodyComponent["CollisionDetectionType"].as<int>());
+
+					auto physicsMaterial = rigidbodyComponent["PhysicsMaterial"];
+					/*rbc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
+					rbc.pPhysicsMaterial->DynamicFriction = physicsMaterial["DynamicFriction"].as<float>();
+					rbc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
+
+					rbc.Mass = rigidbodyComponent["Mass"].as<float>();
+					rbc.LinearDrag = rigidbodyComponent["LinearDrag"].as<float>();
+					rbc.AngularDrag = rigidbodyComponent["AngularDrag"].as<float>();
+
+					rbc.bDisableGravity = rigidbodyComponent["bDisableGravity"].as<bool>();
+					rbc.bKinematic = rigidbodyComponent["bKinematic"].as<bool>();
+
+					rbc.bLockPositionX = rigidbodyComponent["bLockPositionX"].as<bool>();
+					rbc.bLockPositionY = rigidbodyComponent["bLockPositionY"].as<bool>();
+					rbc.bLockPositionZ = rigidbodyComponent["bLockPositionZ"].as<bool>();
+
+					rbc.bLockRotationX = rigidbodyComponent["bLockRotationX"].as<bool>();
+					rbc.bLockRotationY = rigidbodyComponent["bLockRotationY"].as<bool>();
+					rbc.bLockRotationZ = rigidbodyComponent["bLockRotationZ"].as<bool>();
+				}
+
+				auto boxColliderComponent = entity["BoxColliderComponent"];
+				if (boxColliderComponent)
+				{
+					auto& bcc = deserializedEntity.AddComponent<BoxColliderComponent>();
+
+					bcc.Size = boxColliderComponent["Size"].as<DirectX::XMFLOAT3>();
+					bcc.Offset = boxColliderComponent["Offset"].as<DirectX::XMFLOAT3>();
+					bcc.bTrigger = boxColliderComponent["bTrigger"].as<bool>();
+					bcc.bShowColliderBounds = boxColliderComponent["bShowColliderBounds"].as<bool>();
+
+					/*auto physicsMaterial = rigidBodyComponent["PhysicsMaterial"];
+					bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
+					bcc.pPhysicsMaterial->DynamicFriction = physicsMaterial["DynamicFriction"].as<float>();
+					bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
+				}
+
+				auto sphereColliderComponent = entity["SphereColliderComponent"];
+				if (sphereColliderComponent)
+				{
+					auto& scc = deserializedEntity.AddComponent<SphereColliderComponent>();
+
+					scc.Radius = sphereColliderComponent["Radius"].as<float>();
+					scc.bTrigger = sphereColliderComponent["bTrigger"].as<bool>();
+					scc.bShowColliderBounds = sphereColliderComponent["bShowColliderBounds"].as<bool>();
+
+					/*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];
+					bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
+					bcc.pPhysicsMaterial->DynamicFriction = physicsMaterial["DynamicFriction"].as<float>();
+					bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
+				}
+
+				auto capsuleColliderComponent = entity["CapsuleColliderComponent"];
+				if (capsuleColliderComponent)
+				{
+					auto& ccc = deserializedEntity.AddComponent<CapsuleColliderComponent>();
+
+					ccc.Radius = capsuleColliderComponent["Radius"].as<float>();
+					ccc.Height = capsuleColliderComponent["Height"].as<float>();
+					ccc.bTrigger = capsuleColliderComponent["bTrigger"].as<bool>();
+					ccc.bShowColliderBounds = capsuleColliderComponent["bShowColliderBounds"].as<bool>();
 				}
 			}
 		}
