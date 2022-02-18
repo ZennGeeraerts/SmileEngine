@@ -1,6 +1,6 @@
 #include "smpch.h"
 #include "DirectX11Buffer.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 namespace Smile
 {
@@ -11,7 +11,7 @@ namespace Smile
 	DirectX11VertexBuffer::DirectX11VertexBuffer(const VertexBufferData& vertexBufferData)
 		: m_Layout{ vertexBufferData.BufferLayout }
 	{
-		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pDirectX11Context = static_cast<DirectX11Context*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pDirectX11Context, "DirectX11VertexBuffer > Rendering context is not a DirectX 11 Rendering Context");
 
 		D3D11_BUFFER_DESC bd = {};
@@ -55,7 +55,7 @@ namespace Smile
 
 	DirectX11IndexBuffer::DirectX11IndexBuffer(const IndexBufferData& indexBufferData)
 	{
-		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pDirectX11Context = static_cast<DirectX11Context*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pDirectX11Context, "DirectX11IndexBuffer > Rendering context is not a DirectX 11 Rendering Context");
 
 		m_Count = indexBufferData.Count;

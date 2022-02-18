@@ -31,7 +31,7 @@ namespace Smile
 	class Event
 	{
 		friend class EventDispatcher;
-		friend class SmileGame;
+		friend class Application;
 	public:
 		virtual ~Event() = default;
 

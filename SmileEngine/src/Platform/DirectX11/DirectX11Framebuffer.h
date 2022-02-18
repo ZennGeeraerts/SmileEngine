@@ -12,8 +12,8 @@ namespace Smile
 
 		virtual void Invalidate() override;
 
-		virtual void Bind() override;
-		virtual void Unbind() override;
+		virtual void Bind() const override;
+		virtual void Unbind() const override;
 		virtual void SetClearColor(const DirectX::XMFLOAT4& color) override;
 		virtual void Clear() override;
 		virtual void Resize(uint32_t width, uint32_t height) override;
@@ -40,6 +40,8 @@ namespace Smile
 		
 		ID3D11Texture2D* m_pDepthStencilAttachment = nullptr;
 		ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
+
+		D3D11_VIEWPORT m_Viewport;
 
 		static const uint32_t m_MaxFramebufferSize;
 	};

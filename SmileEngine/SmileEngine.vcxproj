@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\DirectX11\DirectX11RasterizerState.h" />
     <ClInclude Include="src\SmileEngine\Core\GamepadCodes.h" />
     <ClInclude Include="src\SmileEngine\Core\MouseCodes.h" />
     <ClInclude Include="src\SmileEngine\Core\UUID.h" />
@@ -29,6 +30,7 @@
     <ClInclude Include="src\SmileEngine\Physics\PhysicsMaterial.h" />
     <ClInclude Include="src\SmileEngine\Physics\PhysicsUtils.h" />
     <ClInclude Include="src\SmileEngine\Renderer\EditorCamera.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\RasterizerState.h" />
     <ClInclude Include="src\SmileEngine\Renderer\SkinnedMeshFilter.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterTexture.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterShader.h" />
@@ -89,7 +91,7 @@
     <ClInclude Include="src\SmileEngine\Core\LayerStack.h" />
     <ClInclude Include="src\SmileEngine\Core\Logger.h" />
     <ClInclude Include="src\SmileEngine\Core\MeshLoader.h" />
-    <ClInclude Include="src\SmileEngine\Core\SmileGame.h" />
+    <ClInclude Include="src\SmileEngine\Core\Application.h" />
     <ClInclude Include="src\SmileEngine\Core\Window.h" />
     <ClInclude Include="Libs\entt\entt.hpp" />
     <ClInclude Include="Libs\ImGui\imconfig.h" />
@@ -131,7 +133,7 @@
     <ClInclude Include="src\SmileEngine\Renderer\RenderingContext.h" />
     <ClInclude Include="src\SmileEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h" />
-    <ClInclude Include="src\SmileEngine\Core\SmTime.h" />
+    <ClInclude Include="src\SmileEngine\Core\Timer.h" />
     <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h" />
     <ClInclude Include="src\smpch.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -141,6 +143,7 @@
     <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DirectX11\DirectX11RasterizerState.cpp" />
     <ClCompile Include="src\SmileEngine\Core\UUID.cpp" />
     <ClCompile Include="src\SmileEngine\Physics\ContactListener.cpp" />
     <ClCompile Include="src\SmileEngine\Physics\PhysicsActor.cpp" />
@@ -148,6 +151,7 @@
     <ClCompile Include="src\SmileEngine\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\SmileEngine\Physics\PhysicsUtils.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\EditorCamera.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\RasterizerState.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\SkinnedMeshFilter.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterTexture.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterShader.cpp" />
@@ -176,7 +180,7 @@
     <ClCompile Include="src\SmileEngine\Core\LayerStack.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Logger.cpp" />
     <ClCompile Include="src\SmileEngine\Core\MeshLoader.cpp" />
-    <ClCompile Include="src\SmileEngine\Core\SmileGame.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\Application.cpp" />
     <ClCompile Include="Libs\ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -231,7 +235,7 @@
     <ClCompile Include="src\Platform\DirectX11\DirectX11Context.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\SmileEngine\Core\SmTime.cpp" />
+    <ClCompile Include="src\SmileEngine\Core\Timer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\smpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -2,13 +2,13 @@
 #include "SmileRasterShader.h"
 
 #include "SmileRasterContext.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 namespace Smile
 {
 	SmileRasterShader::SmileRasterShader(const std::string& assetFile, const BufferLayout& layout)
 	{
-		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pSmileRasterContext = static_cast<SmileRasterContext*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterShader > Rendering context is not a SmileRaster Rendering Context");
 
 		// Find name from asset path

@@ -1,7 +1,7 @@
 #include "smpch.h"
 
 #include "SmileEngine/Utils/PlatformUtils.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 #include <commdlg.h>
 
@@ -13,7 +13,7 @@ namespace Smile::Utils
 		CHAR szFile[260] = { 0 };
 		ZeroMemory(&openFileName, sizeof(OPENFILENAMEA));
 		openFileName.lStructSize = sizeof(OPENFILENAMEA);
-		openFileName.hwndOwner = static_cast<HWND>(SmileGame::GetInstance().GetWindow().GetNativeWindow());
+		openFileName.hwndOwner = static_cast<HWND>(Application::GetInstance().GetWindow().GetNativeWindow());
 		openFileName.lpstrFile = szFile;
 		openFileName.nMaxFile = sizeof(szFile);
 		openFileName.lpstrFilter = filter;
@@ -32,7 +32,7 @@ namespace Smile::Utils
 		CHAR szFile[260] = { 0 };
 		ZeroMemory(&openFileName, sizeof(OPENFILENAMEA));
 		openFileName.lStructSize = sizeof(OPENFILENAMEA);
-		openFileName.hwndOwner = static_cast<HWND>(SmileGame::GetInstance().GetWindow().GetNativeWindow());
+		openFileName.hwndOwner = static_cast<HWND>(Application::GetInstance().GetWindow().GetNativeWindow());
 		openFileName.lpstrFile = szFile;
 		openFileName.nMaxFile = sizeof(szFile);
 		openFileName.lpstrFilter = filter;

@@ -30,14 +30,6 @@ namespace Smile
 		// Icon
 		m_pIconPlay = Texture2D::Create("EditorResources/Icons/PlayButton.png");
 		m_pIconStop = Texture2D::Create("EditorResources/Icons/StopButton.png");
-
-		// Framebuffer
-		FramebufferData framebufferData{};
-		framebufferData.Width = 1280;
-		framebufferData.Height = 720;
-		framebufferData.Attachments = { { FramebufferTextureFormat::eRGBA8, true }, FramebufferTextureFormat::eDepth, { FramebufferTextureFormat::eRGBA8, true } };
-		m_pFramebuffer = Framebuffer::Create(framebufferData);
-		m_pFramebuffer->SetClearColor({ DirectX::Colors::DodgerBlue.f[0], DirectX::Colors::DodgerBlue.f[1], DirectX::Colors::DodgerBlue.f[2], DirectX::Colors::DodgerBlue.f[3] });
 	}
 
 	void SmileEditorLayer::OnDetach()
@@ -47,18 +39,16 @@ namespace Smile
 
 	void SmileEditorLayer::OnUpdate(Timestep deltaTime)
 	{
-		auto framebufferData = m_pFramebuffer->GetData();
-		if ((!Utils::CompareFloats(m_ViewportSize.x, static_cast<float>(framebufferData.Width)) || !Utils::CompareFloats(m_ViewportSize.y, static_cast<float>(framebufferData.Height)))
+		const auto& renderSettings = Renderer::GetSettings();
+		if ((!Utils::CompareFloats(m_ViewportSize.x, static_cast<float>(renderSettings.Width)) || !Utils::CompareFloats(m_ViewportSize.y, static_cast<float>(renderSettings.Height)))
 			&& (m_ViewportSize.x > 0) && (m_ViewportSize.y > 0))
 		{
-			m_pFramebuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+			Renderer::ResizeFramebuffer(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_pActiveScene->OnViewportResize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
 		}
 
 		Smile::RenderCommand::Clear();
-		m_pFramebuffer->Bind();
-		m_pFramebuffer->Clear();
 
 		switch (m_SceneState)
 		{
@@ -76,8 +66,6 @@ namespace Smile
 			break;
 		}
 		}
-
-		m_pFramebuffer->Unbind();
 	}
 
 	void SmileEditorLayer::OnImGuiRender()
@@ -154,7 +142,7 @@ namespace Smile
 					SaveSceneAs();
 
 				if (ImGui::MenuItem("Exit"))
-					Smile::SmileGame::GetInstance().ShutDown();
+					Smile::Application::GetInstance().ShutDown();
 				ImGui::EndMenu();
 			}
 
@@ -172,7 +160,7 @@ namespace Smile
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		
-		ImGui::Image(m_pFramebuffer->GetColor(0), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
+		ImGui::Image(Renderer::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y });
 
 		if (ImGui::BeginDragDropTarget())
 		{

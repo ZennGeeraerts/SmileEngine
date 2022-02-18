@@ -13,7 +13,7 @@ namespace Smile
 			m_pRendererAPI->Initialize();
 		}
 
-		inline static void CleanUp()
+		inline static void ShutDown()
 		{
 			SAFE_DELETE(m_pRendererAPI);
 		}

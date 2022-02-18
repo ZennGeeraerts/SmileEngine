@@ -476,11 +476,11 @@ namespace Smile
 			});
 
 		DrawComponent<SphereColliderComponent>("Sphere Collider", entity, [](auto& sphereColliderComponent)
-		{
+			{
 				ImGui::DragFloat("Radius", &sphereColliderComponent.Radius, 0.03f);
 				ImGui::Checkbox("Trigger", &sphereColliderComponent.bTrigger);
 				ImGui::Checkbox("Show Collider Bounds", &sphereColliderComponent.bShowColliderBounds);
-		});
+			});
 
 		DrawComponent<CapsuleColliderComponent>("Capsule Collider", entity, [](auto& capsuleColliderComponent)
 			{

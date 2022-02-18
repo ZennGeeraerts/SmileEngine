@@ -69,8 +69,6 @@ namespace Smile
 		EditorCamera m_EditorCamera;
 		std::filesystem::path m_EditorScenePath;
 
-		Ref<Framebuffer> m_pFramebuffer;
-
 		DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
 		bool m_bViewportFocused = false;
 		bool m_bViewportHovered = false;

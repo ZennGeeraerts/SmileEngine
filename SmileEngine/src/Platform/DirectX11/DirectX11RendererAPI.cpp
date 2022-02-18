@@ -2,13 +2,13 @@
 #include "DirectX11RendererAPI.h"
 
 #include "DirectX11Shader.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 namespace Smile
 {
 	void DirectX11RendererAPI::Initialize()
 	{
-		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pDirectX11Context = static_cast<DirectX11Context*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pDirectX11Context, "DirectX11RendererAPI > RenderingContext is not a DirectX11Context");
 	}
 
@@ -71,15 +71,12 @@ namespace Smile
 
 		m_pDirectX11Context->m_pDeviceContext->OMSetRenderTargets(1, &m_pDirectX11Context->m_pCurrentRenderTarget, m_pDirectX11Context->m_pDepthStencilView);
 		
-		D3D11_VIEWPORT viewPort{};
-		viewPort.Width = static_cast<FLOAT>(width);
-		viewPort.Height = static_cast<FLOAT>(height);
-		viewPort.TopLeftX = static_cast<FLOAT>(x);
-		viewPort.TopLeftY = static_cast<FLOAT>(y);
-		viewPort.MinDepth = 0.0f;
-		viewPort.MaxDepth = 1.0;
+		m_pDirectX11Context->m_Viewport.Width = static_cast<FLOAT>(width);
+		m_pDirectX11Context->m_Viewport.Height = static_cast<FLOAT>(height);
+		m_pDirectX11Context->m_Viewport.TopLeftX = static_cast<FLOAT>(x);
+		m_pDirectX11Context->m_Viewport.TopLeftY = static_cast<FLOAT>(y);
 
-		m_pDirectX11Context->m_pDeviceContext->RSSetViewports(1, &viewPort);
+		m_pDirectX11Context->m_pDeviceContext->RSSetViewports(1, &m_pDirectX11Context->m_Viewport);
 	}
 
 	void DirectX11RendererAPI::SetClearColor(const DirectX::XMFLOAT4& color)

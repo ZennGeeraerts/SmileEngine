@@ -6,7 +6,7 @@
 #include "Libs/ImGui/imgui_impl_dx11.h"
 #include "Libs/ImGuizmo/ImGuizmo.h"
 
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 #include "SmileEngine/Core/Window.h"
 #include "SmileEngine/Renderer/RendererAPI.h"
 
@@ -74,7 +74,7 @@ namespace Smile
 
 		SetDarkThemeColors();
 
-		Window& window = SmileGame::GetInstance().GetWindow();
+		Window& window = Application::GetInstance().GetWindow();
 		RenderingContext* pRenderingContext = window.GetRenderingContext();
 
 		RendererAPI::API api = RendererAPI::GetAPI();
@@ -125,7 +125,7 @@ namespace Smile
 	void ImGuiLayer::End()
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		Window& window = SmileGame::GetInstance().GetWindow();
+		Window& window = Application::GetInstance().GetWindow();
 		io.DisplaySize = ImVec2{ static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()) };
 
 		RendererAPI::API api = RendererAPI::GetAPI();

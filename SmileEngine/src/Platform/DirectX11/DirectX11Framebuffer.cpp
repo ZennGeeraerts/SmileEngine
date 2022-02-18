@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "DirectX11Framebuffer.h"
 
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 #include "SmileEngine/Core/Logger.h"
 
 namespace Smile
@@ -11,7 +11,7 @@ namespace Smile
 	DirectX11Framebuffer::DirectX11Framebuffer(const FramebufferData& framebufferData)
 		: m_Data{ framebufferData }
 	{
-		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pDirectX11Context = static_cast<DirectX11Context*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pDirectX11Context, "DirectX11Framebuffer::DirectX11Framebuffer > Rendering context is not a DirectX11RenderingContext");
 
 		for (const auto& fbTextureData : m_Data.Attachments.Attachments)
@@ -219,27 +219,27 @@ namespace Smile
 			SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create depth stencil view");
 			return;
 		}*/
+
+		m_Viewport.Width = static_cast<FLOAT>(m_Data.Width);
+		m_Viewport.Height = static_cast<FLOAT>(m_Data.Height);
+		m_Viewport.MinDepth = 0.0f;
+		m_Viewport.MaxDepth = 1.0f;
+		m_Viewport.TopLeftX = 0.0f;
+		m_Viewport.TopLeftY = 0.0f;
 	}
 
-	void DirectX11Framebuffer::Bind()
+	void DirectX11Framebuffer::Bind() const
 	{
 		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(m_pRenderTargetViews.size(), &m_pRenderTargetViews[0], m_pDepthStencilView);
-
-		D3D11_VIEWPORT viewport{};
-		viewport.Width = static_cast<FLOAT>(m_Data.Width);
-		viewport.Height = static_cast<FLOAT>(m_Data.Height);
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-		viewport.TopLeftX = 0.0f;
-		viewport.TopLeftY = 0.0f;
-		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &viewport);
+		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &m_Viewport);
 	}
 
-	void DirectX11Framebuffer::Unbind()
+	void DirectX11Framebuffer::Unbind() const
 	{
-		auto renderTargetView = m_pDirectX11Context->GetRenderTargetView();
-		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, m_pDirectX11Context->GetDepthStencilView());
-		auto viewport = m_pDirectX11Context->GetViewport();
+		auto pRenderTargetView = m_pDirectX11Context->GetRenderTargetView();
+		m_pDirectX11Context->GetDeviceContext()->OMSetRenderTargets(1, &pRenderTargetView, m_pDirectX11Context->GetDepthStencilView());
+
+		const auto& viewport = m_pDirectX11Context->GetViewport();
 		m_pDirectX11Context->GetDeviceContext()->RSSetViewports(1, &viewport);
 	}
 

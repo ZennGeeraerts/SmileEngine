@@ -5,11 +5,11 @@
 
 namespace Smile
 {
-	class SmileEditor final : public SmileGame
+	class SmileEditor final : public Application
 	{
 	public:
 		SmileEditor()
-			: SmileGame("Smile Editor")
+			: Application("Smile Editor")
 		{
 			PushLayer(new SmileEditorLayer{});
 		}
@@ -20,7 +20,7 @@ namespace Smile
 		}
 	};
 
-	SmileGame* CreateGame()
+	Application* CreateGame()
 	{
 		// This application will get passed to the entry point of the engine
 		// and will be deleted once the engine closes

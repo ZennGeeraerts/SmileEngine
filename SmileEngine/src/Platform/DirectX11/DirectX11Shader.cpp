@@ -3,13 +3,13 @@
 
 #include "DirectX11Context.h"
 #include "SmileEngine/Core/Logger.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 namespace Smile
 {
 	DirectX11Shader::DirectX11Shader(const std::string& assetFile, const BufferLayout& layout, const std::string& techniqueName)
 	{
-		m_pDirectX11Context = static_cast<DirectX11Context*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pDirectX11Context = static_cast<DirectX11Context*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pDirectX11Context, "DirectX11Shader > Rendering context is not a DirectX 11 Rendering Context");
 
 		if (!LoadEffect(m_pDirectX11Context->GetDevice(), assetFile))

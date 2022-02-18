@@ -1,6 +1,6 @@
 #include "smpch.h"
 #include "WindowsInput.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 namespace Smile
 {
@@ -22,7 +22,7 @@ namespace Smile
 		POINT point{};
 		if (GetCursorPos(&point))
 		{
-			auto window = static_cast<HWND>(SmileGame::GetInstance().GetWindow().GetNativeWindow());
+			auto window = static_cast<HWND>(Application::GetInstance().GetWindow().GetNativeWindow());
 			ScreenToClient(window, &point);
 		}
 		return std::make_pair<float, float>

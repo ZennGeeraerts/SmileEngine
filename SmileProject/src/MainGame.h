@@ -26,7 +26,7 @@ private:
 	float m_PrintTimer = 0.f;
 };
 
-class MainGame final : public Smile::SmileGame
+class MainGame final : public Smile::Application
 {
 public:
 	MainGame();

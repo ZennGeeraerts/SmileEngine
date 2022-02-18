@@ -1,6 +1,6 @@
 #include "smpch.h"
 #include "SmileRasterBuffer.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 
 namespace Smile
 {
@@ -11,7 +11,7 @@ namespace Smile
 	SmileRasterVertexBuffer::SmileRasterVertexBuffer(const VertexBufferData& vertexBufferData)
 		: m_Layout{ vertexBufferData.BufferLayout  }
 	{
-		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pSmileRasterContext = static_cast<SmileRasterContext*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterVertexBuffer > Rendering context is not a SmileRaster Rendering Context");
 
 		m_VertexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateVertexBuffer(vertexBufferData.pVertices, vertexBufferData.Count, vertexBufferData.BufferLayout.GetStride() * vertexBufferData.Count);
@@ -33,7 +33,7 @@ namespace Smile
 
 	SmileRasterIndexBuffer::SmileRasterIndexBuffer(const IndexBufferData& indexBufferData)
 	{
-		m_pSmileRasterContext = static_cast<SmileRasterContext*>(SmileGame::GetInstance().GetWindow().GetRenderingContext());
+		m_pSmileRasterContext = static_cast<SmileRasterContext*>(Application::GetInstance().GetWindow().GetRenderingContext());
 		SM_ASSERT(m_pSmileRasterContext, "SmileRasterIndexBuffer > Rendering context is not a SmileRaster Rendering Context");
 		
 		m_IndexBuffer = m_pSmileRasterContext->GetDeviceContext()->CreateIndexBuffer(indexBufferData.pIndices, indexBufferData.Count);

@@ -3,7 +3,7 @@
 #include <SmileEngine/Core/EntryPoint.h>
 #include <Libs/ImGui/imgui.h>
 
-Smile::SmileGame* Smile::CreateGame()
+Smile::Application* Smile::CreateGame()
 {
 	// This application will get passed to the entry point of the engine
 	// and will be deleted once the engine closes
@@ -180,11 +180,11 @@ void ExampleLayer::OnUpdate(Smile::Timestep deltaTime)
 
 	//m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation.y += 1.f * deltaTime;
 
-	m_PrintTimer += Smile::SmTime::GetInstance().GetDeltaTime();
+	m_PrintTimer += Smile::Timer::GetInstance().GetDeltaTime();
 	if (m_PrintTimer >= 1.f)
 	{
 		m_PrintTimer = 0.f;
-		Smile::Logger::LogInfo("FPS: %d", Smile::SmTime::GetInstance().GetFPS());
+		Smile::Logger::LogInfo("FPS: %d", Smile::Timer::GetInstance().GetFPS());
 	}
 
 	Smile::RenderCommand::Clear();

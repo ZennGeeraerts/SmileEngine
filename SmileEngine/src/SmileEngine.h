@@ -2,7 +2,7 @@
 
 // Header file to include in Smile Engine applications
 
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 #include "SmileEngine/Core/Layer.h"
 #include "SmileEngine/Core/Logger.h"
 

@@ -3,7 +3,7 @@
 
 #include "Components.h"
 #include "SmileEngine/Renderer/Renderer.h"
-#include "SmileEngine/Core/SmileGame.h"
+#include "SmileEngine/Core/Application.h"
 #include "SmileEngine/Physics/PhysicsEngine.h"
 
 #include "Entity.h"
@@ -127,6 +127,8 @@ namespace Smile
 				}
 			}
 
+			Renderer::Present();
+
 			Renderer::EndScene();
 		}
 	}
@@ -174,6 +176,8 @@ namespace Smile
 				Renderer::Submit(mesh, transform.GetTransform());
 			}
 		}
+
+		Renderer::Present();
 
 		Renderer::EndScene();
 	}
