@@ -9,41 +9,46 @@
 
 #include "SmileEngine/ImGui/ImGuiLayer.h"
 
-namespace Smile
+namespace smile
 {
-	class Application
-	{
-	public:
-		Application(const std::string& name = "Smile Game");
-		virtual ~Application();
+    class Application
+    {
+      public:
+        Application( const std::string &name = "Smile Game" );
+        virtual ~Application();
 
-		void Run();
-		void ShutDown();
+        void Run();
+        void ShutDown();
 
-		void OnEvent(Event& e);
+        void OnEvent( Event &e );
 
-		void PushLayer(Layer* pLayer);
-		void PushOverlay(Layer* pOverlay);
+        void PushLayer( Layer *pLayer );
+        void PushOverlay( Layer *pOverlay );
 
-		inline static Application& GetInstance() { return *m_pInstance; };
-		inline Window& GetWindow() const { return *m_pWindow; }
+        inline static Application &GetInstance()
+        {
+            return *s_pInstance;
+        }
+        inline Window &GetWindow() const
+        {
+            return *m_pWindow;
+        }
 
-	private:
-		bool OnWindowClose(WindowCloseEvent& e);
-		bool OnWindowResize(WindowResizeEvent& e);
+      private:
+        bool OnWindowClose( WindowCloseEvent &e );
+        bool OnWindowResize( WindowResizeEvent &e );
 
-	private:
-		std::unique_ptr<Window> m_pWindow;
-		ImGuiLayer* m_pImGuiLayer;
-		bool m_bRunning = true;
-		bool m_bMinimized = false;
-		LayerStack m_LayerStack;
+      private:
+        std::unique_ptr< Window > m_pWindow;
+        ImGuiLayer *m_pImGuiLayer;
+        bool m_bRunning = true;
+        bool m_bMinimized = false;
+        LayerStack m_LayerStack;
 
-	private:
-		static Application* m_pInstance;
-	};
+      private:
+        static Application *s_pInstance;
+    };
 
-	// To be defined in client
-	Application* CreateGame();
+    // To be defined in client
+    Application *CreateGame();
 }
-

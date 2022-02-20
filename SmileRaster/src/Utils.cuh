@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <DirectXMath.h>
 
-namespace Smile
+namespace smile
 {
     namespace Raster
     {

@@ -2,26 +2,26 @@
 
 #ifdef SM_PLATFORM_WINDOWS
 
-#include <Windows.h>
+#    include <Windows.h>
 
-extern Smile::Application* Smile::CreateGame();
+extern smile::Application *smile::CreateGame();
 
-#pragma warning( push )
-#pragma warning (disable: 6387)
-int main(int argc, char** argv)
+#    pragma warning( push )
+#    pragma warning( disable : 6387 )
+int main( int argc, char **argv )
 {
-	return WinMain(GetModuleHandle(NULL), NULL, NULL, SW_SHOW);
+    return WinMain( GetModuleHandle( NULL ), NULL, NULL, SW_SHOW );
 }
-#pragma warning (pop)
+#    pragma warning( pop )
 
-#pragma warning( push )
-#pragma warning (disable: 28251)
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow)
+#    pragma warning( push )
+#    pragma warning( disable : 28251 )
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow )
 {
-	Smile::Application* pGame = Smile::CreateGame();
-	pGame->Run();
-	delete pGame;
-	return 0;
+    smile::Application *pGame = smile::CreateGame();
+    pGame->Run();
+    delete pGame;
+    return 0;
 }
-#pragma warning (pop)
+#    pragma warning( pop )
 #endif

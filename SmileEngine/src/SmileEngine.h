@@ -29,13 +29,9 @@
 #include "SmileEngine/Renderer/Shader.h"
 #include "SmileEngine/Renderer/Framebuffer.h"
 #include "SmileEngine/Renderer/Texture.h"
-#include "SmileEngine/Renderer/StaticMeshFilter.h"
-#include "SmileEngine/Renderer/Material.h"
+#include "SmileEngine/Renderer/Mesh/StaticMeshFilter.h"
+#include "SmileEngine/Renderer/Mesh/Material.h"
 #include "SmileEngine/Renderer/VertexArray.h"
-
-#include "SmileEngine/Renderer/OrthographicCamera.h"
-#include "SmileEngine/Renderer/PerspectiveCamera.h"
-#include "SmileEngine/Renderer/PerspectiveCameraController.h"
 
 /* --- DirectX --- */
 #include <DirectXMath.h>

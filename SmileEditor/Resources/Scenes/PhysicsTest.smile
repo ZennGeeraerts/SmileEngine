@@ -1,67 +1,5 @@
 Scene: Untitled
 Entities:
-  - Entity: 9551313605796423602
-    TagComponent:
-      Tag: TukTuk
-    TransformComponent:
-      Translation: [0, -15.5237579, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    SkinnedMeshComponent:
-      Mesh: Resources\Meshes\tuktuk.obj
-      Material:
-        AlbedoMap: ""
-        AlbedoColor: [0, 0, 0]
-        MetalnessMap: ""
-        Metalness: 0
-        RoughnessMap: ""
-        Roughness: 0.5
-        NormalMap: ""
-        AOMap: ""
-    RigidbodyComponent:
-      BodyType: 0
-      CollisionDetectionType: 0
-      PhysicsMaterial:
-        {}
-      Mass: 1
-      LinearDrag: 0
-      AngularDrag: 0.0500000007
-      bDisableGravity: false
-      bKinematic: false
-      bLockPositionX: false
-      bLockPositionY: false
-      bLockPositionZ: false
-      bLockRotationX: false
-      bLockRotationY: false
-      bLockRotationZ: false
-    BoxColliderComponent:
-      Size: [1000, 1, 1000]
-      Offset: [0, 0, 0]
-      bTrigger: false
-      bShowColliderBounds: true
-  - Entity: 13548726810245455584
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [0, 0, -42.8577347]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        FOV: 45
-        PerspectiveNearPlane: 0.100000001
-        PerspectiveFarPlane: 2500
-        Size: 10
-        OrthographicNearPlane: -1
-        OrthographicFarPlane: 1
-      bPrimary: true
-      bFixedAspectRatio: false
-    BoxColliderComponent:
-      Size: [10000, 10, 10000]
-      Offset: [0, 0, 0]
-      bTrigger: false
-      bShowColliderBounds: true
   - Entity: 16562852509746758726
     TagComponent:
       Tag: Player
@@ -99,5 +37,62 @@ Entities:
     BoxColliderComponent:
       Size: [1, 1, 1]
       Offset: [0, 1, 0]
+      bTrigger: false
+      bShowColliderBounds: true
+  - Entity: 13548726810245455584
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, -42.8577347]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        FOV: 45
+        PerspectiveNearPlane: 0.100000001
+        PerspectiveFarPlane: 2500
+        Size: 10
+        OrthographicNearPlane: -1
+        OrthographicFarPlane: 1
+      bPrimary: true
+      bFixedAspectRatio: false
+  - Entity: 9551313605796423602
+    TagComponent:
+      Tag: TukTuk
+    TransformComponent:
+      Translation: [0, -15.5237579, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SkinnedMeshComponent:
+      Mesh: Resources\Meshes\tuktuk.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0.5
+        NormalMap: ""
+        AOMap: ""
+    RigidbodyComponent:
+      BodyType: 0
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 1
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [1000, 1, 1000]
+      Offset: [0, 0, 0]
       bTrigger: false
       bShowColliderBounds: true

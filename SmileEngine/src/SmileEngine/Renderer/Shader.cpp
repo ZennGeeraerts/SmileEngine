@@ -4,67 +4,69 @@
 #include "Renderer.h"
 
 #ifdef SM_PLATFORM_WINDOWS
-#include "Platform/DirectX11/DirectX11Shader.h"
-#include "Platform/SmileRaster/SmileRasterShader.h"
+#    include "Platform/DirectX11/DirectX11Shader.h"
+#    include "Platform/SmileRaster/SmileRasterShader.h"
 #endif
 
-namespace Smile
+namespace smile
 {
-	Ref<Shader> Shader::Create(const std::string& filePath, const BufferLayout& bufferLayout)
-	{
-		switch (Renderer::GetAPI())
-		{
-		case RendererAPI::API::eNone:
-			SM_ASSERT(false, "Shader::Create > return nullptr, no renderer api selected");
-			return nullptr;
+    Ref< Shader > Shader::Create( const std::string &filePath, const BufferLayout &bufferLayout )
+    {
+        switch ( Renderer::GetAPI() )
+        {
+            case RendererAPI::API::None:
+                SM_ASSERT( false, "Shader::Create > return nullptr, no renderer api selected" );
+                return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::eDirectX11:
-			return CreateRef<DirectX11Shader>(filePath, bufferLayout);
+            case RendererAPI::API::DirectX11:
+                return CreateRef< DirectX11Shader >( filePath, bufferLayout );
 
-		case RendererAPI::API::eSmileRaster:
-			return CreateRef<SmileRasterShader>(filePath, bufferLayout);
+            case RendererAPI::API::SmileRaster:
+                return CreateRef< SmileRasterShader >( filePath, bufferLayout );
 #endif
-		}
+        }
 
-		SM_ASSERT(false, "Shader::Create > return nullptr, unknown render api or render api is not supported on this platform");
-		return nullptr;
-	}
+        SM_ASSERT( false,
+            "Shader::Create > return nullptr, unknown render api or render api is not supported on this platform" );
+        return nullptr;
+    }
 
-	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& pShader)
-	{
-		SM_ASSERT(!Exists(name), "ShaderLibrary::Add > Shader: %s already exists!", name);
-		m_Shaders[name] = pShader;
-	}
+    void ShaderLibrary::Add( const std::string &name, const Ref< Shader > &pShader )
+    {
+        SM_ASSERT( !Exists( name ), "ShaderLibrary::Add > Shader: %s already exists!", name );
+        m_Shaders[name] = pShader;
+    }
 
-	void ShaderLibrary::Add(const Ref<Shader>& pShader)
-	{
-		auto& name = pShader->GetName();
-		Add(name, pShader);
-	}
+    void ShaderLibrary::Add( const Ref< Shader > &pShader )
+    {
+        auto &name = pShader->GetName();
+        Add( name, pShader );
+    }
 
-	Ref<Shader> ShaderLibrary::Load(const std::string& filePath, const BufferLayout& bufferLayout)
-	{
-		auto pShader = Shader::Create(filePath, bufferLayout);
-		Add(pShader);
-		return pShader;
-	}
+    Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
+    {
+        auto pShader = Shader::Create( filePath, bufferLayout );
+        Add( pShader );
+        return pShader;
+    }
 
-	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filePath, const BufferLayout& bufferLayout)
-	{
-		auto pShader = Shader::Create(filePath, bufferLayout);
-		Add(name, pShader);
-		return pShader;
-	}
+    Ref< Shader >
+    ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
+    {
+        auto pShader = Shader::Create( filePath, bufferLayout );
+        Add( name, pShader );
+        return pShader;
+    }
 
-	Ref<Shader> ShaderLibrary::Get(const std::string& name)
-	{
-		SM_ASSERT(Exists(name), "ShaderLibrary::Add > Shader: %s not found!", name);
-		return m_Shaders[name];
-	}
+    Ref< Shader > ShaderLibrary::Get( const std::string &name )
+    {
+        SM_ASSERT( Exists( name ), "ShaderLibrary::Add > Shader: %s not found!", name );
+        return m_Shaders[name];
+    }
 
-	bool ShaderLibrary::Exists(const std::string& name) const
-	{
-		return m_Shaders.find(name) != m_Shaders.end();
-	}
+    bool ShaderLibrary::Exists( const std::string &name ) const
+    {
+        return m_Shaders.find( name ) != m_Shaders.end();
+    }
 }

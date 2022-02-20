@@ -3,25 +3,24 @@
 #include "SmileEngine/Core/Core.h"
 #include <string>
 
-namespace Smile
+namespace smile
 {
-	class Texture
-	{
-	public:
-		virtual ~Texture() = default;
+    class Texture
+    {
+      public:
+        virtual ~Texture() = default;
 
-		virtual const std::string& GetFilePath() const = 0;
-		virtual uint32_t GetWidth() const = 0;
-		virtual uint32_t GetHeight() const = 0;
-		virtual void* GetData() const = 0;
-	};
+        virtual const std::string &GetFilePath() const = 0;
+        virtual uint32_t GetWidth() const = 0;
+        virtual uint32_t GetHeight() const = 0;
+        virtual void *GetData() const = 0;
+    };
 
-	class Texture2D : public Texture
-	{
-	public:
-		virtual ~Texture2D() = default;
+    class Texture2D : public Texture
+    {
+      public:
+        virtual ~Texture2D() = default;
 
-		static Ref<Texture2D> Create(const std::string& filePath);
-	};
+        static Ref< Texture2D > Create( const std::string &filePath );
+    };
 }
-

@@ -7,26 +7,28 @@
 #include "Platform/DirectX11/DirectX11Context.h"
 #include "Platform/SmileRaster/SmileRasterContext.h"
 
-namespace Smile
+namespace smile
 {
-	RenderingContext* RenderingContext::Create(Window* pWindow)
-	{
-		switch (Renderer::GetAPI())
-		{
-		case RendererAPI::API::eNone:
-			SM_ASSERT(false, "RenderingContext::Create > return nullptr, no renderer api selected");
-			return nullptr;
+    RenderingContext *RenderingContext::Create( Window *pWindow )
+    {
+        switch ( Renderer::GetAPI() )
+        {
+            case RendererAPI::API::None:
+                SM_ASSERT( false, "RenderingContext::Create > return nullptr, no renderer api selected" );
+                return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::eDirectX11:
-			return new DirectX11Context{ pWindow };
+            case RendererAPI::API::DirectX11:
+                return new DirectX11Context{ pWindow };
 
-		case RendererAPI::API::eSmileRaster:
-			return new SmileRasterContext{ pWindow };
+            case RendererAPI::API::SmileRaster:
+                return new SmileRasterContext{ pWindow };
 #endif
-		}
+        }
 
-		SM_ASSERT(false, "RenderingContext::Create > return nullptr, unknown renderer api or renderer api is not supported on this platform");
-		return nullptr;
-	}
+        SM_ASSERT( false,
+            "RenderingContext::Create > return nullptr, unknown renderer api or renderer api is not supported on this "
+            "platform" );
+        return nullptr;
+    }
 }

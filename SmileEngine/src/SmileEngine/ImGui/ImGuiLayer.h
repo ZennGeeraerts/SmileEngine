@@ -5,38 +5,37 @@
 #include "SmileEngine/Events/ApplicationEvent.h"
 #include "SmileEngine/Events/KeyEvent.h"
 
-namespace Smile
+namespace smile
 {
-	class ImGuiLayer final : public Layer
-	{
-	public:
-		ImGuiLayer();
-		~ImGuiLayer();
+    class ImGuiLayer final : public Layer
+    {
+      public:
+        ImGuiLayer();
+        ~ImGuiLayer();
 
-		virtual void OnAttach() override;
-		virtual void OnDetach() override;
-		virtual void OnImGuiRender() override;
-		virtual void OnEvent(Event& event) override;
+        virtual void OnAttach() override;
+        virtual void OnDetach() override;
+        virtual void OnImGuiRender() override;
+        virtual void OnEvent( Event &event ) override;
 
-		void Begin();
-		void End();
+        void Begin();
+        void End();
 
-		void SetDarkThemeColors();
+        void SetDarkThemeColors();
 
-	private:
-		void ShutDown();
+      private:
+        void ShutDown();
 
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
-		bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
-		bool OnMouseMoved(MouseMovedEvent& e);
-		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnKeyPressed(KeyPressedEvent& e);
-		bool OnKeyReleased(KeyReleasedEvent& e);
-		bool OnKeyTyped(KeyTypedEvent& e);
-		bool OnWindowResize(WindowResizeEvent& e);
+        bool OnMouseButtonPressed( MouseButtonPressedEvent &e );
+        bool OnMouseButtonReleased( MouseButtonReleasedEvent &e );
+        bool OnMouseMoved( MouseMovedEvent &e );
+        bool OnMouseScrolled( MouseScrolledEvent &e );
+        bool OnKeyPressed( KeyPressedEvent &e );
+        bool OnKeyReleased( KeyReleasedEvent &e );
+        bool OnKeyTyped( KeyTypedEvent &e );
+        bool OnWindowResize( WindowResizeEvent &e );
 
-	private:
-		bool m_bInitialized = false;
-	};
+      private:
+        bool m_bInitialized = false;
+    };
 }
-

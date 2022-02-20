@@ -1,16 +1,13 @@
 #include "smpch.h"
 #include "Layer.h"
 
-namespace Smile
+namespace smile
 {
-	Layer::Layer(const std::string& name)
-		: m_DebugName{ name }
-	{
+    Layer::Layer( const std::string &name ) : m_DebugName{ name }
+    {
+    }
 
-	}
-
-	Layer::~Layer()
-	{
-
-	}
+    Layer::~Layer()
+    {
+    }
 }

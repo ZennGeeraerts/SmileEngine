@@ -2,7 +2,7 @@
 #include <cstdint>
 
 // From Win32
-namespace Smile
+namespace smile
 {
 	namespace Key
 	{
@@ -10,45 +10,45 @@ namespace Smile
 
 		enum : KeyCode
 		{
-			eBack				= 0x08,
-			eTab				= 0x09,
-			eClear				= 0x0C,
-			eEnter				= 0x0D,
-			eShift				= 0x10,
-			eControl			= 0x11,
-			eAlt				= 0x12,
-			ePause				= 0x13,
-			eCapsLock			= 0x14,
+			Back				= 0x08,
+			Tab					= 0x09,
+			Clear				= 0x0C,
+			Enter				= 0x0D,
+			Shift				= 0x10,
+			Ctrl				= 0x11,
+			Alt					= 0x12,
+			Pause				= 0x13,
+			CapsLock			= 0x14,
 
-			eKana				= 0x15,
-			eHanguel			= 0x15,
-			eHangul				= 0x15,
-			eIMEOn				= 0x16,
-			eJunja				= 0x17,
-			eFinal				= 0x18,
-			eHanja				= 0x19,
-			eKanji				= 0x19,
-			eIMEOff				= 0x1A,
+			Kana				= 0x15,
+			Hanguel				= 0x15,
+			Hangul				= 0x15,
+			IMEOn				= 0x16,
+			Junja				= 0x17,
+			Final				= 0x18,
+			Hanja				= 0x19,
+			Kanja				= 0x19,
+			IMEOff				= 0x1A,
 
-			eEscape				= 0x1B,
+			Escape				= 0x1B,
 
-			eSpace				= 0x20,
+			Space				= 0x20,
 
-			ePageUp				= 0x21,
-			ePageDown			= 0x22,
-			eEnd				= 0x23,
-			eHome				= 0x24,
-			eLeft				= 0x25,
-			eUp					= 0x26,
-			eRight				= 0x27,
-			eDown				= 0x28,
-			eSelect				= 0x29,
-			ePrint				= 0x2A,
-			eExecute			= 0x2B,
-			ePrintScreen		= 0x2C,
-			eInsert				= 0x2D,
-			eDelete				= 0x2E,
-			eHelp				= 0x2F,
+			PageUp				= 0x21,
+			PageDown			= 0x22,
+			End					= 0x23,
+			Home				= 0x24,
+			Left				= 0x25,
+			Up					= 0x26,
+			Right				= 0x27,
+			Down				= 0x28,
+			Select				= 0x29,
+			Print				= 0x2A,
+			Execute				= 0x2B,
+			PrintScreen			= 0x2C,
+			Insert				= 0x2D,
+			Delete				= 0x2E,
+			Help				= 0x2F,
 
 			D0					= 0x30,
 			D1					= 0x31,
@@ -88,28 +88,28 @@ namespace Smile
 			Y					= 0x59,
 			Z					= 0x5A,
 
-			eLeftWindows		= 0x5B,
-			eRightWindows		= 0x5C,
-			eApplications		= 0x5D,
-			eSleep				= 0x5F,
+			WindowsLeft			= 0x5B,
+			WindowsRight		= 0x5C,
+			Applications		= 0x5D,
+			Sleep				= 0x5F,
 
-			eNumPad0			= 0x60,
-			eNumPad1			= 0x61,
-			eNumPad2			= 0x62,
-			eNumPad3			= 0x63,
-			eNumPad4			= 0x64,
-			eNumPad5			= 0x65,
-			eNumPad6			= 0x66,
-			eNumPad7			= 0x67,
-			eNumPad8			= 0x68,
-			eNumPad9			= 0x69,
+			Numpad0				= 0x60,
+			Numpad1				= 0x61,
+			Numpad2				= 0x62,
+			Numpad3				= 0x63,
+			Numpad4				= 0x64,
+			Numpad5				= 0x65,
+			Numpad6				= 0x66,
+			Numpad7				= 0x67,
+			Numpad8				= 0x68,
+			Numpad9				= 0x69,
 
-			eNumPadMultiply		= 0x6A,
-			eNumPadAdd			= 0x6B,
-			eNumPadSeperate		= 0x6C,
-			eNumPadSubtract		= 0x6D,
-			eNumPadDecimal		= 0x6E,
-			eNumPadDivide		= 0x6F,
+			NumpadMultiply		= 0x6A,
+			NumpadAdd			= 0x6B,
+			NumpadSeperate		= 0x6C,
+			NumpadSubtract		= 0x6D,
+			NumpadDecimal		= 0x6E,
+			NumpadDivide		= 0x6F,
 
 			F1					= 0x70,
 			F2					= 0x71,
@@ -136,67 +136,67 @@ namespace Smile
 			F23					= 0x86,
 			F24					= 0x87,
 
-			eNumLock			= 0x90,
-			eScrollLock			= 0x91,
+			NumLock				= 0x90,
+			ScrollLock			= 0x91,
 
-			eLeftShift			= 0xA0,
-			eRightShift			= 0xA1,
-			eLeftControl		= 0xA2,
-			eRightControl		= 0xA3,
-			eLeftAlt			= 0xA4,
-			eRightAlt			= 0xA5,
+			ShiftLeft			= 0xA0,
+			ShiftRight			= 0xA1,
+			CtrlLeft			= 0xA2,
+			CtrlRight			= 0xA3,
+			AltLeft				= 0xA4,
+			AltRight			= 0xA5,
 
-			eBrowserBack		= 0xA6,
-			eBrowserForward		= 0xA7,
-			eBrowserRefresh		= 0xA8,
-			eBrowserStop		= 0xA9,
-			eBrowserSearch		= 0xAA,
-			eBrowserFavorites	= 0xAB,
-			eBrowserHome		= 0xAC,
+			BrowserBack			= 0xA6,
+			BrowserForward		= 0xA7,
+			BrowserRefresh		= 0xA8,
+			BrowserStop			= 0xA9,
+			BrowserSearch		= 0xAA,
+			BrowserFavorites	= 0xAB,
+			BrowserHome			= 0xAC,
 
-			eVolumeMute			= 0xAD,
-			eVolumeDown			= 0xAE,
-			eVolumeUp			= 0xAF,
+			VolumeMute			= 0xAD,
+			VolumeDown			= 0xAE,
+			VolumeUp			= 0xAF,
 
-			eMediaNextTrack		= 0xB0,
-			eMediaPrevTrack		= 0xB1,
-			eMediaStop			= 0xB2,
-			eMediaPlayPause		= 0xB3,
+			MediaNextTrack		= 0xB0,
+			MediaPrevTrack		= 0xB1,
+			MediaStop			= 0xB2,
+			MediaPlayPause		= 0xB3,
 
-			eLaunchMail			= 0xB4,
-			eLauchMediaSelect	= 0xB5,
-			eLaunchApp1			= 0xB6,
-			eLaunchApp2			= 0xB7,
+			LaunchMail			= 0xB4,
+			LaunchMediaSelect	= 0xB5,
+			LaunchApp1			= 0xB6,
+			LaunchApp2			= 0xB7,
 
-			eOEM1				= 0xBA, // the ';:' key on a US standard keyboard
-			ePlus				= 0xBB,
-			eComma				= 0xBC,
-			eMinus				= 0xBD,
-			ePeriod				= 0xBE,
-			eOEM2				= 0xBF, // the '/' key on a US standard keyboard
-			eOEM3				= 0xC0, // the '~' key on a US standard keyboard
+			OEM1				= 0xBA, // the ';:' key on a US standard keyboard
+			Plus				= 0xBB,
+			Comma				= 0xBC,
+			Minus				= 0xBD,
+			Period				= 0xBE,
+			OEM2				= 0xBF, // the '/' key on a US standard keyboard
+			OEM3				= 0xC0, // the '~' key on a US standard keyboard
 
-			eOEM4				= 0xDB, // the '[{' key on a US standard keyboard
-			eOEM5				= 0xDC, // the '\|' key on a US standard keyboard
-			eOEM6				= 0xDD, // the ']}' key on a US standard keyboard
-			eOEM7				= 0xDE, // the 'single-quote/double-quote' key on a US standard keyboard
-			eOEM8				= 0xDF,
+			OEM4				= 0xDB, // the '[{' key on a US standard keyboard
+			OEM5				= 0xDC, // the '\|' key on a US standard keyboard
+			OEM6				= 0xDD, // the ']}' key on a US standard keyboard
+			OEM7				= 0xDE, // the 'single-quote/double-quote' key on a US standard keyboard
+			OEM8				= 0xDF,
 
-			eOEM102				= 0xE2, // the '<>' key on a US standard keyboard
+			OEM102				= 0xE2, // the '<>' key on a US standard keyboard
 
-			eProcessKey			= 0xE5,
+			ProcessKey			= 0xE5,
 
-			ePacket				= 0xE7,
+			Packet				= 0xE7,
 			
-			eAttn				= 0xF6,
-			eCrSel				= 0xF7,
-			eExSel				= 0xF8,
-			eEraseEOF			= 0xF9,
-			ePlay				= 0xFA,
-			eZoom				= 0xFB,
-			eNoName				= 0xFC,
-			ePA1				= 0xFD,
-			eOEMClear			= 0xFE
+			Attn				= 0xF6,
+			CrSel				= 0xF7,
+			ExSel				= 0xF8,
+			EraseEOF			= 0xF9,
+			Play				= 0xFA,
+			Zoom				= 0xFB,
+			NoName				= 0xFC,
+			PA1					= 0xFD,
+			OEMClear			= 0xFE
 		};
 	}
 }

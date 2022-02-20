@@ -4,19 +4,18 @@
 
 #include "SmileEngine/Renderer/Texture.h"
 
-namespace Smile
+namespace smile
 {
-	class ContentBrowserPanel final
-	{
-	public:
-		ContentBrowserPanel();
+    class ContentBrowserPanel final
+    {
+      public:
+        ContentBrowserPanel();
 
-		void OnImGuiRender();
+        void OnImGuiRender();
 
-	private:
-		std::filesystem::path m_CurrentDirectory;
-		Ref<Texture2D> m_pDirectoryIcon = nullptr;
-		Ref<Texture2D> m_pFileIcon = nullptr;
-	};
+      private:
+        std::filesystem::path m_CurrentDirectory;
+        Ref< Texture2D > m_pDirectoryIcon = nullptr;
+        Ref< Texture2D > m_pFileIcon = nullptr;
+    };
 }
-

@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace Smile
+namespace smile
 {
 	using GamepadCode = uint16_t;
 
@@ -9,31 +9,31 @@ namespace Smile
 	{
 		enum : GamepadCode
 		{
-			eButtonA				= 0xC3,
-			eButtonB				= 0xC4,
-			eButtonX				= 0xC5,
-			eButtonY				= 0xC6,
-			eRightShoulder			= 0xC7,
-			eLeftShoulder			= 0xC8,
-			eLeftTrigger			= 0xC9,
-			eRightTrigger			= 0xCA,
-			eDpadUp					= 0xCB,
-			eDpadDown				= 0xCC,
-			eDpadLeft				= 0xCD,
-			eDpadRight				= 0xCE,
-			eMenu					= 0xCF,
-			eView					= 0xD0,
-			eButtonLeftThumbStick	= 0xD1,
-			eButtonRightThumbStick	= 0xD2,
+			ButtonA					= 0xC3,
+			ButtonB					= 0xC4,
+			ButtonX					= 0xC5,
+			ButtonY					= 0xC6,
+			ShoulderRight			= 0xC7,
+			ShoulderLeft			= 0xC8,
+			TriggerLeft				= 0xC9,
+			TriggerRight			= 0xCA,
+			DpadUp					= 0xCB,
+			DpadDown				= 0xCC,
+			DpadLeft				= 0xCD,
+			DpadRight				= 0xCE,
+			Menu					= 0xCF,
+			View					= 0xD0,
+			ButtonThumbstickLeft	= 0xD1,
+			ButtonThumbStickRight	= 0xD2,
 
-			eLeftThumbStickUp		= 0xD3,
-			eLeftThumbStickDown		= 0xD4,
-			eLeftThumbStickRight	= 0xD5,
-			eLeftThumbStickLeft		= 0xD6,
-			eRightThumbStickUp		= 0xD7,
-			eRightThumbStickDown	= 0xD8,
-			eRightThumbStickRight	= 0xD9,
-			eRightThumbStickLeft	= 0xDA
+			LeftThumbstickUp		= 0xD3,
+			LeftThumbstickDown		= 0xD4,
+			LeftThumbstickRight		= 0xD5,
+			LeftThumbstickLeft		= 0xD6,
+			RightThumbstickUp		= 0xD7,
+			RightThumbstickDown		= 0xD8,
+			RightThumbstickRight	= 0xD9,
+			RightThumbstickLeft		= 0xDA
 		};
 	}
 }

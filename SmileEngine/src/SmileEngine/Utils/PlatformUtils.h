@@ -2,8 +2,8 @@
 
 #include <string>
 
-namespace Smile::Utils
+namespace smile::utils
 {
-	std::string OpenFile(const char* filter);
-	std::string SaveFile(const char* filter);
+    std::string OpenFile( const char *pFilter );
+    std::string SaveFile( const char *pFilter );
 }

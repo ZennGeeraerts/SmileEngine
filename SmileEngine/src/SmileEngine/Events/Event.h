@@ -2,90 +2,112 @@
 #include "smpch.h"
 #include "SmileEngine/Core/Core.h"
 
-namespace Smile
+namespace smile
 {
-	enum class EventType
-	{
-		eNone = 0,
-		eWindowClose, eWindowResize, eWindowFocus, eWindowLostFocus, eWindowMoved,
-		eKeyPressed, eKeyReleased, eKeyTyped,
-		eMouseButtonPressed, eMouseButtonReleased, eMouseMoved, eMouseScrolled
-	};
+    enum class EventType
+    {
+        None = 0,
+        WindowClose,
+        WindowResize,
+        WindowFocus,
+        WindowLostFocus,
+        WindowMoved,
+        KeyPressed,
+        KeyReleased,
+        KeyTyped,
+        MouseButtonPressed,
+        MouseButtonReleased,
+        MouseMoved,
+        MouseScrolled
+    };
 
-	enum EventCategory
-	{
-		eNone = 0,
-		eEventCategoryApplication		= BIT(0),
-		eEventCategoryInput				= BIT(1),
-		eEventCategoryKeyboard			= BIT(2),
-		eEventCategoryMouse				= BIT(3),
-		eEventCategoryMouseButton		= BIT(4)
-	};
+    enum EventCategory
+    {
+        None = 0,
+        EventCategoryApplication = BIT( 0 ),
+        EventCategoryInput = BIT( 1 ),
+        EventCategoryKeyboard = BIT( 2 ),
+        EventCategoryMouse = BIT( 3 ),
+        EventCategoryMouseButton = BIT( 4 )
+    };
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
-								virtual EventType GetEventType() const override { return GetStaticType(); }\
-								virtual const char* GetName() const override { return #type; }
+#define EVENT_CLASS_TYPE( type )                                                                                       \
+    static EventType GetStaticType()                                                                                   \
+    {                                                                                                                  \
+        return EventType::##type;                                                                                      \
+    }                                                                                                                  \
+    virtual EventType GetEventType() const override                                                                    \
+    {                                                                                                                  \
+        return GetStaticType();                                                                                        \
+    }                                                                                                                  \
+    virtual const char *GetName() const override                                                                       \
+    {                                                                                                                  \
+        return #type;                                                                                                  \
+    }
 
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
+#define EVENT_CLASS_CATEGORY( category )                                                                               \
+    virtual int GetCategoryFlags() const override                                                                      \
+    {                                                                                                                  \
+        return category;                                                                                               \
+    }
 
-	class Event
-	{
-		friend class EventDispatcher;
-		friend class Application;
-	public:
-		virtual ~Event() = default;
+    class Event
+    {
+        friend class EventDispatcher;
+        friend class Application;
 
-		// GetName and ToString is not optimal and should only be used for debugging, not in the actual game
-		virtual EventType GetEventType() const = 0;
-		virtual const char* GetName() const = 0;
-		virtual int GetCategoryFlags() const = 0;
-		virtual std::string ToString() const
-		{
-			return GetName();
-		}
+      public:
+        virtual ~Event() = default;
 
-#pragma warning(push)
-#pragma warning(disable: 26812)
-		inline bool IsInCategory(EventCategory category)
-		{
-			return GetCategoryFlags() & category;
-		}
-#pragma warning(pop)
+        // GetName and ToString is not optimal and should only be used for debugging, not in the actual game
+        virtual EventType GetEventType() const = 0;
+        virtual const char *GetName() const = 0;
+        virtual int GetCategoryFlags() const = 0;
+        virtual std::string ToString() const
+        {
+            return GetName();
+        }
 
-	protected:
-		bool m_bHandled = false;
-	};
+#pragma warning( push )
+#pragma warning( disable : 26812 )
+        inline bool IsInCategory( EventCategory category )
+        {
+            return GetCategoryFlags() & category;
+        }
+#pragma warning( pop )
 
-	class EventDispatcher
-	{
-		template<typename ParameterType>
-		using EventFunction = std::function<bool(ParameterType&)>;
+      protected:
+        bool m_bHandled = false;
+    };
 
-	public:
-		EventDispatcher(Event& event)
-			: m_Event(event)
-		{
-		}
+    class EventDispatcher
+    {
+        template < typename ParameterType >
+        using EventFunction = std::function< bool( ParameterType & ) >;
 
-		// Bind events to functions
-		template<typename ParameterType>
-		bool Dispatch(EventFunction<ParameterType> eventFunction)
-		{
-			if (m_Event.GetEventType() == ParameterType::GetStaticType())
-			{
-				m_Event.m_bHandled = eventFunction(*(ParameterType*)&m_Event);
-				return true;
-			}
-			return false;
-		}
+      public:
+        EventDispatcher( Event &event ) : m_Event( event )
+        {
+        }
 
-	private:
-		Event& m_Event;
-	};
+        // Bind events to functions
+        template < typename ParameterType >
+        bool Dispatch( EventFunction< ParameterType > eventFunction )
+        {
+            if ( m_Event.GetEventType() == ParameterType::GetStaticType() )
+            {
+                m_Event.m_bHandled = eventFunction( *( ParameterType * )&m_Event );
+                return true;
+            }
+            return false;
+        }
 
-	inline std::ostream& operator<<(std::ostream& os, const Event& e)
-	{
-		return os << e.ToString();
-	}
+      private:
+        Event &m_Event;
+    };
+
+    inline std::ostream &operator<<( std::ostream &os, const Event &e )
+    {
+        return os << e.ToString();
+    }
 }
-

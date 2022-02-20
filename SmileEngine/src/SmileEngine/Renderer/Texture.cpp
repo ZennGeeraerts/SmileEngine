@@ -5,26 +5,27 @@
 #include "Platform/DirectX11/DirectX11Texture.h"
 #include "Platform/SmileRaster/SmileRasterTexture.h"
 
-namespace Smile
+namespace smile
 {
-	Ref<Texture2D> Texture2D::Create(const std::string& filePath)
-	{
-		switch (Renderer::GetAPI())
-		{
-		case RendererAPI::API::eNone:
-			SM_ASSERT(false, "Shader::Create > return nullptr, no renderer api selected");
-			return nullptr;
+    Ref< Texture2D > Texture2D::Create( const std::string &filePath )
+    {
+        switch ( Renderer::GetAPI() )
+        {
+            case RendererAPI::API::None:
+                SM_ASSERT( false, "Shader::Create > return nullptr, no renderer api selected" );
+                return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
-		case RendererAPI::API::eDirectX11:
-			return CreateRef<DirectX11Texture2D>(filePath);
+            case RendererAPI::API::DirectX11:
+                return CreateRef< DirectX11Texture2D >( filePath );
 
-		case RendererAPI::API::eSmileRaster:
-			return CreateRef<SmileRasterTexture2D>(filePath);
+            case RendererAPI::API::SmileRaster:
+                return CreateRef< SmileRasterTexture2D >( filePath );
 #endif
-		}
+        }
 
-		SM_ASSERT(false, "Shader::Create > return nullptr, unknown render api or render api is not supported on this platform");
-		return nullptr;
-	}
+        SM_ASSERT( false,
+            "Shader::Create > return nullptr, unknown render api or render api is not supported on this platform" );
+        return nullptr;
+    }
 }

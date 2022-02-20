@@ -1,6 +1,6 @@
 #include "Rasterizer.cuh"
 
-namespace Smile
+namespace smile
 {
 	namespace Raster
 	{

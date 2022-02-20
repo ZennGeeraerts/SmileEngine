@@ -1,67 +1,67 @@
 #pragma once
 
-namespace Smile
+namespace smile
 {
-	enum class FramebufferTextureFormat
-	{
-		eNone = 0,
-		eRGBA8,
-		eDEPTH24STENCIL8,
+    enum class FramebufferTextureFormat
+    {
+        None = 0,
+        RGBA8,
+        DEPTH24STENCIL8,
 
-		eDepth = eDEPTH24STENCIL8
-	};
+        Depth = DEPTH24STENCIL8
+    };
 
-	struct FramebufferTextureData final
-	{
-		FramebufferTextureData() = default;
-		FramebufferTextureData(FramebufferTextureFormat format, bool bUseShader = false)
-			: TextureFormat{ format }
-			, bUseInShader{ bUseShader }
-		{}
+    struct FramebufferTextureData final
+    {
+        FramebufferTextureData() = default;
+        FramebufferTextureData( FramebufferTextureFormat format, bool bUseShader = false )
+            : m_TextureFormat{ format }, m_bUseInShader{ bUseShader }
+        {
+        }
 
-		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::eNone;
-		bool bUseInShader;
-		// TODO: filtering/wrap
-	};
+        FramebufferTextureFormat m_TextureFormat = FramebufferTextureFormat::None;
+        bool m_bUseInShader;
+        // TODO: filtering/wrap
+    };
 
-	struct FramebufferAttachmentData final
-	{
-		FramebufferAttachmentData() = default;
-		FramebufferAttachmentData(const std::initializer_list<FramebufferTextureData>& attachments)
-			: Attachments{ attachments }
-		{}
+    struct FramebufferAttachmentData final
+    {
+        FramebufferAttachmentData() = default;
+        FramebufferAttachmentData( const std::initializer_list< FramebufferTextureData > &attachments )
+            : m_Attachments{ attachments }
+        {
+        }
 
-		std::vector<FramebufferTextureData> Attachments;
-	};
+        std::vector< FramebufferTextureData > m_Attachments;
+    };
 
-	struct FramebufferData final
-	{
-		uint32_t Width = 0;
-		uint32_t Height = 0;
-		FramebufferAttachmentData Attachments;
-		uint32_t Samples = 1;
+    struct FramebufferData final
+    {
+        Uint32 m_Width = 0;
+        Uint32 m_Height = 0;
+        FramebufferAttachmentData m_Attachments;
+        Uint16 m_Samples = 1;
 
-		// if true -> Render to the swapchain
-		bool bSwapChainTarget = false;
-	};
+        // if true -> Render to the swapchain
+        bool m_bSwapChainTarget = false;
+    };
 
-	class Framebuffer
-	{
-	public:
-		virtual ~Framebuffer() = default;
+    class Framebuffer
+    {
+      public:
+        virtual ~Framebuffer() = default;
 
-		virtual void Invalidate() = 0;
+        virtual void Invalidate() = 0;
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
-		virtual void SetClearColor(const DirectX::XMFLOAT4& color) = 0;
-		virtual void Clear() = 0;
-		virtual void Resize(uint32_t width, uint32_t height) = 0;
+        virtual void Bind() const = 0;
+        virtual void Unbind() const = 0;
+        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) = 0;
+        virtual void Clear() = 0;
+        virtual void Resize( uint32_t width, uint32_t height ) = 0;
 
-		virtual const FramebufferData& GetData() const = 0;
-		virtual void* GetColor(uint32_t index) const = 0;
+        virtual const FramebufferData &GetData() const = 0;
+        virtual void *GetColor( uint32_t index ) const = 0;
 
-		static Ref<Framebuffer> Create(const FramebufferData& framebufferData);
-	};
+        static Ref< Framebuffer > Create( const FramebufferData &framebufferData );
+    };
 }
-
