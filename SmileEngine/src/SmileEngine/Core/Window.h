@@ -17,7 +17,7 @@ namespace smile
         Uint32 m_Height;
     };
 
-    class RenderingContext;
+    class GraphicsContext;
 
     // Window interface for desktop platforms
     class Window
@@ -33,7 +33,7 @@ namespace smile
 
         virtual uint32_t GetWidth() const = 0;
         virtual uint32_t GetHeight() const = 0;
-        virtual RenderingContext *GetRenderingContext() const = 0;
+        virtual GraphicsContext *GetGraphicsContext() const = 0;
 
         // Window attributes
         virtual void SetEventCallback( const EventCallbackFunction &callback ) = 0;

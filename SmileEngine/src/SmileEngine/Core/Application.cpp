@@ -2,7 +2,7 @@
 #include "Application.h"
 
 #include "Logger.h"
-#include "Input.h"
+#include "SmileEngine/Input/Input.h"
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Physics/PhysicsEngine.h"
 

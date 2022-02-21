@@ -2,7 +2,7 @@
 
 #include "Math.h"
 
-namespace smile::Math
+namespace smile::math
 {
     struct Vector2 final
     {

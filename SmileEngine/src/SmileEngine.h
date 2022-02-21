@@ -8,18 +8,19 @@
 
 #include "SmileEngine/Core/Timestep.h"
 
-#include "SmileEngine/Core/Input.h"
-#include "SmileEngine/Core/KeyCodes.h"
+#include "SmileEngine/Utils/Utils.h"
+#include "SmileEngine/Math/Math.h"
 
-#include "SmileEngine/ImGui/ImGuiLayer.h"
+#include "SmileEngine/Input/Input.h"
+#include "SmileEngine/Input/KeyCodes.h"
+#include "SmileEngine/Input/MouseCodes.h"
+#include "SmileEngine/Input/GamepadCodes.h"
+
+#include "SmileEngine/UI/ImGui/ImGuiLayer.h"
 
 #include "SmileEngine/Scene/Scene.h"
 #include "SmileEngine/Scene/Entity.h"
 #include "SmileEngine/Scene/Components.h"
-
-#include "SmileEngine/Utils/Utils.h"
-
-#include "SmileEngine/Math/Math.h"
 
 /* ---Renderer--- */
 #include "SmileEngine/Renderer/Renderer.h"

@@ -10,7 +10,7 @@ namespace smile
         : m_FilePath{ filePath }, m_pSurface{ IMG_Load( filePath.c_str() ) }
     {
         m_pSmileRasterContext =
-            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT( m_pSmileRasterContext, "SmileRasterTexture2D > Rendering context is not a SmileRasterContext" );
 
         if ( !m_pSurface )

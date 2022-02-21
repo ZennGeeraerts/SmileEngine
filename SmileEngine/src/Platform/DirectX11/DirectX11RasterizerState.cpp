@@ -37,7 +37,7 @@ namespace smile
     DirectX11RasterizerState::DirectX11RasterizerState( const RasterizerStateData &rasterizerStateData )
     {
         m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
 
         D3D11_RASTERIZER_DESC rasterizerDesc = {};
         rasterizerDesc.CullMode = CullModeToDirectXType( rasterizerStateData.m_CullMode );

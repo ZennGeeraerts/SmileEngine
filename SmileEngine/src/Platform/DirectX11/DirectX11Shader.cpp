@@ -12,7 +12,7 @@ namespace smile
         const std::string &techniqueName )
     {
         m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT( m_pDirectX11Context, "DirectX11Shader > Rendering context is not a DirectX 11 Rendering Context" );
 
         if ( !LoadEffect( m_pDirectX11Context->GetDevice(), assetFile ) )

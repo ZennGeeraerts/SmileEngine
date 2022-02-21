@@ -7,7 +7,7 @@
 #include "SmileEngine/Events/Event.h"
 #include "SmileEngine/Events/ApplicationEvent.h"
 
-#include "SmileEngine/ImGui/ImGuiLayer.h"
+#include "SmileEngine/UI/ImGui/ImGuiLayer.h"
 
 namespace smile
 {

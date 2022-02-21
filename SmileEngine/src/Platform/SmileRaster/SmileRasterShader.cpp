@@ -9,7 +9,7 @@ namespace smile
     SmileRasterShader::SmileRasterShader( const std::string &assetFile, const BufferLayout &layout )
     {
         m_pSmileRasterContext =
-            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT(
             m_pSmileRasterContext, "SmileRasterShader > Rendering context is not a SmileRaster Rendering Context" );
 

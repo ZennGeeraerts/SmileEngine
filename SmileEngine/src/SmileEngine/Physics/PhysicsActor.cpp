@@ -19,9 +19,9 @@ namespace smile
                 pOutMaterial = nullptr;
             }
 
-            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->StaticFriction,
-                component.m_pPhysicsMaterial->DynamicFriction,
-                component.m_pPhysicsMaterial->Restitution );
+            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->m_StaticFriction,
+                component.m_pPhysicsMaterial->m_DynamicFriction,
+                component.m_pPhysicsMaterial->m_Restitution );
         }
     }
 
@@ -35,9 +35,9 @@ namespace smile
                 pOutMaterial = nullptr;
             }
 
-            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->StaticFriction,
-                component.m_pPhysicsMaterial->DynamicFriction,
-                component.m_pPhysicsMaterial->Restitution );
+            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->m_StaticFriction,
+                component.m_pPhysicsMaterial->m_DynamicFriction,
+                component.m_pPhysicsMaterial->m_Restitution );
         }
     }
 
@@ -51,9 +51,9 @@ namespace smile
                 pOutMaterial = nullptr;
             }
 
-            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->StaticFriction,
-                component.m_pPhysicsMaterial->DynamicFriction,
-                component.m_pPhysicsMaterial->Restitution );
+            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->m_StaticFriction,
+                component.m_pPhysicsMaterial->m_DynamicFriction,
+                component.m_pPhysicsMaterial->m_Restitution );
         }
     }
 
@@ -115,7 +115,7 @@ namespace smile
         }
 
         m_pPxMaterial = pPhysics->createMaterial(
-            m_pPhysicsMaterial->StaticFriction, m_pPhysicsMaterial->DynamicFriction, m_pPhysicsMaterial->Restitution );
+            m_pPhysicsMaterial->m_StaticFriction, m_pPhysicsMaterial->m_DynamicFriction, m_pPhysicsMaterial->m_Restitution );
 
         auto &transformComponent = entity.GetComponent< TransformComponent >();
         if ( entity.HasComponent< BoxColliderComponent >() )
@@ -221,7 +221,7 @@ namespace smile
             TransformComponent &transform = m_Entity.GetComponent< TransformComponent >();
             physx::PxTransform actorPose = m_pRigidActor->getGlobalPose();
             transform.m_Translation = utils::ConvertToDirectXVector( actorPose.p );
-            transform.m_Rotation = Math::QuaternionToEuler( utils::ConvertToDirectXQuat( actorPose.q ) );
+            transform.m_Rotation = math::QuaternionToEuler( utils::ConvertToDirectXQuat( actorPose.q ) );
         }
         else
         {

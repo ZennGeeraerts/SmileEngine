@@ -2,7 +2,7 @@
 
 #include "SmileEngine/Core/Logger.h"
 
-namespace smile::Math
+namespace smile::math
 {
     constexpr float g_PI = 3.14159265358979323846264338327950288419716939937510f;
     constexpr float g_PI2 = 3.14159265358979323846264338327950288419716939937510f * 2.0f;

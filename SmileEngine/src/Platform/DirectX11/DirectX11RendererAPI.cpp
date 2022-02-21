@@ -9,7 +9,7 @@ namespace smile
     void DirectX11RendererAPI::Initialize()
     {
         m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT( m_pDirectX11Context, "DirectX11RendererAPI > RenderingContext is not a DirectX11Context" );
     }
 

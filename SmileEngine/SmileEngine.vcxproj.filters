@@ -45,13 +45,10 @@
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\RenderingContext.h">
+    <ClInclude Include="src\SmileEngine\Renderer\GraphicsContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Core\Timer.h">
@@ -126,31 +123,31 @@
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\entt\entt.hpp">
+    <ClInclude Include="Thirdparty\entt\entt.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imconfig.h">
+    <ClInclude Include="Thirdparty\ImGui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imgui.h">
+    <ClInclude Include="Thirdparty\ImGui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imgui_impl_dx11.h">
+    <ClInclude Include="Thirdparty\ImGui\imgui_impl_dx11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imgui_impl_win32.h">
+    <ClInclude Include="Thirdparty\ImGui\imgui_impl_win32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imgui_internal.h">
+    <ClInclude Include="Thirdparty\ImGui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imstb_rectpack.h">
+    <ClInclude Include="Thirdparty\ImGui\imstb_rectpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imstb_textedit.h">
+    <ClInclude Include="Thirdparty\ImGui\imstb_textedit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Libs\ImGui\imstb_truetype.h">
+    <ClInclude Include="Thirdparty\ImGui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Core\Core.h">
@@ -190,9 +187,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SmileEngine\Utils\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h">
@@ -315,13 +309,7 @@
     <ClInclude Include="src\SmileEngine\Scene\SceneSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SmileEngine\Math\Math.h">
+    <ClInclude Include="Thirdparty\ImGuizmo\ImGuizmo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterContext.h">
@@ -390,13 +378,37 @@
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\MeshFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Math\Vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\MeshFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\MeshLoaderUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Input\GamepadCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Input\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Input\KeyCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Input\MouseCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Math\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Math\Vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Utils\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\UI\ImGui\ImGuiLayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -411,9 +423,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\DirectX11Context.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SmileEngine\ImGui\ImGuiLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Core\Timer.cpp">
@@ -464,22 +473,22 @@
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_demo.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_draw.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_impl_dx11.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_impl_win32.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_impl_win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Core\Layer.cpp">
@@ -506,9 +515,6 @@
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Utils\Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -518,13 +524,10 @@
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp">
+    <ClCompile Include="Thirdparty\ImGuizmo\ImGuizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Math\Math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\RenderingContext.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\GraphicsContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterContext.cpp">
@@ -584,13 +587,22 @@
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\MeshFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Math\Vector2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\MeshFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\MeshLoaderUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Math\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Math\Vector2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Utils\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\UI\ImGui\ImGuiLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

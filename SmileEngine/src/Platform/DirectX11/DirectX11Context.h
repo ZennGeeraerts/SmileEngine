@@ -1,5 +1,5 @@
 #pragma once
-#include "SmileEngine/Renderer/RenderingContext.h"
+#include "SmileEngine/Renderer/GraphicsContext.h"
 
 #include <d3d11.h>
 
@@ -7,7 +7,7 @@ namespace smile
 {
     class Window;
 
-    class DirectX11Context final : public RenderingContext
+    class DirectX11Context final : public GraphicsContext
     {
       public:
         DirectX11Context( Window *pWindow );

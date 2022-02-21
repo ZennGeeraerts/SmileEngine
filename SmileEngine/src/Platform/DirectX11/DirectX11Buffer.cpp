@@ -12,7 +12,7 @@ namespace smile
         : m_Layout{ vertexBufferData.m_BufferLayout }
     {
         m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT(
             m_pDirectX11Context, "DirectX11VertexBuffer > Rendering context is not a DirectX 11 Rendering Context" );
 
@@ -58,7 +58,7 @@ namespace smile
     DirectX11IndexBuffer::DirectX11IndexBuffer( const IndexBufferData &indexBufferData )
     {
         m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT(
             m_pDirectX11Context, "DirectX11IndexBuffer > Rendering context is not a DirectX 11 Rendering Context" );
 

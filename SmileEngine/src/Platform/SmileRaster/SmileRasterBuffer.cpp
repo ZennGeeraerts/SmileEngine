@@ -12,7 +12,7 @@ namespace smile
         : m_Layout{ vertexBufferData.m_BufferLayout }
     {
         m_pSmileRasterContext =
-            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT( m_pSmileRasterContext,
             "SmileRasterVertexBuffer > Rendering context is not a SmileRaster Rendering Context" );
 
@@ -38,7 +38,7 @@ namespace smile
     SmileRasterIndexBuffer::SmileRasterIndexBuffer( const IndexBufferData &indexBufferData )
     {
         m_pSmileRasterContext =
-            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT( m_pSmileRasterContext,
             "SmileRasterIndexBuffer > Rendering context is not a SmileRaster Rendering Context" );
 

@@ -9,7 +9,7 @@ namespace smile
     DirectX11Texture2D::DirectX11Texture2D( const std::string &filePath ) : m_FilePath{ filePath }
     {
         m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetRenderingContext() );
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT( m_pDirectX11Context, "DirectX11Texture2D > Rendering context is not a DirectX11Context" );
 
         if ( !LoadTexture( filePath ) )

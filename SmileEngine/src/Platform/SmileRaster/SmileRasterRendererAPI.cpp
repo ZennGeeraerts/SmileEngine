@@ -8,7 +8,7 @@ namespace smile
     void SmileRasterRendererAPI::Initialize()
     {
         m_pWindow = &Application::GetInstance().GetWindow();
-        m_pSmileRasterContext = static_cast< SmileRasterContext * >( m_pWindow->GetRenderingContext() );
+        m_pSmileRasterContext = static_cast< SmileRasterContext * >( m_pWindow->GetGraphicsContext() );
         SM_ASSERT( m_pSmileRasterContext, "SmileRasterRendererAPI > RenderingContext is not a SmileRasterContext" );
     }
 

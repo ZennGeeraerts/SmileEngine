@@ -1,7 +1,7 @@
 #include "SceneHierarchyPanel.h"
 
-#include <Libs/ImGui/imgui.h>
-#include <Libs/ImGui/imgui_internal.h>
+#include <Thirdparty/ImGui/imgui.h>
+#include <Thirdparty/ImGui/imgui_internal.h>
 
 #include "SmileEngine/Scene/Components.h"
 #include "ContentBrowserPanel.h"

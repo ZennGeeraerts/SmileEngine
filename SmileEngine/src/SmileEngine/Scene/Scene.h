@@ -4,7 +4,7 @@
 #include "SmileEngine/Core/Timestep.h"
 #include "SmileEngine/Renderer/Camera/EditorCamera.h"
 
-#include <Libs/entt/entt.hpp>
+#include <Thirdparty/entt/entt.hpp>
 
 namespace smile
 {

@@ -6,9 +6,9 @@
 #include "SmileEngine/Events/MouseEvent.h"
 #include "SmileEngine/Events/KeyEvent.h"
 
-#include "SmileEngine/Renderer/RenderingContext.h"
+#include "SmileEngine/Renderer/GraphicsContext.h"
 #include "SmileEngine/Renderer/Renderer.h"
-#include "SmileEngine/Core/Input.h"
+#include "SmileEngine/Input/Input.h"
 
 #include "../../../resource.h"
 
@@ -104,7 +104,7 @@ namespace smile
         SM_ASSERT( m_WindowHandle, "WindowsWindow::Init > Could not create window!" );
 
         // Init context
-        m_pContext = RenderingContext::Create( this );
+        m_pContext = GraphicsContext::Create( this );
         m_pContext->Init();
 
         ShowWindow( m_WindowHandle, SW_SHOW );

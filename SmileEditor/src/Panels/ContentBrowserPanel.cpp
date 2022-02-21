@@ -1,6 +1,6 @@
 #include "ContentBrowserPanel.h"
 
-#include <Libs/ImGui/imgui.h>
+#include <Thirdparty/ImGui/imgui.h>
 
 namespace smile
 {

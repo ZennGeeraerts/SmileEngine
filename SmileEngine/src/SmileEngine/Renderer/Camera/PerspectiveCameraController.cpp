@@ -1,8 +1,8 @@
 #include "smpch.h"
 #include "PerspectiveCameraController.h"
 
-#include "SmileEngine/Core/Input.h"
-#include "SmileEngine/Core/KeyCodes.h"
+#include "SmileEngine/Input/Input.h"
+#include "SmileEngine/Input/KeyCodes.h"
 
 namespace smile
 {
@@ -13,13 +13,13 @@ namespace smile
 
     void PerspectiveCameraController::OnUpdate( Timestep deltaTime )
     {
-        if ( Input::IsKeyPressed( Key::Left ) )
+        if ( Input::IsKeyPressed( key::Left ) )
             m_CameraRotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::IsKeyPressed( Key::Right ) )
+        if ( Input::IsKeyPressed( key::Right ) )
             m_CameraRotation.y += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::IsKeyPressed( Key::Up ) )
+        if ( Input::IsKeyPressed( key::Up ) )
             m_CameraRotation.x -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::IsKeyPressed( Key::Down ) )
+        if ( Input::IsKeyPressed( key::Down ) )
             m_CameraRotation.x += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
 
         const DirectX::XMFLOAT3 forward = { 0.f, 0.f, 1.f };
@@ -34,9 +34,9 @@ namespace smile
             dir.z -= 1;
         if ( smile::Input::IsKeyPressed( 'W' ) )
             dir.z += 1;
-        if ( smile::Input::IsKeyPressed( Key::Space ) )
+        if ( smile::Input::IsKeyPressed( key::Space ) )
             dir.y += 1;
-        if ( smile::Input::IsKeyPressed( Key::CtrlLeft ) )
+        if ( smile::Input::IsKeyPressed( key::CtrlLeft ) )
             dir.y -= 1;
 
         dir.x = forward.x * dir.z + right.x * dir.x;

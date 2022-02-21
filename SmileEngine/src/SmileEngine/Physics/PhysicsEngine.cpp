@@ -57,9 +57,9 @@ namespace smile
 
         // Create default physics material
         s_Settings.m_pDefaultPhysicsMaterial = CreateRef< PhysicsMaterial >();
-        s_Settings.m_pDefaultPhysicsMaterial->StaticFriction = 0.3f;
-        s_Settings.m_pDefaultPhysicsMaterial->DynamicFriction = 0.3f;
-        s_Settings.m_pDefaultPhysicsMaterial->Restitution = 0.4f;
+        s_Settings.m_pDefaultPhysicsMaterial->m_StaticFriction = 0.3f;
+        s_Settings.m_pDefaultPhysicsMaterial->m_DynamicFriction = 0.3f;
+        s_Settings.m_pDefaultPhysicsMaterial->m_Restitution = 0.4f;
 
         SM_LOG_INFO( "Initialized Physics Engine" );
     }

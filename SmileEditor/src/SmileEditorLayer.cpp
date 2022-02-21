@@ -3,8 +3,8 @@
 #include "SmileEngine/Scene/SceneSerializer.h"
 #include "SmileEngine/Utils/PlatformUtils.h"
 
-#include <Libs/ImGui/imgui.h>
-#include <Libs/ImGuizmo/ImGuizmo.h>
+#include <Thirdparty/ImGui/imgui.h>
+#include <Thirdparty/ImGuizmo/ImGuizmo.h>
 
 namespace smile
 {
@@ -40,8 +40,8 @@ namespace smile
     void SmileEditorLayer::OnUpdate( Timestep deltaTime )
     {
         const auto &renderSettings = Renderer::GetSettings();
-        if ( ( !Math::CompareFloats( m_ViewportSize.x, static_cast< float >( renderSettings.m_Width ) ) ||
-                 !Math::CompareFloats( m_ViewportSize.y, static_cast< float >( renderSettings.m_Height ) ) ) &&
+        if ( ( !math::CompareFloats( m_ViewportSize.x, static_cast< float >( renderSettings.m_Width ) ) ||
+                 !math::CompareFloats( m_ViewportSize.y, static_cast< float >( renderSettings.m_Height ) ) ) &&
              ( m_ViewportSize.x > 0 ) && ( m_ViewportSize.y > 0 ) )
         {
             Renderer::ResizeFramebuffer(
@@ -213,7 +213,7 @@ namespace smile
                 DirectX::XMConvertToDegrees( entityTransformComponent.m_Rotation.z ) };
 
             // Snapping
-            bool bSnapping = Input::IsKeyPressed( Key::CtrlLeft );
+            bool bSnapping = Input::IsKeyPressed( key::CtrlLeft );
             float snapValue = 0.5f;
             if ( m_GizmoType == GizmoType::Rotate )
                 snapValue = 45.f;
@@ -304,8 +304,8 @@ namespace smile
         if ( e.GetRepeatCount() > 1 )
             return false;
 
-        bool bControlPressed = Input::IsKeyPressed( Key::CtrlLeft ) || Input::IsKeyPressed( Key::CtrlRight );
-        bool bShiftPressed = Input::IsKeyPressed( Key::ShiftLeft ) || Input::IsKeyPressed( Key::ShiftRight );
+        bool bControlPressed = Input::IsKeyPressed( key::CtrlLeft ) || Input::IsKeyPressed( key::CtrlRight );
+        bool bShiftPressed = Input::IsKeyPressed( key::ShiftLeft ) || Input::IsKeyPressed( key::ShiftRight );
 
         switch ( e.GetKeyCode() )
         {

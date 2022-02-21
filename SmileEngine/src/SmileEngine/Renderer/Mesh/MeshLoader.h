@@ -2,9 +2,9 @@
 #include "StaticMeshFilter.h"
 #include "SkinnedMeshFilter.h"
 
-class aiMesh;
-class aiScene;
-class aiNode;
+struct aiMesh;
+struct aiScene;
+struct aiNode;
 
 namespace smile
 {

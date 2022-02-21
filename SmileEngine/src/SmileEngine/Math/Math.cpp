@@ -1,9 +1,7 @@
 #include "smpch.h"
 #include "Math.h"
 
-#include "SmileEngine/Utils/Utils.h"
-
-namespace smile::Math
+namespace smile::math
 {
     DirectX::XMFLOAT3 QuaternionToEuler( const DirectX::XMFLOAT4 &quaternion )
     {

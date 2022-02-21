@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderingContext.h"
+#include "GraphicsContext.h"
 #include "Shader.h"
 
 namespace smile

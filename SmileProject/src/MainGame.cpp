@@ -1,7 +1,7 @@
 #include "MainGame.h"
 
 #include <SmileEngine/Core/EntryPoint.h>
-#include <Libs/ImGui/imgui.h>
+#include <Thirdparty/ImGui/imgui.h>
 
 smile::Application *smile::CreateGame()
 {
@@ -173,13 +173,13 @@ void ExampleLayer::OnUpdate( smile::Timestep deltaTime )
 {
     auto &transform = m_CameraEntity.GetComponent< smile::TransformComponent >();
 
-    if ( smile::Input::IsKeyPressed( smile::Key::Left ) )
+    if ( smile::Input::IsKeyPressed( smile::key::Left ) )
         transform.m_Rotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-    if ( smile::Input::IsKeyPressed( smile::Key::Right ) )
+    if ( smile::Input::IsKeyPressed( smile::key::Right ) )
         transform.m_Rotation.y += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-    if ( smile::Input::IsKeyPressed( smile::Key::Up ) )
+    if ( smile::Input::IsKeyPressed( smile::key::Up ) )
         transform.m_Rotation.x -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-    if ( smile::Input::IsKeyPressed( smile::Key::Down ) )
+    if ( smile::Input::IsKeyPressed( smile::key::Down ) )
         transform.m_Rotation.x += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
 
     const auto forward = transform.GetForward();
@@ -194,9 +194,9 @@ void ExampleLayer::OnUpdate( smile::Timestep deltaTime )
         move.z -= 1;
     if ( smile::Input::IsKeyPressed( 'W' ) )
         move.z += 1;
-    if ( smile::Input::IsKeyPressed( smile::Key::Space ) )
+    if ( smile::Input::IsKeyPressed( smile::key::Space ) )
         move.y += 1;
-    if ( smile::Input::IsKeyPressed( smile::Key::CtrlLeft ) )
+    if ( smile::Input::IsKeyPressed( smile::key::CtrlLeft ) )
         move.y -= 1;
 
     DirectX::XMFLOAT3 dir{};

@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "Components.h"
 
-#include <Libs/entt/entt.hpp>
+#include <Thirdparty/entt/entt.hpp>
 
 namespace smile
 {

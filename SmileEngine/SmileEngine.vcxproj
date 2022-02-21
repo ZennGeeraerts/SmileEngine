@@ -21,8 +21,16 @@
   <ItemGroup>
     <ClInclude Include="src\Platform\DirectX11\DirectX11RasterizerState.h" />
     <ClInclude Include="src\SmileEngine\Core\GamepadCodes.h" />
+    <ClInclude Include="src\SmileEngine\Math\Math.h" />
+    <ClInclude Include="src\SmileEngine\Math\Vector2.h" />
     <ClInclude Include="src\SmileEngine\Core\MouseCodes.h" />
+    <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h" />
+    <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
     <ClInclude Include="src\SmileEngine\Core\UUID.h" />
+    <ClInclude Include="src\SmileEngine\Input\GamepadCodes.h" />
+    <ClInclude Include="src\SmileEngine\Input\Input.h" />
+    <ClInclude Include="src\SmileEngine\Input\KeyCodes.h" />
+    <ClInclude Include="src\SmileEngine\Input\MouseCodes.h" />
     <ClInclude Include="src\SmileEngine\Physics\ContactListener.h" />
     <ClInclude Include="src\SmileEngine\Physics\PhysicsActor.h" />
     <ClInclude Include="src\SmileEngine\Physics\PhysicsDiagnostics.h" />
@@ -39,7 +47,8 @@
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterShader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\MeshAnimator.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Animation\Bone.h" />
-    <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="src\SmileEngine\UI\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="Thirdparty\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="Libs\yaml-cpp\anchor.h" />
     <ClInclude Include="Libs\yaml-cpp\binary.h" />
     <ClInclude Include="Libs\yaml-cpp\contrib\anchordict.h" />
@@ -80,7 +89,6 @@
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterBuffer.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterRendererAPI.h" />
     <ClInclude Include="src\Platform\SmileRaster\SmileRasterContext.h" />
-    <ClInclude Include="src\SmileEngine\Math\Math.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\SmileEngine\Scene\SceneSerializer.h" />
     <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h" />
@@ -96,15 +104,15 @@
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\MeshLoader.h" />
     <ClInclude Include="src\SmileEngine\Core\Application.h" />
     <ClInclude Include="src\SmileEngine\Core\Window.h" />
-    <ClInclude Include="Libs\entt\entt.hpp" />
-    <ClInclude Include="Libs\ImGui\imconfig.h" />
-    <ClInclude Include="Libs\ImGui\imgui.h" />
-    <ClInclude Include="Libs\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="Libs\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="Libs\ImGui\imgui_internal.h" />
-    <ClInclude Include="Libs\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="Libs\ImGui\imstb_textedit.h" />
-    <ClInclude Include="Libs\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Thirdparty\entt\entt.hpp" />
+    <ClInclude Include="Thirdparty\ImGui\imconfig.h" />
+    <ClInclude Include="Thirdparty\ImGui\imgui.h" />
+    <ClInclude Include="Thirdparty\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="Thirdparty\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="Thirdparty\ImGui\imgui_internal.h" />
+    <ClInclude Include="Thirdparty\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Thirdparty\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Thirdparty\ImGui\imstb_truetype.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\Material.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Texture.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\StaticMeshFilter.h" />
@@ -125,7 +133,6 @@
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
-    <ClInclude Include="src\SmileEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h" />
     <ClInclude Include="src\SmileEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\SmileEngine\Events\Event.h" />
@@ -133,21 +140,21 @@
     <ClInclude Include="src\SmileEngine\Events\MouseEvent.h" />
     <ClInclude Include="src\SmileEngine.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Buffer.h" />
-    <ClInclude Include="src\SmileEngine\Renderer\RenderingContext.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\SmileEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h" />
     <ClInclude Include="src\SmileEngine\Core\Timer.h" />
-    <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h" />
     <ClInclude Include="src\smpch.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
-    <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
-    <ClInclude Include="src\SmileEngine\Math\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DirectX11\DirectX11RasterizerState.cpp" />
+    <ClCompile Include="src\SmileEngine\Math\Math.cpp" />
+    <ClCompile Include="src\SmileEngine\Math\Vector2.cpp" />
+    <ClCompile Include="src\SmileEngine\Utils\Utils.cpp" />
     <ClCompile Include="src\SmileEngine\Core\UUID.cpp" />
     <ClCompile Include="src\SmileEngine\Physics\ContactListener.cpp" />
     <ClCompile Include="src\SmileEngine\Physics\PhysicsActor.cpp" />
@@ -164,21 +171,21 @@
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterShader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Animation\MeshAnimator.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Animation\Bone.cpp" />
-    <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp">
+    <ClCompile Include="src\SmileEngine\UI\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="Thirdparty\ImGuizmo\ImGuizmo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Libs/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Thirdparty/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Thirdparty/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Thirdparty/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Thirdparty/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterBuffer.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterRendererAPI.cpp" />
     <ClCompile Include="src\Platform\SmileRaster\SmileRasterContext.cpp" />
-    <ClCompile Include="src\SmileEngine\Math\Math.cpp" />
-    <ClCompile Include="src\SmileEngine\Renderer\RenderingContext.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp" />
@@ -188,37 +195,37 @@
     <ClCompile Include="src\SmileEngine\Core\Logger.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\MeshLoader.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Application.cpp" />
-    <ClCompile Include="Libs\ImGui\imgui.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_demo.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_demo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_draw.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_impl_dx11.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_impl_win32.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_impl_win32.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Libs\ImGui\imgui_widgets.cpp">
+    <ClCompile Include="Thirdparty\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -238,7 +245,6 @@
     <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp" />
-    <ClCompile Include="src\SmileEngine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Context.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\VertexArray.cpp" />
@@ -253,8 +259,6 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Texture.cpp" />
-    <ClCompile Include="src\SmileEngine\Utils\Utils.cpp" />
-    <ClCompile Include="src\SmileEngine\Math\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SmileEngine.rc" />
@@ -320,29 +324,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)Build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)Build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)Build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)Build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)Build\bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)SmileEngine\src;$(SolutionDir)SmileEngine;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -356,7 +360,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include;$(SolutionDir)Libs/PhysX/include/PhysX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty/dx11effects/include;$(SolutionDir)Thirdparty/assimp/include;$(SolutionDir)Thirdparty/dx11tex/include;$(SolutionDir)Thirdparty/yaml-cpp/include;$(SolutionDir)Thirdparty/sdl2-2.0.9/include;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Thirdparty/PhysX/include;$(SolutionDir)Thirdparty/PhysX/include/PhysX</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -367,18 +371,18 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>xcopy "$(SolutionDir)Thirdparty\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Debug;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Libs/sdl2-2.0.9/x64;$(SolutionDir)Libs/sdl2_image-2.0.5/x64;$(SolutionDir)Libs/PhysX/lib/$(Configuration);$(SolutionDir)Libs/PhysX/bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty/dx11effects/x64;$(SolutionDir)Thirdparty/assimp/x64;$(SolutionDir)Thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Thirdparty/sdl2-2.0.9/x64;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)Thirdparty/PhysX/lib/$(Configuration);$(SolutionDir)Thirdparty/PhysX/bin;$(SolutionDir)Thirdparty/dx11tex/x64/$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -398,7 +402,7 @@ xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include;$(SolutionDir)Libs/PhysX/include/PhysX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty/dx11effects/include;$(SolutionDir)Thirdparty/assimp/include;$(SolutionDir)Thirdparty/dx11tex/include;$(SolutionDir)Thirdparty/yaml-cpp/include;$(SolutionDir)Thirdparty/sdl2-2.0.9/include;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Thirdparty/PhysX/include;$(SolutionDir)Thirdparty/PhysX/include/PhysX</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -412,18 +416,18 @@ xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>xcopy "$(SolutionDir)Thirdparty\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Release;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Libs/sdl2-2.0.9/x64;$(SolutionDir)Libs/sdl2_image-2.0.5/x64;$(SolutionDir)Libs/PhysX/lib/$(Configuration);$(SolutionDir)Libs/PhysX/bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty/dx11effects/x64;$(SolutionDir)Thirdparty/assimp/x64;$(SolutionDir)Thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Thirdparty/sdl2-2.0.9/x64;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)Thirdparty/PhysX/lib/$(Configuration);$(SolutionDir)Thirdparty/PhysX/bin;$(SolutionDir)Thirdparty/dx11tex/x64/$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -442,7 +446,7 @@ xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include;$(SolutionDir)Libs/PhysX/include/PhysX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty/dx11effects/include;$(SolutionDir)Thirdparty/assimp/include;$(SolutionDir)Thirdparty/dx11tex/include;$(SolutionDir)Thirdparty/yaml-cpp/include;$(SolutionDir)Thirdparty/sdl2-2.0.9/include;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Thirdparty/PhysX/include;$(SolutionDir)Thirdparty/PhysX/include/PhysX</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -453,18 +457,18 @@ xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>xcopy "$(SolutionDir)Thirdparty\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Debug;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Libs/sdl2-2.0.9/x64;$(SolutionDir)Libs/sdl2_image-2.0.5/x64;$(SolutionDir)Libs/PhysX/lib/$(Configuration);$(SolutionDir)Libs/PhysX/bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty/dx11effects/x64;$(SolutionDir)Thirdparty/assimp/x64;$(SolutionDir)Thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Thirdparty/sdl2-2.0.9/x64;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)Thirdparty/PhysX/lib/$(Configuration);$(SolutionDir)Thirdparty/PhysX/bin;$(SolutionDir)Thirdparty/dx11tex/x64/$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -484,7 +488,7 @@ xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(
       <TreatWarningAsError>false</TreatWarningAsError>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>smpch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs/dx11effects/include;$(SolutionDir)Libs/assimp/include;$(SolutionDir)Libs/dx11tex/include;$(SolutionDir)Libs/yaml-cpp/include;$(SolutionDir)Libs/sdl2-2.0.9/include;$(SolutionDir)Libs/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Libs/PhysX/include;$(SolutionDir)Libs/PhysX/include/PhysX</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty/dx11effects/include;$(SolutionDir)Thirdparty/assimp/include;$(SolutionDir)Thirdparty/dx11tex/include;$(SolutionDir)Thirdparty/yaml-cpp/include;$(SolutionDir)Thirdparty/sdl2-2.0.9/include;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)SmileRaster/src;$(SolutionDir)Thirdparty/PhysX/include;$(SolutionDir)Thirdparty/PhysX/include/PhysX</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -498,18 +502,18 @@ xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\dx11effects\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Libs\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
-xcopy "$(SolutionDir)Libs\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
+      <Command>xcopy "$(SolutionDir)Thirdparty\assimp\x64\assimp-vc140-mt.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\assimp\x64\zlib1.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysX_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCommon_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs/dx11effects/x64;$(SolutionDir)Libs/assimp/x64;$(SolutionDir)Libs/dx11tex/x64/Release;$(SolutionDir)Libs/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Libs/sdl2-2.0.9/x64;$(SolutionDir)Libs/sdl2_image-2.0.5/x64;$(SolutionDir)Libs/PhysX/lib/$(Configuration);$(SolutionDir)Libs/PhysX/bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty/dx11effects/x64;$(SolutionDir)Thirdparty/assimp/x64;$(SolutionDir)Thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)Thirdparty/sdl2-2.0.9/x64;$(SolutionDir)Thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)Thirdparty/PhysX/lib/$(Configuration);$(SolutionDir)Thirdparty/PhysX/bin;$(SolutionDir)Thirdparty/dx11tex/x64/$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>

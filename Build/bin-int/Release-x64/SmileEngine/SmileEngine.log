@@ -1,0 +1,97 @@
+﻿  smpch.cpp
+  DirectX11RasterizerState.cpp
+  Math.cpp
+  Vector2.cpp
+  Utils.cpp
+  UUID.cpp
+  ContactListener.cpp
+  PhysicsActor.cpp
+  PhysicsDiagnostics.cpp
+  PhysicsEngine.cpp
+  PhysicsUtils.cpp
+  EditorCamera.cpp
+  MeshFactory.cpp
+  MeshFilter.cpp
+  MeshLoaderUtils.cpp
+  RasterizerState.cpp
+  SkinnedMeshFilter.cpp
+  SmileRasterTexture.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(29,1): warning C4312: 'reinterpret_cast': conversion from 'const smile::Raster::TextureID' to 'void *' of greater size
+  SmileRasterShader.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.cpp(52,91): warning C4311: 'reinterpret_cast': pointer truncation from 'void *' to 'uint32_t'
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterShader.cpp(52,91): warning C4302: 'reinterpret_cast': truncation from 'void *' to 'uint32_t'
+  MeshAnimator.cpp
+  Bone.cpp
+  Compiling...
+  ImGuiLayer.cpp
+  SmileRasterBuffer.cpp
+  SmileRasterRendererAPI.cpp
+  SmileRasterContext.cpp
+  RenderingContext.cpp
+  SceneSerializer.cpp
+  SceneCamera.cpp
+  DirectX11Framebuffer.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\DirectX11\DirectX11Framebuffer.cpp(243,88): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
+  Framebuffer.cpp
+  Layer.cpp
+  LayerStack.cpp
+  Logger.cpp
+  MeshLoader.cpp
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\cimport.h(58,15): warning C4099: 'aiScene': type name first seen using 'class' now seen using 'struct'
+C:\dev\SmileEngine\SmileEngine\src\SmileEngine\Renderer\Mesh\MeshLoader.h(6): message : see declaration of 'aiScene'
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\mesh.h(559,1): warning C4099: 'aiMesh': type name first seen using 'class' now seen using 'struct'
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\mesh.h(558): message : see declaration of 'aiMesh'
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\scene.h(80,1): warning C4099: 'aiNode': type name first seen using 'class' now seen using 'struct'
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\scene.h(79): message : see declaration of 'aiNode'
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\scene.h(242,1): warning C4099: 'aiScene': type name first seen using 'class' now seen using 'struct'
+C:\dev\SmileEngine\Thirdparty\assimp\include\assimp\scene.h(241): message : see declaration of 'aiScene'
+  Application.cpp
+  Material.cpp
+  DirectX11Texture.cpp
+  StaticMeshFilter.cpp
+  PerspectiveCamera.cpp
+  PerspectiveCameraController.cpp
+  Scene.cpp
+  Compiling...
+  OrthographicCamera.cpp
+  DirectX11RendererAPI.cpp
+  RenderCommand.cpp
+  RendererAPI.cpp
+  DirectX11Shader.cpp
+  Shader.cpp
+  Renderer.cpp
+  DirectX11Buffer.cpp
+  DirectX11Context.cpp
+  Buffer.cpp
+  VertexArray.cpp
+  Timer.cpp
+  WindowsPlatformUtils.cpp
+  WindowsWindow.cpp
+  WindowsInput.cpp
+  Texture.cpp
+C:\dev\SmileEngine\SmileEngine\src\Platform\SmileRaster\SmileRasterTexture.h(29,1): warning C4312: 'reinterpret_cast': conversion from 'const smile::Raster::TextureID' to 'void *' of greater size
+  ImGuizmo.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_dx11.cpp
+  imgui_impl_win32.cpp
+  imgui_widgets.cpp
+d3d11.lib(d3d11.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+d3dcompiler.lib(D3DCOMPILER_47.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+assimp-vc140-mt.lib(assimp-vc140-mt.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+SDL2.lib(SDL2.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in dxgi.lib(dxgi.dll); second definition ignored
+  SmileEngine.vcxproj -> C:\dev\SmileEngine\Build\bin\Release-x64\SmileEngine\SmileEngine.lib
+  C:\dev\SmileEngine\Thirdparty\assimp\x64\assimp-vc140-mt.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\assimp\x64\zlib1.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Release\PhysX_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Release\PhysXCommon_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Release\PhysXCooking_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Release\PhysXFoundation_64.dll
+  1 File(s) copied

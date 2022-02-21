@@ -1,12 +1,12 @@
 #pragma once
-#include "SmileEngine/Renderer/RenderingContext.h"
+#include "SmileEngine/Renderer/GraphicsContext.h"
 #include <DeviceContext.cuh>
 
 namespace smile
 {
     class Window;
 
-    class SmileRasterContext final : public RenderingContext
+    class SmileRasterContext final : public GraphicsContext
     {
       public:
         SmileRasterContext( Window *pWindow );

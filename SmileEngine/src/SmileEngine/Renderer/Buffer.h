@@ -3,7 +3,7 @@
 
 namespace smile
 {
-    class RenderingContext;
+    class GraphicsContext;
 
     enum class ShaderDataType : Uint8
     {
