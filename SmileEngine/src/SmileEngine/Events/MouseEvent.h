@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "SmileEngine/Input/MouseCodes.h"
 
 namespace smile
 {
@@ -78,17 +79,17 @@ namespace smile
 
         EVENT_CLASS_CATEGORY( EventCategoryMouse | EventCategoryInput )
       protected:
-        MouseButtonEvent( int button ) : m_Button{ button }
+        MouseButtonEvent( MouseCode button ) : m_Button{ button }
         {
         }
 
-        int m_Button;
+        MouseCode m_Button;
     };
 
     class MouseButtonPressedEvent final : public MouseButtonEvent
     {
       public:
-        MouseButtonPressedEvent( int button ) : MouseButtonEvent( button )
+        MouseButtonPressedEvent( MouseCode button ) : MouseButtonEvent( button )
         {
         }
 
@@ -105,7 +106,7 @@ namespace smile
     class MouseButtonReleasedEvent final : public MouseButtonEvent
     {
       public:
-        MouseButtonReleasedEvent( int button ) : MouseButtonEvent( button )
+        MouseButtonReleasedEvent( MouseCode button ) : MouseButtonEvent( button )
         {
         }
 

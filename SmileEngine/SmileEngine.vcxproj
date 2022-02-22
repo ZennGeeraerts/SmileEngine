@@ -146,7 +146,6 @@
     <ClInclude Include="src\SmileEngine\Core\Timer.h" />
     <ClInclude Include="src\smpch.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\SmileEngine\Core\Timestep.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
   </ItemGroup>

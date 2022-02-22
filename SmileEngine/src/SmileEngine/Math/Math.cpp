@@ -1,8 +1,28 @@
 #include "smpch.h"
 #include "Math.h"
 
+#include <random>
+
+namespace smile
+{
+    std::mt19937 g_GlobalGenerator{
+        static_cast< Uint32 >( std::chrono::system_clock::now().time_since_epoch().count() ) };
+}
+
 namespace smile::math
 {
+    float GenerateRandom( float min, float max )
+    {
+        std::uniform_real_distribution< float > distribution{ min, max };
+        return distribution( g_GlobalGenerator );
+    }
+
+    Int32 GenerateRandomInt( Int32 min, Int32 max )
+    {
+        std::uniform_int_distribution< Int32 > distribution{ min, max };
+        return distribution( g_GlobalGenerator );
+    }
+
     DirectX::XMFLOAT3 QuaternionToEuler( const DirectX::XMFLOAT4 &quaternion )
     {
         DirectX::XMFLOAT3 euler{};
@@ -15,7 +35,7 @@ namespace smile::math
         // pitch (y-axis rotation)
         float sinp = 2 * ( quaternion.w * quaternion.y - quaternion.z * quaternion.x );
         if ( std::abs( sinp ) >= 1 )
-            euler.y = std::copysign( DirectX::XM_PI / 2, sinp ); // use 90 degrees if out of range
+            euler.y = std::copysign( g_PI_DIV_2, sinp ); // use 90 degrees if out of range
         else
             euler.y = std::asin( sinp );
 

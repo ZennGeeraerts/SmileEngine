@@ -31,7 +31,6 @@ namespace smile
 
     Application::~Application()
     {
-        delete Input::GetInstance();
         Renderer::ShutDown();
         PhysicsEngine::ShutDown();
     }

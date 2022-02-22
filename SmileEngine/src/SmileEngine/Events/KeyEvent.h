@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "SmileEngine/Input/KeyCodes.h"
 
 namespace smile
 {
@@ -9,24 +10,24 @@ namespace smile
       public:
         virtual ~KeyEvent() = default;
 
-        inline int GetKeyCode() const
+        inline KeyCode GetKeyCode() const
         {
             return m_KeyCode;
         }
 
         EVENT_CLASS_CATEGORY( EventCategoryKeyboard | EventCategoryInput )
       protected:
-        KeyEvent( int keyCode ) : m_KeyCode{ keyCode }
+        KeyEvent( KeyCode keyCode ) : m_KeyCode{ keyCode }
         {
         }
 
-        int m_KeyCode;
+        KeyCode m_KeyCode;
     };
 
     class KeyPressedEvent final : public KeyEvent
     {
       public:
-        KeyPressedEvent( int keyCode, int repeatCount ) : KeyEvent( keyCode ), m_RepeatCount{ repeatCount }
+        KeyPressedEvent( KeyCode keyCode, Uint16 repeatCount ) : KeyEvent( keyCode ), m_RepeatCount{ repeatCount }
         {
         }
 
@@ -45,13 +46,13 @@ namespace smile
         EVENT_CLASS_TYPE( KeyPressed );
 
       private:
-        int m_RepeatCount;
+        Uint16 m_RepeatCount;
     };
 
     class KeyReleasedEvent final : public KeyEvent
     {
       public:
-        KeyReleasedEvent( int keyCode ) : KeyEvent( keyCode )
+        KeyReleasedEvent( KeyCode keyCode ) : KeyEvent( keyCode )
         {
         }
 
@@ -68,7 +69,7 @@ namespace smile
     class KeyTypedEvent final : public KeyEvent
     {
       public:
-        KeyTypedEvent( int keyCode ) : KeyEvent( keyCode )
+        KeyTypedEvent( KeyCode keyCode ) : KeyEvent( keyCode )
         {
         }
 

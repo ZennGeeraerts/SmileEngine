@@ -1,23 +1,21 @@
 #include "smpch.h"
-#include "WindowsInput.h"
+#include "SmileEngine/Input/Input.h"
 #include "SmileEngine/Core/Application.h"
 
 namespace smile
 {
-    Input *Input::s_pInstance = new WindowsInput{};
-
-    bool WindowsInput::IsKeyPressedImpl( int keycode )
+    bool Input::IsKeyPressed( KeyCode keycode )
     {
         auto state = GetKeyState( keycode );
         return state & 0x8000;
     }
 
-    bool WindowsInput::IsMouseButtonPressedImpl( int button )
+    bool Input::IsMouseButtonPressed( MouseCode mouseCode )
     {
-        return IsKeyPressedImpl( button );
+        return IsKeyPressed( mouseCode );
     }
 
-    std::pair< float, float > WindowsInput::GetMousePositionImpl()
+    DirectX::XMFLOAT2 Input::GetMousePosition()
     {
         POINT point{};
         if ( GetCursorPos( &point ) )
@@ -25,18 +23,18 @@ namespace smile
             auto window = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
             ScreenToClient( window, &point );
         }
-        return std::make_pair< float, float >( static_cast< float >( point.x ), static_cast< float >( point.y ) );
+        return DirectX::XMFLOAT2{ static_cast< float >( point.x ), static_cast< float >( point.y ) };
     }
 
-    float WindowsInput::GetMouseXImpl()
+    float Input::GetMouseX()
     {
-        auto mousePosition = GetMousePositionImpl();
-        return mousePosition.first;
+        auto mousePosition = GetMousePosition();
+        return mousePosition.x;
     }
 
-    float WindowsInput::GetMouseYImpl()
+    float Input::GetMouseY()
     {
-        auto mousePosition = GetMousePositionImpl();
-        return mousePosition.second;
+        auto mousePosition = GetMousePosition();
+        return mousePosition.y;
     }
 }

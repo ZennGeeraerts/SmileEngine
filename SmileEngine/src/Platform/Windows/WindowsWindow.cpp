@@ -208,14 +208,14 @@ namespace smile
 
             case WM_KEYDOWN:
             {
-                KeyPressedEvent event{ static_cast< unsigned char >( wParam ), lParam & 0xFF };
+                KeyPressedEvent event{ static_cast< KeyCode >( wParam ), static_cast< Uint16 >( lParam & 0xFF ) };
                 pWindow->m_Data.m_EventCallback( event );
                 break;
             }
 
             case WM_KEYUP:
             {
-                KeyReleasedEvent event{ static_cast< unsigned char >( wParam ) };
+                KeyReleasedEvent event{ static_cast< KeyCode >( wParam ) };
                 pWindow->m_Data.m_EventCallback( event );
                 break;
             }
@@ -267,7 +267,7 @@ namespace smile
 
             case WM_CHAR:
             {
-                KeyTypedEvent event{ static_cast< int >( wParam ) };
+                KeyTypedEvent event{ static_cast< KeyCode >( wParam ) };
                 pWindow->m_Data.m_EventCallback( event );
                 break;
             }

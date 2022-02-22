@@ -1,5 +1,4 @@
-﻿  SmileEditorLayer.cpp
-     Creating library C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\SmileEditor.lib and object C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\SmileEditor.exp
+﻿     Creating library C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\SmileEditor.lib and object C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\SmileEditor.exp
 dx11effects_d.lib(d3dxGlobal.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(d3dxGlobal.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\Effects11d.pdb'; linking object as if no debug info
 dx11effects_d.lib(EffectAPI.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectAPI.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\Effects11d.pdb'; linking object as if no debug info
 dx11effects_d.lib(EffectLoad.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectLoad.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\Effects11d.pdb'; linking object as if no debug info
@@ -21,8 +20,8 @@ yaml-cppd.lib(nodebuilder.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was 
 yaml-cppd.lib(null.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(null.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
 yaml-cppd.lib(ostream_wrapper.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(ostream_wrapper.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
 yaml-cppd.lib(parse.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(parse.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
-yaml-cppd.lib(parser.obj) : warning LNK4099: PDB '' was not found with 'yaml-cppd.lib(parser.obj)' or at ''; linking object as if no debug info
-yaml-cppd.lib(regex_yaml.obj) : warning LNK4099: PDB '' was not found with 'yaml-cppd.lib(regex_yaml.obj)' or at ''; linking object as if no debug info
+yaml-cppd.lib(parser.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(parser.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(regex_yaml.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(regex_yaml.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
 yaml-cppd.lib(scanner.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scanner.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
 yaml-cppd.lib(scanscalar.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scanscalar.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info
 yaml-cppd.lib(scantag.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scantag.obj)' or at 'C:\dev\SmileEngine\Build\bin\Debug-x64\SmileEditor\yaml-cpp static.pdb'; linking object as if no debug info

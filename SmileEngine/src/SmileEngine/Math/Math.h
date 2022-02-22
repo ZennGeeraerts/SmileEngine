@@ -87,6 +87,9 @@ namespace smile::math
         return ( deltaF < g_EPSILON );
     }
 
+    float GenerateRandom( float min, float max );
+    Int32 GenerateRandomInt( Int32 min, Int32 max );
+
     struct Vector3 final
     {
         union
