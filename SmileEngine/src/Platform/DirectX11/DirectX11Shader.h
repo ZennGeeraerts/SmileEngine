@@ -13,6 +13,9 @@ namespace smile
         DirectX11Shader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" );
+
+        DirectX11Shader( const std::string &assetFile, const std::string &techniqueName = "" );
+
         virtual ~DirectX11Shader();
 
         virtual void Bind() const override;
@@ -21,6 +24,11 @@ namespace smile
         virtual const std::string &GetName() const override
         {
             return m_Name;
+        }
+
+        virtual const BufferLayout &GetBufferLayout() const override
+        {
+            return m_BufferLayout;        
         }
 
         virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) override;
@@ -42,10 +50,14 @@ namespace smile
         }
 
       private:
+        void Initalize(const std::string& assetFile, const std::string& techniqueName);
+        void SetName( const std::string &assetFile );
         bool LoadEffect( ID3D11Device *pDevice, const std::string &assetFile );
+
         void BuildInputLayout( const BufferLayout &layout );
         void BuildInputLayout();
         DXGI_FORMAT ShaderDataTypeToDirectXBaseType( ShaderDataType type );
+        ShaderDataType DirectXBaseTypeToShaderDataType( DXGI_FORMAT type );
         ID3DX11EffectVariable *GetEffectVariable( const std::string &sementicName );
 
       private:
@@ -56,5 +68,7 @@ namespace smile
         ID3DX11Effect *m_pEffect;
         ID3DX11EffectTechnique *m_pTechnique;
         ID3D11InputLayout *m_pInputLayout;
+
+        BufferLayout m_BufferLayout{};
     };
 }

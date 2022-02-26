@@ -3,8 +3,6 @@
 
 namespace smile
 {
-    class GraphicsContext;
-
     enum class ShaderDataType : Uint8
     {
         None = 0,
@@ -137,6 +135,12 @@ namespace smile
             return m_Elements.cend();
         }
 
+        void AddElement(const BufferElement& element)
+        {
+            m_Elements.push_back( element );
+            CalculateOffsetAndStride();
+        }
+
       private:
         void CalculateOffsetAndStride()
         {
@@ -161,46 +165,5 @@ namespace smile
         Immutable,
         Dynamic,
         Staging
-    };
-
-    struct VertexBufferData final
-    {
-        void *m_pVertices = nullptr;
-        Uint32 m_Count = 0;
-        BufferLayout m_BufferLayout = { { ShaderDataType::Float3, "Position" } };
-        BufferUsage m_Usage = BufferUsage::Default;
-    };
-
-    struct IndexBufferData final
-    {
-        Uint32 *m_pIndices = nullptr;
-        Uint32 m_Count = 0;
-        BufferUsage m_Usage = BufferUsage::Default;
-    };
-
-    class VertexBuffer
-    {
-      public:
-        virtual ~VertexBuffer() = default;
-
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-
-        virtual void SetLayout( const BufferLayout &layout ) = 0;
-        virtual const BufferLayout &GetLayout() const = 0;
-
-        static VertexBuffer *Create( const VertexBufferData &vertexBufferData );
-    };
-
-    class IndexBuffer
-    {
-      public:
-        virtual ~IndexBuffer() = default;
-
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-        virtual uint32_t GetCount() const = 0;
-
-        static IndexBuffer *Create( const IndexBufferData &indexBufferData );
     };
 }

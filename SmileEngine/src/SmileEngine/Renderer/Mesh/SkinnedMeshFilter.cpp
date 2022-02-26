@@ -26,39 +26,39 @@ namespace smile
             return;
         }
 
-        VertexBufferData vertexBufferData{};
+        VertexBufferDescriptor vertexBufferData{};
         vertexBufferData.m_pVertices = m_pDataLocation;
         vertexBufferData.m_Count = m_VertexCount;
         vertexBufferData.m_Usage = BufferUsage::Immutable;
-        vertexBufferData.m_BufferLayout = layout;
+        vertexBufferData.m_Stride = layout.GetStride();
 
         for ( uint32_t i{}; i < m_VertexCount; ++i )
         {
             for ( const BufferElement &element : layout )
             {
-                if ( element.m_Name == "Position" )
+                if ( element.m_Name == "POSITION" )
                     memcpy( m_pDataLocation, m_bUsePositions ? &m_Positions[i] : &s_DefaultFloat3, element.m_Size );
-                else if ( element.m_Name == "Normal" )
+                else if ( element.m_Name == "NORMAL" )
                     memcpy( m_pDataLocation, m_bUseNormals ? &m_Normals[i] : &s_DefaultFloat3, element.m_Size );
-                else if ( element.m_Name == "TexCoord" )
+                else if ( element.m_Name == "TEXCOORD" )
                     memcpy( m_pDataLocation, m_bUseTexCoords ? &m_TexCoords[i] : &s_DefaultFloat2, element.m_Size );
-                else if ( element.m_Name == "Tangent" )
+                else if ( element.m_Name == "TANGENT" )
                     memcpy( m_pDataLocation, m_bUseTangents ? &m_Tangents[i] : &s_DefaultFloat3, element.m_Size );
-                else if ( element.m_Name == "Binormal" )
+                else if ( element.m_Name == "BINORMAL" )
                     memcpy( m_pDataLocation, m_bUseBinormals ? &m_Binormals[i] : &s_DefaultFloat3, element.m_Size );
-                else if ( element.m_Name == "Color" )
+                else if ( element.m_Name == "COLOR" )
                     memcpy( m_pDataLocation, m_bUseColors ? &m_Colors[i] : &s_DefaultFloat4, element.m_Size );
-                else if ( element.m_Name == "BlendIndices" )
+                else if ( element.m_Name == "BLENDINDICES" )
                     memcpy(
                         m_pDataLocation, m_bUseBlendIndices ? &m_BlendIndices[i] : &s_DefaultIndices4, element.m_Size );
-                else if ( element.m_Name == "BlendWeights" )
+                else if ( element.m_Name == "BLENDWEIGHTS" )
                     memcpy( m_pDataLocation, m_bUseBlendWeights ? &m_BlendWeights[i] : &s_DefaultFloat4, element.m_Size );
 
                 m_pDataLocation = ( char * )m_pDataLocation + element.m_Size;
             }
         }
 
-        IndexBufferData indexBufferData{};
+        IndexBufferDescriptor indexBufferData{};
         indexBufferData.m_pIndices = m_Indices.data();
         indexBufferData.m_Count = static_cast< Uint32 >( m_Indices.size() );
         indexBufferData.m_Usage = BufferUsage::Immutable;

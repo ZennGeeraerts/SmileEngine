@@ -4,6 +4,8 @@
 #include "SmileEngine/Core/Application.h"
 #include "SmileEngine/Core/Logger.h"
 
+#include "DirectX11Diagnostics.h"
+
 namespace smile
 {
     static D3D11_CULL_MODE CullModeToDirectXType( CullMode cullMode )
@@ -47,7 +49,10 @@ namespace smile
         HRESULT result =
             m_pDirectX11Context->GetDevice()->CreateRasterizerState( &rasterizerDesc, &m_pRasterizerState );
         if ( FAILED( result ) )
-            SM_LOG_ERROR( "DirectX11RasterizerState::DirectX11RasterizerState > Failed to create rasterizer state" );
+        {
+            SM_LOG_ERROR( "DirectX11RasterizerState::DirectX11RasterizerState > Failed to create rasterizer state: %ls",
+                GetDirectX11ErrorMessage( result ) );
+        }
     }
 
     DirectX11RasterizerState::~DirectX11RasterizerState()

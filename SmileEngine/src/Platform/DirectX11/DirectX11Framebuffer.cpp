@@ -4,6 +4,8 @@
 #include "SmileEngine/Core/Application.h"
 #include "SmileEngine/Core/Logger.h"
 
+#include "DirectX11Diagnostics.h"
+
 namespace smile
 {
     const uint32_t DirectX11Framebuffer::m_MaxFramebufferSize = 8192;
@@ -82,8 +84,9 @@ namespace smile
                 textureDesc.SampleDesc.Count = m_Data.m_Samples;
                 textureDesc.SampleDesc.Quality = 0;
                 textureDesc.Usage = D3D11_USAGE_DEFAULT;
-                textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET |
-                                        ( ( m_ColorAttachmentData[i].m_bUseInShader ) ? D3D11_BIND_SHADER_RESOURCE : 0 );
+                textureDesc.BindFlags =
+                    D3D11_BIND_RENDER_TARGET |
+                    ( ( m_ColorAttachmentData[i].m_bUseInShader ) ? D3D11_BIND_SHADER_RESOURCE : 0 );
                 textureDesc.CPUAccessFlags = 0;
                 textureDesc.MiscFlags = 0;
 
@@ -91,7 +94,8 @@ namespace smile
                     m_pDirectX11Context->GetDevice()->CreateTexture2D( &textureDesc, nullptr, &m_pColorAttachments[i] );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create Texture2D" );
+                    SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create Texture2D: %ls",
+                        GetDirectX11ErrorMessage( result ) );
                     return;
                 }
 
@@ -104,7 +108,8 @@ namespace smile
                     m_pColorAttachments[i], &renderTargetViewDesc, &m_pRenderTargetViews[i] );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create render target view" );
+                    SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create render target view: %ls",
+                        GetDirectX11ErrorMessage( result ) );
                     return;
                 }
 
@@ -114,7 +119,8 @@ namespace smile
                         m_pColorAttachments[i], nullptr, &m_pColorShaderResourceViews[i] );
                     if ( FAILED( result ) )
                     {
-                        SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create shader resource view" );
+                        SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create shader resource view: %ls",
+                            GetDirectX11ErrorMessage( result ) );
                         return;
                     }
                 }
@@ -128,12 +134,13 @@ namespace smile
             depthStencilDesc.Height = m_Data.m_Height;
             depthStencilDesc.MipLevels = 1;
             depthStencilDesc.ArraySize = 1;
-            depthStencilDesc.Format = FramebufferTextureFormatToDirectXBaseType( m_DepthAttachmentData.m_TextureFormat );
+            depthStencilDesc.Format =
+                FramebufferTextureFormatToDirectXBaseType( m_DepthAttachmentData.m_TextureFormat );
             depthStencilDesc.SampleDesc.Count = 1;
             depthStencilDesc.SampleDesc.Quality = 0;
             depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-            depthStencilDesc.BindFlags =
-                D3D11_BIND_DEPTH_STENCIL | ( ( m_DepthAttachmentData.m_bUseInShader ) ? D3D11_BIND_SHADER_RESOURCE : 0 );
+            depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL |
+                                         ( ( m_DepthAttachmentData.m_bUseInShader ) ? D3D11_BIND_SHADER_RESOURCE : 0 );
             depthStencilDesc.CPUAccessFlags = 0;
             depthStencilDesc.MiscFlags = 0;
 
@@ -146,7 +153,8 @@ namespace smile
                 m_pDirectX11Context->GetDevice()->CreateTexture2D( &depthStencilDesc, 0, &m_pDepthStencilAttachment );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create depth stencil buffer" );
+                SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create depth stencil buffer: %ls",
+                    GetDirectX11ErrorMessage( result ) );
                 return;
             }
 
@@ -154,7 +162,8 @@ namespace smile
                 m_pDepthStencilAttachment, &depthStencilViewDesc, &m_pDepthStencilView );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create depth stencil view" );
+                SM_LOG_ERROR( "DirectX11Framebuffer::Invalidate > Failed to create depth stencil view: %ls",
+                    GetDirectX11ErrorMessage( result ) );
                 return;
             }
         }

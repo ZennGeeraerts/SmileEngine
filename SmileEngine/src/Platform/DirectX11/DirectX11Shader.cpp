@@ -2,6 +2,7 @@
 #include "DirectX11Shader.h"
 
 #include "SmileEngine/Core/Application.h"
+#include "DirectX11Diagnostics.h"
 
 #include <d3dcompiler.h>
 
@@ -10,10 +11,23 @@ namespace smile
     DirectX11Shader::DirectX11Shader( const std::string &assetFile,
         const BufferLayout &layout,
         const std::string &techniqueName )
+        : m_BufferLayout{ layout }
+    {
+        Initalize( assetFile, techniqueName );
+        BuildInputLayout( layout );
+    }
+
+    DirectX11Shader::DirectX11Shader( const std::string &assetFile, const std::string &techniqueName )
+    {
+        Initalize( assetFile, techniqueName );
+        BuildInputLayout();
+    }
+
+    void DirectX11Shader::Initalize( const std::string &assetFile, const std::string &techniqueName )
     {
         m_pDirectX11Context =
             static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
-        SM_ASSERT( m_pDirectX11Context, "DirectX11Shader > Rendering context is not a DirectX 11 Rendering Context" );
+        SM_ASSERT( m_pDirectX11Context, "DirectX11Shader > Rendering context is not a DirectX 11 Graphics Context" );
 
         if ( !LoadEffect( m_pDirectX11Context->GetDevice(), assetFile ) )
         {
@@ -29,8 +43,11 @@ namespace smile
         if ( !m_pTechnique->IsValid() )
             SM_LOG_WARNING( "DirectX11Shader > Invalid technique" );
 
-        BuildInputLayout( layout );
+        SetName( assetFile );
+    }
 
+    void DirectX11Shader::SetName( const std::string &assetFile )
+    {
         // Find name from asset path
         auto lastSlash = assetFile.find_last_of( "/\\" );
         lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
@@ -160,7 +177,9 @@ namespace smile
             }
             else
             {
-                SM_LOG_ERROR( "DirectX11Shader::LoadEffect > Failed to CreateEffectFromFile: %s", assetFile );
+                SM_LOG_ERROR( "DirectX11Shader::LoadEffect > Failed to CreateEffectFromFile: %s , error: %ls",
+                    assetFile.c_str(),
+                    GetDirectX11ErrorMessage( result ) );
             }
 
             return false;
@@ -191,7 +210,8 @@ namespace smile
             inputDescs.data(), count, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout );
 
         if ( FAILED( result ) )
-            SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout" );
+            SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout: %ls",
+                GetDirectX11ErrorMessage( result ) );
     }
 
     void DirectX11Shader::BuildInputLayout()
@@ -261,6 +281,9 @@ namespace smile
 
             inputDescs.push_back( inputLayout );
 
+            BufferElement element{ DirectXBaseTypeToShaderDataType( type ), signatureParameterDesc.SemanticName };
+            m_BufferLayout.AddElement( element );
+
             stride += offset;
         }
 
@@ -272,7 +295,8 @@ namespace smile
             inputDescs.data(), count, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayout );
 
         if ( FAILED( result ) )
-            SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout" );
+            SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout: %ls",
+                GetDirectX11ErrorMessage( result ) );
     }
 
     DXGI_FORMAT DirectX11Shader::ShaderDataTypeToDirectXBaseType( ShaderDataType type )
@@ -304,6 +328,32 @@ namespace smile
             default:
                 SM_ASSERT( false, "DirectX11Shader::ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType" );
                 return DXGI_FORMAT_UNKNOWN;
+        }
+    }
+
+    ShaderDataType DirectX11Shader::DirectXBaseTypeToShaderDataType( DXGI_FORMAT type )
+    {
+        switch ( type )
+        {
+            case DXGI_FORMAT_R32_FLOAT:
+                return ShaderDataType::Float;
+            case DXGI_FORMAT_R32G32_FLOAT:
+                return ShaderDataType::Float2;
+            case DXGI_FORMAT_R32G32B32_FLOAT:
+                return ShaderDataType::Float3;
+            case DXGI_FORMAT_R32G32B32A32_FLOAT:
+                return ShaderDataType::Float4;
+            case DXGI_FORMAT_R32_SINT:
+                return ShaderDataType::Int;
+            case DXGI_FORMAT_R32G32_SINT:
+                return ShaderDataType::Int2;
+            case DXGI_FORMAT_R32G32B32_SINT:
+                return ShaderDataType::Int3;
+            case DXGI_FORMAT_R32G32B32A32_SINT:
+                return ShaderDataType::Int4;
+            default:
+                SM_ASSERT( false, "DirectX11Shader::DirectXBaseTypeToShaderDataType > Unknown DXGI Type" );
+                return ShaderDataType::None;
         }
     }
 

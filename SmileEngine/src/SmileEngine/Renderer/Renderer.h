@@ -50,7 +50,7 @@ namespace smile
         static void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
         static void BeginScene( const EditorCamera &editorCamera );
         static void EndScene();
-        static void Present();
+        static void OnRender();
 
         static void Submit( const Ref< VertexBuffer > &pVertexBuffer,
             const Ref< IndexBuffer > &pIndexBuffer,

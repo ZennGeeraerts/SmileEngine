@@ -1,6 +1,7 @@
 #pragma once
 #include "SmileEngine/Core/UUID.h"
-#include "SmileEngine/Renderer/Buffer.h"
+#include "SmileEngine/Renderer/VertexBuffer.h"
+#include "SmileEngine/Renderer/IndexBuffer.h"
 #include "SmileEngine/Renderer/Shader.h"
 
 #include "SmileEngine/Scene/SceneCamera.h"
@@ -95,13 +96,13 @@ namespace smile
     {
         MeshRendererComponent() = default;
         MeshRendererComponent( const MeshRendererComponent & ) = default;
-        MeshRendererComponent( const VertexBufferData &vertexBufferData,
-            const IndexBufferData &indexBufferData,
+        MeshRendererComponent( const VertexBufferDescriptor &vertexBufferData,
+            const IndexBufferDescriptor &indexBufferData,
             const std::string &shaderFilePath )
         {
             m_pVertexBuffer.reset( VertexBuffer::Create( vertexBufferData ) );
             m_pIndexBuffer.reset( IndexBuffer::Create( indexBufferData ) );
-            m_pShader = Shader::Create( shaderFilePath, vertexBufferData.m_BufferLayout );
+            m_pShader = Shader::Create( shaderFilePath );
         }
 
         Ref< VertexBuffer > m_pVertexBuffer = nullptr;

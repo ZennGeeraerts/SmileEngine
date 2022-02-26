@@ -17,6 +17,7 @@ namespace smile
         virtual void Unbind() const = 0;
 
         virtual const std::string &GetName() const = 0;
+        virtual const BufferLayout &GetBufferLayout() const = 0; 
 
         virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) = 0;
         virtual void UploadMat4Array( const std::string &sementicName,
@@ -28,6 +29,7 @@ namespace smile
         virtual void UploadFloat( const std::string &sementicName, float value ) = 0;
 
         static Ref< Shader > Create( const std::string &filePath, const BufferLayout &bufferLayout );
+        static Ref< Shader > Create( const std::string &filePath );
     };
 
     class ShaderLibrary final

@@ -20,10 +20,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Platform\DirectX11\DirectX11RasterizerState.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11Diagnostics.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11VertexBuffer.h" />
+    <ClInclude Include="src\SmileEngine\Core\Assert.h" />
     <ClInclude Include="src\SmileEngine\Core\GamepadCodes.h" />
     <ClInclude Include="src\SmileEngine\Math\Math.h" />
     <ClInclude Include="src\SmileEngine\Math\Vector2.h" />
     <ClInclude Include="src\SmileEngine\Core\MouseCodes.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\IndexBuffer.h" />
+    <ClInclude Include="src\SmileEngine\Renderer\VertexBuffer.h" />
     <ClInclude Include="src\SmileEngine\Utils\PlatformUtils.h" />
     <ClInclude Include="src\SmileEngine\Utils\Utils.h" />
     <ClInclude Include="src\SmileEngine\Core\UUID.h" />
@@ -132,7 +138,7 @@
     <ClInclude Include="src\Platform\DirectX11\DirectX11Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h" />
-    <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h" />
+    <ClInclude Include="src\Platform\DirectX11\DirectX11IndexBuffer.h" />
     <ClInclude Include="src\Platform\DirectX11\DirectX11Context.h" />
     <ClInclude Include="src\SmileEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\SmileEngine\Events\Event.h" />
@@ -150,9 +156,14 @@
     <ClInclude Include="src\SmileEngine\Renderer\Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp" />
+    <ClCompile Include="src\Platform\DirectX11\DirectX11Diagnostics.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11RasterizerState.cpp" />
+    <ClCompile Include="src\Platform\DirectX11\DirectX11VertexBuffer.cpp" />
     <ClCompile Include="src\SmileEngine\Math\Math.cpp" />
     <ClCompile Include="src\SmileEngine\Math\Vector2.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\IndexBuffer.cpp" />
+    <ClCompile Include="src\SmileEngine\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="src\SmileEngine\Utils\Utils.cpp" />
     <ClCompile Include="src\SmileEngine\Core\UUID.cpp" />
     <ClCompile Include="src\SmileEngine\Physics\ContactListener.cpp" />
@@ -243,9 +254,8 @@
     <ClCompile Include="src\Platform\DirectX11\DirectX11Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp" />
+    <ClCompile Include="src\Platform\DirectX11\DirectX11IndexBuffer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\DirectX11Context.cpp" />
-    <ClCompile Include="src\SmileEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SmileEngine\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\SmileEngine\Core\Timer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />

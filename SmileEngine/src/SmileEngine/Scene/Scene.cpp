@@ -126,7 +126,7 @@ namespace smile
                 }
             }
 
-            Renderer::Present();
+            Renderer::OnRender();
 
             Renderer::EndScene();
         }
@@ -184,7 +184,7 @@ namespace smile
             }
         }
 
-        Renderer::Present();
+        Renderer::OnRender();
 
         Renderer::EndScene();
     }

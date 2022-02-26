@@ -4,6 +4,8 @@
 #include "SmileEngine/Core/Logger.h"
 #include "SmileEngine/Core/Application.h"
 
+#include "DirectX11Diagnostics.h"
+
 namespace smile
 {
     DirectX11Texture2D::DirectX11Texture2D( const std::string &filePath ) : m_FilePath{ filePath }
@@ -31,7 +33,7 @@ namespace smile
     {
         if ( filePath.find_last_of( '.' ) == std::string::npos )
         {
-            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Invalid file extension: %s", filePath );
+            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Invalid file extension: %s", filePath.c_str() );
             return false;
         }
 
@@ -48,7 +50,8 @@ namespace smile
             result = DirectX::LoadFromDDSFile( filePathW.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from DDS file failed" );
+                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from DDS file failed: %ls",
+                    GetDirectX11ErrorMessage( result ) );
                 return false;
             }
         }
@@ -57,7 +60,8 @@ namespace smile
             result = DirectX::LoadFromTGAFile( filePathW.c_str(), &info, image );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from TGA file failed" );
+                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from TGA file failed: %ls",
+                    GetDirectX11ErrorMessage( result ) );
                 return false;
             }
         }
@@ -66,7 +70,8 @@ namespace smile
             result = DirectX::LoadFromWICFile( filePathW.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from WIC file failed" );
+                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from WIC file failed: %ls",
+                    GetDirectX11ErrorMessage( result ) );
                 return false;
             }
         }
@@ -78,7 +83,8 @@ namespace smile
             &m_pTexture );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Failed to create texture" );
+            SM_LOG_ERROR(
+                "DirectX11Texture2D::LoadTexture > Failed to create texture: %ls", GetDirectX11ErrorMessage( result ) );
             SAFE_RELEASE( m_pTexture );
             return false;
         }
@@ -90,7 +96,8 @@ namespace smile
             &m_pShaderResourceView );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Failed to create shader resource view" );
+            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Failed to create shader resource view: %ls",
+                GetDirectX11ErrorMessage( result ) );
             SAFE_RELEASE( m_pShaderResourceView );
             return false;
         }

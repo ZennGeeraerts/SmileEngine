@@ -26,7 +26,8 @@
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Renderer/RenderCommand.h"
 
-#include "SmileEngine/Renderer/Buffer.h"
+#include "SmileEngine/Renderer/VertexBuffer.h"
+#include "SmileEngine/Renderer/IndexBuffer.h"
 #include "SmileEngine/Renderer/Shader.h"
 #include "SmileEngine/Renderer/Framebuffer.h"
 #include "SmileEngine/Renderer/Texture.h"

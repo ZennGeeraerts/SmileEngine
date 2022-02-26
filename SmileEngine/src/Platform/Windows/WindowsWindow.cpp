@@ -10,7 +10,7 @@
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Input/Input.h"
 
-#include "../../../resource.h"
+//#include "SmileEngine/../../resource.h"
 
 //#include "SmileEngine/ImGui/imgui_impl_win32.h"
 //
@@ -64,11 +64,27 @@ namespace smile
         m_WindowClass.hCursor = LoadCursor( nullptr, IDC_ARROW );
         m_WindowClass.hbrBackground = ( HBRUSH )GetStockObject( NULL_BRUSH );
 
-        m_WindowClass.hIcon = static_cast< HICON >(
-            LoadImage( HINSTANCE(), MAKEINTRESOURCE( IDI_ICON1 ), IMAGE_ICON, 256, 256, LR_DEFAULTCOLOR ) );
+       m_WindowClass.hIcon = static_cast< HICON >( ::LoadImage(
+            NULL, L"Resources/Icons/logo.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED ) );
+        m_WindowClass.hIconSm = m_WindowClass.hIcon;
 
-        /*LoadIcon(0, IDI_APPLICATION);*/
-        m_WindowClass.hIconSm = LoadIcon( 0, IDI_APPLICATION );
+        /*if ( !m_WindowClass.hIcon )
+        {
+            DWORD dLastError = GetLastError();
+
+            LPCTSTR strErrorMessage = NULL;
+
+            FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ARGUMENT_ARRAY |
+                               FORMAT_MESSAGE_ALLOCATE_BUFFER,
+                NULL,
+                dLastError,
+                0,
+                ( LPWSTR )&strErrorMessage,
+                0,
+                NULL );
+
+            MessageBox( m_WindowHandle, strErrorMessage, L"Error", MB_OK );
+        }*/
 
         m_WindowClass.lpszClassName = className;
         m_WindowClass.lpszMenuName = nullptr;

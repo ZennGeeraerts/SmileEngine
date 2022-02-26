@@ -4,6 +4,8 @@
 #include "DirectX11Shader.h"
 #include "SmileEngine/Core/Application.h"
 
+#include "DirectX11Diagnostics.h"
+
 namespace smile
 {
     void DirectX11RendererAPI::Initialize()
@@ -37,7 +39,7 @@ namespace smile
         HRESULT result = m_pDirectX11Context->m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to resize buffers" );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to resize buffers: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -46,7 +48,7 @@ namespace smile
             &depthStencilDesc, 0, &m_pDirectX11Context->m_pDepthStencilBuffer );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil buffer" );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil buffer: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -55,7 +57,7 @@ namespace smile
             &m_pDirectX11Context->m_pDepthStencilView );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil view" );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil view: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -65,7 +67,7 @@ namespace smile
             reinterpret_cast< void ** >( &m_pDirectX11Context->m_pRenderTargetBuffer ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to get buffer from swap chain" );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to get buffer from swap chain: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -73,7 +75,7 @@ namespace smile
             m_pDirectX11Context->m_pRenderTargetBuffer, 0, &m_pDirectX11Context->m_pCurrentRenderTarget );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create render target view" );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create render target view: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 

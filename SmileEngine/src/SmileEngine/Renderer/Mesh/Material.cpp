@@ -5,17 +5,10 @@ namespace smile
 {
     Material::Material( bool bSkinned )
     {
-        m_BufferLayout = { { ShaderDataType::Float3, "Position" },
-            { ShaderDataType::Float3, "Normal" },
-            { ShaderDataType::Float2, "TexCoord" },
-            { ShaderDataType::Float3, "Tangent" },
-            { ShaderDataType::Float4, "BlendIndices" },
-            { ShaderDataType::Float4, "BlendWeights" } };
-
         if ( bSkinned )
-            m_pShader = Shader::Create( "Resources/Shaders/PBR_Skinned.fx", m_BufferLayout );
+            m_pShader = Shader::Create( "Resources/Shaders/PBR_Skinned.fx" );
         else
-            m_pShader = Shader::Create( "Resources/Shaders/PBR.fx", m_BufferLayout );
+            m_pShader = Shader::Create( "Resources/Shaders/PBR.fx" );
 
         auto pEnvironmentMap = Texture2D::Create( "Resources/Textures/Sunol_Cubemap.dds" );
         m_pShader->UploadTexture2D( "EnvironmentMap", pEnvironmentMap );

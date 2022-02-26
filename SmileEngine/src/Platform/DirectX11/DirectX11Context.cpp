@@ -5,6 +5,8 @@
 #include "SmileEngine/Core/Core.h"
 #include "SmileEngine/Core/Logger.h"
 
+#include "DirectX11Diagnostics.h"
+
 namespace smile
 {
     DirectX11Context::DirectX11Context( Window *pWindow ) : m_pWindow{ pWindow }
@@ -50,7 +52,8 @@ namespace smile
             &m_pDeviceContext );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to create D3D11Device" );
+            SM_LOG_ERROR(
+                "DirectXContext::Init > Failed to create D3D11Device: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -58,12 +61,13 @@ namespace smile
         result = CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_pDXGIFactory ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to create DXGIFactory" );
+            SM_LOG_ERROR(
+                "DirectXContext::Init > Failed to create DXGIFactory: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
-        const uint32_t width = m_pWindow->GetWidth();
-        const uint32_t height = m_pWindow->GetHeight();
+        const Uint32 width = m_pWindow->GetWidth();
+        const Uint32 height = m_pWindow->GetHeight();
 
         // Create SwapChain Descriptor
         DXGI_SWAP_CHAIN_DESC swapChainDesc{};
@@ -88,7 +92,8 @@ namespace smile
         result = m_pDXGIFactory->CreateSwapChain( m_pDevice, &swapChainDesc, &m_pSwapChain );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to create swap chain" );
+            SM_LOG_ERROR(
+                "DirectXContext::Init > Failed to create swap chain: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -115,7 +120,8 @@ namespace smile
         result = m_pDevice->CreateTexture2D( &depthStencilDesc, 0, &m_pDepthStencilBuffer );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to create depth stencil buffer" );
+            SM_LOG_ERROR( "DirectXContext::Init > Failed to create depth stencil buffer: %ls",
+                GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -123,7 +129,8 @@ namespace smile
             m_pDevice->CreateDepthStencilView( m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to create depth stencil view" );
+            SM_LOG_ERROR(
+                "DirectXContext::Init > Failed to create depth stencil view: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
@@ -132,14 +139,16 @@ namespace smile
             0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &m_pRenderTargetBuffer ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to get buffer from swap chain" );
+            SM_LOG_ERROR( "DirectXContext::Init > Failed to get buffer from swap chain: %ls",
+                GetDirectX11ErrorMessage( result ) );
             return;
         }
 
         result = m_pDevice->CreateRenderTargetView( m_pRenderTargetBuffer, 0, &m_pCurrentRenderTarget );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Init > Failed to create render target view" );
+            SM_LOG_ERROR(
+                "DirectXContext::Init > Failed to create render target view: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 

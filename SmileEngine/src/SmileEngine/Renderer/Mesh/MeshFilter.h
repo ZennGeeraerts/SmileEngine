@@ -1,5 +1,6 @@
 #pragma once
-#include "SmileEngine/Renderer/Buffer.h"
+#include "SmileEngine/Renderer/VertexBuffer.h"
+#include "SmileEngine/Renderer/IndexBuffer.h"
 
 #include <DirectXMath.h>
 

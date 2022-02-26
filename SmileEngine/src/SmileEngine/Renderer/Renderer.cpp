@@ -143,7 +143,7 @@ namespace smile
         s_pRenderCollector->m_WireframeDrawList.emplace_back( drawCommand );
     }
 
-    void Renderer::Present()
+    void Renderer::OnRender()
     {
         s_pFinalSceneFramebuffer->Clear();
         s_pFinalSceneFramebuffer->Bind();

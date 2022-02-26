@@ -25,19 +25,6 @@
 #    define SM_ENABLE_ASSERTS
 #endif
 
-#ifdef SM_ENABLE_ASSERTS
-#    define SM_ASSERT( x, ... )                                                                                        \
-        {                                                                                                              \
-            if ( !( x ) )                                                                                              \
-            {                                                                                                          \
-                SM_LOG_ERROR( "Assertion Failed: %s", __VA_ARGS__ );                                                   \
-                __debugbreak();                                                                                        \
-            }                                                                                                          \
-        }
-#else
-#    define SM_ASSERT( x, ... )
-#endif
-
 #define BIT( x ) ( 1 << x )
 #define SM_BIND_EVENT_FN( fn ) std::bind( &fn, this, std::placeholders::_1 )
 #define SAFE_DELETE( p )                                                                                               \
@@ -85,3 +72,6 @@ namespace smile
 
     using Byte = unsigned char;
 }
+
+#include "Logger.h"
+#include "Assert.h"
