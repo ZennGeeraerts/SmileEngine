@@ -1,10 +1,10 @@
 #pragma once
 
 #include "RenderCommand.h"
-#include "Buffer.h"
-#include "Shader.h"
-#include "Framebuffer.h"
-#include "RasterizerState.h"
+#include "Shader/Buffer.h"
+#include "Shader/Shader.h"
+#include "Resource/Framebuffer.h"
+#include "Resource/RasterizerState.h"
 
 #include "Camera/Camera.h"
 #include "Camera/EditorCamera.h"

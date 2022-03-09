@@ -1,0 +1,199 @@
+Scene: Untitled
+Entities:
+  - Entity: 11580094877150454954
+    TagComponent:
+      Tag: box4
+    TransformComponent:
+      Translation: [-0.482875943, 8.87210178, -1.64253628]
+      Rotation: [0.750491321, 0.401425302, 1.95476854]
+      Scale: [0.999999762, 1, 1]
+    RigidbodyComponent:
+      BodyType: 1
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 1
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [1, 1, 1]
+      Offset: [0, 0, 0]
+      bTrigger: false
+      bShowColliderBounds: true
+  - Entity: 16034618772690817214
+    TagComponent:
+      Tag: box5
+    TransformComponent:
+      Translation: [0.999362648, 8.9233551, -2.83869982]
+      Rotation: [0.668286264, -0.163013756, 1.03374076]
+      Scale: [0.999999762, 1, 1]
+    RigidbodyComponent:
+      BodyType: 1
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 1
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [1, 1, 1]
+      Offset: [0, 0, 0]
+      bTrigger: false
+      bShowColliderBounds: true
+  - Entity: 5827096277373423235
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [-7.77111483, 0, -9.79219151]
+      Rotation: [0, 0.773131192, 0]
+      Scale: [0.99999994, 1, 0.99999994]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        FOV: 45
+        PerspectiveNearPlane: 0.100000001
+        PerspectiveFarPlane: 2500
+        Size: 10
+        OrthographicNearPlane: -1
+        OrthographicFarPlane: 1
+      bPrimary: true
+      bFixedAspectRatio: false
+  - Entity: 4257919760232638229
+    TagComponent:
+      Tag: box1
+    TransformComponent:
+      Translation: [-2.11483455, 5.28429651, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    RigidbodyComponent:
+      BodyType: 1
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 1
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [1, 1, 1]
+      Offset: [0, 0, 0]
+      bTrigger: false
+      bShowColliderBounds: true
+  - Entity: 2346151809950131040
+    TagComponent:
+      Tag: box2
+    TransformComponent:
+      Translation: [-0.551638722, 5.28429651, 0]
+      Rotation: [0.785398185, 0.209439516, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SkinnedMeshComponent:
+      Mesh: Resources\Meshes\tuktuk.obj
+      Material:
+        AlbedoMap: ""
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: ""
+        Metalness: 0
+        RoughnessMap: ""
+        Roughness: 0.5
+        NormalMap: ""
+        AOMap: ""
+    RigidbodyComponent:
+      BodyType: 1
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 2
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [15, 15, 15]
+      Offset: [0, 0.860000014, 0]
+      bTrigger: false
+      bShowColliderBounds: true
+  - Entity: 13332611951357713968
+    TagComponent:
+      Tag: box3
+    TransformComponent:
+      Translation: [0.966692448, 5.28429651, 0]
+      Rotation: [0.750491321, 0.40142557, 1.95476854]
+      Scale: [1, 1, 1]
+    RigidbodyComponent:
+      BodyType: 1
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 1
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [1, 1, 1]
+      Offset: [0, 0, 0]
+      bTrigger: false
+      bShowColliderBounds: true
+  - Entity: 1403480678552992253
+    TagComponent:
+      Tag: Floor
+    TransformComponent:
+      Translation: [0, -2.30999994, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RigidbodyComponent:
+      BodyType: 0
+      CollisionDetectionType: 0
+      PhysicsMaterial:
+        {}
+      Mass: 1
+      LinearDrag: 0
+      AngularDrag: 0.0500000007
+      bDisableGravity: false
+      bKinematic: false
+      bLockPositionX: false
+      bLockPositionY: false
+      bLockPositionZ: false
+      bLockRotationX: false
+      bLockRotationY: false
+      bLockRotationZ: false
+    BoxColliderComponent:
+      Size: [10, 0.310000002, 10]
+      Offset: [0, 0, 0]
+      bTrigger: false
+      bShowColliderBounds: true

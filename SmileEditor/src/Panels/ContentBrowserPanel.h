@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "SmileEngine/Renderer/Texture.h"
+#include "SmileEngine/Renderer/Resource/Texture.h"
 
 namespace smile
 {

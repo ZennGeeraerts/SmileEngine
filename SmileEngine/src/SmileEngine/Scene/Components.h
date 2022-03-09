@@ -1,8 +1,8 @@
 #pragma once
 #include "SmileEngine/Core/UUID.h"
-#include "SmileEngine/Renderer/VertexBuffer.h"
-#include "SmileEngine/Renderer/IndexBuffer.h"
-#include "SmileEngine/Renderer/Shader.h"
+#include "SmileEngine/Renderer/Resource/VertexBuffer.h"
+#include "SmileEngine/Renderer/Resource/IndexBuffer.h"
+#include "SmileEngine/Renderer/Shader/Shader.h"
 
 #include "SmileEngine/Scene/SceneCamera.h"
 
@@ -219,7 +219,7 @@ namespace smile
     {
         BoxColliderComponent()
         {
-            BufferLayout bufferLayout{ { ShaderDataType::Float3, "Position" } };
+            BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" } };
             m_pWireframeMesh = MeshFactory::CreateCube( bufferLayout );
             m_pWireframeMesh->Create( bufferLayout );
         }

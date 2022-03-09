@@ -125,6 +125,15 @@ namespace smile
                     Renderer::Submit( mesh, transform.GetTransform() );
                 }
             }
+            {
+                auto group = m_Registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+                for ( auto entity : group )
+                {
+                    const auto &[boxCollider, transform] =
+                        group.get< BoxColliderComponent, TransformComponent >( entity );
+                    Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
+                }
+            }
 
             Renderer::OnRender();
 

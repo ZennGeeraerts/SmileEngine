@@ -10,6 +10,9 @@
 
 #include "SmileEngine/Utils/Utils.h"
 #include "SmileEngine/Math/Math.h"
+#include "SmileEngine/Math/Vector2.h"
+#include "SmileEngine/Math/Vector3.h"
+#include "SmileEngine/Math/Vector4.h"
 
 #include "SmileEngine/Input/Input.h"
 #include "SmileEngine/Input/KeyCodes.h"
@@ -26,14 +29,13 @@
 #include "SmileEngine/Renderer/Renderer.h"
 #include "SmileEngine/Renderer/RenderCommand.h"
 
-#include "SmileEngine/Renderer/VertexBuffer.h"
-#include "SmileEngine/Renderer/IndexBuffer.h"
-#include "SmileEngine/Renderer/Shader.h"
-#include "SmileEngine/Renderer/Framebuffer.h"
-#include "SmileEngine/Renderer/Texture.h"
+#include "SmileEngine/Renderer/Shader/Shader.h"
+#include "SmileEngine/Renderer/Resource/VertexBuffer.h"
+#include "SmileEngine/Renderer/Resource/IndexBuffer.h"
+#include "SmileEngine/Renderer/Resource/Framebuffer.h"
+#include "SmileEngine/Renderer/Resource/Texture.h"
 #include "SmileEngine/Renderer/Mesh/StaticMeshFilter.h"
 #include "SmileEngine/Renderer/Mesh/Material.h"
-#include "SmileEngine/Renderer/VertexArray.h"
 
 /* --- DirectX --- */
 #include <DirectXMath.h>

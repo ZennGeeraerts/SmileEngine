@@ -112,6 +112,9 @@ namespace smile
                 m_pRigidActor = pRigidDynamicActor;
                 break;
             }
+            default:
+                m_pRigidActor = nullptr;
+                break;
         }
 
         m_pPxMaterial = pPhysics->createMaterial(

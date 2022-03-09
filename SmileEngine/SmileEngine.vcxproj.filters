@@ -51,22 +51,22 @@
     <ClInclude Include="src\SmileEngine\Core\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\Buffer.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Shader\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11IndexBuffer.h">
+    <ClInclude Include="src\Platform\DirectX11\Resource\DirectX11IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\Shader.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Shader\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11Shader.h">
+    <ClInclude Include="src\Platform\DirectX11\Shader\DirectX11Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\VertexArray.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Resource\VertexArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\RendererAPI.h">
@@ -111,10 +111,10 @@
     <ClInclude Include="src\SmileEngine\Renderer\Camera\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\Texture.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Resource\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11Texture.h">
+    <ClInclude Include="src\Platform\DirectX11\Resource\DirectX11Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\Material.h">
@@ -180,10 +180,10 @@
     <ClInclude Include="src\SmileEngine\Renderer\Camera\PerspectiveCameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\Framebuffer.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Resource\Framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11Framebuffer.h">
+    <ClInclude Include="src\Platform\DirectX11\Resource\DirectX11Framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Scene\SceneCamera.h">
@@ -366,10 +366,10 @@
     <ClInclude Include="src\SmileEngine\Physics\PhysicsMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\RasterizerState.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Resource\RasterizerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11RasterizerState.h">
+    <ClInclude Include="src\Platform\DirectX11\Resource\DirectX11RasterizerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\SmileEngine\Renderer\Mesh\MeshFactory.h">
@@ -414,16 +414,22 @@
     <ClInclude Include="src\Platform\DirectX11\DirectX11Diagnostics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\VertexBuffer.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Resource\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11VertexBuffer.h">
+    <ClInclude Include="src\Platform\DirectX11\Resource\DirectX11VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SmileEngine\Renderer\IndexBuffer.h">
+    <ClInclude Include="src\SmileEngine\Renderer\Resource\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX11\DirectX11Buffer.h">
+    <ClInclude Include="src\Platform\DirectX11\Shader\DirectX11Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Math\Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SmileEngine\Math\Vector4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -443,19 +449,19 @@
     <ClCompile Include="src\SmileEngine\Core\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11IndexBuffer.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Resource\DirectX11IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\Shader.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Shader\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11Shader.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Shader\DirectX11Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\VertexArray.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Resource\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\RendererAPI.cpp">
@@ -476,10 +482,10 @@
     <ClCompile Include="src\SmileEngine\Renderer\Camera\PerspectiveCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\Texture.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Resource\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11Texture.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Resource\DirectX11Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\Material.cpp">
@@ -521,10 +527,10 @@
     <ClCompile Include="src\SmileEngine\Renderer\Camera\PerspectiveCameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\Framebuffer.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Resource\Framebuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11Framebuffer.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Resource\DirectX11Framebuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Scene\SceneCamera.cpp">
@@ -590,10 +596,10 @@
     <ClCompile Include="src\SmileEngine\Physics\PhysicsActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\RasterizerState.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Resource\RasterizerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11RasterizerState.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Resource\DirectX11RasterizerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\SmileEngine\Renderer\Mesh\MeshFactory.cpp">
@@ -620,16 +626,22 @@
     <ClCompile Include="src\Platform\DirectX11\DirectX11Diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\VertexBuffer.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Resource\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11VertexBuffer.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Resource\DirectX11VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmileEngine\Renderer\IndexBuffer.cpp">
+    <ClCompile Include="src\SmileEngine\Renderer\Resource\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX11\DirectX11Buffer.cpp">
+    <ClCompile Include="src\Platform\DirectX11\Shader\DirectX11Buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Math\Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SmileEngine\Math\Vector4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

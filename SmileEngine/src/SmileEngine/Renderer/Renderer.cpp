@@ -19,7 +19,7 @@ namespace smile
         DirectX::XMStoreFloat4x4( &s_pRenderCollector->m_ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &s_pRenderCollector->m_ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
-        BufferLayout bufferLayout{ { ShaderDataType::Float3, "Position" }, { ShaderDataType::Float3, "Normal" } };
+        BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
         s_ShaderLibrary.Load( "Resources/Shaders/PosColNorm.fx", bufferLayout );
 
         {
@@ -137,9 +137,30 @@ namespace smile
     void Renderer::SubmitWireframe( const BoxColliderComponent &boxColliderComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
+        DirectX::XMMATRIX finalTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );
+        DirectX::XMVECTOR translationVec{};
+        DirectX::XMVECTOR rotationVec{};
+        DirectX::XMVECTOR scaleVec{};
+
+        DirectX::XMMatrixDecompose( &scaleVec, &rotationVec, &translationVec, finalTransformMat );
+        DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat3( &boxColliderComponent.m_Offset );
+        auto finalTranslationVec = DirectX::XMVectorAdd( translationVec, offsetVec );
+        DirectX::XMVECTOR sizeVec = DirectX::XMLoadFloat3( &boxColliderComponent.m_Size );
+
+        sizeVec = DirectX::XMVectorDivide( sizeVec, DirectX::XMVECTOR{ 2, 2, 2 } );
+
+        auto finalScaleVec = DirectX::XMVectorMultiply( scaleVec, sizeVec );
+        finalTransformMat = DirectX::XMMatrixScalingFromVector( finalScaleVec ) *
+                            DirectX::XMMatrixRotationQuaternion( rotationVec ) *
+                            DirectX::XMMatrixTranslationFromVector( finalTranslationVec );
+
+        DirectX::XMFLOAT4X4 finalTransform{};
+        DirectX::XMStoreFloat4x4( &finalTransform, finalTransformMat );
+
         DrawCommand drawCommand{ boxColliderComponent.m_pWireframeMesh->GetVertexBuffer(),
             boxColliderComponent.m_pWireframeMesh->GetIndexBuffer(),
-            s_ShaderLibrary.Get( "PosColNorm" ) };
+            s_ShaderLibrary.Get( "PosColNorm" ),
+            finalTransform };
         s_pRenderCollector->m_WireframeDrawList.emplace_back( drawCommand );
     }
 

@@ -81,43 +81,45 @@ namespace smile::math
         return degrees * g_PI / 180.0f;
     }
 
-    inline bool CompareFloats( float f1, float f2 )
+    inline bool CompareFloats( float f1, float f2, float precision = g_EPSILON )
     {
         float deltaF = AbsoluteValue( f1 - f2 );
         return ( deltaF < g_EPSILON );
     }
 
+    inline constexpr bool IsSquareOne( float value, float precision = g_EPSILON )
+    {
+        return value >= 1.0f - 2.0f * precision + precision * precision &&
+               value <= 1.0f + 2.0f * precision + precision * precision;
+    }
+
+    inline constexpr bool IsSquareZero( float value, float precision = g_EPSILON )
+    {
+        return value >= -precision * precision && value <= precision * precision;
+    }
+
+    inline constexpr bool IsZero( float value, float precision = g_EPSILON )
+    {
+        return ( value * value ) < ( precision * precision );
+    }
+
+    inline constexpr bool IsOne( float value, float precision = g_EPSILON )
+    {
+        return IsZero( value - 1.0f, precision );
+    }
+
     float GenerateRandom( float min, float max );
     Int32 GenerateRandomInt( Int32 min, Int32 max );
 
-    struct Vector3 final
+    inline float Minimum( float f1, float f2 )
     {
-        union
-        {
-            float M[3];
-            struct
-            {
-                float x;
-                float y;
-                float z;
-            };
-        };
-    };
+        return f1 < f2 ? f1 : f2;
+    }
 
-    struct Vector4 final
+    inline float Maximum( float f1, float f2 )
     {
-        union
-        {
-            float M[4];
-            struct
-            {
-                float x;
-                float y;
-                float z;
-                float w;
-            };
-        };
-    };
+        return f1 > f2 ? f1 : f2;
+    }
 
     // Matrix
     struct Matrix4x4 final

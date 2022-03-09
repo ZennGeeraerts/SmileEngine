@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "DirectX11RendererAPI.h"
 
-#include "DirectX11Shader.h"
+#include "Platform/DirectX11/Shader/DirectX11Shader.h"
 #include "SmileEngine/Core/Application.h"
 
 #include "DirectX11Diagnostics.h"

@@ -1,5 +1,5 @@
 #pragma once
-#include "SmileEngine/Renderer/Texture.h"
+#include "SmileEngine/Renderer/Resource/Texture.h"
 #include "SmileRasterContext.h"
 
 #include <SDL_image.h>

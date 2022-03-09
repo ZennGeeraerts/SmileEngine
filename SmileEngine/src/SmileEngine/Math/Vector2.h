@@ -26,12 +26,12 @@ namespace smile::math
 
     inline float DistanceSqr( const Vector2 &v1, const Vector2 &v2 )
     {
-        return ( v1.x - v2.x ) * ( v1.y - v2.y );
+        return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y );
     }
 
     inline float Distance( const Vector2 &v1, const Vector2 &v2 )
     {
-        return SquareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) );
+        return SquareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) );
     }
 
     inline float LengthSqr( const Vector2 &vector )
@@ -44,22 +44,37 @@ namespace smile::math
         return SquareRoot( vector.x * vector.x + vector.y * vector.y );
     }
 
-    inline bool CompareVector2( const Vector2 &v1, const Vector2 &v2 )
+    inline bool IsUnitVector( const Vector2 &vector )
     {
-        return CompareFloats( v1.x, v2.x ) && CompareFloats( v2.x, v2.y );
+        return IsOne( vector.x * vector.x + vector.y * vector.y );
+    }
+
+    inline bool HasZeroLength( const Vector2 &vector, float precision = g_EPSILON )
+    {
+        return IsSquareZero( vector.x * vector.x + vector.y * vector.y, precision );
+    }
+
+    inline bool IsZeroVector( const Vector2 &vector, float precision = g_EPSILON )
+    {
+        return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
+    }
+
+    inline bool CompareVector2( const Vector2 &v1, const Vector2 &v2, float precision = g_EPSILON )
+    {
+        return CompareFloats( v1.x, v2.x, precision ) && CompareFloats( v1.y, v2.y, precision );
     }
 
     inline Vector2 GetNormalized( const Vector2 &vector )
     {
-        SM_ASSERT( !CompareVector2( vector, Vector2::Zero ), "GetNormalized > Vector2 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector2 is zero vector" );
 
         float length = SquareRoot( vector.x * vector.x + vector.y * vector.y );
         return Vector2{ vector.x / length, vector.y / length };
     }
 
-    inline Vector2 Normalize( Vector2 &vector )
+    inline void Normalize( Vector2 &vector )
     {
-        SM_ASSERT( !CompareVector2( vector, Vector2::Zero ), "Normalize > Vector2 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector2 is zero vector" );
 
         float length = SquareRoot( vector.x * vector.x + vector.y * vector.y );
         vector.x /= length;
@@ -118,13 +133,13 @@ namespace smile::math
     inline Vector2 &operator-=( Vector2 &lhs, const Vector2 &rhs )
     {
         lhs.x -= rhs.x;
-        lhs.x -= rhs.x;
+        lhs.y -= rhs.y;
         return lhs;
     }
 
     inline Vector2 operator*( const Vector2 &lhs, const Vector2 &rhs )
     {
-        return Vector2{ lhs.x * rhs.x, lhs.x * rhs.x };
+        return Vector2{ lhs.x * rhs.x, lhs.y * rhs.y };
     }
 
     inline Vector2 operator*( const Vector2 &lhs, float rhs )

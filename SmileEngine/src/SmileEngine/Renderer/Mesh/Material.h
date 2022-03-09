@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SmileEngine/Renderer/Shader.h"
-#include "SmileEngine/Renderer/Texture.h"
+#include "SmileEngine/Renderer/Shader/Shader.h"
+#include "SmileEngine/Renderer/Resource/Texture.h"
 
 namespace smile
 {
