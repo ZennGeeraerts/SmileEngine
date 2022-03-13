@@ -1,0 +1,44 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1967,5): warning : The referenced project '..\SmileEngine\SmileEngine.vcxproj' does not exist.
+     Creating library C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\smile-editor.lib and object C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\smile-editor.exp
+dx11effects_d.lib(d3dxGlobal.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(d3dxGlobal.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectAPI.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectAPI.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectLoad.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectLoad.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectNonRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectNonRuntime.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectReflection.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectReflection.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\Effects11d.pdb'; linking object as if no debug info
+dx11effects_d.lib(EffectRuntime.obj) : warning LNK4099: PDB 'Effects11d.pdb' was not found with 'dx11effects_d.lib(EffectRuntime.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\Effects11d.pdb'; linking object as if no debug info
+yaml-cppd.lib(binary.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(binary.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(convert.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(convert.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(depthguard.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(depthguard.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(directives.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(directives.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(emitter.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(emitter.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(emitterstate.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(emitterstate.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(emitterutils.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(emitterutils.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(exceptions.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(exceptions.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(exp.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(exp.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(memory.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(memory.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(node_data.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(node_data.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(nodebuilder.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(nodebuilder.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(null.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(null.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(ostream_wrapper.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(ostream_wrapper.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(parse.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(parse.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(parser.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(parser.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(regex_yaml.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(regex_yaml.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(scanner.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scanner.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(scanscalar.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scanscalar.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(scantag.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scantag.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(scantoken.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(scantoken.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(simplekey.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(simplekey.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(singledocparser.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(singledocparser.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(stream.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(stream.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+yaml-cppd.lib(tag.obj) : warning LNK4099: PDB 'yaml-cpp static.pdb' was not found with 'yaml-cppd.lib(tag.obj)' or at 'C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\yaml-cpp static.pdb'; linking object as if no debug info
+  smile-editor.vcxproj -> C:\dev\SmileEngine\build\bin\Debug-x64\smile-editor\smile-editor.exe
+  C:\dev\SmileEngine\Thirdparty\assimp\x64\assimp-vc140-mt.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Debug\PhysX_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Debug\PhysXCommon_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Debug\PhysXCooking_64.dll
+  1 File(s) copied
+  C:\dev\SmileEngine\Thirdparty\PhysX\lib\Debug\PhysXFoundation_64.dll
+  1 File(s) copied

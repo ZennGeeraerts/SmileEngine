@@ -1,0 +1,17 @@
+#pragma once
+
+#include "core.h"
+#include "logger.h"
+
+#ifdef SM_ENABLE_ASSERTS
+#    define SM_ASSERT( x, ... )                                                                                        \
+        {                                                                                                              \
+            if ( !( x ) )                                                                                              \
+            {                                                                                                          \
+                SM_LOG_ERROR( "Assertion Failed: %s", __VA_ARGS__ );                                                   \
+                SM_DEBUGBREAK();                                                                                       \
+            }                                                                                                          \
+        }
+#else
+#    define SM_ASSERT( x, ... )
+#endif
