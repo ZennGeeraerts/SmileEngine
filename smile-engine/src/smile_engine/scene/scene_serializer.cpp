@@ -12,6 +12,28 @@
 namespace YAML
 {
     template <>
+    struct convert< DirectX::XMFLOAT2 >
+    {
+        static Node encode( const DirectX::XMFLOAT2 &v )
+        {
+            Node node{};
+            node.push_back( v.x );
+            node.push_back( v.y );
+            return node;
+        }
+
+        static bool decode( const Node &node, DirectX::XMFLOAT2 &v )
+        {
+            if ( !node.IsSequence() || node.size() != 2 )
+                return false;
+
+            v.x = node[0].as< float >();
+            v.y = node[1].as< float >();
+            return true;
+        }
+    };
+
+    template <>
     struct convert< DirectX::XMFLOAT3 >
     {
         static Node encode( const DirectX::XMFLOAT3 &v )
@@ -64,6 +86,13 @@ namespace YAML
 
 namespace smile
 {
+    YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT2 &v )
+    {
+        output << YAML::Flow;
+        output << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+        return output;
+    }
+
     YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT3 &v )
     {
         output << YAML::Flow;
@@ -103,6 +132,69 @@ namespace smile
 
         std::ofstream fileOutput{ filePath };
         fileOutput << output.c_str();
+    }
+
+    static void SerializeMaterial( YAML::Emitter &output, const Ref< Material > &pMaterial )
+    {
+        output << YAML::Key << "Material";
+        output << YAML::BeginMap;
+
+        output << YAML::Key << "FloatValues";
+        output << YAML::BeginMap;
+        const auto &floatValues{ pMaterial->GetFloatValues() };
+        for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
+        {
+            output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
+        }
+        output << YAML::EndMap;
+
+        output << YAML::Key << "IntValues";
+        output << YAML::BeginMap;
+        const auto &intValues{ pMaterial->GetIntValues() };
+        for ( auto it{ intValues.begin() }; it != intValues.end(); ++it )
+        {
+            output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
+        }
+        output << YAML::EndMap;
+
+        output << YAML::Key << "BoolValues";
+        output << YAML::BeginMap;
+        const auto &boolValues{ pMaterial->GetBoolValues() };
+        for ( auto it{ boolValues.begin() }; it != boolValues.end(); ++it )
+        {
+            output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
+        }
+        output << YAML::EndMap;
+
+        output << YAML::Key << "Float2Values";
+        output << YAML::BeginMap;
+        const auto &float2Values{ pMaterial->GetFloat2Values() };
+        for ( auto it{ float2Values.begin() }; it != float2Values.end(); ++it )
+        {
+            output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
+        }
+        output << YAML::EndMap;
+
+        output << YAML::Key << "Float3Values";
+        output << YAML::BeginMap;
+        const auto &float3Values{ pMaterial->GetFloat3Values() };
+        for ( auto it{ float3Values.begin() }; it != float3Values.end(); ++it )
+        {
+            output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
+        }
+        output << YAML::EndMap;
+
+        output << YAML::Key << "Texture2DValues";
+        output << YAML::BeginMap;
+        const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
+        for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+        {
+            output << YAML::Key << ( *it ).first << YAML::Value
+                   << ( ( *it ).second ? ( *it ).second->GetFilePath() : "" );
+        }
+        output << YAML::EndMap;
+
+        output << YAML::EndMap;
     }
 
     static void SerializeEntity( YAML::Emitter &output, Entity entity )
@@ -173,28 +265,7 @@ namespace smile
             output << YAML::Key << "Mesh" << YAML::Value
                    << ( ( meshComponent.m_pMeshes.size() > 0 ) ? meshComponent.m_pMeshes[0]->GetFilePath() : "" );
 
-            output << YAML::Key << "Material";
-            output << YAML::BeginMap;
-
-            auto &pMaterial = meshComponent.m_pMaterials[0];
-            output << YAML::Key << "AlbedoMap" << YAML::Value
-                   << ( pMaterial->GetAlbedoMap() ? pMaterial->GetAlbedoMap()->GetFilePath() : "" );
-            output << YAML::Key << "AlbedoColor" << YAML::Value << pMaterial->GetAlbedoColor();
-
-            output << YAML::Key << "MetalnessMap" << YAML::Value
-                   << ( pMaterial->GetMetalnessMap() ? pMaterial->GetMetalnessMap()->GetFilePath() : "" );
-            output << YAML::Key << "Metalness" << YAML::Value << pMaterial->GetMetalness();
-
-            output << YAML::Key << "RoughnessMap" << YAML::Value
-                   << ( pMaterial->GetRoughnessMap() ? pMaterial->GetRoughnessMap()->GetFilePath() : "" );
-            output << YAML::Key << "Roughness" << YAML::Value << pMaterial->GetRoughness();
-
-            output << YAML::Key << "NormalMap" << YAML::Value
-                   << ( pMaterial->GetNormalMap() ? pMaterial->GetNormalMap()->GetFilePath() : "" );
-            output << YAML::Key << "AOMap" << YAML::Value
-                   << ( pMaterial->GetAOMap() ? pMaterial->GetAOMap()->GetFilePath() : "" );
-
-            output << YAML::EndMap;
+            SerializeMaterial( output, meshComponent.m_pMaterials[0] );
 
             output << YAML::EndMap;
         }
@@ -208,28 +279,7 @@ namespace smile
             output << YAML::Key << "Mesh" << YAML::Value
                    << ( ( meshComponent.m_pMeshes.size() > 0 ) ? meshComponent.m_pMeshes[0]->GetFilePath() : "" );
 
-            output << YAML::Key << "Material";
-            output << YAML::BeginMap;
-
-            auto &pMaterial = meshComponent.m_pMaterials[0];
-            output << YAML::Key << "AlbedoMap" << YAML::Value
-                   << ( pMaterial->GetAlbedoMap() ? pMaterial->GetAlbedoMap()->GetFilePath() : "" );
-            output << YAML::Key << "AlbedoColor" << YAML::Value << pMaterial->GetAlbedoColor();
-
-            output << YAML::Key << "MetalnessMap" << YAML::Value
-                   << ( pMaterial->GetMetalnessMap() ? pMaterial->GetMetalnessMap()->GetFilePath() : "" );
-            output << YAML::Key << "Metalness" << YAML::Value << pMaterial->GetMetalness();
-
-            output << YAML::Key << "RoughnessMap" << YAML::Value
-                   << ( pMaterial->GetRoughnessMap() ? pMaterial->GetRoughnessMap()->GetFilePath() : "" );
-            output << YAML::Key << "Roughness" << YAML::Value << pMaterial->GetRoughness();
-
-            output << YAML::Key << "NormalMap" << YAML::Value
-                   << ( pMaterial->GetNormalMap() ? pMaterial->GetNormalMap()->GetFilePath() : "" );
-            output << YAML::Key << "AOMap" << YAML::Value
-                   << ( pMaterial->GetAOMap() ? pMaterial->GetAOMap()->GetFilePath() : "" );
-
-            output << YAML::EndMap;
+            SerializeMaterial( output, meshComponent.m_pMaterials[0] );
 
             output << YAML::EndMap;
         }
@@ -240,7 +290,8 @@ namespace smile
             output << YAML::BeginMap;
 
             auto &rigidbodyComponent = entity.GetComponent< RigidbodyComponent >();
-            output << YAML::Key << "BodyType" << YAML::Value << static_cast< uint32_t >( rigidbodyComponent.m_BodyType );
+            output << YAML::Key << "BodyType" << YAML::Value
+                   << static_cast< uint32_t >( rigidbodyComponent.m_BodyType );
             output << YAML::Key << "CollisionDetectionType" << YAML::Value
                    << static_cast< uint32_t >( rigidbodyComponent.m_CollisionDetectionType );
 
@@ -298,7 +349,8 @@ namespace smile
             auto &sphereColliderComponent = entity.GetComponent< SphereColliderComponent >();
             output << YAML::Key << "Radius" << YAML::Value << sphereColliderComponent.m_Radius;
             output << YAML::Key << "bTrigger" << YAML::Value << sphereColliderComponent.m_bTrigger;
-            output << YAML::Key << "bShowColliderBounds" << YAML::Value << sphereColliderComponent.m_bShowColliderBounds;
+            output << YAML::Key << "bShowColliderBounds" << YAML::Value
+                   << sphereColliderComponent.m_bShowColliderBounds;
 
             /*auto& pPhysicsMaterial = sphereColliderComponent.pPhysicsMaterial;
             output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
@@ -317,7 +369,8 @@ namespace smile
             output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.m_Radius;
             output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.m_Height;
             output << YAML::Key << "bTrigger" << YAML::Value << capsuleColliderComponent.m_bTrigger;
-            output << YAML::Key << "bShowColliderBounds" << YAML::Value << capsuleColliderComponent.m_bShowColliderBounds;
+            output << YAML::Key << "bShowColliderBounds" << YAML::Value
+                   << capsuleColliderComponent.m_bShowColliderBounds;
 
             output << YAML::EndMap;
         }
@@ -407,42 +460,53 @@ namespace smile
 
                     auto material = staticMeshComponent["Material"];
 
-                    const auto &albedoMap = material["AlbedoMap"].as< std::string >();
-                    if ( !albedoMap.empty() )
+                    auto floatValues = material["FloatValues"];
+                    for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
                     {
-                        smc.m_pMaterials[0]->SetAlbedo( Texture2D::Create( albedoMap ) );
-                        smc.m_pMaterials[0]->SetUseAlbedoMap( true );
-                    }
-                    smc.m_pMaterials[0]->SetAlbedo( material["AlbedoColor"].as< DirectX::XMFLOAT3 >() );
-
-                    const auto &metalnessMap = material["MetalnessMap"].as< std::string >();
-                    if ( !metalnessMap.empty() )
-                    {
-                        smc.m_pMaterials[0]->SetMetalness( Texture2D::Create( metalnessMap ) );
-                        smc.m_pMaterials[0]->SetUseMetalnessMap( true );
-                    }
-                    smc.m_pMaterials[0]->SetMetalness( material["Metalness"].as< float >() );
-
-                    const auto &roughnessMap = material["RoughnessMap"].as< std::string >();
-                    if ( !roughnessMap.empty() )
-                    {
-                        smc.m_pMaterials[0]->SetRoughness( Texture2D::Create( roughnessMap ) );
-                        smc.m_pMaterials[0]->SetUseRoughnessMap( true );
-                    }
-                    smc.m_pMaterials[0]->SetRoughness( material["Roughness"].as< float >() );
-
-                    const auto &normalMap = material["NormalMap"].as< std::string >();
-                    if ( !normalMap.empty() )
-                    {
-                        smc.m_pMaterials[0]->SetNormalMap( Texture2D::Create( normalMap ) );
-                        smc.m_pMaterials[0]->SetUseNormalMap( true );
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< float >();
+                        smc.m_pMaterials[0]->SetFloatValue( semantic, value );
                     }
 
-                    const auto &aoMap = material["AOMap"].as< std::string >();
-                    if ( !aoMap.empty() )
+                    auto intValues = material["IntValues"];
+                    for ( auto it{ intValues.begin() }; it != intValues.end(); ++it )
                     {
-                        smc.m_pMaterials[0]->SetAOMap( Texture2D::Create( aoMap ) );
-                        smc.m_pMaterials[0]->SetUseAOMap( true );
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< int >();
+                        smc.m_pMaterials[0]->SetIntValue( semantic, value );
+                    }
+
+                    auto boolValues = material["BoolValues"];
+                    for ( auto it{ boolValues.begin() }; it != boolValues.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< bool >();
+                        smc.m_pMaterials[0]->SetBoolValue( semantic, value );
+                    }
+
+                    auto float2Values = material["Float2Values"];
+                    for ( auto it{ float2Values.begin() }; it != float2Values.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
+                        smc.m_pMaterials[0]->SetFloat2Value( semantic, value );
+                    }
+
+                    auto float3Values = material["Float3Values"];
+                    for ( auto it{ float3Values.begin() }; it != float3Values.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
+                        smc.m_pMaterials[0]->SetFloat3Value( semantic, value );
+                    }
+
+                    auto texture2DValues = material["Texture2DValues"];
+                    for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto path = ( *it ).second.as< std::string >();
+                        if ( !path.empty() )
+                            smc.m_pMaterials[0]->SetTexture2D( semantic, Texture2D::Create( path ) );
                     }
                 }
 
@@ -471,42 +535,53 @@ namespace smile
 
                     auto material = skinnedMeshComponent["Material"];
 
-                    const auto &albedoMap = material["AlbedoMap"].as< std::string >();
-                    if ( !albedoMap.empty() )
+                    auto floatValues = material["FloatValues"];
+                    for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
                     {
-                        smc.m_pMaterials[0]->SetAlbedo( Texture2D::Create( albedoMap ) );
-                        smc.m_pMaterials[0]->SetUseAlbedoMap( true );
-                    }
-                    smc.m_pMaterials[0]->SetAlbedo( material["AlbedoColor"].as< DirectX::XMFLOAT3 >() );
-
-                    const auto &metalnessMap = material["MetalnessMap"].as< std::string >();
-                    if ( !metalnessMap.empty() )
-                    {
-                        smc.m_pMaterials[0]->SetMetalness( Texture2D::Create( metalnessMap ) );
-                        smc.m_pMaterials[0]->SetUseMetalnessMap( true );
-                    }
-                    smc.m_pMaterials[0]->SetMetalness( material["Metalness"].as< float >() );
-
-                    const auto &roughnessMap = material["RoughnessMap"].as< std::string >();
-                    if ( !roughnessMap.empty() )
-                    {
-                        smc.m_pMaterials[0]->SetRoughness( Texture2D::Create( roughnessMap ) );
-                        smc.m_pMaterials[0]->SetUseRoughnessMap( true );
-                    }
-                    smc.m_pMaterials[0]->SetRoughness( material["Roughness"].as< float >() );
-
-                    const auto &normalMap = material["NormalMap"].as< std::string >();
-                    if ( !normalMap.empty() )
-                    {
-                        smc.m_pMaterials[0]->SetNormalMap( Texture2D::Create( normalMap ) );
-                        smc.m_pMaterials[0]->SetUseNormalMap( true );
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< float >();
+                        smc.m_pMaterials[0]->SetFloatValue( semantic, value );
                     }
 
-                    const auto &aoMap = material["AOMap"].as< std::string >();
-                    if ( !aoMap.empty() )
+                    auto intValues = material["IntValues"];
+                    for ( auto it{ intValues.begin() }; it != intValues.end(); ++it )
                     {
-                        smc.m_pMaterials[0]->SetAOMap( Texture2D::Create( aoMap ) );
-                        smc.m_pMaterials[0]->SetUseAOMap( true );
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< int >();
+                        smc.m_pMaterials[0]->SetIntValue( semantic, value );
+                    }
+
+                    auto boolValues = material["BoolValues"];
+                    for ( auto it{ boolValues.begin() }; it != boolValues.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< bool >();
+                        smc.m_pMaterials[0]->SetBoolValue( semantic, value );
+                    }
+
+                    auto float2Values = material["Float2Values"];
+                    for ( auto it{ float2Values.begin() }; it != float2Values.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
+                        smc.m_pMaterials[0]->SetFloat2Value( semantic, value );
+                    }
+
+                    auto float3Values = material["Float3Values"];
+                    for ( auto it{ float3Values.begin() }; it != float3Values.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
+                        smc.m_pMaterials[0]->SetFloat3Value( semantic, value );
+                    }
+
+                    auto texture2DValues = material["Texture2DValues"];
+                    for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+                    {
+                        std::string semantic = ( *it ).first.as< std::string >();
+                        auto path = ( *it ).second.as< std::string >();
+                        if ( !path.empty() )
+                            smc.m_pMaterials[0]->SetTexture2D( semantic, Texture2D::Create( path ) );
                     }
                 }
 

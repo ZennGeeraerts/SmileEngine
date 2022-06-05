@@ -1,27 +1,18 @@
 #pragma once
 
 #include "smile_engine/renderer/shader/shader.h"
+#include "smile_engine/renderer/shader/shader_reflection.h"
 #include "smile_engine/renderer/resource/texture.h"
 
 namespace smile
 {
     class Material final
     {
-      public:
-        Material( bool bSkinned = false );
-        virtual ~Material() = default;
+     public:
+        Material( const Ref< Shader > &pShader );
+        ~Material();
 
-        void SetAlbedo( const DirectX::XMFLOAT3 &albedo );
-        void SetAlbedo( const Ref< Texture2D > &pAlbedoMap );
-
-        void SetMetalness( float metalness );
-        void SetMetalness( const Ref< Texture2D > &pMetalnessMap );
-
-        void SetRoughness( float roughness );
-        void SetRoughness( const Ref< Texture2D > &pRoughnessMap );
-
-        void SetNormalMap( const Ref< Texture2D > &pNormalMap );
-        void SetAOMap( const Ref< Texture2D > &pAOMap );
+        void SetShader( const Ref< Shader > &pShader );
 
         const BufferLayout &GetBufferLayout() const
         {
@@ -32,85 +23,56 @@ namespace smile
             return m_pShader;
         }
 
-        void SetUseAlbedoMap( bool bUse );
-        void SetUseMetalnessMap( bool bUse );
-        void SetUseRoughnessMap( bool bUse );
-        void SetUseNormalMap( bool bUse );
-        void SetUseAOMap( bool bUse );
+        void SetFloatValue( const std::string &semantic, float value );
+        void SetIntValue( const std::string &semantic, int value );
+        void SetBoolValue( const std::string &semantic, bool value );
+        void SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
+        void SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
+        void SetMatrix4Value( const std::string &semantic, const DirectX::XMFLOAT4X4 &value );
+        void SetMatrix4ArrayValue( const std::string &semantic, const std::vector< DirectX::XMFLOAT4X4 > &value );
+        void SetTexture2D( const std::string &semantic, const Ref< Texture2D > &value );
 
-        const DirectX::XMFLOAT3 &GetAlbedoColor() const
-        {
-            return m_Albedo;
-        }
-        float GetMetalness() const
-        {
-            return m_Metalness;
-        }
-        float GetRoughness() const
-        {
-            return m_Roughness;
-        }
+        float GetFloatValue( const std::string &semantic ) const;
+        int GetIntValue( const std::string &semantic ) const;
+        bool GetBoolValue( const std::string &semantic ) const;
+        const DirectX::XMFLOAT2 &GetFloat2Value( const std::string &semantic ) const;
+        const DirectX::XMFLOAT3 &GetFloat3Value( const std::string &semantic ) const;
+        const DirectX::XMFLOAT4X4 &GetMatrix4Value( const std::string &semantic ) const;
+        const std::vector< DirectX::XMFLOAT4X4 > &GetMatrix4ArrayValue( const std::string &semantic ) const;
 
-        bool GetUseAlbedoMap() const
+        const std::unordered_map< std::string, float > &GetFloatValues() const
         {
-            return m_bUseAlbedoMap;
+            return m_FloatValues;
         }
-        bool GetUseMetalnessMap() const
+        const std::unordered_map< std::string, int > &GetIntValues() const
         {
-            return m_bUseMetalnessMap;
+            return m_IntValues;
         }
-        bool GetUseRoughnessMap() const
+        const std::unordered_map< std::string, bool > &GetBoolValues() const
         {
-            return m_bUseRoughnessMap;
+            return m_BoolValues;
         }
-        bool GetUseNormalMap() const
+        const std::unordered_map< std::string, DirectX::XMFLOAT2 > &GetFloat2Values() const
         {
-            return m_bUseNormalMap;
+            return m_Float2Values;
         }
-        bool GetUseAOMap() const
+        const std::unordered_map< std::string, DirectX::XMFLOAT3 > &GetFloat3Values() const
         {
-            return m_bUseAOMap;
+            return m_Float3Values;
         }
-
-        const Ref< Texture2D > &GetAlbedoMap() const
+        const std::unordered_map< std::string, Ref< Texture2D > > &GetTexture2DValues() const
         {
-            return m_pAlbedoMap;
-        }
-        const Ref< Texture2D > &GetMetalnessMap() const
-        {
-            return m_pMetalnessMap;
-        }
-        const Ref< Texture2D > &GetRoughnessMap() const
-        {
-            return m_pRoughnessMap;
-        }
-        const Ref< Texture2D > &GetNormalMap() const
-        {
-            return m_pNormalMap;
-        }
-        const Ref< Texture2D > &GetAOMap() const
-        {
-            return m_pAOMap;
+            return m_Texture2DValues;
         }
 
-      private:
-        DirectX::XMFLOAT3 m_Albedo = { 0.f, 0.f, 0.f };
-        float m_Metalness = 0.0f;
-        float m_Roughness = 0.5f;
+     private:
+        std::unordered_map< std::string, float > m_FloatValues{};
+        std::unordered_map< std::string, int > m_IntValues{};
+        std::unordered_map< std::string, bool > m_BoolValues{};
+        std::unordered_map< std::string, DirectX::XMFLOAT2 > m_Float2Values{};
+        std::unordered_map< std::string, DirectX::XMFLOAT3 > m_Float3Values{};
+        std::unordered_map< std::string, Ref< Texture2D > > m_Texture2DValues{};
 
-        Ref< Texture2D > m_pAlbedoMap = nullptr;
-        Ref< Texture2D > m_pMetalnessMap = nullptr;
-        Ref< Texture2D > m_pRoughnessMap = nullptr;
-        Ref< Texture2D > m_pNormalMap = nullptr;
-        Ref< Texture2D > m_pAOMap = nullptr;
-
-        bool m_bUseAlbedoMap = false;
-        bool m_bUseMetalnessMap = false;
-        bool m_bUseRoughnessMap = false;
-        bool m_bUseNormalMap = false;
-        bool m_bUseAOMap = false;
-
-        BufferLayout m_BufferLayout;
         Ref< Shader > m_pShader = nullptr;
     };
 }

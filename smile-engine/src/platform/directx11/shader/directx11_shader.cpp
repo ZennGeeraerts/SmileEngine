@@ -8,6 +8,64 @@
 
 namespace smile
 {
+    static DXGI_FORMAT ShaderDataTypeToDirectXBaseType( ShaderDataType type )
+    {
+        switch ( type )
+        {
+            case ShaderDataType::Float:
+                return DXGI_FORMAT_R32_FLOAT;
+            case ShaderDataType::Float2:
+                return DXGI_FORMAT_R32G32_FLOAT;
+            case ShaderDataType::Float3:
+                return DXGI_FORMAT_R32G32B32_FLOAT;
+            case ShaderDataType::Float4:
+                return DXGI_FORMAT_R32G32B32A32_FLOAT;
+            case ShaderDataType::Mat3:
+                return DXGI_FORMAT_UNKNOWN;
+            case ShaderDataType::Mat4:
+                return DXGI_FORMAT_UNKNOWN;
+            case ShaderDataType::Int:
+                return DXGI_FORMAT_R32_SINT;
+            case ShaderDataType::Int2:
+                return DXGI_FORMAT_R32G32_SINT;
+            case ShaderDataType::Int3:
+                return DXGI_FORMAT_R32G32B32_SINT;
+            case ShaderDataType::Int4:
+                return DXGI_FORMAT_R32G32B32A32_SINT;
+            case ShaderDataType::Bool:
+                return DXGI_FORMAT_UNKNOWN;
+            default:
+                SM_ASSERT( false, "DirectX11Shader::ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType" );
+                return DXGI_FORMAT_UNKNOWN;
+        }
+    }
+
+    static ShaderDataType DirectXBaseTypeToShaderDataType( DXGI_FORMAT type )
+    {
+        switch ( type )
+        {
+            case DXGI_FORMAT_R32_FLOAT:
+                return ShaderDataType::Float;
+            case DXGI_FORMAT_R32G32_FLOAT:
+                return ShaderDataType::Float2;
+            case DXGI_FORMAT_R32G32B32_FLOAT:
+                return ShaderDataType::Float3;
+            case DXGI_FORMAT_R32G32B32A32_FLOAT:
+                return ShaderDataType::Float4;
+            case DXGI_FORMAT_R32_SINT:
+                return ShaderDataType::Int;
+            case DXGI_FORMAT_R32G32_SINT:
+                return ShaderDataType::Int2;
+            case DXGI_FORMAT_R32G32B32_SINT:
+                return ShaderDataType::Int3;
+            case DXGI_FORMAT_R32G32B32A32_SINT:
+                return ShaderDataType::Int4;
+            default:
+                SM_ASSERT( false, "DirectX11Shader::DirectXBaseTypeToShaderDataType > Unknown DXGI Type" );
+                return ShaderDataType::None;
+        }
+    }
+
     DirectX11Shader::DirectX11Shader( const std::string &assetFile,
         const BufferLayout &layout,
         const std::string &techniqueName )
@@ -62,6 +120,7 @@ namespace smile
         {
             SAFE_RELEASE( effectVar.second );
         }
+
         m_EffectVariableMap.clear();
 
         SAFE_RELEASE( m_pInputLayout );
@@ -94,7 +153,16 @@ namespace smile
         auto pMatArrayVariable = GetEffectVariable( sementicName )->AsMatrix();
         if ( pMatArrayVariable->IsValid() )
         {
-            pMatArrayVariable->SetMatrixArray( &matArray[0]._11, 0, static_cast< uint32_t >( matArray.size() ) );
+            pMatArrayVariable->SetMatrixArray( &matArray[0]._11, 0, static_cast< Uint32 >( matArray.size() ) );
+        }
+    }
+
+    void DirectX11Shader::UploadFloat2(const std::string& semanticName, const DirectX::XMFLOAT2& value)
+    {
+        auto pVectorVariable = GetEffectVariable( semanticName )->AsVector();
+        if ( pVectorVariable->IsValid() )
+        {
+            pVectorVariable->SetFloatVector( &value.x );
         }
     }
 
@@ -202,7 +270,7 @@ namespace smile
                 0 } );
         }
 
-        uint32_t count{ static_cast< uint32_t >( inputDescs.size() ) };
+        Uint32 count{ static_cast< Uint32 >( inputDescs.size() ) };
 
         D3DX11_PASS_DESC passDesc{};
         m_pTechnique->GetPassByIndex( 0 )->GetDesc( &passDesc );
@@ -297,64 +365,6 @@ namespace smile
         if ( FAILED( result ) )
             SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout: %ls",
                 GetDirectX11ErrorMessage( result ) );
-    }
-
-    DXGI_FORMAT DirectX11Shader::ShaderDataTypeToDirectXBaseType( ShaderDataType type )
-    {
-        switch ( type )
-        {
-            case ShaderDataType::Float:
-                return DXGI_FORMAT_R32_FLOAT;
-            case ShaderDataType::Float2:
-                return DXGI_FORMAT_R32G32_FLOAT;
-            case ShaderDataType::Float3:
-                return DXGI_FORMAT_R32G32B32_FLOAT;
-            case ShaderDataType::Float4:
-                return DXGI_FORMAT_R32G32B32A32_FLOAT;
-            case ShaderDataType::Mat3:
-                return DXGI_FORMAT_UNKNOWN;
-            case ShaderDataType::Mat4:
-                return DXGI_FORMAT_UNKNOWN;
-            case ShaderDataType::Int:
-                return DXGI_FORMAT_R32_SINT;
-            case ShaderDataType::Int2:
-                return DXGI_FORMAT_R32G32_SINT;
-            case ShaderDataType::Int3:
-                return DXGI_FORMAT_R32G32B32_SINT;
-            case ShaderDataType::Int4:
-                return DXGI_FORMAT_R32G32B32A32_SINT;
-            case ShaderDataType::Bool:
-                return DXGI_FORMAT_UNKNOWN;
-            default:
-                SM_ASSERT( false, "DirectX11Shader::ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType" );
-                return DXGI_FORMAT_UNKNOWN;
-        }
-    }
-
-    ShaderDataType DirectX11Shader::DirectXBaseTypeToShaderDataType( DXGI_FORMAT type )
-    {
-        switch ( type )
-        {
-            case DXGI_FORMAT_R32_FLOAT:
-                return ShaderDataType::Float;
-            case DXGI_FORMAT_R32G32_FLOAT:
-                return ShaderDataType::Float2;
-            case DXGI_FORMAT_R32G32B32_FLOAT:
-                return ShaderDataType::Float3;
-            case DXGI_FORMAT_R32G32B32A32_FLOAT:
-                return ShaderDataType::Float4;
-            case DXGI_FORMAT_R32_SINT:
-                return ShaderDataType::Int;
-            case DXGI_FORMAT_R32G32_SINT:
-                return ShaderDataType::Int2;
-            case DXGI_FORMAT_R32G32B32_SINT:
-                return ShaderDataType::Int3;
-            case DXGI_FORMAT_R32G32B32A32_SINT:
-                return ShaderDataType::Int4;
-            default:
-                SM_ASSERT( false, "DirectX11Shader::DirectXBaseTypeToShaderDataType > Unknown DXGI Type" );
-                return ShaderDataType::None;
-        }
     }
 
     ID3DX11EffectVariable *DirectX11Shader::GetEffectVariable( const std::string &sementicName )

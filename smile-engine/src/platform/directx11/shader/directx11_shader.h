@@ -35,6 +35,7 @@ namespace smile
         virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) override;
         virtual void UploadMat4Array( const std::string &sementicName,
             const std::vector< DirectX::XMFLOAT4X4 > &matArray ) override;
+        virtual void UploadFloat2( const std::string &semanticName, const DirectX::XMFLOAT2 &value ) override;
         virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) override;
         virtual void UploadInt( const std::string &sementicName, int value ) override;
         virtual void UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D ) override;
@@ -57,13 +58,13 @@ namespace smile
 
         void BuildInputLayout( const BufferLayout &layout );
         void BuildInputLayout();
-        DXGI_FORMAT ShaderDataTypeToDirectXBaseType( ShaderDataType type );
-        ShaderDataType DirectXBaseTypeToShaderDataType( DXGI_FORMAT type );
+       
         ID3DX11EffectVariable *GetEffectVariable( const std::string &sementicName );
 
       private:
         std::string m_Name;
         std::unordered_map< std::string, ID3DX11EffectVariable * > m_EffectVariableMap;
+
         DirectX11Context *m_pDirectX11Context;
 
         ID3DX11Effect *m_pEffect;

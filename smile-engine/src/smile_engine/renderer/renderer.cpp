@@ -21,6 +21,7 @@ namespace smile
 
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
         s_ShaderLibrary.Load( "assets/shaders/PosColNorm.fx", bufferLayout );
+        s_ShaderLibrary.Load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
         {
             FramebufferData fbData{};
@@ -159,7 +160,7 @@ namespace smile
 
         DrawCommand drawCommand{ boxColliderComponent.m_pWireframeMesh->GetVertexBuffer(),
             boxColliderComponent.m_pWireframeMesh->GetIndexBuffer(),
-            s_ShaderLibrary.Get( "PosColNorm" ),
+            s_ShaderLibrary.Get( "PosCol" ),
             finalTransform };
         s_pRenderCollector->m_WireframeDrawList.emplace_back( drawCommand );
     }

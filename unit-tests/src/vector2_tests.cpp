@@ -1,5 +1,4 @@
 #include <smile_engine.h>
-#define CATCH_CONFIG_MAIN
 #include <thirdparty/catch.hpp>
 
 using namespace smile;
@@ -126,7 +125,7 @@ TEST_CASE( "Vector2" )
         math::Vector2 vector1{ 18.0f, 20.0f };
         math::Vector2 vector2{ 18.0f, 20.0f };
         math::Vector2 vector3{ 5.0f, -2.0f };
-        math::Vector2 vector4{ 18.0f, 5.0F };
+        math::Vector2 vector4{ 18.0f, 5.0f };
         math::Vector2 vector5{ 3.0f, 20.0f };
 
         REQUIRE( vector1 == vector2 );
@@ -173,6 +172,17 @@ TEST_CASE( "Vector2" )
 
         result = math::Distance( vector2, vector1 );
         REQUIRE( result == 1.0f );
+    }
+
+    SECTION( "math::LengthSqr" )
+    {
+        math::Vector2 vector{ 5.0f, 2.0f };
+
+        CHECK( math::LengthSqr( vector ) == Approx{ 29.f } );
+
+        math::Vector2 vector2{ 1.0f, 1.0f };
+
+        CHECK( math::LengthSqr( vector2 ) == Approx( 2.f ) );
     }
 
     SECTION( "Length" )

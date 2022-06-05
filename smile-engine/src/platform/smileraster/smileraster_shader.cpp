@@ -40,6 +40,10 @@ namespace smile
     {
     }
 
+    void SmileRasterShader::UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value )
+    {
+    }
+
     void SmileRasterShader::UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value )
     {
     }

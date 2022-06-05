@@ -66,12 +66,12 @@ Entities:
     SkinnedMeshComponent:
       Mesh: assets\meshes\tuktuk.obj
       Material:
-        AlbedoMap: ""
+        AlbedoMap: assets\textures\tuktuk.png
         AlbedoColor: [0, 0, 0]
         MetalnessMap: ""
-        Metalness: 0
+        Metalness: 1
         RoughnessMap: ""
-        Roughness: 0.5
+        Roughness: 0.456999987
         NormalMap: ""
         AOMap: ""
     RigidbodyComponent:
@@ -92,7 +92,7 @@ Entities:
       bLockRotationZ: false
     BoxColliderComponent:
       Size: [15, 15, 15]
-      Offset: [0, 0.860000014, 0]
+      Offset: [0, 0, 0]
       bTrigger: false
       bShowColliderBounds: true
   - Entity: 4257919760232638229
@@ -102,6 +102,17 @@ Entities:
       Translation: [-2.11483455, 5.28429651, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
+    SkinnedMeshComponent:
+      Mesh: assets\meshes\drakefire_pistol_low.obj
+      Material:
+        AlbedoMap: assets\textures\base_albedo.jpg
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: assets\textures\base_metallic.jpg
+        Metalness: 0
+        RoughnessMap: assets\textures\base_roughness.jpg
+        Roughness: 0.5
+        NormalMap: assets\textures\base_normal.jpg
+        AOMap: assets\textures\base_AO.jpg
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0
@@ -128,7 +139,7 @@ Entities:
       Tag: Camera
     TransformComponent:
       Translation: [-7.53225613, 2.42608007e-06, 5.02201986]
-      Rotation: [3.14153385, -1.36246204, -3.14153624]
+      Rotation: [3.14153385, -0.992112815, -3.14153624]
       Scale: [1, 0.999988139, 1]
     CameraComponent:
       Camera:

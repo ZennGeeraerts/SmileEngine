@@ -6,7 +6,7 @@ namespace smile
 {
     class SceneSerializer final
     {
-      public:
+     public:
         SceneSerializer( const Ref< Scene > &pScene );
 
         void Serialize( const std::string &filePath );
@@ -17,7 +17,7 @@ namespace smile
         // Deserializes the scene from a binary format
         bool DeserializeRuntime( const std::string &filePath );
 
-      private:
+     private:
         Ref< Scene > m_pScene = nullptr;
     };
 }

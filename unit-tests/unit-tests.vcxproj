@@ -159,7 +159,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\vector2_tests.cpp" />
+    <ClCompile Include="src\vector3_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="thirdparty\catch.hpp" />

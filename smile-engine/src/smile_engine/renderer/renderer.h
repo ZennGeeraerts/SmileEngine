@@ -3,6 +3,7 @@
 #include "render_command.h"
 #include "shader/buffer.h"
 #include "shader/shader.h"
+#include "shader/shader_library.h"
 #include "resource/frame_buffer.h"
 #include "resource/rasterizer_state.h"
 

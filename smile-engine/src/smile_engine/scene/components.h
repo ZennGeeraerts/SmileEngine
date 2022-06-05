@@ -79,7 +79,7 @@ namespace smile
         DirectX::XMFLOAT3 m_Rotation{ 0.f, 0.f, 0.f };
         DirectX::XMFLOAT3 m_Scale{ 1.f, 1.f, 1.f };
 
-      private:
+     private:
         void RotateVector( DirectX::XMFLOAT3 &v )
         {
             DirectX::XMVECTOR rotationVec =
@@ -114,7 +114,8 @@ namespace smile
     {
         StaticMeshComponent()
         {
-            m_pMaterials.push_back( CreateRef< Material >() );
+            auto pShader = Shader::Create( "assets/shaders/PBR.fx" );
+            m_pMaterials.push_back( CreateRef< Material >( pShader ) );
         }
 
         StaticMeshComponent( const StaticMeshComponent & ) = default;
@@ -140,7 +141,8 @@ namespace smile
     {
         SkinnedMeshComponent()
         {
-            m_pMaterials.push_back( CreateRef< Material >( true ) );
+            auto pShader = Shader::Create( "assets/shaders/PBR_Skinned.fx" );
+            m_pMaterials.push_back( CreateRef< Material >( pShader ) );
         }
 
         SkinnedMeshComponent( const SkinnedMeshComponent & ) = default;

@@ -155,9 +155,10 @@ void ExampleLayer::OnAttach()
     cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
     cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
-    auto pMaterial = smile::CreateRef< smile::Material >();
+    auto pShader = smile::Shader::Create( "assets/shaders/PBR.fx" );
+    auto pMaterial = smile::CreateRef< smile::Material >( pShader );
     smile::Ref< smile::Texture2D > pAlbedo = smile::Texture2D::Create( "Resources/Textures/uv_grid.png" );
-    pMaterial->SetAlbedo( pAlbedo );
+    pMaterial->SetTexture2D( "ALBEDO", pAlbedo );
 
     m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
     auto &meshComponent =

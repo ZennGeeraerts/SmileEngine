@@ -565,96 +565,79 @@ namespace smile
 
     void SceneHierarchyPanel::DrawMaterial( const Ref< Material > &pMaterial )
     {
-        // Albedo
-        ImGui::Button( "Albedo Map", { 100.f, 0.0f } );
-        if ( ImGui::BeginDragDropTarget() )
-        {
-            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( payload )
-            {
-                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
-                std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetUseAlbedoMap( true );
-                pMaterial->SetAlbedo( Texture2D::Create( texturePath.string() ) );
-            }
+        const Ref< Shader > &pShader = pMaterial->GetShader();
+        ImGui::Text( "Material" );
 
-            ImGui::EndDragDropTarget();
-        }
-
-        auto albedoColor = pMaterial->GetAlbedoColor();
-        ImGui::ColorPicker3( "Albedo Color", reinterpret_cast< float * >( &albedoColor ) );
-        pMaterial->SetAlbedo( albedoColor );
-
-        // Metalness
-        ImGui::Button( "Metalness Map", { 100.f, 0.0f } );
-        if ( ImGui::BeginDragDropTarget() )
-        {
-            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( payload )
-            {
-                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
-                std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetUseMetalnessMap( true );
-                pMaterial->SetMetalness( Texture2D::Create( texturePath.string() ) );
-            }
-
-            ImGui::EndDragDropTarget();
-        }
-
-        auto metalnessValue = pMaterial->GetMetalness();
-        ImGui::SliderFloat( "Metalness", &metalnessValue, 0, 1 );
-        pMaterial->SetMetalness( metalnessValue );
-
-        // Roughness
-        ImGui::Button( "Roughness Map", { 100.f, 0.0f } );
-        if ( ImGui::BeginDragDropTarget() )
-        {
-            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( payload )
-            {
-                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
-                std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetUseRoughnessMap( true );
-                pMaterial->SetRoughness( Texture2D::Create( texturePath.string() ) );
-            }
-
-            ImGui::EndDragDropTarget();
-        }
-
-        auto roughnessValue = pMaterial->GetRoughness();
-        ImGui::SliderFloat( "Roughness", &roughnessValue, 0, 1 );
-        pMaterial->SetRoughness( roughnessValue );
-
-        // Normal
-        ImGui::Button( "Normal Map", { 100.f, 0.0f } );
-        if ( ImGui::BeginDragDropTarget() )
-        {
-            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( payload )
-            {
-                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
-                std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetUseNormalMap( true );
-                pMaterial->SetNormalMap( Texture2D::Create( texturePath.string() ) );
-            }
-
-            ImGui::EndDragDropTarget();
-        }
-
-        // AO
-        ImGui::Button( "Ambient Occlusion Map", { 100.f, 0.0f } );
+        ImGui::Button( pShader->GetName().c_str(), { 100.f, 0.0f } );
         if ( ImGui::BeginDragDropTarget() )
         {
             const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
             if ( pPayload )
             {
-                const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetUseAOMap( true );
-                pMaterial->SetAOMap( Texture2D::Create( texturePath.string() ) );
+                const wchar_t *pPath = static_cast< const wchar_t * >( pPayload->Data );
+                std::filesystem::path shaderPath = std::filesystem::path{ g_AssetPath } / pPath;
+                pMaterial->SetShader( Shader::Create( shaderPath.string() ) );
             }
 
             ImGui::EndDragDropTarget();
+        }
+
+        const auto &floatValues{ pMaterial->GetFloatValues() };
+        for ( const auto &pair : floatValues )
+        {
+            float value = pMaterial->GetFloatValue( pair.first );
+            ImGui::DragFloat( pair.first.c_str(), &value, 0.03f );
+            pMaterial->SetFloatValue( pair.first, value );
+        }
+
+        const auto &intValues{ pMaterial->GetIntValues() };
+        for ( const auto &pair : intValues )
+        {
+            int value = pMaterial->GetIntValue( pair.first );
+            ImGui::DragInt( pair.first.c_str(), &value, 0.03f );
+            pMaterial->SetIntValue( pair.first, value );
+        }
+
+        const auto &boolValues{ pMaterial->GetBoolValues() };
+        for ( const auto &pair : boolValues )
+        {
+            bool value = pMaterial->GetBoolValue( pair.first );
+            ImGui::Checkbox( pair.first.c_str(), &value );
+            pMaterial->SetBoolValue( pair.first, value );
+        }
+
+        const auto &float2Values{ pMaterial->GetFloat2Values() };
+        for ( const auto &pair : float2Values )
+        {
+            DirectX::XMFLOAT2 value = pMaterial->GetFloat2Value( pair.first );
+            ImGui::DragFloat2( pair.first.c_str(), &value.x, 0.03f );
+            pMaterial->SetFloat2Value( pair.first, value );
+        }
+
+        const auto &float3Values{ pMaterial->GetFloat3Values() };
+        for ( const auto &pair : float3Values )
+        {
+            DirectX::XMFLOAT3 value = pMaterial->GetFloat3Value( pair.first );
+            ImGui::DragFloat3( pair.first.c_str(), &value.x, 0.03f );
+            pMaterial->SetFloat3Value( pair.first, value );
+        }
+
+        const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
+        for ( const auto &pair : texture2DValues )
+        {
+            ImGui::Button( pair.first.c_str(), { 100.f, 0.0f } );
+            if ( ImGui::BeginDragDropTarget() )
+            {
+                const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+                if ( pPayload )
+                {
+                    const wchar_t *pPath = static_cast< const wchar_t * >( pPayload->Data );
+                    std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / pPath;
+                    pMaterial->SetTexture2D( pair.first, Texture2D::Create( texturePath.string() ) );
+                }
+
+                ImGui::EndDragDropTarget();
+            }
         }
     }
 }

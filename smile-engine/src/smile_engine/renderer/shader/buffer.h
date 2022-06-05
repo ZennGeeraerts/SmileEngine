@@ -16,7 +16,13 @@ namespace smile
         Int2,
         Int3,
         Int4,
-        Bool
+        Bool,
+        Mat4Array,
+        Texture,
+        Texture2D,
+        Texture3D,
+        TextureCube,
+        String
     };
 
     static Uint32 ShaderDataTypeSize( ShaderDataType type )
@@ -55,7 +61,11 @@ namespace smile
     {
         BufferElement() = default;
         BufferElement( ShaderDataType type, const std::string &name, bool bNorm = false )
-            : m_Name{ name }, m_DataType{ type }, m_Size{ ShaderDataTypeSize( type ) }, m_Offset{ 0 }, m_bNormalized{ bNorm }
+            : m_Name{ name },
+              m_DataType{ type },
+              m_Size{ ShaderDataTypeSize( type ) },
+              m_Offset{ 0 },
+              m_bNormalized{ bNorm }
         {
         }
 
@@ -100,7 +110,7 @@ namespace smile
 
     class BufferLayout final
     {
-      public:
+     public:
         BufferLayout()
         {
         }
@@ -135,13 +145,13 @@ namespace smile
             return m_Elements.cend();
         }
 
-        void AddElement(const BufferElement& element)
+        void AddElement( const BufferElement &element )
         {
             m_Elements.push_back( element );
             CalculateOffsetAndStride();
         }
 
-      private:
+     private:
         void CalculateOffsetAndStride()
         {
             uint32_t offset{ 0 };
@@ -154,7 +164,7 @@ namespace smile
             }
         }
 
-      private:
+     private:
         std::vector< BufferElement > m_Elements;
         Uint32 m_Stride = 0;
     };
