@@ -4,10 +4,10 @@
 
 #include "window.h"
 #include "smile_engine/core/layer_stack.h"
-#include "smile_engine/events/event.h"
-#include "smile_engine/events/application_event.h"
+#include "smile_engine/core/events/event.h"
+#include "smile_engine/core/events/application_event.h"
 
-#include "smile_engine/ui/imgui/imgui_layer.h"
+#include "smile_engine/imgui/imgui_layer.h"
 
 namespace smile
 {
@@ -17,38 +17,38 @@ namespace smile
         Application( const std::string &name = "Smile Game" );
         virtual ~Application();
 
-        void Run();
-        void ShutDown();
+        void run();
+        void shutDown();
 
-        void OnEvent( Event &e );
+        void onEvent( Event &e );
 
-        void PushLayer( Layer *pLayer );
-        void PushOverlay( Layer *pOverlay );
+        void pushLayer( Layer *layer );
+        void pushOverlay( Layer *overlay );
 
-        inline static Application &GetInstance()
+        inline static Application &getInstance()
         {
-            return *s_pInstance;
+            return *instance;
         }
-        inline Window &GetWindow() const
+        inline Window &getWindow() const
         {
-            return *m_pWindow;
+            return *window;
         }
 
       private:
-        bool OnWindowClose( WindowCloseEvent &e );
-        bool OnWindowResize( WindowResizeEvent &e );
+        bool onWindowClose( WindowCloseEvent &e );
+        bool onWindowResize( WindowResizeEvent &e );
 
       private:
-        std::unique_ptr< Window > m_pWindow;
-        ImGuiLayer *m_pImGuiLayer;
-        bool m_bRunning = true;
-        bool m_bMinimized = false;
-        LayerStack m_LayerStack;
+        std::unique_ptr< Window > window;
+        imgui::ImGuiLayer *imGuiLayer;
+        bool isRunning = true;
+        bool isMinimized = false;
+        LayerStack layerStack;
 
       private:
-        static Application *s_pInstance;
+        static Application *instance;
     };
 
     // To be defined in client
-    Application *CreateGame();
+    Application *createGame();
 }

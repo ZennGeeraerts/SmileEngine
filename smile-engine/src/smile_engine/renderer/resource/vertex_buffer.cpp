@@ -8,11 +8,11 @@
 #    include "platform/smileraster/smileraster_buffer.h"
 #endif
 
-namespace smile
+namespace smile::renderer
 {
-    VertexBuffer *VertexBuffer::Create( const VertexBufferDescriptor &vertexBufferDesc )
+    VertexBuffer *VertexBuffer::create( const VertexBufferDescriptor &vertexBufferDesc )
     {
-        switch ( Renderer::GetAPI() )
+        switch ( Renderer::getAPI() )
         {
             case RendererAPI::API::None:
                 SM_ASSERT( false, "VertexBuffer::Create > return nullptr, no renderer api selected" );

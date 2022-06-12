@@ -4,7 +4,7 @@
 
 #    include <Windows.h>
 
-extern smile::Application *smile::CreateGame();
+extern smile::Application *smile::createGame();
 
 #    pragma warning( push )
 #    pragma warning( disable : 6387 )
@@ -18,8 +18,8 @@ int main( int argc, char **argv )
 #    pragma warning( disable : 28251 )
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow )
 {
-    smile::Application *pGame = smile::CreateGame();
-    pGame->Run();
+    smile::Application *pGame = smile::createGame();
+    pGame->run();
     delete pGame;
     return 0;
 }

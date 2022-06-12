@@ -4,65 +4,65 @@
 #include "smileraster_context.h"
 #include "smile_engine/core/application.h"
 
-namespace smile
+namespace smile::renderer
 {
-    SmileRasterShader::SmileRasterShader( const std::string &assetFile, const BufferLayout &layout )
-        : m_Layout{ layout }
+    SmileRasterShader::SmileRasterShader( const std::string &asset_file, const BufferLayout &layout )
+        : bufferLayout{ layout }
     {
-        m_pSmileRasterContext =
-            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
+        smileRasterContext =
+            static_cast< SmileRasterContext * >( Application::getInstance().getWindow().getGraphicsContext() );
         SM_ASSERT(
-            m_pSmileRasterContext, "SmileRasterShader > Rendering context is not a SmileRaster Rendering Context" );
+            smileRasterContext, "SmileRasterShader > Rendering context is not a SmileRaster Rendering Context" );
 
         // Find name from asset path
-        auto lastSlash = assetFile.find_last_of( "/\\" );
-        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
-        auto lastDot = assetFile.rfind( '.' );
-        auto count = lastDot == std::string::npos ? assetFile.size() - lastSlash : lastDot - lastSlash;
-        m_Name = assetFile.substr( lastSlash, count );
+        auto last_slash = asset_file.find_last_of( "/\\" );
+        last_slash = last_slash == std::string::npos ? 0 : last_slash + 1;
+        auto last_dot = asset_file.rfind( '.' );
+        auto count = last_dot == std::string::npos ? asset_file.size() - last_slash : last_dot - last_slash;
+        name = asset_file.substr( last_slash, count );
     }
 
-    void SmileRasterShader::Bind() const
+    void SmileRasterShader::bind() const
     {
     }
 
-    void SmileRasterShader::Unbind() const
+    void SmileRasterShader::unbind() const
     {
     }
 
-    void SmileRasterShader::UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix )
+    void SmileRasterShader::uploadMat4( const std::string &sementic_name, const DirectX::XMFLOAT4X4 &matrix )
     {
-        m_pSmileRasterContext->GetDeviceContext()->UploadMat4( sementicName, matrix );
+        smileRasterContext->getDeviceContext()->UploadMat4( sementic_name, matrix );
     }
 
-    void SmileRasterShader::UploadMat4Array( const std::string &sementicName,
-        const std::vector< DirectX::XMFLOAT4X4 > &matArray )
-    {
-    }
-
-    void SmileRasterShader::UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value )
+    void SmileRasterShader::uploadMat4Array( const std::string &sementic_name,
+        const std::vector< DirectX::XMFLOAT4X4 > &mat_array )
     {
     }
 
-    void SmileRasterShader::UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value )
+    void SmileRasterShader::uploadFloat2( const std::string &sementic_name, const DirectX::XMFLOAT2 &value )
     {
     }
 
-    void SmileRasterShader::UploadInt( const std::string &sementicName, int value )
+    void SmileRasterShader::uploadFloat3( const std::string &sementic_name, const DirectX::XMFLOAT3 &value )
     {
     }
 
-    void SmileRasterShader::UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D )
-    {
-        Raster::TextureID textureID = reinterpret_cast< uint32_t >( pTexture2D->GetData() );
-        m_pSmileRasterContext->GetDeviceContext()->UploadTexture2D( sementicName, textureID );
-    }
-
-    void SmileRasterShader::UploadBool( const std::string &sementicName, bool value )
+    void SmileRasterShader::uploadInt( const std::string &sementic_name, int value )
     {
     }
 
-    void SmileRasterShader::UploadFloat( const std::string &sementicName, float value )
+    void SmileRasterShader::uploadTexture2D( const std::string &sementic_name, const Ref< Texture2D > &texture_2d )
+    {
+        Raster::TextureID textureID = reinterpret_cast< uint32_t >( texture_2d->getData() );
+        smileRasterContext->getDeviceContext()->UploadTexture2D( sementic_name, textureID );
+    }
+
+    void SmileRasterShader::uploadBool( const std::string &sementic_name, bool value )
+    {
+    }
+
+    void SmileRasterShader::uploadFloat( const std::string &sementic_name, float value )
     {
     }
 }

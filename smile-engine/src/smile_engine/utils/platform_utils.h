@@ -4,6 +4,6 @@
 
 namespace smile::utils
 {
-    std::string OpenFile( const char *pFilter );
-    std::string SaveFile( const char *pFilter );
+    std::string openFile( const char *filter );
+    std::string saveFile( const char *filter );
 }

@@ -19,7 +19,7 @@
 #include "smile_engine/input/mouse_codes.h"
 #include "smile_engine/input/gamepad_codes.h"
 
-#include "smile_engine/ui/imgui/imgui_layer.h"
+#include "smile_engine/imgui/imgui_layer.h"
 
 #include "smile_engine/scene/scene.h"
 #include "smile_engine/scene/entity.h"

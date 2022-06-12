@@ -4,75 +4,71 @@
 #include "smile_engine/renderer/shader/shader_reflection.h"
 #include "smile_engine/renderer/resource/texture.h"
 
-namespace smile
+namespace smile::renderer
 {
     class Material final
     {
-     public:
-        Material( const Ref< Shader > &pShader );
+      public:
+        Material( const Ref< Shader > &shader );
         ~Material();
 
-        void SetShader( const Ref< Shader > &pShader );
+        void setShader( const Ref< Shader > &new_shader );
 
-        const BufferLayout &GetBufferLayout() const
+        const BufferLayout &getBufferLayout() const
         {
-            return m_pShader->GetBufferLayout();
+            return shader->getBufferLayout();
         }
-        const Ref< Shader > &GetShader() const
+        const Ref< Shader > &getShader() const
         {
-            return m_pShader;
-        }
-
-        void SetFloatValue( const std::string &semantic, float value );
-        void SetIntValue( const std::string &semantic, int value );
-        void SetBoolValue( const std::string &semantic, bool value );
-        void SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
-        void SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
-        void SetMatrix4Value( const std::string &semantic, const DirectX::XMFLOAT4X4 &value );
-        void SetMatrix4ArrayValue( const std::string &semantic, const std::vector< DirectX::XMFLOAT4X4 > &value );
-        void SetTexture2D( const std::string &semantic, const Ref< Texture2D > &value );
-
-        float GetFloatValue( const std::string &semantic ) const;
-        int GetIntValue( const std::string &semantic ) const;
-        bool GetBoolValue( const std::string &semantic ) const;
-        const DirectX::XMFLOAT2 &GetFloat2Value( const std::string &semantic ) const;
-        const DirectX::XMFLOAT3 &GetFloat3Value( const std::string &semantic ) const;
-        const DirectX::XMFLOAT4X4 &GetMatrix4Value( const std::string &semantic ) const;
-        const std::vector< DirectX::XMFLOAT4X4 > &GetMatrix4ArrayValue( const std::string &semantic ) const;
-
-        const std::unordered_map< std::string, float > &GetFloatValues() const
-        {
-            return m_FloatValues;
-        }
-        const std::unordered_map< std::string, int > &GetIntValues() const
-        {
-            return m_IntValues;
-        }
-        const std::unordered_map< std::string, bool > &GetBoolValues() const
-        {
-            return m_BoolValues;
-        }
-        const std::unordered_map< std::string, DirectX::XMFLOAT2 > &GetFloat2Values() const
-        {
-            return m_Float2Values;
-        }
-        const std::unordered_map< std::string, DirectX::XMFLOAT3 > &GetFloat3Values() const
-        {
-            return m_Float3Values;
-        }
-        const std::unordered_map< std::string, Ref< Texture2D > > &GetTexture2DValues() const
-        {
-            return m_Texture2DValues;
+            return shader;
         }
 
-     private:
-        std::unordered_map< std::string, float > m_FloatValues{};
-        std::unordered_map< std::string, int > m_IntValues{};
-        std::unordered_map< std::string, bool > m_BoolValues{};
-        std::unordered_map< std::string, DirectX::XMFLOAT2 > m_Float2Values{};
-        std::unordered_map< std::string, DirectX::XMFLOAT3 > m_Float3Values{};
-        std::unordered_map< std::string, Ref< Texture2D > > m_Texture2DValues{};
+        void setFloatValue( const std::string &semantic, float value );
+        void setIntValue( const std::string &semantic, int value );
+        void setBoolValue( const std::string &semantic, bool value );
+        void setFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
+        void setFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
+        void setTexture2D( const std::string &semantic, const Ref< Texture2D > &value );
 
-        Ref< Shader > m_pShader = nullptr;
+        float getFloatValue( const std::string &semantic ) const;
+        int getIntValue( const std::string &semantic ) const;
+        bool getBoolValue( const std::string &semantic ) const;
+        const DirectX::XMFLOAT2 &getFloat2Value( const std::string &semantic ) const;
+        const DirectX::XMFLOAT3 &getFloat3Value( const std::string &semantic ) const;
+
+        const std::unordered_map< std::string, float > &getFloatValues() const
+        {
+            return floatValues;
+        }
+        const std::unordered_map< std::string, int > &getIntValues() const
+        {
+            return intValues;
+        }
+        const std::unordered_map< std::string, bool > &getBoolValues() const
+        {
+            return boolValues;
+        }
+        const std::unordered_map< std::string, DirectX::XMFLOAT2 > &getFloat2Values() const
+        {
+            return float2Values;
+        }
+        const std::unordered_map< std::string, DirectX::XMFLOAT3 > &getFloat3Values() const
+        {
+            return float3Values;
+        }
+        const std::unordered_map< std::string, Ref< Texture2D > > &getTexture2DValues() const
+        {
+            return texture2DValues;
+        }
+
+      private:
+        std::unordered_map< std::string, float > floatValues{};
+        std::unordered_map< std::string, int > intValues{};
+        std::unordered_map< std::string, bool > boolValues{};
+        std::unordered_map< std::string, DirectX::XMFLOAT2 > float2Values{};
+        std::unordered_map< std::string, DirectX::XMFLOAT3 > float3Values{};
+        std::unordered_map< std::string, Ref< Texture2D > > texture2DValues{};
+
+        Ref< Shader > shader = nullptr;
     };
 }

@@ -4,119 +4,119 @@
 
 namespace smile::math
 {
-    constexpr float g_PI = 3.14159265358979323846264338327950288419716939937510f;
-    constexpr float g_PI2 = 3.14159265358979323846264338327950288419716939937510f * 2.0f;
-    constexpr float g_PI_DIV_2 = 3.14159265358979323846264338327950288419716939937510f / 2.0f;
-    constexpr float g_EPSILON = 0.00001f;
+    constexpr float pi = 3.14159265358979323846264338327950288419716939937510f;
+    constexpr float pi2 = 3.14159265358979323846264338327950288419716939937510f * 2.0f;
+    constexpr float piDiv2 = 3.14159265358979323846264338327950288419716939937510f / 2.0f;
+    constexpr float epsilon = 0.00001f;
 
-    inline float SquareRoot( float value )
+    inline float squareRoot( float value )
     {
         return sqrt( value );
     }
 
-    inline float Sinus( float value )
+    inline float sinus( float value )
     {
         return sin( value );
     }
 
-    inline float Cosinus( float value )
+    inline float cosinus( float value )
     {
         return cos( value );
     }
 
-    inline float Tangent( float value )
+    inline float tangent( float value )
     {
         return tan( value );
     }
 
-    inline float ArcTangent( float y, float x )
+    inline float arcTangent( float y, float x )
     {
         return atan2( y, x );
     }
 
     template < typename Type >
-    inline constexpr Type Sign( Type value )
+    inline constexpr Type sign( Type value )
     {
         return value == 0 ? Type{ 0 } : value > 0 ? Type{ 1 } : Type{ -1 };
     }
 
     template < typename Type >
-    inline constexpr Type Square( Type value )
+    inline constexpr Type square( Type value )
     {
         return value * value;
     }
 
-    inline float AbsoluteValue( float value )
+    inline float absoluteValue( float value )
     {
         return fabs( value );
     }
 
-    inline int AbsoluteValue( int value )
+    inline int absoluteValue( int value )
     {
         return ( value >= 0 ) ? value : -value;
     }
 
-    inline int Floor( float value )
+    inline int floor( float value )
     {
         return static_cast< int >( std::floorf( value ) );
     }
 
-    inline int Ceil( float value )
+    inline int ceil( float value )
     {
         return static_cast< int >( std::ceilf( value ) );
     }
 
-    inline float Round( float value )
+    inline float round( float value )
     {
         return std::roundf( value );
     }
 
-    inline constexpr float ToDegrees( float radians )
+    inline constexpr float toDegrees( float radians )
     {
-        return radians * 180.0f / g_PI;
+        return radians * 180.0f / pi;
     }
 
-    inline constexpr float ToRadians( float degrees )
+    inline constexpr float toRadians( float degrees )
     {
-        return degrees * g_PI / 180.0f;
+        return degrees * pi / 180.0f;
     }
 
-    inline bool CompareFloats( float f1, float f2, float precision = g_EPSILON )
+    inline bool compareFloats( float f1, float f2, float precision = epsilon )
     {
-        float deltaF = AbsoluteValue( f1 - f2 );
-        return ( deltaF < g_EPSILON );
+        const float delta_f = absoluteValue( f1 - f2 );
+        return ( delta_f < epsilon );
     }
 
-    inline constexpr bool IsSquareOne( float value, float precision = g_EPSILON )
+    inline constexpr bool isSquareOne( float value, float precision = epsilon )
     {
         return value >= 1.0f - 2.0f * precision + precision * precision &&
                value <= 1.0f + 2.0f * precision + precision * precision;
     }
 
-    inline constexpr bool IsSquareZero( float value, float precision = g_EPSILON )
+    inline constexpr bool isSquareZero( float value, float precision = epsilon )
     {
         return value >= -precision * precision && value <= precision * precision;
     }
 
-    inline constexpr bool IsZero( float value, float precision = g_EPSILON )
+    inline constexpr bool isZero( float value, float precision = epsilon )
     {
         return ( value * value ) < ( precision * precision );
     }
 
-    inline constexpr bool IsOne( float value, float precision = g_EPSILON )
+    inline constexpr bool isOne( float value, float precision = epsilon )
     {
-        return IsZero( value - 1.0f, precision );
+        return isZero( value - 1.0f, precision );
     }
 
-    float GenerateRandom( float min, float max );
-    Int32 GenerateRandomInt( Int32 min, Int32 max );
+    float generateRandom( float min, float max );
+    Int32 generateRandomInt( Int32 min, Int32 max );
 
-    inline float Minimum( float f1, float f2 )
+    inline float minimum( float f1, float f2 )
     {
         return f1 < f2 ? f1 : f2;
     }
 
-    inline float Maximum( float f1, float f2 )
+    inline float maximum( float f1, float f2 )
     {
         return f1 > f2 ? f1 : f2;
     }
@@ -126,13 +126,13 @@ namespace smile::math
     {
         union
         {
-            float M[4][4];
+            float m[4][4];
             struct
             {
-                float M00, M01, M02, M03;
-                float M10, M11, M12, M13;
-                float M20, M21, M22, M23;
-                float M30, M31, M32, M33;
+                float m00, m01, m02, m03;
+                float m10, m11, m12, m13;
+                float m20, m21, m22, m23;
+                float m30, m31, m32, m33;
             };
         };
     };
@@ -141,13 +141,13 @@ namespace smile::math
     {
         union
         {
-            float M[4][3];
+            float m[4][3];
             struct
             {
-                float M00, M01, M02;
-                float M10, M11, M12;
-                float M20, M21, M22;
-                float M30, M31, M32;
+                float m00, m01, m02;
+                float m10, m11, m12;
+                float m20, m21, m22;
+                float m30, m31, m32;
             };
         };
     };
@@ -156,16 +156,16 @@ namespace smile::math
     {
         union
         {
-            float M[4];
+            float m[4];
             struct
             {
-                float M00, M01, M02, M03;
+                float m00, m01, m02, m03;
             };
         };
     };
 
-    DirectX::XMFLOAT3 QuaternionToEuler( const DirectX::XMFLOAT4 &quaternion );
-    bool DecomposeMatrix( const DirectX::XMFLOAT4X4 &transform,
+    DirectX::XMFLOAT3 quaternionToEuler( const DirectX::XMFLOAT4 &quaternion );
+    bool decomposeMatrix( const DirectX::XMFLOAT4X4 &transform,
         DirectX::XMFLOAT3 &translation,
         DirectX::XMFLOAT3 &rotation,
         DirectX::XMFLOAT3 &scale );

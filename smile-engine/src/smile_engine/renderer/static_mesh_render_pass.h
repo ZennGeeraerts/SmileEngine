@@ -2,11 +2,11 @@
 
 #include "render_pass.h"
 
-namespace smile
+namespace smile::renderer
 {
 	class StaticMeshRenderPass final : public RenderPass
     {
      public:
-        void OnRender() override;
+        void onRender() override;
     };
 }

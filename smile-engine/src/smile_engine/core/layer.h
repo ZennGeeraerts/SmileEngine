@@ -1,7 +1,7 @@
 #pragma once
 
 #include "smile_engine/core/core.h"
-#include "smile_engine/events/event.h"
+#include "smile_engine/core/events/event.h"
 
 namespace smile
 {
@@ -11,28 +11,28 @@ namespace smile
         Layer( const std::string &name = "Layer" );
         virtual ~Layer();
 
-        virtual void OnAttach()
+        virtual void onAttach()
         {
         }
-        virtual void OnDetach()
+        virtual void onDetach()
         {
         }
-        virtual void OnUpdate( Timestep deltaTime )
+        virtual void onUpdate( Timestep delta_time )
         {
         }
-        virtual void OnImGuiRender()
+        virtual void onImGuiRender()
         {
         }
-        virtual void OnEvent( Event &event )
+        virtual void onEvent( Event &event )
         {
         }
 
-        inline const std::string &GetName() const
+        inline const std::string &getName() const
         {
-            return m_DebugName;
+            return debugName;
         }
 
       protected:
-        std::string m_DebugName;
+        std::string debugName;
     };
 }

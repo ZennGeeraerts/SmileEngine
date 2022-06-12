@@ -3,166 +3,166 @@
 
 #include "smile_engine/renderer/shader/shader_reflection.h"
 
-namespace smile
+namespace smile::renderer
 {
-    Material::Material( const Ref< Shader > &pShader ) : m_pShader{ pShader }
+    Material::Material( const Ref< Shader > &shader ) : shader{ shader }
     {
-        SetShader( pShader );
+        setShader( shader );
     }
 
     Material::~Material()
     {
-        m_FloatValues.clear();
-        m_IntValues.clear();
-        m_BoolValues.clear();
-        m_Float2Values.clear();
-        m_Float3Values.clear();
-        m_Texture2DValues.clear();
+        floatValues.clear();
+        intValues.clear();
+        boolValues.clear();
+        float2Values.clear();
+        float3Values.clear();
+        texture2DValues.clear();
     }
 
-    void Material::SetShader( const Ref< Shader > &pShader )
+    void Material::setShader( const Ref< Shader > &new_shader )
     {
-        m_pShader = pShader;
+        shader = new_shader;
 
-        const auto &shaderVariables{ utils::ReflectShaderVariables( pShader ) };
-        for ( const ShaderVariable &variable : shaderVariables )
+        const auto &shader_variables{ utils::reflectShaderVariables( new_shader ) };
+        for ( const ShaderVariable &variable : shader_variables )
         {
-            switch ( variable.m_Type )
+            switch ( variable.type )
             {
                 case ShaderDataType::Float:
-                    m_FloatValues.insert( std::make_pair( variable.m_Semantic, 0.0f ) );
+                    floatValues.insert( std::make_pair( variable.semantic, 0.0f ) );
                     break;
                 case ShaderDataType::Int:
-                    m_IntValues.insert( std::make_pair( variable.m_Semantic, 0 ) );
+                    intValues.insert( std::make_pair( variable.semantic, 0 ) );
                     break;
                 case ShaderDataType::Bool:
-                    m_BoolValues.insert( std::make_pair( variable.m_Semantic, false ) );
+                    boolValues.insert( std::make_pair( variable.semantic, false ) );
                     break;
                 case ShaderDataType::Float2:
-                    m_Float2Values.insert( std::make_pair( variable.m_Semantic, DirectX::XMFLOAT2{} ) );
+                    float2Values.insert( std::make_pair( variable.semantic, DirectX::XMFLOAT2{} ) );
                     break;
                 case ShaderDataType::Float3:
-                    m_Float3Values.insert( std::make_pair( variable.m_Semantic, DirectX::XMFLOAT3{} ) );
+                    float3Values.insert( std::make_pair( variable.semantic, DirectX::XMFLOAT3{} ) );
                     break;
                 case ShaderDataType::Texture2D:
-                    m_Texture2DValues.insert( std::make_pair( variable.m_Semantic, nullptr ) );
+                    texture2DValues.insert( std::make_pair( variable.semantic, nullptr ) );
                     break;
             }
         }
     }
 
-    void Material::SetFloatValue( const std::string &semantic, float value )
+    void Material::setFloatValue( const std::string &semantic, float value )
     {
-        if ( m_FloatValues.find( semantic ) == m_FloatValues.end() )
+        if ( floatValues.find( semantic ) == floatValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetFloatValue > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setFloatValue > Couldn't find semantic: %s", semantic.c_str() );
             return;
         }
 
-        m_FloatValues[semantic] = value;
-        m_pShader->UploadFloat( semantic, value );
+        floatValues[semantic] = value;
+        shader->uploadFloat( semantic, value );
     }
 
-    void Material::SetIntValue( const std::string &semantic, int value )
+    void Material::setIntValue( const std::string &semantic, int value )
     {
-        if ( m_IntValues.find( semantic ) == m_IntValues.end() )
+        if ( intValues.find( semantic ) == intValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetIntValue > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setIntValue > Couldn't find semantic: %s", semantic.c_str() );
             return;
         }
 
-        m_IntValues[semantic] = value;
-        m_pShader->UploadInt( semantic, value );
+        intValues[semantic] = value;
+        shader->uploadInt( semantic, value );
     }
 
-    void Material::SetBoolValue( const std::string &semantic, bool value )
+    void Material::setBoolValue( const std::string &semantic, bool value )
     {
-        if ( m_BoolValues.find( semantic ) == m_BoolValues.end() )
+        if ( boolValues.find( semantic ) == boolValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetBoolValue > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setBoolValue > Couldn't find semantic: %s", semantic.c_str() );
             return;
         }
 
-        m_BoolValues[semantic] = value;
-        m_pShader->UploadBool( semantic, value );
+        boolValues[semantic] = value;
+        shader->uploadBool( semantic, value );
     }
 
-    void Material::SetFloat2Value(const std::string& semantic, const DirectX::XMFLOAT2& value)
+    void Material::setFloat2Value(const std::string& semantic, const DirectX::XMFLOAT2& value)
     {
-        if ( m_Float2Values.find( semantic ) == m_Float2Values.end() )
+        if ( float2Values.find( semantic ) == float2Values.end() )
         {
-            SM_LOG_WARNING( "Material::SetFloat2Value > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setFloat2Value > Couldn't find semantic: %s", semantic.c_str() );
             return;
         }
 
-        m_Float2Values[semantic] = value;
-        m_pShader->UploadFloat2( semantic, value );
+        float2Values[semantic] = value;
+        shader->uploadFloat2( semantic, value );
     }
 
-    void Material::SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value )
+    void Material::setFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value )
     {
-        if ( m_Float3Values.find( semantic ) == m_Float3Values.end() )
+        if ( float3Values.find( semantic ) == float3Values.end() )
         {
-            SM_LOG_WARNING( "Material::SetFloat3Value > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setFloat3Value > Couldn't find semantic: %s", semantic.c_str() );
             return;
         }
 
-        m_Float3Values[semantic] = value;
-        m_pShader->UploadFloat3( semantic, value );
+        float3Values[semantic] = value;
+        shader->uploadFloat3( semantic, value );
     }
 
-    void Material::SetTexture2D( const std::string &semantic, const Ref< Texture2D > &value )
+    void Material::setTexture2D( const std::string &semantic, const Ref< Texture2D > &value )
     {
-        if ( m_Texture2DValues.find( semantic ) == m_Texture2DValues.end() )
+        if ( texture2DValues.find( semantic ) == texture2DValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetTexture2D > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setTexture2D > Couldn't find semantic: %s", semantic.c_str() );
             return;
         }
 
-        m_Texture2DValues[semantic] = value;
-        m_pShader->UploadTexture2D( semantic, value );
+        texture2DValues[semantic] = value;
+        shader->uploadTexture2D( semantic, value );
     }
 
-    float Material::GetFloatValue( const std::string &semantic ) const
+    float Material::getFloatValue( const std::string &semantic ) const
     {
-        auto it = m_FloatValues.find( semantic );
+        auto it = floatValues.find( semantic );
         SM_ASSERT(
-            it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic.c_str() );
+            it != floatValues.end(), "Material::getFloatValue > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }
 
-    int Material::GetIntValue( const std::string &semantic ) const
+    int Material::getIntValue( const std::string &semantic ) const
     {
-        auto it = m_FloatValues.find( semantic );
+        auto it = floatValues.find( semantic );
         SM_ASSERT(
-            it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic.c_str() );
+            it != floatValues.end(), "Material::getFloatValue > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }
 
-    bool Material::GetBoolValue( const std::string &semantic ) const
+    bool Material::getBoolValue( const std::string &semantic ) const
     {
-        auto it = m_BoolValues.find( semantic );
-        SM_ASSERT( it != m_BoolValues.end(), "Material::GetBoolValue > Couldn't find semantic: %s", semantic.c_str() );
+        auto it = boolValues.find( semantic );
+        SM_ASSERT( it != boolValues.end(), "Material::getBoolValue > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }
 
-    const DirectX::XMFLOAT2 &Material::GetFloat2Value( const std::string &semantic ) const
+    const DirectX::XMFLOAT2 &Material::getFloat2Value( const std::string &semantic ) const
     {
-        auto it = m_Float2Values.find( semantic );
+        auto it = float2Values.find( semantic );
         SM_ASSERT(
-            it != m_Float2Values.end(), "Material::GetFloat2Value > Couldn't find semantic: %s", semantic.c_str() );
+            it != float2Values.end(), "Material::getFloat2Value > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }
 
-    const DirectX::XMFLOAT3 &Material::GetFloat3Value( const std::string &semantic ) const
+    const DirectX::XMFLOAT3 &Material::getFloat3Value( const std::string &semantic ) const
     {
-        auto it = m_Float3Values.find( semantic );
+        auto it = float3Values.find( semantic );
         SM_ASSERT(
-            it != m_Float3Values.end(), "Material::GetFloat3Value > Couldn't find semantic: %s", semantic.c_str() );
+            it != float3Values.end(), "Material::getFloat3Value > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }

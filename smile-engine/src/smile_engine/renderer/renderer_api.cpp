@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "renderer_api.h"
 
-namespace smile
+namespace smile::renderer
 {
-    RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX11;
+    RendererAPI::API RendererAPI::api = RendererAPI::API::DirectX11;
 }

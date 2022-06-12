@@ -5,44 +5,44 @@ namespace smile
     class Timestep final
     {
       public:
-        Timestep( float time = 0.0f ) : m_Time{ time }
+        Timestep( float time = 0.0f ) : time{ time }
         {
         }
 
-        float GetSeconds() const
+        float getSeconds() const
         {
-            return m_Time;
+            return time;
         }
-        float GetMilliseconds() const
+        float getMilliseconds() const
         {
-            return m_Time * 1000.f;
+            return time * 1000.f;
         }
 
       public:
         operator float() const
         {
-            return m_Time;
+            return time;
         }
         Timestep operator+( const Timestep &rhs )
         {
-            return Timestep{ m_Time += rhs.m_Time };
+            return Timestep{ time += rhs.time };
         }
         Timestep operator-( const Timestep &rhs )
         {
-            return Timestep{ m_Time -= rhs.m_Time };
+            return Timestep{ time -= rhs.time };
         }
         Timestep operator+=( const Timestep &rhs )
         {
-            m_Time += rhs.m_Time;
+            time += rhs.time;
             return *this;
         }
         Timestep operator-=( const Timestep &rhs )
         {
-            m_Time -= rhs.m_Time;
+            time -= rhs.time;
             return *this;
         }
 
       private:
-        float m_Time;
+        float time;
     };
 }

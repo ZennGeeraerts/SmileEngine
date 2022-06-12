@@ -1,40 +1,60 @@
 #pragma once
 
 #include "smile_engine/core/core.h"
-#include <chrono>
 #include "timestep.h"
+
+#include <chrono>
 
 namespace smile
 {
     class Timer final
     {
       public:
-        inline static Timer &GetInstance()
+        inline static Timer &getInstance()
         {
             static Timer instance{};
             return instance;
         }
 
-        void Run();
-        void OnUpdate();
-        bool IsCatchingUpInFixedSteps();
+        void run();
+        void onUpdate();
+        bool isCatchingUpInFixedSteps();
 
-        Timestep GetDeltaTime() const;
-        Timestep GetTotalTimePassed() const;
-        uint32_t GetFPS() const;
-        void SetMsPerFrame( uint32_t msPerFrame );
-        uint32_t GetMsPerFrame() const;
-        std::chrono::steady_clock::time_point GetTimeBeforeGameLoop() const;
+        Timestep getDeltaTime() const
+        {
+            return deltaTime;
+        }
+        Timestep getTotalTimePassed() const
+        {
+            return totalTimePassed;
+        }
+        Uint32 getFPS() const
+        {
+            return fps;
+        }
+        void setMsPerFrame( Uint32 ms_per_frame )
+        {
+            msPerFrame = ms_per_frame;
+        }
+        Uint32 getMsPerFrame() const
+        {
+            return msPerFrame;
+        }
+        std::chrono::steady_clock::time_point getTimeBeforeGameLoop() const
+        {
+            return lastTime;
+        }
 
       private:
         Timer();
 
-        uint32_t m_MsPerFrame; /* amount of milliseconds per frame for the fixed update */
-        Timestep m_Lag;
-        Timestep m_TotalTimePassed;
-        Timestep m_DeltaTime;
-        uint32_t m_FPS;
-        std::chrono::steady_clock::time_point m_LastTime;
-        bool m_bRunning;
+      private:
+        Uint32 msPerFrame; /* amount of milliseconds per frame for the fixed update */
+        Timestep lag;
+        Timestep totalTimePassed;
+        Timestep deltaTime;
+        Uint32 fps;
+        std::chrono::steady_clock::time_point lastTime;
+        bool isRunning;
     };
 }

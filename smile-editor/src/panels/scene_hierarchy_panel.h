@@ -5,43 +5,46 @@
 #include "smile_engine/scene/scene.h"
 #include "smile_engine/scene/entity.h"
 
-namespace smile
+namespace smile::renderer
 {
     class Material;
+}
 
+namespace smile::scene
+{
     class SceneHierarchyPanel final
     {
       public:
         SceneHierarchyPanel() = default;
-        SceneHierarchyPanel( const Ref< Scene > &pScene );
+        SceneHierarchyPanel( const Ref< scene::Scene > &scene );
 
-        void SetContext( const Ref< Scene > &pScene );
+        void setContext( const Ref< scene::Scene > &scene );
 
-        void OnImGuiRender();
+        void onImGuiRender();
 
-        Entity GetSelectedEntity() const
+        scene::Entity getSelectedEntity() const
         {
-            return m_SelectedEntity;
+            return selectedEntity;
         }
 
       private:
-        void DrawEntityNode( Entity entity );
+        void drawEntityNode( scene::Entity entity );
 
-        static void DrawVector3Control( const std::string &label,
+        static void drawVector3Control( const std::string &label,
             DirectX::XMFLOAT3 &values,
-            float resetValue = 0.0f,
-            float columnWidth = 100.f );
+            float reset_value = 0.0f,
+            float column_width = 100.f );
 
-        void DrawComponents( Entity entity );
+        void drawComponents( scene::Entity entity );
 
         template < typename ComponentType, typename UIFunction >
         static void
-        DrawComponent( const std::string &label, Entity entity, UIFunction uiFunction, bool bRemoveable = true );
+        drawComponent( const std::string &label, scene::Entity entity, UIFunction ui_function, bool removeable = true );
 
-        static void DrawMaterial( const Ref< Material > &pMaterial );
+        static void drawMaterial( const Ref< renderer::Material > &pMaterial );
 
       private:
-        Ref< Scene > m_pContext;
-        Entity m_SelectedEntity;
+        Ref< scene::Scene > context;
+        scene::Entity selectedEntity;
     };
 }

@@ -6,24 +6,24 @@ class ExampleLayer final : public smile::Layer
   public:
     ExampleLayer();
 
-    virtual void OnAttach() override;
-    virtual void OnUpdate( smile::Timestep deltaTime ) override;
-    virtual void OnEvent( smile::Event &event ) override;
-    virtual void OnImGuiRender() override;
+    virtual void onAttach() override;
+    virtual void onUpdate( smile::Timestep delta_time ) override;
+    virtual void onEvent( smile::Event &event ) override;
+    virtual void onImGuiRender() override;
 
   private:
-    bool OnWindowResize( smile::WindowResizeEvent &e );
+    bool onWindowResize( smile::WindowResizeEvent &e );
 
   private:
-    smile::Ref< smile::Scene > m_pActiveScene;
+    smile::Ref< smile::scene::Scene > activeScene;
 
-    smile::Entity m_CameraEntity;
-    float m_CameraMoveSpeed = 5.f;
-    float m_CameraRotationSpeed = 180.f;
+    smile::scene::Entity cameraEntity;
+    float cameraMoveSpeed = 5.f;
+    float cameraRotationSpeed = 180.f;
 
-    smile::Entity m_ModelEntity;
+    smile::scene::Entity modelEntity;
 
-    float m_PrintTimer = 0.f;
+    float printTimer = 0.f;
 };
 
 class MainGame final : public smile::Application

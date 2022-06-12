@@ -1,9 +1,8 @@
 #pragma once
-#include <cstdint>
 
-namespace smile
+namespace smile::input
 {
-	using MouseCode = uint16_t;
+	using MouseCode = Uint16;
 
 	namespace mouse
 	{

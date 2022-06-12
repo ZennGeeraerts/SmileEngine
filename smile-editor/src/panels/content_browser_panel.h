@@ -11,11 +11,11 @@ namespace smile
       public:
         ContentBrowserPanel();
 
-        void OnImGuiRender();
+        void onImGuiRender();
 
       private:
-        std::filesystem::path m_CurrentDirectory;
-        Ref< Texture2D > m_pDirectoryIcon = nullptr;
-        Ref< Texture2D > m_pFileIcon = nullptr;
+        std::filesystem::path currentDirectory;
+        Ref< renderer::Texture2D > directoryIcon = nullptr;
+        Ref< renderer::Texture2D > fileIcon = nullptr;
     };
 }

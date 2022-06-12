@@ -1,10 +1,9 @@
 #pragma once
-#include <cstdint>
 
 // From Win32
-namespace smile
+namespace smile::input
 {
-    using KeyCode = uint16_t;
+    using KeyCode = Uint16;
 
 	namespace key
 	{

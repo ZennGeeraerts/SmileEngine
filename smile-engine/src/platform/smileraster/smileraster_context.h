@@ -5,11 +5,14 @@
 namespace smile
 {
     class Window;
+}
 
+namespace smile::renderer
+{
     class SmileRasterContext final : public GraphicsContext
     {
       public:
-        SmileRasterContext( Window *pWindow );
+        SmileRasterContext( Window *window );
         virtual ~SmileRasterContext();
 
         SmileRasterContext( const SmileRasterContext & ) = delete;
@@ -17,26 +20,26 @@ namespace smile
         SmileRasterContext &operator=( const SmileRasterContext & ) = delete;
         SmileRasterContext &operator=( SmileRasterContext && ) = delete;
 
-        virtual void Init() override;
-        virtual void Present() override;
+        virtual void init() override;
+        virtual void present() override;
 
-        Raster::DeviceContext *GetDeviceContext() const
+        Raster::DeviceContext *getDeviceContext() const
         {
-            return m_pDeviceContext;
+            return deviceContext;
         }
 
       private:
-        Window *m_pWindow = nullptr;
+        Window *window = nullptr;
 
-        Raster::DeviceContext *m_pDeviceContext = nullptr;
+        Raster::DeviceContext *deviceContext = nullptr;
 
-        HDC m_HDC = nullptr;
-        HBITMAP m_Bitmap = nullptr;
-        HBITMAP m_BitmapOld = nullptr;
-        BITMAPINFO m_BitmapInfo{};
+        HDC hdc = nullptr;
+        HBITMAP bitmap = nullptr;
+        HBITMAP bitmapOld = nullptr;
+        BITMAPINFO bitmapInfo{};
 
-        uint8_t *m_pColorBuffer{};
-        Raster::BufferID m_Framebuffer = SMR_INVALID_BUFFER_ID;
+        Uint8 *colorBuffer{};
+        Raster::BufferID framebuffer = SMR_INVALID_BUFFER_ID;
 
         friend class SmileRasterRendererAPI;
     };

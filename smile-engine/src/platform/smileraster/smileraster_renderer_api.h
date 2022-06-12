@@ -3,21 +3,21 @@
 #include "smile_engine/renderer/renderer_api.h"
 #include "smileraster_context.h"
 
-namespace smile
+namespace smile::renderer
 {
     class SmileRasterRendererAPI final : public RendererAPI
     {
       public:
-        virtual void Initialize() override;
-        virtual void ResizeWindow( uint32_t x, uint32_t y, uint32_t width, uint32_t height ) override;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) override;
-        virtual void Clear() override;
+        virtual void initialize() override;
+        virtual void resizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
+        virtual void setClearColor( const DirectX::XMFLOAT4 &color ) override;
+        virtual void clear() override;
 
-        virtual void DrawIndexed( int32_t indexCount, const Ref< Shader > &pShader ) override;
+        virtual void drawIndexed( Uint32 index_count, const Ref< Shader > &shader ) override;
 
       private:
-        DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
-        Window *m_pWindow = nullptr;
-        SmileRasterContext *m_pSmileRasterContext = nullptr;
+        DirectX::XMFLOAT4 clearColor = { 1.f, 1.f, 1.f, 1.f };
+        Window *window = nullptr;
+        SmileRasterContext *smileRasterContext = nullptr;
     };
 }

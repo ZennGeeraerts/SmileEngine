@@ -46,7 +46,7 @@ namespace smile
     using Scope = std::unique_ptr< Type >;
 
     template < typename Type, typename... Args >
-    constexpr Scope< Type > CreateScope( Args... args )
+    constexpr Scope< Type > createScope( Args... args )
     {
         return std::make_unique< Type >( std::forward< Args >( args )... );
     }
@@ -55,7 +55,7 @@ namespace smile
     using Ref = std::shared_ptr< Type >;
 
     template < typename Type, typename... Args >
-    constexpr Ref< Type > CreateRef( Args... args )
+    constexpr Ref< Type > createRef( Args... args )
     {
         return std::make_shared< Type >( std::forward< Args >( args )... );
     }

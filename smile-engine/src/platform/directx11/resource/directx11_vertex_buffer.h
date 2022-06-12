@@ -2,24 +2,29 @@
 #include "smile_engine/renderer/resource/vertex_buffer.h"
 #include "platform/directX11/directx11_context.h"
 
-namespace smile
+namespace smile::renderer
 {
     class DirectX11VertexBuffer final : public VertexBuffer
     {
       public:
-        DirectX11VertexBuffer( const VertexBufferDescriptor &vertexBufferDesc );
+        DirectX11VertexBuffer( const VertexBufferDescriptor &vertex_buffer_desc );
         virtual ~DirectX11VertexBuffer();
 
-        virtual void Bind() const override;
-        virtual void Unbind() const override;
-        virtual Uint32 GetStride() const override
+        DirectX11VertexBuffer( const DirectX11VertexBuffer & ) = delete;
+        DirectX11VertexBuffer( DirectX11VertexBuffer && ) = delete;
+        DirectX11VertexBuffer &operator=( const DirectX11VertexBuffer & ) = delete;
+        DirectX11VertexBuffer &operator=( DirectX11VertexBuffer && ) = delete;
+
+        virtual void bind() const override;
+        virtual void unbind() const override;
+        virtual Uint32 getStride() const override
         {
-            return m_Stride;
+            return stride;
         }
 
       private:
-        DirectX11Context *m_pDirectX11Context;
-        ID3D11Buffer *m_pVertexBuffer;
-        Uint32 m_Stride = 0;
+        DirectX11Context *directX11Context;
+        ID3D11Buffer *vertexBuffer;
+        Uint32 stride = 0;
     };
 }

@@ -6,7 +6,7 @@
 
 #include <thirdparty/entt/entt.hpp>
 
-namespace smile
+namespace smile::scene
 {
     class Entity;
 
@@ -16,32 +16,32 @@ namespace smile
         Scene();
         ~Scene();
 
-        Entity CreateEntity();
-        Entity CreateEntity( const std::string &name );
-        Entity CreateEntity( UUID uuid, const std::string &name );
-        void DestroyEntity( Entity entity );
+        Entity createEntity();
+        Entity createEntity( const std::string &name );
+        Entity createEntity( UUID uuid, const std::string &name );
+        void destroyEntity( Entity entity );
 
-        void OnRuntimeStart();
-        void OnRuntimeStop();
+        void onRuntimeStart();
+        void onRuntimeStop();
 
-        void OnUpdateRuntime( Timestep deltaTime );
-        void OnUpdateEditor( Timestep deltaTime, EditorCamera &editorCamera, bool bSimmulate = false );
-        void OnViewportResize( uint32_t width, uint32_t height );
+        void onUpdateRuntime( Timestep delta_time );
+        void onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera, bool simmulate = false );
+        void onViewportResize( Uint32 width, Uint32 height );
 
-        Entity GetPrimaryCameraEntity();
+        Entity getPrimaryCameraEntity();
 
-        static Ref< Scene > Copy( const Ref< Scene > &pScene );
+        static Ref< Scene > copy( const Ref< Scene > &scene );
 
-        void DuplicateEntity( Entity entity );
+        void duplicateEntity( Entity entity );
 
       private:
         template < typename ComponentType >
-        void OnComponentAdded( Entity entity, ComponentType &component );
+        void onComponentAdded( Entity entity, ComponentType &component );
 
       private:
-        entt::registry m_Registry;
-        uint32_t m_ViewportWidth = 0;
-        uint32_t m_ViewportHeight = 0;
+        entt::registry registry;
+        Uint32 viewportWidth = 0;
+        Uint32 viewportHeight = 0;
 
         friend class Entity;
         friend class SceneSerializer;

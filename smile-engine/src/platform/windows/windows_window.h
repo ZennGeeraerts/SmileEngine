@@ -18,59 +18,59 @@ namespace smile
         WindowsWindow &operator=( const WindowsWindow & ) = delete;
         WindowsWindow &operator=( WindowsWindow && ) = delete;
 
-        void OnUpdate() override;
+        void onUpdate() override;
 
-        inline unsigned int GetWidth() const override
+        inline Uint32 getWidth() const override
         {
-            return m_Data.m_Width;
+            return data.width;
         }
-        inline unsigned int GetHeight() const override
+        inline Uint32 getHeight() const override
         {
-            return m_Data.m_Height;
+            return data.height;
         }
-        inline GraphicsContext *GetGraphicsContext() const override
+        inline renderer::GraphicsContext *getGraphicsContext() const override
         {
-            return m_pContext;
+            return context;
         }
 
         // Window attributes
-        inline void SetEventCallback( const EventCallbackFunction &callback ) override
+        inline void setEventCallback( const EventCallbackFunction &callback ) override
         {
-            m_Data.m_EventCallback = callback;
+            data.eventCallback = callback;
         }
-        virtual void SetVSync( bool bEnabled ) override;
-        virtual bool IsVSync() const override;
+        virtual void setVSync( bool enabled ) override;
+        virtual bool isVSync() const override;
 
-        inline virtual void *GetNativeWindow() const override
+        inline virtual void *getNativeWindow() const override
         {
-            return m_WindowHandle;
+            return windowHandle;
         }
 
       private:
-        virtual void Init( const WindowSettings &settings );
-        virtual void ShutDown();
+        virtual void init( const WindowSettings &settings );
+        virtual void shutDown();
 
-        static LRESULT CALLBACK WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
-        LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept;
+        static LRESULT CALLBACK windowsProcedureStatic( HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param );
+        LRESULT windowsProcedure( HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param ) noexcept;
 
-        void PollEvents();
+        void pollEvents();
 
       private:
-        HWND m_WindowHandle;
-        WNDCLASSEX m_WindowClass;
-        MSG m_Message;
-        GraphicsContext *m_pContext;
+        HWND windowHandle;
+        WNDCLASSEX windowClass;
+        MSG message;
+        renderer::GraphicsContext *context;
 
         struct WindowData
         {
-            std::string m_Title{};
-            uint32_t m_Width{};
-            uint32_t m_Height{};
-            bool m_bVSync{};
-            EventCallbackFunction m_EventCallback{};
+            std::string title{};
+            Uint32 width{};
+            Uint32 height{};
+            bool vsync{};
+            EventCallbackFunction eventCallback{};
         };
 
-        WindowData m_Data;
-        bool m_bInitialized = false;
+        WindowData data;
+        bool initialized = false;
     };
 }

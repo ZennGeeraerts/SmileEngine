@@ -1,6 +1,6 @@
 #pragma once
 
-namespace smile
+namespace smile::renderer
 {
-    LPTSTR GetDirectX11ErrorMessage( HRESULT result );
+    LPTSTR getDirectX11ErrorMessage( HRESULT result );
 }

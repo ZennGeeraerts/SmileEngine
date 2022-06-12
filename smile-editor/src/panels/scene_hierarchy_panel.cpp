@@ -8,41 +8,44 @@
 
 namespace smile
 {
-    extern const std::filesystem::path g_AssetPath;
+    extern const std::filesystem::path assetPath;
+}
 
-    SceneHierarchyPanel::SceneHierarchyPanel( const Ref< Scene > &pScene )
+namespace smile::scene
+{
+    SceneHierarchyPanel::SceneHierarchyPanel( const Ref< Scene > &scene )
     {
-        SetContext( pScene );
+        setContext( scene );
     }
 
-    void SceneHierarchyPanel::SetContext( const Ref< Scene > &pScene )
+    void SceneHierarchyPanel::setContext( const Ref< Scene > &scene )
     {
-        m_pContext = pScene;
-        m_SelectedEntity = {};
+        context = scene;
+        selectedEntity = {};
     }
 
-    void SceneHierarchyPanel::OnImGuiRender()
+    void SceneHierarchyPanel::onImGuiRender()
     {
         ImGui::Begin( "Scene Hierarchy" );
 
-        if ( m_pContext )
+        if ( context )
         {
-            m_pContext->m_Registry.each(
-                [&]( auto entityID )
+            context->registry.each(
+                [&]( auto entity_id )
                 {
-                    Entity entity{ entityID, m_pContext.get() };
-                    DrawEntityNode( entity );
+                    Entity entity{ entity_id, context.get() };
+                    drawEntityNode( entity );
                 } );
 
             // Deselect entities
             if ( ImGui::IsMouseDown( 0 ) && ImGui::IsWindowHovered() )
-                m_SelectedEntity = {};
+                selectedEntity = {};
 
             // Right click on blank space
             if ( ImGui::BeginPopupContextWindow( 0, 1, false ) )
             {
                 if ( ImGui::MenuItem( "Create Empty Entity" ) )
-                    m_pContext->CreateEntity();
+                    context->createEntity();
 
                 ImGui::EndPopup();
             }
@@ -54,78 +57,78 @@ namespace smile
         ImGui::Begin( "Inspector" );
 
         // Add Components
-        if ( m_SelectedEntity )
+        if ( selectedEntity )
         {
-            DrawComponents( m_SelectedEntity );
+            drawComponents( selectedEntity );
         }
 
         ImGui::End();
     }
 
-    void SceneHierarchyPanel::DrawEntityNode( Entity entity )
+    void SceneHierarchyPanel::drawEntityNode( Entity entity )
     {
-        auto &tag = entity.GetComponent< TagComponent >().m_Tag;
+        auto &tag = entity.getComponent< TagComponent >().tag;
 
-        const ImGuiTreeNodeFlags flags = ( ( m_SelectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
+        const ImGuiTreeNodeFlags flags = ( ( selectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
                                          ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-        bool bNodeExpanded = ImGui::TreeNodeEx( ( void * )( uint64_t )( uint32_t )entity, flags, tag.c_str() );
+        bool node_expanded = ImGui::TreeNodeEx( ( void * )( Uint64 )( Uint32 )entity, flags, tag.c_str() );
         if ( ImGui::IsItemClicked() )
         {
-            m_SelectedEntity = entity;
+            selectedEntity = entity;
         }
 
-        bool bEntityDeleted = false;
+        bool entity_deleted = false;
         if ( ImGui::BeginPopupContextItem() )
         {
             if ( ImGui::MenuItem( "Delete Entity" ) )
-                bEntityDeleted = true;
+                entity_deleted = true;
 
             ImGui::EndPopup();
         }
 
-        if ( bNodeExpanded )
+        if ( node_expanded )
         {
             ImGui::TreePop();
         }
 
-        if ( bEntityDeleted )
+        if ( entity_deleted )
         {
-            m_pContext->DestroyEntity( entity );
-            if ( m_SelectedEntity == entity )
-                m_SelectedEntity = {};
+            context->destroyEntity( entity );
+            if ( selectedEntity == entity )
+                selectedEntity = {};
         }
     }
 
-    void SceneHierarchyPanel::DrawVector3Control( const std::string &label,
+    void SceneHierarchyPanel::drawVector3Control( const std::string &label,
         DirectX::XMFLOAT3 &value,
-        float resetValue,
-        float columnWidth )
+        float reset_value,
+        float column_width )
     {
         ImGuiIO &io = ImGui::GetIO();
-        auto boldFont = io.Fonts->Fonts[1];
+        auto bold_font = io.Fonts->Fonts[1];
 
         ImGui::PushID( label.c_str() );
 
         ImGui::Columns( 2 );
 
-        ImGui::SetColumnWidth( 0, columnWidth );
+        ImGui::SetColumnWidth( 0, column_width );
         ImGui::Text( label.c_str() );
         ImGui::NextColumn();
 
         ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth() );
         ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-        float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
-        ImVec2 buttonSize{ lineHeight + 3.0f, lineHeight };
+        float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 button_size{ line_height + 3.0f, line_height };
 
         // X
         ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f } );
-        ImGui::PushFont( boldFont );
+        ImGui::PushFont( bold_font );
 
-        if ( ImGui::Button( "X", buttonSize ) )
-            value.x = resetValue;
+        if ( ImGui::Button( "X", button_size ) )
+            value.x = reset_value;
 
         ImGui::PopFont();
         ImGui::PopStyleColor( 3 );
@@ -139,10 +142,10 @@ namespace smile
         ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f } );
-        ImGui::PushFont( boldFont );
+        ImGui::PushFont( bold_font );
 
-        if ( ImGui::Button( "Y", buttonSize ) )
-            value.y = resetValue;
+        if ( ImGui::Button( "Y", button_size ) )
+            value.y = reset_value;
 
         ImGui::PopFont();
         ImGui::PopStyleColor( 3 );
@@ -156,10 +159,10 @@ namespace smile
         ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f } );
-        ImGui::PushFont( boldFont );
+        ImGui::PushFont( bold_font );
 
-        if ( ImGui::Button( "Z", buttonSize ) )
-            value.z = resetValue;
+        if ( ImGui::Button( "Z", button_size ) )
+            value.z = reset_value;
 
         ImGui::PopFont();
         ImGui::PopStyleColor( 3 );
@@ -176,19 +179,19 @@ namespace smile
         ImGui::PopID();
     }
 
-    void SceneHierarchyPanel::DrawComponents( Entity entity )
+    void SceneHierarchyPanel::drawComponents( Entity entity )
     {
-        if ( entity.HasComponent< TagComponent >() )
+        if ( entity.hasComponent< TagComponent >() )
         {
-            auto &tag = entity.GetComponent< TagComponent >().m_Tag;
+            auto &tag = entity.getComponent< TagComponent >().tag;
 
-            char tagBuffer[256];
-            memset( tagBuffer, 0, sizeof( tagBuffer ) );
-            strcpy_s( tagBuffer, sizeof( tagBuffer ), tag.c_str() );
+            char tag_buffer[256];
+            memset( tag_buffer, 0, sizeof( tag_buffer ) );
+            strcpy_s( tag_buffer, sizeof( tag_buffer ), tag.c_str() );
 
-            if ( ImGui::InputText( "##Tag", tagBuffer, sizeof( tagBuffer ) ) )
+            if ( ImGui::InputText( "##Tag", tag_buffer, sizeof( tag_buffer ) ) )
             {
-                tag = std::string{ tagBuffer };
+                tag = std::string{ tag_buffer };
             }
         }
 
@@ -201,43 +204,43 @@ namespace smile
         {
             if ( ImGui::MenuItem( "Camera" ) )
             {
-                m_SelectedEntity.AddComponent< CameraComponent >();
+                selectedEntity.addComponent< CameraComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Static Mesh" ) )
             {
-                m_SelectedEntity.AddComponent< StaticMeshComponent >();
+                selectedEntity.addComponent< StaticMeshComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Skinned Mesh" ) )
             {
-                m_SelectedEntity.AddComponent< SkinnedMeshComponent >();
+                selectedEntity.addComponent< SkinnedMeshComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Rigid Body" ) )
             {
-                m_SelectedEntity.AddComponent< RigidbodyComponent >();
+                selectedEntity.addComponent< RigidbodyComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Box Collider" ) )
             {
-                m_SelectedEntity.AddComponent< BoxColliderComponent >();
+                selectedEntity.addComponent< BoxColliderComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Sphere Collider" ) )
             {
-                m_SelectedEntity.AddComponent< SphereColliderComponent >();
+                selectedEntity.addComponent< SphereColliderComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Capsule Collider" ) )
             {
-                m_SelectedEntity.AddComponent< CapsuleColliderComponent >();
+                selectedEntity.addComponent< CapsuleColliderComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
@@ -246,45 +249,46 @@ namespace smile
 
         ImGui::PopItemWidth();
 
-        DrawComponent< TransformComponent >(
+        drawComponent< TransformComponent >(
             "Transform",
             entity,
             []( auto &transformComponent )
             {
-                DrawVector3Control( "Position", transformComponent.m_Translation );
+                drawVector3Control( "Position", transformComponent.translation );
 
-                DirectX::XMFLOAT3 rotationDegrees = {};
-                rotationDegrees.x = DirectX::XMConvertToDegrees( transformComponent.m_Rotation.x );
-                rotationDegrees.y = DirectX::XMConvertToDegrees( transformComponent.m_Rotation.y );
-                rotationDegrees.z = DirectX::XMConvertToDegrees( transformComponent.m_Rotation.z );
-                DrawVector3Control( "Rotation", rotationDegrees );
-                transformComponent.m_Rotation.x = DirectX::XMConvertToRadians( rotationDegrees.x );
-                transformComponent.m_Rotation.y = DirectX::XMConvertToRadians( rotationDegrees.y );
-                transformComponent.m_Rotation.z = DirectX::XMConvertToRadians( rotationDegrees.z );
+                DirectX::XMFLOAT3 rotation_degrees = {};
+                rotation_degrees.x = DirectX::XMConvertToDegrees( transformComponent.rotation.x );
+                rotation_degrees.y = DirectX::XMConvertToDegrees( transformComponent.rotation.y );
+                rotation_degrees.z = DirectX::XMConvertToDegrees( transformComponent.rotation.z );
+                drawVector3Control( "Rotation", rotation_degrees );
+                transformComponent.rotation.x = DirectX::XMConvertToRadians( rotation_degrees.x );
+                transformComponent.rotation.y = DirectX::XMConvertToRadians( rotation_degrees.y );
+                transformComponent.rotation.z = DirectX::XMConvertToRadians( rotation_degrees.z );
 
-                DrawVector3Control( "Scale", transformComponent.m_Scale, 1.0f );
+                drawVector3Control( "Scale", transformComponent.scale, 1.0f );
             },
             false );
 
-        DrawComponent< CameraComponent >( "Camera",
+        drawComponent< CameraComponent >( "Camera",
             entity,
-            []( auto &cameraComponent )
+            []( auto &camera_component )
             {
-                ImGui::Checkbox( "Primary Camera", &cameraComponent.m_bPrimary );
+                ImGui::Checkbox( "Primary Camera", &camera_component.primary );
 
-                const uint32_t projectionTypeCount = 2;
-                const char *pProjectionTypeStrs[projectionTypeCount]{ "Perspective", "Orthographic" };
-                const char *pCurrentProjectionTypeStr =
-                    pProjectionTypeStrs[static_cast< uint32_t >( cameraComponent.m_Camera.GetProjectionType() )];
-                if ( ImGui::BeginCombo( "Projection", pCurrentProjectionTypeStr ) )
+                const Uint32 projection_type_count = 2;
+                const char *projection_type_strs[projection_type_count]{ "Perspective", "Orthographic" };
+                const char *current_projection_type_str =
+                    projection_type_strs[static_cast< Uint32 >( camera_component.camera.getProjectionType() )];
+                if ( ImGui::BeginCombo( "Projection", current_projection_type_str ) )
                 {
-                    for ( uint32_t i{}; i < projectionTypeCount; ++i )
+                    for ( Uint32 i{}; i < projection_type_count; ++i )
                     {
-                        bool bSelected = pCurrentProjectionTypeStr == pProjectionTypeStrs[i];
-                        if ( ImGui::Selectable( pProjectionTypeStrs[i], bSelected ) )
+                        bool bSelected = current_projection_type_str == projection_type_strs[i];
+                        if ( ImGui::Selectable( projection_type_strs[i], bSelected ) )
                         {
-                            pCurrentProjectionTypeStr = pProjectionTypeStrs[i];
-                            cameraComponent.m_Camera.SetProjectionType( static_cast< SceneCamera::ProjectionType >( i ) );
+                            current_projection_type_str = projection_type_strs[i];
+                            camera_component.camera.setProjectionType(
+                                static_cast< SceneCamera::ProjectionType >( i ) );
                         }
 
                         if ( bSelected )
@@ -294,104 +298,104 @@ namespace smile
                     ImGui::EndCombo();
                 }
 
-                switch ( cameraComponent.m_Camera.GetProjectionType() )
+                switch ( camera_component.camera.getProjectionType() )
                 {
                     case SceneCamera::ProjectionType::Perspective:
                     {
-                        float fov = cameraComponent.m_Camera.GetFOV();
+                        float fov = camera_component.camera.getFOV();
                         if ( ImGui::DragFloat( "FOV", &fov, 0.03f, 0.03f ) )
-                            cameraComponent.m_Camera.SetFOV( fov );
+                            camera_component.camera.setFOV( fov );
 
-                        float nearPlane = cameraComponent.m_Camera.GetPerspectiveNearPlane();
-                        if ( ImGui::DragFloat( "Near Plane", &nearPlane, 0.03f, 0.03f ) )
-                            cameraComponent.m_Camera.SetPerspectiveNearPlane( nearPlane );
+                        float near_plane = camera_component.camera.getPerspectiveNearPlane();
+                        if ( ImGui::DragFloat( "Near Plane", &near_plane, 0.03f, 0.03f ) )
+                            camera_component.camera.setPerspectiveNearPlane( near_plane );
 
-                        float farPlane = cameraComponent.m_Camera.GetPerspectiveFarPlane();
-                        if ( ImGui::DragFloat( "Far Plane", &farPlane, 0.03f, 0.03f ) )
-                            cameraComponent.m_Camera.SetPerspectiveFarPlane( farPlane );
+                        float far_plane = camera_component.camera.getPerspectiveFarPlane();
+                        if ( ImGui::DragFloat( "Far Plane", &far_plane, 0.03f, 0.03f ) )
+                            camera_component.camera.setPerspectiveFarPlane( far_plane );
 
                         break;
                     }
                     case SceneCamera::ProjectionType::Orthographic:
                     {
-                        float size = cameraComponent.m_Camera.GetSize();
+                        float size = camera_component.camera.getSize();
                         if ( ImGui::DragFloat( "Size", &size, 0.03f, 0.03f ) )
-                            cameraComponent.m_Camera.SetSize( size );
+                            camera_component.camera.setSize( size );
 
-                        float nearPlane = cameraComponent.m_Camera.GetOrthographicNearPlane();
-                        if ( ImGui::DragFloat( "Near Plane", &nearPlane, 0.03f, 0.03f ) )
-                            cameraComponent.m_Camera.SetOrthographicNearPlane( nearPlane );
+                        float near_plane = camera_component.camera.getOrthographicNearPlane();
+                        if ( ImGui::DragFloat( "Near Plane", &near_plane, 0.03f, 0.03f ) )
+                            camera_component.camera.setOrthographicNearPlane( near_plane );
 
-                        float farPlane = cameraComponent.m_Camera.GetOrthographicFarPlane();
-                        if ( ImGui::DragFloat( "Far Plane", &farPlane, 0.03f, 0.03f ) )
-                            cameraComponent.m_Camera.SetOrthographicFarPlane( farPlane );
+                        float far_plane = camera_component.camera.getOrthographicFarPlane();
+                        if ( ImGui::DragFloat( "Far Plane", &far_plane, 0.03f, 0.03f ) )
+                            camera_component.camera.setOrthographicFarPlane( far_plane );
 
-                        ImGui::Checkbox( "Fixed Aspect Ratio", &cameraComponent.m_bFixedAspectRatio );
+                        ImGui::Checkbox( "Fixed Aspect Ratio", &camera_component.fixedAspectRatio );
 
                         break;
                     }
                 }
             } );
 
-        DrawComponent< StaticMeshComponent >( "Static Mesh",
+        drawComponent< StaticMeshComponent >( "Static Mesh",
             entity,
-            []( auto &staticMeshComponent )
+            []( auto &static_mesh_component )
             {
                 ImGui::Button( "Mesh", { 100.f, 0.0f } );
                 if ( ImGui::BeginDragDropTarget() )
                 {
-                    const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-                    if ( pPayload )
+                    const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+                    if ( payload )
                     {
-                        staticMeshComponent.m_pMeshes.clear();
+                        static_mesh_component.meshes.clear();
 
-                        const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path meshPath = std::filesystem::path{ g_AssetPath } / path;
+                        const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
+                        std::filesystem::path mesh_path = std::filesystem::path{ assetPath } / path;
 
-                        staticMeshComponent.m_pMeshes = MeshLoader::LoadStaticMesh( meshPath.string() );
-                        const auto &bufferLayout = staticMeshComponent.m_pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : staticMeshComponent.m_pMeshes )
+                        static_mesh_component.meshes = renderer::MeshLoader::loadStaticMesh( mesh_path.string() );
+                        const auto &buffer_layout = static_mesh_component.materials[0]->getBufferLayout();
+                        for ( const auto &mesh : static_mesh_component.meshes )
                         {
-                            pMesh->Create( bufferLayout );
+                            mesh->create( buffer_layout );
                         }
                     }
 
                     ImGui::EndDragDropTarget();
                 }
 
-                for ( const auto &pMaterial : staticMeshComponent.m_pMaterials )
+                for ( const auto &material : static_mesh_component.materials )
                 {
-                    DrawMaterial( pMaterial );
+                    drawMaterial( material );
                 }
             } );
 
-        DrawComponent< SkinnedMeshComponent >( "Skinned Mesh",
+        drawComponent< SkinnedMeshComponent >( "Skinned Mesh",
             entity,
-            []( auto &skinnedMeshComponent )
+            []( auto &skinned_mesh_component )
             {
                 ImGui::Button( "Mesh", { 100.f, 0.0f } );
                 if ( ImGui::BeginDragDropTarget() )
                 {
-                    const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-                    if ( pPayload )
+                    const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+                    if ( payload )
                     {
-                        skinnedMeshComponent.m_pMeshes.clear();
-                        skinnedMeshComponent.m_Animators.clear();
+                        skinned_mesh_component.meshes.clear();
+                        skinned_mesh_component.animators.clear();
 
-                        const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path meshPath = std::filesystem::path{ g_AssetPath } / path;
+                        const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
+                        std::filesystem::path mesh_path = std::filesystem::path{ assetPath } / path;
 
-                        skinnedMeshComponent.m_pMeshes = MeshLoader::LoadSkinnedMesh( meshPath.string() );
-                        const auto &bufferLayout = skinnedMeshComponent.m_pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : skinnedMeshComponent.m_pMeshes )
+                        skinned_mesh_component.meshes = renderer::MeshLoader::loadSkinnedMesh( mesh_path.string() );
+                        const auto &buffer_layout = skinned_mesh_component.materials[0]->getBufferLayout();
+                        for ( const auto &mesh : skinned_mesh_component.meshes )
                         {
-                            pMesh->Create( bufferLayout );
+                            mesh->create( buffer_layout );
 
-                            if ( pMesh->HasAnimations() )
+                            if ( mesh->hasAnimations() )
                             {
-                                MeshAnimator animator{ pMesh };
-                                skinnedMeshComponent.m_Animators.push_back( animator );
-                                skinnedMeshComponent.m_Animators.back().SetAnimation( 0 );
+                                renderer::MeshAnimator animator{ mesh };
+                                skinned_mesh_component.animators.push_back( animator );
+                                skinned_mesh_component.animators.back().setAnimation( 0 );
                             }
                         }
                     }
@@ -399,63 +403,64 @@ namespace smile
                     ImGui::EndDragDropTarget();
                 }
 
-                for ( const auto &pMaterial : skinnedMeshComponent.m_pMaterials )
+                for ( const auto &material : skinned_mesh_component.materials )
                 {
-                    DrawMaterial( pMaterial );
+                    drawMaterial( material );
                 }
 
-                for ( auto &animator : skinnedMeshComponent.m_Animators )
+                for ( auto &animator : skinned_mesh_component.animators )
                 {
                     ImGui::Text( "Animator" );
                     if ( ImGui::Button( "Play", { 100.f, 0.0f } ) )
-                        animator.Play();
+                        animator.play();
                     if ( ImGui::Button( "Pause", { 100.f, 0.0f } ) )
-                        animator.Pause();
+                        animator.pause();
                 }
             } );
 
-        DrawComponent< RigidbodyComponent >( "Rigidbody",
+        drawComponent< RigidbodyComponent >( "Rigidbody",
             entity,
-            []( auto &rigidbodyComponent )
+            []( auto &rigidbody_component )
             {
-                const uint32_t bodyTypeCount = 2;
-                const char *bodyTypeStrs[bodyTypeCount]{ "Static", "Dynamic" };
-                const char *currentBodyTypeStr = bodyTypeStrs[static_cast< uint32_t >( rigidbodyComponent.m_BodyType )];
-                if ( ImGui::BeginCombo( "Body Type", currentBodyTypeStr ) )
+                const Uint32 body_type_count = 2;
+                const char *body_type_strs[body_type_count]{ "Static", "Dynamic" };
+                const char *current_body_type_str =
+                    body_type_strs[static_cast< Uint32 >( rigidbody_component.bodyType )];
+                if ( ImGui::BeginCombo( "Body Type", current_body_type_str ) )
                 {
-                    for ( uint32_t i{}; i < bodyTypeCount; ++i )
+                    for ( Uint32 i{}; i < body_type_count; ++i )
                     {
-                        bool bSelected = currentBodyTypeStr == bodyTypeStrs[i];
-                        if ( ImGui::Selectable( bodyTypeStrs[i], bSelected ) )
+                        bool selected = current_body_type_str == body_type_strs[i];
+                        if ( ImGui::Selectable( body_type_strs[i], selected ) )
                         {
-                            currentBodyTypeStr = bodyTypeStrs[i];
-                            rigidbodyComponent.m_BodyType = static_cast< RigidbodyComponent::BodyType >( i );
+                            current_body_type_str = body_type_strs[i];
+                            rigidbody_component.bodyType = static_cast< RigidbodyComponent::BodyType >( i );
                         }
 
-                        if ( bSelected )
+                        if ( selected )
                             ImGui::SetItemDefaultFocus();
                     }
 
                     ImGui::EndCombo();
                 }
 
-                const Uint32 collisionDetectionCount = 2;
-                const char *pCollisionDetectionStrs[collisionDetectionCount]{ "Discrete", "Continuous" };
-                const char *pCurrentCollisionDetectionStr =
-                    pCollisionDetectionStrs[static_cast< uint32_t >( rigidbodyComponent.m_CollisionDetectionType )];
-                if ( ImGui::BeginCombo( "Collision Detection Mode", pCurrentCollisionDetectionStr ) )
+                const Uint32 collision_detection_count = 2;
+                const char *collision_detection_strs[collision_detection_count]{ "Discrete", "Continuous" };
+                const char *current_collision_detection_str =
+                    collision_detection_strs[static_cast< Uint32 >( rigidbody_component.collisionDetectionType )];
+                if ( ImGui::BeginCombo( "Collision Detection Mode", current_collision_detection_str ) )
                 {
-                    for ( Uint32 i{}; i < collisionDetectionCount; ++i )
+                    for ( Uint32 i{}; i < collision_detection_count; ++i )
                     {
-                        bool bSelected = pCurrentCollisionDetectionStr == pCollisionDetectionStrs[i];
-                        if ( ImGui::Selectable( pCollisionDetectionStrs[i], bSelected ) )
+                        bool selected = current_collision_detection_str == collision_detection_strs[i];
+                        if ( ImGui::Selectable( collision_detection_strs[i], selected ) )
                         {
-                            pCurrentCollisionDetectionStr = pCollisionDetectionStrs[i];
-                            rigidbodyComponent.m_CollisionDetectionType =
+                            current_collision_detection_str = collision_detection_strs[i];
+                            rigidbody_component.collisionDetectionType =
                                 static_cast< RigidbodyComponent::CollisionDetectionType >( i );
                         }
 
-                        if ( bSelected )
+                        if ( selected )
                             ImGui::SetItemDefaultFocus();
                     }
 
@@ -464,176 +469,176 @@ namespace smile
 
                 // TODO: Physics Material
 
-                ImGui::DragFloat( "Mass", &rigidbodyComponent.m_Mass, 0.03f );
-                ImGui::DragFloat( "Linear Drag", &rigidbodyComponent.m_LinearDrag, 0.01f );
-                ImGui::DragFloat( "Angular Drag", &rigidbodyComponent.m_AngularDrag, 0.01f );
-                ImGui::Checkbox( "Disable Gravity", &rigidbodyComponent.m_bDisableGravity );
-                ImGui::Checkbox( "Kinematic", &rigidbodyComponent.m_bKinematic );
+                ImGui::DragFloat( "Mass", &rigidbody_component.mass, 0.03f );
+                ImGui::DragFloat( "Linear Drag", &rigidbody_component.linearDrag, 0.01f );
+                ImGui::DragFloat( "Angular Drag", &rigidbody_component.angularDrag, 0.01f );
+                ImGui::Checkbox( "Disable Gravity", &rigidbody_component.disableGravity );
+                ImGui::Checkbox( "Kinematic", &rigidbody_component.kinematic );
 
                 ImGui::Separator();
 
-                ImGui::Checkbox( "Lock Position X", &rigidbodyComponent.m_bLockPositionX );
-                ImGui::Checkbox( "Lock Position Y", &rigidbodyComponent.m_bLockPositionY );
-                ImGui::Checkbox( "Lock Position Z", &rigidbodyComponent.m_bLockPositionZ );
+                ImGui::Checkbox( "Lock Position X", &rigidbody_component.lockPositionX );
+                ImGui::Checkbox( "Lock Position Y", &rigidbody_component.lockPositionY );
+                ImGui::Checkbox( "Lock Position Z", &rigidbody_component.lockPositionZ );
 
                 ImGui::Separator();
 
-                ImGui::Checkbox( "Lock Rotation X", &rigidbodyComponent.m_bLockRotationX );
-                ImGui::Checkbox( "Lock Rotation Y", &rigidbodyComponent.m_bLockRotationY );
-                ImGui::Checkbox( "Lock Rotation Z", &rigidbodyComponent.m_bLockRotationZ );
+                ImGui::Checkbox( "Lock Rotation X", &rigidbody_component.lockRotationX );
+                ImGui::Checkbox( "Lock Rotation Y", &rigidbody_component.lockRotationY );
+                ImGui::Checkbox( "Lock Rotation Z", &rigidbody_component.lockRotationZ );
             } );
 
-        DrawComponent< BoxColliderComponent >( "Box Collider",
+        drawComponent< BoxColliderComponent >( "Box Collider",
             entity,
-            []( auto &boxColliderComponent )
+            []( auto &box_collider_component )
             {
-                ImGui::DragFloat3( "Size", &boxColliderComponent.m_Size.x, 0.03f );
-                ImGui::DragFloat3( "Offset", &boxColliderComponent.m_Offset.x, 0.03f );
-                ImGui::Checkbox( "Trigger", &boxColliderComponent.m_bTrigger );
-                ImGui::Checkbox( "Show Collider Bounds", &boxColliderComponent.m_bShowColliderBounds );
+                ImGui::DragFloat3( "Size", &box_collider_component.size.x, 0.03f );
+                ImGui::DragFloat3( "Offset", &box_collider_component.offset.x, 0.03f );
+                ImGui::Checkbox( "Trigger", &box_collider_component.trigger );
+                ImGui::Checkbox( "Show Collider Bounds", &box_collider_component.showColliderBounds );
 
                 // TODO: Physics Material
             } );
 
-        DrawComponent< SphereColliderComponent >( "Sphere Collider",
+        drawComponent< SphereColliderComponent >( "Sphere Collider",
             entity,
-            []( auto &sphereColliderComponent )
+            []( auto &sphere_collider_component )
             {
-                ImGui::DragFloat( "Radius", &sphereColliderComponent.m_Radius, 0.03f );
-                ImGui::Checkbox( "Trigger", &sphereColliderComponent.m_bTrigger );
-                ImGui::Checkbox( "Show Collider Bounds", &sphereColliderComponent.m_bShowColliderBounds );
+                ImGui::DragFloat( "Radius", &sphere_collider_component.radius, 0.03f );
+                ImGui::Checkbox( "Trigger", &sphere_collider_component.trigger );
+                ImGui::Checkbox( "Show Collider Bounds", &sphere_collider_component.showColliderBounds );
             } );
 
-        DrawComponent< CapsuleColliderComponent >( "Capsule Collider",
+        drawComponent< CapsuleColliderComponent >( "Capsule Collider",
             entity,
-            []( auto &capsuleColliderComponent )
+            []( auto &capsule_collider_component )
             {
-                ImGui::DragFloat( "Radius", &capsuleColliderComponent.m_Radius, 0.03f );
-                ImGui::DragFloat( "Height", &capsuleColliderComponent.m_Height, 0.03f );
-                ImGui::Checkbox( "Trigger", &capsuleColliderComponent.m_bTrigger );
-                ImGui::Checkbox( "Show Collider Bounds", &capsuleColliderComponent.m_bShowColliderBounds );
+                ImGui::DragFloat( "Radius", &capsule_collider_component.radius, 0.03f );
+                ImGui::DragFloat( "Height", &capsule_collider_component.height, 0.03f );
+                ImGui::Checkbox( "Trigger", &capsule_collider_component.trigger );
+                ImGui::Checkbox( "Show Collider Bounds", &capsule_collider_component.showColliderBounds );
             } );
     }
 
     template < typename ComponentType, typename UIFunction >
-    void SceneHierarchyPanel::DrawComponent( const std::string &label,
+    void SceneHierarchyPanel::drawComponent( const std::string &label,
         Entity entity,
-        UIFunction uiFunction,
-        bool bRemoveable )
+        UIFunction ui_function,
+        bool removeable )
     {
-        if ( !entity.HasComponent< ComponentType >() )
+        if ( !entity.hasComponent< ComponentType >() )
             return;
 
-        auto &component = entity.GetComponent< ComponentType >();
-        const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed |
-                                                 ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding |
-                                                 ImGuiTreeNodeFlags_SpanAvailWidth;
+        auto &component = entity.getComponent< ComponentType >();
+        const ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed |
+                                                   ImGuiTreeNodeFlags_AllowItemOverlap |
+                                                   ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-        ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+        ImVec2 content_region_available = ImGui::GetContentRegionAvail();
         ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2{ 4.f, 4.f } );
 
-        float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        const float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImGui::Separator();
 
-        bool bOpen = ImGui::TreeNodeEx( ( void * )typeid( ComponentType ).hash_code(), treeNodeFlags, label.c_str() );
+        bool open = ImGui::TreeNodeEx( ( void * )typeid( ComponentType ).hash_code(), tree_node_flags, label.c_str() );
         ImGui::PopStyleVar();
 
-        ImGui::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
-        if ( ImGui::Button( "+", ImVec2{ lineHeight, lineHeight } ) )
+        ImGui::SameLine( content_region_available.x - line_height * 0.5f );
+        if ( ImGui::Button( "+", ImVec2{ line_height, line_height } ) )
         {
             ImGui::OpenPopup( "ComponentSettings" );
         }
 
-        bool bRemoveComponent = false;
+        bool remove_component = false;
         if ( ImGui::BeginPopup( "ComponentSettings" ) )
         {
             if ( ImGui::MenuItem( "Remove Component" ) )
-                bRemoveComponent = true;
+                remove_component = true;
 
             ImGui::EndPopup();
         }
 
-        if ( bOpen )
+        if ( open )
         {
-            uiFunction( component );
+            ui_function( component );
             ImGui::TreePop();
         }
 
-        if ( bRemoveable && bRemoveComponent )
-            entity.RemoveComponent< ComponentType >();
+        if ( removeable && remove_component )
+            entity.removeComponent< ComponentType >();
     }
 
-    void SceneHierarchyPanel::DrawMaterial( const Ref< Material > &pMaterial )
+    void SceneHierarchyPanel::drawMaterial( const Ref< renderer::Material > &material )
     {
-        const Ref< Shader > &pShader = pMaterial->GetShader();
+        const Ref< renderer::Shader > &shader = material->getShader();
         ImGui::Text( "Material" );
 
-        ImGui::Button( pShader->GetName().c_str(), { 100.f, 0.0f } );
+        ImGui::Button( shader->getName().c_str(), { 100.f, 0.0f } );
         if ( ImGui::BeginDragDropTarget() )
         {
-            const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( pPayload )
+            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+            if ( payload )
             {
-                const wchar_t *pPath = static_cast< const wchar_t * >( pPayload->Data );
-                std::filesystem::path shaderPath = std::filesystem::path{ g_AssetPath } / pPath;
-                pMaterial->SetShader( Shader::Create( shaderPath.string() ) );
+                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
+                std::filesystem::path shader_path = std::filesystem::path{ assetPath } / path;
+                material->setShader( renderer::Shader::create( shader_path.string() ) );
             }
 
             ImGui::EndDragDropTarget();
         }
 
-        const auto &floatValues{ pMaterial->GetFloatValues() };
-        for ( const auto &pair : floatValues )
+        const auto &float_values{ material->getFloatValues() };
+        for ( const auto &pair : float_values )
         {
-            float value = pMaterial->GetFloatValue( pair.first );
+            float value = material->getFloatValue( pair.first );
             ImGui::DragFloat( pair.first.c_str(), &value, 0.03f );
-            pMaterial->SetFloatValue( pair.first, value );
+            material->setFloatValue( pair.first, value );
         }
 
-        const auto &intValues{ pMaterial->GetIntValues() };
-        for ( const auto &pair : intValues )
+        const auto &int_values{ material->getIntValues() };
+        for ( const auto &pair : int_values )
         {
-            int value = pMaterial->GetIntValue( pair.first );
+            int value = material->getIntValue( pair.first );
             ImGui::DragInt( pair.first.c_str(), &value, 0.03f );
-            pMaterial->SetIntValue( pair.first, value );
+            material->setIntValue( pair.first, value );
         }
 
-        const auto &boolValues{ pMaterial->GetBoolValues() };
-        for ( const auto &pair : boolValues )
+        const auto &bool_values{ material->getBoolValues() };
+        for ( const auto &pair : bool_values )
         {
-            bool value = pMaterial->GetBoolValue( pair.first );
+            bool value = material->getBoolValue( pair.first );
             ImGui::Checkbox( pair.first.c_str(), &value );
-            pMaterial->SetBoolValue( pair.first, value );
+            material->setBoolValue( pair.first, value );
         }
 
-        const auto &float2Values{ pMaterial->GetFloat2Values() };
-        for ( const auto &pair : float2Values )
+        const auto &float2_values{ material->getFloat2Values() };
+        for ( const auto &pair : float2_values )
         {
-            DirectX::XMFLOAT2 value = pMaterial->GetFloat2Value( pair.first );
+            DirectX::XMFLOAT2 value = material->getFloat2Value( pair.first );
             ImGui::DragFloat2( pair.first.c_str(), &value.x, 0.03f );
-            pMaterial->SetFloat2Value( pair.first, value );
+            material->setFloat2Value( pair.first, value );
         }
 
-        const auto &float3Values{ pMaterial->GetFloat3Values() };
-        for ( const auto &pair : float3Values )
+        const auto &float3_values{ material->getFloat3Values() };
+        for ( const auto &pair : float3_values )
         {
-            DirectX::XMFLOAT3 value = pMaterial->GetFloat3Value( pair.first );
+            DirectX::XMFLOAT3 value = material->getFloat3Value( pair.first );
             ImGui::DragFloat3( pair.first.c_str(), &value.x, 0.03f );
-            pMaterial->SetFloat3Value( pair.first, value );
+            material->setFloat3Value( pair.first, value );
         }
 
-        const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
-        for ( const auto &pair : texture2DValues )
+        const auto &texture_2d_values{ material->getTexture2DValues() };
+        for ( const auto &pair : texture_2d_values )
         {
             ImGui::Button( pair.first.c_str(), { 100.f, 0.0f } );
             if ( ImGui::BeginDragDropTarget() )
             {
-                const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-                if ( pPayload )
+                const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+                if ( payload )
                 {
-                    const wchar_t *pPath = static_cast< const wchar_t * >( pPayload->Data );
-                    std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / pPath;
-                    pMaterial->SetTexture2D( pair.first, Texture2D::Create( texturePath.string() ) );
+                    const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
+                    std::filesystem::path texture_path = std::filesystem::path{ assetPath } / path;
+                    material->setTexture2D( pair.first, renderer::Texture2D::create( texture_path.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

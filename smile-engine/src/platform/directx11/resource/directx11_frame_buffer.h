@@ -2,53 +2,58 @@
 #include "smile_engine/renderer/resource/frame_buffer.h"
 #include "platform/directx11/directx11_context.h"
 
-namespace smile
+namespace smile::renderer
 {
     class DirectX11Framebuffer final : public Framebuffer
     {
-     public:
-        DirectX11Framebuffer( const FramebufferData &framebufferData );
+      public:
+        DirectX11Framebuffer( const FramebufferData &frame_buffer_data );
         virtual ~DirectX11Framebuffer();
 
-        virtual void Invalidate() override;
+        DirectX11Framebuffer( const DirectX11Framebuffer & ) = delete;
+        DirectX11Framebuffer( DirectX11Framebuffer && ) = delete;
+        DirectX11Framebuffer &operator=( const DirectX11Framebuffer & ) = delete;
+        DirectX11Framebuffer &operator=( DirectX11Framebuffer && ) = delete;
 
-        virtual void Bind() const override;
-        virtual void Unbind() const override;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) override;
-        virtual void Clear() override;
-        virtual void Resize( uint32_t width, uint32_t height ) override;
+        virtual void invalidate() override;
 
-        virtual const FramebufferData &GetData() const override
+        virtual void bind() const override;
+        virtual void unbind() const override;
+        virtual void setClearColor( const DirectX::XMFLOAT4 &color ) override;
+        virtual void clear() override;
+        virtual void resize( Uint32 width, Uint32 height ) override;
+
+        virtual const FramebufferData &getData() const override
         {
-            return m_Data;
+            return data;
         }
-        virtual void *GetColor( uint32_t index ) const override
+        virtual void *getColor( Uint32 index ) const override
         {
-            return m_pColorShaderResourceViews[index];
+            return colorShaderResourceViews[index];
         }
 
-     private:
-        DXGI_FORMAT FramebufferTextureFormatToDirectXBaseType( FramebufferTextureFormat format );
-        bool IsDepthFormat( FramebufferTextureFormat format );
+      private:
+        DXGI_FORMAT framebufferTextureFormatToDirectXBaseType( FramebufferTextureFormat format );
+        bool isDepthFormat( FramebufferTextureFormat format );
 
-     private:
-        DirectX11Context *m_pDirectX11Context = nullptr;
-        FramebufferData m_Data;
+      private:
+        DirectX11Context *directX11Context = nullptr;
+        FramebufferData data;
 
-        DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
+        DirectX::XMFLOAT4 clearColor = { 1.f, 1.f, 1.f, 1.f };
 
-        std::vector< FramebufferTextureData > m_ColorAttachmentData;
-        FramebufferTextureData m_DepthAttachmentData = FramebufferTextureFormat::None;
+        std::vector< FramebufferTextureData > colorAttachmentData;
+        FramebufferTextureData depthAttachmentData = FramebufferTextureFormat::None;
 
-        std::vector< ID3D11Texture2D * > m_pColorAttachments;
-        std::vector< ID3D11RenderTargetView * > m_pRenderTargetViews;
-        std::vector< ID3D11ShaderResourceView * > m_pColorShaderResourceViews;
+        std::vector< ID3D11Texture2D * > colorAttachments;
+        std::vector< ID3D11RenderTargetView * > renderTargetViews;
+        std::vector< ID3D11ShaderResourceView * > colorShaderResourceViews;
 
-        ID3D11Texture2D *m_pDepthStencilAttachment = nullptr;
-        ID3D11DepthStencilView *m_pDepthStencilView = nullptr;
+        ID3D11Texture2D *depthStencilAttachment = nullptr;
+        ID3D11DepthStencilView *depthStencilView = nullptr;
 
-        D3D11_VIEWPORT m_Viewport;
+        D3D11_VIEWPORT viewport;
 
-        static const uint32_t m_MaxFramebufferSize;
+        static const Uint32 maxFramebufferSize;
     };
 }

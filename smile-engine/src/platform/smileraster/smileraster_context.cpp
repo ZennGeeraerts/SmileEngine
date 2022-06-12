@@ -4,68 +4,68 @@
 #include "smile_engine/core/window.h"
 #include "smile_engine/core/logger.h"
 
-namespace smile
+namespace smile::renderer
 {
-    SmileRasterContext::SmileRasterContext( Window *pWindow ) : m_pWindow{ pWindow }
+    SmileRasterContext::SmileRasterContext( Window *window ) : window{ window }
     {
     }
 
     SmileRasterContext::~SmileRasterContext()
     {
-        delete m_pDeviceContext;
+        delete deviceContext;
 
-        SelectObject( m_HDC, m_BitmapOld );
-        DeleteObject( m_BitmapOld );
+        SelectObject( hdc, bitmapOld );
+        DeleteObject( bitmapOld );
 
-        DeleteObject( m_Bitmap );
-        DeleteDC( m_HDC );
+        DeleteObject( bitmap );
+        DeleteDC( hdc );
     }
 
-    void SmileRasterContext::Init()
+    void SmileRasterContext::init()
     {
-        uint32_t width = m_pWindow->GetWidth();
-        uint32_t height = m_pWindow->GetHeight();
-        HWND handle = static_cast< HWND >( m_pWindow->GetNativeWindow() );
+        Uint32 width = window->getWidth();
+        Uint32 height = window->getHeight();
+        HWND handle = static_cast< HWND >( window->getNativeWindow() );
 
-        m_BitmapInfo.bmiHeader.biBitCount = sizeof( uint8_t ) * 8 * 3;
-        m_BitmapInfo.bmiHeader.biClrImportant = 0;
-        m_BitmapInfo.bmiHeader.biClrUsed = 0;
-        m_BitmapInfo.bmiHeader.biCompression = BI_RGB;
-        m_BitmapInfo.bmiHeader.biWidth = width;
-        m_BitmapInfo.bmiHeader.biHeight = -static_cast< int >( height );
-        m_BitmapInfo.bmiHeader.biPlanes = 1;
-        m_BitmapInfo.bmiHeader.biSize = sizeof( BITMAPINFO );
-        m_BitmapInfo.bmiHeader.biSizeImage = width * height * 3;
-        m_BitmapInfo.bmiHeader.biXPelsPerMeter = 0;
-        m_BitmapInfo.bmiHeader.biYPelsPerMeter = 0;
+        bitmapInfo.bmiHeader.biBitCount = sizeof( Uint8 ) * 8 * 3;
+        bitmapInfo.bmiHeader.biClrImportant = 0;
+        bitmapInfo.bmiHeader.biClrUsed = 0;
+        bitmapInfo.bmiHeader.biCompression = BI_RGB;
+        bitmapInfo.bmiHeader.biWidth = width;
+        bitmapInfo.bmiHeader.biHeight = -static_cast< int >( height );
+        bitmapInfo.bmiHeader.biPlanes = 1;
+        bitmapInfo.bmiHeader.biSize = sizeof( BITMAPINFO );
+        bitmapInfo.bmiHeader.biSizeImage = width * height * 3;
+        bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
+        bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
 
         HDC hDC = GetDC( handle );
-        m_HDC = CreateCompatibleDC( hDC );
+        hdc = CreateCompatibleDC( hDC );
         ReleaseDC( handle, hDC );
 
-        m_Bitmap = CreateDIBSection(
-            m_HDC, &m_BitmapInfo, DIB_RGB_COLORS, reinterpret_cast< void ** >( &m_pColorBuffer ), NULL, 0 );
-        SM_ASSERT( m_Bitmap, "SmileRasterContext::Init > Failed to create BitmapDIB" );
+        bitmap = CreateDIBSection(
+            hdc, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast< void ** >( &colorBuffer ), NULL, 0 );
+        SM_ASSERT( bitmap, "SmileRasterContext::Init > Failed to create BitmapDIB" );
 
-        m_BitmapOld = static_cast< HBITMAP >( SelectObject( m_HDC, m_Bitmap ) );
+        bitmapOld = static_cast< HBITMAP >( SelectObject( hdc, bitmap ) );
 
-        memset( m_pColorBuffer, 0, sizeof( uint8_t ) * width * height * 3 );
+        memset( colorBuffer, 0, sizeof( uint8_t ) * width * height * 3 );
 
         Raster::RenderConfig renderConfig{};
-        m_pDeviceContext = new Raster::DeviceContext{ renderConfig };
-        m_Framebuffer =
-            m_pDeviceContext->CreateFramebuffer( m_pColorBuffer, width, height, Raster::ColorbufferFormat::eRGB );
-        m_pDeviceContext->BindFramebuffer( m_Framebuffer );
+        deviceContext = new Raster::DeviceContext{ renderConfig };
+        framebuffer =
+            deviceContext->CreateFramebuffer( colorBuffer, width, height, Raster::ColorbufferFormat::eRGB );
+        deviceContext->BindFramebuffer( framebuffer );
     }
 
-    void SmileRasterContext::Present()
+    void SmileRasterContext::present()
     {
-        uint32_t width = m_pWindow->GetWidth();
-        uint32_t height = m_pWindow->GetHeight();
-        HWND handle = static_cast< HWND >( m_pWindow->GetNativeWindow() );
+        Uint32 width = window->getWidth();
+        Uint32 height = window->getHeight();
+        HWND handle = static_cast< HWND >( window->getNativeWindow() );
 
         HDC hDC = GetDC( handle );
-        BitBlt( hDC, 0, 0, width, height, m_HDC, 0, 0, SRCCOPY );
+        BitBlt( hDC, 0, 0, width, height, hdc, 0, 0, SRCCOPY );
         ReleaseDC( handle, hDC );
     }
 }

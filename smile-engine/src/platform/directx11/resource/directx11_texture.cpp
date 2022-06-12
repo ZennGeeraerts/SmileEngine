@@ -6,99 +6,99 @@
 
 #include "platform/directx11/directx11_diagnostics.h"
 
-namespace smile
+namespace smile::renderer
 {
-    DirectX11Texture2D::DirectX11Texture2D( const std::string &filePath ) : m_FilePath{ filePath }
+    DirectX11Texture2D::DirectX11Texture2D( const std::string &file_path ) : filePath{ file_path }
     {
-        m_pDirectX11Context =
-            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
-        SM_ASSERT( m_pDirectX11Context, "DirectX11Texture2D > Rendering context is not a DirectX11Context" );
+        directX11Context =
+            static_cast< DirectX11Context * >( Application::getInstance().getWindow().getGraphicsContext() );
+        SM_ASSERT( directX11Context, "DirectX11Texture2D > Rendering context is not a DirectX11Context" );
 
-        if ( !LoadTexture( filePath ) )
+        if ( !loadTexture( file_path ) )
         {
-            SAFE_RELEASE( m_pTexture );
-            SAFE_RELEASE( m_pShaderResourceView );
+            SAFE_RELEASE( texture );
+            SAFE_RELEASE( shaderResourceView );
             SM_ASSERT( false, "DirectX11Texture2D > Failed to load texture" );
         }
 
-        auto pTex2D = static_cast< ID3D11Texture2D * >( m_pTexture );
+        auto texture_2d = static_cast< ID3D11Texture2D * >( texture );
         D3D11_TEXTURE2D_DESC tex2Ddesc;
-        pTex2D->GetDesc( &tex2Ddesc );
+        texture_2d->GetDesc( &tex2Ddesc );
 
-        m_Width = tex2Ddesc.Width;
-        m_Height = tex2Ddesc.Height;
+        width = tex2Ddesc.Width;
+        height = tex2Ddesc.Height;
     }
 
-    bool DirectX11Texture2D::LoadTexture( const std::string &filePath )
+    bool DirectX11Texture2D::loadTexture( const std::string &file_path )
     {
-        if ( filePath.find_last_of( '.' ) == std::string::npos )
+        if ( file_path.find_last_of( '.' ) == std::string::npos )
         {
-            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Invalid file extension: %s", filePath.c_str() );
+            SM_LOG_ERROR( "DirectX11Texture2D::loadTexture > Invalid file extension: %s", file_path.c_str() );
             return false;
         }
 
-        std::string fileExtension = filePath.substr( filePath.find_last_of( '.' ) + 1 );
+        std::string file_extension = file_path.substr( file_path.find_last_of( '.' ) + 1 );
 
         DirectX::TexMetadata info{};
         DirectX::ScratchImage image{};
 
-        std::wstring filePathW = std::wstring{ filePath.begin(), filePath.end() };
+        std::wstring file_path_wide = std::wstring{ file_path.begin(), file_path.end() };
 
         HRESULT result{ S_OK };
-        if ( !_strcmpi( fileExtension.c_str(), "dds" ) )
+        if ( !_strcmpi( file_extension.c_str(), "dds" ) )
         {
-            result = DirectX::LoadFromDDSFile( filePathW.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
+            result = DirectX::LoadFromDDSFile( file_path_wide.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from DDS file failed: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Texture2D::loadTexture > Loading from DDS file failed: %ls",
+                    getDirectX11ErrorMessage( result ) );
                 return false;
             }
         }
-        else if ( !_strcmpi( fileExtension.c_str(), "tga" ) )
+        else if ( !_strcmpi( file_extension.c_str(), "tga" ) )
         {
-            result = DirectX::LoadFromTGAFile( filePathW.c_str(), &info, image );
+            result = DirectX::LoadFromTGAFile( file_path_wide.c_str(), &info, image );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from TGA file failed: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Texture2D::loadTexture > Loading from TGA file failed: %ls",
+                    getDirectX11ErrorMessage( result ) );
                 return false;
             }
         }
         else
         {
-            result = DirectX::LoadFromWICFile( filePathW.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
+            result = DirectX::LoadFromWICFile( file_path_wide.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Loading from WIC file failed: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Texture2D::loadTexture > Loading from WIC file failed: %ls",
+                    getDirectX11ErrorMessage( result ) );
                 return false;
             }
         }
 
-        result = DirectX::CreateTexture( m_pDirectX11Context->GetDevice(),
+        result = DirectX::CreateTexture( directX11Context->getDevice(),
             image.GetImages(),
             image.GetImageCount(),
             image.GetMetadata(),
-            &m_pTexture );
+            &texture );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
-                "DirectX11Texture2D::LoadTexture > Failed to create texture: %ls", GetDirectX11ErrorMessage( result ) );
-            SAFE_RELEASE( m_pTexture );
+                "DirectX11Texture2D::loadTexture > Failed to create texture: %ls", getDirectX11ErrorMessage( result ) );
+            SAFE_RELEASE( texture );
             return false;
         }
 
-        result = DirectX::CreateShaderResourceView( m_pDirectX11Context->GetDevice(),
+        result = DirectX::CreateShaderResourceView( directX11Context->getDevice(),
             image.GetImages(),
             image.GetImageCount(),
             image.GetMetadata(),
-            &m_pShaderResourceView );
+            &shaderResourceView );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11Texture2D::LoadTexture > Failed to create shader resource view: %ls",
-                GetDirectX11ErrorMessage( result ) );
-            SAFE_RELEASE( m_pShaderResourceView );
+            SM_LOG_ERROR( "DirectX11Texture2D::loadTexture > Failed to create shader resource view: %ls",
+                getDirectX11ErrorMessage( result ) );
+            SAFE_RELEASE( shaderResourceView );
             return false;
         }
 
@@ -107,7 +107,7 @@ namespace smile
 
     DirectX11Texture2D::~DirectX11Texture2D()
     {
-        SAFE_RELEASE( m_pTexture );
-        SAFE_RELEASE( m_pShaderResourceView );
+        SAFE_RELEASE( texture );
+        SAFE_RELEASE( shaderResourceView );
     }
 }

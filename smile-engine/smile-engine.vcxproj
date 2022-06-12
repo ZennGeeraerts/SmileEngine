@@ -25,12 +25,17 @@
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_vertex_buffer.h" />
     <ClInclude Include="src\smile_engine\core\assert.h" />
     <ClInclude Include="src\SmileEngine\Core\GamepadCodes.h" />
+    <ClInclude Include="src\smile_engine\core\events\application_event.h" />
+    <ClInclude Include="src\smile_engine\core\events\event.h" />
+    <ClInclude Include="src\smile_engine\core\events\key_event.h" />
+    <ClInclude Include="src\smile_engine\core\events\mouse_event.h" />
     <ClInclude Include="src\smile_engine\ecs\component_buffer.h" />
     <ClInclude Include="src\smile_engine\ecs\component_configuration.h" />
     <ClInclude Include="src\smile_engine\ecs\component_data_group.h" />
     <ClInclude Include="src\smile_engine\ecs\component_storage.h" />
     <ClInclude Include="src\smile_engine\ecs\ecs_engine.h" />
     <ClInclude Include="src\smile_engine\ecs\entity_handle.h" />
+    <ClInclude Include="src\smile_engine\imgui\imgui_layer.h" />
     <ClInclude Include="src\smile_engine\math\math.h" />
     <ClInclude Include="src\smile_engine\math\vector2.h" />
     <ClInclude Include="src\SmileEngine\Core\MouseCodes.h" />
@@ -65,7 +70,6 @@
     <ClInclude Include="src\platform\SmileRaster\smileraster_shader.h" />
     <ClInclude Include="src\smile_engine\renderer\animation\mesh_animator.h" />
     <ClInclude Include="src\smile_engine\renderer\animation\bone.h" />
-    <ClInclude Include="src\smile_engine\ui\imgui\imgui_layer.h" />
     <ClInclude Include="thirdparty\imguizmo\ImGuizmo.h" />
     <ClInclude Include="Libs\yaml-cpp\anchor.h" />
     <ClInclude Include="Libs\yaml-cpp\binary.h" />
@@ -175,6 +179,7 @@
     <ClCompile Include="src\platform\directx11\shader\directx11_shader_reflection.cpp" />
     <ClCompile Include="src\smile_engine\ecs\component_configuration.cpp" />
     <ClCompile Include="src\smile_engine\ecs\ecs_engine.cpp" />
+    <ClCompile Include="src\smile_engine\imgui\imgui_layer.cpp" />
     <ClCompile Include="src\smile_engine\math\math.cpp" />
     <ClCompile Include="src\smile_engine\math\vector2.cpp" />
     <ClCompile Include="src\smile_engine\math\vector3.cpp" />
@@ -199,7 +204,6 @@
     <ClCompile Include="src\platform\SmileRaster\smileraster_shader.cpp" />
     <ClCompile Include="src\smile_engine\renderer\animation\mesh_animator.cpp" />
     <ClCompile Include="src\smile_engine\renderer\animation\bone.cpp" />
-    <ClCompile Include="src\smile_engine\ui\imgui\imgui_layer.cpp" />
     <ClCompile Include="thirdparty\imguizmo\ImGuizmo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

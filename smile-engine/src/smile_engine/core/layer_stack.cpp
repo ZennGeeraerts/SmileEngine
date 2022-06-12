@@ -9,39 +9,39 @@ namespace smile
 
     LayerStack::~LayerStack()
     {
-        for ( Layer *pLayer : m_pLayers )
-            delete pLayer;
+        for ( Layer *layer : layers )
+            delete layer;
     }
 
-    // Insert at m_LayerInsert
-    void LayerStack::PushLayer( Layer *pLayer )
+    // Insert at layerInsertIndex
+    void LayerStack::pushLayer( Layer *layer )
     {
-        m_pLayers.emplace( m_pLayers.begin() + m_LayerInsertIndex, pLayer );
-        ++m_LayerInsertIndex;
-        pLayer->OnAttach();
+        layers.emplace( layers.begin() + layerInsertIndex, layer );
+        ++layerInsertIndex;
+        layer->onAttach();
     }
 
     // Overlays get pushed at the back of the vector
-    void LayerStack::PushOverlay( Layer *pOverlay )
+    void LayerStack::pushOverlay( Layer *overlay )
     {
-        m_pLayers.emplace_back( pOverlay );
-        pOverlay->OnAttach();
+        layers.emplace_back( overlay );
+        overlay->onAttach();
     }
 
-    void LayerStack::PopLayer( Layer *pLayer )
+    void LayerStack::popLayer( Layer *layer )
     {
-        auto it = std::find( m_pLayers.begin(), m_pLayers.end(), pLayer );
-        if ( it != m_pLayers.end() )
+        auto it = std::find( layers.begin(), layers.end(), layer );
+        if ( it != layers.end() )
         {
-            m_pLayers.erase( it );
-            --m_LayerInsertIndex;
+            layers.erase( it );
+            --layerInsertIndex;
         }
     }
 
-    void LayerStack::PopOverlay( Layer *pOverlay )
+    void LayerStack::popOverlay( Layer *overlay )
     {
-        auto it = std::find( m_pLayers.begin(), m_pLayers.end(), pOverlay );
-        if ( it != m_pLayers.end() )
-            m_pLayers.erase( it );
+        auto it = std::find( layers.begin(), layers.end(), overlay );
+        if ( it != layers.end() )
+            layers.erase( it );
     }
 }

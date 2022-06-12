@@ -4,39 +4,39 @@
 
 #include <SDL_image.h>
 
-namespace smile
+namespace smile::renderer
 {
     class SmileRasterTexture2D final : public Texture2D
     {
      public:
-        SmileRasterTexture2D( const std::string &filePath );
+        SmileRasterTexture2D( const std::string &file_path );
         virtual ~SmileRasterTexture2D();
 
-        virtual const std::string &GetFilePath() const override
+        virtual const std::string &getFilePath() const override
         {
-            return m_FilePath;
+            return filePath;
         };
-        virtual uint32_t GetWidth() const override
+        virtual Uint32 getWidth() const override
         {
-            return m_Width;
+            return width;
         }
-        virtual uint32_t GetHeight() const override
+        virtual Uint32 getHeight() const override
         {
-            return m_Height;
+            return height;
         }
-        virtual void *GetData() const override
+        virtual void *getData() const override
         {
-            return reinterpret_cast< void * >( m_Texture );
+            return reinterpret_cast< void * >( texture );
         }
 
      private:
-        std::string m_FilePath;
-        uint32_t m_Width = 0;
-        uint32_t m_Height = 0;
+        std::string filePath;
+        Uint32 width = 0;
+        Uint32 height = 0;
 
-        SmileRasterContext *m_pSmileRasterContext = nullptr;
-        Raster::TextureID m_Texture = SMR_INVALID_TEXTURE_ID;
-        SDL_Surface *m_pSurface = nullptr;
-        uint8_t *m_pPixels = nullptr;
+        SmileRasterContext *smileRasterContext = nullptr;
+        Raster::TextureID texture = SMR_INVALID_TEXTURE_ID;
+        SDL_Surface *surface = nullptr;
+        uint8_t *pixels = nullptr;
     };
 }

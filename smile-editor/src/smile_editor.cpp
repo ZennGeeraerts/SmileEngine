@@ -10,7 +10,7 @@ namespace smile
       public:
         SmileEditor() : Application( "Smile Editor" )
         {
-            PushLayer( new SmileEditorLayer{} );
+            pushLayer( new SmileEditorLayer{} );
         }
 
         ~SmileEditor()
@@ -18,7 +18,7 @@ namespace smile
         }
     };
 
-    Application *CreateGame()
+    Application *createGame()
     {
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes

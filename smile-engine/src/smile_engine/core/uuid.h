@@ -8,16 +8,16 @@ namespace smile
     {
       public:
         UUID();
-        UUID( uint64_t id );
+        UUID( Uint64 id );
         UUID( const UUID & ) = default;
 
-        operator uint64_t() const
+        operator Uint64() const
         {
-            return m_UUID;
+            return uuid;
         }
 
       private:
-        uint64_t m_UUID;
+        Uint64 uuid;
     };
 }
 

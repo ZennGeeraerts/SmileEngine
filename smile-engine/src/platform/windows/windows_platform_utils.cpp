@@ -7,43 +7,43 @@
 
 namespace smile::utils
 {
-    std::string OpenFile( const char *pFilter )
+    std::string openFile( const char *filter )
     {
-        OPENFILENAMEA openFileName{};
-        CHAR szFile[260] = { 0 };
-        ZeroMemory( &openFileName, sizeof( OPENFILENAMEA ) );
-        openFileName.lStructSize = sizeof( OPENFILENAMEA );
-        openFileName.hwndOwner = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
-        openFileName.lpstrFile = szFile;
-        openFileName.nMaxFile = sizeof( szFile );
-        openFileName.lpstrFilter = pFilter;
-        openFileName.nFilterIndex = 1;
-        openFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+        OPENFILENAMEA open_file_name{};
+        CHAR sz_file[260] = { 0 };
+        ZeroMemory( &open_file_name, sizeof( OPENFILENAMEA ) );
+        open_file_name.lStructSize = sizeof( OPENFILENAMEA );
+        open_file_name.hwndOwner = static_cast< HWND >( Application::getInstance().getWindow().getNativeWindow() );
+        open_file_name.lpstrFile = sz_file;
+        open_file_name.nMaxFile = sizeof( sz_file );
+        open_file_name.lpstrFilter = filter;
+        open_file_name.nFilterIndex = 1;
+        open_file_name.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
-        if ( GetOpenFileNameA( &openFileName ) == TRUE )
-            return openFileName.lpstrFile;
+        if ( GetOpenFileNameA( &open_file_name ) == TRUE )
+            return open_file_name.lpstrFile;
 
         return std::string{};
     }
 
-    std::string SaveFile( const char *pFilter )
+    std::string saveFile( const char *filter )
     {
-        OPENFILENAMEA openFileName{};
-        CHAR szFile[260] = { 0 };
-        ZeroMemory( &openFileName, sizeof( OPENFILENAMEA ) );
-        openFileName.lStructSize = sizeof( OPENFILENAMEA );
-        openFileName.hwndOwner = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
-        openFileName.lpstrFile = szFile;
-        openFileName.nMaxFile = sizeof( szFile );
-        openFileName.lpstrFilter = pFilter;
-        openFileName.nFilterIndex = 1;
-        openFileName.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+        OPENFILENAMEA open_file_name{};
+        CHAR sz_file[260] = { 0 };
+        ZeroMemory( &open_file_name, sizeof( OPENFILENAMEA ) );
+        open_file_name.lStructSize = sizeof( OPENFILENAMEA );
+        open_file_name.hwndOwner = static_cast< HWND >( Application::getInstance().getWindow().getNativeWindow() );
+        open_file_name.lpstrFile = sz_file;
+        open_file_name.nMaxFile = sizeof( sz_file );
+        open_file_name.lpstrFilter = filter;
+        open_file_name.nFilterIndex = 1;
+        open_file_name.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 
         // Destract the extention from the filter
-        openFileName.lpstrDefExt = strchr( pFilter, '\0' ) + 1;
+        open_file_name.lpstrDefExt = strchr( filter, '\0' ) + 1;
 
-        if ( GetSaveFileNameA( &openFileName ) == TRUE )
-            return openFileName.lpstrFile;
+        if ( GetSaveFileNameA( &open_file_name ) == TRUE )
+            return open_file_name.lpstrFile;
 
         return std::string{};
     }

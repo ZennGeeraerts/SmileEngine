@@ -1,115 +1,115 @@
 #include "smpch.h"
 #include "mesh_animator.h"
 
-namespace smile
+namespace smile::renderer
 {
-    const Uint32 MeshAnimator::m_MaxBoneCount{ 70 };
+    const Uint32 MeshAnimator::maxBoneCount{ 70 };
 
-    MeshAnimator::MeshAnimator( const Ref< SkinnedMeshFilter > &pMesh ) : m_pSkinnedMesh{ pMesh }
+    MeshAnimator::MeshAnimator( const Ref< SkinnedMeshFilter > &mesh ) : skinnedMesh{ mesh }
     {
-        m_Transforms.resize( m_MaxBoneCount );
+        transforms.resize( maxBoneCount );
     }
 
-    void MeshAnimator::OnUpdate( Timestep deltaTime )
+    void MeshAnimator::onUpdate( Timestep delta_time )
     {
-        if ( m_bClipSet && m_bPlaying )
+        if ( clipSet && playing )
         {
-            float passedTicks = deltaTime * m_CurrentClip.m_TicksPerSecond;
-            passedTicks = fmod( passedTicks, m_CurrentClip.m_Duration );
+            float passed_ticks = delta_time * currentClip.ticksPerSecond;
+            passed_ticks = fmod( passed_ticks, currentClip.duration );
 
-            if ( !m_bReversed )
+            if ( !reversed )
             {
-                m_TickCount += passedTicks;
-                if ( m_TickCount > m_CurrentClip.m_Duration )
-                    m_TickCount = 0;
+                tickCount += passed_ticks;
+                if ( tickCount > currentClip.duration )
+                    tickCount = 0;
             }
             else
             {
-                m_TickCount -= passedTicks;
-                if ( m_TickCount < 0 )
-                    m_TickCount = m_CurrentClip.m_Duration;
+                tickCount -= passed_ticks;
+                if ( tickCount < 0 )
+                    tickCount = currentClip.duration;
             }
 
-            DirectX::XMFLOAT4X4 identityMatrix{};
-            DirectX::XMStoreFloat4x4( &identityMatrix, DirectX::XMMatrixIdentity() );
-            CalculateBoneTransform( &m_CurrentClip.m_RootNode, identityMatrix );
+            DirectX::XMFLOAT4X4 identity_matrix{};
+            DirectX::XMStoreFloat4x4( &identity_matrix, DirectX::XMMatrixIdentity() );
+            calculateBoneTransform( &currentClip.rootNode, identity_matrix );
         }
     }
 
-    void MeshAnimator::CalculateBoneTransform( AnimationNode *pNode, const DirectX::XMFLOAT4X4 &parentTransform )
+    void MeshAnimator::calculateBoneTransform( AnimationNode *node, const DirectX::XMFLOAT4X4 &parent_transform )
     {
-        const std::string &nodeName = pNode->m_Name;
-        DirectX::XMFLOAT4X4 nodeTransform = pNode->m_Transform;
+        const std::string &node_name = node->name;
+        DirectX::XMFLOAT4X4 node_transform = node->transform;
 
-        auto it = std::find_if( m_CurrentClip.m_Bones.begin(),
-            m_CurrentClip.m_Bones.end(),
-            [nodeName]( const Bone &bone ) { return bone.GetName() == nodeName; } );
+        auto it = std::find_if( currentClip.bones.begin(),
+            currentClip.bones.end(),
+            [node_name]( const Bone &bone ) { return bone.getName() == node_name; } );
 
-        if ( it != m_CurrentClip.m_Bones.end() )
+        if ( it != currentClip.bones.end() )
         {
             Bone &bone = ( *it );
-            bone.OnUpdate( m_TickCount );
-            nodeTransform = bone.GetLocalTransform();
+            bone.onUpdate( tickCount );
+            node_transform = bone.getLocalTransform();
         }
 
-        DirectX::XMMATRIX globalTransformMat =
-            DirectX::XMLoadFloat4x4( &nodeTransform ) * DirectX::XMLoadFloat4x4( &parentTransform );
-        DirectX::XMFLOAT4X4 globalTransform{};
-        DirectX::XMStoreFloat4x4( &globalTransform, globalTransformMat );
+        DirectX::XMMATRIX global_transform_mat =
+            DirectX::XMLoadFloat4x4( &node_transform ) * DirectX::XMLoadFloat4x4( &parent_transform );
+        DirectX::XMFLOAT4X4 global_transform{};
+        DirectX::XMStoreFloat4x4( &global_transform, global_transform_mat );
 
-        if ( m_pSkinnedMesh->m_SkeletonMap.find( nodeName ) != m_pSkinnedMesh->m_SkeletonMap.end() )
+        if ( skinnedMesh->skeletonMap.find( node_name ) != skinnedMesh->skeletonMap.end() )
         {
-            uint32_t id = m_pSkinnedMesh->m_SkeletonMap[nodeName].m_ID;
-            SM_ASSERT( id < m_MaxBoneCount, "MeshAnimator::CalculateBoneTransform > Max bone count reached" );
+            Uint32 id = skinnedMesh->skeletonMap[node_name].id;
+            SM_ASSERT( id < maxBoneCount, "MeshAnimator::calculateBoneTransform > Max bone count reached" );
 
-            DirectX::XMMATRIX transformMat =
-                DirectX::XMLoadFloat4x4( &m_pSkinnedMesh->m_SkeletonMap[nodeName].m_Offset ) * globalTransformMat;
-            DirectX::XMStoreFloat4x4( &m_Transforms[id], transformMat );
+            DirectX::XMMATRIX transform_mat =
+                DirectX::XMLoadFloat4x4( &skinnedMesh->skeletonMap[node_name].offset ) * global_transform_mat;
+            DirectX::XMStoreFloat4x4( &transforms[id], transform_mat );
         }
 
-        for ( uint32_t i{}; i < pNode->m_ChildrenCount; ++i )
-            CalculateBoneTransform( &pNode->m_Children[i], globalTransform );
+        for ( Uint32 i{}; i < node->childrenCount; ++i )
+            calculateBoneTransform( &node->children[i], global_transform );
     }
 
-    void MeshAnimator::SetAnimation( const std::string &clipName )
+    void MeshAnimator::setAnimation( const std::string &clip_name )
     {
-        m_bClipSet = false;
+        clipSet = false;
 
-        auto it = std::find_if( m_pSkinnedMesh->m_AnimationClips.begin(),
-            m_pSkinnedMesh->m_AnimationClips.end(),
-            [clipName]( const AnimationClip &clip ) { return clip.m_Name == clipName; } );
+        auto it = std::find_if( skinnedMesh->animationClips.begin(),
+            skinnedMesh->animationClips.end(),
+            [clip_name]( const AnimationClip &clip ) { return clip.name == clip_name; } );
 
-        if ( it != m_pSkinnedMesh->m_AnimationClips.end() )
-            SetAnimation( *it );
+        if ( it != skinnedMesh->animationClips.end() )
+            setAnimation( *it );
         else
         {
-            Reset( false );
-            SM_LOG_WARNING( "MeshAnimator::SetAnimation > clip with clipName was not found in m_AnimationClips" );
+            reset( false );
+            SM_LOG_WARNING( "MeshAnimator::setAnimation > clip with clipName was not found in m_AnimationClips" );
         }
     }
 
-    void MeshAnimator::SetAnimation( uint32_t clipID )
+    void MeshAnimator::setAnimation( Uint32 clip_id )
     {
-        if ( clipID < m_pSkinnedMesh->m_AnimationClips.size() )
+        if ( clip_id < skinnedMesh->animationClips.size() )
         {
-            AnimationClip &animationClip = m_pSkinnedMesh->m_AnimationClips[clipID];
-            SetAnimation( animationClip );
+            AnimationClip &animation_clip = skinnedMesh->animationClips[clip_id];
+            setAnimation( animation_clip );
         }
         else
         {
-            Reset( false );
+            reset( false );
             SM_LOG_WARNING( "MeshAnimator::SetAnimation > clipID is bigger than the number of animation clips" );
         }
     }
 
-    void MeshAnimator::SetAnimation( const AnimationClip &clip )
+    void MeshAnimator::setAnimation( const AnimationClip &clip )
     {
-        m_bClipSet = true;
-        m_CurrentClip = clip;
-        Reset( false );
+        clipSet = true;
+        currentClip = clip;
+        reset( false );
     }
 
-    void MeshAnimator::Reset( bool bPause )
+    void MeshAnimator::reset( bool pause )
     {
         // if (bPause)
         //	Pause();

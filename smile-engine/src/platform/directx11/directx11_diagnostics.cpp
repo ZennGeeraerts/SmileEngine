@@ -3,24 +3,24 @@
 
 #include <d3d11.h>
 
-namespace smile
+namespace smile::renderer
 {
-    LPTSTR GetDirectX11ErrorMessage( HRESULT result )
+    LPTSTR getDirectX11ErrorMessage( HRESULT result )
     {
         // This works only with windows 8 or higher
         // FormatMessage are since then including DirectX
         // Before the library DXERR was used
         // TODO: check if the user is on windows 8 or higher
 
-        LPTSTR errorText = NULL;
+        LPTSTR error_text = NULL;
         FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
             NULL,
             result,
             MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-            ( LPTSTR )&errorText,
+            ( LPTSTR )&error_text,
             0,
             NULL );
 
-        return errorText;
+        return error_text;
     }
 }

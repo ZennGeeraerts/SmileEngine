@@ -6,74 +6,44 @@ using namespace std::chrono;
 namespace smile
 {
     Timer::Timer()
-        : m_MsPerFrame{ 16 },
-          m_Lag{ 0.0f },
-          m_TotalTimePassed{ 0.0f },
-          m_DeltaTime{ 0.0f },
-          m_FPS{ 0 },
-          m_LastTime{},
-          m_bRunning{ false }
+        : msPerFrame{ 16 },
+          lag{ 0.0f },
+          totalTimePassed{ 0.0f },
+          deltaTime{ 0.0f },
+          fps{ 0 },
+          lastTime{},
+          isRunning{ false }
     {
     }
 
-    void Timer::Run()
+    void Timer::run()
     {
-        m_bRunning = true;
-        m_LastTime = high_resolution_clock::now();
+        isRunning = true;
+        lastTime = high_resolution_clock::now();
     }
 
-    void Timer::OnUpdate()
+    void Timer::onUpdate()
     {
-        if ( !m_bRunning )
+        if ( !isRunning )
             return;
 
-        const auto currentTime{ high_resolution_clock::now() };
-        m_DeltaTime = duration< float >( currentTime - m_LastTime ).count();
-        m_LastTime = currentTime;
+        const auto current_time{ high_resolution_clock::now() };
+        deltaTime = duration< float >( current_time - lastTime ).count();
+        lastTime = current_time;
 
-        m_Lag += m_DeltaTime;
+        lag += deltaTime;
 
-        m_FPS = static_cast< Uint32 >( 1.f / m_DeltaTime.GetSeconds() );
+        fps = static_cast< Uint32 >( 1.f / deltaTime.getSeconds() );
     }
 
-    bool Timer::IsCatchingUpInFixedSteps()
+    bool Timer::isCatchingUpInFixedSteps()
     {
-        if ( m_Lag >= m_MsPerFrame )
+        if ( lag >= msPerFrame )
         {
-            m_Lag -= static_cast< float >( m_MsPerFrame );
+            lag -= static_cast< float >( msPerFrame );
             return true;
         }
 
         return false;
-    }
-
-    Timestep Timer::GetDeltaTime() const
-    {
-        return m_DeltaTime;
-    }
-
-    Timestep Timer::GetTotalTimePassed() const
-    {
-        return m_TotalTimePassed;
-    }
-
-    uint32_t Timer::GetFPS() const
-    {
-        return m_FPS;
-    }
-
-    void Timer::SetMsPerFrame( uint32_t msPerFrame )
-    {
-        m_MsPerFrame = msPerFrame;
-    }
-
-    uint32_t Timer::GetMsPerFrame() const
-    {
-        return m_MsPerFrame;
-    }
-
-    std::chrono::steady_clock::time_point Timer::GetTimeBeforeGameLoop() const
-    {
-        return m_LastTime;
     }
 }

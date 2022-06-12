@@ -2,13 +2,13 @@
 #include <foundation/PxErrorCallback.h>
 #include <foundation/PxAssert.h>
 
-namespace smile
+namespace smile::physics
 {
     class PhysicsErrorCallback final : public physx::PxErrorCallback
     {
       public:
         virtual void
-        reportError( physx::PxErrorCode::Enum code, const char *pMessage, const char *pFile, int line ) override;
+        reportError( physx::PxErrorCode::Enum code, const char *message, const char *file, int line ) override;
     };
 
     class PhysicsAssertHandler final : public physx::PxAssertHandler

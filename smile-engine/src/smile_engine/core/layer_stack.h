@@ -16,23 +16,23 @@ namespace smile
         LayerStack &operator=( const LayerStack & ) = delete;
         LayerStack &operator=( LayerStack && ) = delete;
 
-        void PushLayer( Layer *pLayer );
-        void PushOverlay( Layer *pOverlay );
-        void PopLayer( Layer *pLayer );
-        void PopOverlay( Layer *pOverlay );
+        void pushLayer( Layer *layer );
+        void pushOverlay( Layer *overlay );
+        void popLayer( Layer *layer );
+        void popOverlay( Layer *overlay );
 
         std::vector< Layer * >::iterator begin()
         {
-            return m_pLayers.begin();
+            return layers.begin();
         }
         std::vector< Layer * >::iterator end()
         {
-            return m_pLayers.end();
+            return layers.end();
         }
 
       private:
         // Vector is used because we iterate over it every frame
-        std::vector< Layer * > m_pLayers;
-        Uint32 m_LayerInsertIndex = 0;
+        std::vector< Layer * > layers;
+        Uint32 layerInsertIndex = 0;
     };
 }

@@ -405,9 +405,6 @@
     <ClInclude Include="src\smile_engine\utils\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\ui\imgui\imgui_layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\smile_engine\core\assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -460,6 +457,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\renderer\shader\shader_reflection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\core\events\application_event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\core\events\mouse_event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\core\events\key_event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\core\events\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\imgui\imgui_layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -650,9 +662,6 @@
     <ClCompile Include="src\smile_engine\utils\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\smile_engine\ui\imgui\imgui_layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\directx11_diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -684,6 +693,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\directx11\shader\directx11_shader_reflection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\imgui\imgui_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

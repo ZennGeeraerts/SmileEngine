@@ -7,248 +7,252 @@
 
 #include <PxPhysicsAPI.h>
 
-namespace smile
+namespace smile::physics
 {
-    static void SetPhysicsMaterial( const BoxColliderComponent &component, physx::PxMaterial *pOutMaterial )
+    static void setPhysicsMaterial( const scene::BoxColliderComponent &component, physx::PxMaterial *out_material )
     {
-        if ( component.m_pPhysicsMaterial )
+        if ( component.physicsMaterial )
         {
-            if ( pOutMaterial )
+            if ( out_material )
             {
-                pOutMaterial->release();
-                pOutMaterial = nullptr;
+                out_material->release();
+                out_material = nullptr;
             }
 
-            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->m_StaticFriction,
-                component.m_pPhysicsMaterial->m_DynamicFriction,
-                component.m_pPhysicsMaterial->m_Restitution );
+            out_material = PhysicsEngine::getPhysics()->createMaterial( component.physicsMaterial->staticFriction,
+                component.physicsMaterial->dynamicFriction,
+                component.physicsMaterial->restitution );
         }
     }
 
-    static void SetPhysicsMaterial( const SphereColliderComponent &component, physx::PxMaterial *pOutMaterial )
+    static void setPhysicsMaterial( const scene::SphereColliderComponent &component, physx::PxMaterial *out_material )
     {
-        if ( component.m_pPhysicsMaterial )
+        if ( component.physicsMaterial )
         {
-            if ( pOutMaterial )
+            if ( out_material )
             {
-                pOutMaterial->release();
-                pOutMaterial = nullptr;
+                out_material->release();
+                out_material = nullptr;
             }
 
-            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->m_StaticFriction,
-                component.m_pPhysicsMaterial->m_DynamicFriction,
-                component.m_pPhysicsMaterial->m_Restitution );
+            out_material = PhysicsEngine::getPhysics()->createMaterial( component.physicsMaterial->staticFriction,
+                component.physicsMaterial->dynamicFriction,
+                component.physicsMaterial->restitution );
         }
     }
 
-    static void SetPhysicsMaterial( const CapsuleColliderComponent &component, physx::PxMaterial *pOutMaterial )
+    static void setPhysicsMaterial( const scene::CapsuleColliderComponent &component, physx::PxMaterial *out_material )
     {
-        if ( component.m_pPhysicsMaterial )
+        if ( component.physicsMaterial )
         {
-            if ( pOutMaterial )
+            if ( out_material )
             {
-                pOutMaterial->release();
-                pOutMaterial = nullptr;
+                out_material->release();
+                out_material = nullptr;
             }
 
-            pOutMaterial = PhysicsEngine::GetPhysics()->createMaterial( component.m_pPhysicsMaterial->m_StaticFriction,
-                component.m_pPhysicsMaterial->m_DynamicFriction,
-                component.m_pPhysicsMaterial->m_Restitution );
+            out_material = PhysicsEngine::getPhysics()->createMaterial( component.physicsMaterial->staticFriction,
+                component.physicsMaterial->dynamicFriction,
+                component.physicsMaterial->restitution );
         }
     }
 
-    PhysicsActor::PhysicsActor( Entity entity ) : m_Entity{ entity }
+    PhysicsActor::PhysicsActor( scene::Entity entity ) : entity{ entity }
     {
-        auto &rigidBodyComponent = entity.GetComponent< RigidbodyComponent >();
-        if ( rigidBodyComponent.m_pPhysicsMaterial )
-            m_pPhysicsMaterial = rigidBodyComponent.m_pPhysicsMaterial;
+        auto &rigidbody_component = entity.getComponent< scene::RigidbodyComponent >();
+        if ( rigidbody_component.physicsMaterial )
+            physicsMaterial = rigidbody_component.physicsMaterial;
         else
-            m_pPhysicsMaterial = PhysicsEngine::GetDefaultPhysicsMaterial();
+            physicsMaterial = PhysicsEngine::getDefaultPhysicsMaterial();
 
-        physx::PxPhysics *pPhysics = PhysicsEngine::GetPhysics();
-        physx::PxTransform pxTransform = utils::ConvertToPhysXTransform( entity.GetTransform() );
+        physx::PxPhysics *physics = PhysicsEngine::getPhysics();
+        physx::PxTransform px_transform = utils::convertToPhysXTransform( entity.getTransform() );
 
-        switch ( rigidBodyComponent.m_BodyType )
+        switch ( rigidbody_component.bodyType )
         {
-            case RigidbodyComponent::BodyType::Static:
+            case scene::RigidbodyComponent::BodyType::Static:
             {
-                physx::PxRigidStatic *pRigidStaticActor = pPhysics->createRigidStatic( pxTransform );
-                m_pRigidActor = pRigidStaticActor;
+                physx::PxRigidStatic *rigid_static_actor = physics->createRigidStatic( px_transform );
+                rigidActor = rigid_static_actor;
                 break;
             }
-            case RigidbodyComponent::BodyType::Dynamic:
+            case scene::RigidbodyComponent::BodyType::Dynamic:
             {
-                const PhysicsSettings &settings = PhysicsEngine::GetPhysicsSettings();
+                const PhysicsSettings &settings = PhysicsEngine::getPhysicsSettings();
 
-                physx::PxRigidDynamic *pRigidDynamicActor = pPhysics->createRigidDynamic( pxTransform );
+                physx::PxRigidDynamic *rigid_dynamic_actor = physics->createRigidDynamic( px_transform );
 
-                pRigidDynamicActor->setLinearDamping( rigidBodyComponent.m_LinearDrag );
-                pRigidDynamicActor->setAngularDamping( rigidBodyComponent.m_AngularDrag );
-                pRigidDynamicActor->setRigidBodyFlag(
-                    physx::PxRigidBodyFlag::eKINEMATIC, rigidBodyComponent.m_bKinematic );
-                pRigidDynamicActor->setRigidBodyFlag( physx::PxRigidBodyFlag::eENABLE_CCD,
-                    rigidBodyComponent.m_CollisionDetectionType == RigidbodyComponent::CollisionDetectionType::Continuous );
+                rigid_dynamic_actor->setLinearDamping( rigidbody_component.linearDrag );
+                rigid_dynamic_actor->setAngularDamping( rigidbody_component.angularDrag );
+                rigid_dynamic_actor->setRigidBodyFlag(
+                    physx::PxRigidBodyFlag::eKINEMATIC, rigidbody_component.kinematic );
+                rigid_dynamic_actor->setRigidBodyFlag( physx::PxRigidBodyFlag::eENABLE_CCD,
+                    rigidbody_component.collisionDetectionType ==
+                        scene::RigidbodyComponent::CollisionDetectionType::Continuous );
 
-                pRigidDynamicActor->setRigidDynamicLockFlag(
-                    physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, rigidBodyComponent.m_bLockPositionX );
-                pRigidDynamicActor->setRigidDynamicLockFlag(
-                    physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, rigidBodyComponent.m_bLockPositionY );
-                pRigidDynamicActor->setRigidDynamicLockFlag(
-                    physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, rigidBodyComponent.m_bLockPositionZ );
+                rigid_dynamic_actor->setRigidDynamicLockFlag(
+                    physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, rigidbody_component.lockPositionX );
+                rigid_dynamic_actor->setRigidDynamicLockFlag(
+                    physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, rigidbody_component.lockPositionY );
+                rigid_dynamic_actor->setRigidDynamicLockFlag(
+                    physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, rigidbody_component.lockPositionZ );
 
-                pRigidDynamicActor->setRigidDynamicLockFlag(
-                    physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, rigidBodyComponent.m_bLockRotationX );
-                pRigidDynamicActor->setRigidDynamicLockFlag(
-                    physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, rigidBodyComponent.m_bLockRotationY );
-                pRigidDynamicActor->setRigidDynamicLockFlag(
-                    physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, rigidBodyComponent.m_bLockRotationZ );
+                rigid_dynamic_actor->setRigidDynamicLockFlag(
+                    physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, rigidbody_component.lockRotationX );
+                rigid_dynamic_actor->setRigidDynamicLockFlag(
+                    physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, rigidbody_component.lockRotationY );
+                rigid_dynamic_actor->setRigidDynamicLockFlag(
+                    physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, rigidbody_component.lockRotationZ );
 
-                pRigidDynamicActor->setActorFlag(
-                    physx::PxActorFlag::eDISABLE_GRAVITY, rigidBodyComponent.m_bDisableGravity );
-                pRigidDynamicActor->setSolverIterationCounts(
-                    settings.m_SolverIterations, settings.m_SolverVelocityIterations );
-                physx::PxRigidBodyExt::setMassAndUpdateInertia( *pRigidDynamicActor, rigidBodyComponent.m_Mass );
+                rigid_dynamic_actor->setActorFlag(
+                    physx::PxActorFlag::eDISABLE_GRAVITY, rigidbody_component.disableGravity );
+                rigid_dynamic_actor->setSolverIterationCounts(
+                    settings.solverIterations, settings.solverVelocityIterations );
+                physx::PxRigidBodyExt::setMassAndUpdateInertia( *rigid_dynamic_actor, rigidbody_component.mass );
 
-                m_pRigidActor = pRigidDynamicActor;
+                rigidActor = rigid_dynamic_actor;
                 break;
             }
             default:
-                m_pRigidActor = nullptr;
+                rigidActor = nullptr;
                 break;
         }
 
-        m_pPxMaterial = pPhysics->createMaterial(
-            m_pPhysicsMaterial->m_StaticFriction, m_pPhysicsMaterial->m_DynamicFriction, m_pPhysicsMaterial->m_Restitution );
+        pxMaterial = physics->createMaterial(
+            physicsMaterial->staticFriction, physicsMaterial->dynamicFriction, physicsMaterial->restitution );
 
-        auto &transformComponent = entity.GetComponent< TransformComponent >();
-        if ( entity.HasComponent< BoxColliderComponent >() )
+        auto &transformComponent = entity.getComponent< scene::TransformComponent >();
+        if ( entity.hasComponent< scene::BoxColliderComponent >() )
         {
-            BoxColliderComponent &boxColliderComponent = entity.GetComponent< BoxColliderComponent >();
-            SetPhysicsMaterial( boxColliderComponent, m_pPxMaterial );
-            AddBoxCollider( boxColliderComponent, transformComponent.m_Scale );
+            scene::BoxColliderComponent &box_collider_component = entity.getComponent< scene::BoxColliderComponent >();
+            setPhysicsMaterial( box_collider_component, pxMaterial );
+            addBoxCollider( box_collider_component, transformComponent.scale );
         }
-        if ( entity.HasComponent< SphereColliderComponent >() )
+        if ( entity.hasComponent< scene::SphereColliderComponent >() )
         {
-            SphereColliderComponent &sphereColliderComponent = entity.GetComponent< SphereColliderComponent >();
-            SetPhysicsMaterial( sphereColliderComponent, m_pPxMaterial );
-            AddSphereCollider( sphereColliderComponent, transformComponent.m_Scale );
+            scene::SphereColliderComponent &sphere_collider_component =
+                entity.getComponent< scene::SphereColliderComponent >();
+            setPhysicsMaterial( sphere_collider_component, pxMaterial );
+            addSphereCollider( sphere_collider_component, transformComponent.scale );
         }
-        if ( entity.HasComponent< CapsuleColliderComponent >() )
+        if ( entity.hasComponent< scene::CapsuleColliderComponent >() )
         {
-            CapsuleColliderComponent &capsuleColliderComponent = entity.GetComponent< CapsuleColliderComponent >();
-            SetPhysicsMaterial( capsuleColliderComponent, m_pPxMaterial );
-            AddCapsuleCollider( capsuleColliderComponent, transformComponent.m_Scale );
+            scene::CapsuleColliderComponent &capsule_collider_component =
+                entity.getComponent< scene::CapsuleColliderComponent >();
+            setPhysicsMaterial( capsule_collider_component, pxMaterial );
+            addCapsuleCollider( capsule_collider_component, transformComponent.scale );
         }
 
         // Set simulation filter data
-        physx::PxAllocatorCallback &allocator = PhysicsEngine::GetAllocatorCallback();
-        physx::PxFilterData filterData{};
-        filterData.word0 = BIT( 0 );
-        filterData.word1 = BIT( 0 );
+        physx::PxAllocatorCallback &allocator = PhysicsEngine::getAllocatorCallback();
+        physx::PxFilterData filter_data{};
+        filter_data.word0 = BIT( 0 );
+        filter_data.word1 = BIT( 0 );
 
-        physx::PxU32 shapeCount = m_pRigidActor->getNbShapes();
-        physx::PxShape **ppShapes = static_cast< physx::PxShape ** >(
-            allocator.allocate( sizeof( physx::PxShape * ) * shapeCount, "", "", 0 ) );
-        m_pRigidActor->getShapes( ppShapes, shapeCount );
+        physx::PxU32 shape_count = rigidActor->getNbShapes();
+        physx::PxShape **shapes = static_cast< physx::PxShape ** >(
+            allocator.allocate( sizeof( physx::PxShape * ) * shape_count, "", "", 0 ) );
+        rigidActor->getShapes( shapes, shape_count );
 
-        for ( physx::PxU32 i{}; i < shapeCount; ++i )
-            ppShapes[i]->setSimulationFilterData( filterData );
+        for ( physx::PxU32 i{}; i < shape_count; ++i )
+            shapes[i]->setSimulationFilterData( filter_data );
 
-        allocator.deallocate( ppShapes );
-        m_pRigidActor->userData = &entity;
+        allocator.deallocate( shapes );
+        rigidActor->userData = &entity;
     }
 
     PhysicsActor::~PhysicsActor()
     {
     }
 
-    void PhysicsActor::AddBoxCollider( const BoxColliderComponent &component, const DirectX::XMFLOAT3 &size )
+    void PhysicsActor::addBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size )
     {
-        DirectX::XMFLOAT3 colliderSize = component.m_Size;
+        DirectX::XMFLOAT3 collider_size = component.size;
 
         if ( size.x != 0.0f )
-            colliderSize.x *= size.x;
+            collider_size.x *= size.x;
         if ( size.y != 0.0f )
-            colliderSize.y *= size.y;
+            collider_size.y *= size.y;
         if ( size.z != 0.0f )
-            colliderSize.z *= size.z;
+            collider_size.z *= size.z;
 
-        physx::PxBoxGeometry boxGeometry =
-            physx::PxBoxGeometry( colliderSize.x / 2.0f, colliderSize.y / 2.0f, colliderSize.z / 2.0f );
-        physx::PxShape *pShape =
-            physx::PxRigidActorExt::createExclusiveShape( *m_pRigidActor, boxGeometry, *m_pPxMaterial );
+        physx::PxBoxGeometry box_geometry =
+            physx::PxBoxGeometry( collider_size.x / 2.0f, collider_size.y / 2.0f, collider_size.z / 2.0f );
+        physx::PxShape *shape = physx::PxRigidActorExt::createExclusiveShape( *rigidActor, box_geometry, *pxMaterial );
 
-        pShape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.m_bTrigger );
-        pShape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.m_bTrigger );
+        shape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.trigger );
+        shape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.trigger );
 
-        DirectX::XMMATRIX transformMat =
+        DirectX::XMMATRIX transform_mat =
             DirectX::XMMatrixScaling( 1.f, 1.f, 1.f ) * DirectX::XMMatrixRotationRollPitchYaw( 0.f, 0.f, 0.f ) *
-            DirectX::XMMatrixTranslation( component.m_Offset.x, component.m_Offset.y, component.m_Offset.z );
+            DirectX::XMMatrixTranslation( component.offset.x, component.offset.y, component.offset.z );
         DirectX::XMFLOAT4X4 transform{};
-        DirectX::XMStoreFloat4x4( &transform, transformMat );
+        DirectX::XMStoreFloat4x4( &transform, transform_mat );
 
-        pShape->setLocalPose( utils::ConvertToPhysXTransform( transform ) );
+        shape->setLocalPose( utils::convertToPhysXTransform( transform ) );
     }
 
-    void PhysicsActor::AddSphereCollider( const SphereColliderComponent &component, const DirectX::XMFLOAT3 &size )
+    void PhysicsActor::addSphereCollider( const scene::SphereColliderComponent &component,
+        const DirectX::XMFLOAT3 &size )
     {
-        float colliderRadius = component.m_Radius;
+        float collider_radius = component.radius;
 
         if ( size.x != 0.0f )
-            colliderRadius *= size.x;
+            collider_radius *= size.x;
 
-        physx::PxSphereGeometry sphereGeometry = physx::PxSphereGeometry( colliderRadius );
-        physx::PxShape *pShape =
-            physx::PxRigidActorExt::createExclusiveShape( *m_pRigidActor, sphereGeometry, *m_pPxMaterial );
-        pShape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.m_bTrigger );
-        pShape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.m_bTrigger );
+        physx::PxSphereGeometry sphere_geometry = physx::PxSphereGeometry( collider_radius );
+        physx::PxShape *shape =
+            physx::PxRigidActorExt::createExclusiveShape( *rigidActor, sphere_geometry, *pxMaterial );
+        shape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.trigger );
+        shape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.trigger );
     }
 
-    void PhysicsActor::AddCapsuleCollider( const CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size )
+    void PhysicsActor::addCapsuleCollider( const scene::CapsuleColliderComponent &component,
+        const DirectX::XMFLOAT3 &size )
     {
-        float radiusScale = std::max( size.x, size.z );
+        const float radius_scale = std::max( size.x, size.z );
 
-        physx::PxCapsuleGeometry capsuleGeometry =
-            physx::PxCapsuleGeometry( component.m_Radius * radiusScale, component.m_Height / 2.f * size.y );
-        physx::PxShape *pShape =
-            physx::PxRigidActorExt::createExclusiveShape( *m_pRigidActor, capsuleGeometry, *m_pPxMaterial );
-        pShape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.m_bTrigger );
-        pShape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.m_bTrigger );
-        pShape->setLocalPose( physx::PxTransform{ physx::PxQuat{ physx::PxHalfPi, physx::PxVec3{ 0, 0, 1 } } } );
+        physx::PxCapsuleGeometry capsule_geometry =
+            physx::PxCapsuleGeometry( component.radius * radius_scale, component.height / 2.f * size.y );
+        physx::PxShape *shape =
+            physx::PxRigidActorExt::createExclusiveShape( *rigidActor, capsule_geometry, *pxMaterial );
+        shape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.trigger );
+        shape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.trigger );
+        shape->setLocalPose( physx::PxTransform{ physx::PxQuat{ physx::PxHalfPi, physx::PxVec3{ 0, 0, 1 } } } );
     }
 
-    void PhysicsActor::UpdateTransform()
+    void PhysicsActor::updateTransform()
     {
-        if ( IsDynamic() )
+        if ( isDynamic() )
         {
-            TransformComponent &transform = m_Entity.GetComponent< TransformComponent >();
-            physx::PxTransform actorPose = m_pRigidActor->getGlobalPose();
+            scene::TransformComponent &transform = entity.getComponent< scene::TransformComponent >();
+            physx::PxTransform actor_pose = rigidActor->getGlobalPose();
             DirectX::XMFLOAT3 offset{ 0, 0, 0 };
 
-            if ( m_Entity.HasComponent< BoxColliderComponent >() )
+            if ( entity.hasComponent< scene::BoxColliderComponent >() )
             {
-                const auto &boxColliderComponent = m_Entity.GetComponent< BoxColliderComponent >();
-                offset = boxColliderComponent.m_Offset;
+                const auto &boxColliderComponent = entity.getComponent< scene::BoxColliderComponent >();
+                offset = boxColliderComponent.offset;
             }
 
-            transform.m_Translation = utils::ConvertToDirectXVector( actorPose.p )/* + offset*/;
-            transform.m_Rotation = math::QuaternionToEuler( utils::ConvertToDirectXQuat( actorPose.q ) );
+            transform.translation = utils::convertToDirectXVector( actor_pose.p ) /* + offset*/;
+            transform.rotation = math::quaternionToEuler( utils::convertToDirectXQuat( actor_pose.q ) );
         }
         else
         {
-            m_pRigidActor->setGlobalPose( utils::ConvertToPhysXTransform( m_Entity.GetTransform() ) );
+            rigidActor->setGlobalPose( utils::convertToPhysXTransform( entity.getTransform() ) );
         }
     }
 
-    void PhysicsActor::OnFixedUpdate( Timestep deltaTime )
+    void PhysicsActor::onFixedUpdate( Timestep delta_time )
     {
     }
 
-    void PhysicsActor::Rotate( const DirectX::XMFLOAT3 &rotation )
+    void PhysicsActor::rotate( const DirectX::XMFLOAT3 &rotation )
     {
-        physx::PxTransform pxTransform = m_pRigidActor->getGlobalPose();
-        pxTransform.q *= ( physx::PxQuat{ rotation.x, { 1, 0, 0 } } * physx::PxQuat{ rotation.y, { 0, 1, 0 } } *
-                           physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
-        m_pRigidActor->setGlobalPose( pxTransform );
+        physx::PxTransform px_transform = rigidActor->getGlobalPose();
+        px_transform.q *= ( physx::PxQuat{ rotation.x, { 1, 0, 0 } } * physx::PxQuat{ rotation.y, { 0, 1, 0 } } *
+                            physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
+        rigidActor->setGlobalPose( px_transform );
     }
 }

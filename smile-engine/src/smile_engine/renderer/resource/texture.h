@@ -3,17 +3,17 @@
 #include "smile_engine/core/core.h"
 #include <string>
 
-namespace smile
+namespace smile::renderer
 {
     class Texture
     {
       public:
         virtual ~Texture() = default;
 
-        virtual const std::string &GetFilePath() const = 0;
-        virtual uint32_t GetWidth() const = 0;
-        virtual uint32_t GetHeight() const = 0;
-        virtual void *GetData() const = 0;
+        virtual const std::string &getFilePath() const = 0;
+        virtual Uint32 getWidth() const = 0;
+        virtual Uint32 getHeight() const = 0;
+        virtual void *getData() const = 0;
     };
 
     class Texture2D : public Texture
@@ -21,6 +21,6 @@ namespace smile
       public:
         virtual ~Texture2D() = default;
 
-        static Ref< Texture2D > Create( const std::string &filePath );
+        static Ref< Texture2D > create( const std::string &file_path );
     };
 }

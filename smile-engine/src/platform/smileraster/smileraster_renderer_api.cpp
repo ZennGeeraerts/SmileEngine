@@ -3,50 +3,50 @@
 
 #include "smile_engine/core/application.h"
 
-namespace smile
+namespace smile::renderer
 {
-    void SmileRasterRendererAPI::Initialize()
+    void SmileRasterRendererAPI::initialize()
     {
-        m_pWindow = &Application::GetInstance().GetWindow();
-        m_pSmileRasterContext = static_cast< SmileRasterContext * >( m_pWindow->GetGraphicsContext() );
-        SM_ASSERT( m_pSmileRasterContext, "SmileRasterRendererAPI > RenderingContext is not a SmileRasterContext" );
+        window = &Application::getInstance().getWindow();
+        smileRasterContext = static_cast< SmileRasterContext * >( window->getGraphicsContext() );
+        SM_ASSERT( smileRasterContext, "SmileRasterRendererAPI > RenderingContext is not a SmileRasterContext" );
     }
 
-    void SmileRasterRendererAPI::ResizeWindow( uint32_t x, uint32_t y, uint32_t width, uint32_t height )
+    void SmileRasterRendererAPI::resizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
     {
-        m_pSmileRasterContext->m_BitmapInfo.bmiHeader.biWidth = width;
-        m_pSmileRasterContext->m_BitmapInfo.bmiHeader.biHeight = -static_cast< int >( height );
-        m_pSmileRasterContext->m_BitmapInfo.bmiHeader.biSizeImage = width * height * 3;
+        smileRasterContext->bitmapInfo.bmiHeader.biWidth = width;
+        smileRasterContext->bitmapInfo.bmiHeader.biHeight = -static_cast< int >( height );
+        smileRasterContext->bitmapInfo.bmiHeader.biSizeImage = width * height * 3;
 
-        m_pSmileRasterContext->m_Bitmap = CreateDIBSection( m_pSmileRasterContext->m_HDC,
-            &m_pSmileRasterContext->m_BitmapInfo,
+        smileRasterContext->bitmap = CreateDIBSection( smileRasterContext->hdc,
+            &smileRasterContext->bitmapInfo,
             DIB_RGB_COLORS,
-            reinterpret_cast< void ** >( &m_pSmileRasterContext->m_pColorBuffer ),
+            reinterpret_cast< void ** >( &smileRasterContext->colorBuffer ),
             NULL,
             0 );
         SM_ASSERT(
-            m_pSmileRasterContext->m_Bitmap, "SmileRasterRendererAPI::ResizeWindow > Failed to create BitmapDIB" );
+            smileRasterContext->bitmap, "SmileRasterRendererAPI::resizeWindow > Failed to create BitmapDIB" );
 
-        m_pSmileRasterContext->m_BitmapOld =
-            static_cast< HBITMAP >( SelectObject( m_pSmileRasterContext->m_HDC, m_pSmileRasterContext->m_Bitmap ) );
-        memset( m_pSmileRasterContext->m_pColorBuffer, 0, width * height * 3 );
+        smileRasterContext->bitmapOld =
+            static_cast< HBITMAP >( SelectObject( smileRasterContext->hdc, smileRasterContext->bitmap ) );
+        memset( smileRasterContext->colorBuffer, 0, width * height * 3 );
 
-        m_pSmileRasterContext->m_pDeviceContext->Resize(
-            m_pSmileRasterContext->m_Framebuffer, width, height, m_pSmileRasterContext->m_pColorBuffer );
+        smileRasterContext->deviceContext->Resize(
+            smileRasterContext->framebuffer, width, height, smileRasterContext->colorBuffer );
     }
 
-    void SmileRasterRendererAPI::SetClearColor( const DirectX::XMFLOAT4 &color )
+    void SmileRasterRendererAPI::setClearColor( const DirectX::XMFLOAT4 &color )
     {
-        m_ClearColor = color;
+        clearColor = color;
     }
 
-    void SmileRasterRendererAPI::Clear()
+    void SmileRasterRendererAPI::clear()
     {
-        m_pSmileRasterContext->m_pDeviceContext->Clear( m_pSmileRasterContext->m_Framebuffer, m_ClearColor, true );
+        smileRasterContext->deviceContext->Clear( smileRasterContext->framebuffer, clearColor, true );
     }
 
-    void SmileRasterRendererAPI::DrawIndexed( int32_t indexCount, const Ref< Shader > &pShader )
+    void SmileRasterRendererAPI::drawIndexed( Uint32 indexCount, const Ref< Shader > &shader )
     {
-        m_pSmileRasterContext->m_pDeviceContext->DrawIndexed( indexCount );
+        smileRasterContext->deviceContext->DrawIndexed( indexCount );
     }
 }

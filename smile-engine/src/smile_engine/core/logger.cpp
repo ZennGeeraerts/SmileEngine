@@ -3,11 +3,11 @@
 
 namespace smile
 {
-    LogPriority Logger::s_Priority = LogPriority::TRACE;
-    std::mutex Logger::s_Mutex{};
+    LogPriority Logger::priority = LogPriority::Trace;
+    std::mutex Logger::mutex{};
 
-    void Logger::SetPriority( LogPriority logPriority )
+    void Logger::setPriority( LogPriority logPriority )
     {
-        s_Priority = logPriority;
+        priority = logPriority;
     }
 }

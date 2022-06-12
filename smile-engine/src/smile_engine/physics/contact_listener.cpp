@@ -5,72 +5,72 @@
 
 #include <PxRigidActor.h>
 
-namespace smile
+namespace smile::physics
 {
-    void ContactListener::onConstraintBreak( physx::PxConstraintInfo *pConstraints, physx::PxU32 count )
+    void ContactListener::onConstraintBreak( physx::PxConstraintInfo *constraints, physx::PxU32 count )
     {
-        PX_UNUSED( pConstraints );
+        PX_UNUSED( constraints );
         PX_UNUSED( count );
     }
 
-    void ContactListener::onWake( physx::PxActor **ppActors, physx::PxU32 count )
+    void ContactListener::onWake( physx::PxActor **actors, physx::PxU32 count )
     {
-        for ( uint32_t i{}; i < count; ++i )
+        for ( Uint32 i{}; i < count; ++i )
         {
-            physx::PxActor &actor = *ppActors[i];
-            Entity &entity = *reinterpret_cast< Entity * >( actor.userData );
-            SM_LOG_INFO( "Physics actor waking up: UUID: %llu, Name: %s", entity.GetUUID(), entity.GetName() );
+            physx::PxActor &actor = *actors[i];
+            scene::Entity &entity = *reinterpret_cast< scene::Entity * >( actor.userData );
+            SM_LOG_INFO( "Physics actor waking up: UUID: %llu, Name: %s", entity.getUUID(), entity.getName() );
         }
     }
 
-    void ContactListener::onSleep( physx::PxActor **ppActors, physx::PxU32 count )
+    void ContactListener::onSleep( physx::PxActor **actors, physx::PxU32 count )
     {
-        for ( uint32_t i{}; i < count; ++i )
+        for ( Uint32 i{}; i < count; ++i )
         {
-            physx::PxActor &actor = *ppActors[i];
-            Entity &entity = *reinterpret_cast< Entity * >( actor.userData );
-            SM_LOG_INFO( "Physics actor going to sleep: UUID: %llu, Name: %s", entity.GetUUID(), entity.GetName() );
+            physx::PxActor &actor = *actors[i];
+            scene::Entity &entity = *reinterpret_cast< scene::Entity * >( actor.userData );
+            SM_LOG_INFO( "Physics actor going to sleep: UUID: %llu, Name: %s", entity.getUUID(), entity.getName() );
         }
     }
 
-    void ContactListener::onContact( const physx::PxContactPairHeader &pairHeader,
-        const physx::PxContactPair *pPairs,
-        physx::PxU32 nbPairs )
+    void ContactListener::onContact( const physx::PxContactPairHeader &pair_header,
+        const physx::PxContactPair *pairs,
+        physx::PxU32 pair_count )
     {
-        Entity &entity0 = *static_cast< Entity * >( pairHeader.actors[0]->userData );
-        Entity &entity1 = *static_cast< Entity * >( pairHeader.actors[1]->userData );
+        scene::Entity &entity0 = *static_cast< scene::Entity * >( pair_header.actors[0]->userData );
+        scene::Entity &entity1 = *static_cast< scene::Entity * >( pair_header.actors[1]->userData );
 
-        if ( pPairs->flags == physx::PxContactPairFlag::eACTOR_PAIR_HAS_FIRST_TOUCH )
+        if ( pairs->flags == physx::PxContactPairFlag::eACTOR_PAIR_HAS_FIRST_TOUCH )
         {
             // On collision begin
         }
-        else if ( pPairs->flags == physx::PxContactPairFlag::eACTOR_PAIR_LOST_TOUCH )
+        else if ( pairs->flags == physx::PxContactPairFlag::eACTOR_PAIR_LOST_TOUCH )
         {
             // On collision end
         }
     }
 
-    void ContactListener::onTrigger( physx::PxTriggerPair *pPairs, physx::PxU32 count )
+    void ContactListener::onTrigger( physx::PxTriggerPair *pairs, physx::PxU32 count )
     {
-        Entity triggerEntity = *static_cast< Entity * >( pPairs->triggerActor->userData );
-        Entity otherEntity = *static_cast< Entity * >( pPairs->otherActor->userData );
+        scene::Entity trigger_entity = *static_cast< scene::Entity * >( pairs->triggerActor->userData );
+        scene::Entity other_entity = *static_cast< scene::Entity * >( pairs->otherActor->userData );
 
-        if ( pPairs->status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND )
+        if ( pairs->status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND )
         {
             // On trigger begin
         }
-        else if ( pPairs->status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST )
+        else if ( pairs->status == physx::PxPairFlag::eNOTIFY_TOUCH_LOST )
         {
             // On trigger end
         }
     }
 
-    void ContactListener::onAdvance( const physx::PxRigidBody *const *ppBodyBuffer,
-        const physx::PxTransform *pPoseBuffer,
+    void ContactListener::onAdvance( const physx::PxRigidBody *const *body_buffer,
+        const physx::PxTransform *pose_buffer,
         const physx::PxU32 count )
     {
-        PX_UNUSED( ppBodyBuffer );
-        PX_UNUSED( pPoseBuffer );
+        PX_UNUSED( body_buffer );
+        PX_UNUSED( pose_buffer );
         PX_UNUSED( count );
     }
 }

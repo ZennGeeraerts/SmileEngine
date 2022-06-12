@@ -11,12 +11,12 @@ Entities:
       Mesh: assets\meshes\model.dae
       Material:
         FloatValues:
-          METALNESS: 0.5
+          METALNESS: 1
           ROUGHNESS: 0.5
         IntValues:
           {}
         BoolValues:
-          USEALBEDOMAP: true
+          USEALBEDOMAP: false
           USENORMALMAP: false
           USEAOMAP: false
           USEMETALNESSMAP: false
@@ -24,7 +24,7 @@ Entities:
         Float2Values:
           {}
         Float3Values:
-          ALBEDO: [0, 0, 0]
+          ALBEDO: [1, 1, 1]
         Texture2DValues:
           ALBEDOMAP: assets\textures\base_albedo.jpg
           NORMALMAP: ""

@@ -8,99 +8,99 @@
 
 namespace smile
 {
-    Application *Application::s_pInstance = nullptr;
+    Application *Application::instance = nullptr;
 
     Application::Application( const std::string &name )
     {
         SM_ASSERT(
-            !s_pInstance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
-        s_pInstance = this;
+            !instance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
+        instance = this;
 
-        Logger::SetPriority( LogPriority::TRACE );
+        Logger::setPriority( LogPriority::Trace );
 
-        m_pWindow = std::unique_ptr< Window >( Window::Create( WindowSettings{ name } ) );
-        m_pWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
-        m_pWindow->SetVSync( false );
+        window = std::unique_ptr< Window >( Window::create( WindowSettings{ name } ) );
+        window->setEventCallback( SM_BIND_EVENT_FN( Application::onEvent ) );
+        window->setVSync( false );
 
-        Renderer::Initialize();
-        PhysicsEngine::Initialize();
+        renderer::Renderer::initialize();
+        physics::PhysicsEngine::initialize();
 
-        m_pImGuiLayer = new ImGuiLayer{};
-        PushOverlay( m_pImGuiLayer );
+        imGuiLayer = new imgui::ImGuiLayer{};
+        pushOverlay( imGuiLayer );
     }
 
     Application::~Application()
     {
-        Renderer::ShutDown();
-        PhysicsEngine::ShutDown();
+        renderer::Renderer::shutDown();
+        physics::PhysicsEngine::shutDown();
     }
 
-    void Application::PushLayer( Layer *pLayer )
+    void Application::pushLayer( Layer *layer )
     {
-        m_LayerStack.PushLayer( pLayer );
+        layerStack.pushLayer( layer );
     }
 
-    void Application::PushOverlay( Layer *pOverlay )
+    void Application::pushOverlay( Layer *overlay )
     {
-        m_LayerStack.PushOverlay( pOverlay );
+        layerStack.pushOverlay( overlay );
     }
 
-    void Application::OnEvent( Event &e )
+    void Application::onEvent( Event &e )
     {
         EventDispatcher dispatcher{ e };
-        dispatcher.Dispatch< WindowCloseEvent >( SM_BIND_EVENT_FN( Application::OnWindowClose ) );
-        dispatcher.Dispatch< WindowResizeEvent >( SM_BIND_EVENT_FN( Application::OnWindowResize ) );
+        dispatcher.dispatch< WindowCloseEvent >( SM_BIND_EVENT_FN( Application::onWindowClose ) );
+        dispatcher.dispatch< WindowResizeEvent >( SM_BIND_EVENT_FN( Application::onWindowResize ) );
 
-        for ( auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+        for ( auto it = layerStack.end(); it != layerStack.begin(); )
         {
-            ( *--it )->OnEvent( e );
-            if ( e.m_bHandled )
+            ( *--it )->onEvent( e );
+            if ( e.isHandled )
                 break;
         }
     }
 
-    void Application::Run()
+    void Application::run()
     {
-        Timer &timer = Timer::GetInstance();
-        timer.Run();
+        Timer &timer = Timer::getInstance();
+        timer.run();
 
-        while ( m_bRunning )
+        while ( isRunning )
         {
-            timer.OnUpdate();
-            Timestep deltaTime = timer.GetDeltaTime();
+            timer.onUpdate();
+            Timestep delta_time = timer.getDeltaTime();
 
-            if ( !m_bMinimized )
+            if ( !isMinimized )
             {
-                for ( Layer *pLayer : m_LayerStack )
-                    pLayer->OnUpdate( deltaTime );
+                for ( Layer *layer : layerStack )
+                    layer->onUpdate( delta_time );
             }
 
-            m_pImGuiLayer->Begin();
-            for ( Layer *pLayer : m_LayerStack )
-                pLayer->OnImGuiRender();
-            m_pImGuiLayer->End();
+            imGuiLayer->begin();
+            for ( Layer *layer : layerStack )
+                layer->onImGuiRender();
+            imGuiLayer->End();
 
-            m_pWindow->OnUpdate();
+            window->onUpdate();
         }
     }
 
-    void Application::ShutDown()
+    void Application::shutDown()
     {
-        m_bRunning = false;
+        isRunning = false;
     }
 
-    bool Application::OnWindowClose( WindowCloseEvent &e )
+    bool Application::onWindowClose( WindowCloseEvent &e )
     {
-        m_bRunning = false;
+        isRunning = false;
         return true;
     }
 
-    bool Application::OnWindowResize( WindowResizeEvent &e )
+    bool Application::onWindowResize( WindowResizeEvent &e )
     {
-        m_bMinimized = ( e.GetWidth() == 0 ) || ( e.GetHeight() == 0 );
+        isMinimized = ( e.getWidth() == 0 ) || ( e.getHeight() == 0 );
 
-        if ( !m_bMinimized )
-            Renderer::OnWindowResize( e.GetWidth(), e.GetHeight() );
+        if ( !isMinimized )
+            renderer::Renderer::onWindowResize( e.getWidth(), e.getHeight() );
 
         return false;
     }

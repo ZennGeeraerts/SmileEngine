@@ -1,2 +1,6 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1967,5): warning : The referenced project '..\SmileEngine\SmileEngine.vcxproj' does not exist.
+  main.cpp
+  vector2_tests.cpp
+  vector3_tests.cpp
+  Generating Code...
   unit-tests.vcxproj -> C:\dev\SmileEngine\build\bin\Debug-x64\unit-tests\unit-tests.exe

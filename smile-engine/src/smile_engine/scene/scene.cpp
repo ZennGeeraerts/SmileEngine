@@ -8,7 +8,7 @@
 
 #include "entity.h"
 
-namespace smile
+namespace smile::scene
 {
     Scene::Scene()
     {
@@ -16,211 +16,211 @@ namespace smile
 
     Scene::~Scene()
     {
-        m_Registry.clear();
+        registry.clear();
     }
 
-    Entity Scene::CreateEntity()
+    Entity Scene::createEntity()
     {
-        return CreateEntity( "Entity" );
+        return createEntity( "Entity" );
     }
 
-    Entity Scene::CreateEntity( const std::string &name )
+    Entity Scene::createEntity( const std::string &name )
     {
-        return CreateEntity( UUID{}, name );
+        return createEntity( UUID{}, name );
     }
 
-    Entity Scene::CreateEntity( UUID uuid, const std::string &name )
+    Entity Scene::createEntity( UUID uuid, const std::string &name )
     {
-        Entity entity{ m_Registry.create(), this };
-        entity.AddComponent< IDComponent >( uuid );
-        entity.AddComponent< TagComponent >( name );
-        entity.AddComponent< TransformComponent >();
+        Entity entity{ registry.create(), this };
+        entity.addComponent< IDComponent >( uuid );
+        entity.addComponent< TagComponent >( name );
+        entity.addComponent< TransformComponent >();
 
         return entity;
     }
 
-    void Scene::DestroyEntity( Entity entity )
+    void Scene::destroyEntity( Entity entity )
     {
-        m_Registry.destroy( entity );
+        registry.destroy( entity );
     }
 
-    void Scene::OnRuntimeStart()
+    void Scene::onRuntimeStart()
     {
-        PhysicsEngine::CreateScene();
+        physics::PhysicsEngine::createScene();
 
         // Create physisc actors
         {
-            const auto &view = m_Registry.view< RigidbodyComponent >();
+            const auto &view = registry.view< RigidbodyComponent >();
             for ( auto &e : view )
             {
                 Entity entity = { e, this };
-                PhysicsEngine::CreateActor( entity );
+                physics::PhysicsEngine::createActor( entity );
             }
         }
     }
 
-    void Scene::OnRuntimeStop()
+    void Scene::onRuntimeStop()
     {
-        PhysicsEngine::DestroyScene();
+        physics::PhysicsEngine::destroyScene();
     }
 
-    void Scene::OnUpdateRuntime( Timestep deltaTime )
+    void Scene::onUpdateRuntime( Timestep delta_time )
     {
-        PhysicsEngine::Simulate( deltaTime );
+        physics::PhysicsEngine::simulate( delta_time );
 
-        Camera *pMainCamera = nullptr;
-        DirectX::XMFLOAT4X4 cameraTransform;
+        renderer::Camera *main_camera = nullptr;
+        DirectX::XMFLOAT4X4 camera_transform;
         {
-            auto view = m_Registry.view< TransformComponent, CameraComponent >();
+            auto view = registry.view< TransformComponent, CameraComponent >();
             for ( auto entity : view )
             {
                 const auto &[transform, camera] = view.get< TransformComponent, CameraComponent >( entity );
 
-                if ( camera.m_bPrimary )
+                if ( camera.primary )
                 {
-                    pMainCamera = &camera.m_Camera;
-                    cameraTransform = transform.GetTransform();
+                    main_camera = &camera.camera;
+                    camera_transform = transform.getTransform();
                     break;
                 }
             }
         }
 
-        if ( pMainCamera )
+        if ( main_camera )
         {
-            Renderer::BeginScene( *pMainCamera, cameraTransform );
+            renderer::Renderer::beginScene( *main_camera, camera_transform );
 
             {
-                auto group = m_Registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
+                auto group = registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[mesh, transform] = group.get< MeshRendererComponent, TransformComponent >( entity );
-                    Renderer::Submit( mesh, transform.GetTransform() );
+                    renderer::Renderer::submit( mesh, transform.getTransform() );
                 }
             }
             {
-                auto group = m_Registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
+                auto group = registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[mesh, transform] = group.get< StaticMeshComponent, TransformComponent >( entity );
-                    Renderer::Submit( mesh, transform.GetTransform() );
+                    renderer::Renderer::submit( mesh, transform.getTransform() );
                 }
             }
             {
-                auto group = m_Registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
+                auto group = registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[mesh, transform] = group.get< SkinnedMeshComponent, TransformComponent >( entity );
 
-                    for ( auto &animator : mesh.m_Animators )
+                    for ( auto &animator : mesh.animators )
                     {
-                        animator.OnUpdate( deltaTime );
-                        const auto &boneTransforms = animator.GetBoneTransforms();
-                        for ( const auto &pMaterial : mesh.m_pMaterials )
+                        animator.onUpdate( delta_time );
+                        const auto &bone_transforms = animator.getBoneTransforms();
+                        for ( const auto &material : mesh.materials )
                         {
-                            if ( animator.IsPlaying() )
-                                pMaterial->GetShader()->UploadMat4Array( "Bones", boneTransforms );
+                            if ( animator.isPlaying() )
+                                material->getShader()->uploadMat4Array( "Bones", bone_transforms );
                         }
                     }
 
-                    Renderer::Submit( mesh, transform.GetTransform() );
+                    renderer::Renderer::submit( mesh, transform.getTransform() );
                 }
             }
             {
-                auto group = m_Registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+                auto group = registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[boxCollider, transform] =
                         group.get< BoxColliderComponent, TransformComponent >( entity );
-                    Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
+                    renderer::Renderer::submitWireframe( boxCollider, transform.getTransform() );
                 }
             }
 
-            Renderer::OnRender();
+            renderer::Renderer::onRender();
 
-            Renderer::EndScene();
+            renderer::Renderer::endScene();
         }
     }
 
-    void Scene::OnUpdateEditor( Timestep deltaTime, EditorCamera &editorCamera, bool bSimmulate )
+    void Scene::onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera, bool simmulate )
     {
-        if ( bSimmulate )
-            PhysicsEngine::Simulate( deltaTime );
+        if ( simmulate )
+            physics::PhysicsEngine::simulate( delta_time );
 
-        Renderer::BeginScene( editorCamera );
+        renderer::Renderer::beginScene( editor_camera );
 
         {
-            auto group = m_Registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
+            auto group = registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = group.get< MeshRendererComponent, TransformComponent >( entity );
-                Renderer::Submit( mesh, transform.GetTransform() );
+                renderer::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = m_Registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
+            auto group = registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = group.get< StaticMeshComponent, TransformComponent >( entity );
-                Renderer::Submit( mesh, transform.GetTransform() );
+                renderer::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = m_Registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
+            auto group = registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = group.get< SkinnedMeshComponent, TransformComponent >( entity );
 
-                for ( auto &animator : mesh.m_Animators )
+                for ( auto &animator : mesh.animators )
                 {
-                    animator.OnUpdate( deltaTime );
-                    const auto &boneTransforms = animator.GetBoneTransforms();
-                    for ( const auto &pMaterial : mesh.m_pMaterials )
+                    animator.onUpdate( delta_time );
+                    const auto &bone_transforms = animator.getBoneTransforms();
+                    for ( const auto &material : mesh.materials )
                     {
-                        if ( animator.IsPlaying() )
-                            pMaterial->GetShader()->UploadMat4Array( "Bones", boneTransforms );
+                        if ( animator.isPlaying() )
+                            material->getShader()->uploadMat4Array( "Bones", bone_transforms );
                     }
                 }
 
-                Renderer::Submit( mesh, transform.GetTransform() );
+                renderer::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = m_Registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+            auto group = registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[boxCollider, transform] = group.get< BoxColliderComponent, TransformComponent >( entity );
-                Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
+                const auto &[box_collider, transform] = group.get< BoxColliderComponent, TransformComponent >( entity );
+                renderer::Renderer::submitWireframe( box_collider, transform.getTransform() );
             }
         }
 
-        Renderer::OnRender();
+        renderer::Renderer::onRender();
 
-        Renderer::EndScene();
+        renderer::Renderer::endScene();
     }
 
-    void Scene::OnViewportResize( uint32_t width, uint32_t height )
+    void Scene::onViewportResize( Uint32 width, Uint32 height )
     {
-        m_ViewportWidth = width;
-        m_ViewportHeight = height;
+        viewportWidth = width;
+        viewportHeight = height;
 
-        auto view = m_Registry.view< CameraComponent >();
+        auto view = registry.view< CameraComponent >();
         for ( auto entity : view )
         {
             auto &cameraComponent = view.get< CameraComponent >( entity );
-            if ( !cameraComponent.m_bFixedAspectRatio )
+            if ( !cameraComponent.fixedAspectRatio )
             {
-                cameraComponent.m_Camera.SetViewportSize( width, height );
+                cameraComponent.camera.setViewportSize( width, height );
             }
         }
     }
 
-    Entity Scene::GetPrimaryCameraEntity()
+    Entity Scene::getPrimaryCameraEntity()
     {
-        auto view = m_Registry.view< CameraComponent >();
+        auto view = registry.view< CameraComponent >();
         for ( auto entity : view )
         {
-            auto &cameraComponent = view.get< CameraComponent >( entity );
-            if ( cameraComponent.m_bPrimary )
+            auto &camera_component = view.get< CameraComponent >( entity );
+            if ( camera_component.primary )
                 return Entity{ entity, this };
         }
         return Entity{};
@@ -233,130 +233,130 @@ namespace smile
         auto view = src.view< ComponentType >();
         for ( auto entity : view )
         {
-            UUID uuid = src.get< IDComponent >( entity ).m_ID;
+            UUID uuid = src.get< IDComponent >( entity ).id;
             SM_ASSERT( enttMap.find( uuid ) != enttMap.end(), "Scene > CopyComponent > uuid not found int enttMap" );
-            entt::entity dstEnttID = enttMap.at( uuid );
+            entt::entity dst_entt_id = enttMap.at( uuid );
 
             auto &component = src.get< ComponentType >( entity );
-            dst.emplace_or_replace< ComponentType >( dstEnttID, component );
+            dst.emplace_or_replace< ComponentType >( dst_entt_id, component );
         }
     }
 
     template < typename ComponentType >
     static void CopyComponentIfExists( Entity dst, Entity src )
     {
-        if ( src.HasComponent< ComponentType >() )
-            dst.AddOrReplaceComponent< ComponentType >( src.GetComponent< ComponentType >() );
+        if ( src.hasComponent< ComponentType >() )
+            dst.addOrReplaceComponent< ComponentType >( src.getComponent< ComponentType >() );
     }
 
-    Ref< Scene > Scene::Copy( const Ref< Scene > &pScene )
+    Ref< Scene > Scene::copy( const Ref< Scene > &scene )
     {
-        Ref< Scene > pNewScene = CreateRef< Scene >();
+        Ref< Scene > new_scene = createRef< Scene >();
 
-        pNewScene->m_ViewportWidth = pScene->m_ViewportWidth;
-        pNewScene->m_ViewportHeight = pScene->m_ViewportHeight;
+        new_scene->viewportWidth = scene->viewportWidth;
+        new_scene->viewportHeight = scene->viewportHeight;
 
         std::unordered_map< UUID, entt::entity > enttMap{};
 
-        auto &srcSceneRegistry = pScene->m_Registry;
-        auto &dstSceneRegistry = pNewScene->m_Registry;
-        auto idView = srcSceneRegistry.view< IDComponent >();
-        for ( auto entity : idView )
+        auto &src_scene_registry = scene->registry;
+        auto &dst_scene_registry = new_scene->registry;
+        auto id_view = src_scene_registry.view< IDComponent >();
+        for ( auto entity : id_view )
         {
-            auto uuid = srcSceneRegistry.get< IDComponent >( entity ).m_ID;
-            const auto &name = srcSceneRegistry.get< TagComponent >( entity ).m_Tag;
-            Entity newEntity = pNewScene->CreateEntity( uuid, name );
-            enttMap[uuid] = static_cast< entt::entity >( newEntity );
+            auto uuid = src_scene_registry.get< IDComponent >( entity ).id;
+            const auto &name = src_scene_registry.get< TagComponent >( entity ).tag;
+            Entity new_entity = new_scene->createEntity( uuid, name );
+            enttMap[uuid] = static_cast< entt::entity >( new_entity );
         }
 
         // Copy components except IDComponent and TagComponent
-        CopyComponent< TransformComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< MeshRendererComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< StaticMeshComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< SkinnedMeshComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< CameraComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< RigidbodyComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< BoxColliderComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< SphereColliderComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
-        CopyComponent< CapsuleColliderComponent >( dstSceneRegistry, srcSceneRegistry, enttMap );
+        CopyComponent< TransformComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< MeshRendererComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< StaticMeshComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< SkinnedMeshComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< CameraComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< RigidbodyComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< BoxColliderComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< SphereColliderComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< CapsuleColliderComponent >( dst_scene_registry, src_scene_registry, enttMap );
 
-        return pNewScene;
+        return new_scene;
     }
 
-    void Scene::DuplicateEntity( Entity entity )
+    void Scene::duplicateEntity( Entity entity )
     {
-        Entity newEntity = CreateEntity( entity.GetName() );
+        Entity new_entity = createEntity( entity.getName() );
 
-        CopyComponentIfExists< TransformComponent >( newEntity, entity );
-        CopyComponentIfExists< MeshRendererComponent >( newEntity, entity );
-        CopyComponentIfExists< StaticMeshComponent >( newEntity, entity );
-        CopyComponentIfExists< SkinnedMeshComponent >( newEntity, entity );
-        CopyComponentIfExists< CameraComponent >( newEntity, entity );
-        CopyComponentIfExists< RigidbodyComponent >( newEntity, entity );
-        CopyComponentIfExists< BoxColliderComponent >( newEntity, entity );
-        CopyComponentIfExists< SphereColliderComponent >( newEntity, entity );
-        CopyComponentIfExists< CapsuleColliderComponent >( newEntity, entity );
+        CopyComponentIfExists< TransformComponent >( new_entity, entity );
+        CopyComponentIfExists< MeshRendererComponent >( new_entity, entity );
+        CopyComponentIfExists< StaticMeshComponent >( new_entity, entity );
+        CopyComponentIfExists< SkinnedMeshComponent >( new_entity, entity );
+        CopyComponentIfExists< CameraComponent >( new_entity, entity );
+        CopyComponentIfExists< RigidbodyComponent >( new_entity, entity );
+        CopyComponentIfExists< BoxColliderComponent >( new_entity, entity );
+        CopyComponentIfExists< SphereColliderComponent >( new_entity, entity );
+        CopyComponentIfExists< CapsuleColliderComponent >( new_entity, entity );
     }
 
     template < typename ComponentType >
-    void Scene::OnComponentAdded( Entity entity, ComponentType &component )
+    void Scene::onComponentAdded( Entity entity, ComponentType &component )
     {
         static_assert( false );
     }
 
     template <>
-    void Scene::OnComponentAdded< IDComponent >( Entity entity, IDComponent &component )
+    void Scene::onComponentAdded< IDComponent >( Entity entity, IDComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< TagComponent >( Entity entity, TagComponent &component )
+    void Scene::onComponentAdded< TagComponent >( Entity entity, TagComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< TransformComponent >( Entity entity, TransformComponent &component )
+    void Scene::onComponentAdded< TransformComponent >( Entity entity, TransformComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< CameraComponent >( Entity entity, CameraComponent &component )
+    void Scene::onComponentAdded< CameraComponent >( Entity entity, CameraComponent &component )
     {
-        component.m_Camera.SetViewportSize( m_ViewportWidth, m_ViewportHeight );
+        component.camera.setViewportSize( viewportWidth, viewportHeight );
     }
 
     template <>
-    void Scene::OnComponentAdded< MeshRendererComponent >( Entity entity, MeshRendererComponent &component )
-    {
-    }
-
-    template <>
-    void Scene::OnComponentAdded< StaticMeshComponent >( Entity entity, StaticMeshComponent &component )
+    void Scene::onComponentAdded< MeshRendererComponent >( Entity entity, MeshRendererComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< SkinnedMeshComponent >( Entity entity, SkinnedMeshComponent &component )
+    void Scene::onComponentAdded< StaticMeshComponent >( Entity entity, StaticMeshComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< RigidbodyComponent >( Entity entity, RigidbodyComponent &component )
+    void Scene::onComponentAdded< SkinnedMeshComponent >( Entity entity, SkinnedMeshComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< BoxColliderComponent >( Entity entity, BoxColliderComponent &component )
+    void Scene::onComponentAdded< RigidbodyComponent >( Entity entity, RigidbodyComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< SphereColliderComponent >( Entity entity, SphereColliderComponent &component )
+    void Scene::onComponentAdded< BoxColliderComponent >( Entity entity, BoxColliderComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< CapsuleColliderComponent >( Entity entity, CapsuleColliderComponent &component )
+    void Scene::onComponentAdded< SphereColliderComponent >( Entity entity, SphereColliderComponent &component )
+    {
+    }
+
+    template <>
+    void Scene::onComponentAdded< CapsuleColliderComponent >( Entity entity, CapsuleColliderComponent &component )
     {
     }
 }

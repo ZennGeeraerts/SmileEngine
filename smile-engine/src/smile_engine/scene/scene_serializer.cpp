@@ -84,7 +84,7 @@ namespace YAML
     };
 }
 
-namespace smile
+namespace smile::scene
 {
     YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT2 &v )
     {
@@ -107,42 +107,42 @@ namespace smile
         return output;
     }
 
-    SceneSerializer::SceneSerializer( const Ref< Scene > &pScene ) : m_pScene{ pScene }
+    SceneSerializer::SceneSerializer( const Ref< Scene > &scene ) : scene{ scene }
     {
     }
 
-    void SceneSerializer::Serialize( const std::string &filePath )
+    void SceneSerializer::serialize( const std::string &file_path )
     {
         YAML::Emitter output{};
         output << YAML::BeginMap;
         output << YAML::Key << "Scene" << YAML::Value << "Untitled";
         output << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-        m_pScene->m_Registry.each(
-            [&]( auto entityID )
+        scene->registry.each(
+            [&]( auto entity_id )
             {
-                Entity entity{ entityID, m_pScene.get() };
+                Entity entity{ entity_id, scene.get() };
                 if ( !entity )
                     return;
-                SerializeEntity( output, entity );
+                serializeEntity( output, entity );
             } );
 
         output << YAML::EndSeq;
         output << YAML::EndMap;
 
-        std::ofstream fileOutput{ filePath };
-        fileOutput << output.c_str();
+        std::ofstream file_output{ file_path };
+        file_output << output.c_str();
     }
 
-    static void SerializeMaterial( YAML::Emitter &output, const Ref< Material > &pMaterial )
+    static void serializeMaterial( YAML::Emitter &output, const Ref< renderer::Material > &material )
     {
         output << YAML::Key << "Material";
         output << YAML::BeginMap;
 
         output << YAML::Key << "FloatValues";
         output << YAML::BeginMap;
-        const auto &floatValues{ pMaterial->GetFloatValues() };
-        for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
+        const auto &float_values{ material->getFloatValues() };
+        for ( auto it{ float_values.begin() }; it != float_values.end(); ++it )
         {
             output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
         }
@@ -150,8 +150,8 @@ namespace smile
 
         output << YAML::Key << "IntValues";
         output << YAML::BeginMap;
-        const auto &intValues{ pMaterial->GetIntValues() };
-        for ( auto it{ intValues.begin() }; it != intValues.end(); ++it )
+        const auto &int_values{ material->getIntValues() };
+        for ( auto it{ int_values.begin() }; it != int_values.end(); ++it )
         {
             output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
         }
@@ -159,8 +159,8 @@ namespace smile
 
         output << YAML::Key << "BoolValues";
         output << YAML::BeginMap;
-        const auto &boolValues{ pMaterial->GetBoolValues() };
-        for ( auto it{ boolValues.begin() }; it != boolValues.end(); ++it )
+        const auto &bool_values{ material->getBoolValues() };
+        for ( auto it{ bool_values.begin() }; it != bool_values.end(); ++it )
         {
             output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
         }
@@ -168,8 +168,8 @@ namespace smile
 
         output << YAML::Key << "Float2Values";
         output << YAML::BeginMap;
-        const auto &float2Values{ pMaterial->GetFloat2Values() };
-        for ( auto it{ float2Values.begin() }; it != float2Values.end(); ++it )
+        const auto &float2_values{ material->getFloat2Values() };
+        for ( auto it{ float2_values.begin() }; it != float2_values.end(); ++it )
         {
             output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
         }
@@ -177,8 +177,8 @@ namespace smile
 
         output << YAML::Key << "Float3Values";
         output << YAML::BeginMap;
-        const auto &float3Values{ pMaterial->GetFloat3Values() };
-        for ( auto it{ float3Values.begin() }; it != float3Values.end(); ++it )
+        const auto &float3_values{ material->getFloat3Values() };
+        for ( auto it{ float3_values.begin() }; it != float3_values.end(); ++it )
         {
             output << YAML::Key << ( *it ).first << YAML::Value << ( *it ).second;
         }
@@ -186,114 +186,115 @@ namespace smile
 
         output << YAML::Key << "Texture2DValues";
         output << YAML::BeginMap;
-        const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
-        for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+        const auto &texture_2d_values{ material->getTexture2DValues() };
+        for ( auto it{ texture_2d_values.begin() }; it != texture_2d_values.end(); ++it )
         {
             output << YAML::Key << ( *it ).first << YAML::Value
-                   << ( ( *it ).second ? ( *it ).second->GetFilePath() : "" );
+                   << ( ( *it ).second ? ( *it ).second->getFilePath() : "" );
         }
         output << YAML::EndMap;
 
         output << YAML::EndMap;
     }
 
-    static void SerializeEntity( YAML::Emitter &output, Entity entity )
+    static void serializeEntity( YAML::Emitter &output, Entity entity )
     {
-        SM_ASSERT( entity.HasComponent< IDComponent >(),
-            "SceneSerializer::SerializeScene > Entity does not have an IDComponent" );
+        SM_ASSERT( entity.hasComponent< IDComponent >(),
+            "SceneSerializer::serializeScene > Entity does not have an IDComponent" );
 
         output << YAML::BeginMap;
-        output << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
+        output << YAML::Key << "Entity" << YAML::Value << entity.getUUID();
 
-        if ( entity.HasComponent< TagComponent >() )
+        if ( entity.hasComponent< TagComponent >() )
         {
             output << YAML::Key << "TagComponent";
             output << YAML::BeginMap;
 
-            auto &tag = entity.GetComponent< TagComponent >().m_Tag;
+            auto &tag = entity.getComponent< TagComponent >().tag;
             output << YAML::Key << "Tag" << YAML::Value << tag;
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< TransformComponent >() )
+        if ( entity.hasComponent< TransformComponent >() )
         {
             output << YAML::Key << "TransformComponent";
             output << YAML::BeginMap;
 
-            auto &transformComponent = entity.GetComponent< TransformComponent >();
-            output << YAML::Key << "Translation" << YAML::Value << transformComponent.m_Translation;
-            output << YAML::Key << "Rotation" << YAML::Value << transformComponent.m_Rotation;
-            output << YAML::Key << "Scale" << YAML::Value << transformComponent.m_Scale;
+            auto &transform_component = entity.getComponent< TransformComponent >();
+            output << YAML::Key << "Translation" << YAML::Value << transform_component.translation;
+            output << YAML::Key << "Rotation" << YAML::Value << transform_component.rotation;
+            output << YAML::Key << "Scale" << YAML::Value << transform_component.scale;
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< CameraComponent >() )
+        if ( entity.hasComponent< CameraComponent >() )
         {
             output << YAML::Key << "CameraComponent";
             output << YAML::BeginMap;
 
-            auto &cameraComponent = entity.GetComponent< CameraComponent >();
-            auto &camera = cameraComponent.m_Camera;
+            auto &camera_component = entity.getComponent< CameraComponent >();
+            auto &camera = camera_component.camera;
             output << YAML::Key << "Camera" << YAML::Value;
             output << YAML::BeginMap;
 
             output << YAML::Key << "ProjectionType" << YAML::Value
-                   << static_cast< uint32_t >( camera.GetProjectionType() );
-            output << YAML::Key << "FOV" << YAML::Value << camera.GetFOV();
-            output << YAML::Key << "PerspectiveNearPlane" << YAML::Value << camera.GetPerspectiveNearPlane();
-            output << YAML::Key << "PerspectiveFarPlane" << YAML::Value << camera.GetPerspectiveFarPlane();
-            output << YAML::Key << "Size" << YAML::Value << camera.GetSize();
-            output << YAML::Key << "OrthographicNearPlane" << camera.GetOrthographicNearPlane();
-            output << YAML::Key << "OrthographicFarPlane" << camera.GetOrthographicFarPlane();
+                   << static_cast< Uint32 >( camera.getProjectionType() );
+            output << YAML::Key << "FOV" << YAML::Value << camera.getFOV();
+            output << YAML::Key << "PerspectiveNearPlane" << YAML::Value << camera.getPerspectiveNearPlane();
+            output << YAML::Key << "PerspectiveFarPlane" << YAML::Value << camera.getPerspectiveFarPlane();
+            output << YAML::Key << "Size" << YAML::Value << camera.getSize();
+            output << YAML::Key << "OrthographicNearPlane" << camera.getOrthographicNearPlane();
+            output << YAML::Key << "OrthographicFarPlane" << camera.getOrthographicFarPlane();
 
             output << YAML::EndMap;
 
-            output << YAML::Key << "bPrimary" << YAML::Value << cameraComponent.m_bPrimary;
-            output << YAML::Key << "bFixedAspectRatio" << YAML::Value << cameraComponent.m_bFixedAspectRatio;
+            output << YAML::Key << "bPrimary" << YAML::Value << camera_component.primary;
+            output << YAML::Key << "bFixedAspectRatio" << YAML::Value << camera_component.fixedAspectRatio;
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< StaticMeshComponent >() )
+        if ( entity.hasComponent< StaticMeshComponent >() )
         {
             output << YAML::Key << "SkinnedMeshComponent";
             output << YAML::BeginMap;
 
-            auto &meshComponent = entity.GetComponent< StaticMeshComponent >();
+            auto &static_mesh_component = entity.getComponent< StaticMeshComponent >();
             output << YAML::Key << "Mesh" << YAML::Value
-                   << ( ( meshComponent.m_pMeshes.size() > 0 ) ? meshComponent.m_pMeshes[0]->GetFilePath() : "" );
+                   << ( ( static_mesh_component.meshes.size() > 0 ) ? static_mesh_component.meshes[0]->getFilePath()
+                                                                    : "" );
 
-            SerializeMaterial( output, meshComponent.m_pMaterials[0] );
+            serializeMaterial( output, static_mesh_component.materials[0] );
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< SkinnedMeshComponent >() )
+        if ( entity.hasComponent< SkinnedMeshComponent >() )
         {
             output << YAML::Key << "SkinnedMeshComponent";
             output << YAML::BeginMap;
 
-            auto &meshComponent = entity.GetComponent< SkinnedMeshComponent >();
+            auto &skinned_mesh_component = entity.getComponent< SkinnedMeshComponent >();
             output << YAML::Key << "Mesh" << YAML::Value
-                   << ( ( meshComponent.m_pMeshes.size() > 0 ) ? meshComponent.m_pMeshes[0]->GetFilePath() : "" );
+                   << ( ( skinned_mesh_component.meshes.size() > 0 ) ? skinned_mesh_component.meshes[0]->getFilePath()
+                                                                     : "" );
 
-            SerializeMaterial( output, meshComponent.m_pMaterials[0] );
+            serializeMaterial( output, skinned_mesh_component.materials[0] );
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< RigidbodyComponent >() )
+        if ( entity.hasComponent< RigidbodyComponent >() )
         {
             output << YAML::Key << "RigidbodyComponent";
             output << YAML::BeginMap;
 
-            auto &rigidbodyComponent = entity.GetComponent< RigidbodyComponent >();
-            output << YAML::Key << "BodyType" << YAML::Value
-                   << static_cast< uint32_t >( rigidbodyComponent.m_BodyType );
+            auto &rigidbody_component = entity.getComponent< RigidbodyComponent >();
+            output << YAML::Key << "BodyType" << YAML::Value << static_cast< Uint32 >( rigidbody_component.bodyType );
             output << YAML::Key << "CollisionDetectionType" << YAML::Value
-                   << static_cast< uint32_t >( rigidbodyComponent.m_CollisionDetectionType );
+                   << static_cast< Uint32 >( rigidbody_component.collisionDetectionType );
 
             output << YAML::Key << "PhysicsMaterial";
             output << YAML::BeginMap;
@@ -305,33 +306,33 @@ namespace smile
 
             output << YAML::EndMap;
 
-            output << YAML::Key << "Mass" << YAML::Value << rigidbodyComponent.m_Mass;
-            output << YAML::Key << "LinearDrag" << YAML::Value << rigidbodyComponent.m_LinearDrag;
-            output << YAML::Key << "AngularDrag" << YAML::Value << rigidbodyComponent.m_AngularDrag;
-            output << YAML::Key << "bDisableGravity" << YAML::Value << rigidbodyComponent.m_bDisableGravity;
-            output << YAML::Key << "bKinematic" << YAML::Value << rigidbodyComponent.m_bKinematic;
+            output << YAML::Key << "Mass" << YAML::Value << rigidbody_component.mass;
+            output << YAML::Key << "LinearDrag" << YAML::Value << rigidbody_component.linearDrag;
+            output << YAML::Key << "AngularDrag" << YAML::Value << rigidbody_component.angularDrag;
+            output << YAML::Key << "bDisableGravity" << YAML::Value << rigidbody_component.disableGravity;
+            output << YAML::Key << "bKinematic" << YAML::Value << rigidbody_component.kinematic;
 
-            output << YAML::Key << "bLockPositionX" << YAML::Value << rigidbodyComponent.m_bLockPositionX;
-            output << YAML::Key << "bLockPositionY" << YAML::Value << rigidbodyComponent.m_bLockPositionY;
-            output << YAML::Key << "bLockPositionZ" << YAML::Value << rigidbodyComponent.m_bLockPositionZ;
+            output << YAML::Key << "bLockPositionX" << YAML::Value << rigidbody_component.lockPositionX;
+            output << YAML::Key << "bLockPositionY" << YAML::Value << rigidbody_component.lockPositionY;
+            output << YAML::Key << "bLockPositionZ" << YAML::Value << rigidbody_component.lockPositionZ;
 
-            output << YAML::Key << "bLockRotationX" << YAML::Value << rigidbodyComponent.m_bLockRotationX;
-            output << YAML::Key << "bLockRotationY" << YAML::Value << rigidbodyComponent.m_bLockRotationY;
-            output << YAML::Key << "bLockRotationZ" << YAML::Value << rigidbodyComponent.m_bLockRotationZ;
+            output << YAML::Key << "bLockRotationX" << YAML::Value << rigidbody_component.lockRotationX;
+            output << YAML::Key << "bLockRotationY" << YAML::Value << rigidbody_component.lockRotationY;
+            output << YAML::Key << "bLockRotationZ" << YAML::Value << rigidbody_component.lockRotationZ;
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< BoxColliderComponent >() )
+        if ( entity.hasComponent< BoxColliderComponent >() )
         {
             output << YAML::Key << "BoxColliderComponent";
             output << YAML::BeginMap;
 
-            auto &boxColliderComponent = entity.GetComponent< BoxColliderComponent >();
-            output << YAML::Key << "Size" << YAML::Value << boxColliderComponent.m_Size;
-            output << YAML::Key << "Offset" << YAML::Value << boxColliderComponent.m_Offset;
-            output << YAML::Key << "bTrigger" << YAML::Value << boxColliderComponent.m_bTrigger;
-            output << YAML::Key << "bShowColliderBounds" << YAML::Value << boxColliderComponent.m_bShowColliderBounds;
+            auto &box_collider_component = entity.getComponent< BoxColliderComponent >();
+            output << YAML::Key << "Size" << YAML::Value << box_collider_component.size;
+            output << YAML::Key << "Offset" << YAML::Value << box_collider_component.offset;
+            output << YAML::Key << "bTrigger" << YAML::Value << box_collider_component.trigger;
+            output << YAML::Key << "bShowColliderBounds" << YAML::Value << box_collider_component.showColliderBounds;
 
             /*auto& pPhysicsMaterial = boxColliderComponent.pPhysicsMaterial;
             output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
@@ -341,16 +342,15 @@ namespace smile
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< SphereColliderComponent >() )
+        if ( entity.hasComponent< SphereColliderComponent >() )
         {
             output << YAML::Key << "SphereColliderComponent";
             output << YAML::BeginMap;
 
-            auto &sphereColliderComponent = entity.GetComponent< SphereColliderComponent >();
-            output << YAML::Key << "Radius" << YAML::Value << sphereColliderComponent.m_Radius;
-            output << YAML::Key << "bTrigger" << YAML::Value << sphereColliderComponent.m_bTrigger;
-            output << YAML::Key << "bShowColliderBounds" << YAML::Value
-                   << sphereColliderComponent.m_bShowColliderBounds;
+            auto &sphere_collider_component = entity.getComponent< SphereColliderComponent >();
+            output << YAML::Key << "Radius" << YAML::Value << sphere_collider_component.radius;
+            output << YAML::Key << "bTrigger" << YAML::Value << sphere_collider_component.trigger;
+            output << YAML::Key << "bShowColliderBounds" << YAML::Value << sphere_collider_component.showColliderBounds;
 
             /*auto& pPhysicsMaterial = sphereColliderComponent.pPhysicsMaterial;
             output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
@@ -360,17 +360,17 @@ namespace smile
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< CapsuleColliderComponent >() )
+        if ( entity.hasComponent< CapsuleColliderComponent >() )
         {
             output << YAML::Key << "CapsuleColliderComponent";
             output << YAML::BeginMap;
 
-            auto &capsuleColliderComponent = entity.GetComponent< CapsuleColliderComponent >();
-            output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.m_Radius;
-            output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.m_Height;
-            output << YAML::Key << "bTrigger" << YAML::Value << capsuleColliderComponent.m_bTrigger;
+            auto &capsule_collider_component = entity.getComponent< CapsuleColliderComponent >();
+            output << YAML::Key << "Radius" << YAML::Value << capsule_collider_component.radius;
+            output << YAML::Key << "Height" << YAML::Value << capsule_collider_component.height;
+            output << YAML::Key << "bTrigger" << YAML::Value << capsule_collider_component.trigger;
             output << YAML::Key << "bShowColliderBounds" << YAML::Value
-                   << capsuleColliderComponent.m_bShowColliderBounds;
+                   << capsule_collider_component.showColliderBounds;
 
             output << YAML::EndMap;
         }
@@ -378,253 +378,253 @@ namespace smile
         output << YAML::EndMap;
     }
 
-    void SceneSerializer::SerializeRuntime( const std::string &filePath )
+    void SceneSerializer::serializeRuntime( const std::string &file_path )
     {
-        SM_ASSERT( false, "SceneSerializer::SerializeRuntime > Not implemented" );
+        SM_ASSERT( false, "SceneSerializer::serializeRuntime > Not implemented" );
     }
 
-    bool SceneSerializer::Deserialize( const std::string &filePath )
+    bool SceneSerializer::deserialize( const std::string &file_path )
     {
-        std::ifstream fileInput{ filePath };
-        std::stringstream strStream{};
-        strStream << fileInput.rdbuf();
+        std::ifstream file_input{ file_path };
+        std::stringstream str_stream{};
+        str_stream << file_input.rdbuf();
 
-        YAML::Node data = YAML::Load( strStream.str() );
+        YAML::Node data = YAML::Load( str_stream.str() );
         if ( !data["Scene"] )
             return false;
 
-        std::string sceneName = data["Scene"].as< std::string >();
-        SM_LOG_TRACE( "Deserializing scene '%s'", sceneName.c_str() );
+        std::string scene_name = data["Scene"].as< std::string >();
+        SM_LOG_TRACE( "Deserializing scene '%s'", scene_name.c_str() );
 
         auto entities = data["Entities"];
         if ( entities )
         {
             for ( auto entity : entities )
             {
-                uint64_t uuid = entity["Entity"].as< uint64_t >();
+                uint64_t uuid = entity["Entity"].as< Uint64 >();
 
                 std::string name{};
-                auto tagComponent = entity["TagComponent"];
-                if ( tagComponent )
-                    name = tagComponent["Tag"].as< std::string >();
+                auto tag_component = entity["TagComponent"];
+                if ( tag_component )
+                    name = tag_component["Tag"].as< std::string >();
 
                 SM_LOG_TRACE( "Deserialized entity with ID: %llu, name: %s", uuid, name.c_str() );
 
-                Entity deserializedEntity = m_pScene->CreateEntity( uuid, name );
+                Entity deserialized_entity = scene->createEntity( uuid, name );
 
-                auto transformComponent = entity["TransformComponent"];
-                if ( transformComponent )
+                auto transform_component = entity["TransformComponent"];
+                if ( transform_component )
                 {
-                    auto &tc = deserializedEntity.GetComponent< TransformComponent >();
-                    tc.m_Translation = transformComponent["Translation"].as< DirectX::XMFLOAT3 >();
-                    tc.m_Rotation = transformComponent["Rotation"].as< DirectX::XMFLOAT3 >();
-                    tc.m_Scale = transformComponent["Scale"].as< DirectX::XMFLOAT3 >();
+                    auto &tc = deserialized_entity.getComponent< TransformComponent >();
+                    tc.translation = transform_component["Translation"].as< DirectX::XMFLOAT3 >();
+                    tc.rotation = transform_component["Rotation"].as< DirectX::XMFLOAT3 >();
+                    tc.scale = transform_component["Scale"].as< DirectX::XMFLOAT3 >();
                 }
 
-                auto cameraComponent = entity["CameraComponent"];
-                if ( cameraComponent )
+                auto camera_component = entity["CameraComponent"];
+                if ( camera_component )
                 {
-                    auto &cc = deserializedEntity.AddComponent< CameraComponent >();
+                    auto &cc = deserialized_entity.addComponent< CameraComponent >();
 
-                    auto cameraProps = cameraComponent["Camera"];
-                    cc.m_Camera.SetProjectionType(
-                        static_cast< SceneCamera::ProjectionType >( cameraProps["ProjectionType"].as< int >() ) );
+                    auto camera_props = camera_component["Camera"];
+                    cc.camera.setProjectionType(
+                        static_cast< SceneCamera::ProjectionType >( camera_props["ProjectionType"].as< int >() ) );
 
-                    cc.m_Camera.SetFOV( cameraProps["FOV"].as< float >() );
-                    cc.m_Camera.SetPerspectiveNearPlane( cameraProps["PerspectiveNearPlane"].as< float >() );
-                    cc.m_Camera.SetPerspectiveFarPlane( cameraProps["PerspectiveFarPlane"].as< float >() );
+                    cc.camera.setFOV( camera_props["FOV"].as< float >() );
+                    cc.camera.setPerspectiveNearPlane( camera_props["PerspectiveNearPlane"].as< float >() );
+                    cc.camera.setPerspectiveFarPlane( camera_props["PerspectiveFarPlane"].as< float >() );
 
-                    cc.m_Camera.SetSize( cameraProps["Size"].as< float >() );
-                    cc.m_Camera.SetOrthographicNearPlane( cameraProps["OrthographicNearPlane"].as< float >() );
-                    cc.m_Camera.SetOrthographicFarPlane( cameraProps["OrthographicFarPlane"].as< float >() );
+                    cc.camera.setSize( camera_props["Size"].as< float >() );
+                    cc.camera.setOrthographicNearPlane( camera_props["OrthographicNearPlane"].as< float >() );
+                    cc.camera.setOrthographicFarPlane( camera_props["OrthographicFarPlane"].as< float >() );
 
-                    cc.m_bPrimary = cameraComponent["bPrimary"].as< bool >();
-                    cc.m_bFixedAspectRatio = cameraComponent["bFixedAspectRatio"].as< bool >();
+                    cc.primary = camera_component["bPrimary"].as< bool >();
+                    cc.fixedAspectRatio = camera_component["bFixedAspectRatio"].as< bool >();
                 }
 
-                auto staticMeshComponent = entity["StaticMeshComponent"];
-                if ( staticMeshComponent )
+                auto static_mesh_component = entity["StaticMeshComponent"];
+                if ( static_mesh_component )
                 {
-                    auto &smc = deserializedEntity.AddComponent< StaticMeshComponent >();
+                    auto &smc = deserialized_entity.addComponent< StaticMeshComponent >();
 
-                    const auto &meshPath = staticMeshComponent["Mesh"].as< std::string >();
-                    if ( !meshPath.empty() )
+                    const auto &mesh_path = static_mesh_component["Mesh"].as< std::string >();
+                    if ( !mesh_path.empty() )
                     {
-                        smc.m_pMeshes = MeshLoader::LoadStaticMesh( meshPath );
-                        const auto &bufferLayout = smc.m_pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : smc.m_pMeshes )
+                        smc.meshes = renderer::MeshLoader::loadStaticMesh( mesh_path );
+                        const auto &buffer_layout = smc.materials[0]->getBufferLayout();
+                        for ( const auto &mesh : smc.meshes )
                         {
-                            pMesh->Create( bufferLayout );
+                            mesh->create( buffer_layout );
                         }
                     }
 
-                    auto material = staticMeshComponent["Material"];
+                    auto material = static_mesh_component["Material"];
 
-                    auto floatValues = material["FloatValues"];
-                    for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
+                    auto float_values = material["FloatValues"];
+                    for ( auto it{ float_values.begin() }; it != float_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< float >();
-                        smc.m_pMaterials[0]->SetFloatValue( semantic, value );
+                        smc.materials[0]->setFloatValue( semantic, value );
                     }
 
-                    auto intValues = material["IntValues"];
-                    for ( auto it{ intValues.begin() }; it != intValues.end(); ++it )
+                    auto int_values = material["IntValues"];
+                    for ( auto it{ int_values.begin() }; it != int_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< int >();
-                        smc.m_pMaterials[0]->SetIntValue( semantic, value );
+                        smc.materials[0]->setIntValue( semantic, value );
                     }
 
-                    auto boolValues = material["BoolValues"];
-                    for ( auto it{ boolValues.begin() }; it != boolValues.end(); ++it )
+                    auto bool_values = material["BoolValues"];
+                    for ( auto it{ bool_values.begin() }; it != bool_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< bool >();
-                        smc.m_pMaterials[0]->SetBoolValue( semantic, value );
+                        smc.materials[0]->setBoolValue( semantic, value );
                     }
 
-                    auto float2Values = material["Float2Values"];
-                    for ( auto it{ float2Values.begin() }; it != float2Values.end(); ++it )
+                    auto float2_values = material["Float2Values"];
+                    for ( auto it{ float2_values.begin() }; it != float2_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
-                        smc.m_pMaterials[0]->SetFloat2Value( semantic, value );
+                        smc.materials[0]->setFloat2Value( semantic, value );
                     }
 
-                    auto float3Values = material["Float3Values"];
-                    for ( auto it{ float3Values.begin() }; it != float3Values.end(); ++it )
+                    auto float3_values = material["Float3Values"];
+                    for ( auto it{ float3_values.begin() }; it != float3_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
-                        smc.m_pMaterials[0]->SetFloat3Value( semantic, value );
+                        smc.materials[0]->setFloat3Value( semantic, value );
                     }
 
-                    auto texture2DValues = material["Texture2DValues"];
-                    for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+                    auto texture_2d_values = material["Texture2DValues"];
+                    for ( auto it{ texture_2d_values.begin() }; it != texture_2d_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.m_pMaterials[0]->SetTexture2D( semantic, Texture2D::Create( path ) );
+                            smc.materials[0]->setTexture2D( semantic, renderer::Texture2D::create( path ) );
                     }
                 }
 
-                auto skinnedMeshComponent = entity["SkinnedMeshComponent"];
-                if ( skinnedMeshComponent )
+                auto skinned_mesh_component = entity["SkinnedMeshComponent"];
+                if ( skinned_mesh_component )
                 {
-                    auto &smc = deserializedEntity.AddComponent< SkinnedMeshComponent >();
+                    auto &smc = deserialized_entity.addComponent< SkinnedMeshComponent >();
 
-                    const auto &meshPath = skinnedMeshComponent["Mesh"].as< std::string >();
-                    if ( !meshPath.empty() )
+                    const auto &mesh_path = skinned_mesh_component["Mesh"].as< std::string >();
+                    if ( !mesh_path.empty() )
                     {
-                        smc.m_pMeshes = MeshLoader::LoadSkinnedMesh( meshPath );
-                        const auto &bufferLayout = smc.m_pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : smc.m_pMeshes )
+                        smc.meshes = renderer::MeshLoader::loadSkinnedMesh( mesh_path );
+                        const auto &buffer_layout = smc.materials[0]->getBufferLayout();
+                        for ( const auto &mesh : smc.meshes )
                         {
-                            pMesh->Create( bufferLayout );
+                            mesh->create( buffer_layout );
 
-                            if ( pMesh->HasAnimations() )
+                            if ( mesh->hasAnimations() )
                             {
-                                MeshAnimator animator{ pMesh };
-                                smc.m_Animators.push_back( animator );
-                                smc.m_Animators.back().SetAnimation( 0 );
+                                renderer::MeshAnimator animator{ mesh };
+                                smc.animators.push_back( animator );
+                                smc.animators.back().setAnimation( 0 );
                             }
                         }
                     }
 
-                    auto material = skinnedMeshComponent["Material"];
+                    auto material = skinned_mesh_component["Material"];
 
-                    auto floatValues = material["FloatValues"];
-                    for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
+                    auto float_values = material["FloatValues"];
+                    for ( auto it{ float_values.begin() }; it != float_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< float >();
-                        smc.m_pMaterials[0]->SetFloatValue( semantic, value );
+                        smc.materials[0]->setFloatValue( semantic, value );
                     }
 
-                    auto intValues = material["IntValues"];
-                    for ( auto it{ intValues.begin() }; it != intValues.end(); ++it )
+                    auto int_values = material["IntValues"];
+                    for ( auto it{ int_values.begin() }; it != int_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< int >();
-                        smc.m_pMaterials[0]->SetIntValue( semantic, value );
+                        smc.materials[0]->setIntValue( semantic, value );
                     }
 
-                    auto boolValues = material["BoolValues"];
-                    for ( auto it{ boolValues.begin() }; it != boolValues.end(); ++it )
+                    auto bool_values = material["BoolValues"];
+                    for ( auto it{ bool_values.begin() }; it != bool_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< bool >();
-                        smc.m_pMaterials[0]->SetBoolValue( semantic, value );
+                        smc.materials[0]->setBoolValue( semantic, value );
                     }
 
-                    auto float2Values = material["Float2Values"];
-                    for ( auto it{ float2Values.begin() }; it != float2Values.end(); ++it )
+                    auto float2_values = material["Float2Values"];
+                    for ( auto it{ float2_values.begin() }; it != float2_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
-                        smc.m_pMaterials[0]->SetFloat2Value( semantic, value );
+                        smc.materials[0]->setFloat2Value( semantic, value );
                     }
 
-                    auto float3Values = material["Float3Values"];
-                    for ( auto it{ float3Values.begin() }; it != float3Values.end(); ++it )
+                    auto float3_values = material["Float3Values"];
+                    for ( auto it{ float3_values.begin() }; it != float3_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
-                        smc.m_pMaterials[0]->SetFloat3Value( semantic, value );
+                        smc.materials[0]->setFloat3Value( semantic, value );
                     }
 
-                    auto texture2DValues = material["Texture2DValues"];
-                    for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+                    auto texture_2d_values = material["Texture2DValues"];
+                    for ( auto it{ texture_2d_values.begin() }; it != texture_2d_values.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.m_pMaterials[0]->SetTexture2D( semantic, Texture2D::Create( path ) );
+                            smc.materials[0]->setTexture2D( semantic, renderer::Texture2D::create( path ) );
                     }
                 }
 
-                auto rigidbodyComponent = entity["RigidbodyComponent"];
-                if ( rigidbodyComponent )
+                auto rigidbody_component = entity["RigidbodyComponent"];
+                if ( rigidbody_component )
                 {
-                    auto &rbc = deserializedEntity.AddComponent< RigidbodyComponent >();
+                    auto &rbc = deserialized_entity.addComponent< RigidbodyComponent >();
 
-                    rbc.m_BodyType =
-                        static_cast< RigidbodyComponent::BodyType >( rigidbodyComponent["BodyType"].as< int >() );
-                    rbc.m_CollisionDetectionType = static_cast< RigidbodyComponent::CollisionDetectionType >(
-                        rigidbodyComponent["CollisionDetectionType"].as< int >() );
+                    rbc.bodyType =
+                        static_cast< RigidbodyComponent::BodyType >( rigidbody_component["BodyType"].as< int >() );
+                    rbc.collisionDetectionType = static_cast< RigidbodyComponent::CollisionDetectionType >(
+                        rigidbody_component["CollisionDetectionType"].as< int >() );
 
-                    auto physicsMaterial = rigidbodyComponent["PhysicsMaterial"];
+                    auto physics_material = rigidbody_component["PhysicsMaterial"];
                     /*rbc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
                     rbc.pPhysicsMaterial->DynamicFriction = physicsMaterial["DynamicFriction"].as<float>();
                     rbc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
 
-                    rbc.m_Mass = rigidbodyComponent["Mass"].as< float >();
-                    rbc.m_LinearDrag = rigidbodyComponent["LinearDrag"].as< float >();
-                    rbc.m_AngularDrag = rigidbodyComponent["AngularDrag"].as< float >();
+                    rbc.mass = rigidbody_component["Mass"].as< float >();
+                    rbc.linearDrag = rigidbody_component["LinearDrag"].as< float >();
+                    rbc.angularDrag = rigidbody_component["AngularDrag"].as< float >();
 
-                    rbc.m_bDisableGravity = rigidbodyComponent["bDisableGravity"].as< bool >();
-                    rbc.m_bKinematic = rigidbodyComponent["bKinematic"].as< bool >();
+                    rbc.disableGravity = rigidbody_component["bDisableGravity"].as< bool >();
+                    rbc.kinematic = rigidbody_component["bKinematic"].as< bool >();
 
-                    rbc.m_bLockPositionX = rigidbodyComponent["bLockPositionX"].as< bool >();
-                    rbc.m_bLockPositionY = rigidbodyComponent["bLockPositionY"].as< bool >();
-                    rbc.m_bLockPositionZ = rigidbodyComponent["bLockPositionZ"].as< bool >();
+                    rbc.lockPositionX = rigidbody_component["bLockPositionX"].as< bool >();
+                    rbc.lockPositionY = rigidbody_component["bLockPositionY"].as< bool >();
+                    rbc.lockPositionZ = rigidbody_component["bLockPositionZ"].as< bool >();
 
-                    rbc.m_bLockRotationX = rigidbodyComponent["bLockRotationX"].as< bool >();
-                    rbc.m_bLockRotationY = rigidbodyComponent["bLockRotationY"].as< bool >();
-                    rbc.m_bLockRotationZ = rigidbodyComponent["bLockRotationZ"].as< bool >();
+                    rbc.lockRotationX = rigidbody_component["bLockRotationX"].as< bool >();
+                    rbc.lockRotationY = rigidbody_component["bLockRotationY"].as< bool >();
+                    rbc.lockRotationZ = rigidbody_component["bLockRotationZ"].as< bool >();
                 }
 
-                auto boxColliderComponent = entity["BoxColliderComponent"];
-                if ( boxColliderComponent )
+                auto box_collider_component = entity["BoxColliderComponent"];
+                if ( box_collider_component )
                 {
-                    auto &bcc = deserializedEntity.AddComponent< BoxColliderComponent >();
+                    auto &bcc = deserialized_entity.addComponent< BoxColliderComponent >();
 
-                    bcc.m_Size = boxColliderComponent["Size"].as< DirectX::XMFLOAT3 >();
-                    bcc.m_Offset = boxColliderComponent["Offset"].as< DirectX::XMFLOAT3 >();
-                    bcc.m_bTrigger = boxColliderComponent["bTrigger"].as< bool >();
-                    bcc.m_bShowColliderBounds = boxColliderComponent["bShowColliderBounds"].as< bool >();
+                    bcc.size = box_collider_component["Size"].as< DirectX::XMFLOAT3 >();
+                    bcc.offset = box_collider_component["Offset"].as< DirectX::XMFLOAT3 >();
+                    bcc.trigger = box_collider_component["bTrigger"].as< bool >();
+                    bcc.showColliderBounds = box_collider_component["bShowColliderBounds"].as< bool >();
 
                     /*auto physicsMaterial = rigidBodyComponent["PhysicsMaterial"];
                     bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
@@ -632,14 +632,14 @@ namespace smile
                     bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
                 }
 
-                auto sphereColliderComponent = entity["SphereColliderComponent"];
-                if ( sphereColliderComponent )
+                auto sphere_collider_component = entity["SphereColliderComponent"];
+                if ( sphere_collider_component )
                 {
-                    auto &scc = deserializedEntity.AddComponent< SphereColliderComponent >();
+                    auto &scc = deserialized_entity.addComponent< SphereColliderComponent >();
 
-                    scc.m_Radius = sphereColliderComponent["Radius"].as< float >();
-                    scc.m_bTrigger = sphereColliderComponent["bTrigger"].as< bool >();
-                    scc.m_bShowColliderBounds = sphereColliderComponent["bShowColliderBounds"].as< bool >();
+                    scc.radius = sphere_collider_component["Radius"].as< float >();
+                    scc.trigger = sphere_collider_component["bTrigger"].as< bool >();
+                    scc.showColliderBounds = sphere_collider_component["bShowColliderBounds"].as< bool >();
 
                     /*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];
                     bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
@@ -647,15 +647,15 @@ namespace smile
                     bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
                 }
 
-                auto capsuleColliderComponent = entity["CapsuleColliderComponent"];
-                if ( capsuleColliderComponent )
+                auto capsule_collider_component = entity["CapsuleColliderComponent"];
+                if ( capsule_collider_component )
                 {
-                    auto &ccc = deserializedEntity.AddComponent< CapsuleColliderComponent >();
+                    auto &ccc = deserialized_entity.addComponent< CapsuleColliderComponent >();
 
-                    ccc.m_Radius = capsuleColliderComponent["Radius"].as< float >();
-                    ccc.m_Height = capsuleColliderComponent["Height"].as< float >();
-                    ccc.m_bTrigger = capsuleColliderComponent["bTrigger"].as< bool >();
-                    ccc.m_bShowColliderBounds = capsuleColliderComponent["bShowColliderBounds"].as< bool >();
+                    ccc.radius = capsule_collider_component["Radius"].as< float >();
+                    ccc.height = capsule_collider_component["Height"].as< float >();
+                    ccc.trigger = capsule_collider_component["bTrigger"].as< bool >();
+                    ccc.showColliderBounds = capsule_collider_component["bShowColliderBounds"].as< bool >();
                 }
             }
         }
@@ -663,9 +663,9 @@ namespace smile
         return true;
     }
 
-    bool SceneSerializer::DeserializeRuntime( const std::string &filePath )
+    bool SceneSerializer::deserializeRuntime( const std::string &file_path )
     {
-        SM_ASSERT( false, "SceneSerializer::DeserializeRuntime > Not implemented" );
+        SM_ASSERT( false, "SceneSerializer::deserializeRuntime > Not implemented" );
         return false;
     }
 }

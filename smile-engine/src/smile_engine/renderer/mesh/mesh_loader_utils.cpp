@@ -1,15 +1,15 @@
 #include "smpch.h"
 #include "mesh_loader_utils.h"
 
-namespace smile::utils
+namespace smile::renderer::utils
 {
-    DirectX::XMFLOAT3 ConvertToVector3( const aiVector3D &aiVector )
+    DirectX::XMFLOAT3 convertToVector3( const aiVector3D &ai_vector )
     {
-        return *( DirectX::XMFLOAT3 * )( &aiVector );
+        return *( DirectX::XMFLOAT3 * )( &ai_vector );
     }
 
-    DirectX::XMFLOAT4 ConvertToVector4( const aiColor4D &aiColor )
+    DirectX::XMFLOAT4 convertToVector4( const aiColor4D &ai_color )
     {
-        return *( DirectX::XMFLOAT4 * )( &aiColor );
+        return *( DirectX::XMFLOAT4 * )( &ai_color );
     }
 }

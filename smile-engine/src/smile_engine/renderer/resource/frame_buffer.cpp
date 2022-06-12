@@ -7,19 +7,19 @@
 #    include "platform/directx11/resource/directx11_frame_buffer.h"
 #endif
 
-namespace smile
+namespace smile::renderer
 {
-    Ref< Framebuffer > Framebuffer::Create( const FramebufferData &framebufferData )
+    Ref< Framebuffer > Framebuffer::create( const FramebufferData &frame_buffer_data )
     {
-        switch ( Renderer::GetAPI() )
+        switch ( Renderer::getAPI() )
         {
             case RendererAPI::API::None:
-                SM_ASSERT( false, "Framebuffer::Create > return nullptr, no renderer api selected" );
+                SM_ASSERT( false, "Framebuffer::create > return nullptr, no renderer api selected" );
                 return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
             case RendererAPI::API::DirectX11:
-                return CreateRef< DirectX11Framebuffer >( framebufferData );
+                return createRef< DirectX11Framebuffer >( frame_buffer_data );
 
             case RendererAPI::API::SmileRaster:
                 return nullptr;
@@ -27,7 +27,7 @@ namespace smile
         }
 
         SM_ASSERT( false,
-            "Framebuffer::Create > return nullptr, unknown render api or render api is not supported on this "
+            "Framebuffer::create > return nullptr, unknown render api or render api is not supported on this "
             "platform" );
         return nullptr;
     }

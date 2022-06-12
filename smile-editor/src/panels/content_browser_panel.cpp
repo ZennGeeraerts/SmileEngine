@@ -4,52 +4,53 @@
 
 namespace smile
 {
-    extern const std::filesystem::path g_AssetPath = "assets";
+    extern const std::filesystem::path assetPath = "assets";
 
-    ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory{ g_AssetPath }
+    ContentBrowserPanel::ContentBrowserPanel() : currentDirectory{ assetPath }
     {
-        m_pDirectoryIcon = Texture2D::Create( "resources/icons/content_browser/directory_icon.png" );
-        m_pFileIcon = Texture2D::Create( "resources/icons/content_browser/file_icon.png" );
+        directoryIcon = renderer::Texture2D::create( "resources/icons/content_browser/directory_icon.png" );
+        fileIcon = renderer::Texture2D::create( "resources/icons/content_browser/file_icon.png" );
     }
 
-    void ContentBrowserPanel::OnImGuiRender()
+    void ContentBrowserPanel::onImGuiRender()
     {
         ImGui::Begin( "Content Browser" );
 
-        if ( m_CurrentDirectory != std::filesystem::path{ g_AssetPath } )
+        if ( currentDirectory != std::filesystem::path{ assetPath } )
         {
             if ( ImGui::Button( "Back" ) )
             {
-                m_CurrentDirectory = m_CurrentDirectory.parent_path();
+                currentDirectory = currentDirectory.parent_path();
             }
         }
 
         static float padding = 16.f;
-        static float thumbnailSize = 128.f;
-        float cellSize = thumbnailSize + padding;
+        static float thumbnail_size = 128.f;
+        float cell_size = thumbnail_size + padding;
 
-        const float panelWidth = ImGui::GetContentRegionAvail().x;
-        int columnCount = static_cast< int >( panelWidth / cellSize );
-        columnCount = std::max( columnCount, 1 );
+        const float panel_width = ImGui::GetContentRegionAvail().x;
+        int column_count
+            = static_cast< int >( panel_width / cell_size );
+        column_count = std::max( column_count, 1 );
 
-        ImGui::Columns( columnCount, 0, false );
+        ImGui::Columns( column_count, 0, false );
 
-        for ( const auto &directoryEntry : std::filesystem::directory_iterator( m_CurrentDirectory ) )
+        for ( const auto &directory_entry : std::filesystem::directory_iterator( currentDirectory ) )
         {
-            const auto &path = directoryEntry.path();
-            auto relativePath = std::filesystem::relative( directoryEntry.path(), g_AssetPath );
-            std::string fileName = relativePath.filename().string();
+            const auto &path = directory_entry.path();
+            auto relative_path = std::filesystem::relative( directory_entry.path(), assetPath );
+            std::string file_name = relative_path.filename().string();
 
-            ImGui::PushID( fileName.c_str() );
-            Ref< Texture2D > icon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
+            ImGui::PushID( file_name.c_str() );
+            Ref< renderer::Texture2D > icon = directory_entry.is_directory() ? directoryIcon : fileIcon;
             ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
-            ImGui::ImageButton( icon->GetData(), { thumbnailSize, thumbnailSize } );
+            ImGui::ImageButton( icon->getData(), { thumbnail_size, thumbnail_size } );
 
             if ( ImGui::BeginDragDropSource() )
             {
-                const wchar_t *itemPath = relativePath.c_str();
+                const wchar_t *item_path = relative_path.c_str();
                 ImGui::SetDragDropPayload(
-                    "ContentBrowserItem", itemPath, ( wcslen( itemPath ) + 1 ) * sizeof( wchar_t ), ImGuiCond_Once );
+                    "ContentBrowserItem", item_path, ( wcslen( item_path ) + 1 ) * sizeof( wchar_t ), ImGuiCond_Once );
                 ImGui::EndDragDropSource();
             }
 
@@ -57,11 +58,11 @@ namespace smile
 
             if ( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) )
             {
-                if ( directoryEntry.is_directory() )
-                    m_CurrentDirectory /= directoryEntry.path().filename();
+                if ( directory_entry.is_directory() )
+                    currentDirectory /= directory_entry.path().filename();
             }
 
-            ImGui::TextWrapped( fileName.c_str() );
+            ImGui::TextWrapped( file_name.c_str() );
 
             ImGui::NextColumn();
 

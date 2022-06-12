@@ -2,16 +2,16 @@
 
 #include "shader.h"
 
-namespace smile
+namespace smile::renderer
 {
     struct ShaderVariable final
     {
-        std::string m_Semantic{};
-        ShaderDataType m_Type{};
+        std::string semantic{};
+        ShaderDataType type{};
     };
 
     namespace utils
     {
-        std::vector< ShaderVariable > ReflectShaderVariables( const Ref< Shader > &pShader );
+        std::vector< ShaderVariable > reflectShaderVariables( const Ref< Shader > &shader );
     }
 }

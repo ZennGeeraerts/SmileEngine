@@ -140,11 +140,11 @@ TEST_CASE( "Vector2" )
         math::Vector2 vector1{ 1.0f, 2.0f };
         math::Vector2 vector2{ 3.0f, 4.0f };
         math::Vector2 vector3{ -2.0f, 7.0f };
-        float result = math::DotProduct( vector1, vector2 );
+        float result = math::dotProduct( vector1, vector2 );
 
         REQUIRE( result == ( 1.0f * 3.0f + 2.0f * 4.0f ) );
 
-        result = math::DotProduct( vector1, vector3 );
+        result = math::dotProduct( vector1, vector3 );
 
         REQUIRE( result == ( 1.0f * -2.0f + 2.0f * 7.0f ) );
     }
@@ -153,7 +153,7 @@ TEST_CASE( "Vector2" )
     {
         math::Vector2 vector1{ 1.0f, 2.0f };
         math::Vector2 vector2{ 3.0f, 4.0f };
-        float result = math::DistanceSqr( vector1, vector2 );
+        float result = math::distanceSqr( vector1, vector2 );
 
         REQUIRE( result == 8.0f );
     }
@@ -161,16 +161,16 @@ TEST_CASE( "Vector2" )
     SECTION( "Distance" )
     {
         math::Vector2 vector1{ 1.0f, 0.0f };
-        float result = math::Distance( smile::math::Vector2::Zero, vector1 );
+        float result = math::distance( smile::math::Vector2::zero, vector1 );
 
         REQUIRE( result == 1.0f );
 
         math::Vector2 vector2{ 1.0f, 1.0f };
-        result = math::Distance( vector1, vector2 );
+        result = math::distance( vector1, vector2 );
 
         REQUIRE( result == 1.0f );
 
-        result = math::Distance( vector2, vector1 );
+        result = math::distance( vector2, vector1 );
         REQUIRE( result == 1.0f );
     }
 
@@ -178,28 +178,28 @@ TEST_CASE( "Vector2" )
     {
         math::Vector2 vector{ 5.0f, 2.0f };
 
-        CHECK( math::LengthSqr( vector ) == Approx{ 29.f } );
+        CHECK( math::lengthSqr( vector ) == Approx{ 29.f } );
 
         math::Vector2 vector2{ 1.0f, 1.0f };
 
-        CHECK( math::LengthSqr( vector2 ) == Approx( 2.f ) );
+        CHECK( math::lengthSqr( vector2 ) == Approx( 2.f ) );
     }
 
     SECTION( "Length" )
     {
         float length{};
 
-        length = math::Length( math::Vector2::Zero );
+        length = math::length( math::Vector2::zero );
         CHECK( Approx{ 0 } == length );
 
-        length = math::Length( math::Vector2::One );
+        length = math::length( math::Vector2::one );
         CHECK( Approx( sqrt( 2.0f ) ) == length );
 
         float x = 5.0f;
         float y = 10.0f;
         math::Vector2 other{ x, y };
 
-        length = math::Length( other );
+        length = math::length( other );
         CHECK( Approx{ sqrt( pow( x, 2 ) + pow( y, 2 ) ) } == length );
     }
 }

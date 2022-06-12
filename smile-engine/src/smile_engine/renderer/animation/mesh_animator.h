@@ -1,41 +1,53 @@
 #pragma once
 #include "smile_engine/renderer/mesh/skinned_mesh_filter.h"
 
-namespace smile
+namespace smile::renderer
 {
     class MeshAnimator final
     {
       public:
-        MeshAnimator( const Ref< SkinnedMeshFilter > &pMesh );
+        MeshAnimator( const Ref< SkinnedMeshFilter > &mesh );
         virtual ~MeshAnimator() = default;
 
-        void OnUpdate( Timestep deltaTime );
+        void onUpdate( Timestep delta_time );
 
-        void SetAnimation( const std::string &clipName );
-        void SetAnimation( uint32_t clipID );
-        void SetAnimation( const AnimationClip &clip );
+        void setAnimation( const std::string &clip_name );
+        void setAnimation( Uint32 clip_id );
+        void setAnimation( const AnimationClip &clip );
 
-        void Play() { m_bPlaying = true; }
-        void Pause() { m_bPlaying = false; }
-        void Reset( bool bPause = true );
+        void play()
+        {
+            playing = true;
+        }
+        void pause()
+        {
+            playing = false;
+        }
+        void reset( bool pause = true );
 
-        const std::vector< DirectX::XMFLOAT4X4 > &GetBoneTransforms() const { return m_Transforms; }
-        bool IsPlaying() const { return m_bPlaying; }
+        const std::vector< DirectX::XMFLOAT4X4 > &getBoneTransforms() const
+        {
+            return transforms;
+        }
+        bool isPlaying() const
+        {
+            return playing;
+        }
 
       private:
-        void CalculateBoneTransform( AnimationNode *pNode, const DirectX::XMFLOAT4X4 &parentTransform );
+        void calculateBoneTransform( AnimationNode *node, const DirectX::XMFLOAT4X4 &parent_transform );
 
       private:
-        AnimationClip m_CurrentClip;
-        Ref< SkinnedMeshFilter > m_pSkinnedMesh;
-        std::vector< DirectX::XMFLOAT4X4 > m_Transforms;
+        AnimationClip currentClip;
+        Ref< SkinnedMeshFilter > skinnedMesh;
+        std::vector< DirectX::XMFLOAT4X4 > transforms;
 
-        float m_TickCount = 0.f;
+        float tickCount = 0.f;
 
-        bool m_bClipSet = false;
-        bool m_bPlaying = false;
-        bool m_bReversed = false;
+        bool clipSet = false;
+        bool playing = false;
+        bool reversed = false;
 
-        static const Uint32 m_MaxBoneCount;
+        static const Uint32 maxBoneCount;
     };
 }

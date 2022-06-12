@@ -1,9 +1,8 @@
 #pragma once
-#include <cstdint>
 
-namespace smile
+namespace smile::input
 {
-    using GamepadCode = uint16_t;
+    using GamepadCode = Uint16;
 
 	namespace gamepad
 	{

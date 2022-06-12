@@ -2,15 +2,15 @@
 
 #include <thirdparty/entt/entt.hpp>
 
-namespace smile
+namespace smile::renderer
 {
-	class RenderPass
-	{
-     public:
+    class RenderPass
+    {
+      public:
         RenderPass() = default;
         virtual ~RenderPass() = default;
 
-		virtual void AddToScene( entt::registry registry ) = 0;
-		virtual void OnRender() = 0;
-	};
+        virtual void addToScene( entt::registry registry ) = 0;
+        virtual void onRender() = 0;
+    };
 }

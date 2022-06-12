@@ -1,45 +1,45 @@
 #pragma once
 
-namespace smile
+namespace smile::renderer
 {
     class OrthographicCamera final
     {
       public:
         OrthographicCamera( float left, float right, float bottom, float top );
 
-        virtual const DirectX::XMFLOAT3 &GetPosition() const
+        virtual const DirectX::XMFLOAT3 &getPosition() const
         {
-            return m_Position;
+            return position;
         }
-        virtual float GetRotation() const
+        virtual float getRotation() const
         {
-            return m_Rotation;
+            return rotation;
         }
-        virtual const DirectX::XMFLOAT4X4 &GetProjectionMatrix() const
+        virtual const DirectX::XMFLOAT4X4 &getProjectionMatrix() const
         {
-            return m_ProjectionMatrix;
+            return projectionMatrix;
         }
-        virtual const DirectX::XMFLOAT4X4 &GetViewMatrix() const
+        virtual const DirectX::XMFLOAT4X4 &getViewMatrix() const
         {
-            return m_ViewMatrix;
+            return viewMatrix;
         }
-        virtual const DirectX::XMFLOAT4X4 &GetViewProjectionMatrix() const
+        virtual const DirectX::XMFLOAT4X4 &getViewProjectionMatrix() const
         {
-            return m_ViewProjectionMatrix;
+            return viewProjectionMatrix;
         }
 
-        virtual void SetPosition( const DirectX::XMFLOAT3 &position );
-        virtual void SetRotation( float rotation );
-
-      private:
-        virtual void RecalculateViewMatrix();
+        virtual void setPosition( const DirectX::XMFLOAT3 &new_position );
+        virtual void setRotation( float new_rotation );
 
       private:
-        DirectX::XMFLOAT4X4 m_ProjectionMatrix;
-        DirectX::XMFLOAT4X4 m_ViewMatrix;
-        DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
+        virtual void recalculateViewMatrix();
 
-        DirectX::XMFLOAT3 m_Position;
-        float m_Rotation = 0.0f;
+      private:
+        DirectX::XMFLOAT4X4 projectionMatrix;
+        DirectX::XMFLOAT4X4 viewMatrix;
+        DirectX::XMFLOAT4X4 viewProjectionMatrix;
+
+        DirectX::XMFLOAT3 position;
+        float rotation = 0.0f;
     };
 }

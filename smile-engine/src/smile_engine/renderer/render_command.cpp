@@ -4,7 +4,7 @@
 #include "platform/directx11/directx11_renderer_api.h"
 #include "platform/smileraster/smileraster_renderer_api.h"
 
-namespace smile
+namespace smile::renderer
 {
-    RendererAPI *RenderCommand::s_pRendererAPI = new DirectX11RendererAPI{};
+    RendererAPI *RenderCommand::rendererAPI = new DirectX11RendererAPI{};
 }

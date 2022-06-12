@@ -1,39 +1,39 @@
 #pragma once
 
-namespace smile
+namespace smile::renderer
 {
     class PerspectiveCamera final
     {
       public:
-        PerspectiveCamera( float fov, float aspectRatio );
+        PerspectiveCamera( float fov, float aspect_ratio );
 
-        void SetProjectionMatrix( float fov, float aspectRatio );
+        void setProjectionMatrix( float fov, float aspect_ratio );
 
-        const DirectX::XMFLOAT4X4 &GetProjectionMatrix() const
+        const DirectX::XMFLOAT4X4 &getProjectionMatrix() const
         {
-            return m_ProjectionMatrix;
+            return projectionMatrix;
         }
-        const DirectX::XMFLOAT4X4 &GetViewMatrix() const
+        const DirectX::XMFLOAT4X4 &getViewMatrix() const
         {
-            return m_ViewMatrix;
+            return viewMatrix;
         }
-        const DirectX::XMFLOAT4X4 &GetViewProjectionMatrix() const
+        const DirectX::XMFLOAT4X4 &getViewProjectionMatrix() const
         {
-            return m_ViewProjectionMatrix;
+            return viewProjectionMatrix;
         }
 
-        void SetPosition( const DirectX::XMFLOAT3 &position );
-        void SetRotation( const DirectX::XMFLOAT3 &rotation );
+        void setPosition( const DirectX::XMFLOAT3 &new_position );
+        void setRotation( const DirectX::XMFLOAT3 &new_rotation );
 
       private:
-        virtual void RecalculateViewMatrix();
+        virtual void recalculateViewMatrix();
 
       private:
-        DirectX::XMFLOAT4X4 m_ProjectionMatrix;
-        DirectX::XMFLOAT4X4 m_ViewMatrix;
-        DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
+        DirectX::XMFLOAT4X4 projectionMatrix;
+        DirectX::XMFLOAT4X4 viewMatrix;
+        DirectX::XMFLOAT4X4 viewProjectionMatrix;
 
-        DirectX::XMFLOAT3 m_Position = { 0.f, 0.f, 0.f };
-        DirectX::XMFLOAT3 m_Rotation = { 0.f, 0.f, 0.f };
+        DirectX::XMFLOAT3 position = { 0.f, 0.f, 0.f };
+        DirectX::XMFLOAT3 rotation = { 0.f, 0.f, 0.f };
     };
 }

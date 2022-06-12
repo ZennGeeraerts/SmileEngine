@@ -38,56 +38,56 @@ namespace smile
         SmileEditorLayer();
         virtual ~SmileEditorLayer() = default;
 
-        virtual void OnAttach() override;
-        virtual void OnDetach() override;
+        virtual void onAttach() override;
+        virtual void onDetach() override;
 
-        virtual void OnUpdate( Timestep deltaTime ) override;
-        virtual void OnImGuiRender() override;
-        virtual void OnEvent( Event &e ) override;
+        virtual void onUpdate( Timestep delta_time ) override;
+        virtual void onImGuiRender() override;
+        virtual void onEvent( Event &e ) override;
 
       private:
-        bool OnKeyPressed( KeyPressedEvent &e );
+        bool onKeyPressed( KeyPressedEvent &e );
 
-        void SaveScene();
-        void SaveSceneAs();
-        void SerializeScene( const Ref< Scene > &pScene, const std::filesystem::path &filePath );
-        void OpenScene();
-        void OpenScene( const std::filesystem::path &filePath );
-        void NewScene();
+        void saveScene();
+        void saveSceneAs();
+        void serializeScene( const Ref< scene::Scene > &scene, const std::filesystem::path &file_path );
+        void openScene();
+        void openScene( const std::filesystem::path &file_path );
+        void newScene();
 
-        void OnScenePlay();
-        void OnSceneStop();
+        void onScenePlay();
+        void onSceneStop();
 
-        void DuplicateEntity();
+        void duplicateEntity();
 
         // UI Panels
-        void DrawToolbar();
+        void drawToolbar();
 
       private:
-        Ref< Scene > m_pActiveScene;
-        Ref< Scene > m_pEditorScene;
-        EditorCamera m_EditorCamera;
-        std::filesystem::path m_EditorScenePath;
+        Ref< scene::Scene > activeScene;
+        Ref< scene::Scene > editorScene;
+        renderer::EditorCamera editorCamera;
+        std::filesystem::path editorScenePath;
 
-        DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
-        bool m_bViewportFocused = false;
-        bool m_bViewportHovered = false;
+        DirectX::XMFLOAT2 viewportSize = { 0.f, 0.f };
+        bool viewportFocused = false;
+        bool viewportHovered = false;
 
-        GizmoType m_GizmoType = GizmoType::None;
+        GizmoType gizmoType = GizmoType::None;
 
         enum class SceneState
         {
             Edit = 0,
             Play = 1
         };
-        SceneState m_SceneState = SceneState::Edit;
+        SceneState sceneState = SceneState::Edit;
 
         // Panels
-        SceneHierarchyPanel m_SceneHierarchyPanel;
-        ContentBrowserPanel m_ContentBrowserPanel;
+        scene::SceneHierarchyPanel sceneHierarchyPanel;
+        ContentBrowserPanel contentBrowserPanel;
 
         // Editor resources
-        Ref< Texture2D > m_pIconPlay = nullptr;
-        Ref< Texture2D > m_pIconStop = nullptr;
+        Ref< renderer::Texture2D > iconPlay = nullptr;
+        Ref< renderer::Texture2D > iconStop = nullptr;
     };
 }

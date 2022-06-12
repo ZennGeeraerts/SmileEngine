@@ -6,91 +6,91 @@
 
 #include <thirdparty/entt/entt.hpp>
 
-namespace smile
+namespace smile::scene
 {
     class Entity final
     {
       public:
         Entity() = default;
 
-        Entity( entt::entity handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
+        Entity( entt::entity handle, Scene *scene ) : entityHandle{ handle }, scene{ scene }
         {
         }
 
         Entity( const Entity & ) = default;
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &AddComponent( ConstructorArgs &&...constructorArgs )
+        ComponentType &addComponent( ConstructorArgs &&...constructor_args )
         {
-            SM_ASSERT( !HasComponent< ComponentType >(), "Entity::AddComponent > Entity already has component" );
+            SM_ASSERT( !hasComponent< ComponentType >(), "Entity::addComponent > Entity already has component" );
 
             // forward the constructor arguments to entt
-            ComponentType &component = m_pScene->m_Registry.emplace< ComponentType >(
-                m_EntityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
-            m_pScene->OnComponentAdded< ComponentType >( *this, component );
+            ComponentType &component = scene->registry.emplace< ComponentType >(
+                entityHandle, std::forward< ConstructorArgs >( constructor_args )... );
+            scene->onComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &AddOrReplaceComponent( ConstructorArgs &&...constructorArgs )
+        ComponentType &addOrReplaceComponent( ConstructorArgs &&...constructor_args )
         {
             // forward the constructor arguments to entt
-            ComponentType &component = m_pScene->m_Registry.emplace_or_replace< ComponentType >(
-                m_EntityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
-            m_pScene->OnComponentAdded< ComponentType >( *this, component );
+            ComponentType &component = scene->registry.emplace_or_replace< ComponentType >(
+                entityHandle, std::forward< ConstructorArgs >( constructor_args )... );
+            scene->onComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
         template < typename ComponentType >
-        void RemoveComponent()
+        void removeComponent()
         {
-            m_pScene->m_Registry.remove< ComponentType >( m_EntityHandle );
+            scene->registry.remove< ComponentType >( entityHandle );
         }
 
         template < typename ComponentType >
-        ComponentType &GetComponent() const
+        ComponentType &getComponent() const
         {
-            SM_ASSERT( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
+            SM_ASSERT( hasComponent< ComponentType >(), "Entity::getComponent > Entity does not have component" );
 
-            return m_pScene->m_Registry.get< ComponentType >( m_EntityHandle );
+            return scene->registry.get< ComponentType >( entityHandle );
         }
 
-        UUID GetUUID() const
+        UUID getUUID() const
         {
-            return GetComponent< IDComponent >().m_ID;
+            return getComponent< IDComponent >().id;
         }
-        const std::string &GetName() const
+        const std::string &getName() const
         {
-            return GetComponent< TagComponent >().m_Tag;
+            return getComponent< TagComponent >().tag;
         }
-        DirectX::XMFLOAT4X4 GetTransform() const
+        DirectX::XMFLOAT4X4 getTransform() const
         {
-            return GetComponent< TransformComponent >().GetTransform();
+            return getComponent< TransformComponent >().getTransform();
         }
 
         template < typename ComponentType >
-        bool HasComponent() const
+        bool hasComponent() const
         {
-            return m_pScene->m_Registry.all_of< ComponentType >( m_EntityHandle );
+            return scene->registry.all_of< ComponentType >( entityHandle );
         }
 
         // Check to see if entity is valid
         operator bool() const
         {
-            return m_EntityHandle != entt::null;
+            return entityHandle != entt::null;
         }
         operator entt::entity() const
         {
-            return m_EntityHandle;
+            return entityHandle;
         }
-        operator uint32_t() const
+        operator Uint32() const
         {
-            return static_cast< uint32_t >( m_EntityHandle );
+            return static_cast< Uint32 >( entityHandle );
         }
 
         bool operator==( Entity other ) const
         {
-            return ( m_EntityHandle == other.m_EntityHandle ) && ( m_pScene == other.m_pScene );
+            return ( entityHandle == other.entityHandle ) && ( scene == other.scene );
         }
         bool operator!=( Entity other ) const
         {
@@ -98,7 +98,7 @@ namespace smile
         }
 
       private:
-        entt::entity m_EntityHandle = entt::null;
-        Scene *m_pScene = nullptr;
+        entt::entity entityHandle = entt::null;
+        Scene *scene = nullptr;
     };
 }

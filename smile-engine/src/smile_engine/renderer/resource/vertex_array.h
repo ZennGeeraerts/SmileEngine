@@ -3,20 +3,20 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 
-namespace smile
+namespace smile::renderer
 {
     class VertexArray
     {
       public:
         virtual ~VertexArray() = default;
 
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
+        virtual void bind() const = 0;
+        virtual void unbind() const = 0;
 
-        virtual void AddVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) = 0;
-        virtual void AddIndexBuffer( const Ref< IndexBuffer > &pVertexBuffer ) = 0;
-        virtual const BufferLayout &GetLayout() const = 0;
+        virtual void addVertexBuffer( const Ref< VertexBuffer > &vertex_buffer ) = 0;
+        virtual void addIndexBuffer( const Ref< IndexBuffer > &index_buffer ) = 0;
+        virtual const BufferLayout &getLayout() const = 0;
 
-        static VertexBuffer *Create();
+        static VertexBuffer *create();
     };
 }

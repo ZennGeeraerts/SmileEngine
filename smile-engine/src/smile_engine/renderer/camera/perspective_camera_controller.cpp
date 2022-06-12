@@ -4,75 +4,75 @@
 #include "smile_engine/input/input.h"
 #include "smile_engine/input/key_codes.h"
 
-namespace smile
+namespace smile::renderer
 {
-    PerspectiveCameraController::PerspectiveCameraController( float fov, float aspectRatio )
-        : m_FOV{ fov }, m_AspectRatio{ aspectRatio }, m_Camera{ fov, aspectRatio }
+    PerspectiveCameraController::PerspectiveCameraController( float fov, float aspect_ratio )
+        : fov{ fov }, aspectRatio{ aspect_ratio }, camera{ fov, aspect_ratio }
     {
     }
 
-    void PerspectiveCameraController::OnUpdate( Timestep deltaTime )
+    void PerspectiveCameraController::onUpdate( Timestep delta_time )
     {
-        if ( Input::IsKeyPressed( key::Left ) )
-            m_CameraRotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::IsKeyPressed( key::Right ) )
-            m_CameraRotation.y += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::IsKeyPressed( key::Up ) )
-            m_CameraRotation.x -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::IsKeyPressed( key::Down ) )
-            m_CameraRotation.x += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
+        if ( input::Input::isKeyPressed( input::key::Left ) )
+            cameraRotation.y -= DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
+        if ( input::Input::isKeyPressed( input::key::Right ) )
+            cameraRotation.y += DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
+        if ( input::Input::isKeyPressed( input::key::Up ) )
+            cameraRotation.x -= DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
+        if ( input::Input::isKeyPressed( input::key::Down ) )
+            cameraRotation.x += DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
 
         const DirectX::XMFLOAT3 forward = { 0.f, 0.f, 1.f };
         const DirectX::XMFLOAT3 right = { 1.f, 0.f, 0.f };
         DirectX::XMFLOAT3 dir{};
 
-        if ( smile::Input::IsKeyPressed( 'A' ) )
+        if ( input::Input::isKeyPressed( 'A' ) )
             dir.x -= 1;
-        if ( smile::Input::IsKeyPressed( 'D' ) )
+        if ( input::Input::isKeyPressed( 'D' ) )
             dir.x += 1;
-        if ( smile::Input::IsKeyPressed( 'S' ) )
+        if ( input::Input::isKeyPressed( 'S' ) )
             dir.z -= 1;
-        if ( smile::Input::IsKeyPressed( 'W' ) )
+        if ( input::Input::isKeyPressed( 'W' ) )
             dir.z += 1;
-        if ( smile::Input::IsKeyPressed( key::Space ) )
+        if ( input::Input::isKeyPressed( input::key::Space ) )
             dir.y += 1;
-        if ( smile::Input::IsKeyPressed( key::CtrlLeft ) )
+        if ( input::Input::isKeyPressed( input::key::CtrlLeft ) )
             dir.y -= 1;
 
         dir.x = forward.x * dir.z + right.x * dir.x;
         // dir.y = forward.y * dir.z + right.y * dir.x;
         dir.z = forward.z * dir.z + right.z * dir.x;
 
-        auto dirMat = DirectX::XMVector3Normalize( DirectX::XMLoadFloat3( &dir ) );
-        DirectX::XMStoreFloat3( &dir, dirMat );
+        auto dir_mat = DirectX::XMVector3Normalize( DirectX::XMLoadFloat3( &dir ) );
+        DirectX::XMStoreFloat3( &dir, dir_mat );
 
-        m_CameraPosition.x += dir.x * m_CameraMoveSpeed * deltaTime;
-        m_CameraPosition.y += dir.y * m_CameraMoveSpeed * deltaTime;
-        m_CameraPosition.z += dir.z * m_CameraMoveSpeed * deltaTime;
+        cameraPosition.x += dir.x * cameraMoveSpeed * delta_time;
+        cameraPosition.y += dir.y * cameraMoveSpeed * delta_time;
+        cameraPosition.z += dir.z * cameraMoveSpeed * delta_time;
 
-        m_Camera.SetPosition( m_CameraPosition );
-        m_Camera.SetRotation( m_CameraRotation );
+        camera.setPosition( cameraPosition );
+        camera.setRotation( cameraRotation );
     }
 
-    void PerspectiveCameraController::OnEvent( Event &e )
+    void PerspectiveCameraController::onEvent( Event &e )
     {
         EventDispatcher dispatcher{ e };
-        dispatcher.Dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( PerspectiveCameraController::OnMouseScrolled ) );
-        dispatcher.Dispatch< WindowResizeEvent >(
-            SM_BIND_EVENT_FN( PerspectiveCameraController::OnWindowResizedEvent ) );
+        dispatcher.dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( PerspectiveCameraController::onMouseScrolled ) );
+        dispatcher.dispatch< WindowResizeEvent >(
+            SM_BIND_EVENT_FN( PerspectiveCameraController::onWindowResizedEvent ) );
     }
 
-    bool PerspectiveCameraController::OnMouseScrolled( MouseScrolledEvent &e )
+    bool PerspectiveCameraController::onMouseScrolled( MouseScrolledEvent &e )
     {
-        m_ZoomLevel -= e.GetOffsetY();
-        m_ZoomLevel = std::max( m_ZoomLevel, 0.25f );
+        zoomLevel -= e.getOffsetY();
+        zoomLevel = std::max( zoomLevel, 0.25f );
         return false;
     }
 
-    bool PerspectiveCameraController::OnWindowResizedEvent( WindowResizeEvent &e )
+    bool PerspectiveCameraController::onWindowResizedEvent( WindowResizeEvent &e )
     {
-        m_AspectRatio = e.GetWidth() / static_cast< float >( e.GetHeight() );
-        m_Camera.SetProjectionMatrix( m_FOV, m_AspectRatio );
+        aspectRatio = e.getWidth() / static_cast< float >( e.getHeight() );
+        camera.setProjectionMatrix( fov, aspectRatio );
         return false;
     }
 }

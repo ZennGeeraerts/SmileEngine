@@ -4,15 +4,15 @@
 
 #include <d3dx11effect.h>
 
-namespace smile::utils
+namespace smile::renderer::utils
 {
-    static ShaderDataType ConvertDirectXShaderVariableType( D3DX11_EFFECT_TYPE_DESC effectTypeDescriptor )
+    static ShaderDataType convertDirectXShaderVariableType( D3DX11_EFFECT_TYPE_DESC effect_type_descriptor )
     {
-        switch ( effectTypeDescriptor.Class )
+        switch ( effect_type_descriptor.Class )
         {
             case D3D_SVC_SCALAR:
             {
-                switch ( effectTypeDescriptor.Type )
+                switch ( effect_type_descriptor.Type )
                 {
                     case D3D_SVT_FLOAT:
                         return ShaderDataType::Float;
@@ -26,11 +26,11 @@ namespace smile::utils
             }
             case D3D_SVC_VECTOR:
             {
-                switch ( effectTypeDescriptor.Type )
+                switch ( effect_type_descriptor.Type )
                 {
                     case D3D_SVT_FLOAT:
                     {
-                        switch ( effectTypeDescriptor.Columns )
+                        switch ( effect_type_descriptor.Columns )
                         {
                             case 2:
                                 return ShaderDataType::Float2;
@@ -46,13 +46,13 @@ namespace smile::utils
             }
             case D3D_SVC_MATRIX_COLUMNS:
             {
-                switch ( effectTypeDescriptor.Type )
+                switch ( effect_type_descriptor.Type )
                 {
                     case D3D_SVT_FLOAT:
                     {
-                        if ( ( effectTypeDescriptor.Columns == 4 ) && ( effectTypeDescriptor.Rows == 4 ) )
+                        if ( ( effect_type_descriptor.Columns == 4 ) && ( effect_type_descriptor.Rows == 4 ) )
                         {
-                            if ( effectTypeDescriptor.Elements == 0 )
+                            if ( effect_type_descriptor.Elements == 0 )
                                 return ShaderDataType::Mat4;
                             else
                                 return ShaderDataType::Mat4Array;
@@ -66,7 +66,7 @@ namespace smile::utils
             }
             case D3D_SVC_OBJECT:
             {
-                switch ( effectTypeDescriptor.Type )
+                switch ( effect_type_descriptor.Type )
                 {
                     case D3D_SVT_TEXTURE:
                         return ShaderDataType::Texture;
@@ -85,35 +85,35 @@ namespace smile::utils
         }
     }
 
-    std::vector< ShaderVariable > ReflectShaderVariables( const Ref< Shader > &pShader )
+    std::vector< ShaderVariable > reflectShaderVariables( const Ref< Shader > &shader )
     {
-        DirectX11Shader *pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
-        std::vector< ShaderVariable > shaderVariables{};
+        DirectX11Shader *directX11_shader = static_cast< DirectX11Shader * >( shader.get() );
+        std::vector< ShaderVariable > shader_variables{};
 
-        ID3DX11Effect *pEffect = pDirectX11Shader->GetEffect();
-        D3DX11_EFFECT_DESC effectDesc{};
-        pEffect->GetDesc( &effectDesc );
-        for ( Uint32 i{}; i < effectDesc.GlobalVariables; ++i )
+        ID3DX11Effect *effect = directX11_shader->getEffect();
+        D3DX11_EFFECT_DESC effect_desc{};
+        effect->GetDesc( &effect_desc );
+        for ( Uint32 i{}; i < effect_desc.GlobalVariables; ++i )
         {
-            ID3DX11EffectVariable *pEffectVariable = pEffect->GetVariableByIndex( i );
-            SM_ASSERT( pEffectVariable, "ReflectShaderVariables > Invalid shader variable" );
+            ID3DX11EffectVariable *effect_variable = effect->GetVariableByIndex( i );
+            SM_ASSERT( effect_variable, "reflectShaderVariables > Invalid shader variable" );
 
-            ID3DX11EffectType *pEffectType = pEffectVariable->GetType();
-            D3DX11_EFFECT_TYPE_DESC effectTypeDescriptor{};
-            pEffectType->GetDesc( &effectTypeDescriptor );
+            ID3DX11EffectType *effect_type = effect_variable->GetType();
+            D3DX11_EFFECT_TYPE_DESC effect_type_descriptor{};
+            effect_type->GetDesc( &effect_type_descriptor );
 
-            D3DX11_EFFECT_VARIABLE_DESC effectVariableDesc{};
-            pEffectVariable->GetDesc( &effectVariableDesc );
+            D3DX11_EFFECT_VARIABLE_DESC effect_variable_desc{};
+            effect_variable->GetDesc( &effect_variable_desc );
 
-            if ( effectVariableDesc.Semantic )
+            if ( effect_variable_desc.Semantic )
             {
-                ShaderVariable shaderVariable{};
-                shaderVariable.m_Semantic = effectVariableDesc.Semantic;
-                shaderVariable.m_Type = ConvertDirectXShaderVariableType( effectTypeDescriptor );
-                shaderVariables.push_back( shaderVariable );
+                ShaderVariable shader_variable{};
+                shader_variable.semantic = effect_variable_desc.Semantic;
+                shader_variable.type = convertDirectXShaderVariableType( effect_type_descriptor );
+                shader_variables.push_back( shader_variable );
             }
         }
 
-        return shaderVariables;
+        return shader_variables;
     }
 }

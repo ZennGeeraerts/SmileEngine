@@ -1,6 +1,6 @@
 ---
 Language:        Cpp
-AccessModifierOffset: -3
+AccessModifierOffset: -2
 AlignAfterOpenBracket: DontAlign
 AlignConsecutiveMacros: None
 AlignConsecutiveAssignments: None

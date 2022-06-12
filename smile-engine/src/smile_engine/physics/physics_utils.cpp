@@ -1,67 +1,67 @@
 #include "smpch.h"
 #include "physics_utils.h"
 
-namespace smile::utils
+namespace smile::physics::utils
 {
-    physx::PxVec3 ConvertToPhysXVector( const DirectX::XMFLOAT3 &vector )
+    physx::PxVec3 convertToPhysXVector( const DirectX::XMFLOAT3 &vector )
     {
         return *( physx::PxVec3 * )( &vector );
     }
 
-    physx::PxQuat ConvertToPhysxQuat( const DirectX::XMFLOAT4 &quat )
+    physx::PxQuat convertToPhysxQuat( const DirectX::XMFLOAT4 &quat )
     {
         return *( physx::PxQuat * )( &quat );
     }
 
-    physx::PxTransform ConvertToPhysXTransform( const DirectX::XMFLOAT4X4 &transform )
+    physx::PxTransform convertToPhysXTransform( const DirectX::XMFLOAT4X4 &transform )
     {
-        DirectX::XMMATRIX transformMat = DirectX::XMLoadFloat4x4( &transform );
-        DirectX::XMVECTOR scaleVec{};
-        DirectX::XMVECTOR rotationVec{};
-        DirectX::XMVECTOR positionVec{};
-        DirectX::XMMatrixDecompose( &scaleVec, &rotationVec, &positionVec, transformMat );
+        DirectX::XMMATRIX transform_mat = DirectX::XMLoadFloat4x4( &transform );
+        DirectX::XMVECTOR scale_vec{};
+        DirectX::XMVECTOR rotation_vec{};
+        DirectX::XMVECTOR position_vec{};
+        DirectX::XMMatrixDecompose( &scale_vec, &rotation_vec, &position_vec, transform_mat );
 
         DirectX::XMFLOAT3 position{};
-        DirectX::XMStoreFloat3( &position, positionVec );
+        DirectX::XMStoreFloat3( &position, position_vec );
 
         DirectX::XMFLOAT4 rotation{};
-        DirectX::XMStoreFloat4( &rotation, rotationVec );
+        DirectX::XMStoreFloat4( &rotation, rotation_vec );
 
-        return physx::PxTransform{ ConvertToPhysXVector( position ), ConvertToPhysxQuat( rotation ) };
+        return physx::PxTransform{ convertToPhysXVector( position ), convertToPhysxQuat( rotation ) };
     }
 
-    DirectX::XMFLOAT3 ConvertToDirectXVector( const physx::PxVec3 &vector )
+    DirectX::XMFLOAT3 convertToDirectXVector( const physx::PxVec3 &vector )
     {
         return *( DirectX::XMFLOAT3 * )( &vector );
     }
 
-    DirectX::XMFLOAT4 ConvertToDirectXQuat( const physx::PxQuat &quat )
+    DirectX::XMFLOAT4 convertToDirectXQuat( const physx::PxQuat &quat )
     {
         return *( DirectX::XMFLOAT4 * )( &quat );
     }
 
-    physx::PxFilterFlags SmileSimulationFilterShader( physx::PxFilterObjectAttributes attribute0,
-        physx::PxFilterData filterData0,
+    physx::PxFilterFlags smileSimulationFilterShader( physx::PxFilterObjectAttributes attribute0,
+        physx::PxFilterData filter_data0,
         physx::PxFilterObjectAttributes attribute1,
-        physx::PxFilterData filterData1,
-        physx::PxPairFlags &pairFlags,
-        const void *pConstantBlock,
-        physx::PxU32 constantBlockSize )
+        physx::PxFilterData filter_data1,
+        physx::PxPairFlags &pair_flags,
+        const void *constant_block,
+        physx::PxU32 constant_block_size )
     {
         if ( physx::PxFilterObjectIsTrigger( attribute0 ) || physx::PxFilterObjectIsTrigger( attribute1 ) )
         {
-            pairFlags = physx::PxPairFlag::eTRIGGER_DEFAULT;
+            pair_flags = physx::PxPairFlag::eTRIGGER_DEFAULT;
             return physx::PxFilterFlag::eDEFAULT;
         }
 
-        pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-        pairFlags |= physx::PxPairFlag::eDETECT_CCD_CONTACT;
+        pair_flags = physx::PxPairFlag::eCONTACT_DEFAULT;
+        pair_flags |= physx::PxPairFlag::eDETECT_CCD_CONTACT;
 
-        if ( ( filterData0.word0 & filterData1.word1 ) || ( filterData1.word0 & filterData0.word1 ) )
+        if ( ( filter_data0.word0 & filter_data1.word1 ) || ( filter_data1.word0 & filter_data0.word1 ) )
         {
-            pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-            pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
-            pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_CCD;
+            pair_flags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+            pair_flags |= physx::PxPairFlag::eNOTIFY_TOUCH_LOST;
+            pair_flags |= physx::PxPairFlag::eNOTIFY_TOUCH_CCD;
             return physx::PxFilterFlag::eDEFAULT;
         }
 

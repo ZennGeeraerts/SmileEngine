@@ -1,64 +1,64 @@
 #include "smpch.h"
 #include "scene_camera.h"
 
-namespace smile
+namespace smile::scene
 {
     SceneCamera::SceneCamera()
     {
-        RecalculateProjectionMatrix();
+        recalculateProjectionMatrix();
     }
 
-    void SceneCamera::SetViewportSize( uint32_t width, uint32_t height )
+    void SceneCamera::setViewportSize( Uint32 width, Uint32 height )
     {
-        m_AspectRatio = width / static_cast< float >( height );
+        aspectRatio = width / static_cast< float >( height );
 
-        RecalculateProjectionMatrix();
+        recalculateProjectionMatrix();
     }
 
-    void SceneCamera::SetPerspectiveCamera( float fov, float nearPlane, float farPlane )
+    void SceneCamera::setPerspectiveCamera( float new_fov, float near_plane, float far_plane )
     {
-        m_ProjectionType = ProjectionType::Perspective;
-        m_FOV = fov;
-        m_PerspectiveNearPlane = nearPlane;
-        m_PerspectiveFarPlane = farPlane;
+        projectionType = ProjectionType::Perspective;
+        fov = new_fov;
+        perspectiveNearPlane = near_plane;
+        perspectiveFarPlane = far_plane;
 
-        RecalculateProjectionMatrix();
+        recalculateProjectionMatrix();
     }
 
-    void SceneCamera::SetOrthographicCamera( float size, float nearPlane, float farPlane )
+    void SceneCamera::setOrthographicCamera( float new_size, float near_plane, float far_plane )
     {
-        m_ProjectionType = ProjectionType::Orthographic;
-        m_Size = size;
-        m_PerspectiveNearPlane = nearPlane;
-        m_PerspectiveFarPlane = farPlane;
+        projectionType = ProjectionType::Orthographic;
+        size = new_size;
+        perspectiveNearPlane = near_plane;
+        perspectiveFarPlane = far_plane;
 
-        RecalculateProjectionMatrix();
+        recalculateProjectionMatrix();
     }
 
-    void SceneCamera::RecalculateProjectionMatrix()
+    void SceneCamera::recalculateProjectionMatrix()
     {
-        switch ( m_ProjectionType )
+        switch ( projectionType )
         {
             case ProjectionType::Perspective:
             {
-                DirectX::XMMATRIX projectionMatrixMat =
-                    DirectX::XMMatrixPerspectiveFovLH( DirectX::XMConvertToRadians( m_FOV ),
-                        m_AspectRatio,
-                        m_PerspectiveNearPlane,
-                        m_PerspectiveFarPlane );
-                DirectX::XMStoreFloat4x4( &m_ProjectionMatrix, projectionMatrixMat );
+                DirectX::XMMATRIX projection_matrix_mat =
+                    DirectX::XMMatrixPerspectiveFovLH( DirectX::XMConvertToRadians( fov ),
+                        aspectRatio,
+                        perspectiveNearPlane,
+                        perspectiveFarPlane );
+                DirectX::XMStoreFloat4x4( &projectionMatrix, projection_matrix_mat );
                 break;
             }
             case ProjectionType::Orthographic:
             {
-                float orthoLeft = -m_Size * m_AspectRatio * 0.5f;
-                float orthoRight = m_Size * m_AspectRatio * 0.5f;
-                float orthoBottom = -m_Size * 0.5f;
-                float orthoTop = m_Size * 0.5f;
+                float ortho_left = -size * aspectRatio * 0.5f;
+                float ortho_right = size * aspectRatio * 0.5f;
+                float ortho_bottom = -size * 0.5f;
+                float ortho_top = size * 0.5f;
 
-                DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixOrthographicOffCenterLH(
-                    orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNearPlane, m_OrthographicFarPlane );
-                DirectX::XMStoreFloat4x4( &m_ProjectionMatrix, projectionMatrixMat );
+                DirectX::XMMATRIX projection_matrix_mat = DirectX::XMMatrixOrthographicOffCenterLH(
+                    ortho_left, ortho_right, ortho_bottom, ortho_top, orthographicNearPlane, orthographicFarPlane );
+                DirectX::XMStoreFloat4x4( &projectionMatrix, projection_matrix_mat );
                 break;
             }
         }
