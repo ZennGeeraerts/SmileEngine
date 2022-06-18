@@ -87,7 +87,7 @@ namespace smile::renderer
         shader->uploadBool( semantic, value );
     }
 
-    void Material::setFloat2Value(const std::string& semantic, const DirectX::XMFLOAT2& value)
+    void Material::setFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value )
     {
         if ( float2Values.find( semantic ) == float2Values.end() )
         {
@@ -126,17 +126,15 @@ namespace smile::renderer
     float Material::getFloatValue( const std::string &semantic ) const
     {
         auto it = floatValues.find( semantic );
-        SM_ASSERT(
-            it != floatValues.end(), "Material::getFloatValue > Couldn't find semantic: %s", semantic.c_str() );
+        SM_ASSERT( it != floatValues.end(), "Material::getFloatValue > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }
 
     int Material::getIntValue( const std::string &semantic ) const
     {
-        auto it = floatValues.find( semantic );
-        SM_ASSERT(
-            it != floatValues.end(), "Material::getFloatValue > Couldn't find semantic: %s", semantic.c_str() );
+        auto it = intValues.find( semantic );
+        SM_ASSERT( it != intValues.end(), "Material::getFloatValue > Couldn't find semantic: %s", semantic.c_str() );
 
         return it->second;
     }

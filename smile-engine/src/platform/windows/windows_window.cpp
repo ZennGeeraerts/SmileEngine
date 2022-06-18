@@ -167,7 +167,7 @@ namespace smile
     {
         if ( msg == WM_NCCREATE )
         {
-            const CREATESTRUCTW *const create = reinterpret_cast< CREATESTRUCT * >( l_param );
+            const CREATESTRUCTW *const create = reinterpret_cast< CREATESTRUCTW * >( l_param );
             SetWindowLongPtr( h_wnd, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( create->lpCreateParams ) );
         }
         else

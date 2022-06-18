@@ -20,9 +20,10 @@ namespace smile::renderer
 #ifdef SM_PLATFORM_WINDOWS
             case RendererAPI::API::DirectX11:
                 return new DirectX11Context{ window };
-
+#    ifdef WITH_SMILERASTER
             case RendererAPI::API::SmileRaster:
                 return new SmileRasterContext{ window };
+#    endif
 #endif
         }
 

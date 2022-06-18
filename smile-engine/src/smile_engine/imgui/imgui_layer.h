@@ -19,7 +19,7 @@ namespace smile::imgui
         virtual void onEvent( Event &event ) override;
 
         void begin();
-        void End();
+        void end();
 
         void setDarkThemeColors();
 

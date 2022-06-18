@@ -1,11 +1,6 @@
 #include "smpch.h"
 #include "imgui_layer.h"
 
-#include "thirdparty/imgui/imgui.h"
-#include "thirdparty/imgui/imgui_impl_win32.h"
-#include "thirdparty/imgui/imgui_impl_dx11.h"
-#include "thirdparty/imguizmo/ImGuizmo.h"
-
 #include "smile_engine/core/application.h"
 #include "smile_engine/core/window.h"
 #include "smile_engine/renderer/renderer_api.h"
@@ -14,6 +9,11 @@
 
 #include "smile_engine/core/logger.h"
 #include "smile_engine/input/key_codes.h"
+
+#include <thirdparty/imgui/imgui.h>
+#include <thirdparty/imgui/imgui_impl_win32.h>
+#include <thirdparty/imgui/imgui_impl_dx11.h>
+#include <thirdparty/imguizmo/ImGuizmo.h>
 
 namespace smile::imgui
 {
@@ -55,9 +55,9 @@ namespace smile::imgui
         // io.ConfigDockingAlwaysTabBar = true;
         // io.ConfigDockingTransparentPayload = true;
 
-        const float fontSize = 18.f;
-        io.FontDefault = io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Regular.ttf", fontSize );
-        io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Bold.ttf", fontSize );
+        const float font_size = 18.f;
+        io.FontDefault = io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Regular.ttf", font_size );
+        io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Bold.ttf", font_size );
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
@@ -75,7 +75,7 @@ namespace smile::imgui
         setDarkThemeColors();
 
         Window &window = Application::getInstance().getWindow();
-        renderer::GraphicsContext *graphicsContext = window.getGraphicsContext();
+        renderer::GraphicsContext *graphics_context = window.getGraphicsContext();
 
         renderer::RendererAPI::API api = renderer::RendererAPI::getAPI();
         switch ( api )
@@ -84,7 +84,7 @@ namespace smile::imgui
             {
                 ImGui_ImplWin32_Init( window.getNativeWindow() );
 
-                renderer::DirectX11Context *directx11_context = static_cast< renderer::DirectX11Context * >( graphicsContext );
+                renderer::DirectX11Context *directx11_context = static_cast< renderer::DirectX11Context * >( graphics_context );
                 ImGui_ImplDX11_Init( directx11_context->getDevice(), directx11_context->getDeviceContext() );
                 break;
             }
@@ -124,7 +124,7 @@ namespace smile::imgui
         ImGuizmo::BeginFrame();
     }
 
-    void ImGuiLayer::End()
+    void ImGuiLayer::end()
     {
         ImGuiIO &io = ImGui::GetIO();
         Window &window = Application::getInstance().getWindow();

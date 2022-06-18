@@ -78,7 +78,7 @@ namespace smile
             imGuiLayer->begin();
             for ( Layer *layer : layerStack )
                 layer->onImGuiRender();
-            imGuiLayer->End();
+            imGuiLayer->end();
 
             window->onUpdate();
         }
