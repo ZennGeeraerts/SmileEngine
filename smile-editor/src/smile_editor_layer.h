@@ -56,6 +56,7 @@ namespace smile
         void newScene();
 
         void onScenePlay();
+        void onSceneSimulate();
         void onSceneStop();
 
         void duplicateEntity();
@@ -78,7 +79,8 @@ namespace smile
         enum class SceneState
         {
             Edit = 0,
-            Play = 1
+            Simulate = 1,
+            Play = 2
         };
         SceneState sceneState = SceneState::Edit;
 
@@ -88,6 +90,7 @@ namespace smile
 
         // Editor resources
         Ref< renderer::Texture2D > iconPlay = nullptr;
+        Ref< renderer::Texture2D > iconSimulate = nullptr;
         Ref< renderer::Texture2D > iconStop = nullptr;
     };
 }

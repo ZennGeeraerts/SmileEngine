@@ -66,6 +66,9 @@ namespace smile::physics
 
     void PhysicsEngine::shutDown()
     {
+        if ( scene )
+            destroyScene();
+
         if ( cookingFactory )
         {
             cookingFactory->release();

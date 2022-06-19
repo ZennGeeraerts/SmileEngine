@@ -64,6 +64,26 @@ namespace smile::scene
         physics::PhysicsEngine::destroyScene();
     }
 
+    void Scene::onSimulationStart()
+    {
+        physics::PhysicsEngine::createScene();
+
+        // Create physisc actors
+        {
+            const auto &view = registry.view< RigidbodyComponent >();
+            for ( auto &e : view )
+            {
+                Entity entity = { e, this };
+                physics::PhysicsEngine::createActor( entity );
+            }
+        }
+    }
+
+    void Scene::onSimulationStop()
+    {
+        physics::PhysicsEngine::destroyScene();
+    }
+
     void Scene::onUpdateRuntime( Timestep delta_time )
     {
         physics::PhysicsEngine::simulate( delta_time );
@@ -141,11 +161,64 @@ namespace smile::scene
         }
     }
 
-    void Scene::onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera, bool simmulate )
+    void Scene::onUpdateSimulation( Timestep delta_time, renderer::EditorCamera &editor_camera )
     {
-        if ( simmulate )
-            physics::PhysicsEngine::simulate( delta_time );
+        physics::PhysicsEngine::simulate( delta_time );
 
+        renderer::Renderer::beginScene( editor_camera );
+
+        {
+            auto group = registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[mesh, transform] = group.get< MeshRendererComponent, TransformComponent >( entity );
+                renderer::Renderer::submit( mesh, transform.getTransform() );
+            }
+        }
+        {
+            auto group = registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[mesh, transform] = group.get< StaticMeshComponent, TransformComponent >( entity );
+                renderer::Renderer::submit( mesh, transform.getTransform() );
+            }
+        }
+        {
+            auto group = registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[mesh, transform] = group.get< SkinnedMeshComponent, TransformComponent >( entity );
+
+                for ( auto &animator : mesh.animators )
+                {
+                    animator.onUpdate( delta_time );
+                    const auto &bone_transforms = animator.getBoneTransforms();
+                    for ( const auto &material : mesh.materials )
+                    {
+                        if ( animator.isPlaying() )
+                            material->getShader()->uploadMat4Array( "Bones", bone_transforms );
+                    }
+                }
+
+                renderer::Renderer::submit( mesh, transform.getTransform() );
+            }
+        }
+        {
+            auto group = registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[box_collider, transform] = group.get< BoxColliderComponent, TransformComponent >( entity );
+                renderer::Renderer::submitWireframe( box_collider, transform.getTransform() );
+            }
+        }
+
+        renderer::Renderer::onRender();
+
+        renderer::Renderer::endScene();
+    }
+
+    void Scene::onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera )
+    {
         renderer::Renderer::beginScene( editor_camera );
 
         {

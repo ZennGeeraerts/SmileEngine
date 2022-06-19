@@ -23,9 +23,12 @@ namespace smile::scene
 
         void onRuntimeStart();
         void onRuntimeStop();
+        void onSimulationStart();
+        void onSimulationStop();
 
         void onUpdateRuntime( Timestep delta_time );
-        void onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera, bool simmulate = false );
+        void onUpdateSimulation( Timestep delta_time, renderer::EditorCamera &editor_camera );
+        void onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera );
         void onViewportResize( Uint32 width, Uint32 height );
 
         Entity getPrimaryCameraEntity();

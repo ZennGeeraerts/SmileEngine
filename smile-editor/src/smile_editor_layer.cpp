@@ -30,6 +30,7 @@ namespace smile
 
         // Icon
         iconPlay = renderer::Texture2D::create( "resources/icons/play_button.png" );
+        iconSimulate = renderer::Texture2D::create( "resources/icons/simulate_button.png" );
         iconStop = renderer::Texture2D::create( "resources/icons/stop_button.png" );
     }
 
@@ -61,6 +62,14 @@ namespace smile
                     editorCamera.onUpdate( deltaTime );
 
                 activeScene->onUpdateEditor( deltaTime, editorCamera );
+                break;
+            }
+            case SceneState::Simulate:
+            {
+                if ( viewportFocused )
+                    editorCamera.onUpdate( deltaTime );
+
+                activeScene->onUpdateSimulation( deltaTime, editorCamera );
                 break;
             }
             case SceneState::Play:
@@ -270,19 +279,38 @@ namespace smile
             nullptr,
             ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse );
 
-        Ref< renderer::Texture2D > state_icon = ( sceneState == SceneState::Edit ) ? iconPlay : iconStop;
         const float icon_size{ ImGui::GetWindowHeight() - 4.f };
-        ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( icon_size * 0.5f ) );
-        if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
-                 ImVec2{ icon_size, icon_size },
-                 ImVec2{ 0, 0 },
-                 ImVec2{ 1, 1 },
-                 0 ) )
         {
-            if ( sceneState == SceneState::Edit )
-                onScenePlay();
-            else if ( sceneState == SceneState::Play )
-                onSceneStop();
+            Ref< renderer::Texture2D > state_icon =
+                ( sceneState == SceneState::Edit || sceneState == SceneState::Simulate ) ? iconPlay : iconStop;
+            ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( icon_size * 0.5f ) );
+            if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
+                     ImVec2{ icon_size, icon_size },
+                     ImVec2{ 0, 0 },
+                     ImVec2{ 1, 1 },
+                     0 ) )
+            {
+                if ( sceneState == SceneState::Edit || sceneState == SceneState::Simulate )
+                    onScenePlay();
+                else if ( sceneState == SceneState::Play )
+                    onSceneStop();
+            }
+        }
+        ImGui::SameLine();
+        {
+            Ref< renderer::Texture2D > state_icon =
+                ( sceneState == SceneState::Edit || sceneState == SceneState::Play ) ? iconSimulate : iconStop;
+            if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
+                     ImVec2{ icon_size, icon_size },
+                     ImVec2{ 0, 0 },
+                     ImVec2{ 1, 1 },
+                     0 ) )
+            {
+                if ( sceneState == SceneState::Edit || sceneState == SceneState::Play )
+                    onSceneSimulate();
+                else if ( sceneState == SceneState::Simulate )
+                    onSceneStop();
+            }
         }
 
         ImGui::PopStyleVar( 2 );
@@ -435,16 +463,34 @@ namespace smile
 
     void SmileEditorLayer::onScenePlay()
     {
+        if ( sceneState == SceneState::Simulate )
+            onSceneStop();
+
         sceneState = SceneState::Play;
         activeScene = scene::Scene::copy( editorScene );
         activeScene->onRuntimeStart();
         sceneHierarchyPanel.setContext( activeScene );
     }
 
+    void SmileEditorLayer::onSceneSimulate()
+    {
+        if ( sceneState == SceneState::Play )
+            onSceneStop();
+
+        sceneState = SceneState::Simulate;
+        activeScene = scene::Scene::copy( editorScene );
+        activeScene->onSimulationStart();
+        sceneHierarchyPanel.setContext( activeScene );
+    }
+
     void SmileEditorLayer::onSceneStop()
     {
+        if ( sceneState == SceneState::Play )
+            activeScene->onRuntimeStop();
+        else if ( sceneState == SceneState::Simulate )
+            activeScene->onSimulationStop();
+
         sceneState = SceneState::Edit;
-        activeScene->onRuntimeStop();
         activeScene = editorScene;
         sceneHierarchyPanel.setContext( activeScene );
     }
