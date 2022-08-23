@@ -1,8 +1,13 @@
-cmake_minimum_required(VERSION "3.22")
+cmake_minimum_required(VERSION 3.14)
 
-project("SmileEditor")
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.hpp)
 
-get_filename_component(ENGINE_PATH "../SmileEngine" ABSOLUTE)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ENGINE_PATH})
+add_executable(smile-editor ${SOURCE_FILES})
 
-add_executable("${PROJECT_NAME}" "src/SmileEditor.cpp")
+set_target_properties(smile-engine PROPERTIES OUTPUT_NAME smile-editor)
+
+target_link_libraries(smile-editor PRIVATE smile-engine)
+
+target_include_directories(smile-editor 
+	PUBLIC ${CMAKE_SOURCE_DIR}/smile-engine/src
+	)

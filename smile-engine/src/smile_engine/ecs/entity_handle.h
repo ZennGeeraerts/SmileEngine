@@ -1,28 +1,27 @@
 #pragma once
 
-#include <stdint.h>
-#include <numeric>
+#include "smile_engine/core/core.h"
 
 namespace smile::ecs
 {
     struct EntityHandle final
     {
-        static const int s_IndexBits = 16;
-        static const int s_GenerationBits = 16;
+        static const int indexBits = 16;
+        static const int generationBits = 16;
 
         EntityHandle()
-            : m_Index{ std::numeric_limits< uint32_t >::max() }, m_Generation{ std::numeric_limits< uint32_t >::max() }
+            : index{ std::numeric_limits< Uint32 >::max() }, generation{ std::numeric_limits< Uint32 >::max() }
         {
         }
 
-        EntityHandle( uint32_t index, uint32_t counter ) : m_Index{ index }, m_Generation{ counter }
+        EntityHandle( Uint32 index, Uint32 generation ) : index{ index }, generation{ generation }
         {
         }
 
         bool isValid() const
         {
-            return !( m_Index == std::numeric_limits< uint32_t >::max() &&
-                      ( m_Generation == std::numeric_limits< uint32_t >::max() ) );
+            return !( index == std::numeric_limits< Uint16 >::max() &&
+                      ( generation == std::numeric_limits< Uint16 >::max() ) );
         }
 
         operator bool() const
@@ -31,16 +30,18 @@ namespace smile::ecs
         }
         bool operator==( const EntityHandle &rhs ) const
         {
-            return m_Index == rhs.m_Index && m_Generation == rhs.m_Generation;
+            return index == rhs.index && generation == rhs.generation;
         }
         bool operator!=( const EntityHandle &rhs ) const
         {
-            return m_Index != rhs.m_Index || m_Generation != rhs.m_Generation;
+            return index != rhs.index || generation != rhs.generation;
         }
 
-        uint32_t m_Index : s_IndexBits;
-        uint32_t m_Generation : s_GenerationBits;
+        Uint32 index : indexBits;
+        Uint32 generation : generationBits;
     };
+
+    static const EntityHandle nullHandle = EntityHandle{};
 }
 
 namespace std
@@ -50,7 +51,7 @@ namespace std
     {
         size_t operator()( smile::ecs::EntityHandle entity_handle ) const
         {
-            return entity_handle.m_Generation << entity_handle.s_IndexBits | entity_handle.m_Index;
+            return entity_handle.generation << entity_handle.indexBits | entity_handle.index;
         }
     };
 }
