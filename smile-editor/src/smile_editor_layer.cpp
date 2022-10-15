@@ -151,6 +151,9 @@ namespace smile
                 if ( ImGui::MenuItem( "Open...", "Ctrl+O" ) )
                     openScene();
 
+                if ( ImGui::MenuItem( "Save", "Ctrl+S" ) )
+                    saveScene();
+
                 if ( ImGui::MenuItem( "Save As...", "Ctrl+Shift+S" ) )
                     saveSceneAs();
 
