@@ -29,6 +29,6 @@ class ExampleLayer final : public smile::Layer
 class MainGame final : public smile::Application
 {
   public:
-    MainGame();
+    MainGame( const smile::ApplicationDescriptor &descriptor );
     ~MainGame();
 };

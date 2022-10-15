@@ -6,19 +6,23 @@
 #include "smile_engine/renderer/renderer.h"
 #include "smile_engine/physics/physics_engine.h"
 
+#include <filesystem>
+
 namespace smile
 {
     Application *Application::instance = nullptr;
 
-    Application::Application( const std::string &name )
+    Application::Application( const ApplicationDescriptor &descriptor ) : descriptor{ descriptor }
     {
-        SM_ASSERT(
-            !instance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
+        SM_ASSERT( !instance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
         instance = this;
 
         Logger::setPriority( LogPriority::Trace );
 
-        window = std::unique_ptr< Window >( Window::create( WindowSettings{ name } ) );
+        if ( !descriptor.workingDirectory.empty() )
+            std::filesystem::current_path( descriptor.workingDirectory );
+
+        window = std::unique_ptr< Window >( Window::create( WindowSettings{ descriptor.name } ) );
         window->setEventCallback( SM_BIND_EVENT_FN( Application::onEvent ) );
         window->setVSync( false );
 

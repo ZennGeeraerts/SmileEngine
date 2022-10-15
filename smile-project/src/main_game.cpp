@@ -3,11 +3,16 @@
 #include <smile_engine/core/entry_point.h>
 #include <thirdparty/imgui/imgui.h>
 
-smile::Application *smile::createGame()
+smile::Application *smile::createApplication( smile::ApplicationCommandLineArgs command_line_args )
 {
+    smile::ApplicationDescriptor descriptor{};
+    descriptor.name = "Main Game";
+    descriptor.workingDirectory = "../smile-editor";
+    descriptor.commandLineArgs = command_line_args;
+
     // This application will get passed to the entry point of the engine
     // and will be deleted once the engine closes
-    return new MainGame();
+    return new MainGame{ descriptor };
 }
 
 /*---------------------------------------------------------------------------------------------------------------*/
@@ -157,7 +162,8 @@ void ExampleLayer::onAttach()
 
     auto shader = smile::renderer::Shader::create( "assets/shaders/PBR.fx" );
     auto material = smile::createRef< smile::renderer::Material >( shader );
-    smile::Ref< smile::renderer::Texture2D > pAlbedo = smile::renderer::Texture2D::create( "Resources/Textures/uv_grid.png" );
+    smile::Ref< smile::renderer::Texture2D > pAlbedo =
+        smile::renderer::Texture2D::create( "Resources/Textures/uv_grid.png" );
     material->setTexture2D( "ALBEDO", pAlbedo );
 
     modelEntity = activeScene->createEntity( "Model" );
@@ -251,7 +257,7 @@ bool ExampleLayer::onWindowResize( smile::WindowResizeEvent &e )
 /*------------------------------------------------ Main Game ------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
 
-MainGame::MainGame()
+MainGame::MainGame( const smile::ApplicationDescriptor &descriptor ) : smile::Application{ descriptor }
 {
     pushLayer( new ExampleLayer{} );
 }
