@@ -6,7 +6,7 @@
 
 #include "platform/directX11/directX11_diagnostics.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     static D3D11_CULL_MODE cullModeToDirectXType( CullMode cull_mode )
     {

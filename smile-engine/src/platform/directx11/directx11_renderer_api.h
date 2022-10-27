@@ -1,9 +1,9 @@
 #pragma once
 
-#include "smile_engine/renderer/renderer_api.h"
+#include "smile_engine/graphic/renderer_api.h"
 #include "directx11_context.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class DirectX11RendererAPI final : public RendererAPI
     {

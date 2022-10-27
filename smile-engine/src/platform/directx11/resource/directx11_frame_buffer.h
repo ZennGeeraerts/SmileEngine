@@ -1,8 +1,8 @@
 #pragma once
-#include "smile_engine/renderer/resource/frame_buffer.h"
+#include "smile_engine/graphic/resource/frame_buffer.h"
 #include "platform/directx11/directx11_context.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class DirectX11Framebuffer final : public Framebuffer
     {

@@ -4,24 +4,30 @@
 
 namespace smile::ecs
 {
+    template < typename IndexType = Uint32, Uint32 IndexBits = 16, Uint32 GenerationBits = 16 >
     struct EntityHandle final
     {
-        static const int indexBits = 16;
-        static const int generationBits = 16;
+        static constexpr Uint32 indexBits = IndexBits;
+        static constexpr Uint32 generationBits = GenerationBits;
+        static constexpr IndexType maxIndex = ( 1 << IndexBits ) - 1;
+        static constexpr IndexType maxGeneration = ( 1 << GenerationBits ) - 1;
 
         EntityHandle()
-            : index{ std::numeric_limits< Uint32 >::max() }, generation{ std::numeric_limits< Uint32 >::max() }
+            : index{ std::numeric_limits< IndexType >::max() }, generation{ std::numeric_limits< IndexType >::max() }
         {
         }
 
-        EntityHandle( Uint32 index, Uint32 generation ) : index{ index }, generation{ generation }
+        EntityHandle( IndexType index, IndexType generation ) : index{ index }, generation{ generation }
         {
         }
 
+        size_t hash() const
+        {
+            return generation << indexBits | index;
+        }
         bool isValid() const
         {
-            return !( index == std::numeric_limits< Uint16 >::max() &&
-                      ( generation == std::numeric_limits< Uint16 >::max() ) );
+            return !( ( index == maxIndex ) || ( generation == maxGeneration ) );
         }
 
         operator bool() const
@@ -37,21 +43,22 @@ namespace smile::ecs
             return index != rhs.index || generation != rhs.generation;
         }
 
-        Uint32 index : indexBits;
-        Uint32 generation : generationBits;
+        IndexType index : IndexBits;
+        IndexType generation : GenerationBits;
     };
 
-    static const EntityHandle nullHandle = EntityHandle{};
+    template< typename IndexType >
+    const EntityHandle< IndexType > nullHandle = EntityHandle< IndexType >{};
 }
 
 namespace std
 {
-    template <>
-    struct hash< smile::ecs::EntityHandle >
+    template < typename IndexType, smile::Uint32 IndexBits, smile::Uint32 GenerationBits >
+    struct hash< smile::ecs::EntityHandle< IndexType, IndexBits, GenerationBits > >
     {
-        size_t operator()( smile::ecs::EntityHandle entity_handle ) const
+        size_t operator()( smile::ecs::EntityHandle< IndexType > handle ) const
         {
-            return entity_handle.generation << entity_handle.indexBits | entity_handle.index;
+            return handle.hash();
         }
     };
 }

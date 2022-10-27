@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "smile_engine/renderer/resource/texture.h"
+#include "smile_engine/graphic/resource/texture.h"
 
 namespace smile
 {
@@ -15,7 +15,7 @@ namespace smile
 
       private:
         std::filesystem::path currentDirectory;
-        Ref< renderer::Texture2D > directoryIcon = nullptr;
-        Ref< renderer::Texture2D > fileIcon = nullptr;
+        Ref< graphic::Texture2D > directoryIcon = nullptr;
+        Ref< graphic::Texture2D > fileIcon = nullptr;
     };
 }

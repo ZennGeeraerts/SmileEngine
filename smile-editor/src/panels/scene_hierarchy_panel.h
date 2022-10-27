@@ -5,7 +5,7 @@
 #include "smile_engine/scene/scene.h"
 #include "smile_engine/scene/entity.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class Material;
 }
@@ -41,7 +41,7 @@ namespace smile::scene
         static void
         drawComponent( const std::string &label, scene::Entity entity, UIFunction ui_function, bool removeable = true );
 
-        static void drawMaterial( const Ref< renderer::Material > &pMaterial );
+        static void drawMaterial( const Ref< graphic::Material > &pMaterial );
 
       private:
         Ref< scene::Scene > context;

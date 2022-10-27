@@ -3,7 +3,7 @@
 
 #include "smile_engine/core/application.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     void SmileRasterRendererAPI::initialize()
     {

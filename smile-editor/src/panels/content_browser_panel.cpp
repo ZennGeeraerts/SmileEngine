@@ -8,8 +8,8 @@ namespace smile
 
     ContentBrowserPanel::ContentBrowserPanel() : currentDirectory{ assetPath }
     {
-        directoryIcon = renderer::Texture2D::create( "resources/icons/content_browser/directory_icon.png" );
-        fileIcon = renderer::Texture2D::create( "resources/icons/content_browser/file_icon.png" );
+        directoryIcon = graphic::Texture2D::create( "resources/icons/content_browser/directory_icon.png" );
+        fileIcon = graphic::Texture2D::create( "resources/icons/content_browser/file_icon.png" );
     }
 
     void ContentBrowserPanel::onImGuiRender()
@@ -42,7 +42,7 @@ namespace smile
             std::string file_name = relative_path.filename().string();
 
             ImGui::PushID( file_name.c_str() );
-            Ref< renderer::Texture2D > icon = directory_entry.is_directory() ? directoryIcon : fileIcon;
+            Ref< graphic::Texture2D > icon = directory_entry.is_directory() ? directoryIcon : fileIcon;
             ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
             ImGui::ImageButton( icon->getData(), { thumbnail_size, thumbnail_size } );
 

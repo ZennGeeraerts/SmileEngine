@@ -3,8 +3,9 @@
 
 #include "logger.h"
 #include "smile_engine/input/input.h"
-#include "smile_engine/renderer/renderer.h"
+#include "smile_engine/graphic/renderer.h"
 #include "smile_engine/physics/physics_engine.h"
+#include "smile_engine/scripting/script_engine.h"
 
 #include <filesystem>
 
@@ -26,8 +27,9 @@ namespace smile
         window->setEventCallback( SM_BIND_EVENT_FN( Application::onEvent ) );
         window->setVSync( false );
 
-        renderer::Renderer::initialize();
+        graphic::Renderer::initialize();
         physics::PhysicsEngine::initialize();
+        scripting::ScriptEngine::initialize();
 
         imGuiLayer = new imgui::ImGuiLayer{};
         pushOverlay( imGuiLayer );
@@ -35,8 +37,9 @@ namespace smile
 
     Application::~Application()
     {
-        renderer::Renderer::shutDown();
+        scripting::ScriptEngine::shutDown();
         physics::PhysicsEngine::shutDown();
+        graphic::Renderer::shutDown();
     }
 
     void Application::pushLayer( Layer *layer )
@@ -104,7 +107,7 @@ namespace smile
         isMinimized = ( e.getWidth() == 0 ) || ( e.getHeight() == 0 );
 
         if ( !isMinimized )
-            renderer::Renderer::onWindowResize( e.getWidth(), e.getHeight() );
+            graphic::Renderer::onWindowResize( e.getWidth(), e.getHeight() );
 
         return false;
     }

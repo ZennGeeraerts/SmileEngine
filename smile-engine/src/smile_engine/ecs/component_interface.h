@@ -1,13 +1,13 @@
 #pragma once
 
-#include "sparse_set.h"
+#include "smile_engine/stl/sparse_set.h"
 #include "component_storage.h"
 
 #include <functional>
 
 namespace smile::ecs
 {
-    using createHandler = std::function< void( EntityHandle, void * ) >;
+    using createHandler = std::function< void( EntityHandleType, void * ) >;
     using destroyHandler = std::function< void( void * ) >;
 
     class ComponentInterface final
@@ -19,37 +19,43 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        ComponentType &get( EntityHandle entity_handle )
+        ComponentType &get( EntityHandleType entity_handle )
         {
-            const Uint32 index = sparseSet.getIndex( entity_handle.index );
+            const IndexType index = sparseSet.getIndex( entity_handle.index );
 
-            SM_ASSERT( index != nullHandle.index, "ComponentInterface::get > Invalid index" );
+            SM_ASSERT( index != nullHandle< IndexType >.index, "ComponentInterface::get > Invalid index" );
 
             return componentStorage->get< ComponentType >( index );
         }
 
         template < typename ComponentType >
-        const ComponentType &get( EntityHandle entity_handle ) const
+        const ComponentType &get( EntityHandleType entity_handle ) const
         {
-            const Uint32 index = sparseSet.getIndex( entity_handle.index );
+            const IndexType index = sparseSet.getIndex( entity_handle.index );
             return componentStorage->get< ComponentType >( index );
         }
 
-        void *getRaw( EntityHandle entity_handle )
+        void *getRaw( EntityHandleType entity_handle )
         {
-            const Uint32 index = sparseSet.getIndex( entity_handle.index );
+            const IndexType index = sparseSet.getIndex( entity_handle.index );
             return componentStorage->getRaw( index );
         }
 
-        const void *getRaw( EntityHandle entity_handle ) const
+        const void *getRaw( EntityHandleType entity_handle ) const
         {
-            const Uint32 index = sparseSet.getIndex( entity_handle.index );
+            const IndexType index = sparseSet.getIndex( entity_handle.index );
             return componentStorage->getRaw( index );
+        }
+
+        void clear()
+        {
+            componentStorage->clear();
+            sparseSet.clear();
         }
 
       public:
         bool relational;
-        SparseSet< Uint32 > sparseSet{};
+        SparseSetType sparseSet{};
         ComponentStorage *componentStorage;
 
         std::vector< createHandler > create;

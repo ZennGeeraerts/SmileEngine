@@ -4,7 +4,8 @@
 #include "scene.h"
 #include "components.h"
 
-#include <thirdparty/entt/entt.hpp>
+#include "smile_engine/ecs/ecs_engine.h"
+//#include <thirdparty/entt/entt.hpp>
 
 namespace smile::scene
 {
@@ -13,7 +14,7 @@ namespace smile::scene
       public:
         Entity() = default;
 
-        Entity( entt::entity handle, Scene *scene ) : entityHandle{ handle }, scene{ scene }
+        Entity( ecs::EntityHandleType handle, Scene *scene ) : entityHandle{ handle }, scene{ scene }
         {
         }
 
@@ -25,7 +26,7 @@ namespace smile::scene
             SM_ASSERT( !hasComponent< ComponentType >(), "Entity::addComponent > Entity already has component" );
 
             // forward the constructor arguments to entt
-            ComponentType &component = scene->registry.emplace< ComponentType >(
+            ComponentType &component = scene->ecsEngine.addComponent< ComponentType >(
                 entityHandle, std::forward< ConstructorArgs >( constructor_args )... );
             scene->onComponentAdded< ComponentType >( *this, component );
             return component;
@@ -35,7 +36,7 @@ namespace smile::scene
         ComponentType &addOrReplaceComponent( ConstructorArgs &&...constructor_args )
         {
             // forward the constructor arguments to entt
-            ComponentType &component = scene->registry.emplace_or_replace< ComponentType >(
+            ComponentType &component = scene->ecsEngine.addOrReplaceComponent< ComponentType >(
                 entityHandle, std::forward< ConstructorArgs >( constructor_args )... );
             scene->onComponentAdded< ComponentType >( *this, component );
             return component;
@@ -44,7 +45,7 @@ namespace smile::scene
         template < typename ComponentType >
         void removeComponent()
         {
-            scene->registry.remove< ComponentType >( entityHandle );
+            scene->ecsEngine.removeComponent< ComponentType >( entityHandle );
         }
 
         template < typename ComponentType >
@@ -52,7 +53,7 @@ namespace smile::scene
         {
             SM_ASSERT( hasComponent< ComponentType >(), "Entity::getComponent > Entity does not have component" );
 
-            return scene->registry.get< ComponentType >( entityHandle );
+            return scene->ecsEngine.getComponent< ComponentType >( entityHandle );
         }
 
         UUID getUUID() const
@@ -71,21 +72,25 @@ namespace smile::scene
         template < typename ComponentType >
         bool hasComponent() const
         {
-            return scene->registry.all_of< ComponentType >( entityHandle );
+            return scene->ecsEngine.hasComponent< ComponentType >( entityHandle );
         }
 
         // Check to see if entity is valid
         operator bool() const
         {
-            return entityHandle != entt::null;
+            return entityHandle != ecs::nullHandle< Uint32 >;
         }
-        operator entt::entity() const
+        operator ecs::EntityHandleType() const
         {
             return entityHandle;
         }
         operator Uint32() const
         {
-            return static_cast< Uint32 >( entityHandle );
+            return static_cast< Uint32 >( entityHandle.hash() );
+        }
+        operator Uint64() const
+        {
+            return entityHandle.hash();
         }
 
         bool operator==( Entity other ) const
@@ -98,7 +103,8 @@ namespace smile::scene
         }
 
       private:
-        entt::entity entityHandle = entt::null;
+        //entt::entity entityHandle = entt::null;
+        ecs::EntityHandleType entityHandle = ecs::nullHandle< Uint32 >;
         Scene *scene = nullptr;
     };
 }

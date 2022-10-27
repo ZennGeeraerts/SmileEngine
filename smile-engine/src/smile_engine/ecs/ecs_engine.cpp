@@ -7,9 +7,19 @@ namespace smile::ecs
     {
         for ( auto component_interface : components )
             delete component_interface;
+
+        if ( !destructorHandlers.empty() )
+        {
+            for ( Uint32 i{ static_cast< Uint32 >( destructorHandlers.size() ) - 1 }; i > 0; --i )
+                destructorHandlers[i]();
+
+            destructorHandlers.clear();
+        }
+
+        updateHandlers.clear();
     }
 
-    void ECSEngine::removeComponent( ComponentInterface *component_interface, EntityHandle entity_handle )
+    void ECSEngine::removeComponent( ComponentInterface *component_interface, EntityHandleType entity_handle )
     {
         void *component_data = component_interface->getRaw( entity_handle );
 
@@ -18,7 +28,13 @@ namespace smile::ecs
 
         callDestructors( component_interface, component_data );
 
-        const auto dead_index = component_interface->sparseSet.erase( entity_handle.index );
+        for ( auto &group : groups )
+        {
+            if ( group.hasComponent( component_interface ) )
+                group.remove( entity_handle.index );
+        }
+
+        const IndexType dead_index = component_interface->sparseSet.erase( entity_handle.index );
         component_interface->componentStorage->removeSwap( dead_index );
 
         // if ( component_interface->relational )
@@ -29,5 +45,28 @@ namespace smile::ecs
     {
         for ( auto destructor : component_interface->destroy )
             destructor( data );
+    }
+
+    void ECSEngine::onUpdate( Timestep delta_time )
+    {
+        for ( auto update_handler : updateHandlers )
+        {
+            update_handler( delta_time );
+        }
+    }
+
+    void ECSEngine::clear()
+    {
+        for ( auto component_interface : components )
+        {
+            for ( Uint32 i{}; i < component_interface->componentStorage->getSize(); ++i )
+            {
+                callDestructors( component_interface, component_interface->componentStorage->getRaw( i ) );
+            }
+            
+            component_interface->clear();
+        }
+
+        groups.clear();
     }
 }

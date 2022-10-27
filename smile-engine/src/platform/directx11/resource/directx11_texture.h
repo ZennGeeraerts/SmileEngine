@@ -1,11 +1,11 @@
 #pragma once
 
-#include "smile_engine/renderer/resource/texture.h"
+#include "smile_engine/graphic/resource/texture.h"
 #include "platform/directX11/directx11_context.h"
 
 #include <DirectXTex.h>
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class DirectX11Texture2D final : public Texture2D
     {

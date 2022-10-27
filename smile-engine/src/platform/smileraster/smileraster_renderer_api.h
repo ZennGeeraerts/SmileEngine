@@ -1,9 +1,9 @@
 #pragma once
 
-#include "smile_engine/renderer/renderer_api.h"
+#include "smile_engine/graphic/renderer_api.h"
 #include "smileraster_context.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class SmileRasterRendererAPI final : public RendererAPI
     {

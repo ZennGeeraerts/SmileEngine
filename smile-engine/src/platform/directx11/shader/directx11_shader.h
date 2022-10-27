@@ -1,12 +1,12 @@
 #pragma once
-#include "smile_engine/renderer/shader/shader.h"
-#include "smile_engine/renderer/shader/buffer.h"
+#include "smile_engine/graphic/shader/shader.h"
+#include "smile_engine/graphic/shader/buffer.h"
 
 #include "platform/directx11/directx11_context.h"
 
 #include <d3dx11effect.h>
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class DirectX11Shader final : public Shader
     {

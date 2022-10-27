@@ -1,10 +1,10 @@
 #pragma once
-#include "smile_engine/renderer/resource/texture.h"
+#include "smile_engine/graphic/resource/texture.h"
 #include "smileraster_context.h"
 
 #include <SDL_image.h>
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class SmileRasterTexture2D final : public Texture2D
     {

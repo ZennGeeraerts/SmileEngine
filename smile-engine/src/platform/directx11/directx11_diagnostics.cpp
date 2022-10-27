@@ -3,7 +3,7 @@
 
 #include <d3d11.h>
 
-namespace smile::renderer
+namespace smile::graphic
 {
     LPTSTR getDirectX11ErrorMessage( HRESULT result )
     {

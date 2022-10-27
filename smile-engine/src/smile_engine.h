@@ -26,16 +26,16 @@
 #include "smile_engine/scene/components.h"
 
 /* ---Renderer--- */
-#include "smile_engine/renderer/renderer.h"
-#include "smile_engine/renderer/render_command.h"
+#include "smile_engine/graphic/renderer.h"
+#include "smile_engine/graphic/render_command.h"
 
-#include "smile_engine/renderer/shader/shader.h"
-#include "smile_engine/renderer/resource/vertex_buffer.h"
-#include "smile_engine/renderer/resource/index_buffer.h"
-#include "smile_engine/renderer/resource/frame_buffer.h"
-#include "smile_engine/renderer/resource/texture.h"
-#include "smile_engine/renderer/mesh/static_mesh_filter.h"
-#include "smile_engine/renderer/mesh/material.h"
+#include "smile_engine/graphic/shader/shader.h"
+#include "smile_engine/graphic/resource/vertex_buffer.h"
+#include "smile_engine/graphic/resource/index_buffer.h"
+#include "smile_engine/graphic/resource/frame_buffer.h"
+#include "smile_engine/graphic/resource/texture.h"
+#include "smile_engine/graphic/mesh/static_mesh_filter.h"
+#include "smile_engine/graphic/mesh/material.h"
 
 /* --- DirectX --- */
 #include <DirectXMath.h>

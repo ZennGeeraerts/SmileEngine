@@ -17,7 +17,7 @@ namespace smile
         Uint32 height;
     };
 
-    namespace renderer
+    namespace graphic
     {
         class GraphicsContext;
     }
@@ -36,7 +36,7 @@ namespace smile
 
         virtual Uint32 getWidth() const = 0;
         virtual Uint32 getHeight() const = 0;
-        virtual renderer::GraphicsContext *getGraphicsContext() const = 0;
+        virtual graphic::GraphicsContext *getGraphicsContext() const = 0;
 
         // Window attributes
         virtual void setEventCallback( const EventCallbackFunction &callback ) = 0;

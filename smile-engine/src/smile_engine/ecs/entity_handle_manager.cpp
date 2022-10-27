@@ -3,7 +3,7 @@
 
 namespace smile::ecs
 {
-    EntityHandle EntityHandleManager::createEntity()
+    EntityHandleType EntityHandleManager::createEntity()
     {
         if ( availableEntities > 0 )
         {
@@ -21,13 +21,13 @@ namespace smile::ecs
         else
         {
             // Create new entity
-            EntityHandle handle{ static_cast< Uint32 >( entities.size() ), 0 };
+            EntityHandleType handle{ static_cast< IndexType >( entities.size() ), 0 };
             entities.push_back( handle );
             return handle;
         }
     }
 
-    void EntityHandleManager::destroyEntity( EntityHandle entity_handle )
+    void EntityHandleManager::destroyEntity( EntityHandleType entity_handle )
     {
         auto &handle = entities[entity_handle.index];
 
@@ -43,7 +43,7 @@ namespace smile::ecs
         ++availableEntities;
     }
 
-    bool EntityHandleManager::isEntityActive( EntityHandle entity_handle ) const
+    bool EntityHandleManager::isEntityActive( EntityHandleType entity_handle ) const
     {
         if ( !entity_handle.isValid() )
             return false;

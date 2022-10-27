@@ -4,7 +4,7 @@
 #include "smile_engine/core/logger.h"
 #include "smile_engine/core/application.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     SmileRasterTexture2D::SmileRasterTexture2D( const std::string &file_path )
         : filePath{ file_path }, surface{ IMG_Load( file_path.c_str() ) }

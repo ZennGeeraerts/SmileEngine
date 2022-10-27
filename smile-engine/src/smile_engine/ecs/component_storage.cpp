@@ -8,7 +8,21 @@ namespace smile::ecs
         reset();
     }
 
-    int ComponentStorage::removeSwap( Uint32 dead_eindex )
+    void ComponentStorage::swap( IndexType element1, IndexType element2 )
+    {
+        if ( element1 == element2 )
+            return;
+
+        Byte *ia = data + componentSize * element1;
+        Byte *ie = data + componentSize * element2;
+
+        std::swap_ranges( ia, ia + componentSize, ie );
+
+        if ( indices )
+            std::swap( indices[element1], indices[element2] );
+    }
+
+    int ComponentStorage::removeSwap( IndexType dead_eindex )
     {
         if ( dead_eindex >= size )
             return -1;
@@ -23,7 +37,7 @@ namespace smile::ecs
         return swap_handle;
     }
 
-    void ComponentStorage::popSwap( Uint32 a )
+    void ComponentStorage::popSwap( IndexType a )
     {
         if ( size == 0 )
             return;

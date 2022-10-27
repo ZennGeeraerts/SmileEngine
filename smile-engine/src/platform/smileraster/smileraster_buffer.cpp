@@ -2,7 +2,7 @@
 #include "smileraster_buffer.h"
 #include "smile_engine/core/application.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     //*------------------------------------------------------------------------------------------------*//
     //*----------------------------------------- Vertex buffer ----------------------------------------*//

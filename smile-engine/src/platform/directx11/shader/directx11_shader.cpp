@@ -6,7 +6,7 @@
 
 #include <d3dcompiler.h>
 
-namespace smile::renderer
+namespace smile::graphic
 {
     static DXGI_FORMAT shaderDataTypeToDirectXBaseType( ShaderDataType type )
     {

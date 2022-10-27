@@ -20,18 +20,18 @@ namespace smile
 
     void SmileEditorLayer::onAttach()
     {
-        renderer::RenderCommand::setClearColor( { DirectX::Colors::DodgerBlue.f[0],
+        graphic::RenderCommand::setClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
             DirectX::Colors::DodgerBlue.f[3] } );
 
         newScene();
-        editorCamera = renderer::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
+        editorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        iconPlay = renderer::Texture2D::create( "resources/icons/play_button.png" );
-        iconSimulate = renderer::Texture2D::create( "resources/icons/simulate_button.png" );
-        iconStop = renderer::Texture2D::create( "resources/icons/stop_button.png" );
+        iconPlay = graphic::Texture2D::create( "resources/icons/play_button.png" );
+        iconSimulate = graphic::Texture2D::create( "resources/icons/simulate_button.png" );
+        iconStop = graphic::Texture2D::create( "resources/icons/stop_button.png" );
     }
 
     void SmileEditorLayer::onDetach()
@@ -40,19 +40,19 @@ namespace smile
 
     void SmileEditorLayer::onUpdate( Timestep deltaTime )
     {
-        const auto &render_settings = renderer::Renderer::getSettings();
+        const auto &render_settings = graphic::Renderer::getSettings();
         if ( ( !math::compareFloats( viewportSize.x, static_cast< float >( render_settings.width ) ) ||
                  !math::compareFloats( viewportSize.y, static_cast< float >( render_settings.height ) ) ) &&
              ( viewportSize.x > 0 ) && ( viewportSize.y > 0 ) )
         {
-            renderer::Renderer::resizeFramebuffer(
+            graphic::Renderer::resizeFramebuffer(
                 static_cast< Uint32 >( viewportSize.x ), static_cast< Uint32 >( viewportSize.y ) );
             editorCamera.setViewportSize( viewportSize.x, viewportSize.y );
             activeScene->onViewportResize(
                 static_cast< Uint32 >( viewportSize.x ), static_cast< Uint32 >( viewportSize.y ) );
         }
 
-        renderer::RenderCommand::clear();
+        graphic::RenderCommand::clear();
 
         switch ( sceneState )
         {
@@ -176,7 +176,7 @@ namespace smile
         ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
         viewportSize = { viewport_panel_size.x, viewport_panel_size.y };
 
-        ImGui::Image( renderer::Renderer::getFinalColor(), ImVec2{ viewportSize.x, viewportSize.y } );
+        ImGui::Image( graphic::Renderer::getFinalColor(), ImVec2{ viewportSize.x, viewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {
@@ -284,7 +284,7 @@ namespace smile
 
         const float icon_size{ ImGui::GetWindowHeight() - 4.f };
         {
-            Ref< renderer::Texture2D > state_icon =
+            Ref< graphic::Texture2D > state_icon =
                 ( sceneState == SceneState::Edit || sceneState == SceneState::Simulate ) ? iconPlay : iconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( icon_size * 0.5f ) );
             if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
@@ -301,7 +301,7 @@ namespace smile
         }
         ImGui::SameLine();
         {
-            Ref< renderer::Texture2D > state_icon =
+            Ref< graphic::Texture2D > state_icon =
                 ( sceneState == SceneState::Edit || sceneState == SceneState::Play ) ? iconSimulate : iconStop;
             if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
                      ImVec2{ icon_size, icon_size },

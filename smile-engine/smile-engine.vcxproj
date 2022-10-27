@@ -28,30 +28,37 @@
     <ClInclude Include="src\smile_engine\core\compiled\identifier.h" />
     <ClInclude Include="src\smile_engine\core\compiled\type_id.h" />
     <ClInclude Include="src\smile_engine\core\compiled\type_name.h" />
+    <ClInclude Include="src\smile_engine\core\compiler.h" />
     <ClInclude Include="src\smile_engine\core\events\application_event.h" />
     <ClInclude Include="src\smile_engine\core\events\event.h" />
     <ClInclude Include="src\smile_engine\core\events\key_event.h" />
     <ClInclude Include="src\smile_engine\core\events\mouse_event.h" />
-    <ClInclude Include="src\smile_engine\ecs\node_list.h" />
-    <ClInclude Include="src\smile_engine\ecs\sparse_set.h" />
+    <ClInclude Include="src\smile_engine\ecs\field_detection.h" />
+    <ClInclude Include="src\smile_engine\ecs\component_list.h" />
+    <ClInclude Include="src\smile_engine\ecs\group.h" />
+    <ClInclude Include="src\smile_engine\scripting\script_engine.h" />
+    <ClInclude Include="src\smile_engine\scripting\script_glue.h" />
+    <ClInclude Include="src\smile_engine\stl\sparse_set.h" />
     <ClInclude Include="src\smile_engine\ecs\component_interface.h" />
     <ClInclude Include="src\smile_engine\ecs\component_storage.h" />
     <ClInclude Include="src\smile_engine\ecs\ecs_engine.h" />
-    <ClInclude Include="src\smile_engine\ecs\entity_handle.h" />
     <ClInclude Include="src\smile_engine\ecs\entity_handle_manager.h" />
     <ClInclude Include="src\smile_engine\ecs\system.h" />
+    <ClInclude Include="src\smile_engine\ecs\ecs_types.h" />
+    <ClInclude Include="src\smile_engine\ecs\view.h" />
     <ClInclude Include="src\smile_engine\imgui\imgui_layer.h" />
     <ClInclude Include="src\smile_engine\math\math.h" />
     <ClInclude Include="src\smile_engine\math\vector2.h" />
     <ClInclude Include="src\SmileEngine\Core\MouseCodes.h" />
     <ClInclude Include="src\smile_engine\math\vector3.h" />
     <ClInclude Include="src\smile_engine\math\vector4.h" />
-    <ClInclude Include="src\smile_engine\renderer\render_pass.h" />
-    <ClInclude Include="src\smile_engine\renderer\resource\index_buffer.h" />
-    <ClInclude Include="src\smile_engine\renderer\resource\vertex_buffer.h" />
-    <ClInclude Include="src\smile_engine\renderer\shader\shader_library.h" />
-    <ClInclude Include="src\smile_engine\renderer\shader\shader_reflection.h" />
-    <ClInclude Include="src\smile_engine\renderer\static_mesh_render_pass.h" />
+    <ClInclude Include="src\smile_engine\graphic\render_pass.h" />
+    <ClInclude Include="src\smile_engine\graphic\resource\index_buffer.h" />
+    <ClInclude Include="src\smile_engine\graphic\resource\vertex_buffer.h" />
+    <ClInclude Include="src\smile_engine\graphic\shader\shader_library.h" />
+    <ClInclude Include="src\smile_engine\graphic\shader\shader_reflection.h" />
+    <ClInclude Include="src\smile_engine\graphic\static_mesh_render_pass.h" />
+    <ClInclude Include="src\smile_engine\ecs\entity_handle.h" />
     <ClInclude Include="src\smile_engine\utils\platform_utils.h" />
     <ClInclude Include="src\smile_engine\utils\utils.h" />
     <ClInclude Include="src\smile_engine\core\uuid.h" />
@@ -65,16 +72,16 @@
     <ClInclude Include="src\smile_engine\physics\physics_engine.h" />
     <ClInclude Include="src\smile_engine\physics\physics_material.h" />
     <ClInclude Include="src\smile_engine\physics\physics_utils.h" />
-    <ClInclude Include="src\smile_engine\renderer\camera\editor_camera.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\mesh_factory.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\mesh_filter.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\mesh_loader_utils.h" />
-    <ClInclude Include="src\smile_engine\renderer\resource\rasterizer_state.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\skinned_mesh_filter.h" />
+    <ClInclude Include="src\smile_engine\graphic\camera\editor_camera.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\mesh_factory.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\mesh_filter.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\mesh_loader_utils.h" />
+    <ClInclude Include="src\smile_engine\graphic\resource\rasterizer_state.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\skinned_mesh_filter.h" />
     <ClInclude Include="src\platform\SmileRaster\smileraster_texture.h" />
     <ClInclude Include="src\platform\SmileRaster\smileraster_shader.h" />
-    <ClInclude Include="src\smile_engine\renderer\animation\mesh_animator.h" />
-    <ClInclude Include="src\smile_engine\renderer\animation\bone.h" />
+    <ClInclude Include="src\smile_engine\graphic\animation\mesh_animator.h" />
+    <ClInclude Include="src\smile_engine\graphic\animation\bone.h" />
     <ClInclude Include="thirdparty\imguizmo\ImGuizmo.h" />
     <ClInclude Include="Libs\yaml-cpp\anchor.h" />
     <ClInclude Include="Libs\yaml-cpp\binary.h" />
@@ -120,7 +127,7 @@
     <ClInclude Include="src\smile_engine\scene\scene_serializer.h" />
     <ClInclude Include="src\smile_engine\scene\scene_camera.h" />
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_frame_buffer.h" />
-    <ClInclude Include="src\smile_engine\renderer\resource\frame_buffer.h" />
+    <ClInclude Include="src\smile_engine\graphic\resource\frame_buffer.h" />
     <ClInclude Include="src\smile_engine\core\core.h" />
     <ClInclude Include="src\smile_engine\core\entry_point.h" />
     <ClInclude Include="src\SmileEngine\Core\Input.h" />
@@ -128,7 +135,7 @@
     <ClInclude Include="src\smile_engine\core\layer.h" />
     <ClInclude Include="src\smile_engine\core\layer_stack.h" />
     <ClInclude Include="src\smile_engine\core\logger.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\mesh_loader.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\mesh_loader.h" />
     <ClInclude Include="src\smile_engine\core\application.h" />
     <ClInclude Include="src\smile_engine\core\window.h" />
     <ClInclude Include="thirdparty\entt\entt.hpp" />
@@ -140,25 +147,25 @@
     <ClInclude Include="thirdparty\imgui\imstb_rectpack.h" />
     <ClInclude Include="thirdparty\imgui\imstb_textedit.h" />
     <ClInclude Include="thirdparty\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\material.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\material.h" />
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_texture.h" />
-    <ClInclude Include="src\smile_engine\renderer\mesh\static_mesh_filter.h" />
-    <ClInclude Include="src\smile_engine\renderer\camera\camera.h" />
-    <ClInclude Include="src\smile_engine\renderer\camera\perspective_camera.h" />
-    <ClInclude Include="src\smile_engine\renderer\camera\perspective_camera_controller.h" />
+    <ClInclude Include="src\smile_engine\graphic\mesh\static_mesh_filter.h" />
+    <ClInclude Include="src\smile_engine\graphic\camera\camera.h" />
+    <ClInclude Include="src\smile_engine\graphic\camera\perspective_camera.h" />
+    <ClInclude Include="src\smile_engine\graphic\camera\perspective_camera_controller.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\Component.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\MeshRendererComponent.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TagComponent.h" />
     <ClInclude Include="src\smile_engine\scene\components.h" />
     <ClInclude Include="src\smile_engine\scene\entity.h" />
     <ClInclude Include="src\smile_engine\scene\scene.h" />
-    <ClInclude Include="src\smile_engine\renderer\camera\orthographic_camera.h" />
+    <ClInclude Include="src\smile_engine\graphic\camera\orthographic_camera.h" />
     <ClInclude Include="src\Platform\DirectX11\directx11_renderer_api.h" />
-    <ClInclude Include="src\smile_engine\renderer\render_command.h" />
-    <ClInclude Include="src\smile_engine\renderer\renderer_api.h" />
+    <ClInclude Include="src\smile_engine\graphic\render_command.h" />
+    <ClInclude Include="src\smile_engine\graphic\renderer_api.h" />
     <ClInclude Include="src\Platform\DirectX11\Shader\directx11_shader.h" />
-    <ClInclude Include="src\smile_engine\renderer\shader\shader.h" />
-    <ClInclude Include="src\smile_engine\renderer\renderer.h" />
+    <ClInclude Include="src\smile_engine\graphic\shader\shader.h" />
+    <ClInclude Include="src\smile_engine\graphic\renderer.h" />
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_index_buffer.h" />
     <ClInclude Include="src\Platform\DirectX11\directx11_context.h" />
     <ClInclude Include="src\smile_engine\events\application_event.h" />
@@ -166,15 +173,15 @@
     <ClInclude Include="src\smile_engine\events\key_event.h" />
     <ClInclude Include="src\smile_engine\events\mouse_event.h" />
     <ClInclude Include="src\smile_engine.h" />
-    <ClInclude Include="src\smile_engine\renderer\shader\buffer.h" />
-    <ClInclude Include="src\smile_engine\renderer\graphics_context.h" />
-    <ClInclude Include="src\smile_engine\renderer\resource\vertex_array.h" />
+    <ClInclude Include="src\smile_engine\graphic\shader\buffer.h" />
+    <ClInclude Include="src\smile_engine\graphic\graphics_context.h" />
+    <ClInclude Include="src\smile_engine\graphic\resource\vertex_array.h" />
     <ClInclude Include="src\SmileEngine\Scene\Components\TransformComponent.h" />
     <ClInclude Include="src\smile_engine\core\timer.h" />
     <ClInclude Include="src\smpch.h" />
     <ClInclude Include="src\Platform\Windows\windows_window.h" />
     <ClInclude Include="src\smile_engine\core\timestep.h" />
-    <ClInclude Include="src\smile_engine\renderer\resource\texture.h" />
+    <ClInclude Include="src\smile_engine\graphic\resource\texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\DirectX11\Shader\directx11_buffer.cpp" />
@@ -190,9 +197,11 @@
     <ClCompile Include="src\smile_engine\math\vector2.cpp" />
     <ClCompile Include="src\smile_engine\math\vector3.cpp" />
     <ClCompile Include="src\smile_engine\math\vector4.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\resource\index_buffer.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\resource\vertex_buffer.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\shader\shader_library.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\resource\index_buffer.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\resource\vertex_buffer.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\shader\shader_library.cpp" />
+    <ClCompile Include="src\smile_engine\scripting\script_engine.cpp" />
+    <ClCompile Include="src\smile_engine\scripting\script_glue.cpp" />
     <ClCompile Include="src\smile_engine\utils\utils.cpp" />
     <ClCompile Include="src\smile_engine\core\uuid.cpp" />
     <ClCompile Include="src\smile_engine\physics\contact_listener.cpp" />
@@ -200,16 +209,16 @@
     <ClCompile Include="src\smile_engine\physics\physics_diagnostics.cpp" />
     <ClCompile Include="src\smile_engine\physics\physics_engine.cpp" />
     <ClCompile Include="src\smile_engine\physics\physics_utils.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\camera\editor_camera.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\mesh\mesh_factory.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\mesh\mesh_filter.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\mesh\mesh_loader_utils.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\resource\rasterizer_state.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\mesh\skinned_mesh_filter.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\camera\editor_camera.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\mesh_factory.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\mesh_filter.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\mesh_loader_utils.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\resource\rasterizer_state.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\skinned_mesh_filter.cpp" />
     <ClCompile Include="src\platform\SmileRaster\smileraster_texture.cpp" />
     <ClCompile Include="src\platform\SmileRaster\smileraster_shader.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\animation\mesh_animator.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\animation\bone.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\animation\mesh_animator.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\animation\bone.cpp" />
     <ClCompile Include="thirdparty\imguizmo\ImGuizmo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -223,15 +232,15 @@
     <ClCompile Include="src\platform\SmileRaster\smileraster_buffer.cpp" />
     <ClCompile Include="src\platform\SmileRaster\smileraster_renderer_api.cpp" />
     <ClCompile Include="src\platform\smileraster\smileraster_context.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\graphics_context.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\graphics_context.cpp" />
     <ClCompile Include="src\smile_engine\scene\scene_serializer.cpp" />
     <ClCompile Include="src\smile_engine\scene\scene_camera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_frame_buffer.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\resource\frame_buffer.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\resource\frame_buffer.cpp" />
     <ClCompile Include="src\smile_engine\core\layer.cpp" />
     <ClCompile Include="src\smile_engine\core\layer_stack.cpp" />
     <ClCompile Include="src\smile_engine\core\logger.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\mesh\mesh_loader.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\mesh_loader.cpp" />
     <ClCompile Include="src\smile_engine\core\application.cpp" />
     <ClCompile Include="thirdparty\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -269,22 +278,22 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\smile_engine\renderer\mesh\material.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\material.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_texture.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\mesh\static_mesh_filter.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\camera\perspective_camera.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\camera\perspective_camera_controller.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\mesh\static_mesh_filter.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\camera\perspective_camera.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\camera\perspective_camera_controller.cpp" />
     <ClCompile Include="src\smile_engine\scene\scene.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\camera\orthographic_camera.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\camera\orthographic_camera.cpp" />
     <ClCompile Include="src\Platform\DirectX11\directx11_renderer_api.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\render_command.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\renderer_api.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\render_command.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\renderer_api.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Shader\directx11_shader.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\shader\shader.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\renderer.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\shader\shader.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\renderer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_index_buffer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\directx11_context.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\resource\vertex_array.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\resource\vertex_array.cpp" />
     <ClCompile Include="src\smile_engine\core\timer.cpp" />
     <ClCompile Include="src\Platform\Windows\windows_platform_utils.cpp" />
     <ClCompile Include="src\smpch.cpp">
@@ -295,7 +304,7 @@
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\windows_window.cpp" />
     <ClCompile Include="src\Platform\Windows\windows_input.cpp" />
-    <ClCompile Include="src\smile_engine\renderer\resource\texture.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\resource\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="smile-engine.rc" />
@@ -488,7 +497,7 @@ xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dl
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>$(SolutionDir)smile-engine\src;$(SolutionDir)smile-engine;$(SolutionDir)thirdparty\dx11effects\include;$(SolutionDir)thirdparty\dx11tex\include;$(SolutionDir)thirdparty\yaml-cpp\include;$(SolutionDir)thirdparty/physx/include/PhysX;$(SolutionDir)thirdparty/physx/include/;$(SolutionDir)thirdparty/assimp/include;$(SolutionDir)thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)thirdparty/sdl2-2.0.9/include;$(SolutionDir)smile-raster/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)smile-engine\src;$(SolutionDir)smile-engine;$(SolutionDir)thirdparty\dx11effects\include;$(SolutionDir)thirdparty\dx11tex\include;$(SolutionDir)thirdparty\yaml-cpp\include;$(SolutionDir)thirdparty/physx/include/PhysX;$(SolutionDir)thirdparty/physx/include/;$(SolutionDir)thirdparty/assimp/include;$(SolutionDir)thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)thirdparty/sdl2-2.0.9/include;$(SolutionDir)smile-raster/src;$(SolutionDir)thirdparty/mono/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -505,10 +514,10 @@ xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" 
 xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;libmono-static-sgen.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty/dx11effects/x64;$(SolutionDir)thirdparty/assimp/x64;$(SolutionDir)thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)thirdparty/sdl2-2.0.9/x64;$(SolutionDir)thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)thirdparty/physx/lib/$(Configuration);$(SolutionDir)thirdparty/physx/bin;$(SolutionDir)thirdparty/dx11tex/x64/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty/dx11effects/x64;$(SolutionDir)thirdparty/assimp/x64;$(SolutionDir)thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)thirdparty/sdl2-2.0.9/x64;$(SolutionDir)thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)thirdparty/physx/lib/$(Configuration);$(SolutionDir)thirdparty/physx/bin;$(SolutionDir)thirdparty/dx11tex/x64/$(Configuration);$(SolutionDir)thirdparty/mono/lib/$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -531,7 +540,7 @@ xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dl
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)smile-engine\src;$(SolutionDir)smile-engine;$(SolutionDir)thirdparty\dx11effects\include;$(SolutionDir)thirdparty\dx11tex\include;$(SolutionDir)thirdparty\yaml-cpp\include;$(SolutionDir)thirdparty/physx/include/PhysX;$(SolutionDir)thirdparty/physx/include/;$(SolutionDir)thirdparty/assimp/include;$(SolutionDir)thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)thirdparty/sdl2-2.0.9/include;$(SolutionDir)smile-raster/src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)smile-engine\src;$(SolutionDir)smile-engine;$(SolutionDir)thirdparty\dx11effects\include;$(SolutionDir)thirdparty\dx11tex\include;$(SolutionDir)thirdparty\yaml-cpp\include;$(SolutionDir)thirdparty/physx/include/PhysX;$(SolutionDir)thirdparty/physx/include/;$(SolutionDir)thirdparty/assimp/include;$(SolutionDir)thirdparty/sdl2_image-2.0.5/include;$(SolutionDir)thirdparty/sdl2-2.0.9/include;$(SolutionDir)smile-raster/src;$(SolutionDir)thirdparty/mono/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -550,10 +559,10 @@ xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXCooking_64.dll" 
 xcopy "$(SolutionDir)Thirdparty\PhysX\lib\$(Configuration)\PhysXFoundation_64.dll" "$(OutputPath)" /R /Y</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxgi.lib;d3d11.lib;d3dcompiler.lib;assimp-vc140-mt.lib;DirectXTex.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;libmono-static-sgen.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty/dx11effects/x64;$(SolutionDir)thirdparty/assimp/x64;$(SolutionDir)thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)thirdparty/sdl2-2.0.9/x64;$(SolutionDir)thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)thirdparty/physx/lib/$(Configuration);$(SolutionDir)thirdparty/physx/bin;$(SolutionDir)thirdparty/dx11tex/x64/$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)thirdparty/dx11effects/x64;$(SolutionDir)thirdparty/assimp/x64;$(SolutionDir)thirdparty/yaml-cpp/x64;%(AdditionalLibraryDirectories);$(SolutionDir)thirdparty/sdl2-2.0.9/x64;$(SolutionDir)thirdparty/sdl2_image-2.0.5/x64;$(SolutionDir)thirdparty/physx/lib/$(Configuration);$(SolutionDir)thirdparty/physx/bin;$(SolutionDir)thirdparty/dx11tex/x64/$(Configuration);$(SolutionDir)thirdparty/mono/lib/$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>

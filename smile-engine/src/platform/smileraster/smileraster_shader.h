@@ -1,7 +1,7 @@
 #pragma once
-#include "smile_engine/renderer/shader/shader.h"
+#include "smile_engine/graphic/shader/shader.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class SmileRasterContext;
 

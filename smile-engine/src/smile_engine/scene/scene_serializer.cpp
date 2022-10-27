@@ -118,7 +118,7 @@ namespace smile::scene
         output << YAML::Key << "Scene" << YAML::Value << "Untitled";
         output << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-        scene->registry.each(
+        scene->ecsEngine.each(
             [&]( auto entity_id )
             {
                 Entity entity{ entity_id, scene.get() };
@@ -134,7 +134,7 @@ namespace smile::scene
         file_output << output.c_str();
     }
 
-    static void serializeMaterial( YAML::Emitter &output, const Ref< renderer::Material > &material )
+    static void serializeMaterial( YAML::Emitter &output, const Ref< graphic::Material > &material )
     {
         output << YAML::Key << "Material";
         output << YAML::BeginMap;
@@ -450,7 +450,7 @@ namespace smile::scene
                     const auto &mesh_path = static_mesh_component["Mesh"].as< std::string >();
                     if ( !mesh_path.empty() )
                     {
-                        smc.meshes = renderer::MeshLoader::loadStaticMesh( mesh_path );
+                        smc.meshes = graphic::MeshLoader::loadStaticMesh( mesh_path );
                         const auto &buffer_layout = smc.materials[0]->getBufferLayout();
                         for ( const auto &mesh : smc.meshes )
                         {
@@ -506,7 +506,7 @@ namespace smile::scene
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.materials[0]->setTexture2D( semantic, renderer::Texture2D::create( path ) );
+                            smc.materials[0]->setTexture2D( semantic, graphic::Texture2D::create( path ) );
                     }
                 }
 
@@ -518,7 +518,7 @@ namespace smile::scene
                     const auto &mesh_path = skinned_mesh_component["Mesh"].as< std::string >();
                     if ( !mesh_path.empty() )
                     {
-                        smc.meshes = renderer::MeshLoader::loadSkinnedMesh( mesh_path );
+                        smc.meshes = graphic::MeshLoader::loadSkinnedMesh( mesh_path );
                         const auto &buffer_layout = smc.materials[0]->getBufferLayout();
                         for ( const auto &mesh : smc.meshes )
                         {
@@ -526,7 +526,7 @@ namespace smile::scene
 
                             if ( mesh->hasAnimations() )
                             {
-                                renderer::MeshAnimator animator{ mesh };
+                                graphic::MeshAnimator animator{ mesh };
                                 smc.animators.push_back( animator );
                                 smc.animators.back().setAnimation( 0 );
                             }
@@ -581,7 +581,7 @@ namespace smile::scene
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.materials[0]->setTexture2D( semantic, renderer::Texture2D::create( path ) );
+                            smc.materials[0]->setTexture2D( semantic, graphic::Texture2D::create( path ) );
                     }
                 }
 

@@ -3,7 +3,7 @@
 
 #include "smile_engine/core/application.h"
 #include "smile_engine/core/window.h"
-#include "smile_engine/renderer/renderer_api.h"
+#include "smile_engine/graphic/renderer_api.h"
 
 #include "platform/directx11/directx11_context.h"
 
@@ -75,20 +75,20 @@ namespace smile::imgui
         setDarkThemeColors();
 
         Window &window = Application::getInstance().getWindow();
-        renderer::GraphicsContext *graphics_context = window.getGraphicsContext();
+        graphic::GraphicsContext *graphics_context = window.getGraphicsContext();
 
-        renderer::RendererAPI::API api = renderer::RendererAPI::getAPI();
+        graphic::RendererAPI::API api = graphic::RendererAPI::getAPI();
         switch ( api )
         {
-            case renderer::RendererAPI::API::DirectX11:
+            case graphic::RendererAPI::API::DirectX11:
             {
                 ImGui_ImplWin32_Init( window.getNativeWindow() );
 
-                renderer::DirectX11Context *directx11_context = static_cast< renderer::DirectX11Context * >( graphics_context );
+                graphic::DirectX11Context *directx11_context = static_cast< graphic::DirectX11Context * >( graphics_context );
                 ImGui_ImplDX11_Init( directx11_context->getDevice(), directx11_context->getDeviceContext() );
                 break;
             }
-            case renderer::RendererAPI::API::SmileRaster:
+            case graphic::RendererAPI::API::SmileRaster:
                 break;
 
             default:
@@ -105,15 +105,15 @@ namespace smile::imgui
 
     void ImGuiLayer::begin()
     {
-        renderer::RendererAPI::API api = renderer::RendererAPI::getAPI();
+        graphic::RendererAPI::API api = graphic::RendererAPI::getAPI();
         switch ( api )
         {
-            case renderer::RendererAPI::API::DirectX11:
+            case graphic::RendererAPI::API::DirectX11:
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
 
-            case renderer::RendererAPI::API::SmileRaster:
+            case graphic::RendererAPI::API::SmileRaster:
                 return;
 
             default:
@@ -131,15 +131,15 @@ namespace smile::imgui
         io.DisplaySize =
             ImVec2{ static_cast< float >( window.getWidth() ), static_cast< float >( window.getHeight() ) };
 
-        renderer::RendererAPI::API api = renderer::RendererAPI::getAPI();
+        graphic::RendererAPI::API api = graphic::RendererAPI::getAPI();
         switch ( api )
         {
-            case renderer::RendererAPI::API::DirectX11:
+            case graphic::RendererAPI::API::DirectX11:
                 ImGui::Render();
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
 
-            case renderer::RendererAPI::API::SmileRaster:
+            case graphic::RendererAPI::API::SmileRaster:
                 return;
 
             default:

@@ -5,7 +5,7 @@
 #include "platform/directX11/directx11_diagnostics.h"
 #include "platform/directX11/shader/directx11_buffer.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     DirectX11VertexBuffer::DirectX11VertexBuffer( const VertexBufferDescriptor &vertex_buffer_desc )
         : stride{ vertex_buffer_desc.stride }

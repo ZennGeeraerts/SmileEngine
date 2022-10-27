@@ -1,7 +1,7 @@
 #pragma once
 
 #include "smile_engine/core/window.h"
-#include "smile_engine/renderer/graphics_context.h"
+#include "smile_engine/graphic/graphics_context.h"
 
 #define HINSTANCE() GetModuleHandle( NULL ) // this function returns the hInstance
 
@@ -28,7 +28,7 @@ namespace smile
         {
             return data.height;
         }
-        inline renderer::GraphicsContext *getGraphicsContext() const override
+        inline graphic::GraphicsContext *getGraphicsContext() const override
         {
             return context;
         }
@@ -59,7 +59,7 @@ namespace smile
         HWND windowHandle;
         WNDCLASSEX windowClass;
         MSG message;
-        renderer::GraphicsContext *context;
+        graphic::GraphicsContext *context;
 
         struct WindowData
         {

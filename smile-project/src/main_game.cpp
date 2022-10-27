@@ -25,7 +25,7 @@ ExampleLayer::ExampleLayer() : Layer( "Example" )
 
 void ExampleLayer::onAttach()
 {
-    smile::renderer::RenderCommand::setClearColor( { DirectX::Colors::DodgerBlue.f[0],
+    smile::graphic::RenderCommand::setClearColor( { DirectX::Colors::DodgerBlue.f[0],
         DirectX::Colors::DodgerBlue.f[1],
         DirectX::Colors::DodgerBlue.f[2],
         DirectX::Colors::DodgerBlue.f[3] } );
@@ -85,9 +85,9 @@ void ExampleLayer::onAttach()
         -0.5f,
         0.5f };
 
-    smile::renderer::BufferLayout buffer_layout{ { smile::renderer::ShaderDataType::Float3, "Position" },
-        { smile::renderer::ShaderDataType::Float3, "Normal" },
-        { smile::renderer::ShaderDataType::Float3, "TexCoord" } };
+    smile::graphic::BufferLayout buffer_layout{ { smile::graphic::ShaderDataType::Float3, "Position" },
+        { smile::graphic::ShaderDataType::Float3, "Normal" },
+        { smile::graphic::ShaderDataType::Float3, "TexCoord" } };
 
     uint32_t indices[]{ 0,
         1,
@@ -160,20 +160,21 @@ void ExampleLayer::onAttach()
     cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
     cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
-    auto shader = smile::renderer::Shader::create( "assets/shaders/PBR.fx" );
-    auto material = smile::createRef< smile::renderer::Material >( shader );
-    smile::Ref< smile::renderer::Texture2D > pAlbedo =
-        smile::renderer::Texture2D::create( "Resources/Textures/uv_grid.png" );
-    material->setTexture2D( "ALBEDO", pAlbedo );
+    auto shader = smile::graphic::Shader::create( "assets/shaders/PBR.fx" );
+    auto material = smile::createRef< smile::graphic::Material >( shader );
+    smile::Ref< smile::graphic::Texture2D > pAlbedo =
+        smile::graphic::Texture2D::create( "assets/textures/uv_grid.png" );
+    material->setTexture2D( "ALBEDOMAP", pAlbedo );
 
     modelEntity = activeScene->createEntity( "Model" );
     auto &mesh_component =
-        modelEntity.addComponent< smile::scene::SkinnedMeshComponent >( "Resources/Meshes/bunny.obj", material );
+        modelEntity.addComponent< smile::scene::SkinnedMeshComponent >( "assets/meshes/nanosuit.obj", material );
     modelEntity.getComponent< smile::scene::TransformComponent >().translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
     modelEntity.getComponent< smile::scene::TransformComponent >().rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
     modelEntity.getComponent< smile::scene::TransformComponent >().scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
     activeScene->onViewportResize( 1280, 720 );
+    activeScene->onRuntimeStart();
 }
 
 void ExampleLayer::onUpdate( smile::Timestep delta_time )
@@ -227,7 +228,7 @@ void ExampleLayer::onUpdate( smile::Timestep delta_time )
         smile::Logger::logInfo( "FPS: %d", smile::Timer::getInstance().getFPS() );
     }
 
-    smile::renderer::RenderCommand::clear();
+    smile::graphic::RenderCommand::clear();
     activeScene->onUpdateRuntime( delta_time );
 }
 

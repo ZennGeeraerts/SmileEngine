@@ -1,4 +1,5 @@
-#include <smile_engine/ecs/sparse_set.h>
+#include <smile_engine/core/core.h>
+#include <smile_engine/stl/sparse_set.h>
 #include <thirdparty/catch.hpp>
 #include <iostream>
 
@@ -8,7 +9,7 @@ TEST_CASE( "SparseSet" )
 {
     SECTION( "SparseSet" )
     {
-        ecs::SparseSet< Uint32 > sparse_set{};
+        stl::SparseSet< Uint32 > sparse_set{};
 
         sparse_set.insert( 15 );
         sparse_set.insert( 16 );

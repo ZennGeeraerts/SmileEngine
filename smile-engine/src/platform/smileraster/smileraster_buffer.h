@@ -1,9 +1,9 @@
 #pragma once
-#include "smile_engine/renderer/resource/vertex_buffer.h"
-#include "smile_engine/renderer/resource/index_buffer.h"
+#include "smile_engine/graphic/resource/vertex_buffer.h"
+#include "smile_engine/graphic/resource/index_buffer.h"
 #include "smileraster_context.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class SmileRasterVertexBuffer final : public VertexBuffer
     {

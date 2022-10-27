@@ -1,9 +1,9 @@
 #pragma once
 
-#include "smile_engine/renderer/resource/rasterizer_state.h"
+#include "smile_engine/graphic/resource/rasterizer_state.h"
 #include "platform/directX11/directx11_context.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class DirectX11RasterizerState final : public RasterizerState
     {

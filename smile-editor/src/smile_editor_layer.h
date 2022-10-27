@@ -3,7 +3,7 @@
 #include "panels/scene_hierarchy_panel.h"
 #include "panels/content_browser_panel.h"
 
-#include "smile_engine/renderer/camera/editor_camera.h"
+#include "smile_engine/graphic/camera/editor_camera.h"
 
 namespace smile
 {
@@ -67,7 +67,7 @@ namespace smile
       private:
         Ref< scene::Scene > activeScene;
         Ref< scene::Scene > editorScene;
-        renderer::EditorCamera editorCamera;
+        graphic::EditorCamera editorCamera;
         std::filesystem::path editorScenePath;
 
         DirectX::XMFLOAT2 viewportSize = { 0.f, 0.f };
@@ -89,8 +89,8 @@ namespace smile
         ContentBrowserPanel contentBrowserPanel;
 
         // Editor resources
-        Ref< renderer::Texture2D > iconPlay = nullptr;
-        Ref< renderer::Texture2D > iconSimulate = nullptr;
-        Ref< renderer::Texture2D > iconStop = nullptr;
+        Ref< graphic::Texture2D > iconPlay = nullptr;
+        Ref< graphic::Texture2D > iconSimulate = nullptr;
+        Ref< graphic::Texture2D > iconStop = nullptr;
     };
 }

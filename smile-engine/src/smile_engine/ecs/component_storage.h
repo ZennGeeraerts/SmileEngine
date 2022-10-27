@@ -1,7 +1,6 @@
 #pragma once
 
-#include "smile_engine/core/core.h"
-#include "entity_handle.h"
+#include "ecs_types.h"
 
 #include <vector>
 
@@ -32,7 +31,6 @@ namespace smile::ecs
     {
       protected:
         ComponentStorage() = default;
-        ~ComponentStorage();
 
         template < typename ComponentType >
         void initialize( bool owner_included )
@@ -50,7 +48,7 @@ namespace smile::ecs
         ~ComponentStorage();
 
         template < typename ComponentType, typename... Args >
-        ComponentType &append( Uint32 index, Args &&...args )
+        ComponentType &append( IndexType index, Args &&...args )
         {
             grow();
             ComponentType *result = reinterpret_cast< ComponentType * >( data ) + size - 1;
@@ -62,19 +60,20 @@ namespace smile::ecs
             return *result;
         }
 
-        int removeSwap( Uint32 dead_eindex );
-        void popSwap( Uint32 a );
+        void swap( IndexType element1, IndexType element2 );
+        int removeSwap( IndexType dead_eindex );
+        void popSwap( IndexType a );
         void clear();
         void reset();
 
         template < typename ComponentType >
-        ComponentType &get( Uint32 index )
+        ComponentType &get( IndexType index )
         {
             return *reinterpret_cast< ComponentType * >( data + componentSize * index );
         }
 
         template < typename ComponentType >
-        const ComponentType &get( Uint32 index ) const
+        const ComponentType &get( IndexType index ) const
         {
             return *reinterpret_cast< const ComponentType * >( data + componentSize * index );
         }
@@ -87,18 +86,19 @@ namespace smile::ecs
         {
             return data;
         }
-        void *getRaw( Uint32 index )
+        void *getRaw( IndexType index )
         {
             return data + componentSize * index;
         }
-        const void *getRaw( Uint32 index ) const
+        const void *getRaw( IndexType index ) const
         {
             return data + componentSize * index;
         }
 
-        Uint32 getIndex( Uint32 index ) const
+        IndexType getIndex( IndexType index ) const
         {
-            return indices ? indices[index] : reinterpret_cast< EntityHandle * >( data + componentSize * index )->index;
+            return indices ? indices[index]
+                           : reinterpret_cast< EntityHandleType * >( data + componentSize * index )->index;
         }
 
         Uint32 getSize() const
@@ -120,7 +120,7 @@ namespace smile::ecs
         Uint32 size = 0;
         bool ownerData = false;
         Byte *data{ nullptr };
-        Uint32 *indices{ nullptr };
+        IndexType *indices{ nullptr };
 
         ConstructorType constructor = nullptr;
         DestructorType destructor = nullptr;

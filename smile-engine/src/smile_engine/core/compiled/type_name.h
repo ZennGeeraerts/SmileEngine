@@ -1,5 +1,7 @@
 #pragma once
 
+#include "smile_engine/core/compiler.h"
+
 #include <string_view>
 
 namespace smile::compiled
@@ -7,9 +9,9 @@ namespace smile::compiled
     template < typename Type >
     constexpr std::string_view getFullTypeName()
     {
-#if defined _MSC_VER
+#if defined SM_COMPILER_MSVC
         return __FUNCSIG__;
-#elif defined __clang__ || __GNU__ || __GNUC__
+#elif defined SM_COMPILER_CLANG || SM_COMPILER_GNU || SM_COMPILER_GNUC
         return __PRETTY_FUNCTION__;
 #else
 #    error "Unsupported compiler"

@@ -7,7 +7,7 @@
 
 #include "directx11_diagnostics.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     DirectX11Context::DirectX11Context( Window *window ) : window{ window }
     {

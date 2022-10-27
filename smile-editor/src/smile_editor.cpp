@@ -8,7 +8,7 @@ namespace smile
     class SmileEditor final : public Application
     {
       public:
-        SmileEditor() : Application( "Smile Editor" )
+        SmileEditor( const ApplicationDescriptor &descriptor ) : Application{ descriptor }
         {
             pushLayer( new SmileEditorLayer{} );
         }
@@ -18,10 +18,15 @@ namespace smile
         }
     };
 
-    Application *createGame()
+    Application *createApplication( ApplicationCommandLineArgs command_line_args )
     {
+        ApplicationDescriptor descriptor{};
+        descriptor.name = "Smile Editor";
+        descriptor.workingDirectory = "../smile-editor";
+        descriptor.commandLineArgs = command_line_args;
+
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes
-        return new SmileEditor{};
+        return new SmileEditor{ descriptor };
     }
 }

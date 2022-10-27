@@ -1,8 +1,8 @@
 #pragma once
-#include "smile_engine/renderer/resource/index_buffer.h"
+#include "smile_engine/graphic/resource/index_buffer.h"
 #include "platform/directX11/directx11_context.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     class DirectX11IndexBuffer final : public IndexBuffer
     {

@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "directx11_buffer.h"
 
-namespace smile::renderer
+namespace smile::graphic
 {
     D3D11_USAGE bufferUsageToDirectXType( BufferUsage buffer_usage )
     {

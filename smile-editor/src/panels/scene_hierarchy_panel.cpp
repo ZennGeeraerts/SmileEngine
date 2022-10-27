@@ -30,7 +30,7 @@ namespace smile::scene
 
         if ( context )
         {
-            context->registry.each(
+            context->ecsEngine.each(
                 [&]( auto entity_id )
                 {
                     Entity entity{ entity_id, context.get() };
@@ -71,7 +71,7 @@ namespace smile::scene
 
         const ImGuiTreeNodeFlags flags = ( ( selectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
                                          ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-        bool node_expanded = ImGui::TreeNodeEx( ( void * )( Uint64 )( Uint32 )entity, flags, tag.c_str() );
+        bool node_expanded = ImGui::TreeNodeEx( ( void * )( Uint64 )entity, flags, tag.c_str() );
         if ( ImGui::IsItemClicked() )
         {
             selectedEntity = entity;
@@ -352,7 +352,7 @@ namespace smile::scene
                         const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                         std::filesystem::path mesh_path = std::filesystem::path{ assetPath } / path;
 
-                        static_mesh_component.meshes = renderer::MeshLoader::loadStaticMesh( mesh_path.string() );
+                        static_mesh_component.meshes = graphic::MeshLoader::loadStaticMesh( mesh_path.string() );
                         const auto &buffer_layout = static_mesh_component.materials[0]->getBufferLayout();
                         for ( const auto &mesh : static_mesh_component.meshes )
                         {
@@ -385,7 +385,7 @@ namespace smile::scene
                         const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                         std::filesystem::path mesh_path = std::filesystem::path{ assetPath } / path;
 
-                        skinned_mesh_component.meshes = renderer::MeshLoader::loadSkinnedMesh( mesh_path.string() );
+                        skinned_mesh_component.meshes = graphic::MeshLoader::loadSkinnedMesh( mesh_path.string() );
                         const auto &buffer_layout = skinned_mesh_component.materials[0]->getBufferLayout();
                         for ( const auto &mesh : skinned_mesh_component.meshes )
                         {
@@ -393,7 +393,7 @@ namespace smile::scene
 
                             if ( mesh->hasAnimations() )
                             {
-                                renderer::MeshAnimator animator{ mesh };
+                                graphic::MeshAnimator animator{ mesh };
                                 skinned_mesh_component.animators.push_back( animator );
                                 skinned_mesh_component.animators.back().setAnimation( 0 );
                             }
@@ -568,9 +568,9 @@ namespace smile::scene
             entity.removeComponent< ComponentType >();
     }
 
-    void SceneHierarchyPanel::drawMaterial( const Ref< renderer::Material > &material )
+    void SceneHierarchyPanel::drawMaterial( const Ref< graphic::Material > &material )
     {
-        const Ref< renderer::Shader > &shader = material->getShader();
+        const Ref< graphic::Shader > &shader = material->getShader();
         ImGui::Text( "Material" );
 
         ImGui::Button( shader->getName().c_str(), { 100.f, 0.0f } );
@@ -581,7 +581,7 @@ namespace smile::scene
             {
                 const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                 std::filesystem::path shader_path = std::filesystem::path{ assetPath } / path;
-                material->setShader( renderer::Shader::create( shader_path.string() ) );
+                material->setShader( graphic::Shader::create( shader_path.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -638,7 +638,7 @@ namespace smile::scene
                 {
                     const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                     std::filesystem::path texture_path = std::filesystem::path{ assetPath } / path;
-                    material->setTexture2D( pair.first, renderer::Texture2D::create( texture_path.string() ) );
+                    material->setTexture2D( pair.first, graphic::Texture2D::create( texture_path.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

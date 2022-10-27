@@ -2,7 +2,7 @@
 #include "scene.h"
 
 #include "components.h"
-#include "smile_engine/renderer/renderer.h"
+#include "smile_engine/graphic/renderer.h"
 #include "smile_engine/core/application.h"
 #include "smile_engine/physics/physics_engine.h"
 
@@ -16,7 +16,8 @@ namespace smile::scene
 
     Scene::~Scene()
     {
-        registry.clear();
+        ecsEngine.clear();
+        //registry.clear();
     }
 
     Entity Scene::createEntity()
@@ -31,7 +32,7 @@ namespace smile::scene
 
     Entity Scene::createEntity( UUID uuid, const std::string &name )
     {
-        Entity entity{ registry.create(), this };
+        Entity entity{ ecsEngine.createEntity(), this };
         entity.addComponent< IDComponent >( uuid );
         entity.addComponent< TagComponent >( name );
         entity.addComponent< TransformComponent >();
@@ -41,7 +42,8 @@ namespace smile::scene
 
     void Scene::destroyEntity( Entity entity )
     {
-        registry.destroy( entity );
+        ecsEngine.destroyEntity( entity );
+        //registry.destroy( entity );
     }
 
     void Scene::onRuntimeStart()
@@ -50,8 +52,8 @@ namespace smile::scene
 
         // Create physisc actors
         {
-            const auto &view = registry.view< RigidbodyComponent >();
-            for ( auto &e : view )
+            auto view = ecsEngine.view< RigidbodyComponent >();
+            for ( auto e : view )
             {
                 Entity entity = { e, this };
                 physics::PhysicsEngine::createActor( entity );
@@ -70,8 +72,8 @@ namespace smile::scene
 
         // Create physisc actors
         {
-            const auto &view = registry.view< RigidbodyComponent >();
-            for ( auto &e : view )
+            auto view = ecsEngine.view< RigidbodyComponent >();
+            for ( auto e : view )
             {
                 Entity entity = { e, this };
                 physics::PhysicsEngine::createActor( entity );
@@ -88,13 +90,13 @@ namespace smile::scene
     {
         physics::PhysicsEngine::simulate( delta_time );
 
-        renderer::Camera *main_camera = nullptr;
+        graphic::Camera *main_camera = nullptr;
         DirectX::XMFLOAT4X4 camera_transform;
         {
-            auto view = registry.view< TransformComponent, CameraComponent >();
+            auto view = ecsEngine.view< TransformComponent, CameraComponent >();
             for ( auto entity : view )
             {
-                const auto &[transform, camera] = view.get< TransformComponent, CameraComponent >( entity );
+                const auto &[transform, camera] = ecsEngine.getComponents< TransformComponent, CameraComponent >( entity );
 
                 if ( camera.primary )
                 {
@@ -107,29 +109,29 @@ namespace smile::scene
 
         if ( main_camera )
         {
-            renderer::Renderer::beginScene( *main_camera, camera_transform );
+            graphic::Renderer::beginScene( *main_camera, camera_transform );
 
             {
-                auto group = registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
+                auto group = ecsEngine.group< MeshRendererComponent >( ecs::get< TransformComponent > );
                 for ( auto entity : group )
                 {
-                    const auto &[mesh, transform] = group.get< MeshRendererComponent, TransformComponent >( entity );
-                    renderer::Renderer::submit( mesh, transform.getTransform() );
+                    const auto &[mesh, transform] = ecsEngine.getComponents< MeshRendererComponent, TransformComponent >( entity );
+                    graphic::Renderer::submit( mesh, transform.getTransform() );
                 }
             }
             {
-                auto group = registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
+                auto group = ecsEngine.group< StaticMeshComponent >( ecs::get< TransformComponent > );
                 for ( auto entity : group )
                 {
-                    const auto &[mesh, transform] = group.get< StaticMeshComponent, TransformComponent >( entity );
-                    renderer::Renderer::submit( mesh, transform.getTransform() );
+                    const auto &[mesh, transform] = ecsEngine.getComponents< StaticMeshComponent, TransformComponent >( entity );
+                    graphic::Renderer::submit( mesh, transform.getTransform() );
                 }
             }
             {
-                auto group = registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
+                auto group = ecsEngine.group< SkinnedMeshComponent >( ecs::get< TransformComponent > );
                 for ( auto entity : group )
                 {
-                    const auto &[mesh, transform] = group.get< SkinnedMeshComponent, TransformComponent >( entity );
+                    const auto &[mesh, transform] = ecsEngine.getComponents< SkinnedMeshComponent, TransformComponent >( entity );
 
                     for ( auto &animator : mesh.animators )
                     {
@@ -142,52 +144,53 @@ namespace smile::scene
                         }
                     }
 
-                    renderer::Renderer::submit( mesh, transform.getTransform() );
+                    graphic::Renderer::submit( mesh, transform.getTransform() );
                 }
             }
             {
-                auto group = registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+                auto group = ecsEngine.group< BoxColliderComponent >( ecs::get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[boxCollider, transform] =
-                        group.get< BoxColliderComponent, TransformComponent >( entity );
-                    renderer::Renderer::submitWireframe( boxCollider, transform.getTransform() );
+                        ecsEngine.getComponents< BoxColliderComponent, TransformComponent >( entity );
+                    graphic::Renderer::submitWireframe( boxCollider, transform.getTransform() );
                 }
             }
 
-            renderer::Renderer::onRender();
+            graphic::Renderer::onRender();
 
-            renderer::Renderer::endScene();
+            graphic::Renderer::endScene();
         }
     }
 
-    void Scene::onUpdateSimulation( Timestep delta_time, renderer::EditorCamera &editor_camera )
+    void Scene::onUpdateSimulation( Timestep delta_time, graphic::EditorCamera &editor_camera )
     {
         physics::PhysicsEngine::simulate( delta_time );
 
-        renderer::Renderer::beginScene( editor_camera );
+        graphic::Renderer::beginScene( editor_camera );
 
         {
-            auto group = registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< MeshRendererComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[mesh, transform] = group.get< MeshRendererComponent, TransformComponent >( entity );
-                renderer::Renderer::submit( mesh, transform.getTransform() );
+                const auto &[mesh, transform] = ecsEngine.getComponents< MeshRendererComponent, TransformComponent >( entity );
+                graphic::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< StaticMeshComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[mesh, transform] = group.get< StaticMeshComponent, TransformComponent >( entity );
-                renderer::Renderer::submit( mesh, transform.getTransform() );
+                const auto &[mesh, transform] = ecsEngine.getComponents< StaticMeshComponent, TransformComponent >( entity );
+                graphic::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< SkinnedMeshComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[mesh, transform] = group.get< SkinnedMeshComponent, TransformComponent >( entity );
+                const auto &[mesh, transform] =
+                    ecsEngine.getComponents< SkinnedMeshComponent, TransformComponent >( entity );
 
                 for ( auto &animator : mesh.animators )
                 {
@@ -200,48 +203,49 @@ namespace smile::scene
                     }
                 }
 
-                renderer::Renderer::submit( mesh, transform.getTransform() );
+                graphic::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< BoxColliderComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[box_collider, transform] = group.get< BoxColliderComponent, TransformComponent >( entity );
-                renderer::Renderer::submitWireframe( box_collider, transform.getTransform() );
+                const auto &[box_collider, transform] =
+                    ecsEngine.getComponents< BoxColliderComponent, TransformComponent >( entity );
+                graphic::Renderer::submitWireframe( box_collider, transform.getTransform() );
             }
         }
 
-        renderer::Renderer::onRender();
+        graphic::Renderer::onRender();
 
-        renderer::Renderer::endScene();
+        graphic::Renderer::endScene();
     }
 
-    void Scene::onUpdateEditor( Timestep delta_time, renderer::EditorCamera &editor_camera )
+    void Scene::onUpdateEditor( Timestep delta_time, graphic::EditorCamera &editor_camera )
     {
-        renderer::Renderer::beginScene( editor_camera );
+        graphic::Renderer::beginScene( editor_camera );
 
         {
-            auto group = registry.group< MeshRendererComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< MeshRendererComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[mesh, transform] = group.get< MeshRendererComponent, TransformComponent >( entity );
-                renderer::Renderer::submit( mesh, transform.getTransform() );
+                const auto &[mesh, transform] = ecsEngine.getComponents< MeshRendererComponent, TransformComponent >( entity );
+                graphic::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = registry.group< StaticMeshComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< StaticMeshComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[mesh, transform] = group.get< StaticMeshComponent, TransformComponent >( entity );
-                renderer::Renderer::submit( mesh, transform.getTransform() );
+                const auto &[mesh, transform] = ecsEngine.getComponents< StaticMeshComponent, TransformComponent >( entity );
+                graphic::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = registry.group< SkinnedMeshComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< SkinnedMeshComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[mesh, transform] = group.get< SkinnedMeshComponent, TransformComponent >( entity );
+                const auto &[mesh, transform] = ecsEngine.getComponents< SkinnedMeshComponent, TransformComponent >( entity );
 
                 for ( auto &animator : mesh.animators )
                 {
@@ -254,21 +258,22 @@ namespace smile::scene
                     }
                 }
 
-                renderer::Renderer::submit( mesh, transform.getTransform() );
+                graphic::Renderer::submit( mesh, transform.getTransform() );
             }
         }
         {
-            auto group = registry.group< BoxColliderComponent >( entt::get< TransformComponent > );
+            auto group = ecsEngine.group< BoxColliderComponent >( ecs::get< TransformComponent > );
             for ( auto entity : group )
             {
-                const auto &[box_collider, transform] = group.get< BoxColliderComponent, TransformComponent >( entity );
-                renderer::Renderer::submitWireframe( box_collider, transform.getTransform() );
+                const auto &[box_collider, transform] =
+                    ecsEngine.getComponents< BoxColliderComponent, TransformComponent >( entity );
+                graphic::Renderer::submitWireframe( box_collider, transform.getTransform() );
             }
         }
 
-        renderer::Renderer::onRender();
+        graphic::Renderer::onRender();
 
-        renderer::Renderer::endScene();
+        graphic::Renderer::endScene();
     }
 
     void Scene::onViewportResize( Uint32 width, Uint32 height )
@@ -276,10 +281,10 @@ namespace smile::scene
         viewportWidth = width;
         viewportHeight = height;
 
-        auto view = registry.view< CameraComponent >();
+        auto view = ecsEngine.view< CameraComponent >();
         for ( auto entity : view )
         {
-            auto &cameraComponent = view.get< CameraComponent >( entity );
+            auto &cameraComponent = ecsEngine.getComponent< CameraComponent >( entity );
             if ( !cameraComponent.fixedAspectRatio )
             {
                 cameraComponent.camera.setViewportSize( width, height );
@@ -289,10 +294,10 @@ namespace smile::scene
 
     Entity Scene::getPrimaryCameraEntity()
     {
-        auto view = registry.view< CameraComponent >();
+        auto view = ecsEngine.view< CameraComponent >();
         for ( auto entity : view )
         {
-            auto &camera_component = view.get< CameraComponent >( entity );
+            auto &camera_component = ecsEngine.getComponent< CameraComponent >( entity );
             if ( camera_component.primary )
                 return Entity{ entity, this };
         }
@@ -301,17 +306,17 @@ namespace smile::scene
 
     template < typename ComponentType >
     static void
-    CopyComponent( entt::registry &dst, entt::registry &src, const std::unordered_map< UUID, entt::entity > &enttMap )
+    CopyComponent( ecs::ECSEngine &dst, ecs::ECSEngine &src, const std::unordered_map< UUID, ecs::EntityHandleType > &entity_handle_map )
     {
         auto view = src.view< ComponentType >();
         for ( auto entity : view )
         {
-            UUID uuid = src.get< IDComponent >( entity ).id;
-            SM_ASSERT( enttMap.find( uuid ) != enttMap.end(), "Scene > CopyComponent > uuid not found int enttMap" );
-            entt::entity dst_entt_id = enttMap.at( uuid );
+            UUID uuid = src.getComponent< IDComponent >( entity ).id;
+            SM_ASSERT( entity_handle_map.find( uuid ) != entity_handle_map.end(), "Scene::CopyComponent > uuid not found int enttMap" );
+            ecs::EntityHandleType dst_entt_id = entity_handle_map.at( uuid );
 
-            auto &component = src.get< ComponentType >( entity );
-            dst.emplace_or_replace< ComponentType >( dst_entt_id, component );
+            auto &component = src.getComponent< ComponentType >( entity );
+            dst.addOrReplaceComponent< ComponentType >( dst_entt_id, component );
         }
     }
 
@@ -329,29 +334,29 @@ namespace smile::scene
         new_scene->viewportWidth = scene->viewportWidth;
         new_scene->viewportHeight = scene->viewportHeight;
 
-        std::unordered_map< UUID, entt::entity > enttMap{};
+        std::unordered_map< UUID, ecs::EntityHandleType > entityMap{};
 
-        auto &src_scene_registry = scene->registry;
-        auto &dst_scene_registry = new_scene->registry;
+        auto &src_scene_registry = scene->ecsEngine;
+        auto &dst_scene_registry = new_scene->ecsEngine;
         auto id_view = src_scene_registry.view< IDComponent >();
         for ( auto entity : id_view )
         {
-            auto uuid = src_scene_registry.get< IDComponent >( entity ).id;
-            const auto &name = src_scene_registry.get< TagComponent >( entity ).tag;
+            auto uuid = src_scene_registry.getComponent< IDComponent >( entity ).id;
+            const auto &name = src_scene_registry.getComponent< TagComponent >( entity ).tag;
             Entity new_entity = new_scene->createEntity( uuid, name );
-            enttMap[uuid] = static_cast< entt::entity >( new_entity );
+            entityMap[uuid] = static_cast< ecs::EntityHandleType >( new_entity );
         }
 
         // Copy components except IDComponent and TagComponent
-        CopyComponent< TransformComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< MeshRendererComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< StaticMeshComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< SkinnedMeshComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< CameraComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< RigidbodyComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< BoxColliderComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< SphereColliderComponent >( dst_scene_registry, src_scene_registry, enttMap );
-        CopyComponent< CapsuleColliderComponent >( dst_scene_registry, src_scene_registry, enttMap );
+        CopyComponent< TransformComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< MeshRendererComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< StaticMeshComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< SkinnedMeshComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< CameraComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< RigidbodyComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< BoxColliderComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< SphereColliderComponent >( dst_scene_registry, src_scene_registry, entityMap );
+        CopyComponent< CapsuleColliderComponent >( dst_scene_registry, src_scene_registry, entityMap );
 
         return new_scene;
     }

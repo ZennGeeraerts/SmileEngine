@@ -22,30 +22,44 @@ struct MyComponent final
     unsigned int z;
 };
 
+struct TestSystem final
+{
+    void onUpdate( ecs::ECSEngine& engine, Timestep delta_time )
+    {
+        int test = 0;
+        //my_component.x += 10;
+        //another_component.name = "modified by system";
+    }
+
+    //static ecs::ComponentList< MyComponent, AnotherComponent > components;
+    //using components = MyComponent, AnotherComponent;
+};
+
 TEST_CASE( "ECS" )
 {
     SECTION( "Entity" )
     {
         ecs::ECSEngine engine{};
+        engine.registerSystem< TestSystem >();
 
-        ecs::EntityHandle handle1 = engine.createEntity();
-        ecs::EntityHandle handle2 = engine.createEntity();
-        ecs::EntityHandle handle3 = engine.createEntity();
+        ecs::EntityHandleType handle1 = engine.createEntity();
+        ecs::EntityHandleType handle2 = engine.createEntity();
+        ecs::EntityHandleType handle3 = engine.createEntity();
 
         engine.destroyEntity( handle2 );
         engine.destroyEntity( handle3 );
 
-        ecs::EntityHandle invalid_handle = ecs::nullHandle;
+        ecs::EntityHandleType invalid_handle = ecs::nullHandle< Uint32 >;
 
         REQUIRE( engine.isEntityActive( handle1 ) );
         REQUIRE( !engine.isEntityActive( handle2 ) );
         REQUIRE( !engine.isEntityActive( handle3 ) );
         REQUIRE( !engine.isEntityActive( invalid_handle ) );
 
-        ecs::EntityHandle handle4 = engine.createEntity();
-        ecs::EntityHandle handle5 = engine.createEntity();
-        ecs::EntityHandle handle6 = engine.createEntity();
-        ecs::EntityHandle handle7 = engine.createEntity();
+        ecs::EntityHandleType handle4 = engine.createEntity();
+        ecs::EntityHandleType handle5 = engine.createEntity();
+        ecs::EntityHandleType handle6 = engine.createEntity();
+        ecs::EntityHandleType handle7 = engine.createEntity();
 
         REQUIRE( engine.isEntityActive( handle4 ) );
         REQUIRE( engine.isEntityActive( handle5 ) );
@@ -108,5 +122,90 @@ TEST_CASE( "ECS" )
 
         another_component = engine.getComponent< AnotherComponent >( handle7 );
         REQUIRE( another_component.name == "just some words" );
+
+        // engine.group< TestComponent, AnotherComponent, MyComponent >();
+
+        engine.onUpdate( 1.0f );
+
+        // REQUIRE( my_component.x == 29u );
+        // REQUIRE( another_component.name == "modified by system" );
+    }
+
+    SECTION( "View" )
+    {
+        ecs::ECSEngine engine{};
+
+        ecs::EntityHandleType handle1 = engine.createEntity();
+        ecs::EntityHandleType handle2 = engine.createEntity();
+        ecs::EntityHandleType handle3 = engine.createEntity();
+
+        engine.addComponent< AnotherComponent >( handle1, "test" );
+        engine.addComponent< TestComponent >( handle1, 10, 2 );
+
+        engine.addComponent< AnotherComponent >( handle2, "this is a string" );
+        //engine.addComponent< TestComponent >( handle2 );
+
+        engine.addComponent< AnotherComponent >( handle3, "name" );
+        engine.addComponent< TestComponent >( handle3, 5, -3 );
+
+        for ( ecs::EntityHandleType entity_handle : engine.view< AnotherComponent, TestComponent >() )
+        {
+            const auto &[another, test] = engine.getComponents< AnotherComponent, TestComponent >( entity_handle );
+        }
+    }
+
+    SECTION( "group" )
+    {
+        ecs::ECSEngine engine{};
+
+        ecs::EntityHandleType handle1 = engine.createEntity();
+        ecs::EntityHandleType handle2 = engine.createEntity();
+        ecs::EntityHandleType handle3 = engine.createEntity();
+
+        engine.addComponent< AnotherComponent >( handle1, "test" );
+        engine.addComponent< TestComponent >( handle1, 10, 2 );
+
+        engine.addComponent< AnotherComponent >( handle2, "this is a string" );
+        // engine.addComponent< TestComponent >( handle2 );
+
+        engine.addComponent< AnotherComponent >( handle3, "name" );
+        engine.addComponent< TestComponent >( handle3, 5, -3 );
+
+        std::vector< ecs::EntityHandleType > handles{};
+        const auto &group = engine.group< AnotherComponent >( ecs::get< TestComponent > );
+
+        int i{};
+        for ( ecs::EntityHandleType entity_handle : group )
+        {
+            const auto &[test, another] = engine.getComponents< TestComponent, AnotherComponent >( entity_handle );
+            ++i;
+        }
+
+        engine.addComponent< TestComponent >( handle2, 7, 3 );
+        for ( ecs::EntityHandleType entity_handle : group )
+        {
+            const auto &[test, another] = engine.getComponents< TestComponent, AnotherComponent >( entity_handle );
+            ++i;
+        }
+
+        engine.removeComponent< TestComponent >( handle3 );
+        for ( ecs::EntityHandleType entity_handle : group )
+        {
+            const auto &[test, another] = engine.getComponents< TestComponent, AnotherComponent >( entity_handle );
+            ++i;
+        }
+    }
+
+    SECTION( "cast" )
+    {
+        ecs::ECSEngine engine{};
+
+        ecs::EntityHandleType handle1 = engine.createEntity();
+        ecs::EntityHandleType handle2 = engine.createEntity();
+
+        Uint32 val = handle1.hash();
+        Uint32 val2 = handle2.hash();
+
+        engine.clear();
     }
 }

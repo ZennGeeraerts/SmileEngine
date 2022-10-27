@@ -1,17 +1,17 @@
 #pragma once
 #include "smile_engine/core/uuid.h"
-#include "smile_engine/renderer/resource/vertex_buffer.h"
-#include "smile_engine/renderer/resource/index_buffer.h"
-#include "smile_engine/renderer/shader/shader.h"
+#include "smile_engine/graphic/resource/vertex_buffer.h"
+#include "smile_engine/graphic/resource/index_buffer.h"
+#include "smile_engine/graphic/shader/shader.h"
 
 #include "smile_engine/scene/scene_camera.h"
 
-#include "smile_engine/renderer/mesh/mesh_loader.h"
-#include "smile_engine/renderer/mesh/static_mesh_filter.h"
-#include "smile_engine/renderer/mesh/skinned_mesh_filter.h"
-#include "smile_engine/renderer/mesh/material.h"
-#include "smile_engine/renderer/animation/mesh_animator.h"
-#include "smile_engine/renderer/mesh/mesh_factory.h"
+#include "smile_engine/graphic/mesh/mesh_loader.h"
+#include "smile_engine/graphic/mesh/static_mesh_filter.h"
+#include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
+#include "smile_engine/graphic/mesh/material.h"
+#include "smile_engine/graphic/animation/mesh_animator.h"
+#include "smile_engine/graphic/mesh/mesh_factory.h"
 
 #include "smile_engine/physics/physics_material.h"
 
@@ -96,36 +96,36 @@ namespace smile::scene
     {
         MeshRendererComponent() = default;
         MeshRendererComponent( const MeshRendererComponent & ) = default;
-        MeshRendererComponent( const renderer::VertexBufferDescriptor &vertex_buffer_desc,
-            const renderer::IndexBufferDescriptor &index_buffer_desc,
+        MeshRendererComponent( const graphic::VertexBufferDescriptor &vertex_buffer_desc,
+            const graphic::IndexBufferDescriptor &index_buffer_desc,
             const std::string &shader_file_path )
         {
-            vertexBuffer.reset( renderer::VertexBuffer::create( vertex_buffer_desc ) );
-            indexBuffer.reset( renderer::IndexBuffer::create( index_buffer_desc ) );
-            shader = renderer::Shader::create( shader_file_path );
+            vertexBuffer.reset( graphic::VertexBuffer::create( vertex_buffer_desc ) );
+            indexBuffer.reset( graphic::IndexBuffer::create( index_buffer_desc ) );
+            shader = graphic::Shader::create( shader_file_path );
         }
 
-        Ref< renderer::VertexBuffer > vertexBuffer = nullptr;
-        Ref< renderer::IndexBuffer > indexBuffer = nullptr;
-        Ref< renderer::Shader > shader = nullptr;
+        Ref< graphic::VertexBuffer > vertexBuffer = nullptr;
+        Ref< graphic::IndexBuffer > indexBuffer = nullptr;
+        Ref< graphic::Shader > shader = nullptr;
     };
 
     struct StaticMeshComponent final
     {
         StaticMeshComponent()
         {
-            auto shader = renderer::Shader::create( "assets/shaders/PBR.fx" );
-            materials.push_back( createRef< renderer::Material >( shader ) );
+            auto shader = graphic::Shader::create( "assets/shaders/PBR.fx" );
+            materials.push_back( createRef< graphic::Material >( shader ) );
         }
 
         StaticMeshComponent( const StaticMeshComponent & ) = default;
 
         // For now, only support 1 material
-        StaticMeshComponent( const std::string &asset_file, const Ref< renderer::Material > &material )
+        StaticMeshComponent( const std::string &asset_file, const Ref< graphic::Material > &material )
         {
             materials.push_back( material );
 
-            meshes = renderer::MeshLoader::loadStaticMesh( asset_file );
+            meshes = graphic::MeshLoader::loadStaticMesh( asset_file );
             const auto &buffer_layout = materials[0]->getBufferLayout();
             for ( const auto &mesh : meshes )
             {
@@ -133,26 +133,26 @@ namespace smile::scene
             }
         }
 
-        std::vector< Ref< renderer::StaticMeshFilter > > meshes = {};
-        std::vector< Ref< renderer::Material > > materials = {};
+        std::vector< Ref< graphic::StaticMeshFilter > > meshes = {};
+        std::vector< Ref< graphic::Material > > materials = {};
     };
 
     struct SkinnedMeshComponent final
     {
         SkinnedMeshComponent()
         {
-            auto pShader = renderer::Shader::create( "assets/shaders/PBR_Skinned.fx" );
-            materials.push_back( createRef< renderer::Material >( pShader ) );
+            auto pShader = graphic::Shader::create( "assets/shaders/PBR_Skinned.fx" );
+            materials.push_back( createRef< graphic::Material >( pShader ) );
         }
 
         SkinnedMeshComponent( const SkinnedMeshComponent & ) = default;
 
         // For now, only support 1 material
-        SkinnedMeshComponent( const std::string &asset_file, const Ref< renderer::Material > &material )
+        SkinnedMeshComponent( const std::string &asset_file, const Ref< graphic::Material > &material )
         {
             materials.push_back( material );
 
-            meshes = renderer::MeshLoader::loadSkinnedMesh( asset_file );
+            meshes = graphic::MeshLoader::loadSkinnedMesh( asset_file );
             const auto &buffer_layout = materials[0]->getBufferLayout();
             for ( const auto &mesh : meshes )
             {
@@ -160,15 +160,15 @@ namespace smile::scene
 
                 if ( mesh->hasAnimations() )
                 {
-                    renderer::MeshAnimator animator{ mesh };
+                    graphic::MeshAnimator animator{ mesh };
                     animators.push_back( animator );
                 }
             }
         }
 
-        std::vector< Ref< renderer::SkinnedMeshFilter > > meshes = {};
-        std::vector< Ref< renderer::Material > > materials = {};
-        std::vector< renderer::MeshAnimator > animators = {};
+        std::vector< Ref< graphic::SkinnedMeshFilter > > meshes = {};
+        std::vector< Ref< graphic::Material > > materials = {};
+        std::vector< graphic::MeshAnimator > animators = {};
     };
 
     struct CameraComponent final
@@ -221,8 +221,8 @@ namespace smile::scene
     {
         BoxColliderComponent()
         {
-            renderer::BufferLayout buffer_layout{ { renderer::ShaderDataType::Float3, "POSITION" } };
-            wireframeMesh = renderer::MeshFactory::createCube( buffer_layout );
+            graphic::BufferLayout buffer_layout{ { graphic::ShaderDataType::Float3, "POSITION" } };
+            wireframeMesh = graphic::MeshFactory::createCube( buffer_layout );
             wireframeMesh->create( buffer_layout );
         }
 
@@ -234,7 +234,7 @@ namespace smile::scene
         bool showColliderBounds = true;
 
         Ref< physics::PhysicsMaterial > physicsMaterial = nullptr;
-        Ref< renderer::StaticMeshFilter > wireframeMesh = nullptr;
+        Ref< graphic::StaticMeshFilter > wireframeMesh = nullptr;
     };
 
     struct SphereColliderComponent final

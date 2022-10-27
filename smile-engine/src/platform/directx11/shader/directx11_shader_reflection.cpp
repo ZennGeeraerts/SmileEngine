@@ -1,10 +1,10 @@
 #include "smpch.h"
-#include "smile_engine/renderer/shader/shader_reflection.h"
+#include "smile_engine/graphic/shader/shader_reflection.h"
 #include "directx11_shader.h"
 
 #include <d3dx11effect.h>
 
-namespace smile::renderer::utils
+namespace smile::graphic::utils
 {
     static ShaderDataType convertDirectXShaderVariableType( D3DX11_EFFECT_TYPE_DESC effect_type_descriptor )
     {
