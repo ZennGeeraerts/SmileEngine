@@ -1,7 +1,7 @@
 #pragma once
 #include "smile_engine/core/logger.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     enum class ShaderDataType : Uint8
     {
@@ -25,7 +25,7 @@ namespace smile::graphic
         String
     };
 
-    static Uint32 shaderDataTypeSize( ShaderDataType type )
+    static Uint32 ShaderDataTypeSize( ShaderDataType type )
     {
         switch ( type )
         {
@@ -52,7 +52,7 @@ namespace smile::graphic
             case ShaderDataType::Bool:
                 return 1;
             default:
-                SM_ASSERT( false, "Buffer.h > shaderDataTypeSize > Unknown ShaderDataType" );
+                SM_ASSERT( false, "Buffer.h > ShaderDataTypeSize > Unknown ShaderDataType" );
                 return 0;
         }
     }
@@ -60,14 +60,14 @@ namespace smile::graphic
     struct BufferElement final
     {
         BufferElement() = default;
-        BufferElement( ShaderDataType type, const std::string &name, bool normalized = false )
-            : name{ name }, dataType{ type }, size{ shaderDataTypeSize( type ) }, offset{ 0 }, normalized{ normalized }
+        BufferElement( ShaderDataType type, const std::string &name, bool isNormalized = false )
+            : Name{ name }, DataType{ type }, Size{ ShaderDataTypeSize( type ) }, Offset{ 0 }, IsNormalized{ isNormalized }
         {
         }
 
-        Uint32 getComponentCount() const
+        Uint32 GetComponentCount() const
         {
-            switch ( dataType )
+            switch ( DataType )
             {
                 case ShaderDataType::Float:
                     return 1;
@@ -92,16 +92,16 @@ namespace smile::graphic
                 case ShaderDataType::Bool:
                     return 1;
                 default:
-                    SM_ASSERT( false, "BufferElement::getElementCount > Unknown ShaderDataType" );
+                    SM_ASSERT( false, "BufferElement::GetElementCount > Unknown ShaderDataType" );
                     return 0;
             }
         }
 
-        std::string name;
-        ShaderDataType dataType;
-        Uint32 size;
-        Uint32 offset;
-        bool normalized;
+        std::string Name;
+        ShaderDataType DataType;
+        Uint32 Size;
+        Uint32 Offset;
+        bool IsNormalized;
     };
 
     class BufferLayout final
@@ -110,59 +110,59 @@ namespace smile::graphic
         BufferLayout()
         {
         }
-        BufferLayout( const std::initializer_list< BufferElement > &elements ) : elements{ elements }
+        BufferLayout( const std::initializer_list< BufferElement > &elements ) : m_Elements{ elements }
         {
-            calculateOffsetAndStride();
+            CalculateOffsetAndStride();
         }
 
-        inline const std::vector< BufferElement > &getElements() const
+        inline const std::vector< BufferElement > &GetElements() const
         {
-            return elements;
+            return m_Elements;
         }
-        inline Uint32 getStride() const
+        inline Uint32 GetStride() const
         {
-            return stride;
+            return m_Stride;
         }
 
         std::vector< BufferElement >::iterator begin()
         {
-            return elements.begin();
+            return m_Elements.begin();
         }
         std::vector< BufferElement >::iterator end()
         {
-            return elements.end();
+            return m_Elements.end();
         }
         std::vector< BufferElement >::const_iterator begin() const
         {
-            return elements.cbegin();
+            return m_Elements.cbegin();
         }
         std::vector< BufferElement >::const_iterator end() const
         {
-            return elements.cend();
+            return m_Elements.cend();
         }
 
-        void addElement( const BufferElement &element )
+        void AddElement( const BufferElement &element )
         {
-            elements.push_back( element );
-            calculateOffsetAndStride();
+            m_Elements.push_back( element );
+            CalculateOffsetAndStride();
         }
 
       private:
-        void calculateOffsetAndStride()
+        void CalculateOffsetAndStride()
         {
             Uint32 offset{ 0 };
-            stride = 0;
-            for ( auto &element : elements )
+            m_Stride = 0;
+            for ( auto &element : m_Elements )
             {
-                element.offset = offset;
-                offset += element.size;
-                stride += element.size;
+                element.Offset = offset;
+                offset += element.Size;
+                m_Stride += element.Size;
             }
         }
 
       private:
-        std::vector< BufferElement > elements;
-        Uint32 stride = 0;
+        std::vector< BufferElement > m_Elements;
+        Uint32 m_Stride = 0;
     };
 
     enum class BufferUsage : Uint8

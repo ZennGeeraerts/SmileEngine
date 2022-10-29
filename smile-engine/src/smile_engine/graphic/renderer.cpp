@@ -1,216 +1,216 @@
 #include "smpch.h"
 #include "renderer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    RendererSettings Renderer::settings{};
-    RenderCollector *Renderer::renderCollector = new RenderCollector{};
+    RendererSettings Renderer::s_Settings{};
+    RenderCollector *Renderer::s_pRenderCollector = new RenderCollector{};
 
-    ShaderLibrary Renderer::shaderLibrary{};
+    ShaderLibrary Renderer::s_ShaderLibrary{};
 
-    Ref< Framebuffer > Renderer::finalSceneFramebuffer{};
+    Ref< Framebuffer > Renderer::s_pFinalSceneFramebuffer{};
 
-    Ref< RasterizerState > Renderer::wireframeRasterizerState{};
+    Ref< RasterizerState > Renderer::s_pWireframeRasterizerState{};
 
-    void Renderer::initialize()
+    void Renderer::Initialize()
     {
-        RenderCommand::initalize();
+        RenderCommand::Initalize();
 
-        DirectX::XMStoreFloat4x4( &renderCollector->viewInverseMatrix, DirectX::XMMatrixIdentity() );
-        DirectX::XMStoreFloat4x4( &renderCollector->viewProjectionMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewInverseMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
-        BufferLayout buffer_layout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
-        shaderLibrary.load( "assets/shaders/PosColNorm.fx", buffer_layout );
-        shaderLibrary.load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
+        BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
+        s_ShaderLibrary.Load( "assets/shaders/PosColNorm.fx", bufferLayout );
+        s_ShaderLibrary.Load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
         {
-            FramebufferData frame_buffer_data{};
-            frame_buffer_data.attachments = { { FramebufferTextureFormat::RGBA8, true },
+            FramebufferDescriptor frameBufferDesc{};
+            frameBufferDesc.Attachments = { { FramebufferTextureFormat::RGBA8, true },
                 FramebufferTextureFormat::Depth,
                 { FramebufferTextureFormat::RGBA8, true } };
-            frame_buffer_data.width = settings.width;
-            frame_buffer_data.height = settings.height;
-            frame_buffer_data.swapChainTarget = false;
+            frameBufferDesc.Width = s_Settings.Width;
+            frameBufferDesc.Height = s_Settings.Height;
+            frameBufferDesc.IsSwapChainTarget = false;
 
-            finalSceneFramebuffer = Framebuffer::create( frame_buffer_data );
-            finalSceneFramebuffer->setClearColor( { DirectX::Colors::DodgerBlue.f[0],
+            s_pFinalSceneFramebuffer = Framebuffer::Create( frameBufferDesc );
+            s_pFinalSceneFramebuffer->SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
                 DirectX::Colors::DodgerBlue.f[1],
                 DirectX::Colors::DodgerBlue.f[2],
                 DirectX::Colors::DodgerBlue.f[3] } );
         }
         {
-            RasterizerStateData rasterizerStateData{};
-            rasterizerStateData.cullMode = CullMode::None;
-            rasterizerStateData.fillMode = FillMode::WireFrame;
-            rasterizerStateData.depthClipEnable = true;
+            RasterizerStateDescriptor rasterizerStateDesc{};
+            rasterizerStateDesc.CullMode = CullMode::None;
+            rasterizerStateDesc.FillMode = FillMode::WireFrame;
+            rasterizerStateDesc.EnableDepthClip = true;
 
-            wireframeRasterizerState = RasterizerState::create( rasterizerStateData );
+            s_pWireframeRasterizerState = RasterizerState::Create( rasterizerStateDesc );
         }
     }
 
-    void Renderer::shutDown()
+    void Renderer::ShutDown()
     {
-        clearDrawlist();
-        SAFE_DELETE( renderCollector );
+        ClearDrawlist();
+        SAFE_DELETE( s_pRenderCollector );
 
-        RenderCommand::shutDown();
+        RenderCommand::ShutDown();
     }
 
-    void Renderer::setSettings( const RendererSettings &new_settings )
+    void Renderer::SetSettings( const RendererSettings &settings )
     {
-        settings = new_settings;
+        s_Settings = settings;
     }
 
-    void Renderer::onWindowResize( Uint32 width, Uint32 height )
+    void Renderer::OnWindowResize( Uint32 width, Uint32 height )
     {
-        RenderCommand::resizeWindow( 0, 0, width, height );
+        RenderCommand::ResizeWindow( 0, 0, width, height );
     }
 
-    void Renderer::resizeFramebuffer( Uint32 width, Uint32 height )
+    void Renderer::ResizeFramebuffer( Uint32 width, Uint32 height )
     {
-        settings.width = width;
-        settings.height = height;
+        s_Settings.Width = width;
+        s_Settings.Height = height;
 
-        finalSceneFramebuffer->resize( width, height );
+        s_pFinalSceneFramebuffer->Resize( width, height );
     }
 
-    void Renderer::beginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &camera_transform )
+    void Renderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
     {
-        auto camera_transform_mat = DirectX::XMLoadFloat4x4( &camera_transform );
-        auto projection_matrix_mat = DirectX::XMLoadFloat4x4( &camera.getProjectionMatrix() );
-        auto view_matrix_mat = DirectX::XMMatrixInverse( nullptr, camera_transform_mat );
-        auto view_projection_matrix_mat = view_matrix_mat * projection_matrix_mat;
+        auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
+        auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
+        auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
+        auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
 
-        DirectX::XMStoreFloat4x4( &renderCollector->viewProjectionMatrix, view_projection_matrix_mat );
-        DirectX::XMStoreFloat4x4( &renderCollector->viewInverseMatrix, camera_transform_mat );
+        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewInverseMatrix, cameraTransformMat );
     }
 
-    void Renderer::beginScene( const EditorCamera &editor_camera )
+    void Renderer::BeginScene( const EditorCamera &editorCamera )
     {
-        renderCollector->viewProjectionMatrix = editor_camera.getViewProjectionMatrix();
+        s_pRenderCollector->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
 
-        DirectX::XMFLOAT4X4 view_matrix = editor_camera.getViewMatrix();
-        auto view_matrix_mat = DirectX::XMLoadFloat4x4( &view_matrix );
+        DirectX::XMFLOAT4X4 viewMatrix = editorCamera.GetViewMatrix();
+        auto viewMatrixMat = DirectX::XMLoadFloat4x4( &viewMatrix );
         DirectX::XMStoreFloat4x4(
-            &renderCollector->viewInverseMatrix, DirectX::XMMatrixInverse( nullptr, view_matrix_mat ) );
+            &s_pRenderCollector->ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
     }
 
-    void Renderer::submit( const Ref< VertexBuffer > &vertexBuffer,
-        const Ref< IndexBuffer > &indexBuffer,
-        const Ref< Shader > &shader,
-        const DirectX::XMFLOAT4X4 &world_transform )
+    void Renderer::Submit( const Ref< VertexBuffer > &pVertexBuffer,
+        const Ref< IndexBuffer > &pIndexBuffer,
+        const Ref< Shader > &pShader,
+        const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        renderCollector->geometryDrawList.emplace_back(
-            DrawCommand{ vertexBuffer, indexBuffer, shader, world_transform } );
+        s_pRenderCollector->GeometryDrawList.emplace_back(
+            DrawCommand{ pVertexBuffer, pIndexBuffer, pShader, worldTransform } );
     }
 
-    void Renderer::submit( const scene::MeshRendererComponent &mesh_renderer_component,
-        const DirectX::XMFLOAT4X4 &world_transform )
+    void Renderer::Submit( const Scene::MeshRendererComponent &meshRendererComponent,
+        const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        submit( mesh_renderer_component.vertexBuffer,
-            mesh_renderer_component.indexBuffer,
-            mesh_renderer_component.shader,
-            world_transform );
+        Submit( meshRendererComponent.pVertexBuffer,
+            meshRendererComponent.pIndexBuffer,
+            meshRendererComponent.pShader,
+            worldTransform );
     }
 
-    void Renderer::submit( const scene::StaticMeshComponent &static_mesh_component, const DirectX::XMFLOAT4X4 &world_transform )
+    void Renderer::Submit( const Scene::StaticMeshComponent &staticMeshComponent, const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        for ( const auto &mesh : static_mesh_component.meshes )
+        for ( const auto &mesh : staticMeshComponent.pMeshes )
         {
-            submit( mesh->getVertexBuffer(),
-                mesh->getIndexBuffer(),
-                static_mesh_component.materials[0]->getShader(),
-                world_transform );
+            Submit( mesh->GetVertexBuffer(),
+                mesh->GetIndexBuffer(),
+                staticMeshComponent.pMaterials[0]->GetShader(),
+                worldTransform );
         }
     }
 
-    void Renderer::submit( const scene::SkinnedMeshComponent &skinned_mesh_component, const DirectX::XMFLOAT4X4 &world_transform )
+    void Renderer::Submit( const Scene::SkinnedMeshComponent &skinnedMeshComponent, const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        for ( const auto &mesh : skinned_mesh_component.meshes )
+        for ( const auto &mesh : skinnedMeshComponent.pMeshes )
         {
-            submit( mesh->getVertexBuffer(),
-                mesh->getIndexBuffer(),
-                skinned_mesh_component.materials[0]->getShader(),
-                world_transform );
+            Submit( mesh->GetVertexBuffer(),
+                mesh->GetIndexBuffer(),
+                skinnedMeshComponent.pMaterials[0]->GetShader(),
+                worldTransform );
         }
     }
 
-    void Renderer::submitWireframe( const scene::BoxColliderComponent &box_collider_component,
-        const DirectX::XMFLOAT4X4 &world_transform )
+    void Renderer::SubmitWireframe( const Scene::BoxColliderComponent &boxColliderComponent,
+        const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        DirectX::XMMATRIX final_transform_mat = DirectX::XMLoadFloat4x4( &world_transform );
-        DirectX::XMVECTOR translation_vec{};
-        DirectX::XMVECTOR rotation_vec{};
-        DirectX::XMVECTOR scale_vec{};
+        DirectX::XMMATRIX finalTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );
+        DirectX::XMVECTOR translationVec{};
+        DirectX::XMVECTOR rotationVec{};
+        DirectX::XMVECTOR scaleVec{};
 
-        DirectX::XMMatrixDecompose( &scale_vec, &rotation_vec, &translation_vec, final_transform_mat );
-        DirectX::XMVECTOR offset_vec = DirectX::XMLoadFloat3( &box_collider_component.offset );
-        auto final_translation_vec = DirectX::XMVectorAdd( translation_vec, offset_vec );
-        DirectX::XMVECTOR size_vec = DirectX::XMLoadFloat3( &box_collider_component.size );
+        DirectX::XMMatrixDecompose( &scaleVec, &rotationVec, &translationVec, finalTransformMat );
+        DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat3( &boxColliderComponent.Offset );
+        auto finalTranslationVec = DirectX::XMVectorAdd( translationVec, offsetVec );
+        DirectX::XMVECTOR sizeVec = DirectX::XMLoadFloat3( &boxColliderComponent.Size );
 
-        size_vec = DirectX::XMVectorDivide( size_vec, DirectX::XMVECTOR{ 2, 2, 2 } );
+        sizeVec = DirectX::XMVectorDivide( sizeVec, DirectX::XMVECTOR{ 2, 2, 2 } );
 
-        auto final_scale_vec = DirectX::XMVectorMultiply( scale_vec, size_vec );
-        final_transform_mat = DirectX::XMMatrixScalingFromVector( final_scale_vec ) *
-                            DirectX::XMMatrixRotationQuaternion( rotation_vec ) *
-                            DirectX::XMMatrixTranslationFromVector( final_translation_vec );
+        auto finalScaleVec = DirectX::XMVectorMultiply( scaleVec, sizeVec );
+        finalTransformMat = DirectX::XMMatrixScalingFromVector( finalScaleVec ) *
+                            DirectX::XMMatrixRotationQuaternion( rotationVec ) *
+                            DirectX::XMMatrixTranslationFromVector( finalTranslationVec );
 
-        DirectX::XMFLOAT4X4 final_transform{};
-        DirectX::XMStoreFloat4x4( &final_transform, final_transform_mat );
+        DirectX::XMFLOAT4X4 finalTransform{};
+        DirectX::XMStoreFloat4x4( &finalTransform, finalTransformMat );
 
-        DrawCommand draw_command{ box_collider_component.wireframeMesh->getVertexBuffer(),
-            box_collider_component.wireframeMesh->getIndexBuffer(),
-            shaderLibrary.get( "PosCol" ),
-            final_transform };
-        renderCollector->wireframeDrawList.emplace_back( draw_command );
+        DrawCommand drawCommand{ boxColliderComponent.pWireframeMesh->GetVertexBuffer(),
+            boxColliderComponent.pWireframeMesh->GetIndexBuffer(),
+            s_ShaderLibrary.Get( "PosCol" ),
+            finalTransform };
+        s_pRenderCollector->WireframeDrawList.emplace_back( drawCommand );
     }
 
-    void Renderer::onRender()
+    void Renderer::OnRender()
     {
-        finalSceneFramebuffer->clear();
-        finalSceneFramebuffer->bind();
+        s_pFinalSceneFramebuffer->Clear();
+        s_pFinalSceneFramebuffer->Bind();
 
-        for ( const DrawCommand &draw_command : renderCollector->geometryDrawList )
+        for ( const DrawCommand &drawCommand : s_pRenderCollector->GeometryDrawList )
         {
-            draw_command.vertexBuffer->bind();
-            draw_command.indexBuffer->bind();
-            draw_command.shader->bind();
+            drawCommand.pVertexBuffer->Bind();
+            drawCommand.pIndexBuffer->Bind();
+            drawCommand.pShader->Bind();
 
-            draw_command.shader->uploadMat4( "ViewProjection", renderCollector->viewProjectionMatrix );
-            draw_command.shader->uploadMat4( "World", draw_command.worldTransform );
-            draw_command.shader->uploadMat4( "ViewInverse", renderCollector->viewInverseMatrix );
+            drawCommand.pShader->UploadMat4( "ViewProjection", s_pRenderCollector->ViewProjectionMatrix );
+            drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
+            drawCommand.pShader->UploadMat4( "ViewInverse", s_pRenderCollector->ViewInverseMatrix );
 
-            RenderCommand::drawIndexed( draw_command.indexBuffer->getCount(), draw_command.shader );
+            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->GetCount(), drawCommand.pShader );
         }
 
-        wireframeRasterizerState->bind();
+        s_pWireframeRasterizerState->Bind();
 
-        for ( const DrawCommand &drawCommand : renderCollector->wireframeDrawList )
+        for ( const DrawCommand &drawCommand : s_pRenderCollector->WireframeDrawList )
         {
-            drawCommand.vertexBuffer->bind();
-            drawCommand.indexBuffer->bind();
-            drawCommand.shader->bind();
+            drawCommand.pVertexBuffer->Bind();
+            drawCommand.pIndexBuffer->Bind();
+            drawCommand.pShader->Bind();
 
-            drawCommand.shader->uploadMat4( "ViewProjection", renderCollector->viewProjectionMatrix );
-            drawCommand.shader->uploadMat4( "World", drawCommand.worldTransform );
+            drawCommand.pShader->UploadMat4( "ViewProjection", s_pRenderCollector->ViewProjectionMatrix );
+            drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             // drawCommand.pShader->UploadMat4("ViewInverse", m_pRenderCollector->ViewInverseMatrix);
 
-            RenderCommand::drawIndexed( drawCommand.indexBuffer->getCount(), drawCommand.shader );
+            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->GetCount(), drawCommand.pShader );
         }
 
-        wireframeRasterizerState->unbind();
+        s_pWireframeRasterizerState->Unbind();
 
-        finalSceneFramebuffer->unbind();
+        s_pFinalSceneFramebuffer->Unbind();
     }
 
-    void Renderer::endScene()
+    void Renderer::EndScene()
     {
-        clearDrawlist();
+        ClearDrawlist();
     }
 
-    void Renderer::clearDrawlist()
+    void Renderer::ClearDrawlist()
     {
-        renderCollector->geometryDrawList.clear();
-        renderCollector->wireframeDrawList.clear();
+        s_pRenderCollector->GeometryDrawList.clear();
+        s_pRenderCollector->WireframeDrawList.clear();
     }
 }

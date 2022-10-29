@@ -1,6 +1,6 @@
 #pragma once
 
-namespace smile::utils
+namespace Smile::Utils
 {
 
 }

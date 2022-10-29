@@ -2,17 +2,17 @@
 #include "smile_engine/graphic/graphics_context.h"
 #include <DeviceContext.cuh>
 
-namespace smile
+namespace Smile
 {
     class Window;
 }
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class SmileRasterContext final : public GraphicsContext
     {
       public:
-        SmileRasterContext( Window *window );
+        SmileRasterContext( Window *pWindow );
         virtual ~SmileRasterContext();
 
         SmileRasterContext( const SmileRasterContext & ) = delete;
@@ -20,26 +20,26 @@ namespace smile::graphic
         SmileRasterContext &operator=( const SmileRasterContext & ) = delete;
         SmileRasterContext &operator=( SmileRasterContext && ) = delete;
 
-        virtual void init() override;
-        virtual void present() override;
+        virtual void Initialize() override;
+        virtual void Present() override;
 
         Raster::DeviceContext *getDeviceContext() const
         {
-            return deviceContext;
+            return m_pDeviceContext;
         }
 
       private:
-        Window *window = nullptr;
+        Window *m_pWindow = nullptr;
 
-        Raster::DeviceContext *deviceContext = nullptr;
+        Raster::DeviceContext *m_pDeviceContext = nullptr;
 
-        HDC hdc = nullptr;
-        HBITMAP bitmap = nullptr;
-        HBITMAP bitmapOld = nullptr;
-        BITMAPINFO bitmapInfo{};
+        HDC m_HDC = nullptr;
+        HBITMAP m_Bitmap = nullptr;
+        HBITMAP m_BitmapOld = nullptr;
+        BITMAPINFO m_BitmapInfo{};
 
-        Uint8 *colorBuffer{};
-        Raster::BufferID framebuffer = SMR_INVALID_BUFFER_ID;
+        Uint8 *m_pColorBuffer{};
+        Raster::BufferID m_Framebuffer = SMR_INVALID_BUFFER_ID;
 
         friend class SmileRasterRendererAPI;
     };

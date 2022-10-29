@@ -1,13 +1,13 @@
 #pragma once
 #include "smile_engine/graphic/shader/buffer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     struct IndexBufferDescriptor final
     {
-        Uint32 *indices = nullptr;
-        Uint32 count = 0;
-        BufferUsage usage = BufferUsage::Default;
+        Uint32 *pIndices = nullptr;
+        Uint32 Count = 0;
+        BufferUsage Usage = BufferUsage::Default;
     };
 
     class IndexBuffer
@@ -15,10 +15,10 @@ namespace smile::graphic
       public:
         virtual ~IndexBuffer() = default;
 
-        virtual void bind() const = 0;
-        virtual void unbind() const = 0;
-        virtual Uint32 getCount() const = 0;
+        virtual void Bind() const = 0;
+        virtual void Unbind() const = 0;
+        virtual Uint32 GetCount() const = 0;
 
-        static IndexBuffer *create( const IndexBufferDescriptor &index_buffer_desc );
+        static IndexBuffer *Create( const IndexBufferDescriptor &indexBufferDesc );
     };
 }

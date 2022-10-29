@@ -9,21 +9,21 @@ extern "C"
     typedef struct _MonoMethod MonoMethod;
 }
 
-namespace smile::scripting
+namespace Smile::Scripting
 {
     class ScriptEngine final
     {
       public:
-        static void initialize();
-        static void shutDown();
+        static void Initialize();
+        static void ShutDown();
 
-        static void loadAssembly( const std::filesystem::path &file_path );
+        static void LoadAssembly( const std::filesystem::path &filePath );
 
       private:
-        static void initializeMono();
-        static void shutDownMono();
+        static void InitializeMono();
+        static void ShutDownMono();
 
-        static MonoObject *instantiateClass( MonoClass *mono_class );
+        static MonoObject *InstantiateClass( MonoClass *pMonoClass );
 
         friend class ScriptClass;
     };
@@ -32,15 +32,15 @@ namespace smile::scripting
     {
       public:
         ScriptClass() = default;
-        ScriptClass( const std::string &class_namespace, const std::string &class_name );
+        ScriptClass( const std::string &classNamespace, const std::string &className );
 
-        MonoObject *instantiate();
-        MonoMethod *getMethod( const std::string &name, int parameter_count );
-        MonoObject *invokeMethod( MonoObject *instance, MonoMethod *method, void **params = nullptr );
+        MonoObject *Instantiate();
+        MonoMethod *GetMethod( const std::string &name, int parameterCount );
+        MonoObject *InvokeMethod( MonoObject *pInstance, MonoMethod *pMethod, void **ppParams = nullptr );
 
       private:
-        std::string classNamespace;
-        std::string className;
-        MonoClass *monoClass = nullptr;
+        std::string m_ClassNamespace;
+        std::string m_ClassName;
+        MonoClass *m_pMonoClass = nullptr;
     };
 }

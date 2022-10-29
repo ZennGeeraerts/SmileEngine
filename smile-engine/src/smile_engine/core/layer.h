@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include "smile_engine/core/events/event.h"
 
-namespace smile
+namespace Smile
 {
     class Layer
     {
@@ -11,28 +11,28 @@ namespace smile
         Layer( const std::string &name = "Layer" );
         virtual ~Layer();
 
-        virtual void onAttach()
+        virtual void OnAttach()
         {
         }
-        virtual void onDetach()
+        virtual void OnDetach()
         {
         }
-        virtual void onUpdate( Timestep delta_time )
+        virtual void OnUpdate( Timestep deltaTime )
         {
         }
-        virtual void onImGuiRender()
+        virtual void OnImGuiRender()
         {
         }
-        virtual void onEvent( Event &event )
+        virtual void OnEvent( Event &event )
         {
         }
 
-        inline const std::string &getName() const
+        inline const std::string &GetName() const
         {
-            return debugName;
+            return m_DebugName;
         }
 
       protected:
-        std::string debugName;
+        std::string m_DebugName;
     };
 }

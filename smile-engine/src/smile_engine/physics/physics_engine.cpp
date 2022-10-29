@@ -8,90 +8,90 @@
 
 #include <PxPhysicsAPI.h>
 
-namespace smile::physics
+namespace Smile::Physics
 {
-    std::unordered_map< UUID, Ref< PhysicsActor > > PhysicsEngine::actorMap{};
-    PhysicsSettings PhysicsEngine::settings{};
-    PhysicsEngineData PhysicsEngine::physicsEngineData{};
+    std::unordered_map< UUID, Ref< PhysicsActor > > PhysicsEngine::s_ActorMap{};
+    PhysicsSettings PhysicsEngine::s_Settings{};
+    PhysicsEngineData PhysicsEngine::s_PhysicsEngineData{};
 
-    static physx::PxScene *scene;
+    static physx::PxScene *s_pScene;
 
-    static physx::PxDefaultAllocator allocatorCallback;
-    static physx::PxDefaultCpuDispatcher *defaultCpuDispatcher{};
-    static physx::PxFoundation *foundation{};
-    static physx::PxPvd *pvd{};
-    static physx::PxPhysics *physics{};
-    static physx::PxCooking *cookingFactory{};
+    static physx::PxDefaultAllocator s_AllocatorCallback;
+    static physx::PxDefaultCpuDispatcher *s_pDefaultCpuDispatcher{};
+    static physx::PxFoundation *s_pFoundation{};
+    static physx::PxPvd *s_pPvd{};
+    static physx::PxPhysics *s_pPhysics{};
+    static physx::PxCooking *s_pCookingFactory{};
 
-    static PhysicsErrorCallback errorCallback;
-    static PhysicsAssertHandler assertHandler{};
-    static ContactListener contactListener{};
+    static PhysicsErrorCallback s_ErrorCallback;
+    static PhysicsAssertHandler s_AssertHandler{};
+    static ContactListener s_ContactListener{};
 
-    void PhysicsEngine::initialize()
+    void PhysicsEngine::Initialize()
     {
-        SM_ASSERT( !foundation, "PhysicsEngine::initialize > Physics Engine is already initialized" );
+        SM_ASSERT( !s_pFoundation, "PhysicsEngine::Initialize > Physics Engine is already initialized" );
 
         // Setup the foundation
-        foundation = PxCreateFoundation( PX_PHYSICS_VERSION, allocatorCallback, errorCallback );
-        SM_ASSERT( foundation, "PhysicsEngine::initialize > Failed to create PhysX foundation" );
+        s_pFoundation = PxCreateFoundation( PX_PHYSICS_VERSION, s_AllocatorCallback, s_ErrorCallback );
+        SM_ASSERT( s_pFoundation, "PhysicsEngine::Initialize > Failed to create PhysX foundation" );
 
         // Create a PDV instance
-        pvd = PxCreatePvd( *foundation );
-        if ( pvd )
+        s_pPvd = PxCreatePvd( *s_pFoundation );
+        if ( s_pPvd )
         {
-            physx::PxPvdTransport *transport = physx::PxDefaultPvdSocketTransportCreate( "localhost", 0001, 10 );
-            pvd->connect( *transport, physx::PxPvdInstrumentationFlag::eALL );
+            physx::PxPvdTransport *pTransport = physx::PxDefaultPvdSocketTransportCreate( "localhost", 0001, 10 );
+            s_pPvd->connect( *pTransport, physx::PxPvdInstrumentationFlag::eALL );
         }
 
         // Create an instance of the PhysX physics SDK
         physx::PxTolerancesScale scale = physx::PxTolerancesScale();
         scale.length = 10;
-        physics = PxCreatePhysics( PX_PHYSICS_VERSION, *foundation, scale, true, pvd );
-        SM_ASSERT( physics, "PhysicsEngine::initialize > Failed to create PhysX Physics" );
+        s_pPhysics = PxCreatePhysics( PX_PHYSICS_VERSION, *s_pFoundation, scale, true, s_pPvd );
+        SM_ASSERT( s_pPhysics, "PhysicsEngine::Initialize > Failed to create PhysX Physics" );
 
         // Create the cooking factory
-        cookingFactory = PxCreateCooking( PX_PHYSICS_VERSION, *foundation, physics->getTolerancesScale() );
-        SM_ASSERT( cookingFactory, "PhysicsEngine::initialize > Failed to create PhysX Cooking" );
-        defaultCpuDispatcher = physx::PxDefaultCpuDispatcherCreate( 1 );
-        PxSetAssertHandler( assertHandler );
+        s_pCookingFactory = PxCreateCooking( PX_PHYSICS_VERSION, *s_pFoundation, s_pPhysics->getTolerancesScale() );
+        SM_ASSERT( s_pCookingFactory, "PhysicsEngine::Initialize > Failed to create PhysX Cooking" );
+        s_pDefaultCpuDispatcher = physx::PxDefaultCpuDispatcherCreate( 1 );
+        PxSetAssertHandler( s_AssertHandler );
 
         // Create default physics material
-        settings.defaultPhysicsMaterial = createRef< PhysicsMaterial >();
-        settings.defaultPhysicsMaterial->staticFriction = 0.3f;
-        settings.defaultPhysicsMaterial->dynamicFriction = 0.3f;
-        settings.defaultPhysicsMaterial->restitution = 0.4f;
+        s_Settings.pDefaultPhysicsMaterial = CreateRef< PhysicsMaterial >();
+        s_Settings.pDefaultPhysicsMaterial->StaticFriction = 0.3f;
+        s_Settings.pDefaultPhysicsMaterial->DynamicFriction = 0.3f;
+        s_Settings.pDefaultPhysicsMaterial->Restitution = 0.4f;
 
         SM_LOG_INFO( "Initialized Physics Engine" );
     }
 
-    void PhysicsEngine::shutDown()
+    void PhysicsEngine::ShutDown()
     {
-        if ( scene )
-            destroyScene();
+        if ( s_pScene )
+            DestroyScene();
 
-        if ( cookingFactory )
+        if ( s_pCookingFactory )
         {
-            cookingFactory->release();
-            cookingFactory = nullptr;
+            s_pCookingFactory->release();
+            s_pCookingFactory = nullptr;
         }
-        if ( physics )
+        if ( s_pPhysics )
         {
-            physics->release();
-            physics = nullptr;
+            s_pPhysics->release();
+            s_pPhysics = nullptr;
         }
-        if ( defaultCpuDispatcher )
+        if ( s_pDefaultCpuDispatcher )
         {
-            defaultCpuDispatcher->release();
-            defaultCpuDispatcher = nullptr;
+            s_pDefaultCpuDispatcher->release();
+            s_pDefaultCpuDispatcher = nullptr;
         }
-        if ( foundation )
+        if ( s_pFoundation )
         {
-            foundation->release();
-            foundation = nullptr;
+            s_pFoundation->release();
+            s_pFoundation = nullptr;
         }
     }
 
-    static physx::PxBroadPhaseType::Enum smileToPhysXBroadPhaseType( BroadPhaseType type )
+    static physx::PxBroadPhaseType::Enum SmileToPhysXBroadPhaseType( BroadPhaseType type )
     {
         switch ( type )
         {
@@ -106,7 +106,7 @@ namespace smile::physics
         }
     }
 
-    static physx::PxFrictionType::Enum smileToPhysXFrictionType( FrictionType type )
+    static physx::PxFrictionType::Enum SmileToPhysXFrictionType( FrictionType type )
     {
         switch ( type )
         {
@@ -121,121 +121,121 @@ namespace smile::physics
         }
     }
 
-    void PhysicsEngine::createScene()
+    void PhysicsEngine::CreateScene()
     {
-        SM_ASSERT( !scene, "PhysicsEngine::createScene > Scene already has a physics scene" );
+        SM_ASSERT( !s_pScene, "PhysicsEngine::CreateScene > Scene already has a physics scene" );
 
-        physx::PxSceneDesc scene_desc{ physics->getTolerancesScale() };
-        scene_desc.gravity = utils::convertToPhysXVector( settings.gravity );
-        scene_desc.filterShader = utils::smileSimulationFilterShader;
-        scene_desc.cpuDispatcher = defaultCpuDispatcher;
-        scene_desc.simulationEventCallback = &contactListener;
-        scene_desc.broadPhaseType = smileToPhysXBroadPhaseType( settings.broadPhaseAlgorithm );
-        scene_desc.frictionType = smileToPhysXFrictionType( settings.frictionModel );
-        scene_desc.flags |= physx::PxSceneFlag::eENABLE_CCD; // Enable continuous collision detection
+        physx::PxSceneDesc sceneDesc{ s_pPhysics->getTolerancesScale() };
+        sceneDesc.gravity = Utils::ConvertToPhysXVector( s_Settings.Gravity );
+        sceneDesc.filterShader = Utils::SmileSimulationFilterShader;
+        sceneDesc.cpuDispatcher = s_pDefaultCpuDispatcher;
+        sceneDesc.simulationEventCallback = &s_ContactListener;
+        sceneDesc.broadPhaseType = SmileToPhysXBroadPhaseType( s_Settings.BroadPhaseAlgorithm );
+        sceneDesc.frictionType = SmileToPhysXFrictionType( s_Settings.FrictionModel );
+        sceneDesc.flags |= physx::PxSceneFlag::eENABLE_CCD; // Enable continuous collision detection
 
-        SM_ASSERT( scene_desc.isValid(), "PhysicsEngine::createScene > Scene descriptor is not valid" );
-        scene = physics->createScene( scene_desc );
+        SM_ASSERT( sceneDesc.isValid(), "PhysicsEngine::CreateScene > Scene descriptor is not valid" );
+        s_pScene = s_pPhysics->createScene( sceneDesc );
 
-        if ( settings.broadPhaseAlgorithm != BroadPhaseType::AutomaticBoxPrune )
+        if ( s_Settings.BroadPhaseAlgorithm != BroadPhaseType::AutomaticBoxPrune )
         {
-            physx::PxBounds3 *region_bounds = nullptr;
-            physx::PxBounds3 global_bounds{ utils::convertToPhysXVector( settings.worldBoundsMin ),
-                utils::convertToPhysXVector( settings.worldBoundsMax ) };
-            Uint32 region_count = physx::PxBroadPhaseExt::createRegionsFromWorldBounds(
-                region_bounds, global_bounds, settings.worldBoundsSubdivisions );
+            physx::PxBounds3 *pRegionBounds = nullptr;
+            physx::PxBounds3 globalBounds{ Utils::ConvertToPhysXVector( s_Settings.WorldBoundsMin ),
+                Utils::ConvertToPhysXVector( s_Settings.WorldBoundsMax ) };
+            Uint32 regionCount = physx::PxBroadPhaseExt::createRegionsFromWorldBounds(
+                pRegionBounds, globalBounds, s_Settings.WorldBoundsSubdivisions );
 
-            for ( Uint32 i{}; i < region_count; ++i )
+            for ( Uint32 i{}; i < regionCount; ++i )
             {
                 physx::PxBroadPhaseRegion region{};
-                region.bounds = region_bounds[i];
-                scene->addBroadPhaseRegion( region );
+                region.bounds = pRegionBounds[i];
+                s_pScene->addBroadPhaseRegion( region );
             }
         }
     }
 
-    void PhysicsEngine::destroyScene()
+    void PhysicsEngine::DestroyScene()
     {
-        SM_ASSERT( scene, "PhysicsEngine::destroyScene > Scene is not valid" );
+        SM_ASSERT( s_pScene, "PhysicsEngine::destroyScene > Scene is not valid" );
 
-        for ( auto &actor : actorMap )
+        for ( auto &actor : s_ActorMap )
             actor.second.reset();
 
-        actorMap.clear();
+        s_ActorMap.clear();
 
-        scene->release();
-        scene = nullptr;
+        s_pScene->release();
+        s_pScene = nullptr;
     }
 
-    Ref< PhysicsActor > PhysicsEngine::createActor( scene::Entity entity )
+    Ref< PhysicsActor > PhysicsEngine::CreateActor( Scene::Entity entity )
     {
-        SM_ASSERT( scene, "PhysicsEngine::createActor > Scene is not valid" );
+        SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
 
-        Ref< PhysicsActor > actor = createRef< PhysicsActor >( entity );
-        actorMap[entity.getUUID()] = actor;
-        scene->addActor( *actor->rigidActor );
-        return actor;
+        Ref< PhysicsActor > pActor = CreateRef< PhysicsActor >( entity );
+        s_ActorMap[entity.GetUUID()] = pActor;
+        s_pScene->addActor( *pActor->m_pRigidActor );
+        return pActor;
     }
 
-    Ref< PhysicsActor > PhysicsEngine::getActorOfEntity( scene::Entity entity )
+    Ref< PhysicsActor > PhysicsEngine::GetActorOfEntity( Scene::Entity entity )
     {
-        auto it = actorMap.find( entity.getUUID() );
-        if ( it != actorMap.end() )
+        auto it = s_ActorMap.find( entity.GetUUID() );
+        if ( it != s_ActorMap.end() )
             return ( *it ).second;
 
         return nullptr;
     }
 
-    void PhysicsEngine::simulate( Timestep delta_time )
+    void PhysicsEngine::Simulate( Timestep deltaTime )
     {
-        if ( advance( delta_time ) )
+        if ( Advance( deltaTime ) )
         {
-            for ( const auto &actor : actorMap )
-                actor.second->updateTransform();
+            for ( const auto &actor : s_ActorMap )
+                actor.second->UpdateTransform();
         }
     }
 
-    bool PhysicsEngine::advance( Timestep delta_time )
+    bool PhysicsEngine::Advance( Timestep deltaTime )
     {
-        substepStrategy( delta_time );
+        SubstepStrategy( deltaTime );
 
-        if ( physicsEngineData.substepCount == 0 )
+        if ( s_PhysicsEngineData.SubstepCount == 0 )
             return false;
 
-        for ( Uint32 i{}; i < physicsEngineData.substepCount; ++i )
+        for ( Uint32 i{}; i < s_PhysicsEngineData.SubstepCount; ++i )
         {
-            scene->simulate( settings.fixedTimestep );
-            scene->fetchResults( true );
+            s_pScene->simulate( s_Settings.FixedTimestep );
+            s_pScene->fetchResults( true );
         }
 
         return true;
     }
 
-    void PhysicsEngine::substepStrategy( Timestep delta_time )
+    void PhysicsEngine::SubstepStrategy( Timestep deltaTime )
     {
-        if ( physicsEngineData.accumulator > settings.fixedTimestep )
-            physicsEngineData.accumulator = 0.0f;
+        if ( s_PhysicsEngineData.Accumulator > s_Settings.FixedTimestep )
+            s_PhysicsEngineData.Accumulator = 0.0f;
 
-        physicsEngineData.accumulator += delta_time;
-        if ( physicsEngineData.accumulator < settings.fixedTimestep )
+        s_PhysicsEngineData.Accumulator += deltaTime;
+        if ( s_PhysicsEngineData.Accumulator < s_Settings.FixedTimestep )
         {
-            physicsEngineData.substepCount = 0;
+            s_PhysicsEngineData.SubstepCount = 0;
             return;
         }
 
-        physicsEngineData.substepCount =
-            std::min( static_cast< Uint32 >( physicsEngineData.accumulator / settings.fixedTimestep ),
-                settings.maxSubsteps );
-        physicsEngineData.accumulator -= physicsEngineData.substepCount * settings.fixedTimestep;
+        s_PhysicsEngineData.SubstepCount =
+            std::min( static_cast< Uint32 >( s_PhysicsEngineData.Accumulator / s_Settings.FixedTimestep ),
+                s_Settings.MaxSubsteps );
+        s_PhysicsEngineData.Accumulator -= s_PhysicsEngineData.SubstepCount * s_Settings.FixedTimestep;
     }
 
-    physx::PxPhysics *PhysicsEngine::getPhysics()
+    physx::PxPhysics *PhysicsEngine::GetPhysics()
     {
-        return physics;
+        return s_pPhysics;
     }
 
-    physx::PxAllocatorCallback &PhysicsEngine::getAllocatorCallback()
+    physx::PxAllocatorCallback &PhysicsEngine::GetAllocatorCallback()
     {
-        return allocatorCallback;
+        return s_AllocatorCallback;
     }
 }

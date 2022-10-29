@@ -6,121 +6,121 @@
 
 #include "directx11_diagnostics.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    void DirectX11RendererAPI::initialize()
+    void DirectX11RendererAPI::Initialize()
     {
-        directX11Context =
-            static_cast< DirectX11Context * >( Application::getInstance().getWindow().getGraphicsContext() );
-        SM_ASSERT( directX11Context, "DirectX11RendererAPI > RenderingContext is not a DirectX11Context" );
+        m_pDirectX11Context =
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
+        SM_ASSERT( m_pDirectX11Context, "DirectX11RendererAPI > RenderingContext is not a DirectX11Context" );
     }
 
-    void DirectX11RendererAPI::resizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
+    void DirectX11RendererAPI::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
     {
-        if ( !directX11Context->swapChain || !directX11Context->device ||
-             !directX11Context->deviceContext )
+        if ( !m_pDirectX11Context->m_pSwapChain || !m_pDirectX11Context->m_pDevice ||
+             !m_pDirectX11Context->m_pDeviceContext )
             return;
 
-        directX11Context->deviceContext->OMSetRenderTargets( 0, 0, 0 );
+        m_pDirectX11Context->m_pDeviceContext->OMSetRenderTargets( 0, 0, 0 );
 
-        D3D11_TEXTURE2D_DESC depth_stencil_desc{};
-        directX11Context->depthStencilBuffer->GetDesc( &depth_stencil_desc );
-        depth_stencil_desc.Width = width;
-        depth_stencil_desc.Height = height;
+        D3D11_TEXTURE2D_DESC depthStencilDesc{};
+        m_pDirectX11Context->m_pDepthStencilBuffer->GetDesc( &depthStencilDesc );
+        depthStencilDesc.Width = width;
+        depthStencilDesc.Height = height;
 
-        D3D11_DEPTH_STENCIL_VIEW_DESC depth_stencil_view_desc{};
-        directX11Context->depthStencilView->GetDesc( &depth_stencil_view_desc );
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+        m_pDirectX11Context->m_pDepthStencilView->GetDesc( &depthStencilViewDesc );
 
-        SAFE_RELEASE( directX11Context->currentRenderTarget );
-        SAFE_RELEASE( directX11Context->renderTargetBuffer );
-        SAFE_RELEASE( directX11Context->depthStencilView );
-        SAFE_RELEASE( directX11Context->depthStencilBuffer );
+        SAFE_RELEASE( m_pDirectX11Context->m_pCurrentRenderTarget );
+        SAFE_RELEASE( m_pDirectX11Context->m_pRenderTargetBuffer );
+        SAFE_RELEASE( m_pDirectX11Context->m_pDepthStencilView );
+        SAFE_RELEASE( m_pDirectX11Context->m_pDepthStencilBuffer );
 
-        HRESULT result = directX11Context->swapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
+        HRESULT result = m_pDirectX11Context->m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::resizeWindow > Failed to resize buffers: %ls", getDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to resize buffers: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
         // Depth stencil
-        result = directX11Context->device->CreateTexture2D(
-            &depth_stencil_desc, 0, &directX11Context->depthStencilBuffer );
+        result = m_pDirectX11Context->m_pDevice->CreateTexture2D(
+            &depthStencilDesc, 0, &m_pDirectX11Context->m_pDepthStencilBuffer );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::resizeWindow > Failed to create depth stencil buffer: %ls", getDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil buffer: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
-        result = directX11Context->device->CreateDepthStencilView( directX11Context->depthStencilBuffer,
-            &depth_stencil_view_desc,
-            &directX11Context->depthStencilView );
+        result = m_pDirectX11Context->m_pDevice->CreateDepthStencilView( m_pDirectX11Context->m_pDepthStencilBuffer,
+            &depthStencilViewDesc,
+            &m_pDirectX11Context->m_pDepthStencilView );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::resizeWindow > Failed to create depth stencil view: %ls", getDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil view: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
         // Render target
-        result = directX11Context->swapChain->GetBuffer( 0,
+        result = m_pDirectX11Context->m_pSwapChain->GetBuffer( 0,
             __uuidof( ID3D11Texture2D ),
-            reinterpret_cast< void ** >( &directX11Context->renderTargetBuffer ) );
+            reinterpret_cast< void ** >( &m_pDirectX11Context->m_pRenderTargetBuffer ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::resizeWindow > Failed to get buffer from swap chain: %ls", getDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to get buffer from swap chain: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
-        result = directX11Context->device->CreateRenderTargetView(
-            directX11Context->renderTargetBuffer, 0, &directX11Context->currentRenderTarget );
+        result = m_pDirectX11Context->m_pDevice->CreateRenderTargetView(
+            m_pDirectX11Context->m_pRenderTargetBuffer, 0, &m_pDirectX11Context->m_pCurrentRenderTarget );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::resizeWindow > Failed to create render target view: %ls", getDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create render target view: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
 
-        directX11Context->deviceContext->OMSetRenderTargets(
-            1, &directX11Context->currentRenderTarget, directX11Context->depthStencilView );
+        m_pDirectX11Context->m_pDeviceContext->OMSetRenderTargets(
+            1, &m_pDirectX11Context->m_pCurrentRenderTarget, m_pDirectX11Context->m_pDepthStencilView );
 
-        directX11Context->viewport.Width = static_cast< FLOAT >( width );
-        directX11Context->viewport.Height = static_cast< FLOAT >( height );
-        directX11Context->viewport.TopLeftX = static_cast< FLOAT >( x );
-        directX11Context->viewport.TopLeftY = static_cast< FLOAT >( y );
+        m_pDirectX11Context->m_Viewport.Width = static_cast< FLOAT >( width );
+        m_pDirectX11Context->m_Viewport.Height = static_cast< FLOAT >( height );
+        m_pDirectX11Context->m_Viewport.TopLeftX = static_cast< FLOAT >( x );
+        m_pDirectX11Context->m_Viewport.TopLeftY = static_cast< FLOAT >( y );
 
-        directX11Context->deviceContext->RSSetViewports( 1, &directX11Context->viewport );
+        m_pDirectX11Context->m_pDeviceContext->RSSetViewports( 1, &m_pDirectX11Context->m_Viewport );
     }
 
-    void DirectX11RendererAPI::setClearColor( const DirectX::XMFLOAT4 &color )
+    void DirectX11RendererAPI::SetClearColor( const DirectX::XMFLOAT4 &color )
     {
-        clearColor = color;
+        m_ClearColor = color;
     }
 
-    void DirectX11RendererAPI::clear()
+    void DirectX11RendererAPI::Clear()
     {
-        directX11Context->deviceContext->OMSetRenderTargets(
-            1, &directX11Context->currentRenderTarget, directX11Context->depthStencilView );
+        m_pDirectX11Context->m_pDeviceContext->OMSetRenderTargets(
+            1, &m_pDirectX11Context->m_pCurrentRenderTarget, m_pDirectX11Context->m_pDepthStencilView );
 
-        const float *clear_color = reinterpret_cast< const float * >( &clearColor );
-        directX11Context->deviceContext->ClearRenderTargetView(
-            directX11Context->currentRenderTarget, clear_color );
-        directX11Context->deviceContext->ClearDepthStencilView(
-            directX11Context->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
+        const float *pClearColor = reinterpret_cast< const float * >( &m_ClearColor );
+        m_pDirectX11Context->m_pDeviceContext->ClearRenderTargetView(
+            m_pDirectX11Context->m_pCurrentRenderTarget, pClearColor );
+        m_pDirectX11Context->m_pDeviceContext->ClearDepthStencilView(
+            m_pDirectX11Context->m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11RendererAPI::drawIndexed( Uint32 index_count, const Ref< Shader > &shader )
+    void DirectX11RendererAPI::DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader )
     {
-        auto directX11_shader = static_cast< DirectX11Shader * >( shader.get() );
-        SM_ASSERT( directX11_shader, "DirectX11RendererAPI::drawIndexed > Shader is not a DirectX11Shader" );
+        auto pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
+        SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::DrawIndexed > Shader is not a DirectX11Shader" );
 
-        directX11Context->deviceContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+        m_pDirectX11Context->m_pDeviceContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-        auto technique = directX11_shader->getTechnique();
-        D3DX11_TECHNIQUE_DESC tech_desc{};
-        technique->GetDesc( &tech_desc );
-        for ( UINT p{}; p < tech_desc.Passes; ++p )
+        auto pTechnique = pDirectX11Shader->GetTechnique();
+        D3DX11_TECHNIQUE_DESC techDesc{};
+        pTechnique->GetDesc( &techDesc );
+        for ( UINT p{}; p < techDesc.Passes; ++p )
         {
-            technique->GetPassByIndex( p )->Apply( 0, directX11Context->deviceContext );
-            directX11Context->deviceContext->DrawIndexed( index_count, 0, 0 );
+            pTechnique->GetPassByIndex( p )->Apply( 0, m_pDirectX11Context->m_pDeviceContext );
+            m_pDirectX11Context->m_pDeviceContext->DrawIndexed( indexCount, 0, 0 );
         }
     }
 }

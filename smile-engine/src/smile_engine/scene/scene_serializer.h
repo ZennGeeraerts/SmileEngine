@@ -2,22 +2,22 @@
 
 #include "scene.h"
 
-namespace smile::scene
+namespace Smile::Scene
 {
     class SceneSerializer final
     {
       public:
-        SceneSerializer( const Ref< Scene > &scene );
+        SceneSerializer( const Ref< Scene > &pScene );
 
-        void serialize( const std::string &file_path );
+        void Serialize( const std::string &filePath );
         // Serializes the scene to a binary format
-        void serializeRuntime( const std::string &file_path );
+        void SerializeRuntime( const std::string &filePath );
 
-        bool deserialize( const std::string &file_path );
+        bool Deserialize( const std::string &filePath );
         // Deserializes the scene from a binary format
-        bool deserializeRuntime( const std::string &file_path );
+        bool DeserializeRuntime( const std::string &filePath );
 
       private:
-        Ref< Scene > scene = nullptr;
+        Ref< Scene > m_pScene = nullptr;
     };
 }

@@ -3,14 +3,14 @@
 
 #include "smile_editor_layer.h"
 
-namespace smile
+namespace Smile
 {
     class SmileEditor final : public Application
     {
       public:
         SmileEditor( const ApplicationDescriptor &descriptor ) : Application{ descriptor }
         {
-            pushLayer( new SmileEditorLayer{} );
+            PushLayer( new SmileEditorLayer{} );
         }
 
         ~SmileEditor()
@@ -18,12 +18,12 @@ namespace smile
         }
     };
 
-    Application *createApplication( ApplicationCommandLineArgs command_line_args )
+    Application *CreateApplication( ApplicationCommandLineArgs commandLineArgs )
     {
         ApplicationDescriptor descriptor{};
-        descriptor.name = "Smile Editor";
-        descriptor.workingDirectory = "../smile-editor";
-        descriptor.commandLineArgs = command_line_args;
+        descriptor.Name = "Smile Editor";
+        descriptor.WorkingDirectory = "../smile-editor";
+        descriptor.CommandLineArgs = commandLineArgs;
 
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes

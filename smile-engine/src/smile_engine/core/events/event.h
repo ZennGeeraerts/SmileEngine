@@ -2,7 +2,7 @@
 #include "smpch.h"
 #include "smile_engine/core/core.h"
 
-namespace smile
+namespace Smile
 {
     enum class EventType
     {
@@ -32,21 +32,21 @@ namespace smile
     };
 
 #define EVENT_CLASS_TYPE( type )                                                                                       \
-    static EventType getStaticType()                                                                                   \
+    static EventType GetStaticType()                                                                                   \
     {                                                                                                                  \
         return EventType::##type;                                                                                      \
     }                                                                                                                  \
-    virtual EventType getEventType() const override                                                                    \
+    virtual EventType GetEventType() const override                                                                    \
     {                                                                                                                  \
-        return getStaticType();                                                                                        \
+        return GetStaticType();                                                                                        \
     }                                                                                                                  \
-    virtual const char *getName() const override                                                                       \
+    virtual const char *GetName() const override                                                                       \
     {                                                                                                                  \
         return #type;                                                                                                  \
     }
 
 #define EVENT_CLASS_CATEGORY( category )                                                                               \
-    virtual int getCategoryFlags() const override                                                                      \
+    virtual int GetCategoryFlags() const override                                                                      \
     {                                                                                                                  \
         return category;                                                                                               \
     }
@@ -60,24 +60,24 @@ namespace smile
         virtual ~Event() = default;
 
         // GetName and ToString is not optimal and should only be used for debugging, not in the actual game
-        virtual EventType getEventType() const = 0;
-        virtual const char *getName() const = 0;
-        virtual int getCategoryFlags() const = 0;
-        virtual std::string toString() const
+        virtual EventType GetEventType() const = 0;
+        virtual const char *GetName() const = 0;
+        virtual int GetCategoryFlags() const = 0;
+        virtual std::string ToString() const
         {
-            return getName();
+            return GetName();
         }
 
 #pragma warning( push )
 #pragma warning( disable : 26812 )
-        inline bool isInCategory( EventCategory category )
+        inline bool IsInCategory( EventCategory category )
         {
-            return getCategoryFlags() & category;
+            return GetCategoryFlags() & category;
         }
 #pragma warning( pop )
 
       protected:
-        bool isHandled = false;
+        bool m_IsHandled = false;
     };
 
     class EventDispatcher
@@ -86,28 +86,28 @@ namespace smile
         using EventFunction = std::function< bool( ParameterType & ) >;
 
       public:
-        EventDispatcher( Event &event ) : event( event )
+        EventDispatcher( Event &event ) : m_Event( event )
         {
         }
 
         // Bind events to functions
         template < typename ParameterType >
-        bool dispatch( EventFunction< ParameterType > event_function )
+        bool Dispatch( EventFunction< ParameterType > eventFunction )
         {
-            if ( event.getEventType() == ParameterType::getStaticType() )
+            if ( m_Event.GetEventType() == ParameterType::GetStaticType() )
             {
-                event.isHandled = event_function( *( ParameterType * )&event );
+                m_Event.m_IsHandled = eventFunction( *( ParameterType * )&m_Event );
                 return true;
             }
             return false;
         }
 
       private:
-        Event &event;
+        Event &m_Event;
     };
 
     inline std::ostream &operator<<( std::ostream &os, const Event &e )
     {
-        return os << e.toString();
+        return os << e.ToString();
     }
 }

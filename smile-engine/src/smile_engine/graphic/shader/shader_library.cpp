@@ -1,43 +1,43 @@
 #include "smpch.h"
 #include "shader_library.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    void ShaderLibrary::add( const std::string &name, const Ref< Shader > &shader )
+    void ShaderLibrary::Add( const std::string &name, const Ref< Shader > &pShader )
     {
-        SM_ASSERT( !exists( name ), "ShaderLibrary::add > Shader: %s already exists!", name );
-        shaders[name] = shader;
+        SM_ASSERT( !Exists( name ), "ShaderLibrary::Add > Shader: %s already exists!", name );
+        m_Shaders[name] = pShader;
     }
 
-    void ShaderLibrary::add( const Ref< Shader > &shader )
+    void ShaderLibrary::Add( const Ref< Shader > &pShader )
     {
-        auto &name = shader->getName();
-        add( name, shader );
+        auto &name = pShader->GetName();
+        Add( name, pShader );
     }
 
-    Ref< Shader > ShaderLibrary::load( const std::string &file_path, const BufferLayout &buffer_layout )
+    Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto shader = Shader::create( file_path, buffer_layout );
-        add( shader );
-        return shader;
+        auto pShader = Shader::Create( filePath, bufferLayout );
+        Add( pShader );
+        return pShader;
     }
 
     Ref< Shader >
-    ShaderLibrary::load( const std::string &name, const std::string &file_path, const BufferLayout &buffer_layout )
+    ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto shader = Shader::create( file_path, buffer_layout );
-        add( name, shader );
-        return shader;
+        auto pShader = Shader::Create( filePath, bufferLayout );
+        Add( name, pShader );
+        return pShader;
     }
 
-    Ref< Shader > ShaderLibrary::get( const std::string &name )
+    Ref< Shader > ShaderLibrary::Get( const std::string &name )
     {
-        SM_ASSERT( exists( name ), "ShaderLibrary::add > Shader: %s not found!", name );
-        return shaders[name];
+        SM_ASSERT( Exists( name ), "ShaderLibrary::Add > Shader: %s not found!", name );
+        return m_Shaders[name];
     }
 
-    bool ShaderLibrary::exists( const std::string &name ) const
+    bool ShaderLibrary::Exists( const std::string &name ) const
     {
-        return shaders.find( name ) != shaders.end();
+        return m_Shaders.find( name ) != m_Shaders.end();
     }
 }

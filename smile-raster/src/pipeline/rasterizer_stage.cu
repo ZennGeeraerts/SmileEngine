@@ -1,7 +1,7 @@
 #include "bin_rasterizer.cu"
 #include "fine_rasterizer.cu"
 
-namespace smile
+namespace Smile
 {
 	namespace Raster
 	{

@@ -3,65 +3,65 @@
 #include "type_name.h"
 #include "identifier.h"
 
-namespace smile::compiled
+namespace Smile::Compiled
 {
     class TypeID final
     {
       public:
         TypeID() = default;
 
-        constexpr TypeID( const std::string_view &text ) : hashCode( identifier::getHashCode( text ) )
+        constexpr TypeID( const std::string_view &text ) : m_HashCode( Identifier::GetHashCode( text ) )
         {
         }
 
         constexpr bool operator==( const TypeID other ) const
         {
-            return hashCode == other.hashCode;
+            return m_HashCode == other.m_HashCode;
         }
 
         constexpr bool operator!=( const TypeID other ) const
         {
-            return hashCode != other.hashCode;
+            return m_HashCode != other.m_HashCode;
         }
 
         constexpr bool operator<( const TypeID other ) const
         {
-            return hashCode < other.hashCode;
+            return m_HashCode < other.m_HashCode;
         }
 
-        inline constexpr size_t getHashCode() const
+        inline constexpr size_t GetHashCode() const
         {
-            return hashCode;
+            return m_HashCode;
         }
 
       private:
-        size_t hashCode;
+        size_t m_HashCode;
     };
 }
 
-namespace smile
+namespace Smile
 {
     template < typename Type >
-    constexpr compiled::TypeID typeIDOf()
+    constexpr Compiled::TypeID TypeIDOf()
     {
-        return compiled::TypeID{ typeNameOf< Type >() };
+        return Compiled::TypeID{ TypeNameOf< Type >() };
     }
 
-    template < int character_count >
-    constexpr compiled::TypeID typeIDOf( const char ( &type )[character_count] )
+    template < int characterCount >
+    constexpr Compiled::TypeID TypeIDOf( const char ( &type )[characterCount] )
     {
-        return compiled::TypeID{ type };
+        return Compiled::TypeID{ type };
     }
 }
 
 namespace std
 {
     template <>
-    struct hash< smile::compiled::TypeID >
+    struct hash< Smile::Compiled::TypeID >
     {
-        size_t operator()( const smile::compiled::TypeID &type_id ) const
+        size_t operator()( const Smile::Compiled::TypeID &typeID ) const
         {
-            return type_id.getHashCode();
+            return typeID.GetHashCode();
         }
     };
 }

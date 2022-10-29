@@ -3,29 +3,29 @@
 #include "Event.h"
 #include "smile_engine/input/mouse_codes.h"
 
-namespace smile
+namespace Smile
 {
     class MouseMovedEvent final : public Event
     {
       public:
-        MouseMovedEvent( float x, float y ) : mouseX{ x }, mouseY{ y }
+        MouseMovedEvent( float x, float y ) : m_MouseX{ x }, m_MouseY{ y }
         {
         }
 
-        inline float getX() const
+        inline float GetX() const
         {
-            return mouseX;
+            return m_MouseX;
         }
 
-        inline float getY() const
+        inline float GetY() const
         {
-            return mouseY;
+            return m_MouseY;
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "MouseMovedEvent: " << mouseX << ", " << mouseY;
+            ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
             return ss.str();
         }
 
@@ -33,30 +33,30 @@ namespace smile
         EVENT_CLASS_CATEGORY( EventCategoryMouse | EventCategoryInput )
 
       private:
-        float mouseX;
-        float mouseY;
+        float m_MouseX;
+        float m_MouseY;
     };
 
     class MouseScrolledEvent final : public Event
     {
       public:
-        MouseScrolledEvent( float offset_x, float offset_y ) : offsetX{ offset_x }, offsetY{ offset_y }
+        MouseScrolledEvent( float offsetX, float offsetY ) : m_OffsetX{ offsetX }, m_OffsetY{ offsetY }
         {
         }
 
-        inline float getOffsetX() const
+        inline float GetOffsetX() const
         {
-            return offsetX;
+            return m_OffsetX;
         }
-        inline float getOffsetY() const
+        inline float GetOffsetY() const
         {
-            return offsetY;
+            return m_OffsetY;
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "MouseScrolledEvent: " << getOffsetX() << ", " << getOffsetY();
+            ss << "MouseScrolledEvent: " << GetOffsetX() << ", " << GetOffsetY();
             return ss.str();
         }
 
@@ -65,8 +65,8 @@ namespace smile
 
       private:
         // To support horizontal scrolling on some mice
-        float offsetX;
-        float offsetY;
+        float m_OffsetX;
+        float m_OffsetY;
     };
 
     class MouseButtonEvent : public Event
@@ -74,33 +74,33 @@ namespace smile
       public:
         virtual ~MouseButtonEvent() = default;
 
-        inline int getMouseButton() const
+        inline int GetMouseButton() const
         {
-            return button;
+            return m_Button;
         }
 
         EVENT_CLASS_CATEGORY( EventCategoryMouse | EventCategoryInput )
 
       protected:
-        MouseButtonEvent( input::MouseCode button ) : button{ button }
+        MouseButtonEvent( Input::MouseCode button ) : m_Button{ button }
         {
         }
 
       protected:
-        input::MouseCode button;
+        Input::MouseCode m_Button;
     };
 
     class MouseButtonPressedEvent final : public MouseButtonEvent
     {
       public:
-        MouseButtonPressedEvent( input::MouseCode button ) : MouseButtonEvent( button )
+        MouseButtonPressedEvent( Input::MouseCode button ) : MouseButtonEvent{ button }
         {
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "MouseButtonPressedEvent: " << button;
+            ss << "MouseButtonPressedEvent: " << m_Button;
             return ss.str();
         }
 
@@ -110,14 +110,14 @@ namespace smile
     class MouseButtonReleasedEvent final : public MouseButtonEvent
     {
       public:
-        MouseButtonReleasedEvent( input::MouseCode button ) : MouseButtonEvent( button )
+        MouseButtonReleasedEvent( Input::MouseCode button ) : MouseButtonEvent{ button }
         {
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "MouseButtonReleasedEvent: " << button;
+            ss << "MouseButtonReleasedEvent: " << m_Button;
             return ss.str();
         }
 

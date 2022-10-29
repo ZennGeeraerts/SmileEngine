@@ -2,23 +2,23 @@
 
 #include <string_view>
 
-namespace smile::compiled::identifier
+namespace Smile::Compiled::Identifier
 {
-    constexpr size_t initialValue = 2166136261u;
+    constexpr size_t g_InitialValue = 2166136261u;
 
-    constexpr size_t getHashCode( const char *text, const size_t code = initialValue )
+    constexpr size_t GetHashCode( const char *text, const size_t code = g_InitialValue )
     {
-        return *text ? getHashCode( text + 1, static_cast< size_t >( code * 16777619ull ) ^ *text ) : code;
+        return *text ? GetHashCode( text + 1, static_cast< size_t >( code * 16777619ull ) ^ *text ) : code;
     }
 
-    constexpr size_t getHashCodeWithSize( const char *text, const int size, const size_t code = initialValue )
+    constexpr size_t GetHashCodeWithSize( const char *text, const int size, const size_t code = g_InitialValue )
     {
-        return size > 0 ? getHashCodeWithSize( text + 1, size - 1, static_cast< size_t >( code * 16777619ull ) ^ *text )
+        return size > 0 ? GetHashCodeWithSize( text + 1, size - 1, static_cast< size_t >( code * 16777619ull ) ^ *text )
                         : code;
     }
 
-    constexpr size_t getHashCode( const std::string_view &text )
+    constexpr size_t GetHashCode( const std::string_view &text )
     {
-        return getHashCodeWithSize( text.data(), text.size() );
+        return GetHashCodeWithSize( text.data(), text.size() );
     }
 }

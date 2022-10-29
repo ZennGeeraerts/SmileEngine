@@ -1,10 +1,10 @@
 #pragma once
 
-namespace smile::scripting
+namespace Smile::Scripting
 {
 	class ScriptGlue final
     {
       public:
-        static void registerFunctions();
+        static void RegisterFunctions();
     };
 }

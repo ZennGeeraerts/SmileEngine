@@ -1,15 +1,15 @@
 #include <smile_engine.h>
 #include <thirdparty/catch.hpp>
 
-using namespace smile;
+using namespace Smile;
 
 TEST_CASE( "Vector3" )
 {
     SECTION( "+" )
     {
-        math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
-        math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
-        math::Vector3 result = vector1 + vector2;
+        Math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
+        Math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
+        Math::Vector3 result = vector1 + vector2;
 
         REQUIRE( result.x == 4.0f );
         REQUIRE( result.y == 6.0f );
@@ -18,8 +18,8 @@ TEST_CASE( "Vector3" )
 
     SECTION( "+=" )
     {
-        math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
-        math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
+        Math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
+        Math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
 
         vector1 += vector2;
 
@@ -30,9 +30,9 @@ TEST_CASE( "Vector3" )
 
     SECTION( "-" )
     {
-        math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
-        math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
-        math::Vector3 result = vector1 - vector2;
+        Math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
+        Math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
+        Math::Vector3 result = vector1 - vector2;
 
         REQUIRE( result.x == -2.0f );
         REQUIRE( result.y == -2.0f );
@@ -47,8 +47,8 @@ TEST_CASE( "Vector3" )
 
     SECTION( "-=" )
     {
-        math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
-        math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
+        Math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
+        Math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
 
         vector1 -= vector2;
 
@@ -59,15 +59,15 @@ TEST_CASE( "Vector3" )
 
     SECTION( "*" )
     {
-        math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
-        math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
-        math::Vector3 result = vector1 * vector2;
+        Math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
+        Math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
+        Math::Vector3 result = vector1 * vector2;
 
         REQUIRE( result.x == 3.0f );
         REQUIRE( result.y == 8.0f );
         REQUIRE( result.z == 15.0f );
 
-        math::Vector3 another{ 5.0f, 6.0f, 7.0f };
+        Math::Vector3 another{ 5.0f, 6.0f, 7.0f };
         result = another * 3.0f;
 
         REQUIRE( result.x == 15.0f );
@@ -77,8 +77,8 @@ TEST_CASE( "Vector3" )
 
     SECTION( "*=" )
     {
-        math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
-        math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
+        Math::Vector3 vector1{ 1.0f, 2.0f, 3.0f };
+        Math::Vector3 vector2{ 3.0f, 4.0f, 5.0f };
 
         vector1 *= vector2;
 
@@ -86,7 +86,7 @@ TEST_CASE( "Vector3" )
         REQUIRE( vector1.y == 8.0f );
         REQUIRE( vector1.z == 15.0f );
 
-        math::Vector3 another{ 2.0f, 4.0f, 8.0f };
+        Math::Vector3 another{ 2.0f, 4.0f, 8.0f };
 
         another *= 5.0f;
 
@@ -97,15 +97,15 @@ TEST_CASE( "Vector3" )
 
     SECTION( "/" )
     {
-        math::Vector3 vector1{ 18.0f, 20.0f, 25.0f };
-        math::Vector3 vector2{ 2.0f, 4.0f, 5.0f };
-        math::Vector3 result = vector1 / vector2;
+        Math::Vector3 vector1{ 18.0f, 20.0f, 25.0f };
+        Math::Vector3 vector2{ 2.0f, 4.0f, 5.0f };
+        Math::Vector3 result = vector1 / vector2;
 
         REQUIRE( result.x == 9.0f );
         REQUIRE( result.y == 5.0f );
         REQUIRE( result.z == 5.0f );
 
-        math::Vector3 another{ 6.0f, 18.0f, 21.0f };
+        Math::Vector3 another{ 6.0f, 18.0f, 21.0f };
         result = another / 3.0f;
 
         REQUIRE( result.x == 2.0f );
@@ -115,8 +115,8 @@ TEST_CASE( "Vector3" )
 
     SECTION( "/=" )
     {
-        math::Vector3 vector1{ 18.0f, 20.0f, 25.0f };
-        math::Vector3 vector2{ 2.0f, 4.0f, 5.0f };
+        Math::Vector3 vector1{ 18.0f, 20.0f, 25.0f };
+        Math::Vector3 vector2{ 2.0f, 4.0f, 5.0f };
 
         vector1 /= vector2;
 
@@ -124,7 +124,7 @@ TEST_CASE( "Vector3" )
         REQUIRE( vector1.y == 5.0f );
         REQUIRE( vector1.z == 5.0f );
 
-        math::Vector3 another{ 6.0f, 18.0f, 21.0f };
+        Math::Vector3 another{ 6.0f, 18.0f, 21.0f };
 
         another /= 3.0f;
 
@@ -135,11 +135,11 @@ TEST_CASE( "Vector3" )
 
     SECTION( "==" )
     {
-        math::Vector3 vector1{ 18.0f, 20.0f, 25.0f };
-        math::Vector3 vector2{ 18.0f, 20.0f, 25.0f };
-        math::Vector3 vector3{ 5.0f, -2.0f, 4.0f };
-        math::Vector3 vector4{ 18.0f, 5.0f, 4.0f };
-        math::Vector3 vector5{ 3.0f, 20.0f, -4.0f };
+        Math::Vector3 vector1{ 18.0f, 20.0f, 25.0f };
+        Math::Vector3 vector2{ 18.0f, 20.0f, 25.0f };
+        Math::Vector3 vector3{ 5.0f, -2.0f, 4.0f };
+        Math::Vector3 vector4{ 18.0f, 5.0f, 4.0f };
+        Math::Vector3 vector5{ 3.0f, 20.0f, -4.0f };
 
         REQUIRE( vector1 == vector2 );
         REQUIRE( vector1 != vector3 );

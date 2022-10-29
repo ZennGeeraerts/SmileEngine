@@ -4,27 +4,27 @@
 #include "smile_engine/core/logger.h"
 #include "smile_engine/core/application.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    SmileRasterTexture2D::SmileRasterTexture2D( const std::string &file_path )
-        : filePath{ file_path }, surface{ IMG_Load( file_path.c_str() ) }
+    SmileRasterTexture2D::SmileRasterTexture2D( const std::string &filePath )
+        : m_FilePath{ filePath }, m_pSurface{ IMG_Load( filePath.c_str() ) }
     {
-        smileRasterContext =
-            static_cast< SmileRasterContext * >( Application::getInstance().getWindow().getGraphicsContext() );
-        SM_ASSERT( smileRasterContext, "SmileRasterTexture2D > Rendering context is not a SmileRasterContext" );
+        m_pSmileRasterContext =
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
+        SM_ASSERT( m_pSmileRasterContext, "SmileRasterTexture2D > Rendering context is not a SmileRasterContext" );
 
-        if ( !surface )
+        if ( !m_pSurface )
             return;
 
-        pixels = static_cast< Uint8 * >( surface->pixels );
-        width = surface->w;
-        height = surface->h;
+        m_pPixels = static_cast< Uint8 * >( m_pSurface->pixels );
+        m_Width = m_pSurface->w;
+        m_Height = m_pSurface->h;
 
-        texture = smileRasterContext->getDeviceContext()->CreateTexture2D( pixels, width, height );
+        m_Texture = m_pSmileRasterContext->getDeviceContext()->CreateTexture2D( m_pPixels, m_Width, m_Height );
     }
 
     SmileRasterTexture2D::~SmileRasterTexture2D()
     {
-        SDL_FreeSurface( surface );
+        SDL_FreeSurface( m_pSurface );
     }
 }

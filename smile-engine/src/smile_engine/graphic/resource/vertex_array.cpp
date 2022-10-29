@@ -3,14 +3,14 @@
 
 #include "smile_engine/graphic/renderer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    VertexBuffer *VertexArray::create()
+    VertexBuffer *VertexArray::Create()
     {
-        switch ( Renderer::getAPI() )
+        switch ( Renderer::GetAPI() )
         {
             case RendererAPI::API::None:
-                SM_ASSERT( false, "VertexArray::create > return nullptr, no renderer api selected" );
+                SM_ASSERT( false, "VertexArray::Create > return nullptr, no renderer api selected" );
                 return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
@@ -23,7 +23,7 @@ namespace smile::graphic
         }
 
         SM_ASSERT( false,
-            "VertexArray::create > return nullptr, unknown render api or render api is not supported on this "
+            "VertexArray::Create > return nullptr, unknown render api or render api is not supported on this "
             "platform" );
         return nullptr;
     }

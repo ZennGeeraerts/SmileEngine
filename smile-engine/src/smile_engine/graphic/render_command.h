@@ -3,42 +3,42 @@
 #include "smile_engine/core/core.h"
 #include "renderer_api.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class RenderCommand final
     {
       public:
-        inline static void initalize()
+        inline static void Initalize()
         {
-            rendererAPI->initialize();
+            s_RendererAPI->Initialize();
         }
 
-        inline static void shutDown()
+        inline static void ShutDown()
         {
-            SAFE_DELETE( rendererAPI );
+            SAFE_DELETE( s_RendererAPI );
         }
 
-        inline static void resizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
+        inline static void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
         {
-            rendererAPI->resizeWindow( x, y, width, height );
+            s_RendererAPI->ResizeWindow( x, y, width, height );
         }
 
-        inline static void setClearColor( const DirectX::XMFLOAT4 &color )
+        inline static void SetClearColor( const DirectX::XMFLOAT4 &color )
         {
-            rendererAPI->setClearColor( color );
+            s_RendererAPI->SetClearColor( color );
         }
 
-        inline static void clear()
+        inline static void Clear()
         {
-            rendererAPI->clear();
+            s_RendererAPI->Clear();
         }
 
-        inline static void drawIndexed( int32_t index_count, const Ref< Shader > &shader )
+        inline static void DrawIndexed( int32_t indexCount, const Ref< Shader > &pShader )
         {
-            rendererAPI->drawIndexed( index_count, shader );
+            s_RendererAPI->DrawIndexed( indexCount, pShader );
         }
 
       private:
-        static RendererAPI *rendererAPI;
+        static RendererAPI *s_RendererAPI;
     };
 }

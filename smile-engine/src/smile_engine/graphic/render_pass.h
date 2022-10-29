@@ -1,8 +1,6 @@
 #pragma once
 
-#include <thirdparty/entt/entt.hpp>
-
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class RenderPass
     {
@@ -10,7 +8,6 @@ namespace smile::graphic
         RenderPass() = default;
         virtual ~RenderPass() = default;
 
-        virtual void addToScene( entt::registry registry ) = 0;
-        virtual void onRender() = 0;
+        virtual void OnRender() = 0;
     };
 }

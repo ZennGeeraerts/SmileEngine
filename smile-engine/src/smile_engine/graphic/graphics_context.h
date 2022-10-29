@@ -1,19 +1,19 @@
 #pragma once
 
-namespace smile
+namespace Smile
 {
     class Window;
 }
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class GraphicsContext
     {
       public:
         virtual ~GraphicsContext() = default;
-        virtual void init() = 0;
-        virtual void present() = 0;
+        virtual void Initialize() = 0;
+        virtual void Present() = 0;
 
-        static GraphicsContext *create( Window *window );
+        static GraphicsContext *Create( Window *pWindow );
     };
 }

@@ -5,46 +5,46 @@
 #include "smile_engine/scene/scene.h"
 #include "smile_engine/scene/entity.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class Material;
 }
 
-namespace smile::scene
+namespace Smile::Scene
 {
     class SceneHierarchyPanel final
     {
       public:
         SceneHierarchyPanel() = default;
-        SceneHierarchyPanel( const Ref< scene::Scene > &scene );
+        SceneHierarchyPanel( const Ref< Scene::Scene > &pScene );
 
-        void setContext( const Ref< scene::Scene > &scene );
+        void SetContext( const Ref< Scene::Scene > &pScene );
 
-        void onImGuiRender();
+        void OnImGuiRender();
 
-        scene::Entity getSelectedEntity() const
+        Scene::Entity GetSelectedEntity() const
         {
-            return selectedEntity;
+            return m_SelectedEntity;
         }
 
       private:
-        void drawEntityNode( scene::Entity entity );
+        void DrawEntityNode( Scene::Entity entity );
 
-        static void drawVector3Control( const std::string &label,
+        static void DrawVector3Control( const std::string &label,
             DirectX::XMFLOAT3 &values,
-            float reset_value = 0.0f,
-            float column_width = 100.f );
+            float resetValue = 0.0f,
+            float columnWidth = 100.f );
 
-        void drawComponents( scene::Entity entity );
+        void DrawComponents( Scene::Entity entity );
 
         template < typename ComponentType, typename UIFunction >
         static void
-        drawComponent( const std::string &label, scene::Entity entity, UIFunction ui_function, bool removeable = true );
+        DrawComponent( const std::string &label, Scene::Entity entity, UIFunction uiFunction, bool bRemoveable = true );
 
-        static void drawMaterial( const Ref< graphic::Material > &pMaterial );
+        static void DrawMaterial( const Ref< Graphic::Material > &material );
 
       private:
-        Ref< scene::Scene > context;
-        scene::Entity selectedEntity;
+        Ref< Scene::Scene > m_pContext;
+        Scene::Entity m_SelectedEntity;
     };
 }

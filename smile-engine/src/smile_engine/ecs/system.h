@@ -4,7 +4,7 @@
 
 #include "smile_engine/core/timestep.h"
 
-namespace smile::ecs
+namespace Smile::ECS
 {
 	class System final
     {

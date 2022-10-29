@@ -5,7 +5,7 @@
 
 #include "smile_engine/graphic/camera/editor_camera.h"
 
-namespace smile
+namespace Smile
 {
     class SmileEditorLayer final : public Layer
     {
@@ -38,43 +38,43 @@ namespace smile
         SmileEditorLayer();
         virtual ~SmileEditorLayer() = default;
 
-        virtual void onAttach() override;
-        virtual void onDetach() override;
+        virtual void OnAttach() override;
+        virtual void OnDetach() override;
 
-        virtual void onUpdate( Timestep delta_time ) override;
-        virtual void onImGuiRender() override;
-        virtual void onEvent( Event &e ) override;
+        virtual void OnUpdate( Timestep deltaTime ) override;
+        virtual void OnImGuiRender() override;
+        virtual void OnEvent( Event &e ) override;
 
       private:
-        bool onKeyPressed( KeyPressedEvent &e );
+        bool OnKeyPressed( KeyPressedEvent &e );
 
-        void saveScene();
-        void saveSceneAs();
-        void serializeScene( const Ref< scene::Scene > &scene, const std::filesystem::path &file_path );
-        void openScene();
-        void openScene( const std::filesystem::path &file_path );
-        void newScene();
+        void SaveScene();
+        void SaveSceneAs();
+        void SerializeScene( const Ref< Scene::Scene > &pScene, const std::filesystem::path &filePath );
+        void OpenScene();
+        void OpenScene( const std::filesystem::path &filePath );
+        void NewScene();
 
-        void onScenePlay();
-        void onSceneSimulate();
-        void onSceneStop();
+        void OnScenePlay();
+        void OnSceneSimulate();
+        void OnSceneStop();
 
-        void duplicateEntity();
+        void DuplicateEntity();
 
         // UI Panels
-        void drawToolbar();
+        void DrawToolbar();
 
       private:
-        Ref< scene::Scene > activeScene;
-        Ref< scene::Scene > editorScene;
-        graphic::EditorCamera editorCamera;
-        std::filesystem::path editorScenePath;
+        Ref< Scene::Scene > m_pActiveScene;
+        Ref< Scene::Scene > m_pEditorScene;
+        Graphic::EditorCamera m_EditorCamera;
+        std::filesystem::path m_EditorScenePath;
 
-        DirectX::XMFLOAT2 viewportSize = { 0.f, 0.f };
-        bool viewportFocused = false;
-        bool viewportHovered = false;
+        DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
+        bool m_IsViewportFocused = false;
+        bool m_IsViewportHovered = false;
 
-        GizmoType gizmoType = GizmoType::None;
+        GizmoType m_GizmoType = GizmoType::None;
 
         enum class SceneState
         {
@@ -82,15 +82,15 @@ namespace smile
             Simulate = 1,
             Play = 2
         };
-        SceneState sceneState = SceneState::Edit;
+        SceneState m_SceneState = SceneState::Edit;
 
         // Panels
-        scene::SceneHierarchyPanel sceneHierarchyPanel;
-        ContentBrowserPanel contentBrowserPanel;
+        Scene::SceneHierarchyPanel m_SceneHierarchyPanel;
+        ContentBrowserPanel m_ContentBrowserPanel;
 
         // Editor resources
-        Ref< graphic::Texture2D > iconPlay = nullptr;
-        Ref< graphic::Texture2D > iconSimulate = nullptr;
-        Ref< graphic::Texture2D > iconStop = nullptr;
+        Ref< Graphic::Texture2D > m_pIconPlay = nullptr;
+        Ref< Graphic::Texture2D > m_pIconSimulate = nullptr;
+        Ref< Graphic::Texture2D > m_pIconStop = nullptr;
     };
 }

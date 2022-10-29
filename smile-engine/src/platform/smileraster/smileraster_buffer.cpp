@@ -2,59 +2,59 @@
 #include "smileraster_buffer.h"
 #include "smile_engine/core/application.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     //*------------------------------------------------------------------------------------------------*//
     //*----------------------------------------- Vertex buffer ----------------------------------------*//
     //*------------------------------------------------------------------------------------------------*//
 
-    SmileRasterVertexBuffer::SmileRasterVertexBuffer( const VertexBufferDescriptor &vertex_buffer_descriptor )
-        : stride{ vertex_buffer_descriptor.stride }
+    SmileRasterVertexBuffer::SmileRasterVertexBuffer( const VertexBufferDescriptor &vertexBufferDescriptor )
+        : m_Stride{ vertexBufferDescriptor.Stride }
     {
-        smileRasterContext =
-            static_cast< SmileRasterContext * >( Application::getInstance().getWindow().getGraphicsContext() );
-        SM_ASSERT( smileRasterContext,
+        m_pSmileRasterContext =
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
+        SM_ASSERT( m_pSmileRasterContext,
             "SmileRasterVertexBuffer > Rendering context is not a SmileRaster Rendering Context" );
 
-        vertexBuffer =
-            smileRasterContext->getDeviceContext()->CreateVertexBuffer( vertex_buffer_descriptor.vertices,
-                vertex_buffer_descriptor.count,
-                vertex_buffer_descriptor.stride * vertex_buffer_descriptor.count );
+        m_VertexBuffer =
+            m_pSmileRasterContext->getDeviceContext()->CreateVertexBuffer( vertexBufferDescriptor.pVertices,
+                vertexBufferDescriptor.Count,
+                vertexBufferDescriptor.Stride * vertexBufferDescriptor.Count );
     }
 
-    void SmileRasterVertexBuffer::bind() const
+    void SmileRasterVertexBuffer::Bind() const
     {
-        smileRasterContext->getDeviceContext()->BindVertexBuffer( vertexBuffer, stride );
+        m_pSmileRasterContext->getDeviceContext()->BindVertexBuffer( m_VertexBuffer, m_Stride );
     }
 
-    void SmileRasterVertexBuffer::unbind() const
+    void SmileRasterVertexBuffer::Unbind() const
     {
-        smileRasterContext->getDeviceContext()->BindVertexBuffer( SMR_INVALID_BUFFER_ID, 0 );
+        m_pSmileRasterContext->getDeviceContext()->BindVertexBuffer( SMR_INVALID_BUFFER_ID, 0 );
     }
 
     //*------------------------------------------------------------------------------------------------*//
     //*----------------------------------------- Index buffer -----------------------------------------*//
     //*------------------------------------------------------------------------------------------------*//
 
-    SmileRasterIndexBuffer::SmileRasterIndexBuffer( const IndexBufferDescriptor &index_buffer_descriptor )
+    SmileRasterIndexBuffer::SmileRasterIndexBuffer( const IndexBufferDescriptor &indexBufferDescriptor )
     {
-        smileRasterContext =
-            static_cast< SmileRasterContext * >( Application::getInstance().getWindow().getGraphicsContext() );
-        SM_ASSERT( smileRasterContext,
+        m_pSmileRasterContext =
+            static_cast< SmileRasterContext * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
+        SM_ASSERT( m_pSmileRasterContext,
             "SmileRasterIndexBuffer > Rendering context is not a SmileRaster Rendering Context" );
 
-        indexBuffer = smileRasterContext->getDeviceContext()->CreateIndexBuffer(
-            index_buffer_descriptor.indices, index_buffer_descriptor.count );
-        count = index_buffer_descriptor.count;
+        m_IndexBuffer = m_pSmileRasterContext->getDeviceContext()->CreateIndexBuffer(
+            indexBufferDescriptor.pIndices, indexBufferDescriptor.Count );
+        m_Count = indexBufferDescriptor.Count;
     }
 
-    void SmileRasterIndexBuffer::bind() const
+    void SmileRasterIndexBuffer::Bind() const
     {
-        smileRasterContext->getDeviceContext()->BindIndexBuffer( indexBuffer );
+        m_pSmileRasterContext->getDeviceContext()->BindIndexBuffer( m_IndexBuffer );
     }
 
-    void SmileRasterIndexBuffer::unbind() const
+    void SmileRasterIndexBuffer::Unbind() const
     {
-        smileRasterContext->getDeviceContext()->BindIndexBuffer( SMR_INVALID_BUFFER_ID );
+        m_pSmileRasterContext->getDeviceContext()->BindIndexBuffer( SMR_INVALID_BUFFER_ID );
     }
 }

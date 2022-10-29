@@ -2,13 +2,13 @@
 
 #include "math.h"
 
-namespace smile::math
+namespace Smile::Math
 {
     struct Vector2 final
     {
         union
         {
-            float m[2];
+            float M[2];
             struct
             {
                 float x;
@@ -16,91 +16,91 @@ namespace smile::math
             };
         };
 
-        static const Vector2 zero, xAxis, yAxis, one;
+        static const Vector2 Zero, XAxis, YAxis, One;
     };
 
-    inline float dotProduct( const Vector2 &v1, const Vector2 &v2 )
+    inline float DotProduct( const Vector2 &v1, const Vector2 &v2 )
     {
         return v1.x * v2.x + v1.y * v2.y;
     }
 
-    inline float distanceSqr( const Vector2 &v1, const Vector2 &v2 )
+    inline float DistanceSqr( const Vector2 &v1, const Vector2 &v2 )
     {
         return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y );
     }
 
-    inline float distance( const Vector2 &v1, const Vector2 &v2 )
+    inline float Distance( const Vector2 &v1, const Vector2 &v2 )
     {
-        return squareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) );
+        return SquareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) );
     }
 
-    inline float lengthSqr( const Vector2 &vector )
+    inline float LengthSqr( const Vector2 &vector )
     {
         return vector.x * vector.x + vector.y * vector.y;
     }
 
-    inline float length( const Vector2 &vector )
+    inline float Length( const Vector2 &vector )
     {
-        return squareRoot( vector.x * vector.x + vector.y * vector.y );
+        return SquareRoot( vector.x * vector.x + vector.y * vector.y );
     }
 
-    inline bool isUnitVector( const Vector2 &vector )
+    inline bool IsUnitVector( const Vector2 &vector )
     {
-        return isOne( vector.x * vector.x + vector.y * vector.y );
+        return IsOne( vector.x * vector.x + vector.y * vector.y );
     }
 
-    inline bool hasZeroLength( const Vector2 &vector, float precision = epsilon )
+    inline bool HasZeroLength( const Vector2 &vector, float precision = g_Epsilon )
     {
-        return isSquareZero( vector.x * vector.x + vector.y * vector.y, precision );
+        return IsSquareZero( vector.x * vector.x + vector.y * vector.y, precision );
     }
 
-    inline bool isZeroVector( const Vector2 &vector, float precision = epsilon )
+    inline bool IsZeroVector( const Vector2 &vector, float precision = g_Epsilon )
     {
-        return isZero( vector.x, precision ) && isZero( vector.y, precision );
+        return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
     }
 
-    inline bool compareVector2( const Vector2 &v1, const Vector2 &v2, float precision = epsilon )
+    inline bool CompareVector2( const Vector2 &v1, const Vector2 &v2, float precision = g_Epsilon )
     {
-        return compareFloats( v1.x, v2.x, precision ) && compareFloats( v1.y, v2.y, precision );
+        return CompareFloats( v1.x, v2.x, precision ) && CompareFloats( v1.y, v2.y, precision );
     }
 
-    inline Vector2 getNormalized( const Vector2 &vector )
+    inline Vector2 GetNormalized( const Vector2 &vector )
     {
-        SM_ASSERT( !isZeroVector( vector ), "getNormalized > Vector2 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector2 is zero vector" );
 
-        const float length = squareRoot( vector.x * vector.x + vector.y * vector.y );
+        const float length = SquareRoot( vector.x * vector.x + vector.y * vector.y );
         return Vector2{ vector.x / length, vector.y / length };
     }
 
-    inline void normalize( Vector2 &vector )
+    inline void Normalize( Vector2 &vector )
     {
-        SM_ASSERT( !isZeroVector( vector ), "normalize > Vector2 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector2 is zero vector" );
 
-        float length = squareRoot( vector.x * vector.x + vector.y * vector.y );
+        float length = SquareRoot( vector.x * vector.x + vector.y * vector.y );
         vector.x /= length;
         vector.y /= length;
     }
 
-    inline Vector2 lerp( const Vector2 &v1, const Vector2 &v2, float percentage )
+    inline Vector2 Lerp( const Vector2 &v1, const Vector2 &v2, float percentage )
     {
-        const float one_minus_percentage = 1.0f - percentage;
+        const float oneMinusPercentage = 1.0f - percentage;
 
         return Vector2{
-            v1.x * one_minus_percentage + v2.x * percentage, v1.y * one_minus_percentage + v2.y * percentage };
+            v1.x * oneMinusPercentage + v2.x * percentage, v1.y * oneMinusPercentage + v2.y * percentage };
     }
 
     inline Vector2 RotateVector( const Vector2 &vector, float angle )
     {
-        const float cosinus_result = cosinus( angle );
-        const float sinus_result = sinus( angle );
+        const float cosinusResult = Cosinus( angle );
+        const float sinusResult = Sinus( angle );
 
         return Vector2{
-            vector.x * cosinus_result + vector.y * sinus_result, -vector.x * sinus_result + vector.y * cosinus_result };
+            vector.x * cosinusResult + vector.y * sinusResult, -vector.x * sinusResult + vector.y * cosinusResult };
     }
 
-    inline float getAngle( const Vector2 &vector )
+    inline float GetAngle( const Vector2 &vector )
     {
-        return arcTangent( vector.y, vector.x );
+        return ArcTangent( vector.y, vector.x );
     }
 
     // Operators

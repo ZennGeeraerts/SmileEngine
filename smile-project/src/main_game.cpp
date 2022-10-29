@@ -3,12 +3,12 @@
 #include <smile_engine/core/entry_point.h>
 #include <thirdparty/imgui/imgui.h>
 
-smile::Application *smile::createApplication( smile::ApplicationCommandLineArgs command_line_args )
+Smile::Application *Smile::CreateApplication( Smile::ApplicationCommandLineArgs commandLineArgs )
 {
-    smile::ApplicationDescriptor descriptor{};
-    descriptor.name = "Main Game";
-    descriptor.workingDirectory = "../smile-editor";
-    descriptor.commandLineArgs = command_line_args;
+    Smile::ApplicationDescriptor descriptor{};
+    descriptor.Name = "Main Game";
+    descriptor.WorkingDirectory = "../smile-editor";
+    descriptor.CommandLineArgs = commandLineArgs;
 
     // This application will get passed to the entry point of the engine
     // and will be deleted once the engine closes
@@ -23,9 +23,9 @@ ExampleLayer::ExampleLayer() : Layer( "Example" )
 {
 }
 
-void ExampleLayer::onAttach()
+void ExampleLayer::OnAttach()
 {
-    smile::graphic::RenderCommand::setClearColor( { DirectX::Colors::DodgerBlue.f[0],
+    Smile::Graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
         DirectX::Colors::DodgerBlue.f[1],
         DirectX::Colors::DodgerBlue.f[2],
         DirectX::Colors::DodgerBlue.f[3] } );
@@ -85,11 +85,11 @@ void ExampleLayer::onAttach()
         -0.5f,
         0.5f };
 
-    smile::graphic::BufferLayout buffer_layout{ { smile::graphic::ShaderDataType::Float3, "Position" },
-        { smile::graphic::ShaderDataType::Float3, "Normal" },
-        { smile::graphic::ShaderDataType::Float3, "TexCoord" } };
+    Smile::Graphic::BufferLayout bufferLayout{ { Smile::Graphic::ShaderDataType::Float3, "Position" },
+        { Smile::Graphic::ShaderDataType::Float3, "Normal" },
+        { Smile::Graphic::ShaderDataType::Float3, "TexCoord" } };
 
-    uint32_t indices[]{ 0,
+    Smile::Uint32 indices[]{ 0,
         1,
         2, // side 1
         2,
@@ -145,11 +145,11 @@ void ExampleLayer::onAttach()
 
     Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", bufferLayout);*/
 
-    activeScene.reset( new smile::scene::Scene{} );
+    m_pActiveScene.reset( new Smile::Scene::Scene{} );
 
-    cameraEntity = activeScene->createEntity( "Camera" );
-    auto &camera = cameraEntity.addComponent< smile::scene::CameraComponent >();
-    camera.primary = true;
+    m_CameraEntity = m_pActiveScene->CreateEntity( "Camera" );
+    auto &camera = m_CameraEntity.AddComponent< Smile::Scene::CameraComponent >();
+    camera.IsPrimary = true;
 
     /*auto cube = m_pActiveScene->CreateEntity("Cube");
     auto& meshRendererComp = cube.AddComponent<Smile::MeshRendererComponent>();
@@ -160,51 +160,51 @@ void ExampleLayer::onAttach()
     cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
     cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
-    auto shader = smile::graphic::Shader::create( "assets/shaders/PBR.fx" );
-    auto material = smile::createRef< smile::graphic::Material >( shader );
-    smile::Ref< smile::graphic::Texture2D > pAlbedo =
-        smile::graphic::Texture2D::create( "assets/textures/uv_grid.png" );
-    material->setTexture2D( "ALBEDOMAP", pAlbedo );
+    auto pShader = Smile::Graphic::Shader::Create( "assets/shaders/PBR.fx" );
+    auto pMaterial = Smile::CreateRef< Smile::Graphic::Material >( pShader );
+    Smile::Ref< Smile::Graphic::Texture2D > pAlbedo =
+        Smile::Graphic::Texture2D::Create( "assets/textures/uv_grid.png" );
+    pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
-    modelEntity = activeScene->createEntity( "Model" );
-    auto &mesh_component =
-        modelEntity.addComponent< smile::scene::SkinnedMeshComponent >( "assets/meshes/nanosuit.obj", material );
-    modelEntity.getComponent< smile::scene::TransformComponent >().translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
-    modelEntity.getComponent< smile::scene::TransformComponent >().rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
-    modelEntity.getComponent< smile::scene::TransformComponent >().scale = DirectX::XMFLOAT3{ 2, 2, 2 };
+    m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
+    auto &meshComponent =
+        m_ModelEntity.AddComponent< Smile::Scene::SkinnedMeshComponent >( "assets/meshes/nanosuit.obj", pMaterial );
+    m_ModelEntity.GetComponent< Smile::Scene::TransformComponent >().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
+    m_ModelEntity.GetComponent< Smile::Scene::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
+    m_ModelEntity.GetComponent< Smile::Scene::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
-    activeScene->onViewportResize( 1280, 720 );
-    activeScene->onRuntimeStart();
+    m_pActiveScene->OnViewportResize( 1280, 720 );
+    m_pActiveScene->OnRuntimeStart();
 }
 
-void ExampleLayer::onUpdate( smile::Timestep delta_time )
+void ExampleLayer::OnUpdate( Smile::Timestep deltaTime )
 {
-    auto &transform = cameraEntity.getComponent< smile::scene::TransformComponent >();
+    auto &transform = m_CameraEntity.GetComponent< Smile::Scene::TransformComponent >();
 
-    if ( smile::input::Input::isKeyPressed( smile::input::key::Left ) )
-        transform.rotation.y -= DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
-    if ( smile::input::Input::isKeyPressed( smile::input::key::Right ) )
-        transform.rotation.y += DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
-    if ( smile::input::Input::isKeyPressed( smile::input::key::Up ) )
-        transform.rotation.x -= DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
-    if ( smile::input::Input::isKeyPressed( smile::input::key::Down ) )
-        transform.rotation.x += DirectX::XMConvertToRadians( cameraRotationSpeed * delta_time );
+    if ( Smile::Input::Input::IsKeyPressed( Smile::Input::key::Left ) )
+        transform.Rotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
+    if ( Smile::Input::Input::IsKeyPressed( Smile::Input::key::Right ) )
+        transform.Rotation.y += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
+    if ( Smile::Input::Input::IsKeyPressed( Smile::Input::key::Up ) )
+        transform.Rotation.x -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
+    if ( Smile::Input::Input::IsKeyPressed( Smile::Input::key::Down ) )
+        transform.Rotation.x += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
 
     const auto forward = transform.getForward();
     const auto right = transform.getRight();
     DirectX::XMFLOAT3 move{};
 
-    if ( smile::input::Input::isKeyPressed( 'A' ) )
+    if ( Smile::Input::Input::IsKeyPressed( 'A' ) )
         move.x -= 1;
-    if ( smile::input::Input::isKeyPressed( 'D' ) )
+    if ( Smile::Input::Input::IsKeyPressed( 'D' ) )
         move.x += 1;
-    if ( smile::input::Input::isKeyPressed( 'S' ) )
+    if ( Smile::Input::Input::IsKeyPressed( 'S' ) )
         move.z -= 1;
-    if ( smile::input::Input::isKeyPressed( 'W' ) )
+    if ( Smile::Input::Input::IsKeyPressed( 'W' ) )
         move.z += 1;
-    if ( smile::input::Input::isKeyPressed( smile::input::key::Space ) )
+    if ( Smile::Input::Input::IsKeyPressed( Smile::Input::key::Space ) )
         move.y += 1;
-    if ( smile::input::Input::isKeyPressed( smile::input::key::CtrlLeft ) )
+    if ( Smile::Input::Input::IsKeyPressed( Smile::Input::key::CtrlLeft ) )
         move.y -= 1;
 
     DirectX::XMFLOAT3 dir{};
@@ -212,37 +212,37 @@ void ExampleLayer::onUpdate( smile::Timestep delta_time )
     // dir.y = forward.y * move.z + right.y * move.x;
     dir.z = forward.z * move.z + right.z * move.x;
 
-    auto dir_vec = DirectX::XMVector3Normalize( DirectX::XMLoadFloat3( &dir ) );
-    DirectX::XMStoreFloat3( &dir, dir_vec );
+    auto dirVec = DirectX::XMVector3Normalize( DirectX::XMLoadFloat3( &dir ) );
+    DirectX::XMStoreFloat3( &dir, dirVec );
 
-    transform.translation.x += dir.x * cameraMoveSpeed * delta_time;
-    transform.translation.y += dir.y * cameraMoveSpeed * delta_time;
-    transform.translation.z += dir.z * cameraMoveSpeed * delta_time;
+    transform.Translation.x += dir.x * m_CameraMoveSpeed * deltaTime;
+    transform.Translation.y += dir.y * m_CameraMoveSpeed * deltaTime;
+    transform.Translation.z += dir.z * m_CameraMoveSpeed * deltaTime;
 
     // m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation.y += 1.f * deltaTime;
 
-    printTimer += smile::Timer::getInstance().getDeltaTime();
-    if ( printTimer >= 1.f )
+    m_PrintTimer += Smile::Timer::GetInstance().GetDeltaTime();
+    if ( m_PrintTimer >= 1.f )
     {
-        printTimer = 0.f;
-        smile::Logger::logInfo( "FPS: %d", smile::Timer::getInstance().getFPS() );
+        m_PrintTimer = 0.f;
+        Smile::Logger::LogInfo( "FPS: %d", Smile::Timer::GetInstance().GetFPS() );
     }
 
-    smile::graphic::RenderCommand::clear();
-    activeScene->onUpdateRuntime( delta_time );
+    Smile::Graphic::RenderCommand::Clear();
+    m_pActiveScene->OnUpdateRuntime( deltaTime );
 }
 
-void ExampleLayer::onEvent( smile::Event &event )
+void ExampleLayer::OnEvent( Smile::Event &event )
 {
-    smile::EventDispatcher dispatcher{ event };
-    dispatcher.dispatch< smile::WindowResizeEvent >( SM_BIND_EVENT_FN( ExampleLayer::onWindowResize ) );
+    Smile::EventDispatcher dispatcher{ event };
+    dispatcher.Dispatch< Smile::WindowResizeEvent >( SM_BIND_EVENT_FN( ExampleLayer::OnWindowResize ) );
 }
 
-void ExampleLayer::onImGuiRender()
+void ExampleLayer::OnImGuiRender()
 {
 }
 
-bool ExampleLayer::onWindowResize( smile::WindowResizeEvent &e )
+bool ExampleLayer::OnWindowResize( Smile::WindowResizeEvent &e )
 {
     const auto width = e.getWidth();
     const auto height = e.getHeight();
@@ -250,7 +250,7 @@ bool ExampleLayer::onWindowResize( smile::WindowResizeEvent &e )
     if ( width == 0 || height == 0 )
         return false;
 
-    activeScene->onViewportResize( width, height );
+    m_pActiveScene->OnViewportResize( width, height );
     return false;
 }
 
@@ -258,9 +258,9 @@ bool ExampleLayer::onWindowResize( smile::WindowResizeEvent &e )
 /*------------------------------------------------ Main Game ------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
 
-MainGame::MainGame( const smile::ApplicationDescriptor &descriptor ) : smile::Application{ descriptor }
+MainGame::MainGame( const Smile::ApplicationDescriptor &descriptor ) : Smile::Application{ descriptor }
 {
-    pushLayer( new ExampleLayer{} );
+    PushLayer( new ExampleLayer{} );
 }
 
 MainGame::~MainGame()

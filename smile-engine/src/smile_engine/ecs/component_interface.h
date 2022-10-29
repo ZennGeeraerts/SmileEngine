@@ -5,7 +5,7 @@
 
 #include <functional>
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     using createHandler = std::function< void( EntityHandleType, void * ) >;
     using destroyHandler = std::function< void( void * ) >;
@@ -15,50 +15,50 @@ namespace smile::ecs
       public:
         virtual ~ComponentInterface()
         {
-            SAFE_DELETE( componentStorage );
+            SAFE_DELETE( m_pComponentStorage );
         }
 
         template < typename ComponentType >
-        ComponentType &get( EntityHandleType entity_handle )
+        ComponentType &Get( EntityHandleType entity_handle )
         {
-            const IndexType index = sparseSet.getIndex( entity_handle.index );
+            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
 
-            SM_ASSERT( index != nullHandle< IndexType >.index, "ComponentInterface::get > Invalid index" );
+            SM_ASSERT( index != g_NullHandle< IndexType >.Index, "ComponentInterface::Get > Invalid index" );
 
-            return componentStorage->get< ComponentType >( index );
+            return m_pComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
-        const ComponentType &get( EntityHandleType entity_handle ) const
+        const ComponentType &Get( EntityHandleType entity_handle ) const
         {
-            const IndexType index = sparseSet.getIndex( entity_handle.index );
-            return componentStorage->get< ComponentType >( index );
+            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            return m_pComponentStorage->Get< ComponentType >( index );
         }
 
-        void *getRaw( EntityHandleType entity_handle )
+        void *GetRaw( EntityHandleType entity_handle )
         {
-            const IndexType index = sparseSet.getIndex( entity_handle.index );
-            return componentStorage->getRaw( index );
+            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            return m_pComponentStorage->GetRaw( index );
         }
 
-        const void *getRaw( EntityHandleType entity_handle ) const
+        const void *GetRaw( EntityHandleType entity_handle ) const
         {
-            const IndexType index = sparseSet.getIndex( entity_handle.index );
-            return componentStorage->getRaw( index );
+            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            return m_pComponentStorage->GetRaw( index );
         }
 
-        void clear()
+        void Clear()
         {
-            componentStorage->clear();
-            sparseSet.clear();
+            m_pComponentStorage->Clear();
+            m_Pool.Clear();
         }
 
       public:
-        bool relational;
-        SparseSetType sparseSet{};
-        ComponentStorage *componentStorage;
+        bool m_IsRelational;
+        SparseSetType m_Pool{};
+        ComponentStorage *m_pComponentStorage;
 
-        std::vector< createHandler > create;
-        std::vector< destroyHandler > destroy;
+        std::vector< createHandler > m_Create;
+        std::vector< destroyHandler > m_Destroy;
     };
 }

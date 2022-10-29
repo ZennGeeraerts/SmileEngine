@@ -3,28 +3,28 @@
 
 #include <mono/metadata/object.h>
 
-namespace smile::scripting
+namespace Smile::Scripting
 {
 #define SM_ADD_INTERNAL_CALL( name ) mono_add_internal_call( "Smile.InternalCalls::" #name, name )
 
-    static void nativeLog( MonoString *text, int value )
+    static void NativeLog( MonoString *pText, int value )
     {
-        char *c_str = mono_string_to_utf8( text );
-        std::string str{ c_str };
+        char *cStr = mono_string_to_utf8( pText );
+        std::string str{ cStr };
 
-        mono_free( c_str );
+        mono_free( cStr );
         std::cout << str << ", " << value << std::endl;
     }
 
-    static void nativeLogVector( DirectX::XMFLOAT3 *parameter )
+    static void NativeLogVector( DirectX::XMFLOAT3 *pParameter )
     {
-        DirectX::XMFLOAT3 vec = *parameter;
+        DirectX::XMFLOAT3 vec = *pParameter;
         std::cout << "Value: " << vec.x << ", " << vec.y << ", " << vec.z << std::endl;
     } 
 
-    void ScriptGlue::registerFunctions()
+    void ScriptGlue::RegisterFunctions()
     {
-        SM_ADD_INTERNAL_CALL( nativeLog );
-        SM_ADD_INTERNAL_CALL( nativeLogVector );
+        SM_ADD_INTERNAL_CALL( NativeLog );
+        SM_ADD_INTERNAL_CALL( NativeLogVector );
     }
 }

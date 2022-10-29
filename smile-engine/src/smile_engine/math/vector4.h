@@ -2,13 +2,13 @@
 
 #include "math.h"
 
-namespace smile::math
+namespace Smile::Math
 {
     struct Vector4 final
     {
         union
         {
-            float m[4];
+            float M[4];
             struct
             {
                 float x;
@@ -18,89 +18,89 @@ namespace smile::math
             };
         };
 
-        static const Vector4 zero, one;
+        static const Vector4 Zero, One;
     };
 
-    inline float dotProduct( const Vector4 &v1, const Vector4 &v2 )
+    inline float DotProduct( const Vector4 &v1, const Vector4 &v2 )
     {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
     }
 
-    inline float distanceSqr( const Vector4 &v1, const Vector4 &v2 )
+    inline float DistanceSqr( const Vector4 &v1, const Vector4 &v2 )
     {
         return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                ( v1.z - v2.z ) * ( v1.z - v2.z ) + ( v1.w - v2.w ) * ( v1.w - v2.w );
     }
 
-    inline float distance( const Vector4 &v1, const Vector4 &v2 )
+    inline float Distance( const Vector4 &v1, const Vector4 &v2 )
     {
-        return squareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
+        return SquareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                            ( v1.z - v2.z ) * ( v1.z - v2.z ) + ( v1.w - v2.w ) * ( v1.w - v2.w ) );
     }
 
-    inline float lengthSqr( const Vector4 &vector )
+    inline float LengthSqr( const Vector4 &vector )
     {
         return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w;
     }
 
-    inline float length( const Vector4 &vector )
+    inline float Length( const Vector4 &vector )
     {
-        return squareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
+        return SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
     }
 
-    inline bool isUnitVector( const Vector4 &vector )
+    inline bool IsUnitVector( const Vector4 &vector )
     {
-        return isOne( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
+        return IsOne( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
     }
 
-    inline bool hasZeroLength( const Vector4 &vector, float precision = epsilon )
+    inline bool HasZeroLength( const Vector4 &vector, float precision = g_Epsilon )
     {
-        return isSquareZero(
+        return IsSquareZero(
             vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w, precision );
     }
 
-    inline bool isZeroVector( const Vector4 &vector, float precision = epsilon )
+    inline bool IsZeroVector( const Vector4 &vector, float precision = g_Epsilon )
     {
-        return isZero( vector.x, precision ) && isZero( vector.y, precision ) && isZero( vector.z, precision ) &&
-               isZero( vector.w, precision );
+        return IsZero( vector.x, precision ) && IsZero( vector.y, precision ) && IsZero( vector.z, precision ) &&
+               IsZero( vector.w, precision );
     }
 
-    inline bool compareVector4( const Vector4 &v1, const Vector4 &v2, float precision = epsilon )
+    inline bool CompareVector4( const Vector4 &v1, const Vector4 &v2, float precision = g_Epsilon )
     {
-        return compareFloats( v1.x, v2.x, precision ) && compareFloats( v1.y, v2.y, precision ) &&
-               compareFloats( v1.z, v2.z, precision ) && compareFloats( v1.w, v2.w, precision );
+        return CompareFloats( v1.x, v2.x, precision ) && CompareFloats( v1.y, v2.y, precision ) &&
+               CompareFloats( v1.z, v2.z, precision ) && CompareFloats( v1.w, v2.w, precision );
     }
 
-    inline Vector4 getNormalized( const Vector4 &vector )
+    inline Vector4 GetNormalized( const Vector4 &vector )
     {
-        SM_ASSERT( !isZeroVector( vector ), "GetNormalized > Vector4 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector4 is zero vector" );
 
         const float length =
-            squareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
+            SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
 
         return Vector4{ vector.x / length, vector.y / length, vector.z / length, vector.w / length };
     }
 
-    inline void normalize( Vector4 &vector )
+    inline void Normalize( Vector4 &vector )
     {
-        SM_ASSERT( !isZeroVector( vector ), "Normalize > Vector4 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector4 is zero vector" );
 
         const float length =
-            squareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
+            SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
         vector.x /= length;
         vector.y /= length;
         vector.z /= length;
         vector.w /= length;
     }
 
-    inline Vector4 lerp( const Vector4 &v1, const Vector4 &v2, float percentage )
+    inline Vector4 Lerp( const Vector4 &v1, const Vector4 &v2, float percentage )
     {
-        const float one_minus_percentage = 1.0f - percentage;
+        const float oneMinusPercentage = 1.0f - percentage;
 
-        return Vector4{ v1.x * one_minus_percentage + v2.x * percentage,
-            v1.y * one_minus_percentage + v2.y * percentage,
-            v1.z * one_minus_percentage + v2.z * percentage,
-            v1.w * one_minus_percentage + v2.w * percentage };
+        return Vector4{ v1.x * oneMinusPercentage + v2.x * percentage,
+            v1.y * oneMinusPercentage + v2.y * percentage,
+            v1.z * oneMinusPercentage + v2.z * percentage,
+            v1.w * oneMinusPercentage + v2.w * percentage };
     }
 
     // Operators

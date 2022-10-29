@@ -3,7 +3,7 @@
 
 #include "smile_engine/core/logger.h"
 
-namespace smile::physics
+namespace Smile::Physics
 {
     void PhysicsErrorCallback::reportError( physx::PxErrorCode::Enum code,
         const char *message,
@@ -42,10 +42,10 @@ namespace smile::physics
         }
     }
 
-    void PhysicsAssertHandler::operator()( const char *pExp, const char *pFile, int line, bool &bIgnore )
+    void PhysicsAssertHandler::operator()( const char *exp, const char *file, int line, bool &ignore )
     {
 #ifdef SM_DEBUG
-        SM_LOG_CRITICALERROR( "[PhysX Error]: %s:%d - %s", pFile, line, pExp );
+        SM_LOG_CRITICALERROR( "[PhysX Error]: %s:%d - %s", file, line, exp );
 #endif
     }
 }

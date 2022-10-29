@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit-tests", "unit-tests\un
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smile-raster", "smile-raster\smile-raster.vcxproj", "{A9D60AB2-78EA-4D7F-BD81-552E080E0401}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smile-ScriptCore", "Smile-ScriptCore\Smile-ScriptCore.csproj", "{4B7520D8-0015-416D-929A-FE7EE3CE1FC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smile-script-core", "smile-script-core\smile-script-core.csproj", "{4B7520D8-0015-416D-929A-FE7EE3CE1FC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

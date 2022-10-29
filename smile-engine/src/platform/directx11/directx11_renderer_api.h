@@ -3,7 +3,7 @@
 #include "smile_engine/graphic/renderer_api.h"
 #include "directx11_context.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class DirectX11RendererAPI final : public RendererAPI
     {
@@ -12,15 +12,15 @@ namespace smile::graphic
         DirectX11RendererAPI( const DirectX11RendererAPI & ) = delete;
         DirectX11RendererAPI( DirectX11RendererAPI && ) = delete;
 
-        virtual void initialize() override;
-        virtual void resizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
-        virtual void setClearColor( const DirectX::XMFLOAT4 &color ) override;
-        virtual void clear() override;
+        virtual void Initialize() override;
+        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
+        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) override;
+        virtual void Clear() override;
 
-        virtual void drawIndexed( Uint32 index_count, const Ref< Shader > &shader ) override;
+        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
 
       private:
-        DirectX::XMFLOAT4 clearColor = { 1.f, 1.f, 1.f, 1.f };
-        DirectX11Context *directX11Context = nullptr;
+        DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
+        DirectX11Context *m_pDirectX11Context = nullptr;
     };
 }

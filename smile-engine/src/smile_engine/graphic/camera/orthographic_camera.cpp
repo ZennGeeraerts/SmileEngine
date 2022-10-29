@@ -1,40 +1,40 @@
 #include "smpch.h"
 #include "orthographic_camera.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     using namespace DirectX;
 
     OrthographicCamera::OrthographicCamera( float left, float right, float bottom, float top )
-        : position{ 0.f, 0.f, 0.f }
+        : m_Position{ 0.f, 0.f, 0.f }
     {
         XMStoreFloat4x4(
-            &projectionMatrix, XMMatrixOrthographicOffCenterLH( left, right, bottom, top, 0.1f, 2500.f ) );
+            &m_ProjectionMatrix, XMMatrixOrthographicOffCenterLH( left, right, bottom, top, 0.1f, 2500.f ) );
 
-        XMStoreFloat4x4( &viewMatrix, DirectX::XMMatrixIdentity() );
+        XMStoreFloat4x4( &m_ViewMatrix, DirectX::XMMatrixIdentity() );
         XMStoreFloat4x4(
-            &viewProjectionMatrix, XMLoadFloat4x4( &viewMatrix ) * XMLoadFloat4x4( &projectionMatrix ) );
+            &m_ViewProjectionMatrix, XMLoadFloat4x4( &m_ViewMatrix ) * XMLoadFloat4x4( &m_ProjectionMatrix ) );
     }
 
-    void OrthographicCamera::setPosition( const DirectX::XMFLOAT3 &new_position )
+    void OrthographicCamera::setPosition( const DirectX::XMFLOAT3 &position )
     {
-        position = new_position;
+        m_Position = position;
         recalculateViewMatrix();
     }
 
-    void OrthographicCamera::setRotation( float new_rotation )
+    void OrthographicCamera::setRotation( float rotation )
     {
-        rotation = new_rotation;
+        m_Rotation = rotation;
         recalculateViewMatrix();
     }
 
     void OrthographicCamera::recalculateViewMatrix()
     {
-        XMMATRIX transform = XMMatrixMultiply( XMMatrixRotationZ( XMConvertToRadians( rotation ) ),
-            XMMatrixTranslation( position.x, position.y, position.z ) );
-        XMStoreFloat4x4( &viewMatrix, XMMatrixInverse( nullptr, transform ) );
+        XMMATRIX transform = XMMatrixMultiply( XMMatrixRotationZ( XMConvertToRadians( m_Rotation ) ),
+            XMMatrixTranslation( m_Position.x, m_Position.y, m_Position.z ) );
+        XMStoreFloat4x4( &m_ViewMatrix, XMMatrixInverse( nullptr, transform ) );
 
         XMStoreFloat4x4(
-            &viewProjectionMatrix, XMLoadFloat4x4( &viewMatrix ) * XMLoadFloat4x4( &projectionMatrix ) );
+            &m_ViewProjectionMatrix, XMLoadFloat4x4( &m_ViewMatrix ) * XMLoadFloat4x4( &m_ProjectionMatrix ) );
     }
 }

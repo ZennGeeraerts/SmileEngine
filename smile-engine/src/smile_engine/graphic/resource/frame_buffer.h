@@ -1,6 +1,6 @@
 #pragma once
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     enum class FramebufferTextureFormat
     {
@@ -14,13 +14,13 @@ namespace smile::graphic
     struct FramebufferTextureData final
     {
         FramebufferTextureData() = default;
-        FramebufferTextureData( FramebufferTextureFormat format, bool use_in_shader = false )
-            : textureFormat{ format }, useInShader{ use_in_shader }
+        FramebufferTextureData( FramebufferTextureFormat format, bool useInShader = false )
+            : TextureFormat{ format }, UseInShader{ useInShader }
         {
         }
 
-        FramebufferTextureFormat textureFormat = FramebufferTextureFormat::None;
-        bool useInShader;
+        FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
+        bool UseInShader;
         // TODO: filtering/wrap
     };
 
@@ -28,22 +28,22 @@ namespace smile::graphic
     {
         FramebufferAttachmentData() = default;
         FramebufferAttachmentData( const std::initializer_list< FramebufferTextureData > &attachments )
-            : attachments{ attachments }
+            : Attachments{ attachments }
         {
         }
 
-        std::vector< FramebufferTextureData > attachments;
+        std::vector< FramebufferTextureData > Attachments;
     };
 
-    struct FramebufferData final
+    struct FramebufferDescriptor final
     {
-        Uint32 width = 0;
-        Uint32 height = 0;
-        FramebufferAttachmentData attachments;
-        Uint16 samples = 1;
+        Uint32 Width = 0;
+        Uint32 Height = 0;
+        FramebufferAttachmentData Attachments;
+        Uint16 Samples = 1;
 
         // if true -> Render to the swapchain
-        bool swapChainTarget = false;
+        bool IsSwapChainTarget = false;
     };
 
     class Framebuffer
@@ -51,17 +51,17 @@ namespace smile::graphic
       public:
         virtual ~Framebuffer() = default;
 
-        virtual void invalidate() = 0;
+        virtual void Invalidate() = 0;
 
-        virtual void bind() const = 0;
-        virtual void unbind() const = 0;
-        virtual void setClearColor( const DirectX::XMFLOAT4 &color ) = 0;
-        virtual void clear() = 0;
-        virtual void resize( Uint32 width, Uint32 height ) = 0;
+        virtual void Bind() const = 0;
+        virtual void Unbind() const = 0;
+        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) = 0;
+        virtual void Clear() = 0;
+        virtual void Resize( Uint32 width, Uint32 height ) = 0;
 
-        virtual const FramebufferData &getData() const = 0;
-        virtual void *getColor( Uint32 index ) const = 0;
+        virtual const FramebufferDescriptor &GetDescriptor() const = 0;
+        virtual void *GetColor( Uint32 index ) const = 0;
 
-        static Ref< Framebuffer > create( const FramebufferData &frame_buffer_data );
+        static Ref< Framebuffer > Create( const FramebufferDescriptor &framebufferDesc );
     };
 }

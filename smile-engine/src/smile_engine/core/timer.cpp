@@ -3,44 +3,44 @@
 
 using namespace std::chrono;
 
-namespace smile
+namespace Smile
 {
     Timer::Timer()
-        : msPerFrame{ 16 },
-          lag{ 0.0f },
-          totalTimePassed{ 0.0f },
-          deltaTime{ 0.0f },
-          fps{ 0 },
-          lastTime{},
-          isRunning{ false }
+        : m_MsPerFrame{ 16 },
+          m_Lag{ 0.0f },
+          m_TotalTimePassed{ 0.0f },
+          m_DeltaTime{ 0.0f },
+          m_FPS{ 0 },
+          m_LastTime{},
+          m_IsRunning{ false }
     {
     }
 
-    void Timer::run()
+    void Timer::Run()
     {
-        isRunning = true;
-        lastTime = high_resolution_clock::now();
+        m_IsRunning = true;
+        m_LastTime = high_resolution_clock::now();
     }
 
-    void Timer::onUpdate()
+    void Timer::OnUpdate()
     {
-        if ( !isRunning )
+        if ( !m_IsRunning )
             return;
 
-        const auto current_time{ high_resolution_clock::now() };
-        deltaTime = duration< float >( current_time - lastTime ).count();
-        lastTime = current_time;
+        const auto currentTime{ high_resolution_clock::now() };
+        m_DeltaTime = duration< float >( currentTime - m_LastTime ).count();
+        m_LastTime = currentTime;
 
-        lag += deltaTime;
+        m_Lag += m_DeltaTime;
 
-        fps = static_cast< Uint32 >( 1.f / deltaTime.getSeconds() );
+        m_FPS = static_cast< Uint32 >( 1.f / m_DeltaTime.GetSeconds() );
     }
 
-    bool Timer::isCatchingUpInFixedSteps()
+    bool Timer::IsCatchingUpInFixedSteps()
     {
-        if ( lag >= msPerFrame )
+        if ( m_Lag >= m_MsPerFrame )
         {
-            lag -= static_cast< float >( msPerFrame );
+            m_Lag -= static_cast< float >( m_MsPerFrame );
             return true;
         }
 

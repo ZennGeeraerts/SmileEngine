@@ -2,153 +2,154 @@
 
 #include <algorithm>
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     class Group final
     {
       public:
         struct Iterator final
         {
-            Iterator( EntityHandleManager &handle_manager, SparseSetType::ConstIterator it )
-                : handleManager{ handle_manager }, it{ it }
+            Iterator( EntityHandleManager &handleManager, SparseSetType::ConstIterator it )
+                : HandleManager{ handleManager }, It{ it }
             {
             }
 
             EntityHandleType operator*() const
             {
-                return handleManager.getEntityHandle( *it );
+                return HandleManager.GetEntityHandle( *It );
             }
             bool operator==( const Iterator &other ) const
             {
-                return it == other.it || ( *it ) == handleManager.getEntityCount();
+                return It == other.It || ( *It ) == HandleManager.GetEntityCount();
             }
             bool operator!=( const Iterator &other ) const
             {
-                return it != other.it && ( *it ) != handleManager.getEntityCount();
+                return It != other.It && ( *It ) != HandleManager.GetEntityCount();
             }
             Iterator &operator++()
             {
-                ++it;
+                ++It;
                 return *this;
             }
 
-            EntityHandleManager &handleManager;
-            SparseSetType::ConstIterator it;
+            EntityHandleManager &HandleManager;
+            SparseSetType::ConstIterator It
+                ;
         };
 
       public:
-        Group( EntityHandleManager &handle_manager,
-            const std::vector< ComponentInterface * > &owned,
-            const std::vector< ComponentInterface * > &get )
-            : handleManager{ handle_manager }
+        Group( EntityHandleManager &handleManager,
+            const std::vector< ComponentInterface * > &pOwned,
+            const std::vector< ComponentInterface * > &pGet )
+            : m_HandleManager{ handleManager }
         {
-            std::vector< SparseSetType * > pools{};
+            std::vector< SparseSetType * > pPools{};
 
-            for ( auto component : owned )
+            for ( auto pComponent : pOwned )
             {
-                if ( component )
+                if ( pComponent )
                 {
-                    pools.push_back( &component->sparseSet );
-                    ownedPools.push_back( component );
+                    pPools.push_back( &pComponent->m_Pool );
+                    m_pOwnedPools.push_back( pComponent );
                 }
             }
 
-            for ( auto component : get )
+            for ( auto pComponent : pGet )
             {
-                if ( component )
+                if ( pComponent )
                 {
-                    pools.push_back( &component->sparseSet );
-                    getPools.push_back( component );
+                    pPools.push_back( &pComponent->m_Pool );
+                    m_pGetPools.push_back( pComponent );
                 }
             }
 
-            if ( pools.empty() )
+            if ( pPools.empty() )
                 return;
 
-            SparseSetType *min_pool = *std::min_element( std::begin( pools ),
-                std::end( pools ),
-                []( SparseSetType *lhs, SparseSetType *rhs )
-                { return lhs->getItemCount() < rhs->getItemCount(); } );
+            SparseSetType *pMinPool = *std::min_element( std::begin( pPools ),
+                std::end( pPools ),
+                []( SparseSetType *pLhs, SparseSetType *pRhs )
+                { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
-            for ( Uint32 i{}; i < min_pool->getItemCount(); ++i )
+            for ( Uint32 i{}; i < pMinPool->GetItemCount(); ++i )
             {
-                auto entity = min_pool->getElement( i );
-                bool match = true;
+                auto entity = pMinPool->GetElement( i );
+                bool isMatch = true;
 
-                for ( auto pool : pools )
+                for ( auto pPool : pPools )
                 {
-                    if ( pool == min_pool )
+                    if ( pPool == pMinPool )
                         continue;
 
-                    if ( !pool->contains( entity ) )
+                    if ( !pPool->Contains( entity ) )
                     {
-                        match = false;
+                        isMatch = false;
                         break;
                     }
                 }
 
-                if ( match )
+                if ( isMatch )
                 {
-                    for ( auto component : ownedPools )
+                    for ( auto pPool : m_pOwnedPools )
                     {
-                        IndexType index = component->sparseSet.getIndex( entity );
-                        component->sparseSet.swap( component->sparseSet.getElement( i ), entity );
-                        component->componentStorage->swap( i, index );
+                        IndexType index = pPool->m_Pool.GetIndex( entity );
+                        pPool->m_Pool.Swap( pPool->m_Pool.GetElement( i ), entity );
+                        pPool->m_pComponentStorage->Swap( i, index );
                     }
 
-                    ++endIndex;
+                    ++m_EndIndex;
                 }
             }
         }
 
-        void addEntity( IndexType entity_index )
+        void AddEntity( IndexType entityIndex )
         {
-            if ( hasEntity( entity_index ) )
+            if ( HasEntity( entityIndex ) )
             {
-                for ( auto component : ownedPools )
+                for ( auto component : m_pOwnedPools )
                 {
-                    IndexType index = component->sparseSet.getIndex( entity_index );
-                    component->sparseSet.swap( component->sparseSet.getElement( endIndex ), entity_index );
-                    component->componentStorage->swap( endIndex, index );
+                    IndexType index = component->m_Pool.GetIndex( entityIndex );
+                    component->m_Pool.Swap( component->m_Pool.GetElement( m_EndIndex ), entityIndex );
+                    component->m_pComponentStorage->Swap( m_EndIndex, index );
                 }
 
-                ++endIndex;
+                ++m_EndIndex;
             }
         }
 
-        void remove( IndexType entity_index )
+        void RemoveEntity( IndexType entityIndex )
         {
-            if ( hasEntity( entity_index ) )
+            if ( HasEntity( entityIndex ) )
             {
-                for ( auto component : ownedPools )
+                for ( auto pComponent : m_pOwnedPools )
                 {
-                    IndexType index = component->sparseSet.getIndex( entity_index );
-                    component->sparseSet.swap( component->sparseSet.getElement( endIndex - 1 ), entity_index );
-                    component->componentStorage->swap( endIndex - 1, index );
+                    IndexType index = pComponent->m_Pool.GetIndex( entityIndex );
+                    pComponent->m_Pool.Swap( pComponent->m_Pool.GetElement( m_EndIndex - 1 ), entityIndex );
+                    pComponent->m_pComponentStorage->Swap( m_EndIndex - 1, index );
                 }
 
-                --endIndex;
+                --m_EndIndex;
             }
         }
 
-        bool hasComponent( ComponentInterface *component ) const
+        bool HasComponent( ComponentInterface *pComponent ) const
         {
-            return ( std::find( ownedPools.begin(), ownedPools.end(), component ) != ownedPools.end() ) ||
-                   ( std::find( getPools.begin(), getPools.end(), component ) != getPools.end() );
+            return ( std::find( m_pOwnedPools.begin(), m_pOwnedPools.end(), pComponent ) != m_pOwnedPools.end() ) ||
+                   ( std::find( m_pGetPools.begin(), m_pGetPools.end(), pComponent ) != m_pGetPools.end() );
         }
 
-        bool hasEntity( IndexType entity_index ) const
+        bool HasEntity( IndexType entityIndex ) const
         {
-            std::vector< SparseSetType * > pools{};
+            std::vector< SparseSetType * > pPools{};
 
-            for ( auto component : ownedPools )
-                pools.push_back( &component->sparseSet );
-            for ( auto component : getPools )
-                pools.push_back( &component->sparseSet );
+            for ( auto pComponent : m_pOwnedPools )
+                pPools.push_back( &pComponent->m_Pool );
+            for ( auto pComponent : m_pGetPools )
+                pPools.push_back( &pComponent->m_Pool );
 
-            for ( auto pool : pools )
+            for ( auto pPool : pPools )
             {
-                if ( !pool->contains( entity_index ) )
+                if ( !pPool->Contains( entityIndex ) )
                     return false;
             }
 
@@ -157,35 +158,35 @@ namespace smile::ecs
 
         Iterator begin() const
         {
-            if ( !ownedPools.empty() )
-                return Iterator{ handleManager, ( *ownedPools.begin() )->sparseSet.begin() };
+            if ( !m_pOwnedPools.empty() )
+                return Iterator{ m_HandleManager, ( *m_pOwnedPools.begin() )->m_Pool.begin() };
             else
-                return Iterator{ handleManager, SparseSetType::ConstIterator{} };
+                return Iterator{ m_HandleManager, SparseSetType::ConstIterator{} };
         }
 
         Iterator end() const
         {
-            if ( !ownedPools.empty() )
-                return Iterator{ handleManager, ( *ownedPools.begin() )->sparseSet.begin() + endIndex };
+            if ( !m_pOwnedPools.empty() )
+                return Iterator{ m_HandleManager, ( *m_pOwnedPools.begin() )->m_Pool.begin() + m_EndIndex };
             else
-                return Iterator{ handleManager, SparseSetType::ConstIterator{} };
+                return Iterator{ m_HandleManager, SparseSetType::ConstIterator{} };
         }
 
-        const std::vector< ComponentInterface * > &getOwnedComponents() const
+        const std::vector< ComponentInterface * > &GetOwnedComponents() const
         {
-            return ownedPools;
+            return m_pOwnedPools;
         }
-        const std::vector< ComponentInterface * > &getGetComponents() const
+        const std::vector< ComponentInterface * > &GetGetComponents() const
         {
-            return getPools;
+            return m_pGetPools;
         }
 
       private:
-        EntityHandleManager &handleManager;
+        EntityHandleManager &m_HandleManager;
 
-        std::vector< ComponentInterface * > ownedPools{};
-        std::vector< ComponentInterface * > getPools{};
+        std::vector< ComponentInterface * > m_pOwnedPools{};
+        std::vector< ComponentInterface * > m_pGetPools{};
 
-        IndexType endIndex{ 0 };
+        IndexType m_EndIndex{ 0 };
     };
 }

@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace smile
+namespace Smile
 {
 	namespace Raster
 	{

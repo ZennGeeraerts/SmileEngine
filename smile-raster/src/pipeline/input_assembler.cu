@@ -3,7 +3,7 @@
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
 
-namespace smile
+namespace Smile
 {
 	namespace Raster
 	{

@@ -5,7 +5,7 @@
 
 #include <type_traits>
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     namespace detail
     {

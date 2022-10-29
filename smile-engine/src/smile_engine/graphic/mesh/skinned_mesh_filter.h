@@ -2,7 +2,7 @@
 #include "mesh_filter.h"
 #include "smile_engine/graphic/animation/bone.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     struct BoneInfo final
     {
@@ -33,72 +33,72 @@ namespace smile::graphic
         SkinnedMeshFilter() = default;
         virtual ~SkinnedMeshFilter();
 
-        virtual void create( const BufferLayout &layout ) override;
-        bool hasAnimations() const
+        virtual void Create( const BufferLayout &layout ) override;
+        bool HasAnimations() const
         {
-            return animated;
+            return m_IsAnimated;
         }
 
-        virtual Ref< VertexBuffer > getVertexBuffer() const override
+        virtual Ref< VertexBuffer > GetVertexBuffer() const override
         {
-            return vertexBuffer;
+            return m_pVertexBuffer;
         }
-        virtual Ref< IndexBuffer > getIndexBuffer() const override
+        virtual Ref< IndexBuffer > GetIndexBuffer() const override
         {
-            return indexBuffer;
+            return m_pIndexBuffer;
         }
-        virtual const std::string &getFilePath() const override
+        virtual const std::string &GetFilePath() const override
         {
-            return filePath;
+            return m_FilePath;
         }
 
-        virtual void setVertexCount( Uint32 vertex_count ) override
+        virtual void SetVertexCount( Uint32 vertex_count ) override
         {
-            vertexCount = vertex_count;
+            m_VertexCount = vertex_count;
         }
-        virtual void addPosition( const DirectX::XMFLOAT3 &position ) override;
-        virtual void addNormal( const DirectX::XMFLOAT3 &normal ) override;
-        virtual void addTangent( const DirectX::XMFLOAT3 &tangent ) override;
-        virtual void addBinormal( const DirectX::XMFLOAT3 &binormal ) override;
-        virtual void addTexCoord( const DirectX::XMFLOAT2 &tex_coord ) override;
-        virtual void addColor( const DirectX::XMFLOAT4 &color ) override;
+        virtual void AddPosition( const DirectX::XMFLOAT3 &position ) override;
+        virtual void AddNormal( const DirectX::XMFLOAT3 &normal ) override;
+        virtual void AddTangent( const DirectX::XMFLOAT3 &tangent ) override;
+        virtual void AddBinormal( const DirectX::XMFLOAT3 &binormal ) override;
+        virtual void AddTexCoord( const DirectX::XMFLOAT2 &texCoord ) override;
+        virtual void AddColor( const DirectX::XMFLOAT4 &color ) override;
 
-        virtual void setIndexCount( Uint32 index_count ) override;
-        virtual void addIndex( Uint32 buffer_position, Uint32 index ) override;
+        virtual void SetIndexCount( Uint32 indexCount ) override;
+        virtual void AddIndex( Uint32 bufferPosition, Uint32 index ) override;
 
       private:
-        std::vector< DirectX::XMFLOAT3 > positions = {};
-        std::vector< DirectX::XMFLOAT3 > normals = {};
-        std::vector< DirectX::XMFLOAT3 > tangents = {};
-        std::vector< DirectX::XMFLOAT3 > binormals = {};
-        std::vector< DirectX::XMFLOAT2 > texCoords = {};
-        std::vector< DirectX::XMFLOAT4 > colors = {};
-        std::vector< DirectX::XMFLOAT4 > blendIndices = {};
-        std::vector< DirectX::XMFLOAT4 > blendWeights = {};
+        std::vector< DirectX::XMFLOAT3 > m_Positions = {};
+        std::vector< DirectX::XMFLOAT3 > m_Normals = {};
+        std::vector< DirectX::XMFLOAT3 > m_Tangents = {};
+        std::vector< DirectX::XMFLOAT3 > m_Binormals = {};
+        std::vector< DirectX::XMFLOAT2 > m_TexCoords = {};
+        std::vector< DirectX::XMFLOAT4 > m_Colors = {};
+        std::vector< DirectX::XMFLOAT4 > m_BlendIndices = {};
+        std::vector< DirectX::XMFLOAT4 > m_BlendWeights = {};
 
-        bool animated = false;
-        std::vector< AnimationClip > animationClips{};
-        std::unordered_map< std::string, BoneInfo > skeletonMap{};
-        Uint32 boneCount = 0;
+        bool m_IsAnimated = false;
+        std::vector< AnimationClip > m_AnimationClips{};
+        std::unordered_map< std::string, BoneInfo > m_SkeletonMap{};
+        Uint32 m_BoneCount = 0;
 
-        bool usePositions = false;
-        bool useNormals = false;
-        bool useTangents = false;
-        bool useBinormals = false;
-        bool useTexCoords = false;
-        bool useColors = false;
-        bool useBlendIndices = false;
-        bool useBlendWeights = false;
+        bool m_UsePositions = false;
+        bool m_UseNormals = false;
+        bool m_UseTangents = false;
+        bool m_UseBinormals = false;
+        bool m_UseTexCoords = false;
+        bool m_UseColors = false;
+        bool m_UseBlendIndices = false;
+        bool m_UseBlendWeights = false;
 
-        std::vector< Uint32 > indices = {};
+        std::vector< Uint32 > m_Indices = {};
 
-        Ref< VertexBuffer > vertexBuffer = nullptr;
-        Ref< IndexBuffer > indexBuffer = nullptr;
+        Ref< VertexBuffer > m_pVertexBuffer = nullptr;
+        Ref< IndexBuffer > m_pIndexBuffer = nullptr;
 
-        Uint32 vertexCount = 0;
+        Uint32 m_VertexCount = 0;
 
-        std::string filePath = {};
-        void *dataLocation = nullptr;
+        std::string m_FilePath = {};
+        void *m_pDataLocation = nullptr;
 
         friend class MeshLoader;
         friend class MeshAnimator;

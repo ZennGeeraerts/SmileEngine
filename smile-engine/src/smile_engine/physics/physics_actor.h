@@ -7,12 +7,12 @@ namespace physx
     class PxMaterial;
 }
 
-namespace smile::physics
+namespace Smile::Physics
 {
     class PhysicsActor final
     {
       public:
-        PhysicsActor( scene::Entity entity );
+        PhysicsActor( Scene::Entity entity );
         ~PhysicsActor();
 
         PhysicsActor( const PhysicsActor & ) = delete;
@@ -20,27 +20,27 @@ namespace smile::physics
         PhysicsActor &operator=( const PhysicsActor & ) = delete;
         PhysicsActor &operator=( PhysicsActor && ) = delete;
 
-        void onFixedUpdate( Timestep delta_time );
-        void rotate( const DirectX::XMFLOAT3 &rotation );
+        void OnFixedUpdate( Timestep deltaTime );
+        void Rotate( const DirectX::XMFLOAT3 &rotation );
 
-        bool isDynamic() const
+        bool IsDynamic() const
         {
-            return entity.getComponent< scene::RigidbodyComponent >().bodyType == scene::RigidbodyComponent::BodyType::Dynamic;
+            return m_Entity.GetComponent< Scene::RigidbodyComponent >().Type == Scene::RigidbodyComponent::BodyType::Dynamic;
         }
 
       private:
-        void addBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );
-        void addSphereCollider( const scene::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size );
-        void addCapsuleCollider( const scene::CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddBoxCollider( const Scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddSphereCollider( const Scene::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddCapsuleCollider( const Scene::CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size );
 
-        void updateTransform();
+        void UpdateTransform();
 
       private:
-        scene::Entity entity;
-        Ref< PhysicsMaterial > physicsMaterial;
+        Scene::Entity m_Entity;
+        Ref< PhysicsMaterial > m_pPhysicsMaterial;
 
-        physx::PxRigidActor *rigidActor = nullptr;
-        physx::PxMaterial *pxMaterial = nullptr;
+        physx::PxRigidActor *m_pRigidActor = nullptr;
+        physx::PxMaterial *m_pPxMaterial = nullptr;
 
         friend class PhysicsEngine;
     };

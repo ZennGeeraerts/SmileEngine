@@ -1,108 +1,109 @@
 #include "smpch.h"
 #include "static_mesh_filter.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     StaticMeshFilter::~StaticMeshFilter()
     {
-        positions.clear();
-        normals.clear();
-        tangents.clear();
-        binormals.clear();
-        texCoords.clear();
-        indices.clear();
-        colors.clear();
+        m_Positions.clear();
+        m_Normals.clear();
+        m_Tangents.clear();
+        m_Binormals.clear();
+        m_TexCoords.clear();
+        m_Indices.clear();
+        m_Colors.clear();
     }
 
-    void StaticMeshFilter::create( const BufferLayout &layout )
+    void StaticMeshFilter::Create( const BufferLayout &layout )
     {
-        dataLocation = malloc( layout.getStride() * vertexCount );
-        if ( !dataLocation )
+        m_pDataLocation =
+            malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( m_VertexCount ) );
+        if ( !m_pDataLocation )
         {
-            SM_LOG_ERROR( "StaticMeshFilter::create > Failed to allocate memory for the vertex buffer" );
+            SM_LOG_ERROR( "StaticMeshFilter::Create > Failed to allocate memory for the vertex buffer" );
             return;
         }
 
-        VertexBufferDescriptor vertex_buffer_data{};
-        vertex_buffer_data.vertices = dataLocation;
-        vertex_buffer_data.count = vertexCount;
-        vertex_buffer_data.usage = BufferUsage::Immutable;
-        vertex_buffer_data.stride = layout.getStride();
+        VertexBufferDescriptor vertexBufferDesc{};
+        vertexBufferDesc.pVertices = m_pDataLocation;
+        vertexBufferDesc.Count = m_VertexCount;
+        vertexBufferDesc.Usage = BufferUsage::Immutable;
+        vertexBufferDesc.Stride = layout.GetStride();
 
-        for ( Uint32 i{}; i < vertexCount; ++i )
+        for ( Uint32 i{}; i < m_VertexCount; ++i )
         {
             for ( const BufferElement &element : layout )
             {
-                if ( element.name == "POSITION" )
-                    memcpy( dataLocation, usePositions ? &positions[i] : &defaultFloat3, element.size );
-                else if ( element.name == "NORMAL" )
-                    memcpy( dataLocation, useNormals ? &normals[i] : &defaultFloat3, element.size );
-                else if ( element.name == "TEXCOORD" )
-                    memcpy( dataLocation, useTexCoords ? &texCoords[i] : &defaultFloat2, element.size );
-                else if ( element.name == "TANGENT" )
-                    memcpy( dataLocation, useTangents ? &tangents[i] : &defaultFloat3, element.size );
-                else if ( element.name == "BINORMAL" )
-                    memcpy( dataLocation, useBinormals ? &binormals[i] : &defaultFloat3, element.size );
-                else if ( element.name == "COLOR" )
-                    memcpy( dataLocation, useColors ? &colors[i] : &defaultFloat4, element.size );
+                if ( element.Name == "POSITION" )
+                    memcpy( m_pDataLocation, m_UsePositions ? &m_Positions[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "NORMAL" )
+                    memcpy( m_pDataLocation, m_UseNormals ? &m_Normals[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "TEXCOORD" )
+                    memcpy( m_pDataLocation, m_UseTexCoords ? &m_TexCoords[i] : &s_DefaultFloat2, element.Size );
+                else if ( element.Name == "TANGENT" )
+                    memcpy( m_pDataLocation, m_UseTangents ? &m_Tangents[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "BINORMAL" )
+                    memcpy( m_pDataLocation, m_UseBinormals ? &m_Binormals[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "COLOR" )
+                    memcpy( m_pDataLocation, m_UseColors ? &m_Colors[i] : &s_DefaultFloat4, element.Size );
 
-                dataLocation = ( BYTE * )dataLocation + element.size;
+                m_pDataLocation = ( BYTE * )m_pDataLocation + element.Size;
             }
         }
 
-        IndexBufferDescriptor index_buffer_data{};
-        index_buffer_data.indices = indices.data();
-        index_buffer_data.count = static_cast< Uint32 >( indices.size() );
-        index_buffer_data.usage = BufferUsage::Immutable;
+        IndexBufferDescriptor indexBufferDesc{};
+        indexBufferDesc.pIndices = m_Indices.data();
+        indexBufferDesc.Count = static_cast< Uint32 >( m_Indices.size() );
+        indexBufferDesc.Usage = BufferUsage::Immutable;
 
-        vertexBuffer.reset( VertexBuffer::create( vertex_buffer_data ) );
-        indexBuffer.reset( IndexBuffer::create( index_buffer_data ) );
+        m_pVertexBuffer.reset( VertexBuffer::Create( vertexBufferDesc ) );
+        m_pIndexBuffer.reset( IndexBuffer::Create( indexBufferDesc ) );
     }
 
-    void StaticMeshFilter::addPosition( const DirectX::XMFLOAT3 &position )
+    void StaticMeshFilter::AddPosition( const DirectX::XMFLOAT3 &position )
     {
-        usePositions = true;
-        positions.push_back( position );
+        m_UsePositions = true;
+        m_Positions.push_back( position );
     }
 
-    void StaticMeshFilter::addNormal( const DirectX::XMFLOAT3 &normal )
+    void StaticMeshFilter::AddNormal( const DirectX::XMFLOAT3 &normal )
     {
-        useNormals = true;
-        normals.push_back( normal );
+        m_UseNormals = true;
+        m_Normals.push_back( normal );
     }
 
-    void StaticMeshFilter::addTangent( const DirectX::XMFLOAT3 &tangent )
+    void StaticMeshFilter::AddTangent( const DirectX::XMFLOAT3 &tangent )
     {
-        useTangents = true;
-        tangents.push_back( tangent );
+        m_UseTangents = true;
+        m_Tangents.push_back( tangent );
     }
 
-    void StaticMeshFilter::addBinormal( const DirectX::XMFLOAT3 &binormal )
+    void StaticMeshFilter::AddBinormal( const DirectX::XMFLOAT3 &binormal )
     {
-        useBinormals = true;
-        binormals.push_back( binormal );
+        m_UseBinormals = true;
+        m_Binormals.push_back( binormal );
     }
 
-    void StaticMeshFilter::addTexCoord( const DirectX::XMFLOAT2 &tex_coord )
+    void StaticMeshFilter::AddTexCoord( const DirectX::XMFLOAT2 &texCoord )
     {
-        useTexCoords = true;
-        texCoords.push_back( tex_coord );
+        m_UseTexCoords = true;
+        m_TexCoords.push_back( texCoord );
     }
 
-    void StaticMeshFilter::addColor( const DirectX::XMFLOAT4 &color )
+    void StaticMeshFilter::AddColor( const DirectX::XMFLOAT4 &color )
     {
-        useColors = true;
-        colors.push_back( color );
+        m_UseColors = true;
+        m_Colors.push_back( color );
     }
 
-    void StaticMeshFilter::setIndexCount( Uint32 index_count )
+    void StaticMeshFilter::SetIndexCount( Uint32 indexCount )
     {
-        indices.resize( index_count );
+        m_Indices.resize( indexCount );
     }
 
-    void StaticMeshFilter::addIndex( Uint32 buffer_position, Uint32 index )
+    void StaticMeshFilter::AddIndex( Uint32 bufferPosition, Uint32 index )
     {
-        SM_ASSERT( buffer_position < indices.size(), "StaticMeshFilter::addIndex > Invalid buffer position" );
-        indices[buffer_position] = index;
+        SM_ASSERT( bufferPosition < m_Indices.size(), "StaticMeshFilter::AddIndex > Invalid buffer position" );
+        m_Indices[bufferPosition] = index;
     }
 }

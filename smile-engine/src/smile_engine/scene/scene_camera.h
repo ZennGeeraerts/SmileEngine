@@ -1,9 +1,9 @@
 #pragma once
 #include "smile_engine/graphic/camera/camera.h"
 
-namespace smile::scene
+namespace Smile::Scene
 {
-    class SceneCamera final : public graphic::Camera
+    class SceneCamera final : public Graphic::Camera
     {
       public:
         enum class ProjectionType
@@ -16,100 +16,100 @@ namespace smile::scene
         SceneCamera();
         virtual ~SceneCamera() = default;
 
-        void setViewportSize( Uint32 width, Uint32 height );
+        void SetViewportSize( Uint32 width, Uint32 height );
 
-        ProjectionType getProjectionType() const
+        ProjectionType GetProjectionType() const
         {
-            return projectionType;
+            return m_ProjectionType;
         }
-        void setProjectionType( ProjectionType projection_type )
+        void SetProjectionType( ProjectionType projectionType )
         {
-            projectionType = projection_type;
-            recalculateProjectionMatrix();
+            projectionType = projectionType;
+            RecalculateProjectionMatrix();
         }
 
         // Perspective
-        void setPerspectiveCamera( float new_fov, float near_plane, float far_plane );
+        void SetPerspectiveCamera( float fov, float nearPlane, float farPlane );
 
-        float getFOV() const
+        float GetFOV() const
         {
-            return fov;
+            return m_FOV;
         }
-        void setFOV( float new_fov )
+        void SetFOV( float fov )
         {
-            fov = new_fov;
-            recalculateProjectionMatrix();
-        }
-
-        float getPerspectiveNearPlane() const
-        {
-            return perspectiveNearPlane;
-        }
-        void setPerspectiveNearPlane( float near_plane )
-        {
-            perspectiveNearPlane = near_plane;
-            recalculateProjectionMatrix();
+            m_FOV = fov;
+            RecalculateProjectionMatrix();
         }
 
-        float getPerspectiveFarPlane() const
+        float GetPerspectiveNearPlane() const
         {
-            return perspectiveFarPlane;
+            return m_PerspectiveNearPlane;
         }
-        void setPerspectiveFarPlane( float far_plane )
+        void SetPerspectiveNearPlane( float nearPlane )
         {
-            perspectiveFarPlane = far_plane;
-            recalculateProjectionMatrix();
+            m_PerspectiveNearPlane = nearPlane;
+            RecalculateProjectionMatrix();
+        }
+
+        float GetPerspectiveFarPlane() const
+        {
+            return m_PerspectiveFarPlane;
+        }
+        void SetPerspectiveFarPlane( float farPlane )
+        {
+            m_PerspectiveFarPlane = farPlane;
+            RecalculateProjectionMatrix();
         }
 
         // Orthographic
-        void setOrthographicCamera( float new_size, float near_plane, float far_plane );
+        void SetOrthographicCamera( float size, float nearPlane, float farPlane );
 
-        float getSize() const
+        float GetSize() const
         {
-            return size;
+            return m_Size;
         }
-        void setSize( float new_size )
+        void SetSize( float size )
         {
-            size = new_size;
-            recalculateProjectionMatrix();
-        }
-
-        float getOrthographicNearPlane() const
-        {
-            return orthographicNearPlane;
-        }
-        void setOrthographicNearPlane( float near_plane )
-        {
-            orthographicNearPlane = near_plane;
-            recalculateProjectionMatrix();
+            m_Size = size;
+            RecalculateProjectionMatrix();
         }
 
-        float getOrthographicFarPlane() const
+        float GetOrthographicNearPlane() const
         {
-            return orthographicFarPlane;
+            return m_OrthographicNearPlane;
         }
-        void setOrthographicFarPlane( float far_plane )
+        void SetOrthographicNearPlane( float nearPlane )
         {
-            orthographicFarPlane = far_plane;
-            recalculateProjectionMatrix();
+            m_OrthographicNearPlane = nearPlane;
+            RecalculateProjectionMatrix();
         }
 
-      private:
-        void recalculateProjectionMatrix();
+        float GetOrthographicFarPlane() const
+        {
+            return m_OrthographicFarPlane;
+        }
+        void SetOrthographicFarPlane( float farPlane )
+        {
+            m_OrthographicFarPlane = farPlane;
+            RecalculateProjectionMatrix();
+        }
 
       private:
-        ProjectionType projectionType = ProjectionType::Perspective;
+        void RecalculateProjectionMatrix();
+
+      private:
+        ProjectionType m_ProjectionType = ProjectionType::Perspective;
 
         // Perspective
-        float fov = 45.f;
-        float perspectiveNearPlane = 0.1f;
-        float perspectiveFarPlane = 2500.f;
+        float m_FOV = 45.f;
+        float m_PerspectiveNearPlane = 0.1f;
+        float m_PerspectiveFarPlane = 2500.f;
 
         // Orthographic
-        float size = 10.f;
-        float orthographicNearPlane = -1.f;
-        float orthographicFarPlane = 1.f;
+        float m_Size = 10.f;
+        float m_OrthographicNearPlane = -1.f;
+        float m_OrthographicFarPlane = 1.f;
 
-        float aspectRatio = 1.0f;
+        float m_AspectRatio = 1.0f;
     };
 }

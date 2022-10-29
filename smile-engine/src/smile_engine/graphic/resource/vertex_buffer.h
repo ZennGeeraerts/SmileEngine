@@ -1,14 +1,14 @@
 #pragma once
 #include "smile_engine/graphic/shader/buffer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     struct VertexBufferDescriptor final
     {
-        void *vertices = nullptr;
-        Uint32 count = 0;
-        Uint32 stride = 0;
-        BufferUsage usage = BufferUsage::Default;
+        void *pVertices = nullptr;
+        Uint32 Count = 0;
+        Uint32 Stride = 0;
+        BufferUsage Usage = BufferUsage::Default;
     };
 
     class VertexBuffer
@@ -16,11 +16,11 @@ namespace smile::graphic
       public:
         virtual ~VertexBuffer() = default;
 
-        virtual void bind() const = 0;
-        virtual void unbind() const = 0;
+        virtual void Bind() const = 0;
+        virtual void Unbind() const = 0;
 
-        virtual Uint32 getStride() const = 0;
+        virtual Uint32 GetStride() const = 0;
 
-        static VertexBuffer *create( const VertexBufferDescriptor &vertex_buffer_desc );
+        static VertexBuffer *Create( const VertexBufferDescriptor &vertexBufferDesc );
     };
 }

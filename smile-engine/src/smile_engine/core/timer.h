@@ -5,56 +5,56 @@
 
 #include <chrono>
 
-namespace smile
+namespace Smile
 {
     class Timer final
     {
       public:
-        inline static Timer &getInstance()
+        inline static Timer &GetInstance()
         {
             static Timer instance{};
             return instance;
         }
 
-        void run();
-        void onUpdate();
-        bool isCatchingUpInFixedSteps();
+        void Run();
+        void OnUpdate();
+        bool IsCatchingUpInFixedSteps();
 
-        Timestep getDeltaTime() const
+        Timestep GetDeltaTime() const
         {
-            return deltaTime;
+            return m_DeltaTime;
         }
-        Timestep getTotalTimePassed() const
+        Timestep GetTotalTimePassed() const
         {
-            return totalTimePassed;
+            return m_TotalTimePassed;
         }
-        Uint32 getFPS() const
+        Uint32 GetFPS() const
         {
-            return fps;
+            return m_FPS;
         }
-        void setMsPerFrame( Uint32 ms_per_frame )
+        void SetMsPerFrame( Uint32 msPerFrame )
         {
-            msPerFrame = ms_per_frame;
+            m_MsPerFrame = msPerFrame;
         }
-        Uint32 getMsPerFrame() const
+        Uint32 GetMsPerFrame() const
         {
-            return msPerFrame;
+            return m_MsPerFrame;
         }
-        std::chrono::steady_clock::time_point getTimeBeforeGameLoop() const
+        std::chrono::steady_clock::time_point GetTimeBeforeGameLoop() const
         {
-            return lastTime;
+            return m_LastTime;
         }
 
       private:
         Timer();
 
       private:
-        Uint32 msPerFrame; /* amount of milliseconds per frame for the fixed update */
-        Timestep lag;
-        Timestep totalTimePassed;
-        Timestep deltaTime;
-        Uint32 fps;
-        std::chrono::steady_clock::time_point lastTime;
-        bool isRunning;
+        Uint32 m_MsPerFrame; /* amount of milliseconds per frame for the fixed update */
+        Timestep m_Lag;
+        Timestep m_TotalTimePassed;
+        Timestep m_DeltaTime;
+        Uint32 m_FPS;
+        std::chrono::steady_clock::time_point m_LastTime;
+        bool m_IsRunning;
     };
 }

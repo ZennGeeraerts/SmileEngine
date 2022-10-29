@@ -6,18 +6,18 @@ struct aiMesh;
 struct aiScene;
 struct aiNode;
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class MeshLoader final
     {
       public:
-        static std::vector< Ref< StaticMeshFilter > > loadStaticMesh( const std::string &file_path );
-        static std::vector< Ref< SkinnedMeshFilter > > loadSkinnedMesh( const std::string &file_path );
+        static std::vector< Ref< StaticMeshFilter > > LoadStaticMesh( const std::string &filePath );
+        static std::vector< Ref< SkinnedMeshFilter > > LoadSkinnedMesh( const std::string &filePath );
 
       private:
-        static void loadVertices( const Ref< MeshFilter > &mesh, aiMesh *aiMesh );
-        static void loadBones( const Ref< SkinnedMeshFilter > &mesh, aiMesh *aiMesh, const aiScene *aiScene );
-        static void loadAnimations( const Ref< SkinnedMeshFilter > &mesh, const aiScene *aiScene );
-        static void loadNodeHierarchy( AnimationNode &dest, const aiNode *src );
+        static void LoadVertices( const Ref< MeshFilter > &pMesh, aiMesh *pAiMesh );
+        static void LoadBones( const Ref< SkinnedMeshFilter > &pMesh, aiMesh *pAiMesh, const aiScene *pAiScene );
+        static void LoadAnimations( const Ref< SkinnedMeshFilter > &pMesh, const aiScene *pAiScene );
+        static void LoadNodeHierarchy( AnimationNode &dest, const aiNode *pSrc );
     };
 }

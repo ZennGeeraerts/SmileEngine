@@ -4,7 +4,7 @@
 
 #    include <Windows.h>
 
-extern smile::Application *smile::createApplication( smile::ApplicationCommandLineArgs command_line_args );
+extern Smile::Application *Smile::CreateApplication( Smile::ApplicationCommandLineArgs commandLineArgs );
 
 #    pragma warning( push )
 #    pragma warning( disable : 6387 )
@@ -18,9 +18,9 @@ int main( int argc, char **argv )
 #    pragma warning( disable : 28251 )
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow )
 {
-    smile::Application *application = smile::createApplication( smile::ApplicationCommandLineArgs{} );
-    application->run();
-    delete application;
+    Smile::Application *pApplication = Smile::CreateApplication( Smile::ApplicationCommandLineArgs{} );
+    pApplication->Run();
+    delete pApplication;
     return 0;
 }
 #    pragma warning( pop )

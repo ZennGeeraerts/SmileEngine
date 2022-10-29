@@ -1,63 +1,63 @@
 #pragma once
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     struct KeyTranslation final
     {
-        DirectX::XMFLOAT3 translation{};
-        float tick{};
+        DirectX::XMFLOAT3 Translation{};
+        float Tick{};
     };
 
     struct KeyRotation final
     {
-        DirectX::XMFLOAT4 rotation{};
-        float tick{};
+        DirectX::XMFLOAT4 Rotation{};
+        float Tick{};
     };
 
     struct KeyScale final
     {
-        DirectX::XMFLOAT3 scale{};
-        float tick{};
+        DirectX::XMFLOAT3 Scale{};
+        float Tick{};
     };
 
     class Bone final
     {
       public:
         Bone( const std::string &name, Uint32 id );
-        void onUpdate( float animation_time );
+        void OnUpdate( float animationTime );
 
-        const DirectX::XMFLOAT4X4 &getLocalTransform() const
+        const DirectX::XMFLOAT4X4 &GetLocalTransform() const
         {
-            return localTransform;
+            return m_LocalTransform;
         }
-        const std::string &getName() const
+        const std::string &GetName() const
         {
-            return name;
+            return m_Name;
         }
 
       private:
-        void interpolateTranslation( DirectX::XMFLOAT3 &position, float animation_time );
-        Uint32 getTranslationIndex( float animatanimation_timeionTime );
+        void InterpolateTranslation( DirectX::XMFLOAT3 &position, float animationTime );
+        Uint32 GetTranslationIndex( float animationTime );
 
-        void interpolateRotation( DirectX::XMFLOAT4 &rotation, float animation_time );
-        Uint32 getRotationIndex( float animation_time );
+        void InterpolateRotation( DirectX::XMFLOAT4 &rotation, float animationTime );
+        Uint32 GetRotationIndex( float animationTime );
 
-        void interpolateScale( DirectX::XMFLOAT3 &scale, float animation_time );
-        Uint32 getScaleIndex( float animation_time );
+        void InterpolateScale( DirectX::XMFLOAT3 &scale, float animationTime );
+        Uint32 GetScaleIndex( float animationTime );
 
-        float getScaleFactor( float last_tick, float next_tick, float animation_time );
+        float GetScaleFactor( float lastTick, float nextTick, float animationTime );
 
       private:
-        std::vector< KeyTranslation > translations{};
-        std::vector< KeyRotation > rotations{};
-        std::vector< KeyScale > scales{};
-        Uint32 translationCount{};
-        Uint32 rotationCount{};
-        Uint32 scaleCount{};
+        std::vector< KeyTranslation > m_Translations{};
+        std::vector< KeyRotation > m_Rotations{};
+        std::vector< KeyScale > m_Scales{};
+        Uint32 m_TranslationCount{};
+        Uint32 m_RotationCount{};
+        Uint32 m_ScaleCount{};
 
-        DirectX::XMFLOAT4X4 localTransform{};
-        std::string name;
-        Uint32 id;
+        DirectX::XMFLOAT4X4 m_LocalTransform{};
+        std::string m_Name;
+        Uint32 m_ID;
 
         friend class MeshLoader;
     };

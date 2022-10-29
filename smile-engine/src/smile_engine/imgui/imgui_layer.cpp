@@ -15,7 +15,7 @@
 #include <thirdparty/imgui/imgui_impl_dx11.h>
 #include <thirdparty/imguizmo/ImGuizmo.h>
 
-namespace smile::imgui
+namespace Smile::ImGui
 {
     ImGuiLayer::ImGuiLayer() : Layer( "ImGuiLayer" )
     {
@@ -23,19 +23,19 @@ namespace smile::imgui
 
     ImGuiLayer::~ImGuiLayer()
     {
-        shutDown();
+        ShutDown();
     }
 
-    void ImGuiLayer::shutDown()
+    void ImGuiLayer::ShutDown()
     {
         ImGui_ImplDX11_Shutdown();
         ImGui_ImplWin32_Shutdown();
         ImGui::DestroyContext();
     }
 
-    void ImGuiLayer::onAttach()
+    void ImGuiLayer::OnAttach()
     {
-        SM_ASSERT( !initialized, "ImGui is initialized more than once. Only initialize it 1 time!" );
+        SM_ASSERT( !m_IsInitialized, "ImGui is initialized more than once. Only initialize it 1 time!" );
 
         ImGui_ImplWin32_EnableDpiAwareness();
 
@@ -55,9 +55,9 @@ namespace smile::imgui
         // io.ConfigDockingAlwaysTabBar = true;
         // io.ConfigDockingTransparentPayload = true;
 
-        const float font_size = 18.f;
-        io.FontDefault = io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Regular.ttf", font_size );
-        io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Bold.ttf", font_size );
+        const float fontSize = 18.f;
+        io.FontDefault = io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Regular.ttf", fontSize );
+        io.Fonts->AddFontFromFileTTF( "assets/fonts/Heebo/Heebo-Bold.ttf", fontSize );
 
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
@@ -72,48 +72,48 @@ namespace smile::imgui
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        setDarkThemeColors();
+        SetDarkThemeColors();
 
-        Window &window = Application::getInstance().getWindow();
-        graphic::GraphicsContext *graphics_context = window.getGraphicsContext();
+        Window &window = Application::GetInstance().GetWindow();
+        Graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
 
-        graphic::RendererAPI::API api = graphic::RendererAPI::getAPI();
+        Graphic::RendererAPI::API api = Graphic::RendererAPI::GetAPI();
         switch ( api )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case Graphic::RendererAPI::API::DirectX11:
             {
-                ImGui_ImplWin32_Init( window.getNativeWindow() );
+                ImGui_ImplWin32_Init( window.GetNativeWindow() );
 
-                graphic::DirectX11Context *directx11_context = static_cast< graphic::DirectX11Context * >( graphics_context );
-                ImGui_ImplDX11_Init( directx11_context->getDevice(), directx11_context->getDeviceContext() );
+                Graphic::DirectX11Context *pDirectx11Context = static_cast< Graphic::DirectX11Context * >( pGraphicsContext );
+                ImGui_ImplDX11_Init( pDirectx11Context->GetDevice(), pDirectx11Context->GetDeviceContext() );
                 break;
             }
-            case graphic::RendererAPI::API::SmileRaster:
+            case Graphic::RendererAPI::API::SmileRaster:
                 break;
 
             default:
                 break;
         }
 
-        initialized = true;
+        m_IsInitialized = true;
     }
 
-    void ImGuiLayer::onDetach()
+    void ImGuiLayer::OnDetach()
     {
-        shutDown();
+        ShutDown();
     }
 
-    void ImGuiLayer::begin()
+    void ImGuiLayer::Begin()
     {
-        graphic::RendererAPI::API api = graphic::RendererAPI::getAPI();
+        Graphic::RendererAPI::API api = Graphic::RendererAPI::GetAPI();
         switch ( api )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case Graphic::RendererAPI::API::DirectX11:
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
 
-            case graphic::RendererAPI::API::SmileRaster:
+            case Graphic::RendererAPI::API::SmileRaster:
                 return;
 
             default:
@@ -124,22 +124,22 @@ namespace smile::imgui
         ImGuizmo::BeginFrame();
     }
 
-    void ImGuiLayer::end()
+    void ImGuiLayer::End()
     {
         ImGuiIO &io = ImGui::GetIO();
-        Window &window = Application::getInstance().getWindow();
+        Window &window = Application::GetInstance().GetWindow();
         io.DisplaySize =
-            ImVec2{ static_cast< float >( window.getWidth() ), static_cast< float >( window.getHeight() ) };
+            ImVec2{ static_cast< float >( window.GetWidth() ), static_cast< float >( window.GetHeight() ) };
 
-        graphic::RendererAPI::API api = graphic::RendererAPI::getAPI();
+        Graphic::RendererAPI::API api = Graphic::RendererAPI::GetAPI();
         switch ( api )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case Graphic::RendererAPI::API::DirectX11:
                 ImGui::Render();
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
 
-            case graphic::RendererAPI::API::SmileRaster:
+            case Graphic::RendererAPI::API::SmileRaster:
                 return;
 
             default:
@@ -154,89 +154,89 @@ namespace smile::imgui
         }
     }
 
-    void ImGuiLayer::onImGuiRender()
+    void ImGuiLayer::OnImGuiRender()
     {
         /*static bool bShow = true;
         ImGui::ShowDemoWindow(&bShow);*/
     }
 
-    void ImGuiLayer::onEvent( Event &event )
+    void ImGuiLayer::OnEvent( Event &event )
     {
         EventDispatcher dispatcher{ event };
-        dispatcher.dispatch< MouseButtonPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onMouseButtonPressed ) );
-        dispatcher.dispatch< MouseButtonReleasedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onMouseButtonReleased ) );
-        dispatcher.dispatch< MouseMovedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onMouseMoved ) );
-        dispatcher.dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onMouseScrolled ) );
-        dispatcher.dispatch< KeyPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onKeyPressed ) );
-        dispatcher.dispatch< KeyReleasedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onKeyReleased ) );
-        dispatcher.dispatch< KeyTypedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onKeyTyped ) );
-        dispatcher.dispatch< WindowResizeEvent >( SM_BIND_EVENT_FN( ImGuiLayer::onWindowResize ) );
+        dispatcher.Dispatch< MouseButtonPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonPressed ) );
+        dispatcher.Dispatch< MouseButtonReleasedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonReleased ) );
+        dispatcher.Dispatch< MouseMovedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseMoved ) );
+        dispatcher.Dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseScrolled ) );
+        dispatcher.Dispatch< KeyPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnKeyPressed ) );
+        dispatcher.Dispatch< KeyReleasedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnKeyReleased ) );
+        dispatcher.Dispatch< KeyTypedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnKeyTyped ) );
+        dispatcher.Dispatch< WindowResizeEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnWindowResize ) );
     }
 
-    bool ImGuiLayer::onMouseButtonPressed( MouseButtonPressedEvent &e )
+    bool ImGuiLayer::OnMouseButtonPressed( MouseButtonPressedEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.MouseDown[e.getMouseButton()] = true;
+        io.MouseDown[e.GetMouseButton()] = true;
 
         return false;
     }
 
-    bool ImGuiLayer::onMouseButtonReleased( MouseButtonReleasedEvent &e )
+    bool ImGuiLayer::OnMouseButtonReleased( MouseButtonReleasedEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.MouseDown[e.getMouseButton()] = false;
+        io.MouseDown[e.GetMouseButton()] = false;
 
         return false;
     }
 
-    bool ImGuiLayer::onMouseMoved( MouseMovedEvent &e )
+    bool ImGuiLayer::OnMouseMoved( MouseMovedEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.MousePos = ImVec2{ e.getX(), e.getY() };
+        io.MousePos = ImVec2{ e.GetX(), e.GetY() };
 
         return false;
     }
 
-    bool ImGuiLayer::onMouseScrolled( MouseScrolledEvent &e )
+    bool ImGuiLayer::OnMouseScrolled( MouseScrolledEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.MouseWheel += e.getOffsetX();
-        io.MouseWheelH += e.getOffsetY();
+        io.MouseWheel += e.GetOffsetX();
+        io.MouseWheelH += e.GetOffsetY();
 
         return false;
     }
 
-    bool ImGuiLayer::onKeyPressed( KeyPressedEvent &e )
+    bool ImGuiLayer::OnKeyPressed( KeyPressedEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.KeysDown[e.getKeyCode()] = true;
+        io.KeysDown[e.GetKeyCode()] = true;
 
-        io.KeyCtrl = io.KeysDown[input::key::CtrlLeft] || io.KeysDown[input::key::CtrlRight];
-        io.KeyShift = io.KeysDown[input::key::ShiftLeft] || io.KeysDown[input::key::ShiftRight];
-        io.KeyAlt = io.KeysDown[input::key::AltLeft] || io.KeysDown[input::key::AltRight];
-        io.KeySuper = io.KeysDown[input::key::WindowsLeft] || io.KeysDown[input::key::WindowsRight];
+        io.KeyCtrl = io.KeysDown[Input::key::CtrlLeft] || io.KeysDown[Input::key::CtrlRight];
+        io.KeyShift = io.KeysDown[Input::key::ShiftLeft] || io.KeysDown[Input::key::ShiftRight];
+        io.KeyAlt = io.KeysDown[Input::key::AltLeft] || io.KeysDown[Input::key::AltRight];
+        io.KeySuper = io.KeysDown[Input::key::WindowsLeft] || io.KeysDown[Input::key::WindowsRight];
         return false;
     }
 
-    bool ImGuiLayer::onKeyReleased( KeyReleasedEvent &e )
+    bool ImGuiLayer::OnKeyReleased( KeyReleasedEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.KeysDown[e.getKeyCode()] = false;
-
-        return false;
-    }
-
-    bool ImGuiLayer::onKeyTyped( KeyTypedEvent &e )
-    {
-        ImGuiIO &io = ImGui::GetIO();
-        int key_code = e.getKeyCode();
-        if ( ( key_code > 0 ) && ( key_code < 0x10000 ) )
-            io.AddInputCharacter( static_cast< unsigned short >( key_code ) );
+        io.KeysDown[e.GetKeyCode()] = false;
 
         return false;
     }
 
-    bool ImGuiLayer::onWindowResize( WindowResizeEvent &e )
+    bool ImGuiLayer::OnKeyTyped( KeyTypedEvent &e )
+    {
+        ImGuiIO &io = ImGui::GetIO();
+        int keyCode = e.GetKeyCode();
+        if ( ( keyCode > 0 ) && ( keyCode < 0x10000 ) )
+            io.AddInputCharacter( static_cast< unsigned short >( keyCode ) );
+
+        return false;
+    }
+
+    bool ImGuiLayer::OnWindowResize( WindowResizeEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
         io.DisplaySize = ImVec2{ static_cast< float >( e.getWidth() ), static_cast< float >( e.getHeight() ) };
@@ -245,7 +245,7 @@ namespace smile::imgui
         return false;
     }
 
-    void ImGuiLayer::setDarkThemeColors()
+    void ImGuiLayer::SetDarkThemeColors()
     {
         auto &colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };

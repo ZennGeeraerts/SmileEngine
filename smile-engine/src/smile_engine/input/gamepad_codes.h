@@ -1,6 +1,6 @@
 #pragma once
 
-namespace smile::input
+namespace Smile::Input
 {
     using GamepadCode = Uint16;
 

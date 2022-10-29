@@ -4,89 +4,89 @@
 #include "smile_engine/core/events/event.h"
 #include "smile_engine/core/events/mouse_event.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class EditorCamera final : public Camera
     {
       public:
         EditorCamera() = default;
-        EditorCamera( float fov, float aspect_ratio, float near_plane, float far_plane );
+        EditorCamera( float fov, float aspectRatio, float nearPlane, float farPlane );
 
-        void onUpdate( Timestep delta_time );
-        void onEvent( Event &e );
+        void OnUpdate( Timestep deltaTime );
+        void OnEvent( Event &e );
 
-        float getDistance() const
+        float GetDistance() const
         {
-            return distance;
+            return m_Distance;
         }
-        void setDistance( float distance )
+        void SetDistance( float distance )
         {
-            distance = distance;
-        }
-
-        void setViewportSize( float width, float height )
-        {
-            viewportWidth = width;
-            viewportHeight = height;
-            updateProjection();
+            m_Distance = distance;
         }
 
-        const DirectX::XMFLOAT4X4 &getViewMatrix() const
+        void SetViewportSize( float width, float height )
         {
-            return viewMatrix;
+            m_ViewportWidth = width;
+            m_ViewportHeight = height;
+            UpdateProjection();
         }
-        DirectX::XMFLOAT4X4 getViewProjectionMatrix() const;
 
-        DirectX::XMFLOAT3 getUpDirection() const;
-        DirectX::XMFLOAT3 getRightDirection() const;
-        DirectX::XMFLOAT3 getForwardDirection() const;
-        const DirectX::XMFLOAT3 &getPosition() const
+        const DirectX::XMFLOAT4X4 &GetViewMatrix() const
         {
-            return position;
+            return m_ViewMatrix;
+        }
+        DirectX::XMFLOAT4X4 GetViewProjectionMatrix() const;
+
+        DirectX::XMFLOAT3 GetUpDirection() const;
+        DirectX::XMFLOAT3 GetRightDirection() const;
+        DirectX::XMFLOAT3 GetForwardDirection() const;
+        const DirectX::XMFLOAT3 &GetPosition() const
+        {
+            return m_Position;
         }
 
         float getPitch() const
         {
-            return pitch;
+            return m_Pitch;
         }
         float getYaw() const
         {
-            return yaw;
+            return m_Yaw;
         }
 
       private:
-        void updateView();
-        void updateProjection();
+        void UpdateView();
+        void UpdateProjection();
 
-        bool onMouseScroll( MouseScrolledEvent &e );
+        bool OnMouseScroll( MouseScrolledEvent &e );
 
-        void mousePan( const DirectX::XMFLOAT2 &delta );
-        void mouseRotate( const DirectX::XMFLOAT2 &delta );
-        void mouseZoom( float delta );
+        void MousePan( const DirectX::XMFLOAT2 &delta );
+        void MouseRotate( const DirectX::XMFLOAT2 &delta );
+        void MouseZoom( float delta );
 
-        DirectX::XMFLOAT3 calculatePosition() const;
+        DirectX::XMFLOAT3 CalculatePosition() const;
 
-        DirectX::XMFLOAT2 calculatePanSpeed() const;
-        float calculateRotationSpeed() const;
-        float calculateZoomSpeed() const;
+        DirectX::XMFLOAT2 CalculatePanSpeed() const;
+        float CalculateRotationSpeed() const;
+        float CalculateZoomSpeed() const;
 
       private:
-        float fov = 45.f;
-        float aspectRatio = 1.778f;
-        float nearPlane = 0.1f;
-        float farPlane = 2500.f;
+        float m_FOV = 45.f;
+        float m_AspectRatio = 1.778f;
+        float m_NearPlane = 0.1f;
+        float m_FarPlane = 2500.f;
 
-        DirectX::XMFLOAT4X4 viewMatrix{};
-        DirectX::XMFLOAT3 position{};
-        DirectX::XMFLOAT3 focalPoint{};
+        DirectX::XMFLOAT4X4 m_ViewMatrix{};
+        DirectX::XMFLOAT3 m_Position{};
+        DirectX::XMFLOAT3 m_FocalPoint{};
 
-        DirectX::XMFLOAT2 initialMousePosition{};
+        DirectX::XMFLOAT2 m_InitialMousePosition{};
 
-        float distance = 10.f;
-        float pitch = 0.f;
-        float yaw = 0.f;
+        float m_Distance = 10.f;
+        float m_Pitch = 0.f;
+        float m_Yaw = 0.f;
 
-        float viewportWidth = 1280.f;
-        float viewportHeight = 720.f;
+        float m_ViewportWidth = 1280.f;
+        float m_ViewportHeight = 720.f;
     };
 }

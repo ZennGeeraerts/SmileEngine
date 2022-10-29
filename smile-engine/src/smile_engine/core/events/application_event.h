@@ -1,28 +1,28 @@
 #pragma once
 #include "event.h"
 
-namespace smile
+namespace Smile
 {
     class WindowResizeEvent final : public Event
     {
       public:
-        WindowResizeEvent( Uint32 width, Uint32 height ) : width{ width }, height{ height }
+        WindowResizeEvent( Uint32 width, Uint32 height ) : m_Width{ width }, m_Height{ height }
         {
         }
 
         inline Uint32 getWidth() const
         {
-            return width;
+            return m_Width;
         }
         inline Uint32 getHeight() const
         {
-            return height;
+            return m_Height;
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "WindowResizeEvent: " << width << ", " << height;
+            ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
             return ss.str();
         }
 
@@ -30,8 +30,8 @@ namespace smile
         EVENT_CLASS_CATEGORY( EventCategoryApplication )
 
       private:
-        Uint32 width;
-        Uint32 height;
+        Uint32 m_Width;
+        Uint32 m_Height;
     };
 
     class WindowCloseEvent final : public Event

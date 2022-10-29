@@ -1,43 +1,43 @@
 #include "smpch.h"
 #include "perspective_camera.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     using namespace DirectX;
 
-    PerspectiveCamera::PerspectiveCamera( float fov, float aspect_ratio )
+    PerspectiveCamera::PerspectiveCamera( float fov, float aspectRatio )
     {
-        XMStoreFloat4x4( &projectionMatrix, XMMatrixPerspectiveFovLH( fov, aspect_ratio, 0.1f, 2500.f ) );
+        XMStoreFloat4x4( &m_ProjectionMatrix, XMMatrixPerspectiveFovLH( fov, aspectRatio, 0.1f, 2500.f ) );
 
-        XMStoreFloat4x4( &viewMatrix, DirectX::XMMatrixIdentity() );
-        XMStoreFloat4x4( &viewProjectionMatrix, XMLoadFloat4x4( &viewMatrix ) * XMLoadFloat4x4( &projectionMatrix ) );
+        XMStoreFloat4x4( &m_ViewMatrix, DirectX::XMMatrixIdentity() );
+        XMStoreFloat4x4( &m_ViewProjectionMatrix, XMLoadFloat4x4( &m_ViewMatrix ) * XMLoadFloat4x4( &m_ProjectionMatrix ) );
     }
 
-    void PerspectiveCamera::setProjectionMatrix( float fov, float aspect_ratio )
+    void PerspectiveCamera::SetProjectionMatrix( float fov, float aspectRatio )
     {
-        XMStoreFloat4x4( &projectionMatrix, XMMatrixPerspectiveFovLH( fov, aspect_ratio, 0.1f, 2500.f ) );
+        XMStoreFloat4x4( &m_ProjectionMatrix, XMMatrixPerspectiveFovLH( fov, aspectRatio, 0.1f, 2500.f ) );
     }
 
-    void PerspectiveCamera::setPosition( const DirectX::XMFLOAT3 &new_position )
+    void PerspectiveCamera::SetPosition( const DirectX::XMFLOAT3 &position )
     {
-        position = new_position;
-        recalculateViewMatrix();
+        m_Position = position;
+        RecalculateViewMatrix();
     }
 
-    void PerspectiveCamera::setRotation( const DirectX::XMFLOAT3 &new_rotation )
+    void PerspectiveCamera::SetRotation( const DirectX::XMFLOAT3 &rotation )
     {
-        rotation = new_rotation;
-        recalculateViewMatrix();
+        m_Rotation = rotation;
+        RecalculateViewMatrix();
     }
 
-    void PerspectiveCamera::recalculateViewMatrix()
+    void PerspectiveCamera::RecalculateViewMatrix()
     {
         XMMATRIX transform = XMMatrixMultiply(
             XMMatrixRotationRollPitchYaw(
-                XMConvertToRadians( rotation.x ), XMConvertToRadians( rotation.y ), XMConvertToRadians( rotation.z ) ),
-            XMMatrixTranslation( position.x, position.y, position.z ) );
-        XMStoreFloat4x4( &viewMatrix, XMMatrixInverse( nullptr, transform ) );
+                XMConvertToRadians( m_Rotation.x ), XMConvertToRadians( m_Rotation.y ), XMConvertToRadians( m_Rotation.z ) ),
+            XMMatrixTranslation( m_Position.x, m_Position.y, m_Position.z ) );
+        XMStoreFloat4x4( &m_ViewMatrix, XMMatrixInverse( nullptr, transform ) );
 
-        XMStoreFloat4x4( &viewProjectionMatrix, XMLoadFloat4x4( &viewMatrix ) * XMLoadFloat4x4( &projectionMatrix ) );
+        XMStoreFloat4x4( &m_ViewProjectionMatrix, XMLoadFloat4x4( &m_ViewMatrix ) * XMLoadFloat4x4( &m_ProjectionMatrix ) );
     }
 }

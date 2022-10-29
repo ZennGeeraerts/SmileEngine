@@ -32,9 +32,33 @@ Entities:
     TagComponent:
       Tag: box3
     TransformComponent:
-      Translation: [0.966692448, 5.28429651, 0]
+      Translation: [1.53699994, 5.28429651, 0]
       Rotation: [0.750491321, 0.40142557, 1.95476854]
       Scale: [1, 1, 1]
+    SkinnedMeshComponent:
+      Mesh: assets\meshes\model.dae
+      Material:
+        FloatValues:
+          METALNESS: 1
+          ROUGHNESS: 0.5
+        IntValues:
+          {}
+        BoolValues:
+          USEALBEDOMAP: false
+          USENORMALMAP: false
+          USEAOMAP: false
+          USEMETALNESSMAP: false
+          USEROUGHNESSMAP: false
+        Float2Values:
+          {}
+        Float3Values:
+          ALBEDO: [1, 0, 0]
+        Texture2DValues:
+          ALBEDOMAP: ""
+          NORMALMAP: ""
+          METALNESSMAP: ""
+          ROUGHNESSMAP: ""
+          AOMap: ""
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0
@@ -66,14 +90,27 @@ Entities:
     SkinnedMeshComponent:
       Mesh: assets\meshes\tuktuk.obj
       Material:
-        AlbedoMap: assets\textures\tuktuk.png
-        AlbedoColor: [0, 0, 0]
-        MetalnessMap: ""
-        Metalness: 1
-        RoughnessMap: ""
-        Roughness: 0.456999987
-        NormalMap: ""
-        AOMap: ""
+        FloatValues:
+          METALNESS: 0
+          ROUGHNESS: 0
+        IntValues:
+          {}
+        BoolValues:
+          USEALBEDOMAP: false
+          USENORMALMAP: false
+          USEAOMAP: false
+          USEMETALNESSMAP: false
+          USEROUGHNESSMAP: false
+        Float2Values:
+          {}
+        Float3Values:
+          ALBEDO: [0, 0, 0]
+        Texture2DValues:
+          ALBEDOMAP: ""
+          NORMALMAP: ""
+          METALNESSMAP: ""
+          ROUGHNESSMAP: ""
+          AOMap: ""
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0
@@ -105,14 +142,27 @@ Entities:
     SkinnedMeshComponent:
       Mesh: assets\meshes\drakefire_pistol_low.obj
       Material:
-        AlbedoMap: assets\textures\base_albedo.jpg
-        AlbedoColor: [0, 0, 0]
-        MetalnessMap: assets\textures\base_metallic.jpg
-        Metalness: 0
-        RoughnessMap: assets\textures\base_roughness.jpg
-        Roughness: 0.5
-        NormalMap: assets\textures\base_normal.jpg
-        AOMap: assets\textures\base_AO.jpg
+        FloatValues:
+          METALNESS: 0
+          ROUGHNESS: 0
+        IntValues:
+          {}
+        BoolValues:
+          USEALBEDOMAP: false
+          USENORMALMAP: false
+          USEAOMAP: false
+          USEMETALNESSMAP: false
+          USEROUGHNESSMAP: false
+        Float2Values:
+          {}
+        Float3Values:
+          ALBEDO: [0, 0, 0]
+        Texture2DValues:
+          ALBEDOMAP: ""
+          NORMALMAP: ""
+          METALNESSMAP: ""
+          ROUGHNESSMAP: ""
+          AOMap: ""
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0

@@ -5,16 +5,16 @@
 #include "key_codes.h"
 #include "mouse_codes.h"
 
-namespace smile::input
+namespace Smile::Input
 {
     class Input
     {
      public:
-        static bool isKeyPressed( KeyCode key_code );
+        static bool IsKeyPressed( KeyCode keyCode );
 
-        static bool isMouseButtonPressed( MouseCode mouse_code );
-        static DirectX::XMFLOAT2 getMousePosition();
-        static float getMouseX();
-        static float getMouseY();
+        static bool IsMouseButtonPressed( MouseCode mouseCode );
+        static DirectX::XMFLOAT2 GetMousePosition();
+        static float GetMouseX();
+        static float GetMouseY();
     };
 }

@@ -4,7 +4,7 @@
 #include <../../smile-raster/thirdparty/glm/glm.hpp>
 #include <unordered_map>
 
-namespace smile
+namespace Smile
 {
 	namespace Raster
 	{

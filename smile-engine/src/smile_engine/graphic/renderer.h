@@ -12,84 +12,84 @@
 
 #include "smile_engine/scene/components.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     struct RendererSettings final
     {
-        Uint32 width = 1280;
-        Uint32 height = 720;
+        Uint32 Width = 1280;
+        Uint32 Height = 720;
     };
 
     struct DrawCommand final
     {
-        Ref< VertexBuffer > vertexBuffer;
-        Ref< IndexBuffer > indexBuffer;
-        Ref< Shader > shader;
-        DirectX::XMFLOAT4X4 worldTransform;
+        Ref< VertexBuffer > pVertexBuffer;
+        Ref< IndexBuffer > pIndexBuffer;
+        Ref< Shader > pShader;
+        DirectX::XMFLOAT4X4 WorldTransform;
     };
 
     struct RenderCollector final
     {
-        DirectX::XMFLOAT4X4 viewInverseMatrix;
-        DirectX::XMFLOAT4X4 viewProjectionMatrix;
+        DirectX::XMFLOAT4X4 ViewInverseMatrix;
+        DirectX::XMFLOAT4X4 ViewProjectionMatrix;
 
-        std::vector< DrawCommand > geometryDrawList;
-        std::vector< DrawCommand > wireframeDrawList;
+        std::vector< DrawCommand > GeometryDrawList;
+        std::vector< DrawCommand > WireframeDrawList;
     };
 
     class Renderer final
     {
       public:
-        static void initialize();
-        static void shutDown();
+        static void Initialize();
+        static void ShutDown();
 
-        static void setSettings( const RendererSettings &new_settings );
+        static void SetSettings( const RendererSettings &settings );
 
-        static void onWindowResize( Uint32 width, Uint32 height );
-        static void resizeFramebuffer( Uint32 width, Uint32 height );
+        static void OnWindowResize( Uint32 width, Uint32 height );
+        static void ResizeFramebuffer( Uint32 width, Uint32 height );
 
-        static void beginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &camera_transform );
-        static void beginScene( const EditorCamera &editor_camera );
-        static void endScene();
-        static void onRender();
+        static void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
+        static void BeginScene( const EditorCamera &editorCamera );
+        static void EndScene();
+        static void OnRender();
 
-        static void submit( const Ref< VertexBuffer > &vertex_buffer,
-            const Ref< IndexBuffer > &index_buffer,
-            const Ref< Shader > &shader,
-            const DirectX::XMFLOAT4X4 &world_transform );
-        static void submit( const scene::MeshRendererComponent &mesh_renderer_component,
-            const DirectX::XMFLOAT4X4 &world_transform );
-        static void submit( const scene::StaticMeshComponent &static_mesh_component,
-            const DirectX::XMFLOAT4X4 &world_transform );
-        static void submit( const scene::SkinnedMeshComponent &skinned_mesh_component,
-            const DirectX::XMFLOAT4X4 &world_transform );
+        static void Submit( const Ref< VertexBuffer > &pVertexBuffer,
+            const Ref< IndexBuffer > &pIndexBuffer,
+            const Ref< Shader > &pShader,
+            const DirectX::XMFLOAT4X4 &worldTransform );
+        static void Submit( const Scene::MeshRendererComponent &meshRendererComponent,
+            const DirectX::XMFLOAT4X4 &worldTransform );
+        static void Submit( const Scene::StaticMeshComponent &staticMeshComponent,
+            const DirectX::XMFLOAT4X4 &worldTransform );
+        static void Submit( const Scene::SkinnedMeshComponent &skinnedMeshComponent,
+            const DirectX::XMFLOAT4X4 &worldTransform );
 
-        static void submitWireframe( const scene::BoxColliderComponent &box_collider_component,
-            const DirectX::XMFLOAT4X4 &world_transform );
+        static void SubmitWireframe( const Scene::BoxColliderComponent &boxColliderComponent,
+            const DirectX::XMFLOAT4X4 &worldTransform );
 
-        static RendererAPI::API getAPI()
+        static RendererAPI::API GetAPI()
         {
-            return RendererAPI::getAPI();
+            return RendererAPI::GetAPI();
         }
-        static const RendererSettings &getSettings()
+        static const RendererSettings &GetSettings()
         {
-            return settings;
+            return s_Settings;
         }
-        static void *getFinalColor()
+        static void *GetFinalColor()
         {
-            return finalSceneFramebuffer->getColor( 0 );
+            return s_pFinalSceneFramebuffer->GetColor( 0 );
         }
 
       private:
-        static void clearDrawlist();
+        static void ClearDrawlist();
 
       private:
-        static RendererSettings settings;
-        static RenderCollector *renderCollector;
+        static RendererSettings s_Settings;
+        static RenderCollector *s_pRenderCollector;
 
-        static ShaderLibrary shaderLibrary;
+        static ShaderLibrary s_ShaderLibrary;
 
-        static Ref< Framebuffer > finalSceneFramebuffer;
-        static Ref< RasterizerState > wireframeRasterizerState;
+        static Ref< Framebuffer > s_pFinalSceneFramebuffer;
+        static Ref< RasterizerState > s_pWireframeRasterizerState;
     };
 }

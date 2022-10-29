@@ -1,11 +1,11 @@
 #pragma once
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     template < typename... Components >
     struct ComponentList
     {
-        static constexpr Uint32 size = sizeof...( Components );
+        static constexpr Uint32 Size = sizeof...( Components );
     };
 
     namespace list
@@ -18,11 +18,11 @@ namespace smile::ecs
             template < typename H, typename... T >
             struct HeadImpl< ComponentList< H, T... > >
             {
-                using type = H;
+                using Type = H;
             };
         }
 
         template < typename List >
-        using Head = typename detail::HeadImpl< List >::type;
+        using Head = typename detail::HeadImpl< List >::Type;
     }
 }

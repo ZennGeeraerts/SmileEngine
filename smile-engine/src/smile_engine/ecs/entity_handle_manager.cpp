@@ -1,53 +1,53 @@
 #include "smpch.h"
 #include "entity_handle_manager.h"
 
-namespace smile::ecs
+namespace Smile::ECS
 {
-    EntityHandleType EntityHandleManager::createEntity()
+    EntityHandleType EntityHandleManager::CreateEntity()
     {
-        if ( availableEntities > 0 )
+        if ( m_AvailableEntities > 0 )
         {
             // Recycle entity
-            auto &handle = entities[nextFreeEntityIndex];
+            auto &handle = m_Entities[m_NextFreeEntityIndex];
 
-            Uint32 new_handle_index = handle.index;
-            std::swap( nextFreeEntityIndex, new_handle_index );
-            handle.index = new_handle_index;
+            Uint32 new_handle_index = handle.Index;
+            std::swap( m_NextFreeEntityIndex, new_handle_index );
+            handle.Index = new_handle_index;
 
-            --availableEntities;
+            --m_AvailableEntities;
 
             return handle;
         }
         else
         {
             // Create new entity
-            EntityHandleType handle{ static_cast< IndexType >( entities.size() ), 0 };
-            entities.push_back( handle );
+            EntityHandleType handle{ static_cast< IndexType >( m_Entities.size() ), 0 };
+            m_Entities.push_back( handle );
             return handle;
         }
     }
 
-    void EntityHandleManager::destroyEntity( EntityHandleType entity_handle )
+    void EntityHandleManager::DestroyEntity( EntityHandleType entityHandle )
     {
-        auto &handle = entities[entity_handle.index];
+        auto &handle = m_Entities[entityHandle.Index];
 
-        SM_ASSERT( handle.generation == entity_handle.generation,
-            "ECSEngine::destroyEntity > Entity handle generation mismatch" );
+        SM_ASSERT( handle.Generation == entityHandle.Generation,
+            "ECSEngine::DestroyEntity > Entity handle generation mismatch" );
 
-        ++handle.generation;
+        ++handle.Generation;
 
-        Uint32 newHandleIndex = handle.index;
-        std::swap( nextFreeEntityIndex, newHandleIndex );
-        handle.index = newHandleIndex;
+        Uint32 newHandleIndex = handle.Index;
+        std::swap( m_NextFreeEntityIndex, newHandleIndex );
+        handle.Index = newHandleIndex;
 
-        ++availableEntities;
+        ++m_AvailableEntities;
     }
 
-    bool EntityHandleManager::isEntityActive( EntityHandleType entity_handle ) const
+    bool EntityHandleManager::IsEntityActive( EntityHandleType entityHandle ) const
     {
-        if ( !entity_handle.isValid() )
+        if ( !entityHandle.IsValid() )
             return false;
 
-        return entity_handle == entities[entity_handle.index];
+        return entityHandle == m_Entities[entityHandle.Index];
     }
 }

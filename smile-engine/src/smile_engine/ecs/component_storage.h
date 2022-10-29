@@ -4,27 +4,27 @@
 
 #include <vector>
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     using ConstructorType = void ( * )( void * );
     using DestructorType = void ( * )( void * );
 
     template < typename ComponentType, typename... Args >
-    inline void rawConstructObject( void *object, Args &&...params )
+    inline void RawConstructObject( void *pObject, Args &&...params )
     {
-        new ( object ) ComponentType( std::forward< Args >( params )... );
+        new ( pObject ) ComponentType( std::forward< Args >( params )... );
     }
 
     template < typename ComponentType, typename... Args >
-    inline void constructObject( ComponentType *object, Args &&...params )
+    inline void ConstructObject( ComponentType *pObject, Args &&...params )
     {
-        new ( object ) ComponentType{ std::forward< Args >( params )... };
+        new ( pObject ) ComponentType{ std::forward< Args >( params )... };
     }
 
     template < typename ComponentType >
-    inline void rawDestructObject( void *object )
+    inline void rawDestructObject( void *pObject )
     {
-        static_cast< ComponentType * >( object )->ComponentType::~ComponentType();
+        static_cast< ComponentType * >( pObject )->ComponentType::~ComponentType();
     }
 
     class ComponentStorage
@@ -33,148 +33,148 @@ namespace smile::ecs
         ComponentStorage() = default;
 
         template < typename ComponentType >
-        void initialize( bool owner_included )
+        void Initialize( bool isOwnerIncluded )
         {
-            data = nullptr;
-            size = 0;
-            allocated = 0;
-            constructor = rawConstructObject< ComponentType >;
-            destructor = rawDestructObject< ComponentType >;
-            componentSize = sizeof( ComponentType );
-            ownerData = owner_included;
+            m_pData = nullptr;
+            m_Size = 0;
+            m_Allocated = 0;
+            m_pConstructor = RawConstructObject< ComponentType >;
+            m_pDestructor = rawDestructObject< ComponentType >;
+            m_ComponentSize = sizeof( ComponentType );
+            m_IsOwnerData = isOwnerIncluded;
         }
 
       public:
         ~ComponentStorage();
 
         template < typename ComponentType, typename... Args >
-        ComponentType &append( IndexType index, Args &&...args )
+        ComponentType &Append( IndexType index, Args &&...args )
         {
-            grow();
-            ComponentType *result = reinterpret_cast< ComponentType * >( data ) + size - 1;
-            constructObject< ComponentType >( result, std::forward< Args >( args )... );
+            Grow();
+            ComponentType *pResult = reinterpret_cast< ComponentType * >( m_pData ) + m_Size - 1;
+            ConstructObject< ComponentType >( pResult, std::forward< Args >( args )... );
 
-            if ( indices )
-                indices[size - 1] = index;
+            if ( m_pIndices )
+                m_pIndices[m_Size - 1] = index;
 
-            return *result;
+            return *pResult;
         }
 
-        void swap( IndexType element1, IndexType element2 );
-        int removeSwap( IndexType dead_eindex );
-        void popSwap( IndexType a );
-        void clear();
-        void reset();
-
-        template < typename ComponentType >
-        ComponentType &get( IndexType index )
-        {
-            return *reinterpret_cast< ComponentType * >( data + componentSize * index );
-        }
+        void Swap( IndexType element1, IndexType element2 );
+        IndexType RemoveSwap( IndexType deadEIndex );
+        void PopSwap( IndexType a );
+        void Clear();
+        void Reset();
 
         template < typename ComponentType >
-        const ComponentType &get( IndexType index ) const
+        ComponentType &Get( IndexType index )
         {
-            return *reinterpret_cast< const ComponentType * >( data + componentSize * index );
+            return *reinterpret_cast< ComponentType * >( m_pData + m_ComponentSize * index );
         }
 
-        void *getRaw()
+        template < typename ComponentType >
+        const ComponentType &Get( IndexType index ) const
         {
-            return data;
-        }
-        const void *getRaw() const
-        {
-            return data;
-        }
-        void *getRaw( IndexType index )
-        {
-            return data + componentSize * index;
-        }
-        const void *getRaw( IndexType index ) const
-        {
-            return data + componentSize * index;
+            return *reinterpret_cast< const ComponentType * >( m_pData + m_ComponentSize * index );
         }
 
-        IndexType getIndex( IndexType index ) const
+        void *GetRaw()
         {
-            return indices ? indices[index]
-                           : reinterpret_cast< EntityHandleType * >( data + componentSize * index )->index;
+            return m_pData;
+        }
+        const void *GetRaw() const
+        {
+            return m_pData;
+        }
+        void *GetRaw( IndexType index )
+        {
+            return m_pData + m_ComponentSize * index;
+        }
+        const void *GetRaw( IndexType index ) const
+        {
+            return m_pData + m_ComponentSize * index;
         }
 
-        Uint32 getSize() const
+        IndexType GetIndex( IndexType index ) const
         {
-            return size;
+            return m_pIndices ? m_pIndices[index]
+                           : reinterpret_cast< EntityHandleType * >( m_pData + m_ComponentSize * index )->Index;
         }
-        Uint32 getRawSize() const
+
+        Uint32 GetSize() const
         {
-            return size * componentSize;
+            return m_Size;
+        }
+        Uint32 GetRawSize() const
+        {
+            return m_Size * m_ComponentSize;
         }
 
       private:
-        void grow();
-        void reallocate( Uint32 new_size );
+        void Grow();
+        void Reallocate( Uint32 newSize );
 
       protected:
-        Uint32 componentSize = 0;
-        Uint32 allocated = 0;
-        Uint32 size = 0;
-        bool ownerData = false;
-        Byte *data{ nullptr };
-        IndexType *indices{ nullptr };
+        Uint32 m_ComponentSize = 0;
+        Uint32 m_Allocated = 0;
+        Uint32 m_Size = 0;
+        bool m_IsOwnerData = false;
+        Byte *m_pData{ nullptr };
+        IndexType *m_pIndices{ nullptr };
 
-        ConstructorType constructor = nullptr;
-        DestructorType destructor = nullptr;
+        ConstructorType m_pConstructor = nullptr;
+        DestructorType m_pDestructor = nullptr;
     };
 
     template < typename ComponentType >
     class ComponentStorageHandler final : public ComponentStorage
     {
       public:
-        ComponentStorageHandler( bool owner_stored )
+        ComponentStorageHandler( bool isOwnerStored )
         {
-            initialize< ComponentType >( owner_stored );
+            Initialize< ComponentType >( isOwnerStored );
         }
 
-        ComponentType *getData()
+        ComponentType *GetData()
         {
-            return reinterpret_cast< ComponentType * >( data );
+            return reinterpret_cast< ComponentType * >( m_pData );
         }
-        const ComponentType *getData() const
+        const ComponentType *GetData() const
         {
-            return reinterpret_cast< const ComponentType * >( data );
+            return reinterpret_cast< const ComponentType * >( m_pData );
         }
 
         inline ComponentType &operator[]( int index )
         {
-            return reinterpret_cast< ComponentType * >( data )[index];
+            return reinterpret_cast< ComponentType * >( m_pData )[index];
         }
         inline const ComponentType &operator[]( int index ) const
         {
-            return reinterpret_cast< const ComponentType * >( data )[index];
+            return reinterpret_cast< const ComponentType * >( m_pData )[index];
         }
 
         inline ComponentType *begin()
         {
-            return reinterpret_cast< ComponentType * >( data );
+            return reinterpret_cast< ComponentType * >( m_pData );
         }
         inline const ComponentType *begin() const
         {
-            return reinterpret_cast< const ComponentType * >( data );
+            return reinterpret_cast< const ComponentType * >( m_pData );
         }
         inline ComponentType *end()
         {
-            return reinterpret_cast< ComponentType * >( data + size );
+            return reinterpret_cast< ComponentType * >( m_pData + m_Size );
         }
         inline const ComponentType *end() const
         {
-            return reinterpret_cast< const ComponentType * >( data + size );
+            return reinterpret_cast< const ComponentType * >( m_pData + m_Size );
         }
     };
 
     template < typename ComponentType >
-    ComponentStorageHandler< ComponentType > *componentStorageCast( ComponentStorage *component_storage )
+    ComponentStorageHandler< ComponentType > *ComponentStorageCast( ComponentStorage *pComponentStorage )
     {
         // TODO: error checking
-        return reinterpret_cast< ComponentStorageHandler< ComponentType > * >( component_storage );
+        return reinterpret_cast< ComponentStorageHandler< ComponentType > * >( pComponentStorage );
     }
 }

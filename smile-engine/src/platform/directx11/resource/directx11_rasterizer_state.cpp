@@ -6,11 +6,11 @@
 
 #include "platform/directX11/directX11_diagnostics.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    static D3D11_CULL_MODE cullModeToDirectXType( CullMode cull_mode )
+    static D3D11_CULL_MODE CullModeToDirectXType( CullMode cullMode )
     {
-        switch ( cull_mode )
+        switch ( cullMode )
         {
             case CullMode::None:
                 return D3D11_CULL_NONE;
@@ -23,9 +23,9 @@ namespace smile::graphic
         }
     }
 
-    static D3D11_FILL_MODE fillModeToDirectXType( FillMode fill_mode )
+    static D3D11_FILL_MODE FillModeToDirectXType( FillMode fillMode )
     {
-        switch ( fill_mode )
+        switch ( fillMode )
         {
             case FillMode::Solid:
                 return D3D11_FILL_SOLID;
@@ -36,37 +36,37 @@ namespace smile::graphic
         }
     }
 
-    DirectX11RasterizerState::DirectX11RasterizerState( const RasterizerStateData &rasterizer_state_data )
+    DirectX11RasterizerState::DirectX11RasterizerState( const RasterizerStateDescriptor &rasterizerStateDesc )
     {
-        directX11Context =
-            static_cast< DirectX11Context * >( Application::getInstance().getWindow().getGraphicsContext() );
+        m_pDirectX11Context =
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
 
-        D3D11_RASTERIZER_DESC rasterizer_desc = {};
-        rasterizer_desc.CullMode = cullModeToDirectXType( rasterizer_state_data.cullMode );
-        rasterizer_desc.FillMode = fillModeToDirectXType( rasterizer_state_data.fillMode );
-        rasterizer_desc.DepthClipEnable = rasterizer_state_data.depthClipEnable;
+        D3D11_RASTERIZER_DESC rasterizerDesc = {};
+        rasterizerDesc.CullMode = CullModeToDirectXType( rasterizerStateDesc.CullMode );
+        rasterizerDesc.FillMode = FillModeToDirectXType( rasterizerStateDesc.FillMode );
+        rasterizerDesc.DepthClipEnable = rasterizerStateDesc.EnableDepthClip;
 
         HRESULT result =
-            directX11Context->getDevice()->CreateRasterizerState( &rasterizer_desc, &rasterizerState );
+            m_pDirectX11Context->GetDevice()->CreateRasterizerState( &rasterizerDesc, &m_pRasterizerState );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11RasterizerState::DirectX11RasterizerState > Failed to create rasterizer state: %ls",
-                getDirectX11ErrorMessage( result ) );
+                GetDirectX11ErrorMessage( result ) );
         }
     }
 
     DirectX11RasterizerState::~DirectX11RasterizerState()
     {
-        SAFE_RELEASE( rasterizerState );
+        SAFE_RELEASE( m_pRasterizerState );
     }
 
-    void DirectX11RasterizerState::bind() const
+    void DirectX11RasterizerState::Bind() const
     {
-        directX11Context->getDeviceContext()->RSSetState( rasterizerState );
+        m_pDirectX11Context->GetDeviceContext()->RSSetState( m_pRasterizerState );
     }
 
-    void DirectX11RasterizerState::unbind() const
+    void DirectX11RasterizerState::Unbind() const
     {
-        directX11Context->getDeviceContext()->RSSetState( nullptr );
+        m_pDirectX11Context->GetDeviceContext()->RSSetState( nullptr );
     }
 }

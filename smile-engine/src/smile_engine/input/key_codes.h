@@ -1,7 +1,7 @@
 #pragma once
 
 // From Win32
-namespace smile::input
+namespace Smile::Input
 {
     using KeyCode = Uint16;
 

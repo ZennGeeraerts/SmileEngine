@@ -6,199 +6,199 @@
 #include <thirdparty/imgui/imgui.h>
 #include <thirdparty/imguizmo/ImGuizmo.h>
 
-namespace smile
+namespace Smile
 {
     /*-----------------------------------------------------------------------------------------------------------*/
     /*---------------------------------------------- Editor Layer -----------------------------------------------*/
     /*-----------------------------------------------------------------------------------------------------------*/
 
-    extern const std::filesystem::path assetPath;
+    extern const std::filesystem::path g_AssetPath;
 
     SmileEditorLayer::SmileEditorLayer() : Layer( "SmileEditorLayer" )
     {
     }
 
-    void SmileEditorLayer::onAttach()
+    void SmileEditorLayer::OnAttach()
     {
-        graphic::RenderCommand::setClearColor( { DirectX::Colors::DodgerBlue.f[0],
+        Graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
             DirectX::Colors::DodgerBlue.f[3] } );
 
-        newScene();
-        editorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
+        NewScene();
+        m_EditorCamera = Graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        iconPlay = graphic::Texture2D::create( "resources/icons/play_button.png" );
-        iconSimulate = graphic::Texture2D::create( "resources/icons/simulate_button.png" );
-        iconStop = graphic::Texture2D::create( "resources/icons/stop_button.png" );
+        m_pIconPlay = Graphic::Texture2D::Create( "resources/icons/play_button.png" );
+        m_pIconSimulate = Graphic::Texture2D::Create( "resources/icons/simulate_button.png" );
+        m_pIconStop = Graphic::Texture2D::Create( "resources/icons/stop_button.png" );
     }
 
-    void SmileEditorLayer::onDetach()
+    void SmileEditorLayer::OnDetach()
     {
     }
 
-    void SmileEditorLayer::onUpdate( Timestep deltaTime )
+    void SmileEditorLayer::OnUpdate( Timestep deltaTime )
     {
-        const auto &render_settings = graphic::Renderer::getSettings();
-        if ( ( !math::compareFloats( viewportSize.x, static_cast< float >( render_settings.width ) ) ||
-                 !math::compareFloats( viewportSize.y, static_cast< float >( render_settings.height ) ) ) &&
-             ( viewportSize.x > 0 ) && ( viewportSize.y > 0 ) )
+        const auto &render_settings = Graphic::Renderer::GetSettings();
+        if ( ( !Math::CompareFloats( m_ViewportSize.x, static_cast< float >( render_settings.Width ) ) ||
+                 !Math::CompareFloats( m_ViewportSize.y, static_cast< float >( render_settings.Height ) ) ) &&
+             ( m_ViewportSize.x > 0 ) && ( m_ViewportSize.y > 0 ) )
         {
-            graphic::Renderer::resizeFramebuffer(
-                static_cast< Uint32 >( viewportSize.x ), static_cast< Uint32 >( viewportSize.y ) );
-            editorCamera.setViewportSize( viewportSize.x, viewportSize.y );
-            activeScene->onViewportResize(
-                static_cast< Uint32 >( viewportSize.x ), static_cast< Uint32 >( viewportSize.y ) );
+            Graphic::Renderer::ResizeFramebuffer(
+                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
+            m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
+            m_pActiveScene->OnViewportResize(
+                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
-        graphic::RenderCommand::clear();
+        Graphic::RenderCommand::Clear();
 
-        switch ( sceneState )
+        switch ( m_SceneState )
         {
             case SceneState::Edit:
             {
-                if ( viewportFocused )
-                    editorCamera.onUpdate( deltaTime );
+                if ( m_IsViewportFocused )
+                    m_EditorCamera.OnUpdate( deltaTime );
 
-                activeScene->onUpdateEditor( deltaTime, editorCamera );
+                m_pActiveScene->OnUpdateEditor( deltaTime, m_EditorCamera );
                 break;
             }
             case SceneState::Simulate:
             {
-                if ( viewportFocused )
-                    editorCamera.onUpdate( deltaTime );
+                if ( m_IsViewportFocused )
+                    m_EditorCamera.OnUpdate( deltaTime );
 
-                activeScene->onUpdateSimulation( deltaTime, editorCamera );
+                m_pActiveScene->OnUpdateSimulation( deltaTime, m_EditorCamera );
                 break;
             }
             case SceneState::Play:
             {
-                activeScene->onUpdateRuntime( deltaTime );
+                m_pActiveScene->OnUpdateRuntime( deltaTime );
                 break;
             }
         }
     }
 
-    void SmileEditorLayer::onImGuiRender()
+    void SmileEditorLayer::OnImGuiRender()
     {
-        static bool opt_fullscreen = true;
-        static bool opt_padding = false;
-        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+        static bool bOptFullscreen = true;
+        static bool bOptPadding = false;
+        static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        if ( opt_fullscreen )
+        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        if ( bOptFullscreen )
         {
-            ImGuiViewport *viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos( viewport->GetWorkPos() );
-            ImGui::SetNextWindowSize( viewport->GetWorkSize() );
-            ImGui::SetNextWindowViewport( viewport->ID );
+            ImGuiViewport *pViewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos( pViewport->GetWorkPos() );
+            ImGui::SetNextWindowSize( pViewport->GetWorkSize() );
+            ImGui::SetNextWindowViewport( pViewport->ID );
             ImGui::PushStyleVar( ImGuiStyleVar_WindowRounding, 0.0f );
             ImGui::PushStyleVar( ImGuiStyleVar_WindowBorderSize, 0.0f );
-            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+            windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                             ImGuiWindowFlags_NoMove;
-            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+            windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         }
         else
         {
-            dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+            dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
         }
 
         // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
         // and handle the pass-thru hole, so we ask Begin() to not render a background.
-        if ( dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode )
-            window_flags |= ImGuiWindowFlags_NoBackground;
+        if ( dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode )
+            windowFlags |= ImGuiWindowFlags_NoBackground;
 
         // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
         // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
         // all active windows docked into it will lose their parent and become undocked.
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        if ( !opt_padding )
+        if ( !bOptPadding )
             ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2( 0.0f, 0.0f ) );
 
-        static bool dock_space_open = true;
-        ImGui::Begin( "DockSpace Demo", &dock_space_open, window_flags );
-        if ( !opt_padding )
+        static bool bDockSpaceOpen = true;
+        ImGui::Begin( "DockSpace Demo", &bDockSpaceOpen, windowFlags );
+        if ( !bOptPadding )
             ImGui::PopStyleVar();
 
-        if ( opt_fullscreen )
+        if ( bOptFullscreen )
             ImGui::PopStyleVar( 2 );
 
         // DockSpace
         ImGuiIO &io = ImGui::GetIO();
         ImGuiStyle &style = ImGui::GetStyle();
-        float standard_window_min_size = style.WindowMinSize.x;
+        float standardWindowMinSize = style.WindowMinSize.x;
         style.WindowMinSize.x = 350.f;
 
         if ( io.ConfigFlags & ImGuiConfigFlags_DockingEnable )
         {
             ImGuiID dockspace_id = ImGui::GetID( "MyDockSpace" );
-            ImGui::DockSpace( dockspace_id, ImVec2( 0.0f, 0.0f ), dockspace_flags );
+            ImGui::DockSpace( dockspace_id, ImVec2( 0.0f, 0.0f ), dockspaceFlags );
         }
 
-        style.WindowMinSize.x = standard_window_min_size;
+        style.WindowMinSize.x = standardWindowMinSize;
 
         if ( ImGui::BeginMenuBar() )
         {
             if ( ImGui::BeginMenu( "File" ) )
             {
                 if ( ImGui::MenuItem( "New", "Ctrl+N" ) )
-                    newScene();
+                    NewScene();
 
                 if ( ImGui::MenuItem( "Open...", "Ctrl+O" ) )
-                    openScene();
+                    OpenScene();
 
                 if ( ImGui::MenuItem( "Save", "Ctrl+S" ) )
-                    saveScene();
+                    SaveScene();
 
                 if ( ImGui::MenuItem( "Save As...", "Ctrl+Shift+S" ) )
-                    saveSceneAs();
+                    SaveSceneAs();
 
                 if ( ImGui::MenuItem( "Exit" ) )
-                    smile::Application::getInstance().shutDown();
+                    Smile::Application::GetInstance().ShutDown();
                 ImGui::EndMenu();
             }
 
             ImGui::EndMenuBar();
         }
 
-        sceneHierarchyPanel.onImGuiRender();
-        contentBrowserPanel.onImGuiRender();
+        m_SceneHierarchyPanel.OnImGuiRender();
+        m_ContentBrowserPanel.OnImGuiRender();
 
         ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2{} );
         ImGui::Begin( "Viewport" );
-        viewportFocused = ImGui::IsWindowFocused();
-        viewportHovered = ImGui::IsWindowHovered();
+        m_IsViewportFocused = ImGui::IsWindowFocused();
+        m_IsViewportHovered = ImGui::IsWindowHovered();
 
-        ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
-        viewportSize = { viewport_panel_size.x, viewport_panel_size.y };
+        ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image( graphic::Renderer::getFinalColor(), ImVec2{ viewportSize.x, viewportSize.y } );
+        ImGui::Image( Graphic::Renderer::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {
-            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( payload )
+            const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+            if ( pPayload )
             {
-                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
-                openScene( std::filesystem::path{ assetPath } / path );
+                const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
+                OpenScene( std::filesystem::path{ g_AssetPath } / path );
             }
 
             ImGui::EndDragDropTarget();
         }
 
         // Gizmos
-        scene::Entity selected_entity = sceneHierarchyPanel.getSelectedEntity();
-        if ( selected_entity && ( gizmoType != GizmoType::None ) && ( sceneState == SceneState::Edit ) )
+        Scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if ( selectedEntity && ( m_GizmoType != GizmoType::None ) && ( m_SceneState == SceneState::Edit ) )
         {
             ImGuizmo::SetOrthographic( false );
             ImGuizmo::SetDrawlist();
-            float window_width = static_cast< float >( ImGui::GetWindowWidth() );
-            float window_height = static_cast< float >( ImGui::GetWindowHeight() );
-            ImGuizmo::SetRect( ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height );
+            float windowWidth = static_cast< float >( ImGui::GetWindowWidth() );
+            float windowHeight = static_cast< float >( ImGui::GetWindowHeight() );
+            ImGuizmo::SetRect( ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight );
 
             //// Runtime camera
             // auto cameraEntity = m_pActiveScene->GetPrimaryCameraEntity();
@@ -214,44 +214,44 @@ namespace smile
             // DirectX::XMMATRIX cameraViewMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat);
 
             // Editor camera
-            const DirectX::XMFLOAT4X4 &camera_projection_matrix = editorCamera.getProjectionMatrix();
-            const DirectX::XMFLOAT4X4 &camera_view_matrix = editorCamera.getViewMatrix();
+            const DirectX::XMFLOAT4X4 &camera_projection_matrix = m_EditorCamera.GetProjectionMatrix();
+            const DirectX::XMFLOAT4X4 &camera_view_matrix = m_EditorCamera.GetViewMatrix();
 
             // Entity
-            auto &entity_transform_component = selected_entity.getComponent< scene::TransformComponent >();
-            auto entity_transform = entity_transform_component.getTransform();
-            auto entity_rotation = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entity_transform_component.rotation.x ),
-                DirectX::XMConvertToDegrees( entity_transform_component.rotation.y ),
-                DirectX::XMConvertToDegrees( entity_transform_component.rotation.z ) };
+            auto &entityTransformComponent = selectedEntity.GetComponent< Scene::TransformComponent >();
+            auto entityTransform = entityTransformComponent.getTransform();
+            auto entityRotation = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.x ),
+                DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.y ),
+                DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.z ) };
 
             // Snapping
-            bool snapping = input::Input::isKeyPressed( input::key::CtrlLeft );
-            float snap_value = 0.5f;
-            if ( gizmoType == GizmoType::Rotate )
-                snap_value = 45.f;
-            float snap_values[3]{ snap_value, snap_value, snap_value };
+            bool snapping = Input::Input::IsKeyPressed( Input::key::CtrlLeft );
+            float snapValue = 0.5f;
+            if ( m_GizmoType == GizmoType::Rotate )
+                snapValue = 45.f;
+            float snapValues[3]{ snapValue, snapValue, snapValue };
 
-            ImGuizmo::RecomposeMatrixFromComponents( &entity_transform_component.translation.x,
-                &entity_rotation.x,
-                &entity_transform_component.scale.x,
-                *entity_transform.m );
+            ImGuizmo::RecomposeMatrixFromComponents( &entityTransformComponent.Translation.x,
+                &entityRotation.x,
+                &entityTransformComponent.Scale.x,
+                *entityTransform.m );
             ImGuizmo::Manipulate( *camera_view_matrix.m,
                 *camera_projection_matrix.m,
-                static_cast< ImGuizmo::OPERATION >( gizmoType ),
+                static_cast< ImGuizmo::OPERATION >( m_GizmoType ),
                 ImGuizmo::MODE::LOCAL,
-                *entity_transform.m,
+                *entityTransform.m,
                 nullptr,
-                snapping ? snap_values : nullptr );
+                snapping ? snapValues : nullptr );
 
             if ( ImGuizmo::IsUsing() )
             {
-                ImGuizmo::DecomposeMatrixToComponents( *entity_transform.m,
-                    &entity_transform_component.translation.x,
-                    &entity_rotation.x,
-                    &entity_transform_component.scale.x );
-                entity_transform_component.rotation = { DirectX::XMConvertToRadians( entity_rotation.x ),
-                    DirectX::XMConvertToRadians( entity_rotation.y ),
-                    DirectX::XMConvertToRadians( entity_rotation.z ) };
+                ImGuizmo::DecomposeMatrixToComponents( *entityTransform.m,
+                    &entityTransformComponent.Translation.x,
+                    &entityRotation.x,
+                    &entityTransformComponent.Scale.x );
+                entityTransformComponent.Rotation = { DirectX::XMConvertToRadians( entityRotation.x ),
+                    DirectX::XMConvertToRadians( entityRotation.y ),
+                    DirectX::XMConvertToRadians( entityRotation.z ) };
             }
         }
 
@@ -259,24 +259,24 @@ namespace smile
 
         ImGui::PopStyleVar();
 
-        drawToolbar();
+        DrawToolbar();
 
         ImGui::End();
     }
 
-    void SmileEditorLayer::drawToolbar()
+    void SmileEditorLayer::DrawToolbar()
     {
         ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2{ 0, 2 } );
         ImGui::PushStyleVar( ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0, 0 } );
         ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
 
         const auto &colors = ImGui::GetStyle().Colors;
-        const auto &button_hovered_color = colors[ImGuiCol_ButtonHovered];
-        const auto &button_active_color = colors[ImGuiCol_ButtonActive];
+        const auto &buttonHoveredColor = colors[ImGuiCol_ButtonHovered];
+        const auto &buttonActiveColor = colors[ImGuiCol_ButtonActive];
         ImGui::PushStyleColor(
-            ImGuiCol_ButtonHovered, ImVec4{ button_hovered_color.x, button_hovered_color.y, button_hovered_color.z, 0.5f } );
+            ImGuiCol_ButtonHovered, ImVec4{ buttonHoveredColor.x, buttonHoveredColor.y, buttonHoveredColor.z, 0.5f } );
         ImGui::PushStyleColor(
-            ImGuiCol_ButtonActive, ImVec4{ button_active_color.x, button_active_color.y, button_active_color.z, 0.5f } );
+            ImGuiCol_ButtonActive, ImVec4{ buttonActiveColor.x, buttonActiveColor.y, buttonActiveColor.z, 0.5f } );
 
         ImGui::Begin( "##toolbar",
             nullptr,
@@ -284,35 +284,35 @@ namespace smile
 
         const float icon_size{ ImGui::GetWindowHeight() - 4.f };
         {
-            Ref< graphic::Texture2D > state_icon =
-                ( sceneState == SceneState::Edit || sceneState == SceneState::Simulate ) ? iconPlay : iconStop;
+            Ref< Graphic::Texture2D > pStateIcon =
+                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate ) ? m_pIconPlay : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( icon_size * 0.5f ) );
-            if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
+            if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
                      ImVec2{ icon_size, icon_size },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
                      0 ) )
             {
-                if ( sceneState == SceneState::Edit || sceneState == SceneState::Simulate )
-                    onScenePlay();
-                else if ( sceneState == SceneState::Play )
-                    onSceneStop();
+                if ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate )
+                    OnScenePlay();
+                else if ( m_SceneState == SceneState::Play )
+                    OnSceneStop();
             }
         }
         ImGui::SameLine();
         {
-            Ref< graphic::Texture2D > state_icon =
-                ( sceneState == SceneState::Edit || sceneState == SceneState::Play ) ? iconSimulate : iconStop;
-            if ( ImGui::ImageButton( static_cast< ImTextureID >( state_icon->getData() ),
+            Ref< Graphic::Texture2D > pStateIcon =
+                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play ) ? m_pIconSimulate : m_pIconStop;
+            if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
                      ImVec2{ icon_size, icon_size },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
                      0 ) )
             {
-                if ( sceneState == SceneState::Edit || sceneState == SceneState::Play )
-                    onSceneSimulate();
-                else if ( sceneState == SceneState::Simulate )
-                    onSceneStop();
+                if ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play )
+                    OnSceneSimulate();
+                else if ( m_SceneState == SceneState::Simulate )
+                    OnSceneStop();
             }
         }
 
@@ -321,190 +321,190 @@ namespace smile
         ImGui::End();
     }
 
-    void SmileEditorLayer::onEvent( Event &e )
+    void SmileEditorLayer::OnEvent( Event &e )
     {
-        if ( viewportHovered )
-            editorCamera.onEvent( e );
+        if ( m_IsViewportHovered )
+            m_EditorCamera.OnEvent( e );
 
         EventDispatcher dispatcher{ e };
-        dispatcher.dispatch< KeyPressedEvent >( SM_BIND_EVENT_FN( SmileEditorLayer::onKeyPressed ) );
+        dispatcher.Dispatch< KeyPressedEvent >( SM_BIND_EVENT_FN( SmileEditorLayer::OnKeyPressed ) );
     }
 
-    bool SmileEditorLayer::onKeyPressed( KeyPressedEvent &e )
+    bool SmileEditorLayer::OnKeyPressed( KeyPressedEvent &e )
     {
         if ( e.getRepeatCount() > 1 )
             return false;
 
-        bool control_pressed = input::Input::isKeyPressed( input::key::CtrlLeft ) || input::Input::isKeyPressed( input::key::CtrlRight );
-        bool shift_pressed = input::Input::isKeyPressed( input::key::ShiftLeft ) || input::Input::isKeyPressed( input::key::ShiftRight );
+        bool bControlPressed = Input::Input::IsKeyPressed( Input::key::CtrlLeft ) || Input::Input::IsKeyPressed( Input::key::CtrlRight );
+        bool bShiftPressed = Input::Input::IsKeyPressed( Input::key::ShiftLeft ) || Input::Input::IsKeyPressed( Input::key::ShiftRight );
 
-        switch ( e.getKeyCode() )
+        switch ( e.GetKeyCode() )
         {
             case 'S':
-                if ( control_pressed )
+                if ( bControlPressed )
                 {
-                    if ( shift_pressed )
-                        saveSceneAs();
+                    if ( bShiftPressed )
+                        SaveSceneAs();
                     else
-                        saveScene();
+                        SaveScene();
                 }
                 break;
             case 'O':
-                if ( control_pressed )
-                    openScene();
+                if ( bControlPressed )
+                    OpenScene();
                 break;
             case 'N':
-                if ( control_pressed )
-                    newScene();
+                if ( bControlPressed )
+                    NewScene();
                 break;
 
             // Scene commands
             case 'D':
-                if ( control_pressed )
-                    duplicateEntity();
+                if ( bControlPressed )
+                    DuplicateEntity();
                 break;
 
             // Gizmos
             case 'Q':
-                gizmoType = GizmoType::None;
+                m_GizmoType = GizmoType::None;
                 break;
             case 'W':
-                gizmoType = GizmoType::Translate;
+                m_GizmoType = GizmoType::Translate;
                 break;
             case 'E':
-                gizmoType = GizmoType::Rotate;
+                m_GizmoType = GizmoType::Rotate;
                 break;
             case 'R':
-                gizmoType = GizmoType::Scale;
+                m_GizmoType = GizmoType::Scale;
                 break;
         }
 
         return false;
     }
 
-    void SmileEditorLayer::saveScene()
+    void SmileEditorLayer::SaveScene()
     {
-        if ( !editorScenePath.empty() )
+        if ( !m_EditorScenePath.empty() )
         {
-            serializeScene( activeScene, editorScenePath );
+            SerializeScene( m_pActiveScene, m_EditorScenePath );
         }
         else
-            saveSceneAs();
+            SaveSceneAs();
     }
 
-    void SmileEditorLayer::saveSceneAs()
+    void SmileEditorLayer::SaveSceneAs()
     {
-        std::string file_path = utils::saveFile( "Smile Scene (*.smile)\0*.smile\0" );
-        if ( !file_path.empty() )
+        std::string filePath = Utils::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
+        if ( !filePath.empty() )
         {
-            serializeScene( activeScene, file_path );
-            editorScenePath = file_path;
+            SerializeScene( m_pActiveScene, filePath );
+            m_EditorScenePath = filePath;
         }
         else
             SM_LOG_ERROR( "SmileEditorLayer::saveSceneAs > Failed to save scene. The file path was empty" );
     }
 
-    void SmileEditorLayer::serializeScene( const Ref< scene::Scene > &scene, const std::filesystem::path &file_path )
+    void SmileEditorLayer::SerializeScene( const Ref< Scene::Scene > &pScene, const std::filesystem::path &filePath )
     {
-        scene::SceneSerializer scene_serializer{ scene };
-        scene_serializer.serialize( file_path.string() );
+        Scene::SceneSerializer scene_serializer{ pScene };
+        scene_serializer.Serialize( filePath.string() );
     }
 
-    void SmileEditorLayer::openScene()
+    void SmileEditorLayer::OpenScene()
     {
-        std::string file_path = utils::openFile( "Smile Scene (*.smile)\0*.smile\0" );
-        openScene( file_path );
+        std::string filePath = Utils::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
+        OpenScene( filePath );
     }
 
-    void SmileEditorLayer::openScene( const std::filesystem::path &file_path )
+    void SmileEditorLayer::OpenScene( const std::filesystem::path &filePath )
     {
-        if ( sceneState != SceneState::Edit )
-            onSceneStop();
+        if ( m_SceneState != SceneState::Edit )
+            OnSceneStop();
 
-        if ( file_path.empty() )
+        if ( filePath.empty() )
         {
             SM_LOG_WARNING( "SmileEditorLayer::openScene > Failed to load scene: the path was empty" );
             return;
         }
 
-        if ( file_path.extension().string() != ".smile" )
+        if ( filePath.extension().string() != ".smile" )
         {
             SM_LOG_WARNING( "SmileEditorLayer::openScene > Failed to load scene: wrong file extention" );
             return;
         }
 
-        Ref< scene::Scene > new_scene = createRef< scene::Scene >();
-        scene::SceneSerializer scene_serializer{ new_scene };
-        if ( scene_serializer.deserialize( file_path.string() ) )
+        Ref< Scene::Scene > pNewScene = CreateRef< Scene::Scene >();
+        Scene::SceneSerializer sceneSerializer{ pNewScene };
+        if ( sceneSerializer.Deserialize( filePath.string() ) )
         {
-            editorScene = new_scene;
+            m_pEditorScene = pNewScene;
 
-            editorScene->onViewportResize(
-                static_cast< Uint32 >( viewportSize.x ), static_cast< Uint32 >( viewportSize.y ) );
-            sceneHierarchyPanel.setContext( editorScene );
-            editorCamera.setViewportSize( viewportSize.x, viewportSize.y );
+            m_pEditorScene->OnViewportResize(
+                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
+            m_SceneHierarchyPanel.SetContext( m_pEditorScene );
+            m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
 
-            activeScene = editorScene;
-            editorScenePath = file_path;
+            m_pActiveScene = m_pEditorScene;
+            m_EditorScenePath = filePath;
         }
     }
 
-    void SmileEditorLayer::newScene()
+    void SmileEditorLayer::NewScene()
     {
-        if ( sceneState == SceneState::Play )
-            onSceneStop();
+        if ( m_SceneState == SceneState::Play )
+            OnSceneStop();
 
-        activeScene = createRef< scene::Scene >();
-        editorScene = activeScene;
-        activeScene->onViewportResize(
-            static_cast< Uint32 >( viewportSize.x ), static_cast< Uint32 >( viewportSize.y ) );
-        editorCamera.setViewportSize( viewportSize.x, viewportSize.y );
-        sceneHierarchyPanel.setContext( activeScene );
+        m_pActiveScene = CreateRef< Scene::Scene >();
+        m_pEditorScene = m_pActiveScene;
+        m_pActiveScene->OnViewportResize(
+            static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
+        m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
+        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
 
-        editorScenePath = std::filesystem::path{};
+        m_EditorScenePath = std::filesystem::path{};
     }
 
-    void SmileEditorLayer::onScenePlay()
+    void SmileEditorLayer::OnScenePlay()
     {
-        if ( sceneState == SceneState::Simulate )
-            onSceneStop();
+        if ( m_SceneState == SceneState::Simulate )
+            OnSceneStop();
 
-        sceneState = SceneState::Play;
-        activeScene = scene::Scene::copy( editorScene );
-        activeScene->onRuntimeStart();
-        sceneHierarchyPanel.setContext( activeScene );
+        m_SceneState = SceneState::Play;
+        m_pActiveScene = Scene::Scene::Copy( m_pEditorScene );
+        m_pActiveScene->OnRuntimeStart();
+        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
 
-    void SmileEditorLayer::onSceneSimulate()
+    void SmileEditorLayer::OnSceneSimulate()
     {
-        if ( sceneState == SceneState::Play )
-            onSceneStop();
+        if ( m_SceneState == SceneState::Play )
+            OnSceneStop();
 
-        sceneState = SceneState::Simulate;
-        activeScene = scene::Scene::copy( editorScene );
-        activeScene->onSimulationStart();
-        sceneHierarchyPanel.setContext( activeScene );
+        m_SceneState = SceneState::Simulate;
+        m_pActiveScene = Scene::Scene::Copy( m_pEditorScene );
+        m_pActiveScene->OnSimulationStart();
+        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
 
-    void SmileEditorLayer::onSceneStop()
+    void SmileEditorLayer::OnSceneStop()
     {
-        if ( sceneState == SceneState::Play )
-            activeScene->onRuntimeStop();
-        else if ( sceneState == SceneState::Simulate )
-            activeScene->onSimulationStop();
+        if ( m_SceneState == SceneState::Play )
+            m_pActiveScene->OnRuntimeStop();
+        else if ( m_SceneState == SceneState::Simulate )
+            m_pActiveScene->OnSimulationStop();
 
-        sceneState = SceneState::Edit;
-        activeScene = editorScene;
-        sceneHierarchyPanel.setContext( activeScene );
+        m_SceneState = SceneState::Edit;
+        m_pActiveScene = m_pEditorScene;
+        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
 
-    void SmileEditorLayer::duplicateEntity()
+    void SmileEditorLayer::DuplicateEntity()
     {
-        if ( sceneState != SceneState::Edit )
+        if ( m_SceneState != SceneState::Edit )
             return;
 
-        scene::Entity selected_entity = sceneHierarchyPanel.getSelectedEntity();
-        if ( selected_entity )
-            editorScene->duplicateEntity( selected_entity );
+        Scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        if ( selectedEntity )
+            m_pEditorScene->DuplicateEntity( selectedEntity );
     }
 }

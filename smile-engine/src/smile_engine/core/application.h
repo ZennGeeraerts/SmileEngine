@@ -9,25 +9,25 @@
 
 #include "smile_engine/imgui/imgui_layer.h"
 
-namespace smile
+namespace Smile
 {
     struct ApplicationCommandLineArgs final
     {
-        int count{ 0 };
-        char **args{ nullptr };
+        int Count{ 0 };
+        char **Args{ nullptr };
 
         const char *operator[]( int index ) const
         {
-            SM_ASSERT( index < count, "ApplicationCommandLineArgs > Index out of range" );
-            return args[index];
+            SM_ASSERT( index < Count, "ApplicationCommandLineArgs::*operator > Index out of range" );
+            return Args[index];
         }
     };
 
     struct ApplicationDescriptor final
     {
-        std::string name = "Smile Game";
-        std::string workingDirectory;
-        ApplicationCommandLineArgs commandLineArgs;
+        std::string Name = "Smile Game";
+        std::string WorkingDirectory;
+        ApplicationCommandLineArgs CommandLineArgs;
     };
 
     class Application
@@ -36,43 +36,43 @@ namespace smile
         Application( const ApplicationDescriptor &descriptor );
         virtual ~Application();
 
-        void run();
-        void shutDown();
+        void Run();
+        void ShutDown();
 
-        void onEvent( Event &e );
+        void OnEvent( Event &e );
 
-        void pushLayer( Layer *layer );
-        void pushOverlay( Layer *overlay );
+        void PushLayer( Layer *pLayer );
+        void PushOverlay( Layer *pOverlay );
 
-        inline static Application &getInstance()
+        inline static Application &GetInstance()
         {
-            return *instance;
+            return *s_Instance;
         }
-        inline Window &getWindow() const
+        inline Window &GetWindow() const
         {
-            return *window;
+            return *m_pWindow;
         }
-        inline const ApplicationDescriptor &getDescriptor() const 
+        inline const ApplicationDescriptor &GetDescriptor() const 
         {
-            return descriptor;
+            return m_Descriptor;
         }
 
       private:
-        bool onWindowClose( WindowCloseEvent &e );
-        bool onWindowResize( WindowResizeEvent &e );
+        bool OnWindowClose( WindowCloseEvent &e );
+        bool OnWindowResize( WindowResizeEvent &e );
 
       private:
-        ApplicationDescriptor descriptor;
-        std::unique_ptr< Window > window;
-        imgui::ImGuiLayer *imGuiLayer;
-        bool isRunning = true;
-        bool isMinimized = false;
-        LayerStack layerStack;
+        ApplicationDescriptor m_Descriptor;
+        std::unique_ptr< Window > m_pWindow;
+        ImGui::ImGuiLayer *m_pImGuiLayer;
+        bool m_IsRunning = true;
+        bool m_IsMinimized = false;
+        LayerStack m_LayerStack;
 
       private:
-        static Application *instance;
+        static Application *s_Instance;
     };
 
     // To be defined in client
-    Application *createApplication( ApplicationCommandLineArgs command_line_args );
+    Application *CreateApplication( ApplicationCommandLineArgs commandLineArgs );
 }

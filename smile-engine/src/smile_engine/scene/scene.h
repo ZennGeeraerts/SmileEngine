@@ -5,9 +5,8 @@
 #include "smile_engine/graphic/camera/editor_camera.h"
 
 #include "smile_engine/ecs/ecs_engine.h"
-//#include <thirdparty/entt/entt.hpp>
 
-namespace smile::scene
+namespace Smile::Scene
 {
     class Entity;
 
@@ -17,36 +16,35 @@ namespace smile::scene
         Scene();
         ~Scene();
 
-        Entity createEntity();
-        Entity createEntity( const std::string &name );
-        Entity createEntity( UUID uuid, const std::string &name );
-        void destroyEntity( Entity entity );
+        Entity CreateEntity();
+        Entity CreateEntity( const std::string &name );
+        Entity CreateEntity( UUID uuid, const std::string &name );
+        void DestroyEntity( Entity entity );
 
-        void onRuntimeStart();
-        void onRuntimeStop();
-        void onSimulationStart();
-        void onSimulationStop();
+        void OnRuntimeStart();
+        void OnRuntimeStop();
+        void OnSimulationStart();
+        void OnSimulationStop();
 
-        void onUpdateRuntime( Timestep delta_time );
-        void onUpdateSimulation( Timestep delta_time, graphic::EditorCamera &editor_camera );
-        void onUpdateEditor( Timestep delta_time, graphic::EditorCamera &editor_camera );
-        void onViewportResize( Uint32 width, Uint32 height );
+        void OnUpdateRuntime( Timestep deltaTime );
+        void OnUpdateSimulation( Timestep deltaTime, Graphic::EditorCamera &editorCamera );
+        void OnUpdateEditor( Timestep deltaTime, Graphic::EditorCamera &editorCamera );
+        void OnViewportResize( Uint32 width, Uint32 height );
 
-        Entity getPrimaryCameraEntity();
+        Entity GetPrimaryCameraEntity();
 
-        static Ref< Scene > copy( const Ref< Scene > &scene );
+        static Ref< Scene > Copy( const Ref< Scene > &pScene );
 
-        void duplicateEntity( Entity entity );
+        void DuplicateEntity( Entity entity );
 
       private:
         template < typename ComponentType >
-        void onComponentAdded( Entity entity, ComponentType &component );
+        void OnComponentAdded( Entity entity, ComponentType &component );
 
       private:
-        //entt::registry registry;
-        ecs::ECSEngine ecsEngine;
-        Uint32 viewportWidth = 0;
-        Uint32 viewportHeight = 0;
+        ECS::ECSEngine m_ECSEngine;
+        Uint32 m_ViewportWidth = 0;
+        Uint32 m_ViewportHeight = 0;
 
         friend class Entity;
         friend class SceneSerializer;

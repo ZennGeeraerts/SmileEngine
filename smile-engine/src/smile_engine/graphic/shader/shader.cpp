@@ -8,46 +8,46 @@
 #    include "platform/smileraster/smileraster_shader.h"
 #endif
 
-namespace smile::graphic
+namespace Smile::graphic
 {
-    Ref< Shader > Shader::create( const std::string &file_path, const BufferLayout &buffer_layout )
+    Ref< Shader > Shader::Create( const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        switch ( Renderer::getAPI() )
+        switch ( Renderer::GetAPI() )
         {
             case RendererAPI::API::None:
-                SM_ASSERT( false, "Shader::create > return nullptr, no renderer api selected" );
+                SM_ASSERT( false, "Shader::Create > return nullptr, no renderer api selected" );
                 return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
             case RendererAPI::API::DirectX11:
-                return createRef< DirectX11Shader >( file_path, buffer_layout );
+                return CreateRef< DirectX11Shader >( filePath, bufferLayout );
 
             case RendererAPI::API::SmileRaster:
-                return createRef< SmileRasterShader >( file_path, buffer_layout );
+                return CreateRef< SmileRasterShader >( filePath, bufferLayout );
 #endif
         }
 
         SM_ASSERT( false,
-            "Shader::create > return nullptr, unknown render api or render api is not supported on this platform" );
+            "Shader::Create > return nullptr, unknown render api or render api is not supported on this platform" );
         return nullptr;
     }
 
-    Ref< Shader > Shader::create( const std::string &file_path )
+    Ref< Shader > Shader::Create( const std::string &filePath )
     {
-        switch ( Renderer::getAPI() )
+        switch ( Renderer::GetAPI() )
         {
             case RendererAPI::API::None:
-                SM_ASSERT( false, "Shader::create > return nullptr, no renderer api selected" );
+                SM_ASSERT( false, "Shader::Create > return nullptr, no renderer api selected" );
                 return nullptr;
 
 #ifdef SM_PLATFORM_WINDOWS
             case RendererAPI::API::DirectX11:
-                return createRef< DirectX11Shader >( file_path );
+                return CreateRef< DirectX11Shader >( filePath );
 #endif
         }
 
         SM_ASSERT( false,
-            "Shader::create > return nullptr, unknown render api or render api is not supported on this platform" );
+            "Shader::Create > return nullptr, unknown render api or render api is not supported on this platform" );
         return nullptr;
     }
 }

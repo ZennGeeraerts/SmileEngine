@@ -5,7 +5,7 @@
 
 #define HINSTANCE() GetModuleHandle( NULL ) // this function returns the hInstance
 
-namespace smile
+namespace Smile
 {
     class WindowsWindow final : public Window
     {
@@ -18,59 +18,59 @@ namespace smile
         WindowsWindow &operator=( const WindowsWindow & ) = delete;
         WindowsWindow &operator=( WindowsWindow && ) = delete;
 
-        void onUpdate() override;
+        void OnUpdate() override;
 
-        inline Uint32 getWidth() const override
+        inline Uint32 GetWidth() const override
         {
-            return data.width;
+            return m_Data.Width;
         }
-        inline Uint32 getHeight() const override
+        inline Uint32 GetHeight() const override
         {
-            return data.height;
+            return m_Data.Height;
         }
-        inline graphic::GraphicsContext *getGraphicsContext() const override
+        inline Graphic::GraphicsContext *GetGraphicsContext() const override
         {
-            return context;
+            return m_pContext;
         }
 
         // Window attributes
-        inline void setEventCallback( const EventCallbackFunction &callback ) override
+        inline void SetEventCallback( const EventCallbackFunction &callback ) override
         {
-            data.eventCallback = callback;
+            m_Data.EventCallback = callback;
         }
-        virtual void setVSync( bool enabled ) override;
-        virtual bool isVSync() const override;
+        virtual void SetVSync( bool isEnabled ) override;
+        virtual bool IsVSync() const override;
 
-        inline virtual void *getNativeWindow() const override
+        inline virtual void *GetNativeWindow() const override
         {
-            return windowHandle;
+            return m_WindowHandle;
         }
 
       private:
-        virtual void init( const WindowSettings &settings );
-        virtual void shutDown();
+        virtual void Initialize( const WindowSettings &settings );
+        virtual void ShutDown();
 
-        static LRESULT CALLBACK windowsProcedureStatic( HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param );
-        LRESULT windowsProcedure( HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param ) noexcept;
+        static LRESULT CALLBACK WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+        LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept;
 
         void pollEvents();
 
       private:
-        HWND windowHandle;
-        WNDCLASSEX windowClass;
-        MSG message;
-        graphic::GraphicsContext *context;
+        HWND m_WindowHandle;
+        WNDCLASSEX m_WindowClass;
+        MSG m_Message;
+        Graphic::GraphicsContext *m_pContext;
 
         struct WindowData
         {
-            std::string title{};
-            Uint32 width{};
-            Uint32 height{};
-            bool vsync{};
-            EventCallbackFunction eventCallback{};
+            std::string Title{};
+            Uint32 Width{};
+            Uint32 Height{};
+            bool IsVSync{};
+            EventCallbackFunction EventCallback{};
         };
 
-        WindowData data;
-        bool initialized = false;
+        WindowData m_Data;
+        bool m_IsInitialized = false;
     };
 }

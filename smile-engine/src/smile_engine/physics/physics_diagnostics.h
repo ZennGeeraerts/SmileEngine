@@ -2,7 +2,7 @@
 #include <foundation/PxErrorCallback.h>
 #include <foundation/PxAssert.h>
 
-namespace smile::physics
+namespace Smile::Physics
 {
     class PhysicsErrorCallback final : public physx::PxErrorCallback
     {
@@ -13,6 +13,6 @@ namespace smile::physics
 
     class PhysicsAssertHandler final : public physx::PxAssertHandler
     {
-        virtual void operator()( const char *pExp, const char *pFile, int line, bool &bIgnore );
+        virtual void operator()( const char *exp, const char *file, int line, bool &ignore );
     };
 }

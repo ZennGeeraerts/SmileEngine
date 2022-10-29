@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "layer_stack.h"
 
-namespace smile
+namespace Smile
 {
     LayerStack::LayerStack()
     {
@@ -9,39 +9,39 @@ namespace smile
 
     LayerStack::~LayerStack()
     {
-        for ( Layer *layer : layers )
-            delete layer;
+        for ( Layer *pLayer : m_pLayers )
+            delete pLayer;
     }
 
     // Insert at layerInsertIndex
-    void LayerStack::pushLayer( Layer *layer )
+    void LayerStack::PushLayer( Layer *pLayer )
     {
-        layers.emplace( layers.begin() + layerInsertIndex, layer );
-        ++layerInsertIndex;
-        layer->onAttach();
+        m_pLayers.emplace( m_pLayers.begin() + m_LayerInsertIndex, pLayer );
+        ++m_LayerInsertIndex;
+        pLayer->OnAttach();
     }
 
     // Overlays get pushed at the back of the vector
-    void LayerStack::pushOverlay( Layer *overlay )
+    void LayerStack::PushOverlay( Layer *pOverlay )
     {
-        layers.emplace_back( overlay );
-        overlay->onAttach();
+        m_pLayers.emplace_back( pOverlay );
+        pOverlay->OnAttach();
     }
 
-    void LayerStack::popLayer( Layer *layer )
+    void LayerStack::PopLayer( Layer *pLayer )
     {
-        auto it = std::find( layers.begin(), layers.end(), layer );
-        if ( it != layers.end() )
+        auto it = std::find( m_pLayers.begin(), m_pLayers.end(), pLayer );
+        if ( it != m_pLayers.end() )
         {
-            layers.erase( it );
-            --layerInsertIndex;
+            m_pLayers.erase( it );
+            --m_LayerInsertIndex;
         }
     }
 
-    void LayerStack::popOverlay( Layer *overlay )
+    void LayerStack::PopOverlay( Layer *pOverlay )
     {
-        auto it = std::find( layers.begin(), layers.end(), overlay );
-        if ( it != layers.end() )
-            layers.erase( it );
+        auto it = std::find( m_pLayers.begin(), m_pLayers.end(), pOverlay );
+        if ( it != m_pLayers.end() )
+            m_pLayers.erase( it );
     }
 }

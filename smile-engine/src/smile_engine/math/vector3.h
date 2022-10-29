@@ -2,13 +2,13 @@
 
 #include "math.h"
 
-namespace smile::math
+namespace Smile::Math
 {
     struct Vector3 final
     {
         union
         {
-            float m[3];
+            float M[3];
             struct
             {
                 float x;
@@ -17,116 +17,116 @@ namespace smile::math
             };
         };
 
-        static const Vector3 zero, xAxis, yAxis, zAxis, one;
+        static const Vector3 Zero, XAxis, YAxis, ZAxis, One;
     };
 
-    inline float dotProduct( const Vector3 &v1, const Vector3 &v2 )
+    inline float DotProduct( const Vector3 &v1, const Vector3 &v2 )
     {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
 
-    inline Vector3 crossProduct( const Vector3 &v1, const Vector3 &v2 )
+    inline Vector3 CrossProduct( const Vector3 &v1, const Vector3 &v2 )
     {
         return Vector3{ v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
     }
 
-    inline float distanceSqr( const Vector3 &v1, const Vector3 &v2 )
+    inline float DistanceSqr( const Vector3 &v1, const Vector3 &v2 )
     {
         return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                ( v1.z - v2.z ) * ( v1.z - v2.z );
     }
 
-    inline float distance( const Vector3 &v1, const Vector3 &v2 )
+    inline float Distance( const Vector3 &v1, const Vector3 &v2 )
     {
-        return squareRoot(
+        return SquareRoot(
             ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) + ( v1.z - v2.z ) * ( v1.z - v2.z ) );
     }
 
-    inline float lengthSqr( const Vector3 &vector )
+    inline float LengthSqr( const Vector3 &vector )
     {
         return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
     }
 
-    inline float length( const Vector3 &vector )
+    inline float Length( const Vector3 &vector )
     {
-        return squareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
+        return SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
     }
 
-    inline bool isUnitVector( const Vector3 &vector )
+    inline bool IsUnitVector( const Vector3 &vector )
     {
-        return isOne( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
+        return IsOne( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
     }
 
-    inline bool hasZeroLength( const Vector3 &vector, float precision = epsilon )
+    inline bool HasZeroLength( const Vector3 &vector, float precision = g_Epsilon )
     {
-        return isSquareZero( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z, precision );
+        return IsSquareZero( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z, precision );
     }
 
-    inline bool isZeroVector( const Vector3 &vector, float precision = epsilon )
+    inline bool IsZeroVector( const Vector3 &vector, float precision = g_Epsilon )
     {
-        return isZero( vector.x, precision ) && isZero( vector.y, precision ) && isZero( vector.z, precision );
+        return IsZero( vector.x, precision ) && IsZero( vector.y, precision ) && IsZero( vector.z, precision );
     }
 
-    inline bool compareVector3( const Vector3 &v1, const Vector3 &v2, float precision = epsilon )
+    inline bool CompareVector3( const Vector3 &v1, const Vector3 &v2, float precision = g_Epsilon )
     {
-        return compareFloats( v1.x, v2.x, precision ) && compareFloats( v1.y, v2.y, precision ) &&
-               compareFloats( v1.z, v2.z, precision );
+        return CompareFloats( v1.x, v2.x, precision ) && CompareFloats( v1.y, v2.y, precision ) &&
+               CompareFloats( v1.z, v2.z, precision );
     }
 
-    inline Vector3 getNormalized( const Vector3 &vector )
+    inline Vector3 GetNormalized( const Vector3 &vector )
     {
-        SM_ASSERT( !isZeroVector( vector ), "getNormalized > Vector3 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector3 is zero vector" );
 
-        float length = squareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
+        float length = SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
         return Vector3{ vector.x / length, vector.y / length, vector.z / length };
     }
 
-    inline void normalize( Vector3 &vector )
+    inline void Normalize( Vector3 &vector )
     {
-        SM_ASSERT( !isZeroVector( vector ), "Normalize > Vector3 is zero vector" );
+        SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector3 is zero vector" );
 
-        float length = squareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
+        float length = SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z );
         vector.x /= length;
         vector.y /= length;
         vector.z /= length;
     }
 
-    inline Vector3 lerp( const Vector3 &v1, const Vector3 &v2, float percentage )
+    inline Vector3 Lerp( const Vector3 &v1, const Vector3 &v2, float percentage )
     {
-        const float one_minus_percentage = 1.0f - percentage;
+        const float oneMinusPercentage = 1.0f - percentage;
 
-        return Vector3{ v1.x * one_minus_percentage + v2.x * percentage,
-            v1.y * one_minus_percentage + v2.y * percentage,
-            v1.z * one_minus_percentage + v2.z * percentage };
+        return Vector3{ v1.x * oneMinusPercentage + v2.x * percentage,
+            v1.y * oneMinusPercentage + v2.y * percentage,
+            v1.z * oneMinusPercentage + v2.z * percentage };
     }
 
-    inline Vector3 getPerpendicular( const Vector3 &vector )
+    inline Vector3 GetPerpendicular( const Vector3 &vector )
     {
-        auto perpendicular = crossProduct( vector, Vector3::xAxis );
+        auto perpendicular = CrossProduct( vector, Vector3::XAxis );
 
-        if ( hasZeroLength( perpendicular ) )
+        if ( HasZeroLength( perpendicular ) )
         {
-            perpendicular = crossProduct( vector, Vector3::yAxis );
+            perpendicular = CrossProduct( vector, Vector3::YAxis );
         }
 
-        return getNormalized( perpendicular );
+        return GetNormalized( perpendicular );
     }
 
-    inline Vector3 generateRandom( const Vector3 &minimum, const Vector3 &maximum )
+    inline Vector3 GenerateRandom( const Vector3 &minimum, const Vector3 &maximum )
     {
-        return Vector3{ generateRandom( minimum.x, maximum.x ),
-            generateRandom( minimum.y, maximum.y ),
-            generateRandom( minimum.z, maximum.z ) };
+        return Vector3{ GenerateRandom( minimum.x, maximum.x ),
+            GenerateRandom( minimum.y, maximum.y ),
+            GenerateRandom( minimum.z, maximum.z ) };
     }
 
-    inline Vector3 minimum( const Vector3 &v1, const Vector3 &v2 )
+    inline Vector3 Minimum( const Vector3 &v1, const Vector3 &v2 )
     {
-        return Vector3{ minimum( v1.x, v2.x ), minimum( v1.y, v2.y ), minimum( v1.z, v2.z ) };
+        return Vector3{ Minimum( v1.x, v2.x ), Minimum( v1.y, v2.y ), Minimum( v1.z, v2.z ) };
     }
 
-    inline Vector3 maximum( const Vector3 &v1, const Vector3 &v2 )
+    inline Vector3 Maximum( const Vector3 &v1, const Vector3 &v2 )
     {
-        return Vector3{ maximum( v1.x, v2.x ), maximum( v1.y, v2.y ), maximum( v1.z, v2.z ) };
+        return Vector3{ Maximum( v1.x, v2.x ), Maximum( v1.y, v2.y ), Maximum( v1.z, v2.z ) };
     }
 
     // Operators

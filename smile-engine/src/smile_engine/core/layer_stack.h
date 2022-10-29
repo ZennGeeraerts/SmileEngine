@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include "layer.h"
 
-namespace smile
+namespace Smile
 {
     class LayerStack final
     {
@@ -16,23 +16,23 @@ namespace smile
         LayerStack &operator=( const LayerStack & ) = delete;
         LayerStack &operator=( LayerStack && ) = delete;
 
-        void pushLayer( Layer *layer );
-        void pushOverlay( Layer *overlay );
-        void popLayer( Layer *layer );
-        void popOverlay( Layer *overlay );
+        void PushLayer( Layer *pLayer );
+        void PushOverlay( Layer *pOverlay );
+        void PopLayer( Layer *pLayer );
+        void PopOverlay( Layer *pOverlay );
 
         std::vector< Layer * >::iterator begin()
         {
-            return layers.begin();
+            return m_pLayers.begin();
         }
         std::vector< Layer * >::iterator end()
         {
-            return layers.end();
+            return m_pLayers.end();
         }
 
       private:
         // Vector is used because we iterate over it every frame
-        std::vector< Layer * > layers;
-        Uint32 layerInsertIndex = 0;
+        std::vector< Layer * > m_pLayers;
+        Uint32 m_LayerInsertIndex = 0;
     };
 }

@@ -16,57 +16,57 @@
 //
 // extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-namespace smile
+namespace Smile
 {
-    Window *Window::create( const WindowSettings &settings )
+    Window *Window::Create( const WindowSettings &settings )
     {
         return new WindowsWindow{ settings };
     }
 
     WindowsWindow::WindowsWindow( const WindowSettings &settings )
     {
-        init( settings );
+        Initialize( settings );
     }
 
     WindowsWindow::~WindowsWindow()
     {
-        shutDown();
+        ShutDown();
     }
 
-    void WindowsWindow::shutDown()
+    void WindowsWindow::ShutDown()
     {
-        DestroyWindow( windowHandle );
-        UnregisterClass( windowClass.lpszClassName, windowClass.hInstance );
-        delete context;
+        DestroyWindow( m_WindowHandle );
+        UnregisterClass( m_WindowClass.lpszClassName, m_WindowClass.hInstance );
+        delete m_pContext;
     }
 
-    void WindowsWindow::init( const WindowSettings &settings )
+    void WindowsWindow::Initialize( const WindowSettings &settings )
     {
-        data.title = settings.title;
-        data.height = settings.height;
-        data.width = settings.width;
+        m_Data.Title = settings.Title;
+        m_Data.Height = settings.Height;
+        m_Data.Width = settings.Width;
 
-        message = { 0 };
+        m_Message = { 0 };
 
         SM_LOG_INFO( "WindowsWindow::init > Creating window: %s (%d, %d)",
-            settings.title.c_str(),
-            settings.width,
-            settings.height );
+            settings.Title.c_str(),
+            settings.Width,
+            settings.Height );
 
         // Create window class
-        const wchar_t *class_name = L"SmileWindowClass";
-        windowClass = {};
-        windowClass.cbSize = sizeof( WNDCLASSEX );
-        windowClass.style = CS_HREDRAW | CS_VREDRAW;
-        windowClass.cbClsExtra = 0;
-        windowClass.cbWndExtra = 0;
+        const wchar_t *className = L"SmileWindowClass";
+        m_WindowClass = {};
+        m_WindowClass.cbSize = sizeof( WNDCLASSEX );
+        m_WindowClass.style = CS_HREDRAW | CS_VREDRAW;
+        m_WindowClass.cbClsExtra = 0;
+        m_WindowClass.cbWndExtra = 0;
 
-        windowClass.hCursor = LoadCursor( nullptr, IDC_ARROW );
-        windowClass.hbrBackground = ( HBRUSH )GetStockObject( NULL_BRUSH );
+        m_WindowClass.hCursor = LoadCursor( nullptr, IDC_ARROW );
+        m_WindowClass.hbrBackground = ( HBRUSH )GetStockObject( NULL_BRUSH );
 
-       windowClass.hIcon = static_cast< HICON >( ::LoadImage(
+       m_WindowClass.hIcon = static_cast< HICON >( ::LoadImage(
             NULL, L"assets/icons/logo.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED ) );
-        windowClass.hIconSm = windowClass.hIcon;
+        m_WindowClass.hIconSm = m_WindowClass.hIcon;
 
         /*if ( !m_WindowClass.hIcon )
         {
@@ -86,109 +86,109 @@ namespace smile
             MessageBox( m_WindowHandle, strErrorMessage, L"Error", MB_OK );
         }*/
 
-        windowClass.lpszClassName = class_name;
-        windowClass.lpszMenuName = nullptr;
+        m_WindowClass.lpszClassName = className;
+        m_WindowClass.lpszMenuName = nullptr;
 
-        windowClass.hInstance = HINSTANCE();
-        windowClass.lpfnWndProc = windowsProcedureStatic;
+        m_WindowClass.hInstance = HINSTANCE();
+        m_WindowClass.lpfnWndProc = WindowsProcedureStatic;
 
-        int success = RegisterClassEx( &windowClass );
+        int success = RegisterClassEx( &m_WindowClass );
         SM_ASSERT( success, "Could not register window class!" );
 
-        RECT window_rect{};
-        window_rect.left = 0;
-        window_rect.right = settings.width + window_rect.left;
-        window_rect.top = 0;
-        window_rect.bottom = settings.height + window_rect.top;
+        RECT windowRect{};
+        windowRect.left = 0;
+        windowRect.right = settings.Width + windowRect.left;
+        windowRect.top = 0;
+        windowRect.bottom = settings.Height + windowRect.top;
         AdjustWindowRect(
-            &window_rect, WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, FALSE );
+            &windowRect, WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, FALSE );
 
         // Create and display the window
-        auto window_title = std::wstring{ settings.title.begin(), settings.title.end() };
-        windowHandle = CreateWindow( class_name,
-            window_title.c_str(),
+        auto windowTitle = std::wstring{ settings.Title.begin(), settings.Title.end() };
+        m_WindowHandle = CreateWindow( className,
+            windowTitle.c_str(),
             WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            window_rect.right - window_rect.left,
-            window_rect.bottom - window_rect.top,
+            windowRect.right - windowRect.left,
+            windowRect.bottom - windowRect.top,
             nullptr,
             nullptr,
             HINSTANCE(),
             this );
 
-        SM_ASSERT( windowHandle, "WindowsWindow::init > Could not create window!" );
+        SM_ASSERT( m_WindowHandle, "WindowsWindow::init > Could not create window!" );
 
         // Init context
-        context = graphic::GraphicsContext::create( this );
-        context->init();
+        m_pContext = Graphic::GraphicsContext::Create( this );
+        m_pContext->Initialize();
 
-        ShowWindow( windowHandle, SW_SHOW );
-        UpdateWindow( windowHandle );
-        SM_LOG_INFO( "WindowsWindow::init > Window '%s' created", settings.title.c_str() );
+        ShowWindow( m_WindowHandle, SW_SHOW );
+        UpdateWindow( m_WindowHandle );
+        SM_LOG_INFO( "WindowsWindow::init > Window '%s' created", settings.Title.c_str() );
 
-        setVSync( true );
-        initialized = true;
+        SetVSync( true );
+        m_IsInitialized = true;
     }
 
-    void WindowsWindow::onUpdate()
+    void WindowsWindow::OnUpdate()
     {
-        if ( !initialized )
+        if ( !m_IsInitialized )
             return;
 
         pollEvents();
-        context->present();
+        m_pContext->Present();
     }
 
     void WindowsWindow::pollEvents()
     {
-        if ( message.message != WM_QUIT )
+        if ( m_Message.message != WM_QUIT )
         {
             // If there are window messages then process them
-            if ( PeekMessage( &message, 0, 0, 0, PM_REMOVE ) )
+            if ( PeekMessage( &m_Message, 0, 0, 0, PM_REMOVE ) )
             {
-                TranslateMessage( &message );
-                DispatchMessage( &message );
+                TranslateMessage( &m_Message );
+                DispatchMessage( &m_Message );
             }
         }
     }
 
-    void WindowsWindow::setVSync( bool enabled )
+    void WindowsWindow::SetVSync( bool isEnabled )
     {
-        data.vsync = enabled;
+        m_Data.IsVSync = isEnabled;
     }
 
-    bool WindowsWindow::isVSync() const
+    bool WindowsWindow::IsVSync() const
     {
-        return data.vsync;
+        return m_Data.IsVSync;
     }
 
-    LRESULT CALLBACK WindowsWindow::windowsProcedureStatic( HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param )
+    LRESULT CALLBACK WindowsWindow::WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
     {
         if ( msg == WM_NCCREATE )
         {
-            const CREATESTRUCTW *const create = reinterpret_cast< CREATESTRUCTW * >( l_param );
-            SetWindowLongPtr( h_wnd, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( create->lpCreateParams ) );
+            const CREATESTRUCTW *const create = reinterpret_cast< CREATESTRUCTW * >( lParam );
+            SetWindowLongPtr( hWnd, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( create->lpCreateParams ) );
         }
         else
         {
             WindowsWindow *const window =
-                reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( h_wnd, GWLP_USERDATA ) );
+                reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( hWnd, GWLP_USERDATA ) );
             if ( window )
-                return window->windowsProcedure( h_wnd, msg, w_param, l_param );
+                return window->WindowsProcedure( hWnd, msg, wParam, lParam );
         }
-        return DefWindowProc( h_wnd, msg, w_param, l_param );
+        return DefWindowProc( hWnd, msg, wParam, lParam );
     }
 
-    LRESULT WindowsWindow::windowsProcedure( HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param ) noexcept
+    LRESULT WindowsWindow::WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept
     {
-        if ( !initialized )
-            return DefWindowProc( h_wnd, msg, w_param, l_param );
+        if ( !m_IsInitialized )
+            return DefWindowProc( hWnd, msg, wParam, lParam );
 
         /*if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
             return true;*/
 
-        WindowsWindow *const window = reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( h_wnd, GWLP_USERDATA ) );
+        WindowsWindow *const pWindow = reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( hWnd, GWLP_USERDATA ) );
 
         switch ( msg )
         {
@@ -200,8 +200,8 @@ namespace smile
             case WM_CLOSE:
             {
                 WindowCloseEvent event{};
-                window->data.eventCallback( event );
-                DestroyWindow( windowHandle );
+                pWindow->m_Data.EventCallback( event );
+                DestroyWindow( m_WindowHandle );
                 break;
             }
 
@@ -213,83 +213,83 @@ namespace smile
 
             case WM_SIZE:
             {
-                Uint32 width = LOWORD( l_param );
-                Uint32 height = HIWORD( l_param );
+                Uint32 width = LOWORD( lParam );
+                Uint32 height = HIWORD( lParam );
                 WindowResizeEvent event{ width, height };
-                window->data.eventCallback( event );
-                window->data.width = width;
-                window->data.height = height;
+                pWindow->m_Data.EventCallback( event );
+                pWindow->m_Data.Width = width;
+                pWindow->m_Data.Height = height;
                 break;
             }
 
             case WM_KEYDOWN:
             {
-                KeyPressedEvent event{ static_cast< input::KeyCode >( w_param ), static_cast< Uint16 >( l_param & 0xFF ) };
-                window->data.eventCallback( event );
+                KeyPressedEvent event{ static_cast< Input::KeyCode >( wParam ), static_cast< Uint16 >( lParam & 0xFF ) };
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_KEYUP:
             {
-                KeyReleasedEvent event{ static_cast< input::KeyCode >( w_param ) };
-                window->data.eventCallback( event );
+                KeyReleasedEvent event{ static_cast< Input::KeyCode >( wParam ) };
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_LBUTTONDOWN:
             {
                 MouseButtonPressedEvent event{ 0 };
-                window->data.eventCallback( event );
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_RBUTTONDOWN:
             {
                 MouseButtonPressedEvent event{ 1 };
-                window->data.eventCallback( event );
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_LBUTTONUP:
             {
                 MouseButtonReleasedEvent event{ 0 };
-                window->data.eventCallback( event );
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_RBUTTONUP:
             {
                 MouseButtonReleasedEvent event{ 1 };
-                window->data.eventCallback( event );
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_MOUSEWHEEL:
             {
-                float z_delta = GET_WHEEL_DELTA_WPARAM( w_param );
-                MouseScrolledEvent event{ z_delta, 0 };
-                window->data.eventCallback( event );
+                float zDelta = GET_WHEEL_DELTA_WPARAM( wParam );
+                MouseScrolledEvent event{ zDelta, 0 };
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_MOUSEMOVE:
             {
-                float x_pos = static_cast< float >( GET_X_LPARAM( l_param ) );
-                float y_pos = static_cast< float >( GET_Y_LPARAM( l_param ) );
-                MouseMovedEvent event{ x_pos, y_pos };
-                window->data.eventCallback( event );
+                float xPos = static_cast< float >( GET_X_LPARAM( lParam ) );
+                float yPos = static_cast< float >( GET_Y_LPARAM( lParam ) );
+                MouseMovedEvent event{ xPos, yPos };
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_CHAR:
             {
-                KeyTypedEvent event{ static_cast< input::KeyCode >( w_param ) };
-                window->data.eventCallback( event );
+                KeyTypedEvent event{ static_cast< Input::KeyCode >( wParam ) };
+                pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             default:
-                return DefWindowProc( h_wnd, msg, w_param, l_param );
+                return DefWindowProc( hWnd, msg, wParam, lParam );
         }
 
         return 0;

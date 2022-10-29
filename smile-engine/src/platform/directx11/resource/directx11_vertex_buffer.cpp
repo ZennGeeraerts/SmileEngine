@@ -5,48 +5,48 @@
 #include "platform/directX11/directx11_diagnostics.h"
 #include "platform/directX11/shader/directx11_buffer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    DirectX11VertexBuffer::DirectX11VertexBuffer( const VertexBufferDescriptor &vertex_buffer_desc )
-        : stride{ vertex_buffer_desc.stride }
+    DirectX11VertexBuffer::DirectX11VertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
+        : m_Stride{ vertexBufferDesc.Stride }
     {
-        directX11Context =
-            static_cast< DirectX11Context * >( Application::getInstance().getWindow().getGraphicsContext() );
+        m_pDirectX11Context =
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT(
-            directX11Context, "DirectX11VertexBuffer > Rendering context is not a DirectX 11 Rendering Context" );
+            m_pDirectX11Context, "DirectX11VertexBuffer > Rendering context is not a DirectX 11 Rendering Context" );
 
-        D3D11_BUFFER_DESC buffer_desc = {};
-        buffer_desc.Usage = bufferUsageToDirectXType( vertex_buffer_desc.usage );
-        buffer_desc.ByteWidth = vertex_buffer_desc.stride * vertex_buffer_desc.count;
-        buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        buffer_desc.CPUAccessFlags = 0;
-        buffer_desc.MiscFlags = 0;
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.Usage = BufferUsageToDirectXType( vertexBufferDesc.Usage );
+        bufferDesc.ByteWidth = vertexBufferDesc.Stride * vertexBufferDesc.Count;
+        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
 
-        D3D11_SUBRESOURCE_DATA init_data = { 0 };
-        init_data.pSysMem = vertex_buffer_desc.vertices;
+        D3D11_SUBRESOURCE_DATA initData = { 0 };
+        initData.pSysMem = vertexBufferDesc.pVertices;
 
-        HRESULT result = directX11Context->getDevice()->CreateBuffer( &buffer_desc, &init_data, &vertexBuffer );
+        HRESULT result = m_pDirectX11Context->GetDevice()->CreateBuffer( &bufferDesc, &initData, &m_pVertexBuffer );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
-                "DirectX11VertexBuffer > Failed to create vertex buffer: %ls", getDirectX11ErrorMessage( result ) );
+                "DirectX11VertexBuffer > Failed to create vertex buffer: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
     }
 
     DirectX11VertexBuffer::~DirectX11VertexBuffer()
     {
-        SAFE_RELEASE( vertexBuffer );
+        SAFE_RELEASE( m_pVertexBuffer );
     }
 
-    void DirectX11VertexBuffer::bind() const
+    void DirectX11VertexBuffer::Bind() const
     {
         Uint32 offset{ 0 };
-        directX11Context->getDeviceContext()->IASetVertexBuffers( 0, 1, &vertexBuffer, &stride, &offset );
+        m_pDirectX11Context->GetDeviceContext()->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &m_Stride, &offset );
     }
 
-    void DirectX11VertexBuffer::unbind() const
+    void DirectX11VertexBuffer::Unbind() const
     {
-        directX11Context->getDeviceContext()->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
+        m_pDirectX11Context->GetDeviceContext()->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
     }
 }

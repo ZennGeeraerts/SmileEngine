@@ -2,39 +2,39 @@
 #include "smile_engine/input/input.h"
 #include "smile_engine/core/application.h"
 
-namespace smile::input
+namespace Smile::Input
 {
-    bool Input::isKeyPressed( KeyCode key_code )
+    bool Input::IsKeyPressed( KeyCode keyCode )
     {
-        auto state = GetKeyState( key_code );
+        auto state = GetKeyState( keyCode );
         return state & 0x8000;
     }
 
-    bool Input::isMouseButtonPressed( MouseCode mouse_code )
+    bool Input::IsMouseButtonPressed( MouseCode mouseCode )
     {
-        return isKeyPressed( mouse_code );
+        return IsKeyPressed( mouseCode );
     }
 
-    DirectX::XMFLOAT2 Input::getMousePosition()
+    DirectX::XMFLOAT2 Input::GetMousePosition()
     {
         POINT point{};
         if ( GetCursorPos( &point ) )
         {
-            auto window = static_cast< HWND >( Application::getInstance().getWindow().getNativeWindow() );
+            auto window = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
             ScreenToClient( window, &point );
         }
         return DirectX::XMFLOAT2{ static_cast< float >( point.x ), static_cast< float >( point.y ) };
     }
 
-    float Input::getMouseX()
+    float Input::GetMouseX()
     {
-        auto mouse_position = getMousePosition();
-        return mouse_position.x;
+        auto mousePosition = GetMousePosition();
+        return mousePosition.x;
     }
 
-    float Input::getMouseY()
+    float Input::GetMouseY()
     {
-        auto mouse_position = getMousePosition();
-        return mouse_position.y;
+        auto mousePosition = GetMousePosition();
+        return mousePosition.y;
     }
 }

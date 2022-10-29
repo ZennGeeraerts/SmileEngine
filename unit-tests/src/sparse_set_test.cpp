@@ -3,33 +3,33 @@
 #include <thirdparty/catch.hpp>
 #include <iostream>
 
-using namespace smile;
+using namespace Smile;
 
 TEST_CASE( "SparseSet" )
 {
     SECTION( "SparseSet" )
     {
-        stl::SparseSet< Uint32 > sparse_set{};
+        STL::SparseSet< Uint32 > sparseSet{};
 
-        sparse_set.insert( 15 );
-        sparse_set.insert( 16 );
-        sparse_set.insert( 17 );
-        sparse_set.insert( 18 );
+        sparseSet.Insert( 15 );
+        sparseSet.Insert( 16 );
+        sparseSet.Insert( 17 );
+        sparseSet.Insert( 18 );
 
-        REQUIRE( 0 == sparse_set.getIndex( 15 ) );
-        REQUIRE( 1 == sparse_set.getIndex( 16 ) );
-        REQUIRE( 2 == sparse_set.getIndex( 17 ) );
-        REQUIRE( 3 == sparse_set.getIndex( 18 ) );
+        REQUIRE( 0 == sparseSet.GetIndex( 15 ) );
+        REQUIRE( 1 == sparseSet.GetIndex( 16 ) );
+        REQUIRE( 2 == sparseSet.GetIndex( 17 ) );
+        REQUIRE( 3 == sparseSet.GetIndex( 18 ) );
 
-        for ( auto it{ sparse_set.begin() }; it != sparse_set.end(); ++it )
+        for ( auto it{ sparseSet.begin() }; it != sparseSet.end(); ++it )
         {
             std::cout << *it << std::endl;
         }
         std::cout << '\n';
 
-        sparse_set.erase( 16 );
+        sparseSet.Erase( 16 );
 
-        for ( auto it{ sparse_set.begin() }; it != sparse_set.end(); ++it )
+        for ( auto it{ sparseSet.begin() }; it != sparseSet.end(); ++it )
         {
             std::cout << *it << std::endl;
         }

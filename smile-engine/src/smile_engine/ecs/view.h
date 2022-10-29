@@ -2,118 +2,118 @@
 
 #include <algorithm>
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     class View final
     {
       public:
         struct Iterator final
         {
-            Iterator( EntityHandleManager &handle_manager,
+            Iterator( EntityHandleManager &handleManager,
                 SparseSetType::ConstIterator it,
-                const std::vector< SparseSetType * > &pools )
-                : handleManager{ handle_manager }, it{ it }, pools{ pools }
+                const std::vector< SparseSetType * > &pPools )
+                : HandleManager{ handleManager }, It{ it }, pPools{ pPools }
             {
             }
 
             EntityHandleType operator*() const
             {
-                return handleManager.getEntityHandle( *it );
+                return HandleManager.GetEntityHandle( *It );
             }
             bool operator==( const Iterator &other ) const
             {
-                return it == other.it || ( *it ) == handleManager.getEntityCount();
+                return It == other.It || ( *It ) == HandleManager.GetEntityCount();
             }
             bool operator!=( const Iterator &other ) const
             {
-                return it != other.it && ( *it ) != handleManager.getEntityCount();
+                return It != other.It && ( *It ) != HandleManager.GetEntityCount();
             }
 
             Iterator &operator++()
             {
-                ++it;
+                ++It;
 
-                SparseSetType *min_pool = *std::min_element( std::begin( pools ),
-                    std::end( pools ),
-                    []( SparseSetType *lhs, SparseSetType *rhs )
-                    { return lhs->getItemCount() < rhs->getItemCount(); } );
+                SparseSetType *pMinPools = *std::min_element( std::begin( pPools ),
+                    std::end( pPools ),
+                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                    { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
-                if ( it == min_pool->end() )
+                if ( It == pMinPools->end() )
                     return *this;
 
-                SparseSetType::ConstIterator old_it;
+                SparseSetType::ConstIterator oldIt;
                 do
                 {
-                    old_it = it;
+                    oldIt = It;
 
-                    for ( auto pool : pools )
+                    for ( auto pPool : pPools )
                     {
-                        if ( pool == min_pool )
+                        if ( pPool == pMinPools )
                             continue;
 
-                        if ( !pool->contains( *it ) )
+                        if ( !pPool->Contains( *It ) )
                         {
-                            ++it;
+                            ++It;
                             break;
                         }
                     }
-                } while ( ( it != old_it ) && ( handleManager.getEntityHandle( *it ).isValid() ) );
+                } while ( ( It != oldIt ) && ( HandleManager.GetEntityHandle( *It ).IsValid() ) );
 
                 return *this;
             }
 
-            EntityHandleManager &handleManager;
-            SparseSetType::ConstIterator it;
-            std::vector< SparseSetType * > pools;
+            EntityHandleManager &HandleManager;
+            SparseSetType::ConstIterator It;
+            std::vector< SparseSetType * > pPools;
         };
 
       public:
-        View( EntityHandleManager &handle_manager, const std::vector< ComponentInterface * > &components )
-            : handleManager{ handle_manager }
+        View( EntityHandleManager &handleManager, const std::vector< ComponentInterface * > &pComponents )
+            : m_HandleManager{ handleManager }
         {
-            for ( auto component : components )
+            for ( auto pComponent : pComponents )
             {
-                if ( component )
-                    pools.push_back( &component->sparseSet );
+                if ( pComponent )
+                    m_pPools.push_back( &pComponent->m_Pool );
             }
         }
 
         const Iterator begin() const
         {
-            if ( !pools.empty() )
+            if ( !m_pPools.empty() )
             {
-                SparseSetType *min_pool = *std::min_element( std::begin( pools ),
-                    std::end( pools ),
-                    []( SparseSetType *lhs, SparseSetType *rhs )
-                    { return lhs->getItemCount() < rhs->getItemCount(); } );
+                SparseSetType *pMinPool = *std::min_element( std::begin( m_pPools ),
+                    std::end( m_pPools ),
+                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                    { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
-                return Iterator{ handleManager, min_pool->begin(), pools };
+                return Iterator{ m_HandleManager, pMinPool->begin(), m_pPools };
             }
             else
             {
-                return Iterator{ handleManager, SparseSetType::ConstIterator{}, pools };
+                return Iterator{ m_HandleManager, SparseSetType::ConstIterator{}, m_pPools };
             }
         }
 
         const Iterator end() const
         {
-            if ( !pools.empty() )
+            if ( !m_pPools.empty() )
             {
-                SparseSetType *min_pool = *std::min_element( std::begin( pools ),
-                    std::end( pools ),
-                    []( SparseSetType *lhs, SparseSetType *rhs )
-                    { return lhs->getItemCount() < rhs->getItemCount(); } );
+                SparseSetType *pMinPool = *std::min_element( std::begin( m_pPools ),
+                    std::end( m_pPools ),
+                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                    { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
-                return Iterator{ handleManager, min_pool->end(), pools };
+                return Iterator{ m_HandleManager, pMinPool->end(), m_pPools };
             }
             else
             {
-                return Iterator{ handleManager, SparseSetType::ConstIterator{}, pools };
+                return Iterator{ m_HandleManager, SparseSetType::ConstIterator{}, m_pPools };
             }
         }
 
       private:
-        EntityHandleManager &handleManager;
-        std::vector< SparseSetType * > pools{};
+        EntityHandleManager &m_HandleManager;
+        std::vector< SparseSetType * > m_pPools{};
     };
 }

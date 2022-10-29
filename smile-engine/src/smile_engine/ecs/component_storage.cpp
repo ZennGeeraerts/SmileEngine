@@ -1,105 +1,105 @@
 #include "smpch.h"
 #include "component_storage.h"
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     ComponentStorage::~ComponentStorage()
     {
-        reset();
+        Reset();
     }
 
-    void ComponentStorage::swap( IndexType element1, IndexType element2 )
+    void ComponentStorage::Swap( IndexType element1, IndexType element2 )
     {
         if ( element1 == element2 )
             return;
 
-        Byte *ia = data + componentSize * element1;
-        Byte *ie = data + componentSize * element2;
+        Byte *pIA = m_pData + m_ComponentSize * element1;
+        Byte *pIE = m_pData + m_ComponentSize * element2;
 
-        std::swap_ranges( ia, ia + componentSize, ie );
+        std::swap_ranges( pIA, pIA + m_ComponentSize, pIE );
 
-        if ( indices )
-            std::swap( indices[element1], indices[element2] );
+        if ( m_pIndices )
+            std::swap( m_pIndices[element1], m_pIndices[element2] );
     }
 
-    int ComponentStorage::removeSwap( IndexType dead_eindex )
+    IndexType ComponentStorage::RemoveSwap( IndexType deadEIndex )
     {
-        if ( dead_eindex >= size )
+        if ( deadEIndex >= m_Size )
             return -1;
 
-        int swap_handle = getIndex( size - 1 );
+        IndexType swapHandle = GetIndex( m_Size - 1 );
 
-        if ( dead_eindex == size - 1 )
-            swap_handle = -1;
+        if ( deadEIndex == m_Size - 1 )
+            swapHandle = -1;
 
-        popSwap( dead_eindex );
+        PopSwap( deadEIndex );
 
-        return swap_handle;
+        return swapHandle;
     }
 
-    void ComponentStorage::popSwap( IndexType a )
+    void ComponentStorage::PopSwap( IndexType a )
     {
-        if ( size == 0 )
+        if ( m_Size == 0 )
             return;
 
-        --size;
+        --m_Size;
 
-        Byte *ia = data + componentSize * a;
-        Byte *ie = data + componentSize * size;
+        Byte *pIA = m_pData + m_ComponentSize * a;
+        Byte *pIE = m_pData + m_ComponentSize * m_Size;
 
-        destructor( ia );
+        m_pDestructor( pIA );
 
-        if ( ia >= ie )
+        if ( pIA >= pIE )
             return;
 
-        memmove( ia, ie, componentSize );
-        if ( indices )
-            indices[a] = indices[size];
+        memmove( pIA, pIE, m_ComponentSize );
+        if ( m_pIndices )
+            m_pIndices[a] = m_pIndices[m_Size];
     }
 
-    void ComponentStorage::grow()
+    void ComponentStorage::Grow()
     {
-        Uint32 new_size = size + 1;
+        Uint32 newSize = m_Size + 1;
 
-        if ( new_size > allocated )
-            reallocate( allocated > 3 ? allocated * 2 : 8 );
+        if ( newSize > m_Allocated )
+            Reallocate( m_Allocated > 3 ? m_Allocated * 2 : 8 );
 
-        size = new_size;
+        m_Size = newSize;
     }
 
-    void ComponentStorage::reallocate( Uint32 new_size )
+    void ComponentStorage::Reallocate( Uint32 newSize )
     {
-        data = reinterpret_cast< Byte * >( realloc( data, new_size * componentSize ) );
+        m_pData = reinterpret_cast< Byte * >( realloc( m_pData, newSize * m_ComponentSize ) );
 
-        if ( !ownerData )
-            indices = reinterpret_cast< Uint32 * >( realloc( indices, new_size * sizeof( Uint32 ) ) );
+        if ( !m_IsOwnerData )
+            m_pIndices = reinterpret_cast< Uint32 * >( realloc( m_pIndices, newSize * sizeof( Uint32 ) ) );
 
-        allocated = new_size;
+        m_Allocated = newSize;
 
-        SM_ASSERT( data, "ComponentStorage::reallocate > data is nullptr" );
+        SM_ASSERT( m_pData, "ComponentStorage::reallocate > data is nullptr" );
     }
 
-    void ComponentStorage::clear()
+    void ComponentStorage::Clear()
     {
-        Uint32 count = size;
-        Byte *d = data;
+        Uint32 count = m_Size;
+        Byte *pData = m_pData;
 
-        for ( ; count > 0; --count, d += componentSize )
-            destructor( d );
+        for ( ; count > 0; --count, pData += m_ComponentSize )
+            m_pDestructor( pData );
 
-        size = 0;
+        m_Size = 0;
     }
 
-    void ComponentStorage::reset()
+    void ComponentStorage::Reset()
     {
-        clear();
+        Clear();
 
-        free( data );
-        data = nullptr;
+        free( m_pData );
+        m_pData = nullptr;
 
-        free( indices );
-        indices = nullptr;
+        free( m_pIndices );
+        m_pIndices = nullptr;
 
-        allocated = 0;
+        m_Allocated = 0;
     }
 }

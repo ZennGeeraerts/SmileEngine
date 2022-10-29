@@ -1,48 +1,48 @@
 #pragma once
 
-namespace smile
+namespace Smile
 {
     class Timestep final
     {
       public:
-        Timestep( float time = 0.0f ) : time{ time }
+        Timestep( float time = 0.0f ) : m_Time{ time }
         {
         }
 
-        float getSeconds() const
+        float GetSeconds() const
         {
-            return time;
+            return m_Time;
         }
-        float getMilliseconds() const
+        float GetMilliseconds() const
         {
-            return time * 1000.f;
+            return m_Time * 1000.f;
         }
 
       public:
         operator float() const
         {
-            return time;
+            return m_Time;
         }
         Timestep operator+( const Timestep &rhs )
         {
-            return Timestep{ time += rhs.time };
+            return Timestep{ m_Time += rhs.m_Time };
         }
         Timestep operator-( const Timestep &rhs )
         {
-            return Timestep{ time -= rhs.time };
+            return Timestep{ m_Time -= rhs.m_Time };
         }
         Timestep operator+=( const Timestep &rhs )
         {
-            time += rhs.time;
+            m_Time += rhs.m_Time;
             return *this;
         }
         Timestep operator-=( const Timestep &rhs )
         {
-            time -= rhs.time;
+            m_Time -= rhs.m_Time;
             return *this;
         }
 
       private:
-        float time;
+        float m_Time;
     };
 }

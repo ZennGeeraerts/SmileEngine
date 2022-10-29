@@ -5,12 +5,12 @@
 
 #include <DirectXTex.h>
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class DirectX11Texture2D final : public Texture2D
     {
       public:
-        DirectX11Texture2D( const std::string &file_path );
+        DirectX11Texture2D( const std::string &filePath );
         virtual ~DirectX11Texture2D();
 
         DirectX11Texture2D( const DirectX11Texture2D & ) = delete;
@@ -18,33 +18,33 @@ namespace smile::graphic
         DirectX11Texture2D &operator=( const DirectX11Texture2D & ) = delete;
         DirectX11Texture2D &operator=( DirectX11Texture2D && ) = delete;
 
-        virtual const std::string &getFilePath() const override
+        virtual const std::string &GetFilePath() const override
         {
-            return filePath;
+            return m_FilePath;
         }
-        virtual Uint32 getWidth() const override
+        virtual Uint32 GetWidth() const override
         {
-            return width;
+            return m_Width;
         }
-        virtual Uint32 getHeight() const override
+        virtual Uint32 GetHeight() const override
         {
-            return height;
+            return m_Height;
         }
-        virtual void *getData() const override
+        virtual void *GetData() const override
         {
-            return shaderResourceView;
+            return m_pShaderResourceView;
         }
 
       private:
-        bool loadTexture( const std::string &file_path );
+        bool LoadTexture( const std::string &filePath );
 
       private:
-        std::string filePath;
-        Uint32 width = 0;
-        Uint32 height = 0;
+        std::string m_FilePath;
+        Uint32 m_Width = 0;
+        Uint32 m_Height = 0;
 
-        DirectX11Context *directX11Context = nullptr;
-        ID3D11Resource *texture = nullptr;
-        ID3D11ShaderResourceView *shaderResourceView = nullptr;
+        DirectX11Context *m_pDirectX11Context = nullptr;
+        ID3D11Resource *m_pTexture = nullptr;
+        ID3D11ShaderResourceView *m_pShaderResourceView = nullptr;
     };
 }

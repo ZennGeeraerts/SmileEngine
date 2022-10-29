@@ -1,6 +1,6 @@
 #pragma once
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     enum class CullMode
     {
@@ -15,11 +15,11 @@ namespace smile::graphic
         Solid
     };
 
-    struct RasterizerStateData final
+    struct RasterizerStateDescriptor final
     {
-        CullMode cullMode = CullMode::None;
-        FillMode fillMode = FillMode::Solid;
-        bool depthClipEnable = true;
+        CullMode CullMode = CullMode::None;
+        FillMode FillMode = FillMode::Solid;
+        bool EnableDepthClip = true;
     };
 
     class RasterizerState
@@ -27,9 +27,9 @@ namespace smile::graphic
       public:
         virtual ~RasterizerState() = default;
 
-        virtual void bind() const = 0;
-        virtual void unbind() const = 0;
+        virtual void Bind() const = 0;
+        virtual void Unbind() const = 0;
 
-        static Ref< RasterizerState > create( const RasterizerStateData &rasterizer_state_data );
+        static Ref< RasterizerState > Create( const RasterizerStateDescriptor &rasterizerStateDesc );
     };
 }

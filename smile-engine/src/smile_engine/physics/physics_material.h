@@ -1,11 +1,11 @@
 #pragma once
 
-namespace smile::physics
+namespace Smile::Physics
 {
     struct PhysicsMaterial final
     {
-        float staticFriction = 0.3f;
-        float dynamicFriction = 0.3f;
-        float restitution = 0.3f;
+        float StaticFriction = 0.3f;
+        float DynamicFriction = 0.3f;
+        float Restitution = 0.3f;
     };
 }

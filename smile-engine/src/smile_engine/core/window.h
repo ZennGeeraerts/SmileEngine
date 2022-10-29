@@ -3,21 +3,21 @@
 #include "smile_engine/core/core.h"
 #include "smile_engine/core/events/event.h"
 
-namespace smile
+namespace Smile
 {
     struct WindowSettings
     {
         WindowSettings( const std::string &title = "Smile Engine", Uint32 width = 1280, Uint32 height = 720 )
-            : title{ title }, width{ width }, height{ height }
+            : Title{ title }, Width{ width }, Height{ height }
         {
         }
 
-        std::string title;
-        Uint32 width;
-        Uint32 height;
+        std::string Title;
+        Uint32 Width;
+        Uint32 Height;
     };
 
-    namespace graphic
+    namespace Graphic
     {
         class GraphicsContext;
     }
@@ -32,20 +32,20 @@ namespace smile
         {
         }
 
-        virtual void onUpdate() = 0;
+        virtual void OnUpdate() = 0;
 
-        virtual Uint32 getWidth() const = 0;
-        virtual Uint32 getHeight() const = 0;
-        virtual graphic::GraphicsContext *getGraphicsContext() const = 0;
+        virtual Uint32 GetWidth() const = 0;
+        virtual Uint32 GetHeight() const = 0;
+        virtual Graphic::GraphicsContext *GetGraphicsContext() const = 0;
 
         // Window attributes
-        virtual void setEventCallback( const EventCallbackFunction &callback ) = 0;
-        virtual void setVSync( bool enabled ) = 0;
-        virtual bool isVSync() const = 0;
+        virtual void SetEventCallback( const EventCallbackFunction &callback ) = 0;
+        virtual void SetVSync( bool isEnabled ) = 0;
+        virtual bool IsVSync() const = 0;
 
         // Returns the child window
-        virtual void *getNativeWindow() const = 0;
+        virtual void *GetNativeWindow() const = 0;
 
-        static Window *create( const WindowSettings &settings = WindowSettings{} );
+        static Window *Create( const WindowSettings &settings = WindowSettings{} );
     };
 }

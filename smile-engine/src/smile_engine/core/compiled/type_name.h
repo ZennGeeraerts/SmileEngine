@@ -4,10 +4,10 @@
 
 #include <string_view>
 
-namespace smile::compiled
+namespace Smile::Compiled
 {
     template < typename Type >
-    constexpr std::string_view getFullTypeName()
+    constexpr std::string_view GetFullTypeName()
     {
 #if defined SM_COMPILER_MSVC
         return __FUNCSIG__;
@@ -19,13 +19,13 @@ namespace smile::compiled
     }
 
     template < typename Type >
-    constexpr std::string_view getTypeName()
+    constexpr std::string_view GetTypeName()
     {
-        size_t prefix_len = getFullTypeName< void >().find( "void" );
-        size_t multiple = getFullTypeName< void >().size() - getFullTypeName< int >().size();
-        size_t dummy_len = getFullTypeName< void >().size() - 4 * multiple;
-        size_t target_len = ( getFullTypeName< Type >().size() - dummy_len ) / multiple;
-        std::string_view rv = getFullTypeName< Type >().substr( prefix_len, target_len );
+        size_t prefixLen = GetFullTypeName< void >().find( "void" );
+        size_t multiple = GetFullTypeName< void >().size() - GetFullTypeName< int >().size();
+        size_t dummyLen = GetFullTypeName< void >().size() - 4 * multiple;
+        size_t targetLen = ( GetFullTypeName< Type >().size() - dummyLen ) / multiple;
+        std::string_view rv = GetFullTypeName< Type >().substr( prefixLen, targetLen );
 
         if ( rv.rfind( ' ' ) == rv.npos )
             return rv;
@@ -34,11 +34,11 @@ namespace smile::compiled
     }
 }
 
-namespace smile
+namespace Smile
 {
     template < typename Type >
-    constexpr std::string_view typeNameOf()
+    constexpr std::string_view TypeNameOf()
     {
-        return compiled::getTypeName< Type >();
+        return Compiled::GetTypeName< Type >();
     }
 }

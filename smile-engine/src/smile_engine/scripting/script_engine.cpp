@@ -8,14 +8,14 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 
-namespace smile::scripting
+namespace Smile::Scripting
 {
-    namespace utils
+    namespace Utils
     {
         // TODO: move to FileSystem class
-        static char *readBytes( const std::filesystem::path &file_path, Uint32 *out_size )
+        static char *ReadBytes( const std::filesystem::path &filePath, Uint32 *pOutSize )
         {
-            std::ifstream stream{ file_path, std::ios::binary | std::ios::ate };
+            std::ifstream stream{ filePath, std::ios::binary | std::ios::ate };
 
             if ( !stream )
             {
@@ -33,159 +33,159 @@ namespace smile::scripting
                 return nullptr;
             }
 
-            char *buffer = new char[size];
-            stream.read( buffer, size );
+            char *pBuffer = new char[size];
+            stream.read( pBuffer, size );
             stream.close();
 
-            *out_size = static_cast< Uint64 >( size );
-            return buffer;
+            *pOutSize = static_cast< Uint64 >( size );
+            return pBuffer;
         }
 
-        static MonoAssembly *loadMonoAssembly( const std::filesystem::path &assembly_path )
+        static MonoAssembly *LoadMonoAssembly( const std::filesystem::path &assemblyPath )
         {
-            Uint32 file_size = 0;
-            char *file_data = readBytes( assembly_path, &file_size );
+            Uint32 fileSize = 0;
+            char *pFileData = ReadBytes( assemblyPath, &fileSize );
 
             // NOTE: We can't use this image for anything other than loading the assembly because this image doesn't
             // have a reference to the assembly
             MonoImageOpenStatus status;
-            MonoImage *image = mono_image_open_from_data_full( file_data, file_size, 1, &status, 0 );
+            MonoImage *image = mono_image_open_from_data_full( pFileData, fileSize, 1, &status, 0 );
 
             if ( status != MONO_IMAGE_OK )
             {
-                const char *error_message = mono_image_strerror( status );
+                const char *errorMessage = mono_image_strerror( status );
                 // Log some error message using the errorMessage data
                 return nullptr;
             }
 
-            std::string assembly_path_str = assembly_path.string();
-            MonoAssembly *assembly = mono_assembly_load_from_full( image, assembly_path_str.c_str(), &status, 0 );
+            std::string assemblyPathStr = assemblyPath.string();
+            MonoAssembly *pAssembly = mono_assembly_load_from_full( image, assemblyPathStr.c_str(), &status, 0 );
             mono_image_close( image );
 
             // Don't forget to free the file data
-            delete[] file_data;
+            delete[] pFileData;
 
-            return assembly;
+            return pAssembly;
         }
 
-        static void printAssemblyTypes( MonoAssembly *assembly )
+        static void PrintAssemblyTypes( MonoAssembly *pAssembly )
         {
-            MonoImage *image = mono_assembly_get_image( assembly );
-            const MonoTableInfo *type_definitions_table = mono_image_get_table_info( image, MONO_TABLE_TYPEDEF );
-            Int32 type_count = mono_table_info_get_rows( type_definitions_table );
+            MonoImage *pImage = mono_assembly_get_image( pAssembly );
+            const MonoTableInfo *pTypeDefinitionsTable = mono_image_get_table_info( pImage, MONO_TABLE_TYPEDEF );
+            Int32 typeCount = mono_table_info_get_rows( pTypeDefinitionsTable );
 
-            for ( Int32 i = 0; i < type_count; i++ )
+            for ( Int32 i = 0; i < typeCount; i++ )
             {
                 Uint32 cols[MONO_TYPEDEF_SIZE];
-                mono_metadata_decode_row( type_definitions_table, i, cols, MONO_TYPEDEF_SIZE );
+                mono_metadata_decode_row( pTypeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE );
 
-                const char *name_space = mono_metadata_string_heap( image, cols[MONO_TYPEDEF_NAMESPACE] );
-                const char *name = mono_metadata_string_heap( image, cols[MONO_TYPEDEF_NAME] );
+                const char *nameSpace = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAMESPACE] );
+                const char *name = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAME] );
 
-                printf( "%s.%s\n", name_space, name );
+                printf( "%s.%s\n", nameSpace, name );
             }
         }
     }
 
     struct ScriptEngineData final
     {
-        MonoDomain *rootDomain = nullptr;
-        MonoDomain *appDomain = nullptr;
+        MonoDomain *pRootDomain = nullptr;
+        MonoDomain *pAppDomain = nullptr;
 
-        MonoAssembly *coreAssembly = nullptr;
-        MonoImage *coreAssemblyImage = nullptr;
+        MonoAssembly *pCoreAssembly = nullptr;
+        MonoImage *pCoreAssemblyImage = nullptr;
 
-        ScriptClass entityClass;
+        ScriptClass EntityClass;
     };
 
-    static ScriptEngineData *data = nullptr;
+    static ScriptEngineData *s_pData = nullptr;
 
-    void ScriptEngine::initialize()
+    void ScriptEngine::Initialize()
     {
-        data = new ScriptEngineData{};
+        s_pData = new ScriptEngineData{};
 
-        initializeMono();
-        loadAssembly( "resources/scripts/Smile-ScriptCore.dll" );
+        InitializeMono();
+        LoadAssembly( "resources/scripts/Smile-ScriptCore.dll" );
 
-        ScriptGlue::registerFunctions();
+        ScriptGlue::RegisterFunctions();
 
         // Retrieve and instantiate class
-        data->entityClass = ScriptClass{ "Smile", "Entity" };
+        s_pData->EntityClass = ScriptClass{ "Smile", "Entity" };
 
-        MonoObject *instance = data->entityClass.instantiate();
+        MonoObject *pInstance = s_pData->EntityClass.Instantiate();
 
-        MonoMethod *print_int_func = data->entityClass.getMethod( "PrintInt", 1 );
+        MonoMethod *pPrintIntFunc = s_pData->EntityClass.GetMethod( "PrintInt", 1 );
         int value = 5;
-        void *params[1] = { &value };
-        data->entityClass.invokeMethod( instance, print_int_func, params );
+        void *pParams[1] = { &value };
+        s_pData->EntityClass.InvokeMethod( pInstance, pPrintIntFunc, pParams );
 
-        MonoString *mono_string = mono_string_new( data->appDomain, "Hello world from C++" );
-        void *string_param = mono_string;
-        MonoMethod *print_custom_message_func = data->entityClass.getMethod( "PrintCustomMessage", 1 );
-        data->entityClass.invokeMethod( instance, print_custom_message_func, &string_param );
+        MonoString *pMonoString = mono_string_new( s_pData->pAppDomain, "Hello world from C++" );
+        void *pStringParam = pMonoString;
+        MonoMethod *pPrintCustomMessageFunc = s_pData->EntityClass.GetMethod( "PrintCustomMessage", 1 );
+        s_pData->EntityClass.InvokeMethod( pInstance, pPrintCustomMessageFunc, &pStringParam );
     }
 
-    void ScriptEngine::shutDown()
+    void ScriptEngine::ShutDown()
     {
-        shutDownMono();
-        delete data;
+        ShutDownMono();
+        delete s_pData;
     }
 
-    void ScriptEngine::initializeMono()
+    void ScriptEngine::InitializeMono()
     {
         mono_set_assemblies_path( "mono/lib" );
 
-        MonoDomain *root_domain = mono_jit_init( "SmileJITRuntime" );
-        SM_ASSERT( root_domain, "ScriptEngine::initializeMono > Cannot initialize root domain" );
+        MonoDomain *pRootDomain = mono_jit_init( "SmileJITRuntime" );
+        SM_ASSERT( pRootDomain, "ScriptEngine::initializeMono > Cannot initialize root domain" );
         
         // Store the root domain pointer
-        data->rootDomain = root_domain;
+        s_pData->pRootDomain = pRootDomain;
     }
 
-    void ScriptEngine::shutDownMono()
+    void ScriptEngine::ShutDownMono()
     {
         //mono_domain_unload( data->appDomain );
-        data->appDomain = nullptr;
+        s_pData->pAppDomain = nullptr;
 
         //mono_jit_cleanup( data->rootDomain );
-        data->rootDomain = nullptr;
+        s_pData->pRootDomain = nullptr;
     }
 
-    void ScriptEngine::loadAssembly( const std::filesystem::path &file_path )
+    void ScriptEngine::LoadAssembly( const std::filesystem::path &filePath )
     {
-        data->appDomain = mono_domain_create_appdomain( ( char * )"SmileScriptRuntime", nullptr );
-        mono_domain_set( data->appDomain, true );
+        s_pData->pAppDomain = mono_domain_create_appdomain( ( char * )"SmileScriptRuntime", nullptr );
+        mono_domain_set( s_pData->pAppDomain, true );
 
-        data->coreAssembly = utils::loadMonoAssembly( file_path );
-        data->coreAssemblyImage = mono_assembly_get_image( data->coreAssembly );
+        s_pData->pCoreAssembly = Utils::LoadMonoAssembly( filePath );
+        s_pData->pCoreAssemblyImage = mono_assembly_get_image( s_pData->pCoreAssembly );
         // utils::printAssemblyTypes( data->coreAssembly );
     }
 
-    MonoObject *ScriptEngine::instantiateClass( MonoClass *mono_class )
+    MonoObject *ScriptEngine::InstantiateClass( MonoClass *pMonoClass )
     {
-        MonoObject *instance = mono_object_new( data->appDomain, mono_class );
-        mono_runtime_object_init( instance );
-        return instance;
+        MonoObject *pInstance = mono_object_new( s_pData->pAppDomain, pMonoClass );
+        mono_runtime_object_init( pInstance );
+        return pInstance;
     }
 
-    ScriptClass::ScriptClass( const std::string &class_namespace, const std::string &class_name )
-        : classNamespace{ class_namespace }, className{ class_name }
+    ScriptClass::ScriptClass( const std::string &classNamespace, const std::string &className )
+        : m_ClassNamespace{ classNamespace }, m_ClassName{ className }
     {
-        monoClass = mono_class_from_name( data->coreAssemblyImage, class_namespace.c_str(), class_name.c_str() );
+        m_pMonoClass = mono_class_from_name( s_pData->pCoreAssemblyImage, classNamespace.c_str(), className.c_str() );
     }
 
-    MonoObject *ScriptClass::instantiate()
+    MonoObject *ScriptClass::Instantiate()
     {
-        return ScriptEngine::instantiateClass( monoClass );
+        return ScriptEngine::InstantiateClass( m_pMonoClass );
     }
 
-    MonoMethod *ScriptClass::getMethod( const std::string &name, int parameter_count )
+    MonoMethod *ScriptClass::GetMethod( const std::string &name, int parameterCount )
     {
-        return mono_class_get_method_from_name( monoClass, name.c_str(), parameter_count );
+        return mono_class_get_method_from_name( m_pMonoClass, name.c_str(), parameterCount );
     }
 
-    MonoObject *ScriptClass::invokeMethod( MonoObject *instance, MonoMethod *method, void **params )
+    MonoObject *ScriptClass::InvokeMethod( MonoObject *pInstance, MonoMethod *pMethod, void **ppParams )
     {
-        return mono_runtime_invoke( method, instance, params, nullptr );
+        return mono_runtime_invoke( pMethod, pInstance, ppParams, nullptr );
     }
 }

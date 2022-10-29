@@ -2,11 +2,11 @@
 
 #include "static_mesh_filter.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class MeshFactory final
     {
       public:
-        static Ref< StaticMeshFilter > createCube( const BufferLayout &buffer_layout );
+        static Ref< StaticMeshFilter > CreateCube( const BufferLayout &bufferLayout );
     };
 }

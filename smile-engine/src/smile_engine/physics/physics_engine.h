@@ -8,12 +8,12 @@ namespace physx
     class PxAllocatorCallback;
 }
 
-namespace smile::physics
+namespace Smile::Physics
 {
     struct PhysicsEngineData final
     {
-        float accumulator = 0.0f;
-        Uint32 substepCount = 0;
+        float Accumulator = 0.0f;
+        Uint32 SubstepCount = 0;
     };
 
     enum class FrictionType
@@ -32,52 +32,52 @@ namespace smile::physics
 
     struct PhysicsSettings final
     {
-        float fixedTimestep = 0.01f;
-        Uint32 maxSubsteps = 8;
-        DirectX::XMFLOAT3 gravity = { 0, -9.81f, 0 };
+        float FixedTimestep = 0.01f;
+        Uint32 MaxSubsteps = 8;
+        DirectX::XMFLOAT3 Gravity = { 0, -9.81f, 0 };
 
-        BroadPhaseType broadPhaseAlgorithm = BroadPhaseType::AutomaticBoxPrune;
-        FrictionType frictionModel = FrictionType::Patch;
-        DirectX::XMFLOAT3 worldBoundsMin = { 0, 0, 0 };
-        DirectX::XMFLOAT3 worldBoundsMax = { 1, 1, 1 };
-        Uint32 worldBoundsSubdivisions = 2;
-        Uint32 solverIterations = 6;
-        Uint32 solverVelocityIterations = 1;
-        Ref< PhysicsMaterial > defaultPhysicsMaterial;
+        BroadPhaseType BroadPhaseAlgorithm = BroadPhaseType::AutomaticBoxPrune;
+        FrictionType FrictionModel = FrictionType::Patch;
+        DirectX::XMFLOAT3 WorldBoundsMin = { 0, 0, 0 };
+        DirectX::XMFLOAT3 WorldBoundsMax = { 1, 1, 1 };
+        Uint32 WorldBoundsSubdivisions = 2;
+        Uint32 SolverIterations = 6;
+        Uint32 SolverVelocityIterations = 1;
+        Ref< PhysicsMaterial > pDefaultPhysicsMaterial;
     };
 
     class PhysicsEngine final
     {
       public:
-        static void initialize();
-        static void shutDown();
+        static void Initialize();
+        static void ShutDown();
 
-        static void createScene();
-        static void destroyScene();
+        static void CreateScene();
+        static void DestroyScene();
 
-        static Ref< PhysicsActor > createActor( scene::Entity entity );
-        static Ref< PhysicsActor > getActorOfEntity( scene::Entity entity );
+        static Ref< PhysicsActor > CreateActor( Scene::Entity entity );
+        static Ref< PhysicsActor > GetActorOfEntity( Scene::Entity entity );
 
-        static void simulate( Timestep delta_time );
+        static void Simulate( Timestep deltaTime );
 
-        static physx::PxPhysics *getPhysics();
-        static physx::PxAllocatorCallback &getAllocatorCallback();
-        static const PhysicsSettings &getPhysicsSettings()
+        static physx::PxPhysics *GetPhysics();
+        static physx::PxAllocatorCallback &GetAllocatorCallback();
+        static const PhysicsSettings &GetPhysicsSettings()
         {
-            return settings;
+            return s_Settings;
         }
-        static const Ref< PhysicsMaterial > &getDefaultPhysicsMaterial()
+        static const Ref< PhysicsMaterial > &GetDefaultPhysicsMaterial()
         {
-            return settings.defaultPhysicsMaterial;
+            return s_Settings.pDefaultPhysicsMaterial;
         }
 
       private:
-        static bool advance( Timestep delta_time );
-        static void substepStrategy( Timestep delta_time );
+        static bool Advance( Timestep deltaTime );
+        static void SubstepStrategy( Timestep deltaTime );
 
       private:
-        static std::unordered_map< UUID, Ref< PhysicsActor > > actorMap;
-        static PhysicsSettings settings;
-        static PhysicsEngineData physicsEngineData;
+        static std::unordered_map< UUID, Ref< PhysicsActor > > s_ActorMap;
+        static PhysicsSettings s_Settings;
+        static PhysicsEngineData s_PhysicsEngineData;
     };
 }

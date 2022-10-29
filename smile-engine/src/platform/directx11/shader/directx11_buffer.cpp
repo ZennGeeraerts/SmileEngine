@@ -1,11 +1,11 @@
 #include "smpch.h"
 #include "directx11_buffer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    D3D11_USAGE bufferUsageToDirectXType( BufferUsage buffer_usage )
+    D3D11_USAGE BufferUsageToDirectXType( BufferUsage bufferUsage )
     {
-        switch ( buffer_usage )
+        switch ( bufferUsage )
         {
             case BufferUsage::Default:
                 return D3D11_USAGE_DEFAULT;

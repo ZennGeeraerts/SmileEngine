@@ -2,63 +2,63 @@
 
 #include "smile_engine/core/core.h"
 
-namespace smile::ecs
+namespace Smile::ECS
 {
-    template < typename IndexType = Uint32, Uint32 IndexBits = 16, Uint32 GenerationBits = 16 >
+    template < typename IndexType = Uint32, Uint32 indexBits = 16, Uint32 generationBits = 16 >
     struct EntityHandle final
     {
-        static constexpr Uint32 indexBits = IndexBits;
-        static constexpr Uint32 generationBits = GenerationBits;
-        static constexpr IndexType maxIndex = ( 1 << IndexBits ) - 1;
-        static constexpr IndexType maxGeneration = ( 1 << GenerationBits ) - 1;
+        static constexpr Uint32 IndexBits = indexBits;
+        static constexpr Uint32 GenerationBits = generationBits;
+        static constexpr IndexType MaxIndex = ( 1 << IndexBits ) - 1;
+        static constexpr IndexType MaxGeneration = ( 1 << GenerationBits ) - 1;
 
         EntityHandle()
-            : index{ std::numeric_limits< IndexType >::max() }, generation{ std::numeric_limits< IndexType >::max() }
+            : Index{ std::numeric_limits< IndexType >::max() }, Generation{ std::numeric_limits< IndexType >::max() }
         {
         }
 
-        EntityHandle( IndexType index, IndexType generation ) : index{ index }, generation{ generation }
+        EntityHandle( IndexType index, IndexType generation ) : Index{ index }, Generation{ generation }
         {
         }
 
-        size_t hash() const
+        size_t Hash() const
         {
-            return generation << indexBits | index;
+            return Generation << IndexBits | Index;
         }
-        bool isValid() const
+        bool IsValid() const
         {
-            return !( ( index == maxIndex ) || ( generation == maxGeneration ) );
+            return !( ( Index == MaxIndex ) || ( Generation == MaxGeneration ) );
         }
 
         operator bool() const
         {
-            return isValid();
+            return IsValid();
         }
         bool operator==( const EntityHandle &rhs ) const
         {
-            return index == rhs.index && generation == rhs.generation;
+            return Index == rhs.Index && Generation == rhs.Generation;
         }
         bool operator!=( const EntityHandle &rhs ) const
         {
-            return index != rhs.index || generation != rhs.generation;
+            return Index != rhs.Index || Generation != rhs.Generation;
         }
 
-        IndexType index : IndexBits;
-        IndexType generation : GenerationBits;
+        IndexType Index : IndexBits;
+        IndexType Generation : GenerationBits;
     };
 
     template< typename IndexType >
-    const EntityHandle< IndexType > nullHandle = EntityHandle< IndexType >{};
+    const EntityHandle< IndexType > g_NullHandle = EntityHandle< IndexType >{};
 }
 
 namespace std
 {
-    template < typename IndexType, smile::Uint32 IndexBits, smile::Uint32 GenerationBits >
-    struct hash< smile::ecs::EntityHandle< IndexType, IndexBits, GenerationBits > >
+    template < typename IndexType, Smile::Uint32 indexBits, Smile::Uint32 generationBits >
+    struct hash< Smile::ECS::EntityHandle< IndexType, indexBits, generationBits > >
     {
-        size_t operator()( smile::ecs::EntityHandle< IndexType > handle ) const
+        size_t operator()( Smile::ECS::EntityHandle< IndexType > entityHandle ) const
         {
-            return handle.hash();
+            return entityHandle.Hash();
         }
     };
 }

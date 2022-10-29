@@ -1,13 +1,13 @@
 #include "smpch.h"
 #include "logger.h"
 
-namespace smile
+namespace Smile
 {
-    LogPriority Logger::priority = LogPriority::Trace;
-    std::mutex Logger::mutex{};
+    LogPriority Logger::m_Priority = LogPriority::Trace;
+    std::mutex Logger::m_Mutex{};
 
-    void Logger::setPriority( LogPriority logPriority )
+    void Logger::SetPriority( LogPriority logPriority )
     {
-        priority = logPriority;
+        m_Priority = logPriority;
     }
 }

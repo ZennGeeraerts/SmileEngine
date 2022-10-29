@@ -1,9 +1,9 @@
 #include "smpch.h"
 #include "mesh_factory.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    static std::vector< DirectX::XMFLOAT3 > cubePositions
+    static std::vector< DirectX::XMFLOAT3 > s_CubePositions
     { 
         // front
         { -1.0f, 1.0f, -1.0f },
@@ -42,7 +42,7 @@ namespace smile::graphic
         { -1.0f, -1.0f, 1.0f } 
     };
 
-    static const std::vector< Uint32 > cubeIndices
+    static const std::vector< Uint32 > s_CubeIndices
     {
         // front
         0 + 0,
@@ -88,7 +88,7 @@ namespace smile::graphic
         3 + 20,
     };
 
-    static std::vector< DirectX::XMFLOAT3 > cubeNormals
+    static std::vector< DirectX::XMFLOAT3 > s_CubeNormals
     { 
         // front
         { 0.0f, 0.0f, 1.0f },
@@ -127,21 +127,21 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f } 
     };
 
-    Ref< StaticMeshFilter > MeshFactory::createCube( const BufferLayout &buffer_layout )
+    Ref< StaticMeshFilter > MeshFactory::CreateCube( const BufferLayout &bufferLayout )
     {
-        Ref< StaticMeshFilter > static_mesh_filter = createRef< StaticMeshFilter >();
+        Ref< StaticMeshFilter > static_mesh_filter = CreateRef< StaticMeshFilter >();
 
-        for ( const auto &element : buffer_layout )
+        for ( const auto &element : bufferLayout )
         {
-            if ( element.name == "POSITION" )
+            if ( element.Name == "POSITION" )
             {
-                static_mesh_filter->usePositions = true;
-                static_mesh_filter->positions = cubePositions;
+                static_mesh_filter->m_UsePositions = true;
+                static_mesh_filter->m_Positions = s_CubePositions;
             }
-            else if ( element.name == "NORMAL" )
+            else if ( element.Name == "NORMAL" )
             {
-                static_mesh_filter->useNormals = true;
-                static_mesh_filter->normals = cubeNormals;
+                static_mesh_filter->m_UseNormals = true;
+                static_mesh_filter->m_Normals = s_CubeNormals;
             }
             /*else if (element.Name == "TexCoord")
             {
@@ -150,8 +150,8 @@ namespace smile::graphic
             }*/
         }
 
-        static_mesh_filter->vertexCount = static_cast< Uint32 >( cubePositions.size() );
-        static_mesh_filter->indices = cubeIndices;
+        static_mesh_filter->m_VertexCount = static_cast< Uint32 >( s_CubePositions.size() );
+        static_mesh_filter->m_Indices = s_CubeIndices;
 
         return static_mesh_filter;
     }

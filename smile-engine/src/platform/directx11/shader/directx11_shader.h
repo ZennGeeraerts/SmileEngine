@@ -6,16 +6,16 @@
 
 #include <d3dx11effect.h>
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class DirectX11Shader final : public Shader
     {
       public:
-        DirectX11Shader( const std::string &asset_file,
+        DirectX11Shader( const std::string &assetFile,
             const BufferLayout &layout,
-            const std::string &technique_name = "" );
+            const std::string &techniqueName = "" );
 
-        DirectX11Shader( const std::string &asset_file, const std::string &technique_name = "" );
+        DirectX11Shader( const std::string &assetFile, const std::string &techniqueName = "" );
 
         virtual ~DirectX11Shader();
 
@@ -24,58 +24,58 @@ namespace smile::graphic
         DirectX11Shader &operator=( const DirectX11Shader & ) = delete;
         DirectX11Shader &operator=( DirectX11Shader && ) = delete;
 
-        virtual void bind() const override;
-        virtual void unbind() const override;
+        virtual void Bind() const override;
+        virtual void Unbind() const override;
 
-        virtual const std::string &getName() const override
+        virtual const std::string &GetName() const override
         {
-            return name;
+            return m_Name;
         }
 
-        virtual const BufferLayout &getBufferLayout() const override
+        virtual const BufferLayout &GetBufferLayout() const override
         {
-            return bufferLayout;        
+            return m_BufferLayout;        
         }
 
-        virtual void uploadMat4( const std::string &sementic_name, const DirectX::XMFLOAT4X4 &matrix ) override;
-        virtual void uploadMat4Array( const std::string &sementic_name,
-            const std::vector< DirectX::XMFLOAT4X4 > &mat_array ) override;
-        virtual void uploadFloat2( const std::string &sementic_name, const DirectX::XMFLOAT2 &value ) override;
-        virtual void uploadFloat3( const std::string &sementic_name, const DirectX::XMFLOAT3 &value ) override;
-        virtual void uploadInt( const std::string &sementic_name, int value ) override;
-        virtual void uploadTexture2D( const std::string &sementic_name, const Ref< Texture2D > &texture_2d ) override;
-        virtual void uploadBool( const std::string &sementic_name, bool value ) override;
-        virtual void uploadFloat( const std::string &sementic_name, float value ) override;
+        virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) override;
+        virtual void UploadMat4Array( const std::string &sementicName,
+            const std::vector< DirectX::XMFLOAT4X4 > &matArray ) override;
+        virtual void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) override;
+        virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) override;
+        virtual void UploadInt( const std::string &sementicName, int value ) override;
+        virtual void UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D ) override;
+        virtual void UploadBool( const std::string &sementicName, bool value ) override;
+        virtual void UploadFloat( const std::string &sementicName, float value ) override;
 
-        inline ID3DX11Effect *getEffect() const
+        inline ID3DX11Effect *GetEffect() const
         {
-            return effect;
+            return m_pEffect;
         }
-        inline ID3DX11EffectTechnique *getTechnique() const
+        inline ID3DX11EffectTechnique *GetTechnique() const
         {
-            return technique;
+            return m_pTechnique;
         }
 
       private:
-        void initalize(const std::string& asset_file, const std::string& technique_name);
-        void setName( const std::string &asset_file );
-        bool loadEffect( ID3D11Device *device, const std::string &asset_file );
+        void Initalize(const std::string& assetFile, const std::string& techniqueName);
+        void SetName( const std::string &assetFile );
+        bool LoadEffect( ID3D11Device *pDevice, const std::string &assetFile );
 
-        void buildInputLayout( const BufferLayout &layout );
-        void buildInputLayout();
+        void BuildInputLayout( const BufferLayout &layout );
+        void BuildInputLayout();
        
-        ID3DX11EffectVariable *getEffectVariable( const std::string &sementic_name );
+        ID3DX11EffectVariable *GetEffectVariable( const std::string &sementicName );
 
       private:
-        std::string name;
-        std::unordered_map< std::string, ID3DX11EffectVariable * > effectVariableMap;
+        std::string m_Name;
+        std::unordered_map< std::string, ID3DX11EffectVariable * > m_EffectVariableMap;
 
-        DirectX11Context *directX11Context;
+        DirectX11Context *m_pDirectX11Context;
 
-        ID3DX11Effect *effect;
-        ID3DX11EffectTechnique *technique;
-        ID3D11InputLayout *inputLayout;
+        ID3DX11Effect *m_pEffect;
+        ID3DX11EffectTechnique *m_pTechnique;
+        ID3D11InputLayout *m_pInputLayout;
 
-        BufferLayout bufferLayout{};
+        BufferLayout m_BufferLayout{};
     };
 }

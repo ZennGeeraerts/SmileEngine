@@ -7,192 +7,192 @@
 
 #include "smile_engine/math/math.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    EditorCamera::EditorCamera( float fov, float aspect_ratio, float near_plane, float far_plane )
-        : fov{ fov },
-          aspectRatio{ aspect_ratio },
-          nearPlane{ near_plane },
-          farPlane{ far_plane },
-          Camera( DirectX::XMMatrixPerspectiveFovLH( DirectX::XMConvertToRadians( fov ),
-              aspect_ratio,
-              near_plane,
-              far_plane ) )
+    EditorCamera::EditorCamera( float fov, float aspectRatio, float nearPlane, float farPlane )
+        : m_FOV{ fov },
+          m_AspectRatio{ aspectRatio },
+          m_NearPlane{ nearPlane },
+          m_FarPlane{ farPlane },
+          Camera{ DirectX::XMMatrixPerspectiveFovLH( DirectX::XMConvertToRadians( fov ),
+              aspectRatio,
+              nearPlane,
+              farPlane ) }
     {
     }
 
-    void EditorCamera::onUpdate( Timestep delta_time )
+    void EditorCamera::OnUpdate( Timestep deltaTime )
     {
-        if ( input::Input::isKeyPressed( input::key::Alt ) )
+        if ( Input::Input::IsKeyPressed( Input::key::Alt ) )
         {
-            DirectX::XMFLOAT2 mouse_position{ input::Input::getMouseX(), input::Input::getMouseY() };
-            auto mouse_position_vec = DirectX::XMLoadFloat2( &mouse_position );
-            auto initial_mouse_pos_vec = DirectX::XMLoadFloat2( &initialMousePosition );
+            DirectX::XMFLOAT2 mousePosition{ Input::Input::GetMouseX(), Input::Input::GetMouseY() };
+            auto mousePositionVec = DirectX::XMLoadFloat2( &mousePosition );
+            auto initialMousePosVec = DirectX::XMLoadFloat2( &m_InitialMousePosition );
 
-            DirectX::XMVECTOR delta_vec =
-                DirectX::XMVectorScale( ( DirectX::XMVectorSubtract( mouse_position_vec, initial_mouse_pos_vec ) ), 0.003f );
-            initialMousePosition = mouse_position;
+            DirectX::XMVECTOR deltaVec =
+                DirectX::XMVectorScale( ( DirectX::XMVectorSubtract( mousePositionVec, initialMousePosVec ) ), 0.003f );
+            m_InitialMousePosition = mousePosition;
 
             DirectX::XMFLOAT2 delta{};
-            DirectX::XMStoreFloat2( &delta, delta_vec );
+            DirectX::XMStoreFloat2( &delta, deltaVec );
 
-            if ( input::Input::isMouseButtonPressed( input::mouse::ButtonMiddle ) )
-                mousePan( delta );
-            else if ( input::Input::isMouseButtonPressed( input::mouse::ButtonLeft ) )
-                mouseRotate( delta );
-            else if ( input::Input::isMouseButtonPressed( input::mouse::ButtonRight ) )
-                mouseZoom( delta.y );
+            if ( Input::Input::IsMouseButtonPressed( Input::mouse::ButtonMiddle ) )
+                MousePan( delta );
+            else if ( Input::Input::IsMouseButtonPressed( Input::mouse::ButtonLeft ) )
+                MouseRotate( delta );
+            else if ( Input::Input::IsMouseButtonPressed( Input::mouse::ButtonRight ) )
+                MouseZoom( delta.y );
         }
 
-        updateView();
+        UpdateView();
     }
 
-    void EditorCamera::updateView()
+    void EditorCamera::UpdateView()
     {
-        position = calculatePosition();
+        m_Position = CalculatePosition();
 
-        DirectX::XMMATRIX transform_mat =
-            DirectX::XMMatrixMultiply( DirectX::XMMatrixRotationRollPitchYaw( -pitch, -yaw, 0.f ),
-                DirectX::XMMatrixTranslation( position.x, position.y, position.z ) );
-        XMStoreFloat4x4( &viewMatrix, DirectX::XMMatrixInverse( nullptr, transform_mat ) );
+        DirectX::XMMATRIX transformMat =
+            DirectX::XMMatrixMultiply( DirectX::XMMatrixRotationRollPitchYaw( -m_Pitch, -m_Yaw, 0.f ),
+                DirectX::XMMatrixTranslation( m_Position.x, m_Position.y, m_Position.z ) );
+        XMStoreFloat4x4( &m_ViewMatrix, DirectX::XMMatrixInverse( nullptr, transformMat ) );
     }
 
-    void EditorCamera::updateProjection()
+    void EditorCamera::UpdateProjection()
     {
-        aspectRatio = viewportWidth / viewportHeight;
-        DirectX::XMMATRIX projection_matrix_mat = DirectX::XMMatrixPerspectiveFovLH(
-            DirectX::XMConvertToRadians( fov ), aspectRatio, nearPlane, farPlane );
-        DirectX::XMStoreFloat4x4( &projectionMatrix, projection_matrix_mat );
+        m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
+        DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixPerspectiveFovLH(
+            DirectX::XMConvertToRadians( m_FOV ), m_AspectRatio, m_NearPlane, m_FarPlane );
+        DirectX::XMStoreFloat4x4( &m_ProjectionMatrix, projectionMatrixMat );
     }
 
-    void EditorCamera::onEvent( Event &e )
+    void EditorCamera::OnEvent( Event &e )
     {
         EventDispatcher dispatcher{ e };
-        dispatcher.dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( EditorCamera::onMouseScroll ) );
+        dispatcher.Dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( EditorCamera::OnMouseScroll ) );
     }
 
-    DirectX::XMFLOAT4X4 EditorCamera::getViewProjectionMatrix() const
+    DirectX::XMFLOAT4X4 EditorCamera::GetViewProjectionMatrix() const
     {
-        DirectX::XMMATRIX view_projection_matrix_mat =
-            DirectX::XMLoadFloat4x4( &viewMatrix ) * DirectX::XMLoadFloat4x4( &projectionMatrix );
-        DirectX::XMFLOAT4X4 view_projection_matrix{};
-        DirectX::XMStoreFloat4x4( &view_projection_matrix, view_projection_matrix_mat );
-        return view_projection_matrix;
+        DirectX::XMMATRIX viewProjectionMatrixMat =
+            DirectX::XMLoadFloat4x4( &m_ViewMatrix ) * DirectX::XMLoadFloat4x4( &m_ProjectionMatrix );
+        DirectX::XMFLOAT4X4 viewProjectionMatrix{};
+        DirectX::XMStoreFloat4x4( &viewProjectionMatrix, viewProjectionMatrixMat );
+        return viewProjectionMatrix;
     }
 
-    bool EditorCamera::onMouseScroll( MouseScrolledEvent &e )
+    bool EditorCamera::OnMouseScroll( MouseScrolledEvent &e )
     {
-        float delta = e.getOffsetX() * 0.1f;
-        mouseZoom( delta );
-        updateView();
+        float delta = e.GetOffsetX() * 0.1f;
+        MouseZoom( delta );
+        UpdateView();
         return false;
     }
 
-    void EditorCamera::mousePan( const DirectX::XMFLOAT2 &delta )
+    void EditorCamera::MousePan( const DirectX::XMFLOAT2 &delta )
     {
-        DirectX::XMFLOAT2 pan_speed = calculatePanSpeed();
-        DirectX::XMFLOAT3 right_direction = getRightDirection();
-        DirectX::XMVECTOR right_direction_vec = DirectX::XMLoadFloat3( &right_direction );
-        DirectX::XMFLOAT3 up_direction = getUpDirection();
-        DirectX::XMVECTOR up_direction_vec = DirectX::XMLoadFloat3( &up_direction );
-        DirectX::XMVECTOR focal_point_vec = DirectX::XMLoadFloat3( &focalPoint );
+        DirectX::XMFLOAT2 panSpeed = CalculatePanSpeed();
+        DirectX::XMFLOAT3 rightDirection = GetRightDirection();
+        DirectX::XMVECTOR rightDirectionVec = DirectX::XMLoadFloat3( &rightDirection );
+        DirectX::XMFLOAT3 upDirection = GetUpDirection();
+        DirectX::XMVECTOR upDirectionVec = DirectX::XMLoadFloat3( &upDirection );
+        DirectX::XMVECTOR focalPointVec = DirectX::XMLoadFloat3( &m_FocalPoint );
 
-        focal_point_vec = DirectX::XMVectorAdd( focal_point_vec,
+        focalPointVec = DirectX::XMVectorAdd( focalPointVec,
             DirectX::XMVectorScale(
                 DirectX::XMVectorScale(
-                    DirectX::XMVectorScale( DirectX::XMVectorNegate( right_direction_vec ), delta.x ), pan_speed.x ),
-                distance ) );
+                    DirectX::XMVectorScale( DirectX::XMVectorNegate( rightDirectionVec ), delta.x ), panSpeed.x ),
+                m_Distance ) );
 
-        focal_point_vec = DirectX::XMVectorAdd( focal_point_vec,
+        focalPointVec = DirectX::XMVectorAdd( focalPointVec,
             DirectX::XMVectorScale(
-                DirectX::XMVectorScale( DirectX::XMVectorScale( up_direction_vec, delta.y ), pan_speed.y ), distance ) );
+                DirectX::XMVectorScale( DirectX::XMVectorScale( upDirectionVec, delta.y ), panSpeed.y ), m_Distance ) );
 
-        DirectX::XMStoreFloat3( &focalPoint, focal_point_vec );
+        DirectX::XMStoreFloat3( &m_FocalPoint, focalPointVec );
     }
 
-    DirectX::XMFLOAT2 EditorCamera::calculatePanSpeed() const
+    DirectX::XMFLOAT2 EditorCamera::CalculatePanSpeed() const
     {
-        float x = std::min( viewportWidth / 1000.0f, 2.4f ); // max = 2.4f
-        float x_factor = 0.0366f * ( x * x ) - 0.1778f * x + 0.3021f;
+        float x = std::min( m_ViewportWidth / 1000.0f, 2.4f ); // max = 2.4f
+        float xFactor = 0.0366f * ( x * x ) - 0.1778f * x + 0.3021f;
 
-        float y = std::min( viewportHeight / 1000.0f, 2.4f ); // max = 2.4f
-        float y_factor = 0.0366f * ( y * y ) - 0.1778f * y + 0.3021f;
+        float y = std::min( m_ViewportHeight / 1000.0f, 2.4f ); // max = 2.4f
+        float yFactor = 0.0366f * ( y * y ) - 0.1778f * y + 0.3021f;
 
-        return DirectX::XMFLOAT2{ x_factor, y_factor };
+        return DirectX::XMFLOAT2{ xFactor, yFactor };
     }
 
-    void EditorCamera::mouseRotate( const DirectX::XMFLOAT2 &delta )
+    void EditorCamera::MouseRotate( const DirectX::XMFLOAT2 &delta )
     {
-        const float yaw_sign = getUpDirection().y < 0 ? -1.0f : 1.0f;
-        yaw += yaw_sign * delta.x * calculateRotationSpeed();
-        pitch += delta.y * calculateRotationSpeed();
+        const float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
+        m_Yaw += yawSign * delta.x * CalculateRotationSpeed();
+        m_Pitch += delta.y * CalculateRotationSpeed();
     }
 
-    float EditorCamera::calculateRotationSpeed() const
+    float EditorCamera::CalculateRotationSpeed() const
     {
         return 0.8f;
     }
 
-    void EditorCamera::mouseZoom( float delta )
+    void EditorCamera::MouseZoom( float delta )
     {
-        distance -= delta * calculateZoomSpeed();
-        if ( distance < 1.0f )
+        m_Distance -= delta * CalculateZoomSpeed();
+        if ( m_Distance < 1.0f )
         {
-            DirectX::XMVECTOR focal_point_vec = DirectX::XMLoadFloat3( &focalPoint );
-            DirectX::XMFLOAT3 forward_direction = getForwardDirection();
-            focal_point_vec = DirectX::XMVectorAdd( focal_point_vec, DirectX::XMLoadFloat3( &forward_direction ) );
-            DirectX::XMStoreFloat3( &focalPoint, focal_point_vec );
-            distance = 1.0f;
+            DirectX::XMVECTOR focalPointVec = DirectX::XMLoadFloat3( &m_FocalPoint );
+            DirectX::XMFLOAT3 forwardDirection = GetForwardDirection();
+            focalPointVec = DirectX::XMVectorAdd( focalPointVec, DirectX::XMLoadFloat3( &forwardDirection ) );
+            DirectX::XMStoreFloat3( &m_FocalPoint, focalPointVec );
+            m_Distance = 1.0f;
         }
     }
 
-    float EditorCamera::calculateZoomSpeed() const
+    float EditorCamera::CalculateZoomSpeed() const
     {
-        float new_distance = distance * 0.2f;
-        new_distance = std::max( new_distance, 0.0f );
-        float speed = new_distance * new_distance;
+        float newDistance = m_Distance * 0.2f;
+        newDistance = std::max( newDistance, 0.0f );
+        float speed = newDistance * newDistance;
         speed = std::min( speed, 100.0f ); // max speed = 100
         return speed;
     }
 
-    DirectX::XMFLOAT3 EditorCamera::calculatePosition() const
+    DirectX::XMFLOAT3 EditorCamera::CalculatePosition() const
     {
         DirectX::XMFLOAT3 position{};
-        DirectX::XMFLOAT3 forward_direction = getForwardDirection();
-        DirectX::XMVECTOR position_vec = DirectX::XMVectorSubtract( DirectX::XMLoadFloat3( &focalPoint ),
-            DirectX::XMVectorScale( DirectX::XMLoadFloat3( &forward_direction ), distance ) );
+        DirectX::XMFLOAT3 forwardDirection = GetForwardDirection();
+        DirectX::XMVECTOR positionVec = DirectX::XMVectorSubtract( DirectX::XMLoadFloat3( &m_FocalPoint ),
+            DirectX::XMVectorScale( DirectX::XMLoadFloat3( &forwardDirection ), m_Distance ) );
 
-        DirectX::XMStoreFloat3( &position, position_vec );
+        DirectX::XMStoreFloat3( &position, positionVec );
         return position;
     }
 
-    DirectX::XMFLOAT3 EditorCamera::getUpDirection() const
+    DirectX::XMFLOAT3 EditorCamera::GetUpDirection() const
     {
         DirectX::XMFLOAT3 rotation{};
-        DirectX::XMVECTOR up_vec{ 0.f, 1.0f, 0.f };
-        DirectX::XMVECTOR rotation_vec =
-            DirectX::XMVector3Rotate( up_vec, DirectX::XMQuaternionRotationRollPitchYaw( -pitch, -yaw, 0.f ) );
-        DirectX::XMStoreFloat3( &rotation, rotation_vec );
+        DirectX::XMVECTOR upVec{ 0.f, 1.0f, 0.f };
+        DirectX::XMVECTOR rotationVec =
+            DirectX::XMVector3Rotate( upVec, DirectX::XMQuaternionRotationRollPitchYaw( -m_Pitch, -m_Yaw, 0.f ) );
+        DirectX::XMStoreFloat3( &rotation, rotationVec );
         return rotation;
     }
 
-    DirectX::XMFLOAT3 EditorCamera::getRightDirection() const
+    DirectX::XMFLOAT3 EditorCamera::GetRightDirection() const
     {
         DirectX::XMFLOAT3 rotation{};
-        DirectX::XMVECTOR right_direction{ 1.0f, 0.0f, 0.0f };
-        DirectX::XMVECTOR rotation_vec = DirectX::XMVector3Rotate(
-            right_direction, DirectX::XMQuaternionRotationRollPitchYaw( -pitch, -yaw, 0.f ) );
-        DirectX::XMStoreFloat3( &rotation, rotation_vec );
+        DirectX::XMVECTOR rightDirection{ 1.0f, 0.0f, 0.0f };
+        DirectX::XMVECTOR rotationVec = DirectX::XMVector3Rotate(
+            rightDirection, DirectX::XMQuaternionRotationRollPitchYaw( -m_Pitch, -m_Yaw, 0.f ) );
+        DirectX::XMStoreFloat3( &rotation, rotationVec );
         return rotation;
     }
 
-    DirectX::XMFLOAT3 EditorCamera::getForwardDirection() const
+    DirectX::XMFLOAT3 EditorCamera::GetForwardDirection() const
     {
         DirectX::XMFLOAT3 rotation{};
-        DirectX::XMVECTOR forward_direction{ 0.0f, 0.0f, 1.0f };
-        DirectX::XMVECTOR rotation_vec = DirectX::XMVector3Rotate(
-            forward_direction, DirectX::XMQuaternionRotationRollPitchYaw( -pitch, -yaw, 0.f ) );
-        DirectX::XMStoreFloat3( &rotation, rotation_vec );
+        DirectX::XMVECTOR forwardDirection{ 0.0f, 0.0f, 1.0f };
+        DirectX::XMVECTOR rotationVec = DirectX::XMVector3Rotate(
+            forwardDirection, DirectX::XMQuaternionRotationRollPitchYaw( -m_Pitch, -m_Yaw, 0.f ) );
+        DirectX::XMStoreFloat3( &rotation, rotationVec );
         return rotation;
     }
 }

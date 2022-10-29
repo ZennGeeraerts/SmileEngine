@@ -1,9 +1,9 @@
 #include "smpch.h"
 #include "layer.h"
 
-namespace smile
+namespace Smile
 {
-    Layer::Layer( const std::string &name ) : debugName{ name }
+    Layer::Layer( const std::string &name ) : m_DebugName{ name }
     {
     }
 

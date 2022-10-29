@@ -5,7 +5,7 @@
 #include "smile_engine/core/events/application_event.h"
 #include "smile_engine/core/events/key_event.h"
 
-namespace smile::imgui
+namespace Smile::ImGui
 {
     class ImGuiLayer final : public Layer
     {
@@ -13,29 +13,29 @@ namespace smile::imgui
         ImGuiLayer();
         ~ImGuiLayer();
 
-        virtual void onAttach() override;
-        virtual void onDetach() override;
-        virtual void onImGuiRender() override;
-        virtual void onEvent( Event &event ) override;
+        virtual void OnAttach() override;
+        virtual void OnDetach() override;
+        virtual void OnImGuiRender() override;
+        virtual void OnEvent( Event &event ) override;
 
-        void begin();
-        void end();
+        void Begin();
+        void End();
 
-        void setDarkThemeColors();
-
-      private:
-        void shutDown();
-
-        bool onMouseButtonPressed( MouseButtonPressedEvent &e );
-        bool onMouseButtonReleased( MouseButtonReleasedEvent &e );
-        bool onMouseMoved( MouseMovedEvent &e );
-        bool onMouseScrolled( MouseScrolledEvent &e );
-        bool onKeyPressed( KeyPressedEvent &e );
-        bool onKeyReleased( KeyReleasedEvent &e );
-        bool onKeyTyped( KeyTypedEvent &e );
-        bool onWindowResize( WindowResizeEvent &e );
+        void SetDarkThemeColors();
 
       private:
-        bool initialized = false;
+        void ShutDown();
+
+        bool OnMouseButtonPressed( MouseButtonPressedEvent &e );
+        bool OnMouseButtonReleased( MouseButtonReleasedEvent &e );
+        bool OnMouseMoved( MouseMovedEvent &e );
+        bool OnMouseScrolled( MouseScrolledEvent &e );
+        bool OnKeyPressed( KeyPressedEvent &e );
+        bool OnKeyReleased( KeyReleasedEvent &e );
+        bool OnKeyTyped( KeyTypedEvent &e );
+        bool OnWindowResize( WindowResizeEvent &e );
+
+      private:
+        bool m_IsInitialized = false;
     };
 }

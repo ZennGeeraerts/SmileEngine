@@ -17,25 +17,25 @@
 
 #include <DirectXMath.h>
 
-namespace smile::scene
+namespace Smile::Scene
 {
     struct IDComponent
     {
         IDComponent() = default;
         IDComponent( const IDComponent & ) = default;
 
-        UUID id;
+        UUID ID;
     };
 
     struct TagComponent
     {
         TagComponent() = default;
         TagComponent( const TagComponent & ) = default;
-        TagComponent( const std::string &tag ) : tag{ tag }
+        TagComponent( const std::string &tag ) : Tag{ tag }
         {
         }
 
-        std::string tag;
+        std::string Tag;
     };
 
     struct TransformComponent final
@@ -45,19 +45,19 @@ namespace smile::scene
         TransformComponent( const DirectX::XMFLOAT3 &translation,
             const DirectX::XMFLOAT3 &rotation,
             const DirectX::XMFLOAT3 &scale )
-            : translation{ translation }, rotation{ rotation }, scale{ scale }
+            : Translation{ translation }, Rotation{ rotation }, Scale{ scale }
         {
         }
 
         DirectX::XMFLOAT4X4 getTransform() const
         {
-            DirectX::XMMATRIX transform_mat =
-                DirectX::XMMatrixScaling( scale.x, scale.y, scale.z ) *
-                DirectX::XMMatrixRotationRollPitchYaw( rotation.x, rotation.y, rotation.z ) *
-                DirectX::XMMatrixTranslation( translation.x, translation.y, translation.z );
+            DirectX::XMMATRIX transformMat =
+                DirectX::XMMatrixScaling( Scale.x, Scale.y, Scale.z ) *
+                DirectX::XMMatrixRotationRollPitchYaw( Rotation.x, Rotation.y, Rotation.z ) *
+                DirectX::XMMatrixTranslation( Translation.x, Translation.y, Translation.z );
 
             DirectX::XMFLOAT4X4 transform{};
-            DirectX::XMStoreFloat4x4( &transform, transform_mat );
+            DirectX::XMStoreFloat4x4( &transform, transformMat );
             return transform;
         }
 
@@ -75,20 +75,20 @@ namespace smile::scene
             return right;
         }
 
-        DirectX::XMFLOAT3 translation{ 0.f, 0.f, 0.f };
-        DirectX::XMFLOAT3 rotation{ 0.f, 0.f, 0.f };
-        DirectX::XMFLOAT3 scale{ 1.f, 1.f, 1.f };
+        DirectX::XMFLOAT3 Translation{ 0.f, 0.f, 0.f };
+        DirectX::XMFLOAT3 Rotation{ 0.f, 0.f, 0.f };
+        DirectX::XMFLOAT3 Scale{ 1.f, 1.f, 1.f };
 
       private:
         void rotateVector( DirectX::XMFLOAT3 &v )
         {
-            DirectX::XMVECTOR rotation_vec =
-                DirectX::XMQuaternionRotationRollPitchYaw( rotation.x, rotation.y, rotation.z );
-            auto rotation_mat = DirectX::XMMatrixRotationQuaternion( rotation_vec );
+            DirectX::XMVECTOR rotationVec =
+                DirectX::XMQuaternionRotationRollPitchYaw( Rotation.x, Rotation.y, Rotation.z );
+            auto rotationMat = DirectX::XMMatrixRotationQuaternion( rotationVec );
 
-            DirectX::XMVECTOR v_vec =
-                DirectX::XMVector3TransformCoord( DirectX::XMVectorSet( v.x, v.y, v.z, 0 ), rotation_mat );
-            DirectX::XMStoreFloat3( &v, v_vec );
+            DirectX::XMVECTOR vVec =
+                DirectX::XMVector3TransformCoord( DirectX::XMVectorSet( v.x, v.y, v.z, 0 ), rotationMat );
+            DirectX::XMStoreFloat3( &v, vVec );
         }
     };
 
@@ -96,79 +96,79 @@ namespace smile::scene
     {
         MeshRendererComponent() = default;
         MeshRendererComponent( const MeshRendererComponent & ) = default;
-        MeshRendererComponent( const graphic::VertexBufferDescriptor &vertex_buffer_desc,
-            const graphic::IndexBufferDescriptor &index_buffer_desc,
-            const std::string &shader_file_path )
+        MeshRendererComponent( const Graphic::VertexBufferDescriptor &vertexBufferDesc,
+            const Graphic::IndexBufferDescriptor &indexBufferDesc,
+            const std::string &shaderFilePath )
         {
-            vertexBuffer.reset( graphic::VertexBuffer::create( vertex_buffer_desc ) );
-            indexBuffer.reset( graphic::IndexBuffer::create( index_buffer_desc ) );
-            shader = graphic::Shader::create( shader_file_path );
+            pVertexBuffer.reset( Graphic::VertexBuffer::Create( vertexBufferDesc ) );
+            pIndexBuffer.reset( Graphic::IndexBuffer::Create( indexBufferDesc ) );
+            pShader = Graphic::Shader::Create( shaderFilePath );
         }
 
-        Ref< graphic::VertexBuffer > vertexBuffer = nullptr;
-        Ref< graphic::IndexBuffer > indexBuffer = nullptr;
-        Ref< graphic::Shader > shader = nullptr;
+        Ref< Graphic::VertexBuffer > pVertexBuffer = nullptr;
+        Ref< Graphic::IndexBuffer > pIndexBuffer = nullptr;
+        Ref< Graphic::Shader > pShader = nullptr;
     };
 
     struct StaticMeshComponent final
     {
         StaticMeshComponent()
         {
-            auto shader = graphic::Shader::create( "assets/shaders/PBR.fx" );
-            materials.push_back( createRef< graphic::Material >( shader ) );
+            auto pShader = Graphic::Shader::Create( "assets/shaders/PBR.fx" );
+            pMaterials.push_back( CreateRef< Graphic::Material >( pShader ) );
         }
 
         StaticMeshComponent( const StaticMeshComponent & ) = default;
 
         // For now, only support 1 material
-        StaticMeshComponent( const std::string &asset_file, const Ref< graphic::Material > &material )
+        StaticMeshComponent( const std::string &assetFile, const Ref< Graphic::Material > &pMaterial )
         {
-            materials.push_back( material );
+            pMaterials.push_back( pMaterial );
 
-            meshes = graphic::MeshLoader::loadStaticMesh( asset_file );
-            const auto &buffer_layout = materials[0]->getBufferLayout();
-            for ( const auto &mesh : meshes )
+            pMeshes = Graphic::MeshLoader::LoadStaticMesh( assetFile );
+            const auto &bufferLayout = pMaterials[0]->GetBufferLayout();
+            for ( const auto &pMesh : pMeshes )
             {
-                mesh->create( buffer_layout );
+                pMesh->Create( bufferLayout );
             }
         }
 
-        std::vector< Ref< graphic::StaticMeshFilter > > meshes = {};
-        std::vector< Ref< graphic::Material > > materials = {};
+        std::vector< Ref< Graphic::StaticMeshFilter > > pMeshes = {};
+        std::vector< Ref< Graphic::Material > > pMaterials = {};
     };
 
     struct SkinnedMeshComponent final
     {
         SkinnedMeshComponent()
         {
-            auto pShader = graphic::Shader::create( "assets/shaders/PBR_Skinned.fx" );
-            materials.push_back( createRef< graphic::Material >( pShader ) );
+            auto pShader = Graphic::Shader::Create( "assets/shaders/PBR_Skinned.fx" );
+            pMaterials.push_back( CreateRef< Graphic::Material >( pShader ) );
         }
 
         SkinnedMeshComponent( const SkinnedMeshComponent & ) = default;
 
         // For now, only support 1 material
-        SkinnedMeshComponent( const std::string &asset_file, const Ref< graphic::Material > &material )
+        SkinnedMeshComponent( const std::string &assetFile, const Ref< Graphic::Material > &pMaterial )
         {
-            materials.push_back( material );
+            pMaterials.push_back( pMaterial );
 
-            meshes = graphic::MeshLoader::loadSkinnedMesh( asset_file );
-            const auto &buffer_layout = materials[0]->getBufferLayout();
-            for ( const auto &mesh : meshes )
+            pMeshes = Graphic::MeshLoader::LoadSkinnedMesh( assetFile );
+            const auto &bufferLayout = pMaterials[0]->GetBufferLayout();
+            for ( const auto &pMesh : pMeshes )
             {
-                mesh->create( buffer_layout );
+                pMesh->Create( bufferLayout );
 
-                if ( mesh->hasAnimations() )
+                if ( pMesh->HasAnimations() )
                 {
-                    graphic::MeshAnimator animator{ mesh };
-                    animators.push_back( animator );
+                    Graphic::MeshAnimator animator{ pMesh };
+                    Animators.push_back( animator );
                 }
             }
         }
 
-        std::vector< Ref< graphic::SkinnedMeshFilter > > meshes = {};
-        std::vector< Ref< graphic::Material > > materials = {};
-        std::vector< graphic::MeshAnimator > animators = {};
+        std::vector< Ref< Graphic::SkinnedMeshFilter > > pMeshes = {};
+        std::vector< Ref< Graphic::Material > > pMaterials = {};
+        std::vector< Graphic::MeshAnimator > Animators = {};
     };
 
     struct CameraComponent final
@@ -176,9 +176,9 @@ namespace smile::scene
         CameraComponent() = default;
         CameraComponent( const CameraComponent & ) = default;
 
-        SceneCamera camera;
-        bool primary = true;
-        bool fixedAspectRatio = false;
+        SceneCamera Camera;
+        bool IsPrimary = true;
+        bool HasFixedAspectRatio = false;
     };
 
     struct RigidbodyComponent final
@@ -198,43 +198,43 @@ namespace smile::scene
         RigidbodyComponent( const RigidbodyComponent & ) = default;
 
         // Data
-        BodyType bodyType;
-        CollisionDetectionType collisionDetectionType = CollisionDetectionType::Discrete;
-        Ref< physics::PhysicsMaterial > physicsMaterial = nullptr;
+        BodyType Type;
+        CollisionDetectionType CollisionDetection = CollisionDetectionType::Discrete;
+        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
 
-        float mass = 1.0f;
-        float linearDrag = 0.0f;
-        float angularDrag = 0.05f;
+        float Mass = 1.0f;
+        float LinearDrag = 0.0f;
+        float AngularDrag = 0.05f;
 
-        bool disableGravity = false;
-        bool kinematic = false;
+        bool DisableGravity = false;
+        bool IsKinematic = false;
 
-        bool lockPositionX = false;
-        bool lockPositionY = false;
-        bool lockPositionZ = false;
-        bool lockRotationX = false;
-        bool lockRotationY = false;
-        bool lockRotationZ = false;
+        bool LockPositionX = false;
+        bool LockPositionY = false;
+        bool LockPositionZ = false;
+        bool LockRotationX = false;
+        bool LockRotationY = false;
+        bool LockRotationZ = false;
     };
 
     struct BoxColliderComponent final
     {
         BoxColliderComponent()
         {
-            graphic::BufferLayout buffer_layout{ { graphic::ShaderDataType::Float3, "POSITION" } };
-            wireframeMesh = graphic::MeshFactory::createCube( buffer_layout );
-            wireframeMesh->create( buffer_layout );
+            Graphic::BufferLayout bufferLayout{ { Graphic::ShaderDataType::Float3, "POSITION" } };
+            pWireframeMesh = Graphic::MeshFactory::CreateCube( bufferLayout );
+            pWireframeMesh->Create( bufferLayout );
         }
 
         BoxColliderComponent( const BoxColliderComponent & ) = default;
 
-        DirectX::XMFLOAT3 size = { 1.0f, 1.0f, 1.0f };
-        DirectX::XMFLOAT3 offset = { 0.0f, 0.0f, 0.0f };
-        bool trigger = false;
-        bool showColliderBounds = true;
+        DirectX::XMFLOAT3 Size = { 1.0f, 1.0f, 1.0f };
+        DirectX::XMFLOAT3 Offset = { 0.0f, 0.0f, 0.0f };
+        bool IsTrigger = false;
+        bool ShowColliderBounds = true;
 
-        Ref< physics::PhysicsMaterial > physicsMaterial = nullptr;
-        Ref< graphic::StaticMeshFilter > wireframeMesh = nullptr;
+        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< Graphic::StaticMeshFilter > pWireframeMesh = nullptr;
     };
 
     struct SphereColliderComponent final
@@ -242,11 +242,11 @@ namespace smile::scene
         SphereColliderComponent() = default;
         SphereColliderComponent( const SphereColliderComponent & ) = default;
 
-        float radius = 0.5f;
-        bool trigger = false;
-        bool showColliderBounds = true;
+        float Radius = 0.5f;
+        bool IsTrigger = false;
+        bool ShowColliderBounds = true;
 
-        Ref< physics::PhysicsMaterial > physicsMaterial = nullptr;
+        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 
     struct CapsuleColliderComponent final
@@ -254,11 +254,11 @@ namespace smile::scene
         CapsuleColliderComponent() = default;
         CapsuleColliderComponent( const CapsuleColliderComponent & ) = default;
 
-        float radius = 0.5f;
-        float height = 1.0f;
-        bool trigger = false;
-        bool showColliderBounds = true;
+        float Radius = 0.5f;
+        float Height = 1.0f;
+        bool IsTrigger = false;
+        bool ShowColliderBounds = true;
 
-        Ref< physics::PhysicsMaterial > physicsMaterial = nullptr;
+        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 }

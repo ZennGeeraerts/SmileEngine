@@ -3,65 +3,65 @@
 #include "Event.h"
 #include "smile_engine/input/key_codes.h"
 
-namespace smile
+namespace Smile
 {
     class KeyEvent : public Event
     {
       public:
         virtual ~KeyEvent() = default;
 
-        inline input::KeyCode getKeyCode() const
+        inline Input::KeyCode GetKeyCode() const
         {
-            return keyCode;
+            return m_KeyCode;
         }
 
         EVENT_CLASS_CATEGORY( EventCategoryKeyboard | EventCategoryInput )
 
       protected:
-        KeyEvent( input::KeyCode key_code ) : keyCode{ key_code }
+        KeyEvent( Input::KeyCode key_code ) : m_KeyCode{ key_code }
         {
         }
 
-        input::KeyCode keyCode;
+        Input::KeyCode m_KeyCode;
     };
 
     class KeyPressedEvent final : public KeyEvent
     {
       public:
-        KeyPressedEvent( input::KeyCode key_code, Uint16 repeat_count )
-            : KeyEvent( key_code ), repeatCount{ repeat_count }
+        KeyPressedEvent( Input::KeyCode keyCode, Uint16 repeatCount )
+            : KeyEvent{ keyCode }, m_RepeatCount{ repeatCount }
         {
         }
 
         inline Uint16 getRepeatCount() const
         {
-            return repeatCount;
+            return m_RepeatCount;
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "KeyPressedEvent: " << keyCode << " (" << repeatCount << " repeats)";
+            ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
             return ss.str();
         }
 
         EVENT_CLASS_TYPE( KeyPressed );
 
       private:
-        Uint16 repeatCount;
+        Uint16 m_RepeatCount;
     };
 
     class KeyReleasedEvent final : public KeyEvent
     {
       public:
-        KeyReleasedEvent( input::KeyCode key_code ) : KeyEvent( key_code )
+        KeyReleasedEvent( Input::KeyCode keyCode ) : KeyEvent{ keyCode }
         {
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "KeyReleasedEvent: " << keyCode;
+            ss << "KeyReleasedEvent: " << m_KeyCode;
             return ss.str();
         }
 
@@ -71,14 +71,14 @@ namespace smile
     class KeyTypedEvent final : public KeyEvent
     {
       public:
-        KeyTypedEvent( input::KeyCode key_code ) : KeyEvent( key_code )
+        KeyTypedEvent( Input::KeyCode keyCode ) : KeyEvent{ keyCode }
         {
         }
 
-        std::string toString() const override
+        std::string ToString() const override
         {
             std::stringstream ss{};
-            ss << "KeyTypedEvent: " << keyCode;
+            ss << "KeyTypedEvent: " << m_KeyCode;
             return ss.str();
         }
 

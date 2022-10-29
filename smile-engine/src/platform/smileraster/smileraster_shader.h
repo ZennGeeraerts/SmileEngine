@@ -1,41 +1,41 @@
 #pragma once
 #include "smile_engine/graphic/shader/shader.h"
 
-namespace smile::graphic
+namespace Smile::graphic
 {
     class SmileRasterContext;
 
     class SmileRasterShader final : public Shader
     {
       public:
-        SmileRasterShader( const std::string &asset_file, const BufferLayout &layout );
+        SmileRasterShader( const std::string &assetFile, const BufferLayout &layout );
 
-        virtual void bind() const override;
-        virtual void unbind() const override;
+        virtual void Bind() const override;
+        virtual void Unbind() const override;
 
-        virtual const std::string &getName() const override
+        virtual const std::string &GetName() const override
         {
-            return name;
+            return m_Name;
         }
 
-        virtual const BufferLayout &getBufferLayout() const override
+        virtual const BufferLayout &GetBufferLayout() const override
         {
-            return bufferLayout;        
+            return m_BufferLayout;        
         }
 
-        virtual void uploadMat4( const std::string &sementic_name, const DirectX::XMFLOAT4X4 &matrix ) override;
-        virtual void uploadMat4Array( const std::string &sementic_name,
-            const std::vector< DirectX::XMFLOAT4X4 > &mat_array ) override;
-        virtual void uploadFloat2( const std::string &sementic_name, const DirectX::XMFLOAT2 &value ) override;
-        virtual void uploadFloat3( const std::string &sementic_name, const DirectX::XMFLOAT3 &value ) override;
-        virtual void uploadInt( const std::string &sementic_name, int value ) override;
-        virtual void uploadTexture2D( const std::string &sementic_name, const Ref< Texture2D > &texture_2d ) override;
-        virtual void uploadBool( const std::string &sementic_name, bool value ) override;
-        virtual void uploadFloat( const std::string &sementic_name, float value ) override;
+        virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) override;
+        virtual void UploadMat4Array( const std::string &sementicName,
+            const std::vector< DirectX::XMFLOAT4X4 > &matArray ) override;
+        virtual void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) override;
+        virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) override;
+        virtual void UploadInt( const std::string &sementicName, int value ) override;
+        virtual void UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D ) override;
+        virtual void UploadBool( const std::string &sementicName, bool value ) override;
+        virtual void UploadFloat( const std::string &sementicName, float value ) override;
 
       private:
-        SmileRasterContext *smileRasterContext = nullptr;
-        std::string name{};
-        BufferLayout bufferLayout{};
+        SmileRasterContext *m_pSmileRasterContext = nullptr;
+        std::string m_Name{};
+        BufferLayout m_BufferLayout{};
     };
 }

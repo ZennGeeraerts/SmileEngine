@@ -9,10 +9,10 @@
 #include "smile_engine/core/compiled/type_id.h"
 #include "smile_engine/core/timestep.h"
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     template < typename... Components >
-    constexpr ComponentList< Components... > get{};
+    constexpr ComponentList< Components... > g_Get{};
 
     class ECSEngine final
     {
@@ -23,15 +23,15 @@ namespace smile::ecs
           public:
             GatherComponents( ECSEngine &engine )
             {
-                fillComponentInterfaces< 0, Components... >( engine );
+                FillComponentInterfaces< 0, Components... >( engine );
             }
 
-            bool run( EntityHandleType entity_handle )
+            bool Run( EntityHandleType entityHandle )
             {
-                for ( Uint32 i{}; i < size; ++i )
+                for ( Uint32 i{}; i < s_Size; ++i )
                 {
-                    components[i] = componentInterfaces[i]->getRaw( entity_handle );
-                    if ( !components[i] )
+                    m_pComponents[i] = m_pComponentInterfaces[i]->GetRaw( entityHandle );
+                    if ( !m_pComponents[i] )
                         return false;
                 }
 
@@ -39,168 +39,168 @@ namespace smile::ecs
             }
 
             template < typename Component >
-            bool runComponent( Component &component )
+            bool RunComponent( Component &component )
             {
-                return run( *reinterpret_cast< const EntityHandleType * >( &component ) );
+                return Run( *reinterpret_cast< const EntityHandleType * >( &component ) );
             }
 
           private:
-            template < Uint32 Index, typename Component, typename... Components >
-            void fillComponentInterfaces( ECSEngine &engine )
+            template < Uint32 index, typename Component, typename... Components >
+            void FillComponentInterfaces( ECSEngine &engine )
             {
-                componentInterfaces[Index] = engine.getComponentInterface< Component >();
-                fillComponentInterfaces< Index + 1, Components... >( engine );
+                m_pComponentInterfaces[index] = engine.GetComponentInterface< Component >();
+                FillComponentInterfaces< index + 1, Components... >( engine );
             }
 
-            template < Uint32 Index >
-            void fillComponentInterfaces( ECSEngine & )
+            template < Uint32 index >
+            void FillComponentInterfaces( ECSEngine & )
             {
             }
 
           public:
-            static constexpr Uint32 size = sizeof...( Components );
-            ComponentInterface *componentInterfaces[size];
-            void *components[size];
+            static constexpr Uint32 s_Size = sizeof...( Components );
+            ComponentInterface *m_pComponentInterfaces[s_Size];
+            void *m_pComponents[s_Size];
         };
 
       public:
         ECSEngine() = default;
         virtual ~ECSEngine();
 
-        EntityHandleType createEntity()
+        EntityHandleType CreateEntity()
         {
-            return handleManager.createEntity();
+            return m_HandleManager.CreateEntity();
         }
 
-        void destroyEntity( EntityHandleType entity_handle )
+        void DestroyEntity( EntityHandleType entityHandle )
         {
-            handleManager.destroyEntity( entity_handle );
+            m_HandleManager.DestroyEntity( entityHandle );
 
-            for ( auto component_interface : components )
+            for ( auto pComponentInterface : m_pComponents )
             {
-                if ( hasComponent( component_interface, entity_handle ) )
-                    removeComponent( component_interface, entity_handle );
+                if ( HasComponent( pComponentInterface, entityHandle ) )
+                    RemoveComponent( pComponentInterface, entityHandle );
             }
         }
 
-        bool isEntityActive( EntityHandleType entity_handle ) const
+        bool IsEntityActive( EntityHandleType entityHandle ) const
         {
-            return handleManager.isEntityActive( entity_handle );
+            return m_HandleManager.IsEntityActive( entityHandle );
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &addComponent( EntityHandleType entity_handle, ConstructorArgs &&...constructor_args )
+        ComponentType &AddComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
         {
-            registerComponentIfNeeded< ComponentType >();
+            RegisterComponentIfNeeded< ComponentType >();
 
-            ComponentInterface *component_interface = getComponentInterface< ComponentType >();
-            ComponentStorage *component_storage = getComponentStorage< ComponentType >();
+            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+            ComponentStorage *pComponentStorage = GetComponentStorage< ComponentType >();
 
-            const IndexType index = component_interface->sparseSet.insert( entity_handle.index );
+            const IndexType index = pComponentInterface->m_Pool.Insert( entityHandle.Index );
 
-            SM_ASSERT( index == component_storage->getSize(), "ECSEngine::addComponent > Failed to add component" );
+            SM_ASSERT( index == pComponentStorage->GetSize(), "ECSEngine::AddComponent > Failed to add component" );
 
-            ComponentType &component = component_storage->append< ComponentType >(
-                entity_handle.index, std::forward< ConstructorArgs >( constructor_args )... );
+            ComponentType &component = pComponentStorage->Append< ComponentType >(
+                entityHandle.Index, std::forward< ConstructorArgs >( constructorArgs )... );
 
-            for ( auto &group : groups )
+            for ( auto &group : m_Groups )
             {
-                if ( group.hasComponent( component_interface ) )
-                    group.addEntity( entity_handle.index );
+                if ( group.HasComponent( pComponentInterface ) )
+                    group.AddEntity( entityHandle.Index );
             }
 
             return component;
         }
 
         template< typename ComponentType, typename... ConstructorArgs >
-        ComponentType& addOrReplaceComponent(EntityHandleType entity_handle, ConstructorArgs&&... constructor_args)
+        ComponentType& AddOrReplaceComponent(EntityHandleType entityHandle, ConstructorArgs&&... constructorArgs)
         {
-            ComponentInterface *component_interface = getComponentInterface< ComponentType >();
-            if ( component_interface && component_interface->sparseSet.contains( entity_handle.index ) )
-                removeComponent< ComponentType >( entity_handle );
+            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+            if ( pComponentInterface && pComponentInterface->m_Pool.Contains( entityHandle.Index ) )
+                RemoveComponent< ComponentType >( entityHandle );
 
-            return addComponent< ComponentType >( entity_handle, std::forward< ConstructorArgs >( constructor_args )... );
+            return AddComponent< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
         }
 
         template < typename ComponentType >
-        void removeComponent( EntityHandleType entity_handle )
+        void RemoveComponent( EntityHandleType entityHandle )
         {
-            ComponentInterface *component_interface = getComponentInterface< ComponentType >();
-            removeComponent( component_interface, entity_handle );
+            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+            RemoveComponent( pComponentInterface, entityHandle );
         }
 
-        void removeComponent( ComponentInterface *component_interface, EntityHandleType entity_handle );
+        void RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle );
 
         template < typename ComponentType >
-        ComponentType &getComponent( EntityHandleType entity_handle )
+        ComponentType &GetComponent( EntityHandleType entityHandle )
         {
-            auto it = componentMap.find( typeIDOf< ComponentType >() );
+            auto it = m_ComponentMap.find( TypeIDOf< ComponentType >() );
 
-            SM_ASSERT( it != componentMap.end(), "ECSEngine::getComponent > Component is missing" );
+            SM_ASSERT( it != m_ComponentMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
-            return it->second->get< ComponentType >( entity_handle );
+            return it->second->Get< ComponentType >( entityHandle );
         }
 
         template < typename ComponentType >
-        const ComponentType &getComponent( EntityHandleType entity_handle ) const
+        const ComponentType &GetComponent( EntityHandleType entityHandle ) const
         {
-            auto it = componentMap.find( typeIDOf< ComponentType >() );
+            auto it = m_ComponentMap.find( TypeIDOf< ComponentType >() );
 
-            SM_ASSERT( it != componentMap.end(), "ECSEngine::getComponent > Component is missing" );
+            SM_ASSERT( it != m_ComponentMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
-            return it->second->get< ComponentType >( entity_handle );
+            return it->second->Get< ComponentType >( entityHandle );
         }
 
         template < typename... Components >
-        std::tuple< Components &... > getComponents( EntityHandleType entity_handle )
+        std::tuple< Components &... > GetComponents( EntityHandleType entityHandle )
         {
-            return std::tie( getComponent< Components >( entity_handle )... );
+            return std::tie( GetComponent< Components >( entityHandle )... );
         }
 
         template < typename... Components >
-        std::tuple< const Components &... > getComponents( EntityHandleType entity_handle ) const
+        std::tuple< const Components &... > GetComponents( EntityHandleType entityHandle ) const
         {
-            return std::tie( getComponent< Components >( entity_handle )... );
+            return std::tie( GetComponent< Components >( entityHandle )... );
         }
 
         template < typename Component >
-        bool hasComponent( EntityHandleType entity_handle ) const
+        bool HasComponent( EntityHandleType entityHandle ) const
         {
-            const ComponentInterface *component_interface = getComponentInterface< Component >();
-            return component_interface ? component_interface->sparseSet.contains( entity_handle.index ) : false;
+            const ComponentInterface *pComponentInterface = GetComponentInterface< Component >();
+            return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.Index ) : false;
         }
 
-        bool hasComponent( ComponentInterface *component_interface, EntityHandleType entity_handle ) const
+        bool HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
         {
-            return component_interface ? component_interface->sparseSet.contains( entity_handle.index ) : false;
+            return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.Index ) : false;
         }
 
         template < typename... Components >
-        View view()
+        View GetView()
         {
-            const std::vector< ComponentInterface * > components{ getComponentInterface< Components >()... };
+            const std::vector< ComponentInterface * > pComponents{ GetComponentInterface< Components >()... };
 
-            for (auto component : components)
+            for (auto pComponent : pComponents)
             {
-                if ( !component )
-                    return View{ handleManager, {} };
+                if ( !pComponent )
+                    return View{ m_HandleManager, {} };
             }
 
-            return View{ handleManager, components };
+            return View{ m_HandleManager, pComponents };
         }
 
         template < typename... Components, typename... Get >
-        const Group &group( ComponentList< Get... > get = {} )
+        const Group &GetGroup( ComponentList< Get... > get = {} )
         {
-            std::vector< ComponentInterface * > owned_components{ getComponentInterface< Components >()... };
-            std::vector< ComponentInterface * > get_components{ getComponentInterface< Get >()... };
+            std::vector< ComponentInterface * > pOwnedComponents{ GetComponentInterface< Components >()... };
+            std::vector< ComponentInterface * > pGetComponents{ GetComponentInterface< Get >()... };
             
-            auto it = std::find_if( groups.begin(),
-                groups.end(),
-                [owned_components, get_components]( const Group &group )
+            auto it = std::find_if( m_Groups.begin(),
+                m_Groups.end(),
+                [pOwnedComponents, pGetComponents]( const Group &group )
                 {
-                    const auto &group_owned = group.getOwnedComponents();
-                    const auto &group_get = group.getGetComponents();
+                    const auto &groupOwned = group.GetOwnedComponents();
+                    const auto &groupGet = group.GetGetComponents();
 
                     //for ( auto component : owned_components )
                     //{
@@ -208,68 +208,68 @@ namespace smile::ecs
                     //    SM_ASSERT( it == group_owned.end(), "ECSEngine::group > Component already owned by a group" );
                     //}
 
-                    return owned_components.size() == group_owned.size() && get_components.size() == group_get.size() &&
-                           std::equal( owned_components.begin(), owned_components.end(), group_owned.begin() ) &&
-                           std::equal( get_components.begin(), get_components.end(), group_get.begin() );
+                    return pOwnedComponents.size() == groupOwned.size() && pGetComponents.size() == groupGet.size() &&
+                           std::equal( pOwnedComponents.begin(), pOwnedComponents.end(), groupOwned.begin() ) &&
+                           std::equal( pGetComponents.begin(), pGetComponents.end(), groupGet.begin() );
                 } );
 
-            if ( it != groups.end() )
+            if ( it != m_Groups.end() )
                 return *it;
 
-            Group group{ handleManager, owned_components, get_components };
-            groups.push_back( group );
-            return groups.back();
+            Group group{ m_HandleManager, pOwnedComponents, pGetComponents };
+            m_Groups.push_back( group );
+            return m_Groups.back();
         }
 
-        template < typename System, typename... Args >
-        System *registerSystem( Args &&...args )
-        {
-            System *result = new System{ std::forward< Args >( args )... };
+        //template < typename System, typename... Args >
+        //System *RegisterSystem( Args &&...args )
+        //{
+        //    System *pResult = new System{ std::forward< Args >( args )... };
 
-            if constexpr ( hasComponents< System > )
-                registerComponentHelper< System >( result );
+        //    if constexpr ( hasComponents< System > )
+        //        registerComponentHelper< System >( pResult );
 
-            if constexpr ( hasECSUpdate< ECSEngine, System, Timestep > )
-                registerECSUpdate< System >( result );
+        //    if constexpr ( hasECSUpdate< ECSEngine, System, Timestep > )
+        //        registerECSUpdate< System >( pResult );
 
-            destructorHandlers.emplace_back( [=]() { delete result; } );
+        //    destructorHandlers.emplace_back( [=]() { delete pResult; } );
 
-            return result;
-        }
+        //    return pResult;
+        //}
 
         template < typename FunctionType >
-        void each( FunctionType function )
+        void Each( FunctionType function )
         {
-            for ( const auto handle : handleManager )
+            for ( const auto handle : m_HandleManager )
                 std::apply( function, std::make_tuple( handle ) );
         }
 
-        void onUpdate( Timestep delta_time );
-        void clear();
+        //void onUpdate( Timestep delta_time );
+        void Clear();
 
       private:
         template < typename ComponentType >
-        void registerComponent( bool relational = false )
+        void RegisterComponent( bool isRelational = false )
         {
-            ComponentInterface *component_interface = new ComponentInterface{};
-            component_interface->relational = relational;
-            component_interface->componentStorage = new ComponentStorageHandler< ComponentType >( relational );
+            ComponentInterface *pComponentInterface = new ComponentInterface{};
+            pComponentInterface->m_IsRelational = isRelational;
+            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( isRelational );
 
-            components.push_back( component_interface );
+            m_pComponents.push_back( pComponentInterface );
 
-            auto type_id = typeIDOf< ComponentType >();
-            componentMap[type_id] = component_interface;
+            auto typeID = TypeIDOf< ComponentType >();
+            m_ComponentMap[typeID] = pComponentInterface;
         }
 
         template < typename ComponentType >
-        void registerComponentIfNeeded( bool relational = false )
+        void RegisterComponentIfNeeded( bool isRelational = false )
         {
-            auto type_id = typeIDOf< ComponentType >();
-            if ( componentMap.find( type_id ) == componentMap.end() )
-                registerComponent< ComponentType >( relational );
+            auto typeID = TypeIDOf< ComponentType >();
+            if ( m_ComponentMap.find( typeID ) == m_ComponentMap.end() )
+                RegisterComponent< ComponentType >( isRelational );
         }
 
-        template < typename System >
+        /*template < typename System >
         void registerComponentHelper( System* system )
         {
             if constexpr ( hasECSComponentUpdate< ECSEngine, System, System::components, Timestep > )
@@ -295,7 +295,7 @@ namespace smile::ecs
                     GatherComponents< 0, Components... > gather{ *this };
                     for ( auto &component : *component_storage )
                     {
-                        if ( gather.runComponent( component ) )
+                        if ( gather.RunComponent( component ) )
                             system->onUpdate( *this, component, gather.template get< Components >()..., delta_time );
                     }
                 } );
@@ -311,7 +311,7 @@ namespace smile::ecs
                     GatherComponents< 0, Components... > gather{ *this };
                     for ( auto &component : *component_storage )
                     {
-                        if ( gather.runComponent( component ) )
+                        if ( gather.RunComponent( component ) )
                             system->onUpdate( component, gather.template get< Components >()..., delta_time );
                     }
                 } );
@@ -335,7 +335,7 @@ namespace smile::ecs
 
             SM_ASSERT( component_interface, "ECSEngine::registerDestroy > Unregistered component!" );
 
-            component_interface->destroy.push_back(
+            component_interface->m_Destroy.push_back(
                 [=]( void *data ) { system->onDestroy( *reinterpret_cast< Component * >( data ) ); } );
         }
 
@@ -346,51 +346,51 @@ namespace smile::ecs
 
             SM_ASSERT( component_interface, "ECSEngine::registerDestroy > Unregistered component!" );
 
-            component_interface->create.push_back( [=]( Handle entity_handle, void *data )
+            component_interface->m_Create.push_back( [=]( Handle entity_handle, void *data )
                 { system->onCreate( entity_handle, *reinterpret_cast< Component * >( data ) ); } );
+        }*/
+
+        template < typename ComponentType >
+        ComponentInterface *GetComponentInterface()
+        {
+            auto typeID = TypeIDOf< ComponentType >();
+            return m_ComponentMap.find( typeID ) != m_ComponentMap.end() ? m_ComponentMap[typeID] : nullptr;
         }
 
         template < typename ComponentType >
-        ComponentInterface *getComponentInterface()
+        const ComponentInterface *GetComponentInterface() const
         {
-            auto type_id = typeIDOf< ComponentType >();
-            return componentMap.find( type_id ) != componentMap.end() ? componentMap[type_id] : nullptr;
+            auto typeID = TypeIDOf< ComponentType >();
+            return m_ComponentMap.find( typeID ) != m_ComponentMap.end() ? m_ComponentMap.at( typeID ) : nullptr;
         }
 
         template < typename ComponentType >
-        const ComponentInterface *getComponentInterface() const
+        ComponentStorageHandler< ComponentType > *GetComponentStorage()
         {
-            auto type_id = typeIDOf< ComponentType >();
-            return componentMap.find( type_id ) != componentMap.end() ? componentMap.at( type_id ) : nullptr;
+            auto typeID = TypeIDOf< ComponentType >();
+            auto pComponentInterface = m_ComponentMap[typeID];
+
+            return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
         }
 
         template < typename ComponentType >
-        ComponentStorageHandler< ComponentType > *getComponentStorage()
+        const ComponentStorageHandler< ComponentType > *GetComponentStorage() const
         {
-            auto type_id = typeIDOf< ComponentType >();
-            auto component_interface = componentMap[type_id];
+            auto typeID = TypeIDOf< ComponentType >();
+            auto pComponentInterface = m_ComponentMap[typeID];
 
-            return componentStorageCast< ComponentType >( component_interface->componentStorage );
+            return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
         }
 
-        template < typename ComponentType >
-        const ComponentStorageHandler< ComponentType > *getComponentStorage() const
-        {
-            auto type_id = typeIDOf< ComponentType >();
-            auto component_interface = componentMap[type_id];
-
-            return componentStorageCast< ComponentType >( component_interface->componentStorage );
-        }
-
-        void callDestructors( ComponentInterface *component_interface, void *data );
+        void CallDestructors( ComponentInterface *pComponentInterface, void *pData );
 
       private:
-        EntityHandleManager handleManager{};
-        std::vector< ComponentInterface * > components{};
-        std::unordered_map< compiled::TypeID, ComponentInterface * > componentMap{};
-        std::vector< Group > groups{};
+        EntityHandleManager m_HandleManager{};
+        std::vector< ComponentInterface * > m_pComponents{};
+        std::unordered_map< Compiled::TypeID, ComponentInterface * > m_ComponentMap{};
+        std::vector< Group > m_Groups{};
 
-        std::vector< std::function< void( Timestep ) > > updateHandlers{};
-        std::vector< std::function< void() > > destructorHandlers{};
+        /*std::vector< std::function< void( Timestep ) > > updateHandlers{};
+        std::vector< std::function< void() > > destructorHandlers{};*/
     };
 }

@@ -3,44 +3,44 @@
 #include "smile_engine/graphic/resource/index_buffer.h"
 #include "smileraster_context.h"
 
-namespace smile::graphic
+namespace Smile::graphic
 {
     class SmileRasterVertexBuffer final : public VertexBuffer
     {
       public:
-        SmileRasterVertexBuffer( const VertexBufferDescriptor &vertex_buffer_descriptor );
+        SmileRasterVertexBuffer( const VertexBufferDescriptor &vertexBufferDescriptor );
         virtual ~SmileRasterVertexBuffer() = default;
 
-        virtual void bind() const override;
-        virtual void unbind() const override;
+        virtual void Bind() const override;
+        virtual void Unbind() const override;
 
-        virtual Uint32 getStride() const
+        virtual Uint32 GetStride() const
         {
-            return stride;
+            return m_Stride;
         }
 
       private:
-        SmileRasterContext *smileRasterContext = nullptr;
-        Raster::BufferID vertexBuffer = SMR_INVALID_BUFFER_ID;
-        Uint32 stride;
+        SmileRasterContext *m_pSmileRasterContext = nullptr;
+        Raster::BufferID m_VertexBuffer = SMR_INVALID_BUFFER_ID;
+        Uint32 m_Stride;
     };
 
     class SmileRasterIndexBuffer final : public IndexBuffer
     {
       public:
-        SmileRasterIndexBuffer( const IndexBufferDescriptor &index_buffer_descriptor );
+        SmileRasterIndexBuffer( const IndexBufferDescriptor &indexBufferDescriptor );
         virtual ~SmileRasterIndexBuffer() = default;
 
-        virtual void bind() const override;
-        virtual void unbind() const override;
-        virtual Uint32 getCount() const override
+        virtual void Bind() const override;
+        virtual void Unbind() const override;
+        virtual Uint32 GetCount() const override
         {
-            return count;
+            return m_Count;
         }
 
       private:
-        SmileRasterContext *smileRasterContext = nullptr;
-        Raster::BufferID indexBuffer = SMR_INVALID_BUFFER_ID;
-        Uint32 count;
+        SmileRasterContext *m_pSmileRasterContext = nullptr;
+        Raster::BufferID m_IndexBuffer = SMR_INVALID_BUFFER_ID;
+        Uint32 m_Count;
     };
 }

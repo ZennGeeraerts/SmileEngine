@@ -1,116 +1,117 @@
 #include "smpch.h"
 #include "skinned_mesh_filter.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     SkinnedMeshFilter::~SkinnedMeshFilter()
     {
-        positions.clear();
-        normals.clear();
-        tangents.clear();
-        binormals.clear();
-        texCoords.clear();
-        indices.clear();
-        colors.clear();
-        blendIndices.clear();
-        blendWeights.clear();
-        skeletonMap.clear();
+        m_Positions.clear();
+        m_Normals.clear();
+        m_Tangents.clear();
+        m_Binormals.clear();
+        m_TexCoords.clear();
+        m_Indices.clear();
+        m_Colors.clear();
+        m_BlendIndices.clear();
+        m_BlendWeights.clear();
+        m_SkeletonMap.clear();
     }
 
-    void SkinnedMeshFilter::create( const BufferLayout &layout )
+    void SkinnedMeshFilter::Create( const BufferLayout &layout )
     {
-        dataLocation = malloc( layout.getStride() * vertexCount );
-        if ( !dataLocation )
+        m_pDataLocation =
+            malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( m_VertexCount ) );
+        if ( !m_pDataLocation )
         {
-            SM_LOG_ERROR( "SkinnedMeshFilter::create > Failed to allocate memory for the vertex buffer" );
+            SM_LOG_ERROR( "SkinnedMeshFilter::Create > Failed to allocate memory for the vertex buffer" );
             return;
         }
 
-        VertexBufferDescriptor vertex_buffer_data{};
-        vertex_buffer_data.vertices = dataLocation;
-        vertex_buffer_data.count = vertexCount;
-        vertex_buffer_data.usage = BufferUsage::Immutable;
-        vertex_buffer_data.stride = layout.getStride();
+        VertexBufferDescriptor vertexBufferDesc{};
+        vertexBufferDesc.pVertices = m_pDataLocation;
+        vertexBufferDesc.Count = m_VertexCount;
+        vertexBufferDesc.Usage = BufferUsage::Immutable;
+        vertexBufferDesc.Stride = layout.GetStride();
 
-        for ( Uint32 i{}; i < vertexCount; ++i )
+        for ( Uint32 i{}; i < m_VertexCount; ++i )
         {
             for ( const BufferElement &element : layout )
             {
-                if ( element.name == "POSITION" )
-                    memcpy( dataLocation, usePositions ? &positions[i] : &defaultFloat3, element.size );
-                else if ( element.name == "NORMAL" )
-                    memcpy( dataLocation, useNormals ? &normals[i] : &defaultFloat3, element.size );
-                else if ( element.name == "TEXCOORD" )
-                    memcpy( dataLocation, useTexCoords ? &texCoords[i] : &defaultFloat2, element.size );
-                else if ( element.name == "TANGENT" )
-                    memcpy( dataLocation, useTangents ? &tangents[i] : &defaultFloat3, element.size );
-                else if ( element.name == "BINORMAL" )
-                    memcpy( dataLocation, useBinormals ? &binormals[i] : &defaultFloat3, element.size );
-                else if ( element.name == "COLOR" )
-                    memcpy( dataLocation, useColors ? &colors[i] : &defaultFloat4, element.size );
-                else if ( element.name == "BLENDINDICES" )
+                if ( element.Name == "POSITION" )
+                    memcpy( m_pDataLocation, m_UsePositions ? &m_Positions[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "NORMAL" )
+                    memcpy( m_pDataLocation, m_UseNormals ? &m_Normals[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "TEXCOORD" )
+                    memcpy( m_pDataLocation, m_UseTexCoords ? &m_TexCoords[i] : &s_DefaultFloat2, element.Size );
+                else if ( element.Name == "TANGENT" )
+                    memcpy( m_pDataLocation, m_UseTangents ? &m_Tangents[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "BINORMAL" )
+                    memcpy( m_pDataLocation, m_UseBinormals ? &m_Binormals[i] : &s_DefaultFloat3, element.Size );
+                else if ( element.Name == "COLOR" )
+                    memcpy( m_pDataLocation, m_UseColors ? &m_Colors[i] : &s_DefaultFloat4, element.Size );
+                else if ( element.Name == "BLENDINDICES" )
                     memcpy(
-                        dataLocation, useBlendIndices ? &blendIndices[i] : &defaultIndices4, element.size );
-                else if ( element.name == "BLENDWEIGHTS" )
-                    memcpy( dataLocation, useBlendWeights ? &blendWeights[i] : &defaultFloat4, element.size );
+                        m_pDataLocation, m_UseBlendIndices ? &m_BlendIndices[i] : &s_DefaultIndices4, element.Size );
+                else if ( element.Name == "BLENDWEIGHTS" )
+                    memcpy( m_pDataLocation, m_UseBlendWeights ? &m_BlendWeights[i] : &s_DefaultFloat4, element.Size );
 
-                dataLocation = ( char * )dataLocation + element.size;
+                m_pDataLocation = ( Byte * )m_pDataLocation + element.Size;
             }
         }
 
-        IndexBufferDescriptor index_buffer_data{};
-        index_buffer_data.indices = indices.data();
-        index_buffer_data.count = static_cast< Uint32 >( indices.size() );
-        index_buffer_data.usage = BufferUsage::Immutable;
+        IndexBufferDescriptor indexBufferDesc{};
+        indexBufferDesc.pIndices = m_Indices.data();
+        indexBufferDesc.Count = static_cast< Uint32 >( m_Indices.size() );
+        indexBufferDesc.Usage = BufferUsage::Immutable;
 
-        vertexBuffer.reset( VertexBuffer::create( vertex_buffer_data ) );
-        indexBuffer.reset( IndexBuffer::create( index_buffer_data ) );
+        m_pVertexBuffer.reset( VertexBuffer::Create( vertexBufferDesc ) );
+        m_pIndexBuffer.reset( IndexBuffer::Create( indexBufferDesc ) );
     }
 
-    void SkinnedMeshFilter::addPosition( const DirectX::XMFLOAT3 &position )
+    void SkinnedMeshFilter::AddPosition( const DirectX::XMFLOAT3 &position )
     {
-        usePositions = true;
-        positions.push_back( position );
+        m_UsePositions = true;
+        m_Positions.push_back( position );
     }
 
-    void SkinnedMeshFilter::addNormal( const DirectX::XMFLOAT3 &normal )
+    void SkinnedMeshFilter::AddNormal( const DirectX::XMFLOAT3 &normal )
     {
-        useNormals = true;
-        normals.push_back( normal );
+        m_UseNormals = true;
+        m_Normals.push_back( normal );
     }
 
-    void SkinnedMeshFilter::addTangent( const DirectX::XMFLOAT3 &tangent )
+    void SkinnedMeshFilter::AddTangent( const DirectX::XMFLOAT3 &tangent )
     {
-        useTangents = true;
-        tangents.push_back( tangent );
+        m_UseTangents = true;
+        m_Tangents.push_back( tangent );
     }
 
-    void SkinnedMeshFilter::addBinormal( const DirectX::XMFLOAT3 &binormal )
+    void SkinnedMeshFilter::AddBinormal( const DirectX::XMFLOAT3 &binormal )
     {
-        useBinormals = true;
-        binormals.push_back( binormal );
+        m_UseBinormals = true;
+        m_Binormals.push_back( binormal );
     }
 
-    void SkinnedMeshFilter::addTexCoord( const DirectX::XMFLOAT2 &tex_coord )
+    void SkinnedMeshFilter::AddTexCoord( const DirectX::XMFLOAT2 &tex_coord )
     {
-        useTexCoords = true;
-        texCoords.push_back( tex_coord );
+        m_UseTexCoords = true;
+        m_TexCoords.push_back( tex_coord );
     }
 
-    void SkinnedMeshFilter::addColor( const DirectX::XMFLOAT4 &color )
+    void SkinnedMeshFilter::AddColor( const DirectX::XMFLOAT4 &color )
     {
-        useColors = true;
-        colors.push_back( color );
+        m_UseColors = true;
+        m_Colors.push_back( color );
     }
 
-    void SkinnedMeshFilter::setIndexCount( Uint32 index_count )
+    void SkinnedMeshFilter::SetIndexCount( Uint32 indexCount )
     {
-        indices.resize( index_count );
+        m_Indices.resize( indexCount );
     }
 
-    void SkinnedMeshFilter::addIndex( Uint32 buffer_position, Uint32 index )
+    void SkinnedMeshFilter::AddIndex( Uint32 bufferPosition, Uint32 index )
     {
-        SM_ASSERT( buffer_position < indices.size(), "SkinnedMeshFilter::addIndex > Invalid buffer position" );
-        indices[buffer_position] = index;
+        SM_ASSERT( bufferPosition < m_Indices.size(), "SkinnedMeshFilter::AddIndex > Invalid buffer position" );
+        m_Indices[bufferPosition] = index;
     }
 }

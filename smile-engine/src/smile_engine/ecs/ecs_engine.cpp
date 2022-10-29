@@ -1,14 +1,14 @@
 #include "smpch.h"
 #include "ecs_engine.h"
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     ECSEngine::~ECSEngine()
     {
-        for ( auto component_interface : components )
-            delete component_interface;
+        for ( auto pComponentInterface : m_pComponents )
+            delete pComponentInterface;
 
-        if ( !destructorHandlers.empty() )
+       /* if ( !destructorHandlers.empty() )
         {
             for ( Uint32 i{ static_cast< Uint32 >( destructorHandlers.size() ) - 1 }; i > 0; --i )
                 destructorHandlers[i]();
@@ -16,57 +16,57 @@ namespace smile::ecs
             destructorHandlers.clear();
         }
 
-        updateHandlers.clear();
+        updateHandlers.clear();*/
     }
 
-    void ECSEngine::removeComponent( ComponentInterface *component_interface, EntityHandleType entity_handle )
+    void ECSEngine::RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle )
     {
-        void *component_data = component_interface->getRaw( entity_handle );
+        void *pComponentData = pComponentInterface->GetRaw( entityHandle );
 
-        if ( component_data == nullptr )
+        if ( pComponentData == nullptr )
             return;
 
-        callDestructors( component_interface, component_data );
+        CallDestructors( pComponentInterface, pComponentData );
 
-        for ( auto &group : groups )
+        for ( auto &group : m_Groups )
         {
-            if ( group.hasComponent( component_interface ) )
-                group.remove( entity_handle.index );
+            if ( group.HasComponent( pComponentInterface ) )
+                group.RemoveEntity( entityHandle.Index );
         }
 
-        const IndexType dead_index = component_interface->sparseSet.erase( entity_handle.index );
-        component_interface->componentStorage->removeSwap( dead_index );
+        const IndexType deadIndex = pComponentInterface->m_Pool.Erase( entityHandle.Index );
+        pComponentInterface->m_pComponentStorage->RemoveSwap( deadIndex );
 
         // if ( component_interface->relational )
         // relational_rebuild( ci, dead_eindex );
     }
 
-    void ECSEngine::callDestructors( ComponentInterface *component_interface, void *data )
+    void ECSEngine::CallDestructors( ComponentInterface *component_interface, void *data )
     {
-        for ( auto destructor : component_interface->destroy )
+        for ( auto destructor : component_interface->m_Destroy )
             destructor( data );
     }
 
-    void ECSEngine::onUpdate( Timestep delta_time )
-    {
-        for ( auto update_handler : updateHandlers )
-        {
-            update_handler( delta_time );
-        }
-    }
+    //void ECSEngine::onUpdate( Timestep delta_time )
+    //{
+    //    for ( auto update_handler : updateHandlers )
+    //    {
+    //        update_handler( delta_time );
+    //    }
+    //}
 
-    void ECSEngine::clear()
+    void ECSEngine::Clear()
     {
-        for ( auto component_interface : components )
+        for ( auto pComponentInterface : m_pComponents )
         {
-            for ( Uint32 i{}; i < component_interface->componentStorage->getSize(); ++i )
+            for ( Uint32 i{}; i < pComponentInterface->m_pComponentStorage->GetSize(); ++i )
             {
-                callDestructors( component_interface, component_interface->componentStorage->getRaw( i ) );
+                CallDestructors( pComponentInterface, pComponentInterface->m_pComponentStorage->GetRaw( i ) );
             }
             
-            component_interface->clear();
+            pComponentInterface->Clear();
         }
 
-        groups.clear();
+        m_Groups.clear();
     }
 }

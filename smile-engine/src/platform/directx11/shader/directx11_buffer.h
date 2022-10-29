@@ -3,7 +3,7 @@
 
 #include <d3d11.h>
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    D3D11_USAGE bufferUsageToDirectXType( BufferUsage buffer_usage );
+    D3D11_USAGE BufferUsageToDirectXType( BufferUsage bufferUsage );
 }

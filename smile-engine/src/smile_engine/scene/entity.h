@@ -5,97 +5,96 @@
 #include "components.h"
 
 #include "smile_engine/ecs/ecs_engine.h"
-//#include <thirdparty/entt/entt.hpp>
 
-namespace smile::scene
+namespace Smile::Scene
 {
     class Entity final
     {
       public:
         Entity() = default;
 
-        Entity( ecs::EntityHandleType handle, Scene *scene ) : entityHandle{ handle }, scene{ scene }
+        Entity( ECS::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
         {
         }
 
         Entity( const Entity & ) = default;
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &addComponent( ConstructorArgs &&...constructor_args )
+        ComponentType &AddComponent( ConstructorArgs &&...constructor_args )
         {
-            SM_ASSERT( !hasComponent< ComponentType >(), "Entity::addComponent > Entity already has component" );
+            SM_ASSERT( !HasComponent< ComponentType >(), "Entity::AddComponent > Entity already has component" );
 
-            // forward the constructor arguments to entt
-            ComponentType &component = scene->ecsEngine.addComponent< ComponentType >(
-                entityHandle, std::forward< ConstructorArgs >( constructor_args )... );
-            scene->onComponentAdded< ComponentType >( *this, component );
+            // forward the constructor arguments
+            ComponentType &component = m_pScene->m_ECSEngine.AddComponent< ComponentType >(
+                m_EntityHandle, std::forward< ConstructorArgs >( constructor_args )... );
+            m_pScene->OnComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &addOrReplaceComponent( ConstructorArgs &&...constructor_args )
+        ComponentType &AddOrReplaceComponent( ConstructorArgs &&...constructorArgs )
         {
-            // forward the constructor arguments to entt
-            ComponentType &component = scene->ecsEngine.addOrReplaceComponent< ComponentType >(
-                entityHandle, std::forward< ConstructorArgs >( constructor_args )... );
-            scene->onComponentAdded< ComponentType >( *this, component );
+            // forward the constructor arguments
+            ComponentType &component = m_pScene->m_ECSEngine.AddOrReplaceComponent< ComponentType >(
+                m_EntityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
+            m_pScene->OnComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
         template < typename ComponentType >
-        void removeComponent()
+        void RemoveComponent()
         {
-            scene->ecsEngine.removeComponent< ComponentType >( entityHandle );
+            m_pScene->m_ECSEngine.RemoveComponent< ComponentType >( m_EntityHandle );
         }
 
         template < typename ComponentType >
-        ComponentType &getComponent() const
+        ComponentType &GetComponent() const
         {
-            SM_ASSERT( hasComponent< ComponentType >(), "Entity::getComponent > Entity does not have component" );
+            SM_ASSERT( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
 
-            return scene->ecsEngine.getComponent< ComponentType >( entityHandle );
+            return m_pScene->m_ECSEngine.GetComponent< ComponentType >( m_EntityHandle );
         }
 
-        UUID getUUID() const
+        UUID GetUUID() const
         {
-            return getComponent< IDComponent >().id;
+            return GetComponent< IDComponent >().ID;
         }
-        const std::string &getName() const
+        const std::string &GetName() const
         {
-            return getComponent< TagComponent >().tag;
+            return GetComponent< TagComponent >().Tag;
         }
-        DirectX::XMFLOAT4X4 getTransform() const
+        DirectX::XMFLOAT4X4 GetTransform() const
         {
-            return getComponent< TransformComponent >().getTransform();
+            return GetComponent< TransformComponent >().getTransform();
         }
 
         template < typename ComponentType >
-        bool hasComponent() const
+        bool HasComponent() const
         {
-            return scene->ecsEngine.hasComponent< ComponentType >( entityHandle );
+            return m_pScene->m_ECSEngine.HasComponent< ComponentType >( m_EntityHandle );
         }
 
         // Check to see if entity is valid
         operator bool() const
         {
-            return entityHandle != ecs::nullHandle< Uint32 >;
+            return m_EntityHandle != ECS::g_NullHandle< Uint32 >;
         }
-        operator ecs::EntityHandleType() const
+        operator ECS::EntityHandleType() const
         {
-            return entityHandle;
+            return m_EntityHandle;
         }
         operator Uint32() const
         {
-            return static_cast< Uint32 >( entityHandle.hash() );
+            return static_cast< Uint32 >( m_EntityHandle.Hash() );
         }
         operator Uint64() const
         {
-            return entityHandle.hash();
+            return m_EntityHandle.Hash();
         }
 
         bool operator==( Entity other ) const
         {
-            return ( entityHandle == other.entityHandle ) && ( scene == other.scene );
+            return ( m_EntityHandle == other.m_EntityHandle ) && ( m_pScene == other.m_pScene );
         }
         bool operator!=( Entity other ) const
         {
@@ -103,8 +102,7 @@ namespace smile::scene
         }
 
       private:
-        //entt::entity entityHandle = entt::null;
-        ecs::EntityHandleType entityHandle = ecs::nullHandle< Uint32 >;
-        Scene *scene = nullptr;
+        ECS::EntityHandleType m_EntityHandle = ECS::g_NullHandle< Uint32 >;
+        Scene *m_pScene = nullptr;
     };
 }

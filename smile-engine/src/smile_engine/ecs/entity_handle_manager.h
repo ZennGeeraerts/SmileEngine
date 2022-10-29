@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace smile::ecs
+namespace Smile::ECS
 {
     class EntityHandleManager final
     {
@@ -13,74 +13,74 @@ namespace smile::ecs
         {
             Iterator( const std::vector< EntityHandleType > &entities,
                 std::vector< EntityHandleType >::const_iterator it )
-                : entities{ entities }, it{ it }
+                : Entities{ entities }, It{ it }
             {
             }
 
             EntityHandleType operator*() const
             {
-                return *it;
+                return *It;
             }
             bool operator==( const Iterator &other ) const
             {
-                return it == other.it;
+                return It == other.It;
             }
             bool operator!=( const Iterator &other ) const
             {
-                return it != other.it;
+                return It != other.It;
             }
 
             Iterator &operator++()
             {
                 do
                 {
-                    ++it;
+                    ++It;
                 } while (
-                    it != entities.end() && ( it->index > entities.size() || entities[it->index].index != it->index ) );
+                    It != Entities.end() && ( It->Index > Entities.size() || Entities[It->Index].Index != It->Index ) );
 
                 return *this;
             }
 
-            const std::vector< EntityHandleType > &entities;
-            std::vector< EntityHandleType >::const_iterator it;
+            const std::vector< EntityHandleType > &Entities;
+            std::vector< EntityHandleType >::const_iterator It;
         };
 
       public:
         EntityHandleManager() = default;
 
-        EntityHandleType createEntity();
-        void destroyEntity( EntityHandleType entity_handle );
-        bool isEntityActive( EntityHandleType entity_handle ) const;
+        EntityHandleType CreateEntity();
+        void DestroyEntity( EntityHandleType entityHandle );
+        bool IsEntityActive( EntityHandleType entityHandle ) const;
 
-        EntityHandleType getEntityHandle( IndexType index ) const
+        EntityHandleType GetEntityHandle( IndexType index ) const
         {
-            SM_ASSERT( index < entities.size(), "EntityHandleManager::getEntityHandle > Index out of range" );
-            return entities[index];
+            SM_ASSERT( index < m_Entities.size(), "EntityHandleManager::getEntityHandle > Index out of range" );
+            return m_Entities[index];
         }
 
-        Uint32 getEntityCount() const
+        Uint32 GetEntityCount() const
         {
-            return entities.size();
+            return m_Entities.size();
         }
 
         Iterator begin() const
         {
-            auto it = entities.begin();
-            while ( it != entities.end() && ( it->index > entities.size() || entities[it->index].index != it->index ) )
+            auto it = m_Entities.begin();
+            while ( it != m_Entities.end() && ( it->Index > m_Entities.size() || m_Entities[it->Index].Index != it->Index ) )
             {
                 ++it;
             }
 
-            return Iterator{ entities, it };
+            return Iterator{ m_Entities, it };
         }
         Iterator end() const
         {
-            return Iterator{ entities, entities.end() };
+            return Iterator{ m_Entities, m_Entities.end() };
         }
 
       private:
-        std::vector< EntityHandleType > entities{};
-        Uint32 availableEntities{ 0 };
-        IndexType nextFreeEntityIndex{ std::numeric_limits< IndexType >::max() }; // Used for implicit list
+        std::vector< EntityHandleType > m_Entities{};
+        Uint32 m_AvailableEntities{ 0 };
+        IndexType m_NextFreeEntityIndex{ std::numeric_limits< IndexType >::max() }; // Used for implicit list
     };
 }

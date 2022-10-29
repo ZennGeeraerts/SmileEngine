@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace smile::stl
+namespace Smile::STL
 {
     template < typename IndexType >
     class SparseSet final
@@ -17,110 +17,110 @@ namespace smile::stl
 
         ~SparseSet()
         {
-            clear();
+            Clear();
         }
 
-        IndexType insert( IndexType element )
+        IndexType Insert( IndexType element )
         {
-            SM_ASSERT( !contains( element ), "SparseSet::insert > Sparse set already contains this value" );
+            SM_ASSERT( !Contains( element ), "SparseSet::Insert > Sparse set already contains this value" );
 
-            const auto pos = dense.size();
-            dense.push_back( element );
+            const auto pos = m_Dense.size();
+            m_Dense.push_back( element );
 
-            if ( element >= sparse.size() )
-                sparse.resize( element + 1, std::numeric_limits< IndexType >::max() );
+            if ( element >= m_Sparse.size() )
+                m_Sparse.resize( element + 1, std::numeric_limits< IndexType >::max() );
 
-            sparse[element] = pos;
+            m_Sparse[element] = pos;
 
-            return dense.size() - 1;
+            return m_Dense.size() - 1;
         }
 
-        IndexType erase( IndexType element )
+        IndexType Erase( IndexType element )
         {
-            SM_ASSERT( contains( element ), "SparseSet::erase > Sparse set doesn't contain this value" );
+            SM_ASSERT( Contains( element ), "SparseSet::Erase > Sparse set doesn't contain this value" );
 
-            IndexType dead_index = sparse[element];
+            IndexType deadIndex = m_Sparse[element];
 
-            const IndexType last = dense.back();
-            std::swap( dense.back(), dense[dead_index] );
-            std::swap( sparse[last], sparse[element] );
-            dense.pop_back();
+            const IndexType last = m_Dense.back();
+            std::swap( m_Dense.back(), m_Dense[deadIndex] );
+            std::swap( m_Sparse[last], m_Sparse[element] );
+            m_Dense.pop_back();
 
-            sparse[element] = std::numeric_limits< IndexType >::max();
+            m_Sparse[element] = std::numeric_limits< IndexType >::max();
 
-            return dead_index;
+            return deadIndex;
         }
 
-        bool contains( IndexType element ) const
+        bool Contains( IndexType element ) const
         {
-            return ( element < sparse.size() ) && ( sparse[element] < dense.size() ) &&
-                   ( sparse[element] != std::numeric_limits< IndexType >::max() );
+            return ( element < m_Sparse.size() ) && ( m_Sparse[element] < m_Dense.size() ) &&
+                   ( m_Sparse[element] != std::numeric_limits< IndexType >::max() );
         }
 
-        void clear()
+        void Clear()
         {
-            sparse.clear();
-            dense.clear();
+            m_Sparse.clear();
+            m_Dense.clear();
         }
 
-        void swap( IndexType element1, IndexType element2 )
+        void Swap( IndexType element1, IndexType element2 )
         {
-            SM_ASSERT( contains( element1 ) && contains( element2 ),
-                "SparseSet::swap > Sparse set doesn't contains this value" );
+            SM_ASSERT( Contains( element1 ) && Contains( element2 ),
+                "SparseSet::Swap > Sparse set doesn't contains this value" );
 
             if ( element1 == element2 )
                 return;
 
-            std::swap( dense[sparse[element1]], dense[sparse[element2]] );
-            std::swap( sparse[element1], sparse[element2] );
+            std::swap( m_Dense[m_Sparse[element1]], m_Dense[m_Sparse[element2]] );
+            std::swap( m_Sparse[element1], m_Sparse[element2] );
         }
 
         Iterator begin()
         {
-            return dense.begin();
+            return m_Dense.begin();
         }
 
         Iterator end()
         {
-            return dense.end();
+            return m_Dense.end();
         }
 
         ConstIterator begin() const
         {
-            return dense.begin();
+            return m_Dense.begin();
         }
 
         ConstIterator end() const
         {
-            return dense.end();
+            return m_Dense.end();
         }
 
-        IndexType getIndex( IndexType element ) const
+        IndexType GetIndex( IndexType element ) const
         {
-            SM_ASSERT( contains( element ), "SparseSet::getIndex > Sparse set doesn't contains this value" );
+            SM_ASSERT( Contains( element ), "SparseSet::GetIndex > Sparse set doesn't contains this value" );
 
-            return sparse[element];
+            return m_Sparse[element];
         }
 
-        IndexType getElement( IndexType index ) const
+        IndexType GetElement( IndexType index ) const
         {
-            SM_ASSERT( index < dense.size(), "SparseSet::getElement > Index out of range" );
+            SM_ASSERT( index < m_Dense.size(), "SparseSet::GetElement > Index out of range" );
 
-            return dense[index];
+            return m_Dense[index];
         }
 
-        size_t getItemCount() const
+        size_t GetItemCount() const
         {
-            return dense.size();
+            return m_Dense.size();
         }
 
-        bool isEmpty() const
+        bool IsEmpty() const
         {
-            return dense.empty();
+            return m_Dense.empty();
         }
 
       private:
-        std::vector< IndexType > sparse{};
-        std::vector< IndexType > dense{};
+        std::vector< IndexType > m_Sparse{};
+        std::vector< IndexType > m_Dense{};
     };
 }

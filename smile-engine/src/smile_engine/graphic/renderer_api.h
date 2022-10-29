@@ -3,7 +3,7 @@
 #include "graphics_context.h"
 #include "shader/shader.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class RendererAPI
     {
@@ -18,19 +18,19 @@ namespace smile::graphic
       public:
         virtual ~RendererAPI() = default;
 
-        virtual void initialize() = 0;
-        virtual void resizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
-        virtual void setClearColor( const DirectX::XMFLOAT4 &color ) = 0;
-        virtual void clear() = 0;
+        virtual void Initialize() = 0;
+        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
+        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) = 0;
+        virtual void Clear() = 0;
 
-        virtual void drawIndexed( Uint32 index_count, const Ref< Shader > &shader ) = 0;
+        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
 
-        inline static API getAPI()
+        inline static API GetAPI()
         {
-            return api;
+            return s_API;
         }
 
       private:
-        static API api;
+        static API s_API;
     };
 }

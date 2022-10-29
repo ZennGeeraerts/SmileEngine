@@ -25,7 +25,7 @@ namespace Smile
         internal extern static void NativeLog(string text, int parameter);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static void NativeLog_Vector(ref Vector3 parameter);
+        internal extern static void NativeLogVector(ref Vector3 parameter);
     }
     class Entity
     {
@@ -36,7 +36,7 @@ namespace Smile
             InternalCalls.NativeLog("Zenn", 8085);
 
             Vector3 pos = new Vector3(5, 2.5f, 3);
-            InternalCalls.NativeLog_Vector(ref pos);
+            InternalCalls.NativeLogVector(ref pos);
         }
 
         public void PrintMessage()

@@ -5,48 +5,48 @@
 #include "platform/directx11/directx11_diagnostics.h"
 #include "platform/directX11/shader/directx11_buffer.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
-    DirectX11IndexBuffer::DirectX11IndexBuffer( const IndexBufferDescriptor &index_buffer_desc )
+    DirectX11IndexBuffer::DirectX11IndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
     {
-        directX11Context =
-            static_cast< DirectX11Context * >( Application::getInstance().getWindow().getGraphicsContext() );
+        m_pDirectX11Context =
+            static_cast< DirectX11Context * >( Application::GetInstance().GetWindow().GetGraphicsContext() );
         SM_ASSERT(
-            directX11Context, "DirectX11IndexBuffer > Rendering context is not a DirectX 11 Rendering Context" );
+            m_pDirectX11Context, "DirectX11IndexBuffer > Rendering context is not a DirectX 11 Rendering Context" );
 
-        count = index_buffer_desc.count;
+        m_Count = indexBufferDesc.Count;
 
-        D3D11_BUFFER_DESC buffer_desc = {};
-        buffer_desc.Usage = bufferUsageToDirectXType( index_buffer_desc.usage );
-        buffer_desc.ByteWidth = sizeof( Uint32 ) * index_buffer_desc.count;
-        buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        buffer_desc.CPUAccessFlags = 0;
-        buffer_desc.MiscFlags = 0;
+        D3D11_BUFFER_DESC bufferDesc = {};
+        bufferDesc.Usage = BufferUsageToDirectXType( indexBufferDesc.Usage );
+        bufferDesc.ByteWidth = sizeof( Uint32 ) * indexBufferDesc.Count;
+        bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.MiscFlags = 0;
 
-        D3D11_SUBRESOURCE_DATA init_data = { 0 };
-        init_data.pSysMem = index_buffer_desc.indices;
+        D3D11_SUBRESOURCE_DATA initData = { 0 };
+        initData.pSysMem = indexBufferDesc.pIndices;
 
-        HRESULT result = directX11Context->getDevice()->CreateBuffer( &buffer_desc, &init_data, &indexBuffer );
+        HRESULT result = m_pDirectX11Context->GetDevice()->CreateBuffer( &bufferDesc, &initData, &m_pIndexBuffer );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
-                "DirectX11IndexBuffer > Failed to create index buffer: %ls", getDirectX11ErrorMessage( result ) );
+                "DirectX11IndexBuffer > Failed to create index buffer: %ls", GetDirectX11ErrorMessage( result ) );
             return;
         }
     }
 
     DirectX11IndexBuffer::~DirectX11IndexBuffer()
     {
-        SAFE_RELEASE( indexBuffer );
+        SAFE_RELEASE( m_pIndexBuffer );
     }
 
-    void DirectX11IndexBuffer::bind() const
+    void DirectX11IndexBuffer::Bind() const
     {
-        directX11Context->getDeviceContext()->IASetIndexBuffer( indexBuffer, DXGI_FORMAT_R32_UINT, 0 );
+        m_pDirectX11Context->GetDeviceContext()->IASetIndexBuffer( m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
     }
 
-    void DirectX11IndexBuffer::unbind() const
+    void DirectX11IndexBuffer::Unbind() const
     {
-        directX11Context->getDeviceContext()->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
+        m_pDirectX11Context->GetDeviceContext()->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
     }
 }

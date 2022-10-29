@@ -9,105 +9,105 @@
 
 #include <filesystem>
 
-namespace smile
+namespace Smile
 {
-    Application *Application::instance = nullptr;
+    Application *Application::s_Instance = nullptr;
 
-    Application::Application( const ApplicationDescriptor &descriptor ) : descriptor{ descriptor }
+    Application::Application( const ApplicationDescriptor &descriptor ) : m_Descriptor{ descriptor }
     {
-        SM_ASSERT( !instance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
-        instance = this;
+        SM_ASSERT( !s_Instance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
+        s_Instance = this;
 
-        Logger::setPriority( LogPriority::Trace );
+        Logger::SetPriority( LogPriority::Trace );
 
-        if ( !descriptor.workingDirectory.empty() )
-            std::filesystem::current_path( descriptor.workingDirectory );
+        if ( !descriptor.WorkingDirectory.empty() )
+            std::filesystem::current_path( descriptor.WorkingDirectory );
 
-        window = std::unique_ptr< Window >( Window::create( WindowSettings{ descriptor.name } ) );
-        window->setEventCallback( SM_BIND_EVENT_FN( Application::onEvent ) );
-        window->setVSync( false );
+        m_pWindow = std::unique_ptr< Window >( Window::Create( WindowSettings{ descriptor.Name } ) );
+        m_pWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
+        m_pWindow->SetVSync( false );
 
-        graphic::Renderer::initialize();
-        physics::PhysicsEngine::initialize();
-        scripting::ScriptEngine::initialize();
+        Graphic::Renderer::Initialize();
+        Physics::PhysicsEngine::Initialize();
+        Scripting::ScriptEngine::Initialize();
 
-        imGuiLayer = new imgui::ImGuiLayer{};
-        pushOverlay( imGuiLayer );
+        m_pImGuiLayer = new ImGui::ImGuiLayer{};
+        PushOverlay( m_pImGuiLayer );
     }
 
     Application::~Application()
     {
-        scripting::ScriptEngine::shutDown();
-        physics::PhysicsEngine::shutDown();
-        graphic::Renderer::shutDown();
+        Scripting::ScriptEngine::ShutDown();
+        Physics::PhysicsEngine::ShutDown();
+        Graphic::Renderer::ShutDown();
     }
 
-    void Application::pushLayer( Layer *layer )
+    void Application::PushLayer( Layer *pLayer )
     {
-        layerStack.pushLayer( layer );
+        m_LayerStack.PushLayer( pLayer );
     }
 
-    void Application::pushOverlay( Layer *overlay )
+    void Application::PushOverlay( Layer *pOverlay )
     {
-        layerStack.pushOverlay( overlay );
+        m_LayerStack.PushOverlay( pOverlay );
     }
 
-    void Application::onEvent( Event &e )
+    void Application::OnEvent( Event &e )
     {
         EventDispatcher dispatcher{ e };
-        dispatcher.dispatch< WindowCloseEvent >( SM_BIND_EVENT_FN( Application::onWindowClose ) );
-        dispatcher.dispatch< WindowResizeEvent >( SM_BIND_EVENT_FN( Application::onWindowResize ) );
+        dispatcher.Dispatch< WindowCloseEvent >( SM_BIND_EVENT_FN( Application::OnWindowClose ) );
+        dispatcher.Dispatch< WindowResizeEvent >( SM_BIND_EVENT_FN( Application::OnWindowResize ) );
 
-        for ( auto it = layerStack.end(); it != layerStack.begin(); )
+        for ( auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
         {
-            ( *--it )->onEvent( e );
-            if ( e.isHandled )
+            ( *--it )->OnEvent( e );
+            if ( e.m_IsHandled )
                 break;
         }
     }
 
-    void Application::run()
+    void Application::Run()
     {
-        Timer &timer = Timer::getInstance();
-        timer.run();
+        Timer &timer = Timer::GetInstance();
+        timer.Run();
 
-        while ( isRunning )
+        while ( m_IsRunning )
         {
-            timer.onUpdate();
-            Timestep delta_time = timer.getDeltaTime();
+            timer.OnUpdate();
+            Timestep deltaTime = timer.GetDeltaTime();
 
-            if ( !isMinimized )
+            if ( !m_IsMinimized )
             {
-                for ( Layer *layer : layerStack )
-                    layer->onUpdate( delta_time );
+                for ( Layer *pLayer : m_LayerStack )
+                    pLayer->OnUpdate( deltaTime );
             }
 
-            imGuiLayer->begin();
-            for ( Layer *layer : layerStack )
-                layer->onImGuiRender();
-            imGuiLayer->end();
+            m_pImGuiLayer->Begin();
+            for ( Layer *pLayer : m_LayerStack )
+                pLayer->OnImGuiRender();
+            m_pImGuiLayer->End();
 
-            window->onUpdate();
+            m_pWindow->OnUpdate();
         }
     }
 
-    void Application::shutDown()
+    void Application::ShutDown()
     {
-        isRunning = false;
+        m_IsRunning = false;
     }
 
-    bool Application::onWindowClose( WindowCloseEvent &e )
+    bool Application::OnWindowClose( WindowCloseEvent &e )
     {
-        isRunning = false;
+        m_IsRunning = false;
         return true;
     }
 
-    bool Application::onWindowResize( WindowResizeEvent &e )
+    bool Application::OnWindowResize( WindowResizeEvent &e )
     {
-        isMinimized = ( e.getWidth() == 0 ) || ( e.getHeight() == 0 );
+        m_IsMinimized = ( e.getWidth() == 0 ) || ( e.getHeight() == 0 );
 
-        if ( !isMinimized )
-            graphic::Renderer::onWindowResize( e.getWidth(), e.getHeight() );
+        if ( !m_IsMinimized )
+            Graphic::Renderer::OnWindowResize( e.getWidth(), e.getHeight() );
 
         return false;
     }

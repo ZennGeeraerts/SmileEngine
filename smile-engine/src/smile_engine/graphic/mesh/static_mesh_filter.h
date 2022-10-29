@@ -2,7 +2,7 @@
 
 #include "mesh_filter.h"
 
-namespace smile::graphic
+namespace Smile::Graphic
 {
     class StaticMeshFilter final : public MeshFilter
     {
@@ -10,59 +10,59 @@ namespace smile::graphic
         StaticMeshFilter() = default;
         virtual ~StaticMeshFilter();
 
-        virtual void create( const BufferLayout &layout ) override;
+        virtual void Create( const BufferLayout &layout ) override;
 
-        virtual Ref< VertexBuffer > getVertexBuffer() const override
+        virtual Ref< VertexBuffer > GetVertexBuffer() const override
         {
-            return vertexBuffer;
+            return m_pVertexBuffer;
         }
-        virtual Ref< IndexBuffer > getIndexBuffer() const override
+        virtual Ref< IndexBuffer > GetIndexBuffer() const override
         {
-            return indexBuffer;
+            return m_pIndexBuffer;
         }
-        virtual const std::string &getFilePath() const override
+        virtual const std::string &GetFilePath() const override
         {
-            return filePath;
+            return m_FilePath;
         }
 
-        virtual void setVertexCount( Uint32 vertex_count ) override
+        virtual void SetVertexCount( Uint32 vertexCount ) override
         {
-            vertexCount = vertex_count;
+            vertexCount = vertexCount;
         }
-        virtual void addPosition( const DirectX::XMFLOAT3 &position ) override;
-        virtual void addNormal( const DirectX::XMFLOAT3 &normal ) override;
-        virtual void addTangent( const DirectX::XMFLOAT3 &tangent ) override;
-        virtual void addBinormal( const DirectX::XMFLOAT3 &binormal ) override;
-        virtual void addTexCoord( const DirectX::XMFLOAT2 &tex_coord ) override;
-        virtual void addColor( const DirectX::XMFLOAT4 &color ) override;
+        virtual void AddPosition( const DirectX::XMFLOAT3 &position ) override;
+        virtual void AddNormal( const DirectX::XMFLOAT3 &normal ) override;
+        virtual void AddTangent( const DirectX::XMFLOAT3 &tangent ) override;
+        virtual void AddBinormal( const DirectX::XMFLOAT3 &binormal ) override;
+        virtual void AddTexCoord( const DirectX::XMFLOAT2 &texCoord ) override;
+        virtual void AddColor( const DirectX::XMFLOAT4 &color ) override;
 
-        virtual void setIndexCount( Uint32 index_count );
-        virtual void addIndex( Uint32 buffer_position, Uint32 index ) override;
+        virtual void SetIndexCount( Uint32 indexCount );
+        virtual void AddIndex( Uint32 bufferPosition, Uint32 index ) override;
 
       private:
-        std::vector< DirectX::XMFLOAT3 > positions = {};
-        std::vector< DirectX::XMFLOAT3 > normals = {};
-        std::vector< DirectX::XMFLOAT3 > tangents = {};
-        std::vector< DirectX::XMFLOAT3 > binormals = {};
-        std::vector< DirectX::XMFLOAT2 > texCoords = {};
-        std::vector< DirectX::XMFLOAT4 > colors = {};
+        std::vector< DirectX::XMFLOAT3 > m_Positions = {};
+        std::vector< DirectX::XMFLOAT3 > m_Normals = {};
+        std::vector< DirectX::XMFLOAT3 > m_Tangents = {};
+        std::vector< DirectX::XMFLOAT3 > m_Binormals = {};
+        std::vector< DirectX::XMFLOAT2 > m_TexCoords = {};
+        std::vector< DirectX::XMFLOAT4 > m_Colors = {};
 
-        bool usePositions = false;
-        bool useNormals = false;
-        bool useTangents = false;
-        bool useBinormals = false;
-        bool useTexCoords = false;
-        bool useColors = false;
+        bool m_UsePositions = false;
+        bool m_UseNormals = false;
+        bool m_UseTangents = false;
+        bool m_UseBinormals = false;
+        bool m_UseTexCoords = false;
+        bool m_UseColors = false;
 
-        std::vector< Uint32 > indices = {};
+        std::vector< Uint32 > m_Indices = {};
 
-        Ref< VertexBuffer > vertexBuffer = nullptr;
-        Ref< IndexBuffer > indexBuffer = nullptr;
+        Ref< VertexBuffer > m_pVertexBuffer = nullptr;
+        Ref< IndexBuffer > m_pIndexBuffer = nullptr;
 
-        Uint32 vertexCount = 0;
+        Uint32 m_VertexCount = 0;
 
-        std::string filePath = {};
-        void *dataLocation = nullptr;
+        std::string m_FilePath = {};
+        void *m_pDataLocation = nullptr;
 
         friend class MeshFactory;
         friend class MeshLoader;
