@@ -4,7 +4,7 @@
 #include "smileraster_context.h"
 #include "smile_engine/core/application.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     SmileRasterShader::SmileRasterShader( const std::string &asset_file, const BufferLayout &layout )
         : m_BufferLayout{ layout }

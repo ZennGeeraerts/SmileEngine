@@ -2,7 +2,7 @@
 #include <foundation/PxErrorCallback.h>
 #include <foundation/PxAssert.h>
 
-namespace Smile::Physics
+namespace smile::physics
 {
     class PhysicsErrorCallback final : public physx::PxErrorCallback
     {

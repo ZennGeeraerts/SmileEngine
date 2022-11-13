@@ -7,7 +7,7 @@
 #include "platform/directX11/directx11_context.h"
 #include "platform/smileraster/smileraster_context.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     GraphicsContext *GraphicsContext::Create( Window *pWindow )
     {

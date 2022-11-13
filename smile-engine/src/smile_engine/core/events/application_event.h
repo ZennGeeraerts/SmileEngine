@@ -1,7 +1,7 @@
 #pragma once
 #include "event.h"
 
-namespace Smile
+namespace smile
 {
     class WindowResizeEvent final : public Event
     {

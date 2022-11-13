@@ -9,7 +9,7 @@ extern "C"
     typedef struct _MonoMethod MonoMethod;
 }
 
-namespace Smile::Scripting
+namespace smile::scripting
 {
     class ScriptEngine final
     {

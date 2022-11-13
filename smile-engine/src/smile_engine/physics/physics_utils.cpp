@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "physics_utils.h"
 
-namespace Smile::Physics::Utils
+namespace smile::physics::utils
 {
     physx::PxVec3 ConvertToPhysXVector( const DirectX::XMFLOAT3 &vector )
     {

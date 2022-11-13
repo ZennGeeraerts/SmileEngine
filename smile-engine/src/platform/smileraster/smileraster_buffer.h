@@ -3,7 +3,7 @@
 #include "smile_engine/graphic/resource/index_buffer.h"
 #include "smileraster_context.h"
 
-namespace Smile::graphic
+namespace smile::graphic
 {
     class SmileRasterVertexBuffer final : public VertexBuffer
     {

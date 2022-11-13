@@ -3,7 +3,7 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class VertexArray
     {

@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "mesh_filter.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     const DirectX::XMFLOAT4 MeshFilter::s_DefaultColor = DirectX::XMFLOAT4{ 1, 0, 0, 1 };
     const DirectX::XMFLOAT4 MeshFilter::s_DefaultFloat4 = DirectX::XMFLOAT4{ 0, 0, 0, 0 };

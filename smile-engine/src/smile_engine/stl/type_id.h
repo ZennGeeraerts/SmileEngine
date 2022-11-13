@@ -3,14 +3,14 @@
 #include "type_name.h"
 #include "identifier.h"
 
-namespace Smile::Compiled
+namespace smile::stl
 {
     class TypeID final
     {
       public:
         TypeID() = default;
 
-        constexpr TypeID( const std::string_view &text ) : m_HashCode( Identifier::GetHashCode( text ) )
+        constexpr TypeID( const std::string_view &text ) : m_HashCode( identifier::GetHashCode( text ) )
         {
         }
 
@@ -37,29 +37,26 @@ namespace Smile::Compiled
       private:
         size_t m_HashCode;
     };
-}
 
-namespace Smile
-{
     template < typename Type >
-    constexpr Compiled::TypeID TypeIDOf()
+    constexpr TypeID TypeIDOf()
     {
-        return Compiled::TypeID{ TypeNameOf< Type >() };
+        return TypeID{ TypeNameOf< Type >() };
     }
 
     template < int characterCount >
-    constexpr Compiled::TypeID TypeIDOf( const char ( &type )[characterCount] )
+    constexpr TypeID TypeIDOf( const char ( &type )[characterCount] )
     {
-        return Compiled::TypeID{ type };
+        return TypeID{ type };
     }
 }
 
 namespace std
 {
     template <>
-    struct hash< Smile::Compiled::TypeID >
+    struct hash< smile::stl::TypeID >
     {
-        size_t operator()( const Smile::Compiled::TypeID &typeID ) const
+        size_t operator()( const smile::stl::TypeID &typeID ) const
         {
             return typeID.GetHashCode();
         }

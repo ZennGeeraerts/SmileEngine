@@ -5,46 +5,46 @@
 #include "smile_engine/scene/scene.h"
 #include "smile_engine/scene/entity.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class Material;
 }
 
-namespace Smile::Scene
+namespace smile::scene
 {
     class SceneHierarchyPanel final
     {
       public:
         SceneHierarchyPanel() = default;
-        SceneHierarchyPanel( const Ref< Scene::Scene > &pScene );
+        SceneHierarchyPanel( const Ref< Scene > &pScene );
 
-        void SetContext( const Ref< Scene::Scene > &pScene );
+        void SetContext( const Ref< Scene > &pScene );
 
         void OnImGuiRender();
 
-        Scene::Entity GetSelectedEntity() const
+        Entity GetSelectedEntity() const
         {
             return m_SelectedEntity;
         }
 
       private:
-        void DrawEntityNode( Scene::Entity entity );
+        void DrawEntityNode( Entity entity );
 
         static void DrawVector3Control( const std::string &label,
             DirectX::XMFLOAT3 &values,
             float resetValue = 0.0f,
             float columnWidth = 100.f );
 
-        void DrawComponents( Scene::Entity entity );
+        void DrawComponents( Entity entity );
 
         template < typename ComponentType, typename UIFunction >
         static void
-        DrawComponent( const std::string &label, Scene::Entity entity, UIFunction uiFunction, bool bRemoveable = true );
+        DrawComponent( const std::string &label, Entity entity, UIFunction uiFunction, bool bRemoveable = true );
 
-        static void DrawMaterial( const Ref< Graphic::Material > &material );
+        static void DrawMaterial( const Ref< graphic::Material > &material );
 
       private:
-        Ref< Scene::Scene > m_pContext;
-        Scene::Entity m_SelectedEntity;
+        Ref< Scene > m_pContext;
+        Entity m_SelectedEntity;
     };
 }

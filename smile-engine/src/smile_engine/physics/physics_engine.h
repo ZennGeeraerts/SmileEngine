@@ -8,7 +8,7 @@ namespace physx
     class PxAllocatorCallback;
 }
 
-namespace Smile::Physics
+namespace smile::physics
 {
     struct PhysicsEngineData final
     {
@@ -55,8 +55,8 @@ namespace Smile::Physics
         static void CreateScene();
         static void DestroyScene();
 
-        static Ref< PhysicsActor > CreateActor( Scene::Entity entity );
-        static Ref< PhysicsActor > GetActorOfEntity( Scene::Entity entity );
+        static Ref< PhysicsActor > CreateActor( scene::Entity entity );
+        static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
 
         static void Simulate( Timestep deltaTime );
 

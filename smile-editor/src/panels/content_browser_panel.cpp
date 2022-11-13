@@ -2,14 +2,14 @@
 
 #include <thirdparty/imgui/imgui.h>
 
-namespace Smile
+namespace smile
 {
     extern const std::filesystem::path g_AssetPath = "assets";
 
     ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory{ g_AssetPath }
     {
-        m_pDirectoryIcon = Graphic::Texture2D::Create( "resources/icons/content_browser/directory_icon.png" );
-        m_pFileIcon = Graphic::Texture2D::Create( "resources/icons/content_browser/file_icon.png" );
+        m_pDirectoryIcon = graphic::Texture2D::Create( "resources/icons/content_browser/directory_icon.png" );
+        m_pFileIcon = graphic::Texture2D::Create( "resources/icons/content_browser/file_icon.png" );
     }
 
     void ContentBrowserPanel::OnImGuiRender()
@@ -41,7 +41,7 @@ namespace Smile
             std::string fileName = relativePath.filename().string();
 
             ImGui::PushID( fileName.c_str() );
-            Ref< Graphic::Texture2D > icon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
+            Ref< graphic::Texture2D > icon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
             ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
             ImGui::ImageButton( icon->GetData(), { thumbnailSize, thumbnailSize } );
 

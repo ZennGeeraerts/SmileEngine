@@ -6,21 +6,21 @@
 #include "smile_engine/scene/components.h"
 #include "content_browser_panel.h"
 
-namespace Smile
+namespace smile
 {
     extern const std::filesystem::path g_AssetPath;
 }
 
-namespace Smile::Scene
+namespace smile::scene
 {
-    SceneHierarchyPanel::SceneHierarchyPanel( const Ref< Scene > &scene )
+    SceneHierarchyPanel::SceneHierarchyPanel( const Ref< Scene > &pScene )
     {
-        SetContext( scene );
+        SetContext( pScene );
     }
 
-    void SceneHierarchyPanel::SetContext( const Ref< Scene > &scene )
+    void SceneHierarchyPanel::SetContext( const Ref< Scene > &pScene )
     {
-        m_pContext = scene;
+        m_pContext = pScene;
         m_SelectedEntity = {};
     }
 
@@ -352,7 +352,7 @@ namespace Smile::Scene
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path meshPath = std::filesystem::path{ g_AssetPath } / path;
 
-                        staticMeshComponent.pMeshes = Graphic::MeshLoader::LoadStaticMesh( meshPath.string() );
+                        staticMeshComponent.pMeshes = graphic::MeshLoader::LoadStaticMesh( meshPath.string() );
                         const auto &bufferLayout = staticMeshComponent.pMaterials[0]->GetBufferLayout();
                         for ( const auto &pMesh : staticMeshComponent.pMeshes )
                         {
@@ -385,7 +385,7 @@ namespace Smile::Scene
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path meshPath = std::filesystem::path{ g_AssetPath } / path;
 
-                        skinnedMeshComponent.pMeshes = Graphic::MeshLoader::LoadSkinnedMesh( meshPath.string() );
+                        skinnedMeshComponent.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( meshPath.string() );
                         const auto &bufferLayout = skinnedMeshComponent.pMaterials[0]->GetBufferLayout();
                         for ( const auto &pMesh : skinnedMeshComponent.pMeshes )
                         {
@@ -393,7 +393,7 @@ namespace Smile::Scene
 
                             if ( pMesh->HasAnimations() )
                             {
-                                Graphic::MeshAnimator animator{ pMesh };
+                                graphic::MeshAnimator animator{ pMesh };
                                 skinnedMeshComponent.Animators.push_back( animator );
                                 skinnedMeshComponent.Animators.back().SetAnimation( 0 );
                             }
@@ -568,9 +568,9 @@ namespace Smile::Scene
             entity.RemoveComponent< ComponentType >();
     }
 
-    void SceneHierarchyPanel::DrawMaterial( const Ref< Graphic::Material > &pMaterial )
+    void SceneHierarchyPanel::DrawMaterial( const Ref< graphic::Material > &pMaterial )
     {
-        const Ref< Graphic::Shader > &shader = pMaterial->GetShader();
+        const Ref< graphic::Shader > &shader = pMaterial->GetShader();
         ImGui::Text( "Material" );
 
         ImGui::Button( shader->GetName().c_str(), { 100.f, 0.0f } );
@@ -581,7 +581,7 @@ namespace Smile::Scene
             {
                 const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                 std::filesystem::path shader_path = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetShader( Graphic::Shader::Create( shader_path.string() ) );
+                pMaterial->SetShader( graphic::Shader::Create( shader_path.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -638,7 +638,7 @@ namespace Smile::Scene
                 {
                     const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                     std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                    pMaterial->SetTexture2D( pair.first, Graphic::Texture2D::Create( texturePath.string() ) );
+                    pMaterial->SetTexture2D( pair.first, graphic::Texture2D::Create( texturePath.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

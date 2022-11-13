@@ -15,7 +15,7 @@
 #include <thirdparty/imgui/imgui_impl_dx11.h>
 #include <thirdparty/imguizmo/ImGuizmo.h>
 
-namespace Smile::ImGui
+namespace smile::imgui
 {
     ImGuiLayer::ImGuiLayer() : Layer( "ImGuiLayer" )
     {
@@ -75,20 +75,20 @@ namespace Smile::ImGui
         SetDarkThemeColors();
 
         Window &window = Application::GetInstance().GetWindow();
-        Graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
+        graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
 
-        Graphic::RendererAPI::API api = Graphic::RendererAPI::GetAPI();
+        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
         switch ( api )
         {
-            case Graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererAPI::API::DirectX11:
             {
                 ImGui_ImplWin32_Init( window.GetNativeWindow() );
 
-                Graphic::DirectX11Context *pDirectx11Context = static_cast< Graphic::DirectX11Context * >( pGraphicsContext );
+                graphic::DirectX11Context *pDirectx11Context = static_cast< graphic::DirectX11Context * >( pGraphicsContext );
                 ImGui_ImplDX11_Init( pDirectx11Context->GetDevice(), pDirectx11Context->GetDeviceContext() );
                 break;
             }
-            case Graphic::RendererAPI::API::SmileRaster:
+            case graphic::RendererAPI::API::SmileRaster:
                 break;
 
             default:
@@ -105,15 +105,15 @@ namespace Smile::ImGui
 
     void ImGuiLayer::Begin()
     {
-        Graphic::RendererAPI::API api = Graphic::RendererAPI::GetAPI();
+        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
         switch ( api )
         {
-            case Graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererAPI::API::DirectX11:
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
 
-            case Graphic::RendererAPI::API::SmileRaster:
+            case graphic::RendererAPI::API::SmileRaster:
                 return;
 
             default:
@@ -131,15 +131,15 @@ namespace Smile::ImGui
         io.DisplaySize =
             ImVec2{ static_cast< float >( window.GetWidth() ), static_cast< float >( window.GetHeight() ) };
 
-        Graphic::RendererAPI::API api = Graphic::RendererAPI::GetAPI();
+        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
         switch ( api )
         {
-            case Graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererAPI::API::DirectX11:
                 ImGui::Render();
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
 
-            case Graphic::RendererAPI::API::SmileRaster:
+            case graphic::RendererAPI::API::SmileRaster:
                 return;
 
             default:
@@ -211,10 +211,10 @@ namespace Smile::ImGui
         ImGuiIO &io = ImGui::GetIO();
         io.KeysDown[e.GetKeyCode()] = true;
 
-        io.KeyCtrl = io.KeysDown[Input::key::CtrlLeft] || io.KeysDown[Input::key::CtrlRight];
-        io.KeyShift = io.KeysDown[Input::key::ShiftLeft] || io.KeysDown[Input::key::ShiftRight];
-        io.KeyAlt = io.KeysDown[Input::key::AltLeft] || io.KeysDown[Input::key::AltRight];
-        io.KeySuper = io.KeysDown[Input::key::WindowsLeft] || io.KeysDown[Input::key::WindowsRight];
+        io.KeyCtrl = io.KeysDown[input::key::CtrlLeft] || io.KeysDown[input::key::CtrlRight];
+        io.KeyShift = io.KeysDown[input::key::ShiftLeft] || io.KeysDown[input::key::ShiftRight];
+        io.KeyAlt = io.KeysDown[input::key::AltLeft] || io.KeysDown[input::key::AltRight];
+        io.KeySuper = io.KeysDown[input::key::WindowsLeft] || io.KeysDown[input::key::WindowsRight];
         return false;
     }
 

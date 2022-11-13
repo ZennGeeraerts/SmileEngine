@@ -2,7 +2,7 @@
 #include "smpch.h"
 #include "smile_engine/core/core.h"
 
-namespace Smile
+namespace smile
 {
     enum class EventType
     {

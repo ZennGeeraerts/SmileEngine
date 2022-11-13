@@ -7,12 +7,12 @@ namespace physx
     class PxMaterial;
 }
 
-namespace Smile::Physics
+namespace smile::physics
 {
     class PhysicsActor final
     {
       public:
-        PhysicsActor( Scene::Entity entity );
+        PhysicsActor( scene::Entity entity );
         ~PhysicsActor();
 
         PhysicsActor( const PhysicsActor & ) = delete;
@@ -25,18 +25,18 @@ namespace Smile::Physics
 
         bool IsDynamic() const
         {
-            return m_Entity.GetComponent< Scene::RigidbodyComponent >().Type == Scene::RigidbodyComponent::BodyType::Dynamic;
+            return m_Entity.GetComponent< scene::RigidbodyComponent >().Type == scene::RigidbodyComponent::BodyType::Dynamic;
         }
 
       private:
-        void AddBoxCollider( const Scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );
-        void AddSphereCollider( const Scene::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size );
-        void AddCapsuleCollider( const Scene::CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddSphereCollider( const scene::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddCapsuleCollider( const scene::CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size );
 
         void UpdateTransform();
 
       private:
-        Scene::Entity m_Entity;
+        scene::Entity m_Entity;
         Ref< PhysicsMaterial > m_pPhysicsMaterial;
 
         physx::PxRigidActor *m_pRigidActor = nullptr;

@@ -8,7 +8,7 @@
 
 #include <PxPhysicsAPI.h>
 
-namespace Smile::Physics
+namespace smile::physics
 {
     std::unordered_map< UUID, Ref< PhysicsActor > > PhysicsEngine::s_ActorMap{};
     PhysicsSettings PhysicsEngine::s_Settings{};
@@ -126,8 +126,8 @@ namespace Smile::Physics
         SM_ASSERT( !s_pScene, "PhysicsEngine::CreateScene > Scene already has a physics scene" );
 
         physx::PxSceneDesc sceneDesc{ s_pPhysics->getTolerancesScale() };
-        sceneDesc.gravity = Utils::ConvertToPhysXVector( s_Settings.Gravity );
-        sceneDesc.filterShader = Utils::SmileSimulationFilterShader;
+        sceneDesc.gravity = utils::ConvertToPhysXVector( s_Settings.Gravity );
+        sceneDesc.filterShader = utils::SmileSimulationFilterShader;
         sceneDesc.cpuDispatcher = s_pDefaultCpuDispatcher;
         sceneDesc.simulationEventCallback = &s_ContactListener;
         sceneDesc.broadPhaseType = SmileToPhysXBroadPhaseType( s_Settings.BroadPhaseAlgorithm );
@@ -140,8 +140,8 @@ namespace Smile::Physics
         if ( s_Settings.BroadPhaseAlgorithm != BroadPhaseType::AutomaticBoxPrune )
         {
             physx::PxBounds3 *pRegionBounds = nullptr;
-            physx::PxBounds3 globalBounds{ Utils::ConvertToPhysXVector( s_Settings.WorldBoundsMin ),
-                Utils::ConvertToPhysXVector( s_Settings.WorldBoundsMax ) };
+            physx::PxBounds3 globalBounds{ utils::ConvertToPhysXVector( s_Settings.WorldBoundsMin ),
+                utils::ConvertToPhysXVector( s_Settings.WorldBoundsMax ) };
             Uint32 regionCount = physx::PxBroadPhaseExt::createRegionsFromWorldBounds(
                 pRegionBounds, globalBounds, s_Settings.WorldBoundsSubdivisions );
 
@@ -167,7 +167,7 @@ namespace Smile::Physics
         s_pScene = nullptr;
     }
 
-    Ref< PhysicsActor > PhysicsEngine::CreateActor( Scene::Entity entity )
+    Ref< PhysicsActor > PhysicsEngine::CreateActor( scene::Entity entity )
     {
         SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
 
@@ -177,7 +177,7 @@ namespace Smile::Physics
         return pActor;
     }
 
-    Ref< PhysicsActor > PhysicsEngine::GetActorOfEntity( Scene::Entity entity )
+    Ref< PhysicsActor > PhysicsEngine::GetActorOfEntity( scene::Entity entity )
     {
         auto it = s_ActorMap.find( entity.GetUUID() );
         if ( it != s_ActorMap.end() )

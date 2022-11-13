@@ -5,7 +5,7 @@
 
 #define HINSTANCE() GetModuleHandle( NULL ) // this function returns the hInstance
 
-namespace Smile
+namespace smile
 {
     class WindowsWindow final : public Window
     {
@@ -28,7 +28,7 @@ namespace Smile
         {
             return m_Data.Height;
         }
-        inline Graphic::GraphicsContext *GetGraphicsContext() const override
+        inline graphic::GraphicsContext *GetGraphicsContext() const override
         {
             return m_pContext;
         }
@@ -59,7 +59,7 @@ namespace Smile
         HWND m_WindowHandle;
         WNDCLASSEX m_WindowClass;
         MSG m_Message;
-        Graphic::GraphicsContext *m_pContext;
+        graphic::GraphicsContext *m_pContext;
 
         struct WindowData
         {

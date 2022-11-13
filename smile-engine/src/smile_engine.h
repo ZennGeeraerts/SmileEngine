@@ -10,9 +10,6 @@
 
 #include "smile_engine/utils/utils.h"
 #include "smile_engine/math/math.h"
-#include "smile_engine/math/vector2.h"
-#include "smile_engine/math/vector3.h"
-#include "smile_engine/math/vector4.h"
 
 #include "smile_engine/input/input.h"
 #include "smile_engine/input/key_codes.h"

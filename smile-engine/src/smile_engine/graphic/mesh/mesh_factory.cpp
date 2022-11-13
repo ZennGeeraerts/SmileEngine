@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "mesh_factory.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     static std::vector< DirectX::XMFLOAT3 > s_CubePositions
     { 

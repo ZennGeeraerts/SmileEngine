@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "skinned_mesh_filter.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     SkinnedMeshFilter::~SkinnedMeshFilter()
     {

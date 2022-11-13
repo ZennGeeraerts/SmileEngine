@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "entity_handle_manager.h"
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     EntityHandleType EntityHandleManager::CreateEntity()
     {
@@ -10,9 +10,9 @@ namespace Smile::ECS
             // Recycle entity
             auto &handle = m_Entities[m_NextFreeEntityIndex];
 
-            Uint32 new_handle_index = handle.Index;
-            std::swap( m_NextFreeEntityIndex, new_handle_index );
-            handle.Index = new_handle_index;
+            Uint32 newHandleIndex = handle.m_Index;
+            std::swap( m_NextFreeEntityIndex, newHandleIndex );
+            handle.m_Index = newHandleIndex;
 
             --m_AvailableEntities;
 
@@ -29,16 +29,16 @@ namespace Smile::ECS
 
     void EntityHandleManager::DestroyEntity( EntityHandleType entityHandle )
     {
-        auto &handle = m_Entities[entityHandle.Index];
+        auto &handle = m_Entities[entityHandle.m_Index];
 
-        SM_ASSERT( handle.Generation == entityHandle.Generation,
+        SM_ASSERT( handle.m_Generation == entityHandle.m_Generation,
             "ECSEngine::DestroyEntity > Entity handle generation mismatch" );
 
-        ++handle.Generation;
+        ++handle.m_Generation;
 
-        Uint32 newHandleIndex = handle.Index;
+        Uint32 newHandleIndex = handle.m_Index;
         std::swap( m_NextFreeEntityIndex, newHandleIndex );
-        handle.Index = newHandleIndex;
+        handle.m_Index = newHandleIndex;
 
         ++m_AvailableEntities;
     }
@@ -48,6 +48,6 @@ namespace Smile::ECS
         if ( !entityHandle.IsValid() )
             return false;
 
-        return entityHandle == m_Entities[entityHandle.Index];
+        return entityHandle == m_Entities[entityHandle.m_Index];
     }
 }

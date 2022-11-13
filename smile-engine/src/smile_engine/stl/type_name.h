@@ -4,7 +4,7 @@
 
 #include <string_view>
 
-namespace Smile::Compiled
+namespace smile::stl
 {
     template < typename Type >
     constexpr std::string_view GetFullTypeName()
@@ -32,13 +32,10 @@ namespace Smile::Compiled
 
         return rv.substr( rv.rfind( ' ' ) + 1 );
     }
-}
 
-namespace Smile
-{
     template < typename Type >
     constexpr std::string_view TypeNameOf()
     {
-        return Compiled::GetTypeName< Type >();
+        return GetTypeName< Type >();
     }
 }

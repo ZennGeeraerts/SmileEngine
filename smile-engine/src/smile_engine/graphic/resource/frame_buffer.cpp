@@ -7,7 +7,7 @@
 #    include "platform/directx11/resource/directx11_frame_buffer.h"
 #endif
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     Ref< Framebuffer > Framebuffer::Create( const FramebufferDescriptor &framebufferDesc )
     {

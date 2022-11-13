@@ -2,7 +2,7 @@
 #include "mesh_filter.h"
 #include "smile_engine/graphic/animation/bone.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     struct BoneInfo final
     {

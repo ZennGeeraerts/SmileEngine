@@ -3,13 +3,13 @@
 #include <thirdparty/catch.hpp>
 #include <iostream>
 
-using namespace Smile;
+using namespace smile;
 
 TEST_CASE( "SparseSet" )
 {
     SECTION( "SparseSet" )
     {
-        STL::SparseSet< Uint32 > sparseSet{};
+        stl::SparseSet< Uint32 > sparseSet{};
 
         sparseSet.Insert( 15 );
         sparseSet.Insert( 16 );

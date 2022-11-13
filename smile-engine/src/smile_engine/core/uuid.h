@@ -2,7 +2,7 @@
 
 #include <xhash>
 
-namespace Smile
+namespace smile
 {
     class UUID final
     {
@@ -24,11 +24,11 @@ namespace Smile
 namespace std
 {
     template <>
-    struct hash< Smile::UUID >
+    struct hash< smile::UUID >
     {
-        size_t operator()( const Smile::UUID &uuid ) const
+        size_t operator()( const smile::UUID &uuid ) const
         {
-            return hash< Smile::Uint64 >()( static_cast< Smile::Uint64 >( uuid ) );
+            return hash< smile::Uint64 >()( static_cast< smile::Uint64 >( uuid ) );
         }
     };
 }

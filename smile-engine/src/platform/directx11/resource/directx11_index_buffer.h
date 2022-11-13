@@ -2,7 +2,7 @@
 #include "smile_engine/graphic/resource/index_buffer.h"
 #include "platform/directX11/directx11_context.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class DirectX11IndexBuffer final : public IndexBuffer
     {

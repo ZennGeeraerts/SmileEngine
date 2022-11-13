@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include "smile_engine/core/events/event.h"
 
-namespace Smile
+namespace smile
 {
     class Layer
     {

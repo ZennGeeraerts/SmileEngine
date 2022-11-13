@@ -1,7 +1,7 @@
 #pragma once
 #include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class MeshAnimator final
     {

@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include "layer.h"
 
-namespace Smile
+namespace smile
 {
     class LayerStack final
     {

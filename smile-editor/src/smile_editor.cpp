@@ -3,7 +3,7 @@
 
 #include "smile_editor_layer.h"
 
-namespace Smile
+namespace smile
 {
     class SmileEditor final : public Application
     {

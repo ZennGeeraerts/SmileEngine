@@ -2,7 +2,7 @@
 #include "bone.h"
 #include "smile_engine/core/logger.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     Bone::Bone( const std::string &name, Uint32 id ) : m_Name{ name }, m_ID{ id }
     {

@@ -1,22 +1,15 @@
 #include "smpch.h"
 #include "ecs_engine.h"
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     ECSEngine::~ECSEngine()
     {
         for ( auto pComponentInterface : m_pComponents )
             delete pComponentInterface;
 
-       /* if ( !destructorHandlers.empty() )
-        {
-            for ( Uint32 i{ static_cast< Uint32 >( destructorHandlers.size() ) - 1 }; i > 0; --i )
-                destructorHandlers[i]();
-
-            destructorHandlers.clear();
-        }
-
-        updateHandlers.clear();*/
+        for ( auto pGroup : m_pGroups )
+            delete pGroup;
     }
 
     void ECSEngine::RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle )
@@ -28,32 +21,24 @@ namespace Smile::ECS
 
         CallDestructors( pComponentInterface, pComponentData );
 
-        for ( auto &group : m_Groups )
+        for ( auto &pGroup : m_pGroups )
         {
-            if ( group.HasComponent( pComponentInterface ) )
-                group.RemoveEntity( entityHandle.Index );
+            if ( pGroup->HasComponent( pComponentInterface ) )
+                pGroup->RemoveEntity( entityHandle.GetIndex() );
         }
 
-        const IndexType deadIndex = pComponentInterface->m_Pool.Erase( entityHandle.Index );
+        const IndexType deadIndex = pComponentInterface->m_Pool.Erase( entityHandle.GetIndex() );
         pComponentInterface->m_pComponentStorage->RemoveSwap( deadIndex );
 
-        // if ( component_interface->relational )
-        // relational_rebuild( ci, dead_eindex );
+        // if ( pComponentInterface->m_IsRelational )
+        // RelationalRebuild( pComponentInterface, deadIndex );
     }
 
-    void ECSEngine::CallDestructors( ComponentInterface *component_interface, void *data )
+    void ECSEngine::CallDestructors( ComponentInterface *pComponentInterface, void *pData )
     {
-        for ( auto destructor : component_interface->m_Destroy )
-            destructor( data );
+        for ( auto destructor : pComponentInterface->m_Destroy )
+            destructor( pData );
     }
-
-    //void ECSEngine::onUpdate( Timestep delta_time )
-    //{
-    //    for ( auto update_handler : updateHandlers )
-    //    {
-    //        update_handler( delta_time );
-    //    }
-    //}
 
     void ECSEngine::Clear()
     {
@@ -67,6 +52,9 @@ namespace Smile::ECS
             pComponentInterface->Clear();
         }
 
-        m_Groups.clear();
+        for ( auto pGroup : m_pGroups )
+            delete pGroup;
+
+        m_pGroups.clear();
     }
 }

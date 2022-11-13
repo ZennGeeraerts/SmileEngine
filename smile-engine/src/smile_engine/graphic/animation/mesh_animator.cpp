@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "mesh_animator.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     const Uint32 MeshAnimator::s_MaxBoneCount{ 70 };
 

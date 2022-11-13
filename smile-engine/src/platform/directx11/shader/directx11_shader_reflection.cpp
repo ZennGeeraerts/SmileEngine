@@ -4,7 +4,7 @@
 
 #include <d3dx11effect.h>
 
-namespace Smile::Graphic::Utils
+namespace smile::graphic::utils
 {
     static ShaderDataType ConvertDirectXShaderVariableType( D3DX11_EFFECT_TYPE_DESC effectTypeDescriptor )
     {

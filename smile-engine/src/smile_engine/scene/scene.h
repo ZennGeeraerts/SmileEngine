@@ -6,7 +6,7 @@
 
 #include "smile_engine/ecs/ecs_engine.h"
 
-namespace Smile::Scene
+namespace smile::scene
 {
     class Entity;
 
@@ -27,8 +27,8 @@ namespace Smile::Scene
         void OnSimulationStop();
 
         void OnUpdateRuntime( Timestep deltaTime );
-        void OnUpdateSimulation( Timestep deltaTime, Graphic::EditorCamera &editorCamera );
-        void OnUpdateEditor( Timestep deltaTime, Graphic::EditorCamera &editorCamera );
+        void OnUpdateSimulation( Timestep deltaTime, graphic::EditorCamera &editorCamera );
+        void OnUpdateEditor( Timestep deltaTime, graphic::EditorCamera &editorCamera );
         void OnViewportResize( Uint32 width, Uint32 height );
 
         Entity GetPrimaryCameraEntity();
@@ -42,7 +42,7 @@ namespace Smile::Scene
         void OnComponentAdded( Entity entity, ComponentType &component );
 
       private:
-        ECS::ECSEngine m_ECSEngine;
+        ecs::ECSEngine m_ECSEngine;
         Uint32 m_ViewportWidth = 0;
         Uint32 m_ViewportHeight = 0;
 

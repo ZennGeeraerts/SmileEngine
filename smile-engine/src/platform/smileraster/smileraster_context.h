@@ -2,12 +2,12 @@
 #include "smile_engine/graphic/graphics_context.h"
 #include <DeviceContext.cuh>
 
-namespace Smile
+namespace smile
 {
     class Window;
 }
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class SmileRasterContext final : public GraphicsContext
     {

@@ -2,7 +2,7 @@
 
 #include "shader.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     struct ShaderVariable final
     {
@@ -10,7 +10,7 @@ namespace Smile::Graphic
         ShaderDataType Type{};
     };
 
-    namespace Utils
+    namespace utils
     {
         std::vector< ShaderVariable > ReflectShaderVariables( const Ref< Shader > &pShader );
     }

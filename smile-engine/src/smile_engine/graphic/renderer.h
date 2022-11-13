@@ -12,7 +12,7 @@
 
 #include "smile_engine/scene/components.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     struct RendererSettings final
     {
@@ -57,14 +57,14 @@ namespace Smile::Graphic
             const Ref< IndexBuffer > &pIndexBuffer,
             const Ref< Shader > &pShader,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const Scene::MeshRendererComponent &meshRendererComponent,
+        static void Submit( const scene::MeshRendererComponent &meshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const Scene::StaticMeshComponent &staticMeshComponent,
+        static void Submit( const scene::StaticMeshComponent &staticMeshComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const Scene::SkinnedMeshComponent &skinnedMeshComponent,
+        static void Submit( const scene::SkinnedMeshComponent &skinnedMeshComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
 
-        static void SubmitWireframe( const Scene::BoxColliderComponent &boxColliderComponent,
+        static void SubmitWireframe( const scene::BoxColliderComponent &boxColliderComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
 
         static RendererAPI::API GetAPI()

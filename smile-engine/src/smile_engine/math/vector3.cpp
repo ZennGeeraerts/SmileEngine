@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "vector3.h"
 
-namespace Smile::Math
+namespace smile::math
 {
     const Vector3 Vector3::Zero{ 0, 0, 0 };
     const Vector3 Vector3::XAxis{ 1, 0, 0 };

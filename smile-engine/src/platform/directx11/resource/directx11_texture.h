@@ -5,7 +5,7 @@
 
 #include <DirectXTex.h>
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class DirectX11Texture2D final : public Texture2D
     {

@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "perspective_camera.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     using namespace DirectX;
 

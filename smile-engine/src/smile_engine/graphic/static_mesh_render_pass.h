@@ -2,7 +2,7 @@
 
 #include "render_pass.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
 	class StaticMeshRenderPass final : public RenderPass
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Smile::Scripting
+namespace smile::scripting
 {
 	class ScriptGlue final
     {

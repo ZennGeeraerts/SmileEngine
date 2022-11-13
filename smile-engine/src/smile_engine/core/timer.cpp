@@ -3,7 +3,7 @@
 
 using namespace std::chrono;
 
-namespace Smile
+namespace smile
 {
     Timer::Timer()
         : m_MsPerFrame{ 16 },

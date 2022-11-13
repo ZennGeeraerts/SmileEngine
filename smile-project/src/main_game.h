@@ -1,34 +1,34 @@
 #pragma once
 #include <smile_engine.h>
 
-class ExampleLayer final : public Smile::Layer
+class ExampleLayer final : public smile::Layer
 {
   public:
     ExampleLayer();
 
     virtual void OnAttach() override;
-    virtual void OnUpdate( Smile::Timestep deltaTime ) override;
-    virtual void OnEvent( Smile::Event &event ) override;
+    virtual void OnUpdate( smile::Timestep deltaTime ) override;
+    virtual void OnEvent( smile::Event &event ) override;
     virtual void OnImGuiRender() override;
 
   private:
-    bool OnWindowResize( Smile::WindowResizeEvent &e );
+    bool OnWindowResize( smile::WindowResizeEvent &e );
 
   private:
-    Smile::Ref< Smile::Scene::Scene > m_pActiveScene;
+    smile::Ref< smile::scene::Scene > m_pActiveScene;
 
-    Smile::Scene::Entity m_CameraEntity;
+    smile::scene::Entity m_CameraEntity;
     float m_CameraMoveSpeed = 5.f;
     float m_CameraRotationSpeed = 180.f;
 
-    Smile::Scene::Entity m_ModelEntity;
+    smile::scene::Entity m_ModelEntity;
 
     float m_PrintTimer = 0.f;
 };
 
-class MainGame final : public Smile::Application
+class MainGame final : public smile::Application
 {
   public:
-    MainGame( const Smile::ApplicationDescriptor &descriptor );
+    MainGame( const smile::ApplicationDescriptor &descriptor );
     ~MainGame();
 };

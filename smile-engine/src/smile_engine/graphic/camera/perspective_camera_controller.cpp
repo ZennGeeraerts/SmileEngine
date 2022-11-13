@@ -4,7 +4,7 @@
 #include "smile_engine/input/input.h"
 #include "smile_engine/input/key_codes.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     PerspectiveCameraController::PerspectiveCameraController( float fov, float aspectRatio )
         : m_FOV{ fov }, m_AspectRatio{ aspectRatio }, m_Camera{ fov, aspectRatio }
@@ -13,30 +13,30 @@ namespace Smile::Graphic
 
     void PerspectiveCameraController::OnUpdate( Timestep deltaTime )
     {
-        if ( Input::Input::IsKeyPressed( Input::key::Left ) )
+        if ( input::Input::IsKeyPressed( input::key::Left ) )
             m_CameraRotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::Input::IsKeyPressed( Input::key::Right ) )
+        if ( input::Input::IsKeyPressed( input::key::Right ) )
             m_CameraRotation.y += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::Input::IsKeyPressed( Input::key::Up ) )
+        if ( input::Input::IsKeyPressed( input::key::Up ) )
             m_CameraRotation.x -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
-        if ( Input::Input::IsKeyPressed( Input::key::Down ) )
+        if ( input::Input::IsKeyPressed( input::key::Down ) )
             m_CameraRotation.x += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
 
         const DirectX::XMFLOAT3 forward = { 0.f, 0.f, 1.f };
         const DirectX::XMFLOAT3 right = { 1.f, 0.f, 0.f };
         DirectX::XMFLOAT3 dir{};
 
-        if ( Input::Input::IsKeyPressed( 'A' ) )
+        if ( input::Input::IsKeyPressed( 'A' ) )
             dir.x -= 1;
-        if ( Input::Input::IsKeyPressed( 'D' ) )
+        if ( input::Input::IsKeyPressed( 'D' ) )
             dir.x += 1;
-        if ( Input::Input::IsKeyPressed( 'S' ) )
+        if ( input::Input::IsKeyPressed( 'S' ) )
             dir.z -= 1;
-        if ( Input::Input::IsKeyPressed( 'W' ) )
+        if ( input::Input::IsKeyPressed( 'W' ) )
             dir.z += 1;
-        if ( Input::Input::IsKeyPressed( Input::key::Space ) )
+        if ( input::Input::IsKeyPressed( input::key::Space ) )
             dir.y += 1;
-        if ( Input::Input::IsKeyPressed( Input::key::CtrlLeft ) )
+        if ( input::Input::IsKeyPressed( input::key::CtrlLeft ) )
             dir.y -= 1;
 
         dir.x = forward.x * dir.z + right.x * dir.x;

@@ -40,7 +40,7 @@
         ( r ) = nullptr;                                                                                               \
     }
 
-namespace Smile
+namespace smile
 {
     template < typename Type >
     using Scope = std::unique_ptr< Type >;

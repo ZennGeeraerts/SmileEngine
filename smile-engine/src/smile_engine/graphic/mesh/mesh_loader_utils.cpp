@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "mesh_loader_utils.h"
 
-namespace Smile::Graphic::Utils
+namespace smile::graphic::utils
 {
     DirectX::XMFLOAT3 convertToVector3( const aiVector3D &aiVector )
     {

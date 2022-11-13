@@ -5,7 +5,7 @@
 #include "platform/directx11/directx11_diagnostics.h"
 #include "platform/directX11/shader/directx11_buffer.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     DirectX11IndexBuffer::DirectX11IndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
     {

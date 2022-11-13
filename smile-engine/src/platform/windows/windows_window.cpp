@@ -16,7 +16,7 @@
 //
 // extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-namespace Smile
+namespace smile
 {
     Window *Window::Create( const WindowSettings &settings )
     {
@@ -120,7 +120,7 @@ namespace Smile
         SM_ASSERT( m_WindowHandle, "WindowsWindow::init > Could not create window!" );
 
         // Init context
-        m_pContext = Graphic::GraphicsContext::Create( this );
+        m_pContext = graphic::GraphicsContext::Create( this );
         m_pContext->Initialize();
 
         ShowWindow( m_WindowHandle, SW_SHOW );
@@ -224,14 +224,14 @@ namespace Smile
 
             case WM_KEYDOWN:
             {
-                KeyPressedEvent event{ static_cast< Input::KeyCode >( wParam ), static_cast< Uint16 >( lParam & 0xFF ) };
+                KeyPressedEvent event{ static_cast< input::KeyCode >( wParam ), static_cast< Uint16 >( lParam & 0xFF ) };
                 pWindow->m_Data.EventCallback( event );
                 break;
             }
 
             case WM_KEYUP:
             {
-                KeyReleasedEvent event{ static_cast< Input::KeyCode >( wParam ) };
+                KeyReleasedEvent event{ static_cast< input::KeyCode >( wParam ) };
                 pWindow->m_Data.EventCallback( event );
                 break;
             }
@@ -283,7 +283,7 @@ namespace Smile
 
             case WM_CHAR:
             {
-                KeyTypedEvent event{ static_cast< Input::KeyCode >( wParam ) };
+                KeyTypedEvent event{ static_cast< input::KeyCode >( wParam ) };
                 pWindow->m_Data.EventCallback( event );
                 break;
             }

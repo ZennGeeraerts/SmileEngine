@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include <string>
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class Texture
     {

@@ -4,7 +4,7 @@
 
 #include <SDL_image.h>
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class SmileRasterTexture2D final : public Texture2D
     {

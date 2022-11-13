@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-namespace Smile
+namespace smile
 {
     class Timer final
     {

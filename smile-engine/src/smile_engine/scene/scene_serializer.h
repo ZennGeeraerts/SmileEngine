@@ -2,7 +2,7 @@
 
 #include "scene.h"
 
-namespace Smile::Scene
+namespace smile::scene
 {
     class SceneSerializer final
     {

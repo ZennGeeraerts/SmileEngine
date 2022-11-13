@@ -2,7 +2,7 @@
 
 #include <string_view>
 
-namespace Smile::Compiled::Identifier
+namespace smile::stl::identifier
 {
     constexpr size_t g_InitialValue = 2166136261u;
 

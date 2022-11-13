@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Smile::Physics
+namespace smile::physics
 {
     struct PhysicsMaterial final
     {

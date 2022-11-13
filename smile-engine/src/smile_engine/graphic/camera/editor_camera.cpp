@@ -7,7 +7,7 @@
 
 #include "smile_engine/math/math.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     EditorCamera::EditorCamera( float fov, float aspectRatio, float nearPlane, float farPlane )
         : m_FOV{ fov },
@@ -23,9 +23,9 @@ namespace Smile::Graphic
 
     void EditorCamera::OnUpdate( Timestep deltaTime )
     {
-        if ( Input::Input::IsKeyPressed( Input::key::Alt ) )
+        if ( input::Input::IsKeyPressed( input::key::Alt ) )
         {
-            DirectX::XMFLOAT2 mousePosition{ Input::Input::GetMouseX(), Input::Input::GetMouseY() };
+            DirectX::XMFLOAT2 mousePosition{ input::Input::GetMouseX(), input::Input::GetMouseY() };
             auto mousePositionVec = DirectX::XMLoadFloat2( &mousePosition );
             auto initialMousePosVec = DirectX::XMLoadFloat2( &m_InitialMousePosition );
 
@@ -36,11 +36,11 @@ namespace Smile::Graphic
             DirectX::XMFLOAT2 delta{};
             DirectX::XMStoreFloat2( &delta, deltaVec );
 
-            if ( Input::Input::IsMouseButtonPressed( Input::mouse::ButtonMiddle ) )
+            if ( input::Input::IsMouseButtonPressed( input::mouse::ButtonMiddle ) )
                 MousePan( delta );
-            else if ( Input::Input::IsMouseButtonPressed( Input::mouse::ButtonLeft ) )
+            else if ( input::Input::IsMouseButtonPressed( input::mouse::ButtonLeft ) )
                 MouseRotate( delta );
-            else if ( Input::Input::IsMouseButtonPressed( Input::mouse::ButtonRight ) )
+            else if ( input::Input::IsMouseButtonPressed( input::mouse::ButtonRight ) )
                 MouseZoom( delta.y );
         }
 

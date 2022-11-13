@@ -3,7 +3,7 @@
 #include "smile_engine/graphic/resource/rasterizer_state.h"
 #include "platform/directX11/directx11_context.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class DirectX11RasterizerState final : public RasterizerState
     {

@@ -11,7 +11,7 @@
 #define SM_CYN "\x1B[36m"
 #define SM_WHT "\x1B[37m"
 
-namespace Smile
+namespace smile
 {
     enum class LogPriority
     {
@@ -87,9 +87,9 @@ namespace Smile
 }
 
 // Macro's are used for the log functions, so the functionality can easily be removed if we want a distribution build
-#define SM_LOG_TRACE( ... ) ::Smile::Logger::LogTrace( __VA_ARGS__ )
-#define SM_LOG_DEBUG( ... ) ::Smile::Logger::LogDebug( __VA_ARGS__ )
-#define SM_LOG_INFO( ... ) ::Smile::Logger::LogInfo( __VA_ARGS__ )
-#define SM_LOG_WARNING( ... ) ::Smile::Logger::LogWarning( __VA_ARGS__ )
-#define SM_LOG_ERROR( ... ) ::Smile::Logger::LogError( __VA_ARGS__ )
-#define SM_LOG_CRITICALERROR( ... ) ::Smile::Logger::LogCriticalError( __VA_ARGS__ )
+#define SM_LOG_TRACE( ... ) ::smile::Logger::LogTrace( __VA_ARGS__ )
+#define SM_LOG_DEBUG( ... ) ::smile::Logger::LogDebug( __VA_ARGS__ )
+#define SM_LOG_INFO( ... ) ::smile::Logger::LogInfo( __VA_ARGS__ )
+#define SM_LOG_WARNING( ... ) ::smile::Logger::LogWarning( __VA_ARGS__ )
+#define SM_LOG_ERROR( ... ) ::smile::Logger::LogError( __VA_ARGS__ )
+#define SM_LOG_CRITICALERROR( ... ) ::smile::Logger::LogCriticalError( __VA_ARGS__ )

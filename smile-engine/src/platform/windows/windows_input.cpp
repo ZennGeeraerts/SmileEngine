@@ -2,7 +2,7 @@
 #include "smile_engine/input/input.h"
 #include "smile_engine/core/application.h"
 
-namespace Smile::Input
+namespace smile::input
 {
     bool Input::IsKeyPressed( KeyCode keyCode )
     {

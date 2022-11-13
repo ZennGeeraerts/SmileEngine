@@ -9,7 +9,7 @@
 
 #include <filesystem>
 
-namespace Smile
+namespace smile
 {
     Application *Application::s_Instance = nullptr;
 
@@ -27,19 +27,19 @@ namespace Smile
         m_pWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
         m_pWindow->SetVSync( false );
 
-        Graphic::Renderer::Initialize();
-        Physics::PhysicsEngine::Initialize();
-        Scripting::ScriptEngine::Initialize();
+        graphic::Renderer::Initialize();
+        physics::PhysicsEngine::Initialize();
+        scripting::ScriptEngine::Initialize();
 
-        m_pImGuiLayer = new ImGui::ImGuiLayer{};
+        m_pImGuiLayer = new imgui::ImGuiLayer{};
         PushOverlay( m_pImGuiLayer );
     }
 
     Application::~Application()
     {
-        Scripting::ScriptEngine::ShutDown();
-        Physics::PhysicsEngine::ShutDown();
-        Graphic::Renderer::ShutDown();
+        scripting::ScriptEngine::ShutDown();
+        physics::PhysicsEngine::ShutDown();
+        graphic::Renderer::ShutDown();
     }
 
     void Application::PushLayer( Layer *pLayer )
@@ -107,7 +107,7 @@ namespace Smile
         m_IsMinimized = ( e.getWidth() == 0 ) || ( e.getHeight() == 0 );
 
         if ( !m_IsMinimized )
-            Graphic::Renderer::OnWindowResize( e.getWidth(), e.getHeight() );
+            graphic::Renderer::OnWindowResize( e.getWidth(), e.getHeight() );
 
         return false;
     }

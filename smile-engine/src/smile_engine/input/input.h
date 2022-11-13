@@ -5,7 +5,7 @@
 #include "key_codes.h"
 #include "mouse_codes.h"
 
-namespace Smile::Input
+namespace smile::input
 {
     class Input
     {

@@ -17,7 +17,7 @@
 
 #include <DirectXMath.h>
 
-namespace Smile::Scene
+namespace smile::scene
 {
     struct IDComponent
     {
@@ -49,7 +49,7 @@ namespace Smile::Scene
         {
         }
 
-        DirectX::XMFLOAT4X4 getTransform() const
+        DirectX::XMFLOAT4X4 GetTransform() const
         {
             DirectX::XMMATRIX transformMat =
                 DirectX::XMMatrixScaling( Scale.x, Scale.y, Scale.z ) *
@@ -96,36 +96,36 @@ namespace Smile::Scene
     {
         MeshRendererComponent() = default;
         MeshRendererComponent( const MeshRendererComponent & ) = default;
-        MeshRendererComponent( const Graphic::VertexBufferDescriptor &vertexBufferDesc,
-            const Graphic::IndexBufferDescriptor &indexBufferDesc,
+        MeshRendererComponent( const graphic::VertexBufferDescriptor &vertexBufferDesc,
+            const graphic::IndexBufferDescriptor &indexBufferDesc,
             const std::string &shaderFilePath )
         {
-            pVertexBuffer.reset( Graphic::VertexBuffer::Create( vertexBufferDesc ) );
-            pIndexBuffer.reset( Graphic::IndexBuffer::Create( indexBufferDesc ) );
-            pShader = Graphic::Shader::Create( shaderFilePath );
+            pVertexBuffer.reset( graphic::VertexBuffer::Create( vertexBufferDesc ) );
+            pIndexBuffer.reset( graphic::IndexBuffer::Create( indexBufferDesc ) );
+            pShader = graphic::Shader::Create( shaderFilePath );
         }
 
-        Ref< Graphic::VertexBuffer > pVertexBuffer = nullptr;
-        Ref< Graphic::IndexBuffer > pIndexBuffer = nullptr;
-        Ref< Graphic::Shader > pShader = nullptr;
+        Ref< graphic::VertexBuffer > pVertexBuffer = nullptr;
+        Ref< graphic::IndexBuffer > pIndexBuffer = nullptr;
+        Ref< graphic::Shader > pShader = nullptr;
     };
 
     struct StaticMeshComponent final
     {
         StaticMeshComponent()
         {
-            auto pShader = Graphic::Shader::Create( "assets/shaders/PBR.fx" );
-            pMaterials.push_back( CreateRef< Graphic::Material >( pShader ) );
+            auto pShader = graphic::Shader::Create( "assets/shaders/PBR.fx" );
+            pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
         }
 
         StaticMeshComponent( const StaticMeshComponent & ) = default;
 
         // For now, only support 1 material
-        StaticMeshComponent( const std::string &assetFile, const Ref< Graphic::Material > &pMaterial )
+        StaticMeshComponent( const std::string &assetFile, const Ref< graphic::Material > &pMaterial )
         {
             pMaterials.push_back( pMaterial );
 
-            pMeshes = Graphic::MeshLoader::LoadStaticMesh( assetFile );
+            pMeshes = graphic::MeshLoader::LoadStaticMesh( assetFile );
             const auto &bufferLayout = pMaterials[0]->GetBufferLayout();
             for ( const auto &pMesh : pMeshes )
             {
@@ -133,26 +133,26 @@ namespace Smile::Scene
             }
         }
 
-        std::vector< Ref< Graphic::StaticMeshFilter > > pMeshes = {};
-        std::vector< Ref< Graphic::Material > > pMaterials = {};
+        std::vector< Ref< graphic::StaticMeshFilter > > pMeshes = {};
+        std::vector< Ref< graphic::Material > > pMaterials = {};
     };
 
     struct SkinnedMeshComponent final
     {
         SkinnedMeshComponent()
         {
-            auto pShader = Graphic::Shader::Create( "assets/shaders/PBR_Skinned.fx" );
-            pMaterials.push_back( CreateRef< Graphic::Material >( pShader ) );
+            auto pShader = graphic::Shader::Create( "assets/shaders/PBR_Skinned.fx" );
+            pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
         }
 
         SkinnedMeshComponent( const SkinnedMeshComponent & ) = default;
 
         // For now, only support 1 material
-        SkinnedMeshComponent( const std::string &assetFile, const Ref< Graphic::Material > &pMaterial )
+        SkinnedMeshComponent( const std::string &assetFile, const Ref< graphic::Material > &pMaterial )
         {
             pMaterials.push_back( pMaterial );
 
-            pMeshes = Graphic::MeshLoader::LoadSkinnedMesh( assetFile );
+            pMeshes = graphic::MeshLoader::LoadSkinnedMesh( assetFile );
             const auto &bufferLayout = pMaterials[0]->GetBufferLayout();
             for ( const auto &pMesh : pMeshes )
             {
@@ -160,15 +160,15 @@ namespace Smile::Scene
 
                 if ( pMesh->HasAnimations() )
                 {
-                    Graphic::MeshAnimator animator{ pMesh };
+                    graphic::MeshAnimator animator{ pMesh };
                     Animators.push_back( animator );
                 }
             }
         }
 
-        std::vector< Ref< Graphic::SkinnedMeshFilter > > pMeshes = {};
-        std::vector< Ref< Graphic::Material > > pMaterials = {};
-        std::vector< Graphic::MeshAnimator > Animators = {};
+        std::vector< Ref< graphic::SkinnedMeshFilter > > pMeshes = {};
+        std::vector< Ref< graphic::Material > > pMaterials = {};
+        std::vector< graphic::MeshAnimator > Animators = {};
     };
 
     struct CameraComponent final
@@ -200,7 +200,7 @@ namespace Smile::Scene
         // Data
         BodyType Type;
         CollisionDetectionType CollisionDetection = CollisionDetectionType::Discrete;
-        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
 
         float Mass = 1.0f;
         float LinearDrag = 0.0f;
@@ -221,8 +221,8 @@ namespace Smile::Scene
     {
         BoxColliderComponent()
         {
-            Graphic::BufferLayout bufferLayout{ { Graphic::ShaderDataType::Float3, "POSITION" } };
-            pWireframeMesh = Graphic::MeshFactory::CreateCube( bufferLayout );
+            graphic::BufferLayout bufferLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
+            pWireframeMesh = graphic::MeshFactory::CreateCube( bufferLayout );
             pWireframeMesh->Create( bufferLayout );
         }
 
@@ -233,8 +233,8 @@ namespace Smile::Scene
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 
-        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
-        Ref< Graphic::StaticMeshFilter > pWireframeMesh = nullptr;
+        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< graphic::StaticMeshFilter > pWireframeMesh = nullptr;
     };
 
     struct SphereColliderComponent final
@@ -246,7 +246,7 @@ namespace Smile::Scene
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 
-        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 
     struct CapsuleColliderComponent final
@@ -259,6 +259,6 @@ namespace Smile::Scene
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 
-        Ref< Physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 }

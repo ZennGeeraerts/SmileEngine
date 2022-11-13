@@ -8,7 +8,7 @@
 #    include "platform/smileraster/smileraster_shader.h"
 #endif
 
-namespace Smile::graphic
+namespace smile::graphic
 {
     Ref< Shader > Shader::Create( const std::string &filePath, const BufferLayout &bufferLayout )
     {

@@ -6,7 +6,7 @@
 #include <thirdparty/imgui/imgui.h>
 #include <thirdparty/imguizmo/ImGuizmo.h>
 
-namespace Smile
+namespace smile
 {
     /*-----------------------------------------------------------------------------------------------------------*/
     /*---------------------------------------------- Editor Layer -----------------------------------------------*/
@@ -20,18 +20,18 @@ namespace Smile
 
     void SmileEditorLayer::OnAttach()
     {
-        Graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
+        graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
             DirectX::Colors::DodgerBlue.f[3] } );
 
         NewScene();
-        m_EditorCamera = Graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
+        m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        m_pIconPlay = Graphic::Texture2D::Create( "resources/icons/play_button.png" );
-        m_pIconSimulate = Graphic::Texture2D::Create( "resources/icons/simulate_button.png" );
-        m_pIconStop = Graphic::Texture2D::Create( "resources/icons/stop_button.png" );
+        m_pIconPlay = graphic::Texture2D::Create( "resources/icons/play_button.png" );
+        m_pIconSimulate = graphic::Texture2D::Create( "resources/icons/simulate_button.png" );
+        m_pIconStop = graphic::Texture2D::Create( "resources/icons/stop_button.png" );
     }
 
     void SmileEditorLayer::OnDetach()
@@ -40,19 +40,19 @@ namespace Smile
 
     void SmileEditorLayer::OnUpdate( Timestep deltaTime )
     {
-        const auto &render_settings = Graphic::Renderer::GetSettings();
-        if ( ( !Math::CompareFloats( m_ViewportSize.x, static_cast< float >( render_settings.Width ) ) ||
-                 !Math::CompareFloats( m_ViewportSize.y, static_cast< float >( render_settings.Height ) ) ) &&
+        const auto &render_settings = graphic::Renderer::GetSettings();
+        if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( render_settings.Width ) ) ||
+                 !math::AreEqual( m_ViewportSize.y, static_cast< float >( render_settings.Height ) ) ) &&
              ( m_ViewportSize.x > 0 ) && ( m_ViewportSize.y > 0 ) )
         {
-            Graphic::Renderer::ResizeFramebuffer(
+            graphic::Renderer::ResizeFramebuffer(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
             m_pActiveScene->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
-        Graphic::RenderCommand::Clear();
+        graphic::RenderCommand::Clear();
 
         switch ( m_SceneState )
         {
@@ -158,7 +158,7 @@ namespace Smile
                     SaveSceneAs();
 
                 if ( ImGui::MenuItem( "Exit" ) )
-                    Smile::Application::GetInstance().ShutDown();
+                    smile::Application::GetInstance().ShutDown();
                 ImGui::EndMenu();
             }
 
@@ -176,7 +176,7 @@ namespace Smile
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image( Graphic::Renderer::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
+        ImGui::Image( graphic::Renderer::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {
@@ -191,7 +191,7 @@ namespace Smile
         }
 
         // Gizmos
-        Scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
         if ( selectedEntity && ( m_GizmoType != GizmoType::None ) && ( m_SceneState == SceneState::Edit ) )
         {
             ImGuizmo::SetOrthographic( false );
@@ -214,18 +214,18 @@ namespace Smile
             // DirectX::XMMATRIX cameraViewMatrixMat = DirectX::XMMatrixInverse(nullptr, cameraTransformMat);
 
             // Editor camera
-            const DirectX::XMFLOAT4X4 &camera_projection_matrix = m_EditorCamera.GetProjectionMatrix();
-            const DirectX::XMFLOAT4X4 &camera_view_matrix = m_EditorCamera.GetViewMatrix();
+            const DirectX::XMFLOAT4X4 &cameraProjectionMatrix = m_EditorCamera.GetProjectionMatrix();
+            const DirectX::XMFLOAT4X4 &cameraViewMatrix = m_EditorCamera.GetViewMatrix();
 
             // Entity
-            auto &entityTransformComponent = selectedEntity.GetComponent< Scene::TransformComponent >();
-            auto entityTransform = entityTransformComponent.getTransform();
+            auto &entityTransformComponent = selectedEntity.GetComponent< scene::TransformComponent >();
+            auto entityTransform = entityTransformComponent.GetTransform();
             auto entityRotation = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.x ),
                 DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.y ),
                 DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.z ) };
 
             // Snapping
-            bool snapping = Input::Input::IsKeyPressed( Input::key::CtrlLeft );
+            bool snapping = input::Input::IsKeyPressed( input::key::CtrlLeft );
             float snapValue = 0.5f;
             if ( m_GizmoType == GizmoType::Rotate )
                 snapValue = 45.f;
@@ -235,8 +235,8 @@ namespace Smile
                 &entityRotation.x,
                 &entityTransformComponent.Scale.x,
                 *entityTransform.m );
-            ImGuizmo::Manipulate( *camera_view_matrix.m,
-                *camera_projection_matrix.m,
+            ImGuizmo::Manipulate( *cameraViewMatrix.m,
+                *cameraProjectionMatrix.m,
                 static_cast< ImGuizmo::OPERATION >( m_GizmoType ),
                 ImGuizmo::MODE::LOCAL,
                 *entityTransform.m,
@@ -284,7 +284,7 @@ namespace Smile
 
         const float icon_size{ ImGui::GetWindowHeight() - 4.f };
         {
-            Ref< Graphic::Texture2D > pStateIcon =
+            Ref< graphic::Texture2D > pStateIcon =
                 ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate ) ? m_pIconPlay : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( icon_size * 0.5f ) );
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
@@ -301,7 +301,7 @@ namespace Smile
         }
         ImGui::SameLine();
         {
-            Ref< Graphic::Texture2D > pStateIcon =
+            Ref< graphic::Texture2D > pStateIcon =
                 ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play ) ? m_pIconSimulate : m_pIconStop;
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
                      ImVec2{ icon_size, icon_size },
@@ -335,32 +335,34 @@ namespace Smile
         if ( e.getRepeatCount() > 1 )
             return false;
 
-        bool bControlPressed = Input::Input::IsKeyPressed( Input::key::CtrlLeft ) || Input::Input::IsKeyPressed( Input::key::CtrlRight );
-        bool bShiftPressed = Input::Input::IsKeyPressed( Input::key::ShiftLeft ) || Input::Input::IsKeyPressed( Input::key::ShiftRight );
+        bool isControlPressed =
+            input::Input::IsKeyPressed( input::key::CtrlLeft ) || input::Input::IsKeyPressed( input::key::CtrlRight );
+        bool isShiftPressed =
+            input::Input::IsKeyPressed( input::key::ShiftLeft ) || input::Input::IsKeyPressed( input::key::ShiftRight );
 
         switch ( e.GetKeyCode() )
         {
             case 'S':
-                if ( bControlPressed )
+                if ( isControlPressed )
                 {
-                    if ( bShiftPressed )
+                    if ( isShiftPressed )
                         SaveSceneAs();
                     else
                         SaveScene();
                 }
                 break;
             case 'O':
-                if ( bControlPressed )
+                if ( isControlPressed )
                     OpenScene();
                 break;
             case 'N':
-                if ( bControlPressed )
+                if ( isControlPressed )
                     NewScene();
                 break;
 
             // Scene commands
             case 'D':
-                if ( bControlPressed )
+                if ( isControlPressed )
                     DuplicateEntity();
                 break;
 
@@ -394,7 +396,7 @@ namespace Smile
 
     void SmileEditorLayer::SaveSceneAs()
     {
-        std::string filePath = Utils::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = utils::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
         {
             SerializeScene( m_pActiveScene, filePath );
@@ -404,15 +406,15 @@ namespace Smile
             SM_LOG_ERROR( "SmileEditorLayer::saveSceneAs > Failed to save scene. The file path was empty" );
     }
 
-    void SmileEditorLayer::SerializeScene( const Ref< Scene::Scene > &pScene, const std::filesystem::path &filePath )
+    void SmileEditorLayer::SerializeScene( const Ref< scene::Scene > &pScene, const std::filesystem::path &filePath )
     {
-        Scene::SceneSerializer scene_serializer{ pScene };
-        scene_serializer.Serialize( filePath.string() );
+        scene::SceneSerializer sceneSerializer{ pScene };
+        sceneSerializer.Serialize( filePath.string() );
     }
 
     void SmileEditorLayer::OpenScene()
     {
-        std::string filePath = Utils::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = utils::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
         OpenScene( filePath );
     }
 
@@ -433,8 +435,8 @@ namespace Smile
             return;
         }
 
-        Ref< Scene::Scene > pNewScene = CreateRef< Scene::Scene >();
-        Scene::SceneSerializer sceneSerializer{ pNewScene };
+        Ref< scene::Scene > pNewScene = CreateRef< scene::Scene >();
+        scene::SceneSerializer sceneSerializer{ pNewScene };
         if ( sceneSerializer.Deserialize( filePath.string() ) )
         {
             m_pEditorScene = pNewScene;
@@ -454,7 +456,7 @@ namespace Smile
         if ( m_SceneState == SceneState::Play )
             OnSceneStop();
 
-        m_pActiveScene = CreateRef< Scene::Scene >();
+        m_pActiveScene = CreateRef< scene::Scene >();
         m_pEditorScene = m_pActiveScene;
         m_pActiveScene->OnViewportResize(
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
@@ -470,7 +472,7 @@ namespace Smile
             OnSceneStop();
 
         m_SceneState = SceneState::Play;
-        m_pActiveScene = Scene::Scene::Copy( m_pEditorScene );
+        m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
         m_pActiveScene->OnRuntimeStart();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
@@ -481,7 +483,7 @@ namespace Smile
             OnSceneStop();
 
         m_SceneState = SceneState::Simulate;
-        m_pActiveScene = Scene::Scene::Copy( m_pEditorScene );
+        m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
         m_pActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
@@ -503,7 +505,7 @@ namespace Smile
         if ( m_SceneState != SceneState::Edit )
             return;
 
-        Scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
         if ( selectedEntity )
             m_pEditorScene->DuplicateEntity( selectedEntity );
     }

@@ -6,7 +6,7 @@
 
 #include <d3dx11effect.h>
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class DirectX11Shader final : public Shader
     {

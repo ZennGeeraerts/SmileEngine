@@ -3,7 +3,7 @@
 #include "graphics_context.h"
 #include "shader/shader.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class RendererAPI
     {

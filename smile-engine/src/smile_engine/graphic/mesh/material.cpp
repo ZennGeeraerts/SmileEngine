@@ -3,7 +3,7 @@
 
 #include "smile_engine/graphic/shader/shader_reflection.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     Material::Material( const Ref< Shader > &shader ) : m_pShader{ shader }
     {
@@ -24,7 +24,7 @@ namespace Smile::Graphic
     {
         m_pShader = new_shader;
 
-        const auto &shaderVariables{ Utils::ReflectShaderVariables( new_shader ) };
+        const auto &shaderVariables{ utils::ReflectShaderVariables( new_shader ) };
         for ( const ShaderVariable &variable : shaderVariables )
         {
             switch ( variable.Type )

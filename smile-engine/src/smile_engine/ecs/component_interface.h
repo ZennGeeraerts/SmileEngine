@@ -5,7 +5,7 @@
 
 #include <functional>
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     using createHandler = std::function< void( EntityHandleType, void * ) >;
     using destroyHandler = std::function< void( void * ) >;
@@ -19,31 +19,31 @@ namespace Smile::ECS
         }
 
         template < typename ComponentType >
-        ComponentType &Get( EntityHandleType entity_handle )
+        ComponentType &Get( EntityHandleType entityHandle )
         {
-            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
 
-            SM_ASSERT( index != g_NullHandle< IndexType >.Index, "ComponentInterface::Get > Invalid index" );
+            SM_ASSERT( index != EntityHandleType::NullHandle().GetIndex(), "ComponentInterface::Get > Invalid index" );
 
             return m_pComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
-        const ComponentType &Get( EntityHandleType entity_handle ) const
+        const ComponentType &Get( EntityHandleType entityHandle ) const
         {
-            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->Get< ComponentType >( index );
         }
 
-        void *GetRaw( EntityHandleType entity_handle )
+        void *GetRaw( EntityHandleType entityHandle )
         {
-            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->GetRaw( index );
         }
 
-        const void *GetRaw( EntityHandleType entity_handle ) const
+        const void *GetRaw( EntityHandleType entityHandle ) const
         {
-            const IndexType index = m_Pool.GetIndex( entity_handle.Index );
+            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->GetRaw( index );
         }
 

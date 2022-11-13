@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "component_storage.h"
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     ComponentStorage::~ComponentStorage()
     {
@@ -76,7 +76,7 @@ namespace Smile::ECS
 
         m_Allocated = newSize;
 
-        SM_ASSERT( m_pData, "ComponentStorage::reallocate > data is nullptr" );
+        SM_ASSERT( m_pData, "ComponentStorage::Reallocate > data is nullptr" );
     }
 
     void ComponentStorage::Clear()

@@ -10271,8 +10271,8 @@ private:
  * @tparam Get Types of components observed by the group.
  * @tparam Owned Types of components owned by the group.
  */
-template<typename Entity, typename... Exclude, typename... Get, typename... Owned>
-class basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Owned...> final {
+template<typename Entity, typename... Exclude, typename... Get, typename... Components>
+class basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Components...> final {
     /*! @brief A registry is allowed to create groups. */
     friend class basic_registry<Entity>;
 
@@ -10334,14 +10334,14 @@ class basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Owned...> final 
     public:
         using iterator = iterable_iterator<
             typename basic_common_type::iterator,
-            type_list_cat_t<std::conditional_t<std::is_void_v<decltype(std::declval<storage_type<Owned>>().get({}))>, type_list<>, type_list<decltype(std::declval<storage_type<Owned>>().end())>>...>
+            type_list_cat_t<std::conditional_t<std::is_void_v<decltype(std::declval<storage_type<Components>>().get({}))>, type_list<>, type_list<decltype(std::declval<storage_type<Components>>().end())>>...>
         >;
         using reverse_iterator = iterable_iterator<
             typename basic_common_type::reverse_iterator,
-            type_list_cat_t<std::conditional_t<std::is_void_v<decltype(std::declval<storage_type<Owned>>().get({}))>, type_list<>, type_list<decltype(std::declval<storage_type<Owned>>().rbegin())>>...>
+            type_list_cat_t<std::conditional_t<std::is_void_v<decltype(std::declval<storage_type<Components>>().get({}))>, type_list<>, type_list<decltype(std::declval<storage_type<Components>>().rbegin())>>...>
         >;
 
-        iterable(std::tuple<storage_type<Owned> *..., storage_type<Get> *...> cpools, const std::size_t * const extent)
+        iterable(std::tuple<storage_type<Components> *..., storage_type<Get> *...> cpools, const std::size_t * const extent)
             : pools{cpools},
               length{extent}
         {}
@@ -10349,41 +10349,41 @@ class basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Owned...> final 
         [[nodiscard]] iterator begin() const ENTT_NOEXCEPT {
             return length ? iterator{
                 std::get<0>(pools)->basic_common_type::end() - *length,
-                std::make_tuple((std::get<storage_type<Owned> *>(pools)->end() - *length)...),
+                std::make_tuple((std::get<storage_type<Components> *>(pools)->end() - *length)...),
                 std::make_tuple(std::get<storage_type<Get> *>(pools)...)
-            } : iterator{{}, std::make_tuple(decltype(std::get<storage_type<Owned> *>(pools)->end()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
+            } : iterator{{}, std::make_tuple(decltype(std::get<storage_type<Components> *>(pools)->end()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
         }
 
         [[nodiscard]] iterator end() const ENTT_NOEXCEPT {
             return length ? iterator{
                 std::get<0>(pools)->basic_common_type::end(),
-                std::make_tuple((std::get<storage_type<Owned> *>(pools)->end())...),
+                std::make_tuple((std::get<storage_type<Components> *>(pools)->end())...),
                 std::make_tuple(std::get<storage_type<Get> *>(pools)...)
-            } : iterator{{}, std::make_tuple(decltype(std::get<storage_type<Owned> *>(pools)->end()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
+            } : iterator{{}, std::make_tuple(decltype(std::get<storage_type<Components> *>(pools)->end()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
         }
 
         [[nodiscard]] reverse_iterator rbegin() const ENTT_NOEXCEPT {
             return length ? reverse_iterator{
                 std::get<0>(pools)->basic_common_type::rbegin(),
-                std::make_tuple((std::get<storage_type<Owned> *>(pools)->rbegin())...),
+                std::make_tuple((std::get<storage_type<Components> *>(pools)->rbegin())...),
                 std::make_tuple(std::get<storage_type<Get> *>(pools)...)
-            } : reverse_iterator{{}, std::make_tuple(decltype(std::get<storage_type<Owned> *>(pools)->rbegin()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
+            } : reverse_iterator{{}, std::make_tuple(decltype(std::get<storage_type<Components> *>(pools)->rbegin()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
         }
 
         [[nodiscard]] reverse_iterator rend() const ENTT_NOEXCEPT {
             return length ? reverse_iterator{
                 std::get<0>(pools)->basic_common_type::rbegin() + *length,
-                std::make_tuple((std::get<storage_type<Owned> *>(pools)->rbegin() + *length)...),
+                std::make_tuple((std::get<storage_type<Components> *>(pools)->rbegin() + *length)...),
                 std::make_tuple(std::get<storage_type<Get> *>(pools)...)
-            } : reverse_iterator{{}, std::make_tuple(decltype(std::get<storage_type<Owned> *>(pools)->rbegin()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
+            } : reverse_iterator{{}, std::make_tuple(decltype(std::get<storage_type<Components> *>(pools)->rbegin()){}...), std::make_tuple(std::get<storage_type<Get> *>(pools)...)};
         }
 
     private:
-        const std::tuple<storage_type<Owned> *..., storage_type<Get> *...> pools;
+        const std::tuple<storage_type<Components> *..., storage_type<Get> *...> pools;
         const std::size_t * const length;
     };
 
-    basic_group(const std::size_t &extent, storage_type<Owned> &... opool, storage_type<Get> &... gpool) ENTT_NOEXCEPT
+    basic_group(const std::size_t &extent, storage_type<Components> &... opool, storage_type<Get> &... gpool) ENTT_NOEXCEPT
         : pools{&opool..., &gpool...},
           length{&extent}
     {}
@@ -10432,7 +10432,7 @@ public:
      */
     template<typename Component>
     [[nodiscard]] auto raw() const ENTT_NOEXCEPT {
-        static_assert((std::is_same_v<Component, Owned> || ...), "Non-owned type");
+        static_assert((std::is_same_v<Component, Components> || ...), "Non-owned type");
         auto *cpool = std::get<storage_type<Component> *>(pools);
         return cpool ? cpool->raw() : decltype(cpool->raw()){};
     }
@@ -10579,7 +10579,7 @@ public:
         ENTT_ASSERT(contains(entt), "Group does not contain entity");
 
         if constexpr(sizeof...(Component) == 0) {
-            return std::tuple_cat(get_as_tuple(*std::get<storage_type<Owned> *>(pools), entt)..., get_as_tuple(*std::get<storage_type<Get> *>(pools), entt)...);
+            return std::tuple_cat(get_as_tuple(*std::get<storage_type<Components> *>(pools), entt)..., get_as_tuple(*std::get<storage_type<Get> *>(pools), entt)...);
         } else if constexpr(sizeof...(Component) == 1) {
             return (std::get<storage_type<Component> *>(pools)->get(entt), ...);
         } else {
@@ -10697,11 +10697,11 @@ public:
                 [[maybe_unused]] const auto entt = head->data()[pos];
                 (other->swap(other->data()[pos], entt), ...);
             }
-        }(std::get<storage_type<Owned> *>(pools)...);
+        }(std::get<storage_type<Components> *>(pools)...);
     }
 
 private:
-    const std::tuple<storage_type<Owned> *..., storage_type<Get> *...> pools;
+    const std::tuple<storage_type<Components> *..., storage_type<Get> *...> pools;
     const size_type * const length;
 };
 
@@ -18771,39 +18771,39 @@ class basic_registry {
     template<typename...>
     struct group_handler;
 
-    template<typename... Exclude, typename... Get, typename... Owned>
-    struct group_handler<exclude_t<Exclude...>, get_t<Get...>, Owned...> {
-        static_assert(!std::disjunction_v<typename component_traits<Owned>::in_place_delete...>, "Groups do not support in-place delete");
-        static_assert(std::conjunction_v<std::is_same<Owned, std::remove_const_t<Owned>>..., std::is_same<Get, std::remove_const_t<Get>>..., std::is_same<Exclude, std::remove_const_t<Exclude>>...>, "One or more component types are invalid");
+    template<typename... Exclude, typename... Get, typename... Components>
+    struct group_handler<exclude_t<Exclude...>, get_t<Get...>, Components...> {
+        static_assert(!std::disjunction_v<typename component_traits<Components>::in_place_delete...>, "Groups do not support in-place delete");
+        static_assert(std::conjunction_v<std::is_same<Components, std::remove_const_t<Components>>..., std::is_same<Get, std::remove_const_t<Get>>..., std::is_same<Exclude, std::remove_const_t<Exclude>>...>, "One or more component types are invalid");
         std::conditional_t<sizeof...(Owned) == 0, basic_common_type, std::size_t> current{};
 
         template<typename Component>
         void maybe_valid_if(basic_registry &owner, const Entity entt) {
-            [[maybe_unused]] const auto cpools = std::make_tuple(owner.assure<Owned>()...);
+            [[maybe_unused]] const auto cpools = std::make_tuple(owner.assure<Components>()...);
 
-            const auto is_valid = ((std::is_same_v<Component, Owned> || std::get<storage_type<Owned> *>(cpools)->contains(entt)) && ...)
+            const auto is_valid = ((std::is_same_v<Component, Components> || std::get<storage_type<Components> *>(cpools)->contains(entt)) && ...)
                     && ((std::is_same_v<Component, Get> || owner.assure<Get>()->contains(entt)) && ...)
                     && ((std::is_same_v<Component, Exclude> || !owner.assure<Exclude>()->contains(entt)) && ...);
 
-            if constexpr(sizeof...(Owned) == 0) {
+            if constexpr(sizeof...(Components) == 0) {
                 if(is_valid && !current.contains(entt)) {
                     current.emplace(entt);
                 }
             } else {
                 if(is_valid && !(std::get<0>(cpools)->index(entt) < current)) {
                     const auto pos = current++;
-                    (std::get<storage_type<Owned> *>(cpools)->swap(std::get<storage_type<Owned> *>(cpools)->data()[pos], entt), ...);
+                    (std::get<storage_type<Components> *>(cpools)->swap(std::get<storage_type<Components> *>(cpools)->data()[pos], entt), ...);
                 }
             }
         }
 
         void discard_if([[maybe_unused]] basic_registry &owner, const Entity entt) {
-            if constexpr(sizeof...(Owned) == 0) {
+            if constexpr(sizeof...(Components) == 0) {
                 current.remove(entt);
             } else {
-                if(const auto cpools = std::make_tuple(owner.assure<Owned>()...); std::get<0>(cpools)->contains(entt) && (std::get<0>(cpools)->index(entt) < current)) {
+                if(const auto cpools = std::make_tuple(owner.assure<Components>()...); std::get<0>(cpools)->contains(entt) && (std::get<0>(cpools)->index(entt) < current)) {
                     const auto pos = --current;
-                    (std::get<storage_type<Owned> *>(cpools)->swap(std::get<storage_type<Owned> *>(cpools)->data()[pos], entt), ...);
+                    (std::get<storage_type<Components> *>(cpools)->swap(std::get<storage_type<Components> *>(cpools)->data()[pos], entt), ...);
                 }
             }
         }
@@ -19986,20 +19986,20 @@ public:
      * @tparam Exclude Types of components used to filter the group.
      * @return A newly created group.
      */
-    template<typename... Owned, typename... Get, typename... Exclude>
-    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Owned...> group(get_t<Get...>, exclude_t<Exclude...> = {}) {
-        static_assert(sizeof...(Owned) + sizeof...(Get) > 0, "Exclusion-only groups are not supported");
-        static_assert(sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude) > 1, "Single component groups are not allowed");
+    template<typename... Components, typename... Get, typename... Exclude>
+    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Components...> group(get_t<Get...>, exclude_t<Exclude...> = {}) {
+        static_assert(sizeof...(Components) + sizeof...(Get) > 0, "Exclusion-only groups are not supported");
+        static_assert(sizeof...(Components) + sizeof...(Get) + sizeof...(Exclude) > 1, "Single component groups are not allowed");
 
-        using handler_type = group_handler<exclude_t<Exclude...>, get_t<std::remove_const_t<Get>...>, std::remove_const_t<Owned>...>;
+        using handler_type = group_handler<exclude_t<Exclude...>, get_t<std::remove_const_t<Get>...>, std::remove_const_t<Components>...>;
 
-        const auto cpools = std::make_tuple(assure<std::remove_const_t<Owned>>()..., assure<std::remove_const_t<Get>>()...);
-        constexpr auto size = sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude);
+        const auto cpools = std::make_tuple(assure<std::remove_const_t<Components>>()..., assure<std::remove_const_t<Get>>()...);
+        constexpr auto size = sizeof...(Components) + sizeof...(Get) + sizeof...(Exclude);
         handler_type *handler = nullptr;
 
         if(auto it = std::find_if(groups.cbegin(), groups.cend(), [size](const auto &gdata) {
             return gdata.size == size
-                && (gdata.owned(type_hash<std::remove_const_t<Owned>>::value()) && ...)
+                && (gdata.owned(type_hash<std::remove_const_t<Components>>::value()) && ...)
                 && (gdata.get(type_hash<std::remove_const_t<Get>>::value()) && ...)
                 && (gdata.exclude(type_hash<Exclude>::value()) && ...);
         }); it != groups.cend())
@@ -20011,7 +20011,7 @@ public:
             group_data candidate = {
                 size,
                 { new handler_type{}, [](void *instance) { delete static_cast<handler_type *>(instance); } },
-                []([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<std::remove_const_t<Owned>>::value()) || ...); },
+                []([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<std::remove_const_t<Components>>::value()) || ...); },
                 []([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<std::remove_const_t<Get>>::value()) || ...); },
                 []([[maybe_unused]] const id_type ctype) ENTT_NOEXCEPT { return ((ctype == type_hash<Exclude>::value()) || ...); },
             };
@@ -20021,21 +20021,21 @@ public:
             const void *maybe_valid_if = nullptr;
             const void *discard_if = nullptr;
 
-            if constexpr(sizeof...(Owned) == 0) {
+            if constexpr(sizeof...(Components) == 0) {
                 groups.push_back(std::move(candidate));
             } else {
                 ENTT_ASSERT(std::all_of(groups.cbegin(), groups.cend(), [size](const auto &gdata) {
-                    const auto overlapping = (0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value()));
+                    const auto overlapping = (0u + ... + gdata.owned(type_hash<std::remove_const_t<Components>>::value()));
                     const auto sz = overlapping + (0u + ... + gdata.get(type_hash<std::remove_const_t<Get>>::value())) + (0u + ... + gdata.exclude(type_hash<Exclude>::value()));
                     return !overlapping || ((sz == size) || (sz == gdata.size));
                 }), "Conflicting groups");
 
                 const auto next = std::find_if_not(groups.cbegin(), groups.cend(), [size](const auto &gdata) {
-                    return !(0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value())) || (size > gdata.size);
+                    return !(0u + ... + gdata.owned(type_hash<std::remove_const_t<Components>>::value())) || (size > gdata.size);
                 });
 
                 const auto prev = std::find_if(std::make_reverse_iterator(next), groups.crend(), [](const auto &gdata) {
-                    return (0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value()));
+                    return (0u + ... + gdata.owned(type_hash<std::remove_const_t<Components>>::value()));
                 });
 
                 maybe_valid_if = (next == groups.cend() ? maybe_valid_if : next->group.get());
@@ -20043,27 +20043,27 @@ public:
                 groups.insert(next, std::move(candidate));
             }
 
-            (on_construct<std::remove_const_t<Owned>>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<std::remove_const_t<Owned>>>(*handler), ...);
+            (on_construct<std::remove_const_t<Components>>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<std::remove_const_t<Components>>>(*handler), ...);
             (on_construct<std::remove_const_t<Get>>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<std::remove_const_t<Get>>>(*handler), ...);
             (on_destroy<Exclude>().before(maybe_valid_if).template connect<&handler_type::template maybe_valid_if<Exclude>>(*handler), ...);
 
-            (on_destroy<std::remove_const_t<Owned>>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
+            (on_destroy<std::remove_const_t<Components>>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
             (on_destroy<std::remove_const_t<Get>>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
             (on_construct<Exclude>().before(discard_if).template connect<&handler_type::discard_if>(*handler), ...);
 
-            if constexpr(sizeof...(Owned) == 0) {
-                for(const auto entity: view<Owned..., Get...>(exclude<Exclude...>)) {
+            if constexpr(sizeof...(Components) == 0) {
+                for(const auto entity: view<Components..., Get...>(exclude<Exclude...>)) {
                     handler->current.emplace(entity);
                 }
             } else {
                 // we cannot iterate backwards because we want to leave behind valid entities in case of owned types
                 for(auto *first = std::get<0>(cpools)->data(), *last = first + std::get<0>(cpools)->size(); first != last; ++first) {
-                    handler->template maybe_valid_if<type_list_element_t<0, type_list<std::remove_const_t<Owned>...>>>(*this, *first);
+                    handler->template maybe_valid_if<type_list_element_t<0, type_list<std::remove_const_t<Components>...>>>(*this, *first);
                 }
             }
         }
 
-        return { handler->current, *std::get<storage_type<std::remove_const_t<Owned>> *>(cpools)..., *std::get<storage_type<std::remove_const_t<Get>> *>(cpools)... };
+        return { handler->current, *std::get<storage_type<std::remove_const_t<Components>> *>(cpools)..., *std::get<storage_type<std::remove_const_t<Get>> *>(cpools)... };
     }
 
     /**
@@ -20076,19 +20076,19 @@ public:
      * @tparam Exclude Types of components used to filter the group.
      * @return A newly created group.
      */
-    template<typename... Owned, typename... Get, typename... Exclude>
-    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<std::add_const_t<Get>...>, std::add_const_t<Owned>...> group_if_exists(get_t<Get...>, exclude_t<Exclude...> = {}) const {
+    template<typename... Components, typename... Get, typename... Exclude>
+    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<std::add_const_t<Get>...>, std::add_const_t<Components>...> group_if_exists(get_t<Get...>, exclude_t<Exclude...> = {}) const {
         if(auto it = std::find_if(groups.cbegin(), groups.cend(), [](const auto &gdata) {
-            return gdata.size == (sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude))
-                && (gdata.owned(type_hash<std::remove_const_t<Owned>>::value()) && ...)
+            return gdata.size == (sizeof...(Components) + sizeof...(Get) + sizeof...(Exclude))
+                && (gdata.owned(type_hash<std::remove_const_t<Components>>::value()) && ...)
                 && (gdata.get(type_hash<std::remove_const_t<Get>>::value()) && ...)
                 && (gdata.exclude(type_hash<Exclude>::value()) && ...);
             }); it == groups.cend())
         {
             return {};
         } else {
-            using handler_type = group_handler<exclude_t<Exclude...>, get_t<std::remove_const_t<Get>...>, std::remove_const_t<Owned>...>;
-            return { static_cast<handler_type *>(it->group.get())->current, *pool_if_exists<std::remove_const_t<Owned>>()... , *pool_if_exists<std::remove_const_t<Get>>()... };
+            using handler_type = group_handler<exclude_t<Exclude...>, get_t<std::remove_const_t<Get>...>, std::remove_const_t<Components>...>;
+            return { static_cast<handler_type *>(it->group.get())->current, *pool_if_exists<std::remove_const_t<Components>>()... , *pool_if_exists<std::remove_const_t<Get>>()... };
         }
     }
 
@@ -20101,9 +20101,9 @@ public:
      * @tparam Exclude Types of components used to filter the group.
      * @return A newly created group.
      */
-    template<typename... Owned, typename... Exclude>
-    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<>, Owned...> group(exclude_t<Exclude...> = {}) {
-        return group<Owned...>(get_t<>{}, exclude<Exclude...>);
+    template<typename... Components, typename... Exclude>
+    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<>, Components...> group(exclude_t<Exclude...> = {}) {
+        return group<Components...>(get_t<>{}, exclude<Exclude...>);
     }
 
     /**
@@ -20115,9 +20115,9 @@ public:
      * @tparam Exclude Types of components used to filter the group.
      * @return A newly created group.
      */
-    template<typename... Owned, typename... Exclude>
-    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<>, std::add_const_t<Owned>...> group_if_exists(exclude_t<Exclude...> = {}) const {
-        return group_if_exists<std::add_const_t<Owned>...>(get_t<>{}, exclude<Exclude...>);
+    template<typename... Components, typename... Exclude>
+    [[nodiscard]] basic_group<Entity, exclude_t<Exclude...>, get_t<>, std::add_const_t<Components>...> group_if_exists(exclude_t<Exclude...> = {}) const {
+        return group_if_exists<std::add_const_t<Components>...>(get_t<>{}, exclude<Exclude...>);
     }
 
     /**
@@ -20138,11 +20138,11 @@ public:
      * @tparam Exclude Types of components used to filter the group.
      * @return True if the group can be sorted, false otherwise.
      */
-    template<typename... Owned, typename... Get, typename... Exclude>
-    [[nodiscard]] bool sortable(const basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Owned...> &) ENTT_NOEXCEPT {
-        constexpr auto size = sizeof...(Owned) + sizeof...(Get) + sizeof...(Exclude);
+    template<typename... Components, typename... Get, typename... Exclude>
+    [[nodiscard]] bool sortable(const basic_group<Entity, exclude_t<Exclude...>, get_t<Get...>, Components...> &) ENTT_NOEXCEPT {
+        constexpr auto size = sizeof...(Components) + sizeof...(Get) + sizeof...(Exclude);
         return std::find_if(groups.cbegin(), groups.cend(), [size](const auto &gdata) {
-            return (0u + ... + gdata.owned(type_hash<std::remove_const_t<Owned>>::value())) && (size < gdata.size);
+            return (0u + ... + gdata.owned(type_hash<std::remove_const_t<Components>>::value())) && (size < gdata.size);
         }) == groups.cend();
     }
 
@@ -21233,12 +21233,12 @@ struct as_group {
      * @tparam Owned Types of components owned by the group.
      * @return A newly created group.
      */
-    template<typename Exclude, typename Get, typename... Owned>
-    operator basic_group<entity_type, Exclude, Get, Owned...>() const {
+    template<typename Exclude, typename Get, typename... Components>
+    operator basic_group<entity_type, Exclude, Get, Components...>() const {
         if constexpr(std::is_const_v<registry_type>) {
-            return reg.template group_if_exists<Owned...>(Get{}, Exclude{});
+            return reg.template group_if_exists<Components...>(Get{}, Exclude{});
         } else {
-            return reg.template group<Owned...>(Get{}, Exclude{});
+            return reg.template group<Components...>(Get{}, Exclude{});
         }
     }
 

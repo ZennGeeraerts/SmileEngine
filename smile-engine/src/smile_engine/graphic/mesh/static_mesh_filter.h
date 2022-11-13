@@ -2,7 +2,7 @@
 
 #include "mesh_filter.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class StaticMeshFilter final : public MeshFilter
     {

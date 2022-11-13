@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace Smile::STL
+namespace smile::stl
 {
     template < typename IndexType >
     class SparseSet final
@@ -24,7 +24,7 @@ namespace Smile::STL
         {
             SM_ASSERT( !Contains( element ), "SparseSet::Insert > Sparse set already contains this value" );
 
-            const auto pos = m_Dense.size();
+            const auto pos = static_cast< IndexType >( m_Dense.size() );
             m_Dense.push_back( element );
 
             if ( element >= m_Sparse.size() )

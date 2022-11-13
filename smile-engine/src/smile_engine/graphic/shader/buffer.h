@@ -1,7 +1,7 @@
 #pragma once
 #include "smile_engine/core/logger.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     enum class ShaderDataType : Uint8
     {

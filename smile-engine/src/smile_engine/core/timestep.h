@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Smile
+namespace smile
 {
     class Timestep final
     {

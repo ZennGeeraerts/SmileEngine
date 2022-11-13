@@ -5,7 +5,7 @@
 
 #include <PxRigidActor.h>
 
-namespace Smile::Physics
+namespace smile::physics
 {
     void ContactListener::onConstraintBreak( physx::PxConstraintInfo *pConstraints, physx::PxU32 count )
     {
@@ -18,7 +18,7 @@ namespace Smile::Physics
         for ( Uint32 i{}; i < count; ++i )
         {
             physx::PxActor &actor = *ppActors[i];
-            Scene::Entity &entity = *reinterpret_cast< Scene::Entity * >( actor.userData );
+            scene::Entity &entity = *reinterpret_cast< scene::Entity * >( actor.userData );
             SM_LOG_INFO( "Physics actor waking up: UUID: %llu, Name: %s", entity.GetUUID(), entity.GetName() );
         }
     }
@@ -28,7 +28,7 @@ namespace Smile::Physics
         for ( Uint32 i{}; i < count; ++i )
         {
             physx::PxActor &actor = *ppActors[i];
-            Scene::Entity &entity = *reinterpret_cast< Scene::Entity * >( actor.userData );
+            scene::Entity &entity = *reinterpret_cast< scene::Entity * >( actor.userData );
             SM_LOG_INFO( "Physics actor going to sleep: UUID: %llu, Name: %s", entity.GetUUID(), entity.GetName() );
         }
     }
@@ -37,8 +37,8 @@ namespace Smile::Physics
         const physx::PxContactPair *pairs,
         physx::PxU32 pair_count )
     {
-        Scene::Entity &entity0 = *static_cast< Scene::Entity * >( pairHeader.actors[0]->userData );
-        Scene::Entity &entity1 = *static_cast< Scene::Entity * >( pairHeader.actors[1]->userData );
+        scene::Entity &entity0 = *static_cast< scene::Entity * >( pairHeader.actors[0]->userData );
+        scene::Entity &entity1 = *static_cast< scene::Entity * >( pairHeader.actors[1]->userData );
 
         if ( pairs->flags == physx::PxContactPairFlag::eACTOR_PAIR_HAS_FIRST_TOUCH )
         {
@@ -52,8 +52,8 @@ namespace Smile::Physics
 
     void ContactListener::onTrigger( physx::PxTriggerPair *pPairs, physx::PxU32 count )
     {
-        Scene::Entity triggerEntity = *static_cast< Scene::Entity * >( pPairs->triggerActor->userData );
-        Scene::Entity otherEntity = *static_cast< Scene::Entity * >( pPairs->otherActor->userData );
+        scene::Entity triggerEntity = *static_cast< scene::Entity * >( pPairs->triggerActor->userData );
+        scene::Entity otherEntity = *static_cast< scene::Entity * >( pPairs->otherActor->userData );
 
         if ( pPairs->status == physx::PxPairFlag::eNOTIFY_TOUCH_FOUND )
         {

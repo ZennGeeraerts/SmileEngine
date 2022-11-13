@@ -3,7 +3,7 @@
 
 #include "smile_engine/core/logger.h"
 
-namespace Smile::Physics
+namespace smile::physics
 {
     void PhysicsErrorCallback::reportError( physx::PxErrorCode::Enum code,
         const char *message,

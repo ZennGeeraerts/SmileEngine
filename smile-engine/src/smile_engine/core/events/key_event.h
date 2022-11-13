@@ -3,14 +3,14 @@
 #include "Event.h"
 #include "smile_engine/input/key_codes.h"
 
-namespace Smile
+namespace smile
 {
     class KeyEvent : public Event
     {
       public:
         virtual ~KeyEvent() = default;
 
-        inline Input::KeyCode GetKeyCode() const
+        inline input::KeyCode GetKeyCode() const
         {
             return m_KeyCode;
         }
@@ -18,17 +18,17 @@ namespace Smile
         EVENT_CLASS_CATEGORY( EventCategoryKeyboard | EventCategoryInput )
 
       protected:
-        KeyEvent( Input::KeyCode key_code ) : m_KeyCode{ key_code }
+        KeyEvent( input::KeyCode key_code ) : m_KeyCode{ key_code }
         {
         }
 
-        Input::KeyCode m_KeyCode;
+        input::KeyCode m_KeyCode;
     };
 
     class KeyPressedEvent final : public KeyEvent
     {
       public:
-        KeyPressedEvent( Input::KeyCode keyCode, Uint16 repeatCount )
+        KeyPressedEvent( input::KeyCode keyCode, Uint16 repeatCount )
             : KeyEvent{ keyCode }, m_RepeatCount{ repeatCount }
         {
         }
@@ -54,7 +54,7 @@ namespace Smile
     class KeyReleasedEvent final : public KeyEvent
     {
       public:
-        KeyReleasedEvent( Input::KeyCode keyCode ) : KeyEvent{ keyCode }
+        KeyReleasedEvent( input::KeyCode keyCode ) : KeyEvent{ keyCode }
         {
         }
 
@@ -71,7 +71,7 @@ namespace Smile
     class KeyTypedEvent final : public KeyEvent
     {
       public:
-        KeyTypedEvent( Input::KeyCode keyCode ) : KeyEvent{ keyCode }
+        KeyTypedEvent( input::KeyCode keyCode ) : KeyEvent{ keyCode }
         {
         }
 

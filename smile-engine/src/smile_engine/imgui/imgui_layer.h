@@ -5,7 +5,7 @@
 #include "smile_engine/core/events/application_event.h"
 #include "smile_engine/core/events/key_event.h"
 
-namespace Smile::ImGui
+namespace smile::imgui
 {
     class ImGuiLayer final : public Layer
     {

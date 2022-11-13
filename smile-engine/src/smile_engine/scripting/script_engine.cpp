@@ -8,7 +8,7 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 
-namespace Smile::Scripting
+namespace smile::scripting
 {
     namespace Utils
     {

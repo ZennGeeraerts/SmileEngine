@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     using ConstructorType = void ( * )( void * );
     using DestructorType = void ( * )( void * );
@@ -98,7 +98,7 @@ namespace Smile::ECS
         IndexType GetIndex( IndexType index ) const
         {
             return m_pIndices ? m_pIndices[index]
-                           : reinterpret_cast< EntityHandleType * >( m_pData + m_ComponentSize * index )->Index;
+                              : reinterpret_cast< EntityHandleType * >( m_pData + m_ComponentSize * index )->GetIndex();
         }
 
         Uint32 GetSize() const

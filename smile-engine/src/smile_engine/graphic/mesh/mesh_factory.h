@@ -2,7 +2,7 @@
 
 #include "static_mesh_filter.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class MeshFactory final
     {

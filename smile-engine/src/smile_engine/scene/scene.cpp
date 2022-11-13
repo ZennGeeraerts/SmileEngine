@@ -8,7 +8,7 @@
 
 #include "entity.h"
 
-namespace Smile::Scene
+namespace smile::scene
 {
     Scene::Scene()
     {
@@ -46,7 +46,7 @@ namespace Smile::Scene
 
     void Scene::OnRuntimeStart()
     {
-        Physics::PhysicsEngine::CreateScene();
+        physics::PhysicsEngine::CreateScene();
 
         // Create physisc actors
         {
@@ -54,19 +54,19 @@ namespace Smile::Scene
             for ( auto e : view )
             {
                 Entity entity = { e, this };
-                Physics::PhysicsEngine::CreateActor( entity );
+                physics::PhysicsEngine::CreateActor( entity );
             }
         }
     }
 
     void Scene::OnRuntimeStop()
     {
-        Physics::PhysicsEngine::DestroyScene();
+        physics::PhysicsEngine::DestroyScene();
     }
 
     void Scene::OnSimulationStart()
     {
-        Physics::PhysicsEngine::CreateScene();
+        physics::PhysicsEngine::CreateScene();
 
         // Create physisc actors
         {
@@ -74,19 +74,19 @@ namespace Smile::Scene
             for ( auto e : view )
             {
                 Entity entity = { e, this };
-                Physics::PhysicsEngine::CreateActor( entity );
+                physics::PhysicsEngine::CreateActor( entity );
             }
         }
     }
 
     void Scene::OnSimulationStop()
     {
-        Physics::PhysicsEngine::DestroyScene();
+        physics::PhysicsEngine::DestroyScene();
     }
 
     void Scene::OnUpdateRuntime( Timestep deltaTime )
     {
-        Physics::PhysicsEngine::Simulate( deltaTime );
+        physics::PhysicsEngine::Simulate( deltaTime );
 
         graphic::Camera *pMainCamera = nullptr;
         DirectX::XMFLOAT4X4 cameraTransform;
@@ -99,7 +99,7 @@ namespace Smile::Scene
                 if ( camera.IsPrimary )
                 {
                     pMainCamera = &camera.Camera;
-                    cameraTransform = transform.getTransform();
+                    cameraTransform = transform.GetTransform();
                     break;
                 }
             }
@@ -107,26 +107,26 @@ namespace Smile::Scene
 
         if ( pMainCamera )
         {
-            Graphic::Renderer::BeginScene( *pMainCamera, cameraTransform );
+            graphic::Renderer::BeginScene( *pMainCamera, cameraTransform );
 
             {
-                auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ECS::g_Get< TransformComponent > );
+                auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ecs::g_Get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[mesh, transform] = m_ECSEngine.GetComponents< MeshRendererComponent, TransformComponent >( entity );
-                    Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                    graphic::Renderer::Submit( mesh, transform.GetTransform() );
                 }
             }
             {
-                auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ECS::g_Get< TransformComponent > );
+                auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ecs::g_Get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[mesh, transform] = m_ECSEngine.GetComponents< StaticMeshComponent, TransformComponent >( entity );
-                    Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                    graphic::Renderer::Submit( mesh, transform.GetTransform() );
                 }
             }
             {
-                auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ECS::g_Get< TransformComponent > );
+                auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ecs::g_Get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[mesh, transform] = m_ECSEngine.GetComponents< SkinnedMeshComponent, TransformComponent >( entity );
@@ -142,49 +142,49 @@ namespace Smile::Scene
                         }
                     }
 
-                    Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                    graphic::Renderer::Submit( mesh, transform.GetTransform() );
                 }
             }
             {
-                auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ECS::g_Get< TransformComponent > );
+                auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ecs::g_Get< TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[boxCollider, transform] =
                         m_ECSEngine.GetComponents< BoxColliderComponent, TransformComponent >( entity );
-                    Graphic::Renderer::SubmitWireframe( boxCollider, transform.getTransform() );
+                    graphic::Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
                 }
             }
 
-            Graphic::Renderer::OnRender();
+            graphic::Renderer::OnRender();
 
-            Graphic::Renderer::EndScene();
+            graphic::Renderer::EndScene();
         }
     }
 
-    void Scene::OnUpdateSimulation( Timestep deltaTime, Graphic::EditorCamera &editorCamera )
+    void Scene::OnUpdateSimulation( Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
-        Physics::PhysicsEngine::Simulate( deltaTime );
+        physics::PhysicsEngine::Simulate( deltaTime );
 
-        Graphic::Renderer::BeginScene( editorCamera );
+        graphic::Renderer::BeginScene( editorCamera );
 
         {
-            auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = m_ECSEngine.GetComponents< MeshRendererComponent, TransformComponent >( entity );
-                Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                graphic::Renderer::Submit( mesh, transform.GetTransform() );
             }
         }
         {
-            auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = m_ECSEngine.GetComponents< StaticMeshComponent, TransformComponent >( entity );
-                Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                graphic::Renderer::Submit( mesh, transform.GetTransform() );
             }
         }
         {
-            auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] =
@@ -201,46 +201,46 @@ namespace Smile::Scene
                     }
                 }
 
-                Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                graphic::Renderer::Submit( mesh, transform.GetTransform() );
             }
         }
         {
-            auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[boxCollider, transform] =
                     m_ECSEngine.GetComponents< BoxColliderComponent, TransformComponent >( entity );
-                Graphic::Renderer::SubmitWireframe( boxCollider, transform.getTransform() );
+                graphic::Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
             }
         }
 
-        Graphic::Renderer::OnRender();
+        graphic::Renderer::OnRender();
 
-        Graphic::Renderer::EndScene();
+        graphic::Renderer::EndScene();
     }
 
-    void Scene::OnUpdateEditor( Timestep deltaTime, Graphic::EditorCamera &editorCamera )
+    void Scene::OnUpdateEditor( Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
-        Graphic::Renderer::BeginScene( editorCamera );
+        graphic::Renderer::BeginScene( editorCamera );
 
         {
-            auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = m_ECSEngine.GetComponents< MeshRendererComponent, TransformComponent >( entity );
-                Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                graphic::Renderer::Submit( mesh, transform.GetTransform() );
             }
         }
         {
-            auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = m_ECSEngine.GetComponents< StaticMeshComponent, TransformComponent >( entity );
-                Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                graphic::Renderer::Submit( mesh, transform.GetTransform() );
             }
         }
         {
-            auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[mesh, transform] = m_ECSEngine.GetComponents< SkinnedMeshComponent, TransformComponent >( entity );
@@ -256,22 +256,22 @@ namespace Smile::Scene
                     }
                 }
 
-                Graphic::Renderer::Submit( mesh, transform.getTransform() );
+                graphic::Renderer::Submit( mesh, transform.GetTransform() );
             }
         }
         {
-            auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ECS::g_Get< TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ecs::g_Get< TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[boxCollider, transform] =
                     m_ECSEngine.GetComponents< BoxColliderComponent, TransformComponent >( entity );
-                Graphic::Renderer::SubmitWireframe( boxCollider, transform.getTransform() );
+                graphic::Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
             }
         }
 
-        Graphic::Renderer::OnRender();
+        graphic::Renderer::OnRender();
 
-        Graphic::Renderer::EndScene();
+        graphic::Renderer::EndScene();
     }
 
     void Scene::OnViewportResize( Uint32 width, Uint32 height )
@@ -303,15 +303,16 @@ namespace Smile::Scene
     }
 
     template < typename ComponentType >
-    static void
-    CopyComponent( ECS::ECSEngine &dst, ECS::ECSEngine &src, const std::unordered_map< UUID, ECS::EntityHandleType > &entityHandleMap )
+    static void CopyComponent( ecs::ECSEngine &dst,
+        ecs::ECSEngine &src,
+        const std::unordered_map< UUID, ecs::EntityHandleType > &entityHandleMap )
     {
         auto view = src.GetView< ComponentType >();
         for ( auto entity : view )
         {
             UUID uuid = src.GetComponent< IDComponent >( entity ).ID;
             SM_ASSERT( entityHandleMap.find( uuid ) != entityHandleMap.end(), "Scene::CopyComponent > uuid not found int enttMap" );
-            ECS::EntityHandleType dstHandleID = entityHandleMap.at( uuid );
+            ecs::EntityHandleType dstHandleID = entityHandleMap.at( uuid );
 
             auto &component = src.GetComponent< ComponentType >( entity );
             dst.AddOrReplaceComponent< ComponentType >( dstHandleID, component );
@@ -332,7 +333,7 @@ namespace Smile::Scene
         pNewScene->m_ViewportWidth = scene->m_ViewportWidth;
         pNewScene->m_ViewportHeight = scene->m_ViewportHeight;
 
-        std::unordered_map< UUID, ECS::EntityHandleType > entityMap{};
+        std::unordered_map< UUID, ecs::EntityHandleType > entityMap{};
 
         auto &srcSceneEngine = scene->m_ECSEngine;
         auto &dstSceneEngine = pNewScene->m_ECSEngine;
@@ -342,7 +343,7 @@ namespace Smile::Scene
             auto uuid = srcSceneEngine.GetComponent< IDComponent >( entity ).ID;
             const auto &name = srcSceneEngine.GetComponent< TagComponent >( entity ).Tag;
             Entity newEntity = pNewScene->CreateEntity( uuid, name );
-            entityMap[uuid] = static_cast< ECS::EntityHandleType >( newEntity );
+            entityMap[uuid] = static_cast< ecs::EntityHandleType >( newEntity );
         }
 
         // Copy components except IDComponent and TagComponent

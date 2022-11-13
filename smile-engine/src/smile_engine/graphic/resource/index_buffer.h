@@ -1,7 +1,7 @@
 #pragma once
 #include "smile_engine/graphic/shader/buffer.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     struct IndexBufferDescriptor final
     {

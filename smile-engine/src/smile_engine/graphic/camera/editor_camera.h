@@ -4,7 +4,7 @@
 #include "smile_engine/core/events/event.h"
 #include "smile_engine/core/events/mouse_event.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class EditorCamera final : public Camera
     {

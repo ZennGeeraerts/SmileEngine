@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "scene_camera.h"
 
-namespace Smile::Scene
+namespace smile::scene
 {
     SceneCamera::SceneCamera()
     {

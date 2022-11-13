@@ -3,12 +3,12 @@
 
 #include <d3d11.h>
 
-namespace Smile
+namespace smile
 {
     class Window;
 }
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class DirectX11Context final : public GraphicsContext
     {

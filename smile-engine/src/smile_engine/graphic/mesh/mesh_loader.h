@@ -6,7 +6,7 @@ struct aiMesh;
 struct aiScene;
 struct aiNode;
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class MeshLoader final
     {

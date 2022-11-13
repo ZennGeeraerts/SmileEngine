@@ -1,15 +1,15 @@
 #include "smpch.h"
-#include "math.h"
+#include "math_utilities.h"
 
 #include <random>
 
-namespace Smile
+namespace smile
 {
     std::mt19937 g_GlobalGenerator{
         static_cast< Uint32 >( std::chrono::system_clock::now().time_since_epoch().count() ) };
 }
 
-namespace Smile::Math
+namespace smile::math
 {
     float GenerateRandom( float min, float max )
     {
@@ -25,24 +25,34 @@ namespace Smile::Math
 
     DirectX::XMFLOAT3 QuaternionToEuler( const DirectX::XMFLOAT4 &quaternion )
     {
-        DirectX::XMFLOAT3 euler{};
+        //DirectX::XMFLOAT3 euler{};
 
-        // roll (x-axis rotation)
-        double sinrCosp = 2 * ( quaternion.w * quaternion.x + quaternion.y * quaternion.z );
-        double cosrCosp = 1 - 2 * ( quaternion.x * quaternion.x + quaternion.y * quaternion.y );
-        euler.x = static_cast< float >( std::atan2( sinrCosp, cosrCosp ) );
+        //// roll (x-axis rotation)
+        //double sinrCosp = 2 * ( quaternion.w * quaternion.x + quaternion.y * quaternion.z );
+        //double cosrCosp = 1 - 2 * ( quaternion.x * quaternion.x + quaternion.y * quaternion.y );
+        //euler.x = static_cast< float >( std::atan2( sinrCosp, cosrCosp ) );
 
-        // pitch (y-axis rotation)
-        float sinp = 2 * ( quaternion.w * quaternion.y - quaternion.z * quaternion.x );
-        if ( std::abs( sinp ) >= 1 )
-            euler.y = std::copysign( g_PIDiv2, sinp ); // use 90 degrees if out of range
-        else
-            euler.y = std::asin( sinp );
+        //// pitch (y-axis rotation)
+        //float sinp = 2 * ( quaternion.w * quaternion.y - quaternion.z * quaternion.x );
+        //if ( std::abs( sinp ) >= 1 )
+        //    euler.y = std::copysign( g_PIDiv2, sinp ); // use 90 degrees if out of range
+        //else
+        //    euler.y = std::asin( sinp );
 
-        // yaw (z-axis rotation)
-        float sinyCosp = 2 * ( quaternion.w * quaternion.z + quaternion.x * quaternion.y );
-        float cosyCosp = 1 - 2 * ( quaternion.y * quaternion.y + quaternion.z * quaternion.z );
-        euler.z = std::atan2( sinyCosp, cosyCosp );
+        //// yaw (z-axis rotation)
+        //float sinyCosp = 2 * ( quaternion.w * quaternion.z + quaternion.x * quaternion.y );
+        //float cosyCosp = 1 - 2 * ( quaternion.y * quaternion.y + quaternion.z * quaternion.z );
+        //euler.z = std::atan2( sinyCosp, cosyCosp );
+
+        //return euler;
+
+        DirectX::XMFLOAT3 euler;
+
+        euler.y = atan2f( 2.f * quaternion.x * quaternion.w + 2.f * quaternion.y * quaternion.z,
+            1.f - 2.f * ( quaternion.z * quaternion.z + quaternion.w * quaternion.w ) );        // Yaw
+        euler.x = asinf( 2.f * ( quaternion.x * quaternion.z - quaternion.w * quaternion.y ) ); // Pitch
+        euler.z = atan2f( 2.f * quaternion.x * quaternion.y + 2.f * quaternion.z * quaternion.w,
+            1.f - 2.f * ( quaternion.y * quaternion.y + quaternion.z * quaternion.z ) ); // Roll
 
         return euler;
     }
@@ -55,12 +65,12 @@ namespace Smile::Math
         DirectX::XMFLOAT4X4 localMatrix{ transform };
 
         // Normalize the matrix.
-        if ( CompareFloats( localMatrix._44, 0.f ) )
+        if ( AreEqual( localMatrix._44, 0.f ) )
             return false;
 
         // First, isolate perspective.  This is the messiest.
-        if ( CompareFloats( localMatrix._14, 0.f ) || CompareFloats( localMatrix._24, 0.f ) ||
-             CompareFloats( localMatrix._34, 0.f ) )
+        if ( AreEqual( localMatrix._14, 0.f ) || AreEqual( localMatrix._24, 0.f ) ||
+             AreEqual( localMatrix._34, 0.f ) )
         {
             // Clear the perspective partition
             localMatrix._14 = localMatrix._24 = localMatrix._34 = 0.f;
@@ -101,7 +111,7 @@ namespace Smile::Math
 
         rotation.y = asin( -row[0].z );
         // rotation.y = atan2(-row[0].z, sqrt(pow(row[1].z, 2) + pow(row[2].z, 2)));
-        if ( !CompareFloats( cos( rotation.y ), 0.f ) )
+        if ( !AreEqual( cos( rotation.y ), 0.f ) )
         {
             rotation.x = atan2( row[1].z, row[2].z );
             rotation.z = atan2( row[0].y, row[0].x );

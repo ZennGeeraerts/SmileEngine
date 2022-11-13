@@ -1,6 +1,6 @@
-C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\intermediates\smile-script-core.csproj.AssemblyReference.cache
 C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\intermediates\smile-script-core.csproj.CoreCompileInputs.cache
 C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\intermediates\smile-script-core.dll
 C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\intermediates\smile-script-core.pdb
 C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\smile-script-core.dll
 C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\smile-script-core.pdb
+C:\Users\Gebruiker\Documents\GitHub\SmileEngine\smile-editor\resources\scripts\intermediates\smile-script-core.csproj.AssemblyReference.cache

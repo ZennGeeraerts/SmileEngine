@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     template < typename... Components >
     struct ComponentList

@@ -6,7 +6,7 @@
 
 #include "platform/directx11/directx11_diagnostics.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     DirectX11Texture2D::DirectX11Texture2D( const std::string &filePath ) : m_FilePath{ filePath }
     {

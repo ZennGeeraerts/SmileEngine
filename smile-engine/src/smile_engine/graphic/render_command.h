@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include "renderer_api.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class RenderCommand final
     {

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     class EntityHandleManager final
     {
@@ -36,7 +36,7 @@ namespace Smile::ECS
                 {
                     ++It;
                 } while (
-                    It != Entities.end() && ( It->Index > Entities.size() || Entities[It->Index].Index != It->Index ) );
+                    It != Entities.end() && ( It->GetIndex() > Entities.size() || Entities[It->GetIndex()].GetIndex() != It->GetIndex() ) );
 
                 return *this;
             }
@@ -60,13 +60,14 @@ namespace Smile::ECS
 
         Uint32 GetEntityCount() const
         {
-            return m_Entities.size();
+            return static_cast< Uint32 >( m_Entities.size() );
         }
 
         Iterator begin() const
         {
             auto it = m_Entities.begin();
-            while ( it != m_Entities.end() && ( it->Index > m_Entities.size() || m_Entities[it->Index].Index != it->Index ) )
+            while ( it != m_Entities.end() &&
+                    ( it->GetIndex() > m_Entities.size() || m_Entities[it->GetIndex()].GetIndex() != it->GetIndex() ) )
             {
                 ++it;
             }

@@ -1,6 +1,6 @@
 #include "data_structs.cuh"
 
-namespace Smile
+namespace smile
 {
 	namespace Raster
 	{

@@ -1,11 +1,11 @@
 #pragma once
 
-namespace Smile
+namespace smile
 {
     class Window;
 }
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class GraphicsContext
     {

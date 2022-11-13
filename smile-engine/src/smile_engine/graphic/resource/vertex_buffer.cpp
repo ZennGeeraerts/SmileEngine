@@ -8,7 +8,7 @@
 #    include "platform/smileraster/smileraster_buffer.h"
 #endif
 
-namespace Smile::graphic
+namespace smile::graphic
 {
     VertexBuffer *VertexBuffer::Create( const VertexBufferDescriptor &vertexBufferDesc )
     {

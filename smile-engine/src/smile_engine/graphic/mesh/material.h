@@ -4,7 +4,7 @@
 #include "smile_engine/graphic/shader/shader_reflection.h"
 #include "smile_engine/graphic/resource/texture.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class Material final
     {

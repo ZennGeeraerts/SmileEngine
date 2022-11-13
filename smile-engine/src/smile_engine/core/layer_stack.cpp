@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "layer_stack.h"
 
-namespace Smile
+namespace smile
 {
     LayerStack::LayerStack()
     {

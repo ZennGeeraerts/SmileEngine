@@ -8,7 +8,7 @@
 #    include "platform/smileraster/smileraster_buffer.h"
 #endif
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     IndexBuffer *IndexBuffer::Create( const IndexBufferDescriptor &indexBufferDesc )
     {

@@ -6,7 +6,7 @@
 
 #include "directx11_diagnostics.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     void DirectX11RendererAPI::Initialize()
     {

@@ -2,7 +2,7 @@
 
 #include "shader.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class ShaderLibrary final
     {

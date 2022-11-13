@@ -2,7 +2,7 @@
 
 #include <thirdparty/catch.hpp>
 
-using namespace Smile;
+using namespace smile;
 
 struct TestComponent final
 {
@@ -22,44 +22,31 @@ struct MyComponent final
     unsigned int z;
 };
 
-struct TestSystem final
-{
-    void onUpdate( ECS::ECSEngine& engine, Timestep delta_time )
-    {
-        int test = 0;
-        //my_component.x += 10;
-        //another_component.name = "modified by system";
-    }
-
-    //static ecs::ComponentList< MyComponent, AnotherComponent > components;
-    //using components = MyComponent, AnotherComponent;
-};
-
 TEST_CASE( "ECS" )
 {
     SECTION( "Entity" )
     {
-        ECS::ECSEngine engine{};
+        ecs::ECSEngine engine{};
         //engine.RegisterSystem< TestSystem >();
 
-        ECS::EntityHandleType handle1 = engine.CreateEntity();
-        ECS::EntityHandleType handle2 = engine.CreateEntity();
-        ECS::EntityHandleType handle3 = engine.CreateEntity();
+        ecs::EntityHandleType handle1 = engine.CreateEntity();
+        ecs::EntityHandleType handle2 = engine.CreateEntity();
+        ecs::EntityHandleType handle3 = engine.CreateEntity();
 
         engine.DestroyEntity( handle2 );
         engine.DestroyEntity( handle3 );
 
-        ECS::EntityHandleType invalidHandle = ECS::g_NullHandle< Uint32 >;
+        ecs::EntityHandleType invalidHandle = ecs::EntityHandleType::NullHandle();
 
         REQUIRE( engine.IsEntityActive( handle1 ) );
         REQUIRE( !engine.IsEntityActive( handle2 ) );
         REQUIRE( !engine.IsEntityActive( handle3 ) );
         REQUIRE( !engine.IsEntityActive( invalidHandle ) );
 
-        ECS::EntityHandleType handle4 = engine.CreateEntity();
-        ECS::EntityHandleType handle5 = engine.CreateEntity();
-        ECS::EntityHandleType handle6 = engine.CreateEntity();
-        ECS::EntityHandleType handle7 = engine.CreateEntity();
+        ecs::EntityHandleType handle4 = engine.CreateEntity();
+        ecs::EntityHandleType handle5 = engine.CreateEntity();
+        ecs::EntityHandleType handle6 = engine.CreateEntity();
+        ecs::EntityHandleType handle7 = engine.CreateEntity();
 
         REQUIRE( engine.IsEntityActive( handle4 ) );
         REQUIRE( engine.IsEntityActive( handle5 ) );
@@ -133,11 +120,11 @@ TEST_CASE( "ECS" )
 
     SECTION( "View" )
     {
-        ECS::ECSEngine engine{};
+        ecs::ECSEngine engine{};
 
-        ECS::EntityHandleType handle1 = engine.CreateEntity();
-        ECS::EntityHandleType handle2 = engine.CreateEntity();
-        ECS::EntityHandleType handle3 = engine.CreateEntity();
+        ecs::EntityHandleType handle1 = engine.CreateEntity();
+        ecs::EntityHandleType handle2 = engine.CreateEntity();
+        ecs::EntityHandleType handle3 = engine.CreateEntity();
 
         engine.AddComponent< AnotherComponent >( handle1, "test" );
         engine.AddComponent< TestComponent >( handle1, 10, 2 );
@@ -148,7 +135,7 @@ TEST_CASE( "ECS" )
         engine.AddComponent< AnotherComponent >( handle3, "name" );
         engine.AddComponent< TestComponent >( handle3, 5, -3 );
 
-        for ( ECS::EntityHandleType entityHandle : engine.GetView< AnotherComponent, TestComponent >() )
+        for ( ecs::EntityHandleType entityHandle : engine.GetView< AnotherComponent, TestComponent >() )
         {
             const auto &[another, test] = engine.GetComponents< AnotherComponent, TestComponent >( entityHandle );
         }
@@ -156,11 +143,11 @@ TEST_CASE( "ECS" )
 
     SECTION( "group" )
     {
-        ECS::ECSEngine engine{};
+        ecs::ECSEngine engine{};
 
-        ECS::EntityHandleType handle1 = engine.CreateEntity();
-        ECS::EntityHandleType handle2 = engine.CreateEntity();
-        ECS::EntityHandleType handle3 = engine.CreateEntity();
+        ecs::EntityHandleType handle1 = engine.CreateEntity();
+        ecs::EntityHandleType handle2 = engine.CreateEntity();
+        ecs::EntityHandleType handle3 = engine.CreateEntity();
 
         engine.AddComponent< AnotherComponent >( handle1, "test" );
         engine.AddComponent< TestComponent >( handle1, 10, 2 );
@@ -171,25 +158,25 @@ TEST_CASE( "ECS" )
         engine.AddComponent< AnotherComponent >( handle3, "name" );
         engine.AddComponent< TestComponent >( handle3, 5, -3 );
 
-        std::vector< ECS::EntityHandleType > handles{};
-        const auto &group = engine.GetGroup< AnotherComponent >( ECS::g_Get< TestComponent > );
+        std::vector< ecs::EntityHandleType > handles{};
+        const auto &group = engine.GetGroup< AnotherComponent >( ecs::g_Get< TestComponent > );
 
         int i{};
-        for ( ECS::EntityHandleType entityHandle : group )
+        for ( ecs::EntityHandleType entityHandle : group )
         {
             const auto &[test, another] = engine.GetComponents< TestComponent, AnotherComponent >( entityHandle );
             ++i;
         }
 
         engine.AddComponent< TestComponent >( handle2, 7, 3 );
-        for ( ECS::EntityHandleType entityHandle : group )
+        for ( ecs::EntityHandleType entityHandle : group )
         {
             const auto &[test, another] = engine.GetComponents< TestComponent, AnotherComponent >( entityHandle );
             ++i;
         }
 
         engine.RemoveComponent< TestComponent >( handle3 );
-        for ( ECS::EntityHandleType entityHandle : group )
+        for ( ecs::EntityHandleType entityHandle : group )
         {
             const auto &[test, another] = engine.GetComponents< TestComponent, AnotherComponent >( entityHandle );
             ++i;
@@ -198,10 +185,10 @@ TEST_CASE( "ECS" )
 
     SECTION( "cast" )
     {
-        ECS::ECSEngine engine{};
+        ecs::ECSEngine engine{};
 
-        ECS::EntityHandleType handle1 = engine.CreateEntity();
-        ECS::EntityHandleType handle2 = engine.CreateEntity();
+        ecs::EntityHandleType handle1 = engine.CreateEntity();
+        ecs::EntityHandleType handle2 = engine.CreateEntity();
 
         Uint32 val = handle1.Hash();
         Uint32 val2 = handle2.Hash();

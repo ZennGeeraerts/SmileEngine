@@ -2,7 +2,7 @@
 #include "smile_engine/graphic/resource/frame_buffer.h"
 #include "platform/directx11/directx11_context.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class DirectX11Framebuffer final : public Framebuffer
     {

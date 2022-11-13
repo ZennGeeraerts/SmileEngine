@@ -3,7 +3,7 @@
 #include "Event.h"
 #include "smile_engine/input/mouse_codes.h"
 
-namespace Smile
+namespace smile
 {
     class MouseMovedEvent final : public Event
     {
@@ -82,18 +82,18 @@ namespace Smile
         EVENT_CLASS_CATEGORY( EventCategoryMouse | EventCategoryInput )
 
       protected:
-        MouseButtonEvent( Input::MouseCode button ) : m_Button{ button }
+        MouseButtonEvent( input::MouseCode button ) : m_Button{ button }
         {
         }
 
       protected:
-        Input::MouseCode m_Button;
+        input::MouseCode m_Button;
     };
 
     class MouseButtonPressedEvent final : public MouseButtonEvent
     {
       public:
-        MouseButtonPressedEvent( Input::MouseCode button ) : MouseButtonEvent{ button }
+        MouseButtonPressedEvent( input::MouseCode button ) : MouseButtonEvent{ button }
         {
         }
 
@@ -110,7 +110,7 @@ namespace Smile
     class MouseButtonReleasedEvent final : public MouseButtonEvent
     {
       public:
-        MouseButtonReleasedEvent( Input::MouseCode button ) : MouseButtonEvent{ button }
+        MouseButtonReleasedEvent( input::MouseCode button ) : MouseButtonEvent{ button }
         {
         }
 

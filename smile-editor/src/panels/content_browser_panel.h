@@ -4,7 +4,7 @@
 
 #include "smile_engine/graphic/resource/texture.h"
 
-namespace Smile
+namespace smile
 {
     class ContentBrowserPanel final
     {
@@ -15,7 +15,7 @@ namespace Smile
 
       private:
         std::filesystem::path m_CurrentDirectory;
-        Ref< Graphic::Texture2D > m_pDirectoryIcon = nullptr;
-        Ref< Graphic::Texture2D > m_pFileIcon = nullptr;
+        Ref< graphic::Texture2D > m_pDirectoryIcon = nullptr;
+        Ref< graphic::Texture2D > m_pFileIcon = nullptr;
     };
 }

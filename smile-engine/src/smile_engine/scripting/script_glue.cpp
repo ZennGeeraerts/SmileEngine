@@ -3,7 +3,7 @@
 
 #include <mono/metadata/object.h>
 
-namespace Smile::Scripting
+namespace smile::scripting
 {
 #define SM_ADD_INTERNAL_CALL( name ) mono_add_internal_call( "Smile.InternalCalls::" #name, name )
 

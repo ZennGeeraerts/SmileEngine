@@ -4,9 +4,9 @@
 #include "smile_engine/stl/sparse_set.h"
 #include "smile_engine/core/core.h"
 
-namespace Smile::ECS
+namespace smile::ecs
 {
     using IndexType = typename Uint32;
     using EntityHandleType = typename EntityHandle< IndexType >;
-    using SparseSetType = typename STL::SparseSet< IndexType >;
+    using SparseSetType = typename stl::SparseSet< IndexType >;
 }

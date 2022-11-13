@@ -6,7 +6,7 @@
 
 #include "platform/directx11/directx11_diagnostics.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     const Uint32 DirectX11Framebuffer::s_MaxFramebufferSize = 8192;
 

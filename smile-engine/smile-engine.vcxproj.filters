@@ -393,7 +393,7 @@
     <ClInclude Include="src\smile_engine\input\mouse_codes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\math\math.h">
+    <ClInclude Include="src\smile_engine\math\math_utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\math\vector2.h">
@@ -462,19 +462,16 @@
     <ClInclude Include="src\smile_engine\imgui\imgui_layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\core\compiled\type_id.h">
+    <ClInclude Include="src\smile_engine\stl\type_id.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\core\compiled\type_name.h">
+    <ClInclude Include="src\smile_engine\stl\type_name.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\core\compiled\identifier.h">
+    <ClInclude Include="src\smile_engine\stl\identifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\stl\sparse_set.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\smile_engine\ecs\system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\ecs\entity_handle_manager.h">
@@ -484,15 +481,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\ecs\component_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\smile_engine\ecs\field_detection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\smile_engine\ecs\view.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\smile_engine\ecs\group.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\core\compiler.h">
@@ -508,6 +496,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\scripting\script_glue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\math\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\math\math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -689,10 +683,7 @@
     <ClCompile Include="src\smile_engine\graphic\mesh\mesh_loader_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\smile_engine\math\math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\smile_engine\math\vector2.cpp">
+    <ClCompile Include="src\smile_engine\math\math_utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\smile_engine\utils\utils.cpp">

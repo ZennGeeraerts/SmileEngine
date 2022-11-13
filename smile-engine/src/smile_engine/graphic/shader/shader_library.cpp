@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "shader_library.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     void ShaderLibrary::Add( const std::string &name, const Ref< Shader > &pShader )
     {

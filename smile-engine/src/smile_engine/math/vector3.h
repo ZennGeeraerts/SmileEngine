@@ -2,7 +2,7 @@
 
 #include "math.h"
 
-namespace Smile::Math
+namespace smile::math
 {
     struct Vector3 final
     {
@@ -65,12 +65,6 @@ namespace Smile::Math
     inline bool IsZeroVector( const Vector3 &vector, float precision = g_Epsilon )
     {
         return IsZero( vector.x, precision ) && IsZero( vector.y, precision ) && IsZero( vector.z, precision );
-    }
-
-    inline bool CompareVector3( const Vector3 &v1, const Vector3 &v2, float precision = g_Epsilon )
-    {
-        return CompareFloats( v1.x, v2.x, precision ) && CompareFloats( v1.y, v2.y, precision ) &&
-               CompareFloats( v1.z, v2.z, precision );
     }
 
     inline Vector3 GetNormalized( const Vector3 &vector )

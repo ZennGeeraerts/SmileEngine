@@ -9,7 +9,7 @@
 
 #include "smile_engine/imgui/imgui_layer.h"
 
-namespace Smile
+namespace smile
 {
     struct ApplicationCommandLineArgs final
     {
@@ -64,7 +64,7 @@ namespace Smile
       private:
         ApplicationDescriptor m_Descriptor;
         std::unique_ptr< Window > m_pWindow;
-        ImGui::ImGuiLayer *m_pImGuiLayer;
+        imgui::ImGuiLayer *m_pImGuiLayer;
         bool m_IsRunning = true;
         bool m_IsMinimized = false;
         LayerStack m_LayerStack;

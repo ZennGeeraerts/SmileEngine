@@ -2,7 +2,7 @@
 
 #include <PxSimulationEventCallback.h>
 
-namespace Smile::Physics
+namespace smile::physics
 {
     class ContactListener final : public physx::PxSimulationEventCallback
     {

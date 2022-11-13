@@ -5,7 +5,7 @@
 #include "platform/directx11/resource/directx11_texture.h"
 #include "platform/smileraster/smileraster_texture.h"
 
-namespace Smile::graphic
+namespace smile::graphic
 {
     Ref< Texture2D > Texture2D::Create( const std::string &filePath )
     {

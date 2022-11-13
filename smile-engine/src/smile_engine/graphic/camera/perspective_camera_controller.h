@@ -7,7 +7,7 @@
 
 #include "smile_engine/scene/components.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class PerspectiveCameraController final
     {

@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "renderer.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     RendererSettings Renderer::s_Settings{};
     RenderCollector *Renderer::s_pRenderCollector = new RenderCollector{};
@@ -104,7 +104,7 @@ namespace Smile::Graphic
             DrawCommand{ pVertexBuffer, pIndexBuffer, pShader, worldTransform } );
     }
 
-    void Renderer::Submit( const Scene::MeshRendererComponent &meshRendererComponent,
+    void Renderer::Submit( const scene::MeshRendererComponent &meshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         Submit( meshRendererComponent.pVertexBuffer,
@@ -113,7 +113,7 @@ namespace Smile::Graphic
             worldTransform );
     }
 
-    void Renderer::Submit( const Scene::StaticMeshComponent &staticMeshComponent, const DirectX::XMFLOAT4X4 &worldTransform )
+    void Renderer::Submit( const scene::StaticMeshComponent &staticMeshComponent, const DirectX::XMFLOAT4X4 &worldTransform )
     {
         for ( const auto &mesh : staticMeshComponent.pMeshes )
         {
@@ -124,7 +124,7 @@ namespace Smile::Graphic
         }
     }
 
-    void Renderer::Submit( const Scene::SkinnedMeshComponent &skinnedMeshComponent, const DirectX::XMFLOAT4X4 &worldTransform )
+    void Renderer::Submit( const scene::SkinnedMeshComponent &skinnedMeshComponent, const DirectX::XMFLOAT4X4 &worldTransform )
     {
         for ( const auto &mesh : skinnedMeshComponent.pMeshes )
         {
@@ -135,7 +135,7 @@ namespace Smile::Graphic
         }
     }
 
-    void Renderer::SubmitWireframe( const Scene::BoxColliderComponent &boxColliderComponent,
+    void Renderer::SubmitWireframe( const scene::BoxColliderComponent &boxColliderComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         DirectX::XMMATRIX finalTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );

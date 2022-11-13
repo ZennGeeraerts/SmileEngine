@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class Camera
     {

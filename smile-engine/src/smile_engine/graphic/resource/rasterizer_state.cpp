@@ -5,7 +5,7 @@
 
 #include "platform/directx11/resource/directx11_rasterizer_state.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     Ref< RasterizerState > RasterizerState::Create( const RasterizerStateDescriptor &rasterizerStateDesc )
     {

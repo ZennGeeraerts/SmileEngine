@@ -3,7 +3,7 @@
 
 #include "smile_engine/graphic/renderer.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     VertexBuffer *VertexArray::Create()
     {

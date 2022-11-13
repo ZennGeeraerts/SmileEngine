@@ -2,7 +2,7 @@
 
 #include <PxPhysicsAPI.h>
 
-namespace Smile::Physics::Utils
+namespace smile::physics::utils
 {
     physx::PxVec3 ConvertToPhysXVector( const DirectX::XMFLOAT3 &vector );
     physx::PxQuat ConvertToPhysxQuat( const DirectX::XMFLOAT4 &quat );

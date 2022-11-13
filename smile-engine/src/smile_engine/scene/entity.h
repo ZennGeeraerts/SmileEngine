@@ -6,14 +6,14 @@
 
 #include "smile_engine/ecs/ecs_engine.h"
 
-namespace Smile::Scene
+namespace smile::scene
 {
     class Entity final
     {
       public:
         Entity() = default;
 
-        Entity( ECS::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
+        Entity( ecs::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
         {
         }
 
@@ -65,7 +65,7 @@ namespace Smile::Scene
         }
         DirectX::XMFLOAT4X4 GetTransform() const
         {
-            return GetComponent< TransformComponent >().getTransform();
+            return GetComponent< TransformComponent >().GetTransform();
         }
 
         template < typename ComponentType >
@@ -77,9 +77,9 @@ namespace Smile::Scene
         // Check to see if entity is valid
         operator bool() const
         {
-            return m_EntityHandle != ECS::g_NullHandle< Uint32 >;
+            return m_EntityHandle != ecs::EntityHandleType::NullHandle();
         }
-        operator ECS::EntityHandleType() const
+        operator ecs::EntityHandleType() const
         {
             return m_EntityHandle;
         }
@@ -102,7 +102,7 @@ namespace Smile::Scene
         }
 
       private:
-        ECS::EntityHandleType m_EntityHandle = ECS::g_NullHandle< Uint32 >;
+        ecs::EntityHandleType m_EntityHandle = ecs::EntityHandleType::NullHandle();
         Scene *m_pScene = nullptr;
     };
 }

@@ -4,7 +4,7 @@
 #include "buffer.h"
 #include "smile_engine/graphic/resource/texture.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     class Shader
     {

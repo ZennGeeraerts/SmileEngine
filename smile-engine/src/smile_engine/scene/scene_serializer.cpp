@@ -84,7 +84,7 @@ namespace YAML
     };
 }
 
-namespace Smile::Scene
+namespace smile::scene
 {
     YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT2 &v )
     {
@@ -450,7 +450,7 @@ namespace Smile::Scene
                     const auto &meshPath = staticMeshComponent["Mesh"].as< std::string >();
                     if ( !meshPath.empty() )
                     {
-                        smc.pMeshes = Graphic::MeshLoader::LoadStaticMesh( meshPath );
+                        smc.pMeshes = graphic::MeshLoader::LoadStaticMesh( meshPath );
                         const auto &bufferLayout = smc.pMaterials[0]->GetBufferLayout();
                         for ( const auto &pMesh : smc.pMeshes )
                         {
@@ -506,7 +506,7 @@ namespace Smile::Scene
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.pMaterials[0]->SetTexture2D( semantic, Graphic::Texture2D::Create( path ) );
+                            smc.pMaterials[0]->SetTexture2D( semantic, graphic::Texture2D::Create( path ) );
                     }
                 }
 
@@ -518,7 +518,7 @@ namespace Smile::Scene
                     const auto &meshPath = skinnedMeshComponent["Mesh"].as< std::string >();
                     if ( !meshPath.empty() )
                     {
-                        smc.pMeshes = Graphic::MeshLoader::LoadSkinnedMesh( meshPath );
+                        smc.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( meshPath );
                         const auto &bufferLayout = smc.pMaterials[0]->GetBufferLayout();
                         for ( const auto &mesh : smc.pMeshes )
                         {
@@ -526,7 +526,7 @@ namespace Smile::Scene
 
                             if ( mesh->HasAnimations() )
                             {
-                                Graphic::MeshAnimator animator{ mesh };
+                                graphic::MeshAnimator animator{ mesh };
                                 smc.Animators.push_back( animator );
                                 smc.Animators.back().SetAnimation( 0 );
                             }
@@ -581,7 +581,7 @@ namespace Smile::Scene
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.pMaterials[0]->SetTexture2D( semantic, Graphic::Texture2D::Create( path ) );
+                            smc.pMaterials[0]->SetTexture2D( semantic, graphic::Texture2D::Create( path ) );
                     }
                 }
 

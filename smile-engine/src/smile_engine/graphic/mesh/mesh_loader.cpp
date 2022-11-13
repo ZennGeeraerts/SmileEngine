@@ -8,7 +8,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     std::vector< Ref< StaticMeshFilter > > MeshLoader::LoadStaticMesh( const std::string &filePath )
     {
@@ -113,12 +113,12 @@ namespace Smile::Graphic
         for ( Uint32 v{}; v < pAiMesh->mNumVertices; ++v )
         {
             aiVector3D &vertex = pAiMesh->mVertices[v];
-            pMesh->AddPosition( Utils::convertToVector3( vertex ) );
+            pMesh->AddPosition( utils::convertToVector3( vertex ) );
 
             if ( pAiMesh->HasNormals() )
             {
                 aiVector3D &normal = pAiMesh->mNormals[v];
-                pMesh->AddNormal( Utils::convertToVector3( normal ) );
+                pMesh->AddNormal( utils::convertToVector3( normal ) );
             }
 
             if ( pAiMesh->HasTextureCoords( 0 ) )
@@ -130,13 +130,13 @@ namespace Smile::Graphic
             if ( pAiMesh->HasTangentsAndBitangents() )
             {
                 aiVector3D &tangent = pAiMesh->mTangents[v];
-                pMesh->AddTangent( Utils::convertToVector3( tangent ) );
+                pMesh->AddTangent( utils::convertToVector3( tangent ) );
             }
 
             if ( pAiMesh->HasVertexColors( 0 ) )
             {
                 aiColor4D &color = pAiMesh->mColors[0][v];
-                pMesh->AddColor( Utils::convertToVector4( color ) );
+                pMesh->AddColor( utils::convertToVector4( color ) );
             }
         }
 

@@ -5,7 +5,7 @@
 
 #include <commdlg.h>
 
-namespace Smile::Utils
+namespace smile::utils
 {
     std::string OpenFile( const char *filter )
     {

@@ -4,7 +4,7 @@
 #include "smile_engine/core/window.h"
 #include "smile_engine/core/logger.h"
 
-namespace Smile::Graphic
+namespace smile::graphic
 {
     SmileRasterContext::SmileRasterContext( Window *pWindow ) : m_pWindow{ pWindow }
     {

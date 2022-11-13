@@ -5,7 +5,7 @@
 
 #include "smile_engine/graphic/camera/editor_camera.h"
 
-namespace Smile
+namespace smile
 {
     class SmileEditorLayer final : public Layer
     {
@@ -50,7 +50,7 @@ namespace Smile
 
         void SaveScene();
         void SaveSceneAs();
-        void SerializeScene( const Ref< Scene::Scene > &pScene, const std::filesystem::path &filePath );
+        void SerializeScene( const Ref< scene::Scene > &pScene, const std::filesystem::path &filePath );
         void OpenScene();
         void OpenScene( const std::filesystem::path &filePath );
         void NewScene();
@@ -65,9 +65,9 @@ namespace Smile
         void DrawToolbar();
 
       private:
-        Ref< Scene::Scene > m_pActiveScene;
-        Ref< Scene::Scene > m_pEditorScene;
-        Graphic::EditorCamera m_EditorCamera;
+        Ref< scene::Scene > m_pActiveScene;
+        Ref< scene::Scene > m_pEditorScene;
+        graphic::EditorCamera m_EditorCamera;
         std::filesystem::path m_EditorScenePath;
 
         DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
@@ -85,12 +85,12 @@ namespace Smile
         SceneState m_SceneState = SceneState::Edit;
 
         // Panels
-        Scene::SceneHierarchyPanel m_SceneHierarchyPanel;
+        scene::SceneHierarchyPanel m_SceneHierarchyPanel;
         ContentBrowserPanel m_ContentBrowserPanel;
 
         // Editor resources
-        Ref< Graphic::Texture2D > m_pIconPlay = nullptr;
-        Ref< Graphic::Texture2D > m_pIconSimulate = nullptr;
-        Ref< Graphic::Texture2D > m_pIconStop = nullptr;
+        Ref< graphic::Texture2D > m_pIconPlay = nullptr;
+        Ref< graphic::Texture2D > m_pIconSimulate = nullptr;
+        Ref< graphic::Texture2D > m_pIconStop = nullptr;
     };
 }

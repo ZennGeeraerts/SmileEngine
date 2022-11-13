@@ -1,9 +1,9 @@
 #pragma once
 #include "smile_engine/graphic/camera/camera.h"
 
-namespace Smile::Scene
+namespace smile::scene
 {
-    class SceneCamera final : public Graphic::Camera
+    class SceneCamera final : public graphic::Camera
     {
       public:
         enum class ProjectionType

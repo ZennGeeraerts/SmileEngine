@@ -3,7 +3,7 @@
 #include "smile_engine/core/core.h"
 #include "smile_engine/core/events/event.h"
 
-namespace Smile
+namespace smile
 {
     struct WindowSettings
     {
@@ -17,7 +17,7 @@ namespace Smile
         Uint32 Height;
     };
 
-    namespace Graphic
+    namespace graphic
     {
         class GraphicsContext;
     }
@@ -36,7 +36,7 @@ namespace Smile
 
         virtual Uint32 GetWidth() const = 0;
         virtual Uint32 GetHeight() const = 0;
-        virtual Graphic::GraphicsContext *GetGraphicsContext() const = 0;
+        virtual graphic::GraphicsContext *GetGraphicsContext() const = 0;
 
         // Window attributes
         virtual void SetEventCallback( const EventCallbackFunction &callback ) = 0;
