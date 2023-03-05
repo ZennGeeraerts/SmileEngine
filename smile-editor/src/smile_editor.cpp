@@ -25,6 +25,8 @@ namespace smile
         descriptor.WorkingDirectory = "../smile-editor";
         descriptor.CommandLineArgs = commandLineArgs;
 
+        //project::Project::New()->SaveActive( "TestProject.smproj" );
+
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes
         return new SmileEditor{ descriptor };

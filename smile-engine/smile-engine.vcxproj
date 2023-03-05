@@ -27,6 +27,8 @@
     <ClInclude Include="src\SmileEngine\Core\GamepadCodes.h" />
     <ClInclude Include="src\smile_engine\math\math.h" />
     <ClInclude Include="src\smile_engine\math\vector.h" />
+    <ClInclude Include="src\smile_engine\project\project.h" />
+    <ClInclude Include="src\smile_engine\project\project_serializer.h" />
     <ClInclude Include="src\smile_engine\stl\identifier.h" />
     <ClInclude Include="src\smile_engine\stl\type_id.h" />
     <ClInclude Include="src\smile_engine\stl\type_name.h" />
@@ -197,6 +199,8 @@
     <ClCompile Include="src\smile_engine\graphic\resource\index_buffer.cpp" />
     <ClCompile Include="src\smile_engine\graphic\resource\vertex_buffer.cpp" />
     <ClCompile Include="src\smile_engine\graphic\shader\shader_library.cpp" />
+    <ClCompile Include="src\smile_engine\project\project.cpp" />
+    <ClCompile Include="src\smile_engine\project\project_serializer.cpp" />
     <ClCompile Include="src\smile_engine\scripting\script_engine.cpp" />
     <ClCompile Include="src\smile_engine\scripting\script_glue.cpp" />
     <ClCompile Include="src\smile_engine\utils\utils.cpp" />

@@ -124,7 +124,7 @@ namespace smile::scene
                 Entity entity{ entityID, m_pScene.get() };
                 if ( !entity )
                     return;
-                serializeEntity( output, entity );
+                SerializeEntity( output, entity );
             } );
 
         output << YAML::EndSeq;
@@ -197,7 +197,7 @@ namespace smile::scene
         output << YAML::EndMap;
     }
 
-    static void serializeEntity( YAML::Emitter &output, Entity entity )
+    static void SerializeEntity( YAML::Emitter &output, Entity entity )
     {
         SM_ASSERT( entity.HasComponent< IDComponent >(),
             "SceneSerializer::serializeScene > Entity does not have an IDComponent" );

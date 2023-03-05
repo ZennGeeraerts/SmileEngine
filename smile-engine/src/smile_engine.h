@@ -22,6 +22,8 @@
 #include "smile_engine/scene/entity.h"
 #include "smile_engine/scene/components.h"
 
+#include "smile_engine/project/project.h"
+
 /* ---Renderer--- */
 #include "smile_engine/graphic/renderer.h"
 #include "smile_engine/graphic/render_command.h"

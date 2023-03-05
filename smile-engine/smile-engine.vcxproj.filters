@@ -504,6 +504,12 @@
     <ClInclude Include="src\smile_engine\math\math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\smile_engine\project\project.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\project\project_serializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -732,6 +738,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\smile_engine\scripting\script_glue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\project\project.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\project\project_serializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
