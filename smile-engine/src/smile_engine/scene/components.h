@@ -181,6 +181,14 @@ namespace smile::scene
         bool HasFixedAspectRatio = false;
     };
 
+    struct ScriptComponent final
+    {
+        ScriptComponent() = default;
+        ScriptComponent( const ScriptComponent & ) = default;
+
+        std::string ClassName;
+    };
+
     struct RigidbodyComponent final
     {
         enum class BodyType

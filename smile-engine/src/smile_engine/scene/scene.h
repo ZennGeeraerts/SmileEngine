@@ -37,6 +37,8 @@ namespace smile::scene
 
         void DuplicateEntity( Entity entity );
 
+        Entity GetEntityByUUID( UUID uuid );
+
       private:
         template < typename ComponentType >
         void OnComponentAdded( Entity entity, ComponentType &component );
@@ -45,6 +47,8 @@ namespace smile::scene
         ecs::ECSEngine m_ECSEngine;
         Uint32 m_ViewportWidth = 0;
         Uint32 m_ViewportHeight = 0;
+
+        std::unordered_map< UUID, ecs::EntityHandleType > m_EntityMap{};
 
         friend class Entity;
         friend class SceneSerializer;

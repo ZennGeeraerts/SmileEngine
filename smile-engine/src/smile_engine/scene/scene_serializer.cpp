@@ -256,6 +256,17 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
+        if ( entity.HasComponent< ScriptComponent >() )
+        {
+            output << YAML::Key << "ScriptComponent";
+            output << YAML::BeginMap;
+
+            auto &scriptComponent = entity.GetComponent< ScriptComponent >();
+            output << YAML::Key << "ClassName" << YAML::Value << scriptComponent.ClassName; 
+
+            output << YAML::EndMap;
+        }
+
         if ( entity.HasComponent< StaticMeshComponent >() )
         {
             output << YAML::Key << "SkinnedMeshComponent";
@@ -440,6 +451,13 @@ namespace smile::scene
 
                     cc.IsPrimary = cameraComponent["bPrimary"].as< bool >();
                     cc.HasFixedAspectRatio = cameraComponent["bFixedAspectRatio"].as< bool >();
+                }
+
+                auto scriptComponent = entity["ScriptComponent"];
+                if (scriptComponent)
+                {
+                    auto &sc = deserializedEntity.AddComponent< ScriptComponent >();
+                    sc.ClassName = scriptComponent["ClassName"].as< std::string >();
                 }
 
                 auto staticMeshComponent = entity["StaticMeshComponent"];

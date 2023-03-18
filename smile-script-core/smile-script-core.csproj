@@ -44,6 +44,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Entity.cs" />
+    <Compile Include="Source\Input.cs" />
+    <Compile Include="Source\KeyCode.cs" />
+    <Compile Include="Source\Player.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

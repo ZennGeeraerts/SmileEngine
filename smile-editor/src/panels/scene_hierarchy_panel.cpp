@@ -1,10 +1,10 @@
 #include "scene_hierarchy_panel.h"
 
+#include "smile_engine/scene/components.h"
+#include "smile_engine/scripting/script_engine.h"
+
 #include <thirdparty/imgui/imgui.h>
 #include <thirdparty/imgui/imgui_internal.h>
-
-#include "smile_engine/scene/components.h"
-#include "content_browser_panel.h"
 
 namespace smile
 {
@@ -208,6 +208,12 @@ namespace smile::scene
                 ImGui::CloseCurrentPopup();
             }
 
+            if ( ImGui::MenuItem( "Script" ) )
+            {
+                m_SelectedEntity.AddComponent< ScriptComponent >();
+                ImGui::CloseCurrentPopup();
+            }
+
             if ( ImGui::MenuItem( "Static Mesh" ) )
             {
                 m_SelectedEntity.AddComponent< StaticMeshComponent >();
@@ -335,6 +341,26 @@ namespace smile::scene
                         break;
                     }
                 }
+            } );
+
+        DrawComponent< ScriptComponent >( "Script",
+            entity,
+            []( auto &scriptComponent )
+            {
+                bool scriptClassExists = scripting::ScriptEngine::EntityClassExists( scriptComponent.ClassName );
+
+                if ( !scriptClassExists )
+                    ImGui::PushStyleColor( ImGuiCol_Text, ImVec4{ 0.9f, 0.2f, 0.3f, 1.0f } );
+
+                static char buffer[64];
+                strcpy_s( buffer, scriptComponent.ClassName.c_str() );
+                if ( ImGui::InputText( "Class", buffer, sizeof( buffer ) ) )
+                {
+                    scriptComponent.ClassName = buffer;
+                }
+
+                if ( !scriptClassExists )
+                    ImGui::PopStyleColor();
             } );
 
         DrawComponent< StaticMeshComponent >( "Static Mesh",
@@ -530,20 +556,20 @@ namespace smile::scene
             return;
 
         auto &component = entity.GetComponent< ComponentType >();
-        const ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed |
+        const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed |
                                                    ImGuiTreeNodeFlags_AllowItemOverlap |
                                                    ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-        ImVec2 content_region_available = ImGui::GetContentRegionAvail();
+        ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
         ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2{ 4.f, 4.f } );
 
         const float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImGui::Separator();
 
-        bool open = ImGui::TreeNodeEx( ( void * )typeid( ComponentType ).hash_code(), tree_node_flags, label.c_str() );
+        bool open = ImGui::TreeNodeEx( ( void * )typeid( ComponentType ).hash_code(), treeNodeFlags, label.c_str() );
         ImGui::PopStyleVar();
 
-        ImGui::SameLine( content_region_available.x - line_height * 0.5f );
+        ImGui::SameLine( contentRegionAvailable.x - line_height * 0.5f );
         if ( ImGui::Button( "+", ImVec2{ line_height, line_height } ) )
         {
             ImGui::OpenPopup( "ComponentSettings" );

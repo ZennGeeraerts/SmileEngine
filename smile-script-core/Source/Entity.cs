@@ -10,12 +10,28 @@ namespace Smile
     public struct Vector3
     {
         public float X, Y, Z;
+        public static Vector3 Zero = new Vector3(0);
 
+        public Vector3(float scalar)
+        {
+            X = scalar;
+            Y = scalar;
+            Z = scalar;
+        }
         public Vector3(float x, float y, float z)
         {
             X = x;
             Y = y;
             Z = z;
+        }
+
+        public static Vector3 operator+(Vector3 lhs, Vector3 rhs)
+        {
+            return new Vector3(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z);
+        }
+        public static Vector3 operator*(Vector3 vector, float scalar)
+        {
+            return new Vector3(vector.X * scalar, vector.Y * scalar, vector.Z * scalar);
         }
     }
 
@@ -26,32 +42,39 @@ namespace Smile
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void NativeLogVector(ref Vector3 parameter);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void GetEntityTranslation(ulong entityID, out Vector3 translation);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void SetEntityTranslation(ulong entityID, ref Vector3 translation);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsKeyPressed(KeyCode keyCode);
     }
-    class Entity
+    public class Entity
     {
-        public float FloatVar { get; set; }
-        public Entity()
+        protected Entity()
         {
-            Console.WriteLine("Main constructor!");
-            InternalCalls.NativeLog("Zenn", 8085);
-
-            Vector3 pos = new Vector3(5, 2.5f, 3);
-            InternalCalls.NativeLogVector(ref pos);
+            ID = 0;
         }
 
-        public void PrintMessage()
+        internal Entity(ulong id)
         {
-            Console.WriteLine("Hello world from C#");
+            ID = id;
         }
 
-        public void PrintInt(int value)
-        {
-            Console.WriteLine($"Integer value: {value}");
-        }
+        public readonly ulong ID;
 
-        public void PrintCustomMessage(string message)
+        public Vector3 Translation
         {
-            Console.WriteLine($"C# custom message: {message}");
+            get 
+            {
+                InternalCalls.GetEntityTranslation(ID, out Vector3 translation);
+                return translation;
+            }
+            set 
+            { 
+                InternalCalls.SetEntityTranslation(ID, ref value); 
+            }
         }
     }
 }

@@ -10,7 +10,7 @@
 
 namespace smile::scripting
 {
-    namespace Utils
+    namespace utils
     {
         // TODO: move to FileSystem class
         static char *ReadBytes( const std::filesystem::path &filePath, Uint32 *pOutSize )
@@ -82,7 +82,7 @@ namespace smile::scripting
                 const char *nameSpace = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAMESPACE] );
                 const char *name = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAME] );
 
-                printf( "%s.%s\n", nameSpace, name );
+                SM_LOG_TRACE( "%s.%s\n", nameSpace, name );
             }
         }
     }
@@ -96,6 +96,12 @@ namespace smile::scripting
         MonoImage *pCoreAssemblyImage = nullptr;
 
         ScriptClass EntityClass;
+
+        std::unordered_map< std::string, Ref< ScriptClass > > EntityClasses;
+        std::unordered_map< UUID, Ref< ScriptInstance > > EntityInstances;
+
+        // Runtime
+        scene::Scene *pSceneContext = nullptr;
     };
 
     static ScriptEngineData *s_pData = nullptr;
@@ -105,13 +111,14 @@ namespace smile::scripting
         s_pData = new ScriptEngineData{};
 
         InitializeMono();
-        LoadAssembly( "resources/scripts/Smile-ScriptCore.dll" );
+        LoadAssembly( "resources/scripts/smile-script-core.dll" );
+        LoadAssemblyClasses( s_pData->pCoreAssembly );
 
         ScriptGlue::RegisterFunctions();
 
         // Retrieve and instantiate class
         s_pData->EntityClass = ScriptClass{ "Smile", "Entity" };
-
+#if 0
         MonoObject *pInstance = s_pData->EntityClass.Instantiate();
 
         MonoMethod *pPrintIntFunc = s_pData->EntityClass.GetMethod( "PrintInt", 1 );
@@ -123,6 +130,7 @@ namespace smile::scripting
         void *pStringParam = pMonoString;
         MonoMethod *pPrintCustomMessageFunc = s_pData->EntityClass.GetMethod( "PrintCustomMessage", 1 );
         s_pData->EntityClass.InvokeMethod( pInstance, pPrintCustomMessageFunc, &pStringParam );
+#endif
     }
 
     void ScriptEngine::ShutDown()
@@ -137,17 +145,17 @@ namespace smile::scripting
 
         MonoDomain *pRootDomain = mono_jit_init( "SmileJITRuntime" );
         SM_ASSERT( pRootDomain, "ScriptEngine::initializeMono > Cannot initialize root domain" );
-        
+
         // Store the root domain pointer
         s_pData->pRootDomain = pRootDomain;
     }
 
     void ScriptEngine::ShutDownMono()
     {
-        //mono_domain_unload( data->appDomain );
+        // mono_domain_unload( data->appDomain );
         s_pData->pAppDomain = nullptr;
 
-        //mono_jit_cleanup( data->rootDomain );
+        // mono_jit_cleanup( data->rootDomain );
         s_pData->pRootDomain = nullptr;
     }
 
@@ -156,9 +164,52 @@ namespace smile::scripting
         s_pData->pAppDomain = mono_domain_create_appdomain( ( char * )"SmileScriptRuntime", nullptr );
         mono_domain_set( s_pData->pAppDomain, true );
 
-        s_pData->pCoreAssembly = Utils::LoadMonoAssembly( filePath );
+        s_pData->pCoreAssembly = utils::LoadMonoAssembly( filePath );
         s_pData->pCoreAssemblyImage = mono_assembly_get_image( s_pData->pCoreAssembly );
         // utils::printAssemblyTypes( data->coreAssembly );
+    }
+
+    void ScriptEngine::LoadAssemblyClasses( MonoAssembly *pAssembly )
+    {
+        s_pData->EntityClasses.clear();
+
+        MonoImage *pImage = mono_assembly_get_image( pAssembly );
+        const MonoTableInfo *pTypeDefinitionsTable = mono_image_get_table_info( pImage, MONO_TABLE_TYPEDEF );
+        Int32 typeCount = mono_table_info_get_rows( pTypeDefinitionsTable );
+        MonoClass *pEntityClass = mono_class_from_name( pImage, "Smile", "Entity" );
+
+        for ( Int32 i = 0; i < typeCount; i++ )
+        {
+            Uint32 cols[MONO_TYPEDEF_SIZE];
+            mono_metadata_decode_row( pTypeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE );
+
+            const char *nameSpace = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAMESPACE] );
+            const char *name = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAME] );
+            std::string fullName;
+            if ( strlen( nameSpace ) != 0 )
+            {
+                fullName = nameSpace;
+                fullName.append( "." );
+                fullName.append( name );
+            }
+            else
+            {
+                fullName = name;
+            }
+
+            MonoClass *pMonoClass = mono_class_from_name( pImage, nameSpace, name );
+
+            if ( pMonoClass == pEntityClass )
+                continue;
+
+            bool isEntity = mono_class_is_subclass_of( pMonoClass, pEntityClass, false );
+            if ( isEntity )
+            {
+                s_pData->EntityClasses[fullName] = CreateRef< ScriptClass >( nameSpace, name );
+            }
+
+            SM_LOG_TRACE( "%s.%s\n", nameSpace, name );
+        }
     }
 
     MonoObject *ScriptEngine::InstantiateClass( MonoClass *pMonoClass )
@@ -166,6 +217,54 @@ namespace smile::scripting
         MonoObject *pInstance = mono_object_new( s_pData->pAppDomain, pMonoClass );
         mono_runtime_object_init( pInstance );
         return pInstance;
+    }
+
+    scene::Scene *ScriptEngine::GetSceneContext()
+    {
+        return s_pData->pSceneContext;
+    }
+
+    std::unordered_map< std::string, Ref< ScriptClass > > ScriptEngine::GetEntityClasses()
+    {
+        return s_pData->EntityClasses;
+    }
+
+    void ScriptEngine::OnRuntimeStart( scene::Scene *pScene )
+    {
+        s_pData->pSceneContext = pScene;
+    }
+
+    void ScriptEngine::OnRuntimeStop()
+    {
+        s_pData->pSceneContext = nullptr;
+        s_pData->EntityInstances.clear();
+    }
+
+    bool ScriptEngine::EntityClassExists( const std::string &fullClassName )
+    {
+        return s_pData->EntityClasses.find( fullClassName ) != s_pData->EntityClasses.end();
+    }
+
+    void ScriptEngine::OnCreateEntity( scene::Entity entity )
+    {
+        const auto &scriptComponent = entity.GetComponent< scene::ScriptComponent >();
+        if ( EntityClassExists( scriptComponent.ClassName ) )
+        {
+            Ref< ScriptInstance > pInstance =
+                CreateRef< ScriptInstance >( s_pData->EntityClasses[scriptComponent.ClassName], entity );
+            s_pData->EntityInstances[entity.GetUUID()] = pInstance;
+            pInstance->InvokeOnCreate();
+        }
+    }
+
+    void ScriptEngine::OnUpdateEntity( scene::Entity entity, Timestep deltaTime )
+    {
+        UUID entityUUID = entity.GetUUID();
+        SM_ASSERT( s_pData->EntityInstances.find( entityUUID ) != s_pData->EntityInstances.end(),
+            "ScriptEngine::OnUpdateEntity > Entity instance not found" );
+
+        Ref< ScriptInstance > pInstance = s_pData->EntityInstances[entityUUID];
+        pInstance->InvokeOnUpdate( deltaTime );
     }
 
     ScriptClass::ScriptClass( const std::string &classNamespace, const std::string &className )
@@ -187,5 +286,29 @@ namespace smile::scripting
     MonoObject *ScriptClass::InvokeMethod( MonoObject *pInstance, MonoMethod *pMethod, void **ppParams )
     {
         return mono_runtime_invoke( pMethod, pInstance, ppParams, nullptr );
+    }
+
+    ScriptInstance::ScriptInstance( Ref< ScriptClass > pScriptClass, scene::Entity entity )
+        : m_pScriptClass{ pScriptClass }
+    {
+        m_pInstance = pScriptClass->Instantiate();
+        m_pConstructor = s_pData->EntityClass.GetMethod( ".ctor", 1 );
+        m_pOnCreateMethod = pScriptClass->GetMethod( "OnCreate", 0 );
+        m_pOnUpdateMethod = pScriptClass->GetMethod( "OnUpdate", 1 );
+
+        UUID entityID = entity.GetUUID();
+        void *pParam = &entityID;
+        pScriptClass->InvokeMethod( m_pInstance, m_pConstructor, &pParam );
+    }
+
+    void ScriptInstance::InvokeOnCreate()
+    {
+        m_pScriptClass->InvokeMethod( m_pInstance, m_pOnCreateMethod );
+    }
+
+    void ScriptInstance::InvokeOnUpdate( float deltaTime )
+    {
+        void *pParam = &deltaTime;
+        m_pScriptClass->InvokeMethod( m_pInstance, m_pOnUpdateMethod, &pParam );
     }
 }

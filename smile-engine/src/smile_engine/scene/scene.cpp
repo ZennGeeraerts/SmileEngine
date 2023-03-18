@@ -5,6 +5,7 @@
 #include "smile_engine/graphic/renderer.h"
 #include "smile_engine/core/application.h"
 #include "smile_engine/physics/physics_engine.h"
+#include "smile_engine/scripting/script_engine.h"
 
 #include "entity.h"
 
@@ -36,20 +37,24 @@ namespace smile::scene
         entity.AddComponent< TagComponent >( name );
         entity.AddComponent< TransformComponent >();
 
+        m_EntityMap[uuid] = entity;
+
         return entity;
     }
 
     void Scene::DestroyEntity( Entity entity )
     {
+        m_EntityMap.erase( entity.GetUUID() );
         m_ECSEngine.DestroyEntity( entity );
     }
 
     void Scene::OnRuntimeStart()
     {
-        physics::PhysicsEngine::CreateScene();
-
-        // Create physisc actors
+        // Physics
         {
+            physics::PhysicsEngine::CreateScene();
+
+            // Create physics actors
             auto view = m_ECSEngine.GetView< RigidbodyComponent >();
             for ( auto e : view )
             {
@@ -57,11 +62,25 @@ namespace smile::scene
                 physics::PhysicsEngine::CreateActor( entity );
             }
         }
+
+        // Scripting
+        {
+            scripting::ScriptEngine::OnRuntimeStart( this );
+
+            // Instantiate all script entities
+            auto view = m_ECSEngine.GetView< ScriptComponent >();
+            for ( auto e : view )
+            {
+                Entity entity = { e, this };
+                scripting::ScriptEngine::OnCreateEntity( entity );
+            }
+        }
     }
 
     void Scene::OnRuntimeStop()
     {
         physics::PhysicsEngine::DestroyScene();
+        scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void Scene::OnSimulationStart()
@@ -86,6 +105,13 @@ namespace smile::scene
 
     void Scene::OnUpdateRuntime( Timestep deltaTime )
     {
+        auto view = m_ECSEngine.GetView< ScriptComponent >();
+        for ( auto e : view )
+        {
+            Entity entity = { e, this };
+            scripting::ScriptEngine::OnUpdateEntity( entity, deltaTime );
+        }
+
         physics::PhysicsEngine::Simulate( deltaTime );
 
         graphic::Camera *pMainCamera = nullptr;
@@ -352,6 +378,7 @@ namespace smile::scene
         CopyComponent< StaticMeshComponent >( dstSceneEngine, srcSceneEngine, entityMap );
         CopyComponent< SkinnedMeshComponent >( dstSceneEngine, srcSceneEngine, entityMap );
         CopyComponent< CameraComponent >( dstSceneEngine, srcSceneEngine, entityMap );
+        CopyComponent< ScriptComponent >( dstSceneEngine, srcSceneEngine, entityMap );
         CopyComponent< RigidbodyComponent >( dstSceneEngine, srcSceneEngine, entityMap );
         CopyComponent< BoxColliderComponent >( dstSceneEngine, srcSceneEngine, entityMap );
         CopyComponent< SphereColliderComponent >( dstSceneEngine, srcSceneEngine, entityMap );
@@ -369,16 +396,23 @@ namespace smile::scene
         CopyComponentIfExists< StaticMeshComponent >( newEntity, entity );
         CopyComponentIfExists< SkinnedMeshComponent >( newEntity, entity );
         CopyComponentIfExists< CameraComponent >( newEntity, entity );
+        CopyComponentIfExists< ScriptComponent >( newEntity, entity );
         CopyComponentIfExists< RigidbodyComponent >( newEntity, entity );
         CopyComponentIfExists< BoxColliderComponent >( newEntity, entity );
         CopyComponentIfExists< SphereColliderComponent >( newEntity, entity );
         CopyComponentIfExists< CapsuleColliderComponent >( newEntity, entity );
     }
 
+    Entity Scene::GetEntityByUUID( UUID uuid )
+    {
+        SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "Scene::GetEntityByUUID > Invalid UUID" )
+        return Entity{ m_EntityMap.at( uuid ), this };
+    }
+
     template < typename ComponentType >
     void Scene::OnComponentAdded( Entity entity, ComponentType &component )
     {
-        static_assert( false );
+        static_assert( sizeof( ComponentType ) == 0 );
     }
 
     template <>
@@ -400,6 +434,11 @@ namespace smile::scene
     void Scene::OnComponentAdded< CameraComponent >( Entity entity, CameraComponent &component )
     {
         component.Camera.SetViewportSize( m_ViewportWidth, m_ViewportHeight );
+    }
+
+    template <>
+    void Scene::OnComponentAdded< ScriptComponent >( Entity entity, ScriptComponent &component )
+    {
     }
 
     template <>
