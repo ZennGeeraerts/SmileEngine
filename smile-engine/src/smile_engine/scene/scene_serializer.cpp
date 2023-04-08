@@ -2,6 +2,7 @@
 #include "scene_serializer.h"
 
 #include "smile_engine/core/logger.h"
+#include "smile_engine/graphic/graphics_device.h"
 #include "entity.h"
 #include "components.h"
 
@@ -107,7 +108,7 @@ namespace smile::scene
         return output;
     }
 
-    SceneSerializer::SceneSerializer( const Ref< Scene > &pScene ) : m_pScene{ pScene }
+    SceneSerializer::SceneSerializer( Ref< Scene > pScene ) : m_pScene{ pScene }
     {
     }
 
@@ -189,8 +190,7 @@ namespace smile::scene
         const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
         for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
         {
-            output << YAML::Key << ( *it ).first << YAML::Value
-                   << ( ( *it ).second ? ( *it ).second->GetFilePath() : "" );
+            output << YAML::Key << ( *it ).first << YAML::Value << ( ( *it ).second ? ( *it ).second->FilePath : "" );
         }
         output << YAML::EndMap;
 
@@ -262,7 +262,7 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &scriptComponent = entity.GetComponent< ScriptComponent >();
-            output << YAML::Key << "ClassName" << YAML::Value << scriptComponent.ClassName; 
+            output << YAML::Key << "ClassName" << YAML::Value << scriptComponent.ClassName;
 
             output << YAML::EndMap;
         }
@@ -275,7 +275,7 @@ namespace smile::scene
             auto &staticMeshComponent = entity.GetComponent< StaticMeshComponent >();
             output << YAML::Key << "Mesh" << YAML::Value
                    << ( ( staticMeshComponent.pMeshes.size() > 0 ) ? staticMeshComponent.pMeshes[0]->GetFilePath()
-                                                                    : "" );
+                                                                   : "" );
 
             SerializeMaterial( output, staticMeshComponent.pMaterials[0] );
 
@@ -290,7 +290,7 @@ namespace smile::scene
             auto &skinnedMeshComponent = entity.GetComponent< SkinnedMeshComponent >();
             output << YAML::Key << "Mesh" << YAML::Value
                    << ( ( skinnedMeshComponent.pMeshes.size() > 0 ) ? skinnedMeshComponent.pMeshes[0]->GetFilePath()
-                                                                     : "" );
+                                                                    : "" );
 
             SerializeMaterial( output, skinnedMeshComponent.pMaterials[0] );
 
@@ -380,8 +380,7 @@ namespace smile::scene
             output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.Radius;
             output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.Height;
             output << YAML::Key << "bTrigger" << YAML::Value << capsuleColliderComponent.IsTrigger;
-            output << YAML::Key << "bShowColliderBounds" << YAML::Value
-                   << capsuleColliderComponent.ShowColliderBounds;
+            output << YAML::Key << "bShowColliderBounds" << YAML::Value << capsuleColliderComponent.ShowColliderBounds;
 
             output << YAML::EndMap;
         }
@@ -454,7 +453,7 @@ namespace smile::scene
                 }
 
                 auto scriptComponent = entity["ScriptComponent"];
-                if (scriptComponent)
+                if ( scriptComponent )
                 {
                     auto &sc = deserializedEntity.AddComponent< ScriptComponent >();
                     sc.ClassName = scriptComponent["ClassName"].as< std::string >();
@@ -524,7 +523,8 @@ namespace smile::scene
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.pMaterials[0]->SetTexture2D( semantic, graphic::Texture2D::Create( path ) );
+                            smc.pMaterials[0]->SetTexture2D(
+                                semantic, graphic::GraphicsDevice::GetInstance()->CreateTexture2D( path ) );
                     }
                 }
 
@@ -599,7 +599,8 @@ namespace smile::scene
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
-                            smc.pMaterials[0]->SetTexture2D( semantic, graphic::Texture2D::Create( path ) );
+                            smc.pMaterials[0]->SetTexture2D(
+                                semantic, graphic::GraphicsDevice::GetInstance()->CreateTexture2D( path ) );
                     }
                 }
 

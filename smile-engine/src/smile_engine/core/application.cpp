@@ -104,10 +104,10 @@ namespace smile
 
     bool Application::OnWindowResize( WindowResizeEvent &e )
     {
-        m_IsMinimized = ( e.getWidth() == 0 ) || ( e.getHeight() == 0 );
+        m_IsMinimized = ( e.GetWidth() == 0 ) || ( e.GetHeight() == 0 );
 
         if ( !m_IsMinimized )
-            graphic::Renderer::OnWindowResize( e.getWidth(), e.getHeight() );
+            graphic::Renderer::OnWindowResize( e.GetWidth(), e.GetHeight() );
 
         return false;
     }

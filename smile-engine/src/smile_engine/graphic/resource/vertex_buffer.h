@@ -11,16 +11,12 @@ namespace smile::graphic
         BufferUsage Usage = BufferUsage::Default;
     };
 
-    class VertexBuffer
+    struct VertexBuffer
     {
-      public:
+        VertexBuffer() = default;
         virtual ~VertexBuffer() = default;
+        virtual void *GetInternal() const = 0;
 
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-
-        virtual Uint32 GetStride() const = 0;
-
-        static VertexBuffer *Create( const VertexBufferDescriptor &vertexBufferDesc );
+        Uint32 Stride = 0;
     };
 }

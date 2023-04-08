@@ -33,7 +33,7 @@ namespace smile
         {
         }
 
-        inline Uint16 getRepeatCount() const
+        inline Uint16 GetRepeatCount() const
         {
             return m_RepeatCount;
         }

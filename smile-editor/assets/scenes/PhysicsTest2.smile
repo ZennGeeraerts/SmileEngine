@@ -150,21 +150,21 @@ Entities:
         IntValues:
           {}
         BoolValues:
-          USEALBEDOMAP: false
-          USENORMALMAP: false
-          USEAOMAP: false
-          USEMETALNESSMAP: false
-          USEROUGHNESSMAP: false
+          USEALBEDOMAP: true
+          USENORMALMAP: true
+          USEAOMAP: true
+          USEMETALNESSMAP: true
+          USEROUGHNESSMAP: true
         Float2Values:
           {}
         Float3Values:
           ALBEDO: [0, 0, 0]
         Texture2DValues:
-          ALBEDOMAP: ""
-          NORMALMAP: ""
-          METALNESSMAP: ""
-          ROUGHNESSMAP: ""
-          AOMap: ""
+          ALBEDOMAP: assets\textures\base_albedo.jpg
+          NORMALMAP: assets\textures\base_normal.jpg
+          METALNESSMAP: assets\textures\base_metallic.jpg
+          ROUGHNESSMAP: assets\textures\base_roughness.jpg
+          AOMap: assets\textures\base_AO.jpg
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0

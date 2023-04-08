@@ -22,14 +22,11 @@ namespace smile::graphic
         bool EnableDepthClip = true;
     };
 
-    class RasterizerState
+    struct RasterizerState
     {
-      public:
+        RasterizerState() = default;
         virtual ~RasterizerState() = default;
 
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-
-        static Ref< RasterizerState > Create( const RasterizerStateDescriptor &rasterizerStateDesc );
+        virtual void *GetInternal() const = 0;
     };
 }

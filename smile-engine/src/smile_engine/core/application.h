@@ -52,7 +52,7 @@ namespace smile
         {
             return *m_pWindow;
         }
-        inline const ApplicationDescriptor &GetDescriptor() const 
+        inline const ApplicationDescriptor &GetDescriptor() const
         {
             return m_Descriptor;
         }

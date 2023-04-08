@@ -38,6 +38,7 @@ namespace smile
         DestroyWindow( m_WindowHandle );
         UnregisterClass( m_WindowClass.lpszClassName, m_WindowClass.hInstance );
         delete m_pContext;
+        delete m_pDevice;
     }
 
     void WindowsWindow::Initialize( const WindowSettings &settings )
@@ -117,15 +118,18 @@ namespace smile
             HINSTANCE(),
             this );
 
-        SM_ASSERT( m_WindowHandle, "WindowsWindow::init > Could not create window!" );
+        SM_ASSERT( m_WindowHandle, "WindowsWindow::Initialize > Could not create window!" );
 
-        // Init context
+        // Init device and context
+        m_pDevice = graphic::GraphicsDevice::Create();
         m_pContext = graphic::GraphicsContext::Create( this );
-        m_pContext->Initialize();
+
+        m_pDevice->Initialize( m_pContext );
+        m_pContext->Initialize( m_pDevice );
 
         ShowWindow( m_WindowHandle, SW_SHOW );
         UpdateWindow( m_WindowHandle );
-        SM_LOG_INFO( "WindowsWindow::init > Window '%s' created", settings.Title.c_str() );
+        SM_LOG_INFO( "WindowsWindow::Initialize > Window '%s' created", settings.Title.c_str() );
 
         SetVSync( true );
         m_IsInitialized = true;
@@ -136,11 +140,11 @@ namespace smile
         if ( !m_IsInitialized )
             return;
 
-        pollEvents();
+        PollEvents();
         m_pContext->Present();
     }
 
-    void WindowsWindow::pollEvents()
+    void WindowsWindow::PollEvents()
     {
         if ( m_Message.message != WM_QUIT )
         {

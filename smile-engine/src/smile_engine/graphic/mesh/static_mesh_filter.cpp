@@ -1,6 +1,8 @@
 #include "smpch.h"
 #include "static_mesh_filter.h"
 
+#include "smile_engine/graphic/graphics_device.h"
+
 namespace smile::graphic
 {
     StaticMeshFilter::~StaticMeshFilter()
@@ -56,8 +58,9 @@ namespace smile::graphic
         indexBufferDesc.Count = static_cast< Uint32 >( m_Indices.size() );
         indexBufferDesc.Usage = BufferUsage::Immutable;
 
-        m_pVertexBuffer.reset( VertexBuffer::Create( vertexBufferDesc ) );
-        m_pIndexBuffer.reset( IndexBuffer::Create( indexBufferDesc ) );
+        GraphicsDevice *pDevice = GraphicsDevice::GetInstance();
+        m_pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
+        m_pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
     }
 
     void StaticMeshFilter::AddPosition( const DirectX::XMFLOAT3 &position )

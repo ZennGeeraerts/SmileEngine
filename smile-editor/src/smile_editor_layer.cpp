@@ -29,9 +29,10 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        m_pIconPlay = graphic::Texture2D::Create( "resources/icons/play_button.png" );
-        m_pIconSimulate = graphic::Texture2D::Create( "resources/icons/simulate_button.png" );
-        m_pIconStop = graphic::Texture2D::Create( "resources/icons/stop_button.png" );
+        auto pDevice = graphic::GraphicsDevice::GetInstance();
+        m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
+        m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
+        m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
     }
 
     void SmileEditorLayer::OnDetach()
@@ -40,9 +41,9 @@ namespace smile
 
     void SmileEditorLayer::OnUpdate( Timestep deltaTime )
     {
-        const auto &render_settings = graphic::Renderer::GetSettings();
-        if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( render_settings.Width ) ) ||
-                 !math::AreEqual( m_ViewportSize.y, static_cast< float >( render_settings.Height ) ) ) &&
+        const auto &renderSettings = graphic::Renderer::GetSettings();
+        if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( renderSettings.Width ) ) ||
+                 !math::AreEqual( m_ViewportSize.y, static_cast< float >( renderSettings.Height ) ) ) &&
              ( m_ViewportSize.x > 0 ) && ( m_ViewportSize.y > 0 ) )
         {
             graphic::Renderer::ResizeFramebuffer(
@@ -332,7 +333,7 @@ namespace smile
 
     bool SmileEditorLayer::OnKeyPressed( KeyPressedEvent &e )
     {
-        if ( e.getRepeatCount() > 1 )
+        if ( e.GetRepeatCount() > 1 )
             return false;
 
         bool isControlPressed =
@@ -403,7 +404,7 @@ namespace smile
             m_EditorScenePath = filePath;
         }
         else
-            SM_LOG_ERROR( "SmileEditorLayer::saveSceneAs > Failed to save scene. The file path was empty" );
+            SM_LOG_ERROR( "SmileEditorLayer::SaveSceneAs > Failed to save scene. The file path was empty" );
     }
 
     void SmileEditorLayer::SerializeScene( const Ref< scene::Scene > &pScene, const std::filesystem::path &filePath )
@@ -425,13 +426,13 @@ namespace smile
 
         if ( filePath.empty() )
         {
-            SM_LOG_WARNING( "SmileEditorLayer::openScene > Failed to load scene: the path was empty" );
+            SM_LOG_WARNING( "SmileEditorLayer::OpenScene > Failed to load scene: the path was empty" );
             return;
         }
 
         if ( filePath.extension().string() != ".smile" )
         {
-            SM_LOG_WARNING( "SmileEditorLayer::openScene > Failed to load scene: wrong file extention" );
+            SM_LOG_WARNING( "SmileEditorLayer::OpenScene > Failed to load scene: wrong file extention" );
             return;
         }
 

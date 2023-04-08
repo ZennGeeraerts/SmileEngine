@@ -160,10 +160,10 @@ void ExampleLayer::OnAttach()
     cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
     cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
-    auto pShader = smile::graphic::Shader::Create( "assets/shaders/PBR.fx" );
+    auto pDevice = smile::graphic::GraphicsDevice::GetInstance();
+    auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
     auto pMaterial = smile::CreateRef< smile::graphic::Material >( pShader );
-    smile::Ref< smile::graphic::Texture2D > pAlbedo =
-        smile::graphic::Texture2D::Create( "assets/textures/uv_grid.png" );
+    smile::Ref< smile::graphic::Texture2D > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
     m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
@@ -190,8 +190,8 @@ void ExampleLayer::OnUpdate( smile::Timestep deltaTime )
     if ( smile::input::Input::IsKeyPressed( smile::input::key::Down ) )
         transform.Rotation.x += DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
 
-    const auto forward = transform.getForward();
-    const auto right = transform.getRight();
+    const auto forward = transform.GetForward();
+    const auto right = transform.GetRight();
     DirectX::XMFLOAT3 move{};
 
     if ( smile::input::Input::IsKeyPressed( 'A' ) )
@@ -244,8 +244,8 @@ void ExampleLayer::OnImGuiRender()
 
 bool ExampleLayer::OnWindowResize( smile::WindowResizeEvent &e )
 {
-    const auto width = e.getWidth();
-    const auto height = e.getHeight();
+    const auto width = e.GetWidth();
+    const auto height = e.GetHeight();
 
     if ( width == 0 || height == 0 )
         return false;

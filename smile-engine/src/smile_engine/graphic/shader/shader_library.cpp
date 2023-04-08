@@ -1,6 +1,8 @@
 #include "smpch.h"
 #include "shader_library.h"
 
+#include "smile_engine/graphic/graphics_device.h"
+
 namespace smile::graphic
 {
     void ShaderLibrary::Add( const std::string &name, const Ref< Shader > &pShader )
@@ -11,13 +13,12 @@ namespace smile::graphic
 
     void ShaderLibrary::Add( const Ref< Shader > &pShader )
     {
-        auto &name = pShader->GetName();
-        Add( name, pShader );
+        Add( pShader->Name, pShader );
     }
 
     Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto pShader = Shader::Create( filePath, bufferLayout );
+        auto pShader = GraphicsDevice::GetInstance()->CreateShader( filePath, bufferLayout );
         Add( pShader );
         return pShader;
     }
@@ -25,7 +26,7 @@ namespace smile::graphic
     Ref< Shader >
     ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto pShader = Shader::Create( filePath, bufferLayout );
+        auto pShader = GraphicsDevice::GetInstance()->CreateShader( filePath, bufferLayout );
         Add( name, pShader );
         return pShader;
     }

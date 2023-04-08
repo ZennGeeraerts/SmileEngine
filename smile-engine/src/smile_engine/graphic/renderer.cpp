@@ -23,6 +23,7 @@ namespace smile::graphic
         s_ShaderLibrary.Load( "assets/shaders/PosColNorm.fx", bufferLayout );
         s_ShaderLibrary.Load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
+        GraphicsDevice *pDevice = GraphicsDevice::GetInstance();
         {
             FramebufferDescriptor frameBufferDesc{};
             frameBufferDesc.Attachments = { { FramebufferTextureFormat::RGBA8, true },
@@ -32,11 +33,11 @@ namespace smile::graphic
             frameBufferDesc.Height = s_Settings.Height;
             frameBufferDesc.IsSwapChainTarget = false;
 
-            s_pFinalSceneFramebuffer = Framebuffer::Create( frameBufferDesc );
-            s_pFinalSceneFramebuffer->SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
+            s_pFinalSceneFramebuffer = pDevice->CreateFramebuffer( frameBufferDesc );
+            s_pFinalSceneFramebuffer->ClearColor = { DirectX::Colors::DodgerBlue.f[0],
                 DirectX::Colors::DodgerBlue.f[1],
                 DirectX::Colors::DodgerBlue.f[2],
-                DirectX::Colors::DodgerBlue.f[3] } );
+                DirectX::Colors::DodgerBlue.f[3] };
         }
         {
             RasterizerStateDescriptor rasterizerStateDesc{};
@@ -44,7 +45,7 @@ namespace smile::graphic
             rasterizerStateDesc.FillMode = FillMode::WireFrame;
             rasterizerStateDesc.EnableDepthClip = true;
 
-            s_pWireframeRasterizerState = RasterizerState::Create( rasterizerStateDesc );
+            s_pWireframeRasterizerState = pDevice->CreateRasterizerState( rasterizerStateDesc );
         }
     }
 
@@ -71,7 +72,7 @@ namespace smile::graphic
         s_Settings.Width = width;
         s_Settings.Height = height;
 
-        s_pFinalSceneFramebuffer->Resize( width, height );
+        GraphicsDevice::GetInstance()->ResizeFramebuffer( s_pFinalSceneFramebuffer, width, height );
     }
 
     void Renderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -167,40 +168,40 @@ namespace smile::graphic
 
     void Renderer::OnRender()
     {
-        s_pFinalSceneFramebuffer->Clear();
-        s_pFinalSceneFramebuffer->Bind();
+        GraphicsContext *pContext = GraphicsContext::GetInstance();
+        pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
+        pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
         for ( const DrawCommand &drawCommand : s_pRenderCollector->GeometryDrawList )
         {
-            drawCommand.pVertexBuffer->Bind();
-            drawCommand.pIndexBuffer->Bind();
-            drawCommand.pShader->Bind();
+            pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
+            pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
+            pContext->BindShader( drawCommand.pShader );
 
             drawCommand.pShader->UploadMat4( "ViewProjection", s_pRenderCollector->ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadMat4( "ViewInverse", s_pRenderCollector->ViewInverseMatrix );
 
-            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->GetCount(), drawCommand.pShader );
+            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }
 
-        s_pWireframeRasterizerState->Bind();
+        pContext->BindRasterizerState( s_pWireframeRasterizerState );
 
         for ( const DrawCommand &drawCommand : s_pRenderCollector->WireframeDrawList )
         {
-            drawCommand.pVertexBuffer->Bind();
-            drawCommand.pIndexBuffer->Bind();
-            drawCommand.pShader->Bind();
+            pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
+            pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
+            pContext->BindShader( drawCommand.pShader );
 
             drawCommand.pShader->UploadMat4( "ViewProjection", s_pRenderCollector->ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
-            // drawCommand.pShader->UploadMat4("ViewInverse", m_pRenderCollector->ViewInverseMatrix);
+            //drawCommand.pShader->UploadMat4( "ViewInverse", s_pRenderCollector->ViewInverseMatrix );
 
-            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->GetCount(), drawCommand.pShader );
+            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }
 
-        s_pWireframeRasterizerState->Unbind();
-
-        s_pFinalSceneFramebuffer->Unbind();
+        pContext->UnbindRasterizerState();
+        pContext->UnbindFramebuffer();
     }
 
     void Renderer::EndScene()

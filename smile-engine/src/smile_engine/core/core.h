@@ -16,6 +16,10 @@
 #    error SmileEngine only supports Windows
 #endif
 
+#if defined( DEBUG ) || defined( _DEBUG )
+#    define SM_C_DEBUG
+#endif
+
 #ifdef SM_C_DEBUG
 #    ifdef SM_PLATFORM_WINDOWS
 #        define SM_DEBUGBREAK() __debugbreak()

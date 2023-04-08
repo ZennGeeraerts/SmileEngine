@@ -1,5 +1,6 @@
 #pragma once
 #include "smile_engine/graphic/graphics_context.h"
+#include "resource/directx11_frame_buffer.h"
 
 #include <d3d11.h>
 
@@ -21,24 +22,33 @@ namespace smile::graphic
         DirectX11Context &operator=( const DirectX11Context & ) = delete;
         DirectX11Context &operator=( DirectX11Context && ) = delete;
 
-        virtual void Initialize() override;
+        virtual void Initialize( GraphicsDevice *pGraphicsDevice ) override;
         virtual void Present() override;
 
-        inline ID3D11Device *GetDevice() const
+        void *GetInternal() const override
         {
-            return m_pDevice;
+            return m_pInternal;
         }
-        inline ID3D11DeviceContext *GetDeviceContext() const
-        {
-            return m_pDeviceContext;
-        }
+
+        void BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const override;
+        void UnbindVertexBuffer() const override;
+        void BindIndexBuffer( const Ref< IndexBuffer > &pIndexBuffer ) const override;
+        void UnbindIndexBuffer() const override;
+        void BindShader( const Ref< Shader > &pShader ) const override;
+        void UnbindShader() const override;
+        void BindFramebuffer( const Ref< Framebuffer > &pFramebuffer ) const override;
+        void UnbindFramebuffer() const override;
+        void ClearFramebuffer( const Ref< Framebuffer > &pFramebuffer ) override;
+        void BindRasterizerState( const Ref< RasterizerState > &pRasterizerState ) const override;
+        void UnbindRasterizerState() const override;
+
         inline ID3D11RenderTargetView *GetRenderTargetView() const
         {
             return m_pCurrentRenderTarget;
         }
         inline ID3D11DepthStencilView *GetDepthStencilView() const
         {
-            return m_pDepthStencilView;
+            return m_pSwapChainTarget->pDepthStencilView;
         }
         inline const D3D11_VIEWPORT &GetViewport() const
         {
@@ -47,19 +57,18 @@ namespace smile::graphic
 
       private:
         Window *m_pWindow = nullptr;
-        ID3D11Device *m_pDevice = nullptr;
-        ID3D11DeviceContext *m_pDeviceContext = nullptr;
+        ID3D11DeviceContext *m_pInternal = nullptr;
         IDXGIFactory *m_pDXGIFactory = nullptr;
         IDXGISwapChain *m_pSwapChain = nullptr;
 
-        ID3D11RenderTargetView *m_pCurrentRenderTarget = nullptr;
-        ID3D11DepthStencilView *m_pDepthStencilView = nullptr;
+        Ref< DirectX11Framebuffer > m_pSwapChainTarget = nullptr;
 
-        ID3D11Texture2D *m_pDepthStencilBuffer = nullptr;
+        ID3D11RenderTargetView *m_pCurrentRenderTarget = nullptr;
         ID3D11Resource *m_pRenderTargetBuffer = nullptr;
 
-        D3D11_VIEWPORT m_Viewport;
+        D3D11_VIEWPORT m_Viewport{};
 
+        friend class DirectX11Device;
         friend class DirectX11RendererAPI;
     };
 }

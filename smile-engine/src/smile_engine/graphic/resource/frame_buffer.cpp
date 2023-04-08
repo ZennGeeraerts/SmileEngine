@@ -1,34 +1,19 @@
 #include "smpch.h"
 #include "frame_buffer.h"
 
-#include "smile_engine/graphic/renderer.h"
-
-#ifdef SM_PLATFORM_WINDOWS
-#    include "platform/directx11/resource/directx11_frame_buffer.h"
-#endif
-
 namespace smile::graphic
 {
-    Ref< Framebuffer > Framebuffer::Create( const FramebufferDescriptor &framebufferDesc )
+    const Uint32 Framebuffer::MaxFramebufferSize = 8192;
+
+    bool Framebuffer::IsDepthFormat( FramebufferTextureFormat format )
     {
-        switch ( Renderer::GetAPI() )
+        switch ( format )
         {
-            case RendererAPI::API::None:
-                SM_ASSERT( false, "Framebuffer::Create > return nullptr, no renderer api selected" );
-                return nullptr;
+            case FramebufferTextureFormat::Depth24Stencil8:
+                return true;
 
-#ifdef SM_PLATFORM_WINDOWS
-            case RendererAPI::API::DirectX11:
-                return CreateRef< DirectX11Framebuffer >( framebufferDesc );
-
-            case RendererAPI::API::SmileRaster:
-                return nullptr;
-#endif
+            default:
+                return false;
         }
-
-        SM_ASSERT( false,
-            "Framebuffer::Create > return nullptr, unknown render api or render api is not supported on this "
-            "platform" );
-        return nullptr;
     }
 }

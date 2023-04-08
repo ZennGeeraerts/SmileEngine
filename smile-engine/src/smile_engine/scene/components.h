@@ -6,6 +6,7 @@
 
 #include "smile_engine/scene/scene_camera.h"
 
+#include "smile_engine/graphic/graphics_device.h"
 #include "smile_engine/graphic/mesh/mesh_loader.h"
 #include "smile_engine/graphic/mesh/static_mesh_filter.h"
 #include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
@@ -61,17 +62,17 @@ namespace smile::scene
             return transform;
         }
 
-        DirectX::XMFLOAT3 getForward()
+        DirectX::XMFLOAT3 GetForward()
         {
             DirectX::XMFLOAT3 forward{ 0, 0, 1 };
-            rotateVector( forward );
+            RotateVector( forward );
             return forward;
         }
 
-        DirectX::XMFLOAT3 getRight()
+        DirectX::XMFLOAT3 GetRight()
         {
             DirectX::XMFLOAT3 right{ 1, 0, 0 };
-            rotateVector( right );
+            RotateVector( right );
             return right;
         }
 
@@ -80,7 +81,7 @@ namespace smile::scene
         DirectX::XMFLOAT3 Scale{ 1.f, 1.f, 1.f };
 
       private:
-        void rotateVector( DirectX::XMFLOAT3 &v )
+        void RotateVector( DirectX::XMFLOAT3 &v )
         {
             DirectX::XMVECTOR rotationVec =
                 DirectX::XMQuaternionRotationRollPitchYaw( Rotation.x, Rotation.y, Rotation.z );
@@ -100,9 +101,10 @@ namespace smile::scene
             const graphic::IndexBufferDescriptor &indexBufferDesc,
             const std::string &shaderFilePath )
         {
-            pVertexBuffer.reset( graphic::VertexBuffer::Create( vertexBufferDesc ) );
-            pIndexBuffer.reset( graphic::IndexBuffer::Create( indexBufferDesc ) );
-            pShader = graphic::Shader::Create( shaderFilePath );
+            graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+            pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
+            pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
+            pShader = pDevice->CreateShader( shaderFilePath );
         }
 
         Ref< graphic::VertexBuffer > pVertexBuffer = nullptr;
@@ -114,7 +116,8 @@ namespace smile::scene
     {
         StaticMeshComponent()
         {
-            auto pShader = graphic::Shader::Create( "assets/shaders/PBR.fx" );
+            graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+            auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
             pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
         }
 
@@ -141,7 +144,8 @@ namespace smile::scene
     {
         SkinnedMeshComponent()
         {
-            auto pShader = graphic::Shader::Create( "assets/shaders/PBR_Skinned.fx" );
+            graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+            auto pShader = pDevice->CreateShader( "assets/shaders/PBR_Skinned.fx" );
             pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
         }
 

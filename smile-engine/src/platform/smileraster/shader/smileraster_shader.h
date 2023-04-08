@@ -1,27 +1,14 @@
 #pragma once
 #include "smile_engine/graphic/shader/shader.h"
+#include "platform/smileraster/smileraster_context.h"
 
 namespace smile::graphic
 {
     class SmileRasterContext;
 
-    class SmileRasterShader final : public Shader
+    struct SmileRasterShader final : public Shader
     {
-      public:
-        SmileRasterShader( const std::string &assetFile, const BufferLayout &layout );
-
-        virtual void Bind() const override;
-        virtual void Unbind() const override;
-
-        virtual const std::string &GetName() const override
-        {
-            return m_Name;
-        }
-
-        virtual const BufferLayout &GetBufferLayout() const override
-        {
-            return m_BufferLayout;        
-        }
+        SmileRasterShader() = default;
 
         virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) override;
         virtual void UploadMat4Array( const std::string &sementicName,
@@ -33,9 +20,11 @@ namespace smile::graphic
         virtual void UploadBool( const std::string &sementicName, bool value ) override;
         virtual void UploadFloat( const std::string &sementicName, float value ) override;
 
-      private:
-        SmileRasterContext *m_pSmileRasterContext = nullptr;
-        std::string m_Name{};
-        BufferLayout m_BufferLayout{};
+        void* GetData() const override
+        {
+            return nullptr;
+        }
+
+        Raster::DeviceContext *pDeviceContext = nullptr;
     };
 }

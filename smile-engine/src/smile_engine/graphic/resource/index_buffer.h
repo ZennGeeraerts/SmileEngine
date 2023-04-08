@@ -10,15 +10,12 @@ namespace smile::graphic
         BufferUsage Usage = BufferUsage::Default;
     };
 
-    class IndexBuffer
+    struct IndexBuffer
     {
-      public:
+        IndexBuffer() = default;
         virtual ~IndexBuffer() = default;
+        virtual void *GetInternal() const = 0;
 
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-        virtual Uint32 GetCount() const = 0;
-
-        static IndexBuffer *Create( const IndexBufferDescriptor &indexBufferDesc );
+        Uint32 Count;
     };
 }

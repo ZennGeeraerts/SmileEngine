@@ -5,22 +5,22 @@
 
 namespace smile::graphic
 {
-    class Texture
+    struct Texture
     {
-      public:
+        Texture() = default;
         virtual ~Texture() = default;
 
-        virtual const std::string &GetFilePath() const = 0;
-        virtual Uint32 GetWidth() const = 0;
-        virtual Uint32 GetHeight() const = 0;
         virtual void *GetData() const = 0;
+
+        std::string FilePath;
+        Uint32 Width = 0;
+        Uint32 Height = 0;
     };
 
-    class Texture2D : public Texture
+    struct Texture2D : public Texture
     {
       public:
+        Texture2D() = default;
         virtual ~Texture2D() = default;
-
-        static Ref< Texture2D > Create( const std::string &filePath );
     };
 }

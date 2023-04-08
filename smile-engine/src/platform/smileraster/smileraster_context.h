@@ -1,5 +1,6 @@
 #pragma once
 #include "smile_engine/graphic/graphics_context.h"
+
 #include <DeviceContext.cuh>
 
 namespace smile
@@ -20,13 +21,18 @@ namespace smile::graphic
         SmileRasterContext &operator=( const SmileRasterContext & ) = delete;
         SmileRasterContext &operator=( SmileRasterContext && ) = delete;
 
-        virtual void Initialize() override;
+        virtual void Initialize( GraphicsDevice *pGraphicsDevice ) override;
         virtual void Present() override;
 
-        Raster::DeviceContext *getDeviceContext() const
+        Raster::DeviceContext *GetDeviceContext() const
         {
             return m_pDeviceContext;
         }
+
+        void BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const override;
+        void UnbindVertexBuffer() const override;
+        void BindIndexBuffer( const Ref< IndexBuffer > &pIndexBuffer ) const override;
+        void UnbindIndexBuffer() const override;
 
       private:
         Window *m_pWindow = nullptr;

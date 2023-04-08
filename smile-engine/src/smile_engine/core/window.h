@@ -19,6 +19,7 @@ namespace smile
 
     namespace graphic
     {
+        class GraphicsDevice;
         class GraphicsContext;
     }
 
@@ -36,6 +37,7 @@ namespace smile
 
         virtual Uint32 GetWidth() const = 0;
         virtual Uint32 GetHeight() const = 0;
+        virtual graphic::GraphicsDevice *GetGraphicsDevice() const = 0;
         virtual graphic::GraphicsContext *GetGraphicsContext() const = 0;
 
         // Window attributes

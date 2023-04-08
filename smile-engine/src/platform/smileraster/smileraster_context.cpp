@@ -21,7 +21,7 @@ namespace smile::graphic
         DeleteDC( m_HDC );
     }
 
-    void SmileRasterContext::Initialize()
+    void SmileRasterContext::Initialize( GraphicsDevice *pGraphicsDevice )
     {
         Uint32 width = m_pWindow->GetWidth();
         Uint32 height = m_pWindow->GetHeight();
@@ -67,5 +67,27 @@ namespace smile::graphic
         HDC hDC = GetDC( handle );
         BitBlt( hDC, 0, 0, width, height, m_HDC, 0, 0, SRCCOPY );
         ReleaseDC( handle, hDC );
+    }
+
+    void SmileRasterContext::BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const
+    {
+        Raster::BufferID bufferID = reinterpret_cast< Raster::BufferID >( pVertexBuffer->GetInternal() );
+        m_pDeviceContext->BindVertexBuffer( bufferID, pVertexBuffer->Stride );
+    }
+
+    void SmileRasterContext::UnbindVertexBuffer() const
+    {
+        m_pDeviceContext->BindVertexBuffer( SMR_INVALID_BUFFER_ID, 0 );
+    }
+
+    void SmileRasterContext::BindIndexBuffer( const Ref< IndexBuffer > &pIndexBuffer ) const
+    {
+        Raster::BufferID bufferID = reinterpret_cast< Raster::BufferID >( pIndexBuffer->GetInternal() );
+        m_pDeviceContext->BindIndexBuffer( bufferID );
+    }
+
+    void SmileRasterContext::UnbindIndexBuffer() const
+    {
+        m_pDeviceContext->BindIndexBuffer( SMR_INVALID_BUFFER_ID );
     }
 }

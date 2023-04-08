@@ -1,5 +1,7 @@
 #pragma once
 
+#include <DirectXMath.h>
+
 namespace smile::graphic
 {
     enum class FramebufferTextureFormat
@@ -46,22 +48,25 @@ namespace smile::graphic
         bool IsSwapChainTarget = false;
     };
 
-    class Framebuffer
+    struct Framebuffer
     {
-      public:
+        Framebuffer() = default;
         virtual ~Framebuffer() = default;
 
-        virtual void Invalidate() = 0;
-
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) = 0;
-        virtual void Clear() = 0;
-        virtual void Resize( Uint32 width, Uint32 height ) = 0;
-
-        virtual const FramebufferDescriptor &GetDescriptor() const = 0;
         virtual void *GetColor( Uint32 index ) const = 0;
+        virtual Uint32 GetRenderTargetViewCount() const = 0;
+        virtual void *GetRenderTargetViews() = 0;
+        virtual void *GetDepthStencilView() const = 0;
+        virtual void *GetDepthStencilAttachment() const = 0;
+        virtual void *GetViewport() = 0;
 
-        static Ref< Framebuffer > Create( const FramebufferDescriptor &framebufferDesc );
+        bool IsDepthFormat( FramebufferTextureFormat format );
+
+        FramebufferDescriptor Descriptor{};
+        DirectX::XMFLOAT4 ClearColor = { 1.f, 1.f, 1.f, 1.f };
+        std::vector< FramebufferTextureData > ColorAttachmentData{};
+        FramebufferTextureData DepthAttachmentData = FramebufferTextureFormat::None;
+
+        static const Uint32 MaxFramebufferSize;
     };
 }

@@ -90,7 +90,7 @@ namespace smile::graphic::utils
         DirectX11Shader *pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
         std::vector< ShaderVariable > shaderVariables{};
 
-        ID3DX11Effect *pEffect = pDirectX11Shader->GetEffect();
+        ID3DX11Effect *pEffect = pDirectX11Shader->pEffect;
         D3DX11_EFFECT_DESC effectDesc{};
         pEffect->GetDesc( &effectDesc );
         for ( Uint32 i{}; i < effectDesc.GlobalVariables; ++i )

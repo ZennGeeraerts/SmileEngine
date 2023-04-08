@@ -10,11 +10,12 @@ namespace smile
         {
         }
 
-        inline Uint32 getWidth() const
+        inline Uint32 GetWidth
+        () const
         {
             return m_Width;
         }
-        inline Uint32 getHeight() const
+        inline Uint32 GetHeight() const
         {
             return m_Height;
         }

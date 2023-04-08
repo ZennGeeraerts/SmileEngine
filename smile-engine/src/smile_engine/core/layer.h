@@ -27,12 +27,21 @@ namespace smile
         {
         }
 
+#ifdef SM_C_DEBUG
         inline const std::string &GetName() const
         {
             return m_DebugName;
         }
+#else
+        inline const std::string &GetName() const
+        {
+            return "";
+        }
+#endif
 
       protected:
+#ifdef SM_C_DEBUG
         std::string m_DebugName;
+#endif
     };
 }

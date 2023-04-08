@@ -6,16 +6,10 @@
 
 namespace smile::graphic
 {
-    class Shader
+    struct Shader
     {
-      public:
+        Shader() = default;
         virtual ~Shader() = default;
-
-        virtual void Bind() const = 0;
-        virtual void Unbind() const = 0;
-
-        virtual const std::string &GetName() const = 0;
-        virtual const BufferLayout &GetBufferLayout() const = 0;
 
         virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) = 0;
         virtual void UploadMat4Array( const std::string &sementicName,
@@ -27,7 +21,11 @@ namespace smile::graphic
         virtual void UploadBool( const std::string &sementicName, bool value ) = 0;
         virtual void UploadFloat( const std::string &sementicName, float value ) = 0;
 
-        static Ref< Shader > Create( const std::string &filePath, const BufferLayout &bufferLayout );
-        static Ref< Shader > Create( const std::string &filePath );
+        virtual void *GetData() const = 0;
+
+        void SetName( const std::string &assetFile );
+
+        std::string Name;
+        BufferLayout BufferLayout{};
     };
 }

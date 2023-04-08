@@ -71,7 +71,7 @@ namespace smile::graphic
 
     bool PerspectiveCameraController::OnWindowResizedEvent( WindowResizeEvent &e )
     {
-        m_AspectRatio = e.getWidth() / static_cast< float >( e.getHeight() );
+        m_AspectRatio = e.GetWidth() / static_cast< float >( e.GetHeight() );
         m_Camera.SetProjectionMatrix( m_FOV, m_AspectRatio );
         return false;
     }

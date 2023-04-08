@@ -2,6 +2,7 @@
 
 #include "smile_engine/scene/components.h"
 #include "smile_engine/scripting/script_engine.h"
+#include "smile_engine/graphic/graphics_device.h"
 
 #include <thirdparty/imgui/imgui.h>
 #include <thirdparty/imgui/imgui_internal.h>
@@ -31,9 +32,9 @@ namespace smile::scene
         if ( m_pContext )
         {
             m_pContext->m_ECSEngine.Each(
-                [&]( auto entity_id )
+                [&]( auto entityID )
                 {
-                    Entity entity{ entity_id, m_pContext.get() };
+                    Entity entity{ entityID, m_pContext.get() };
                     DrawEntityNode( entity );
                 } );
 
@@ -293,8 +294,7 @@ namespace smile::scene
                         if ( ImGui::Selectable( projectionTypeStrs[i], isSelected ) )
                         {
                             currentProjectionTypeStr = projectionTypeStrs[i];
-                            cameraComponent.Camera.SetProjectionType(
-                                static_cast< SceneCamera::ProjectionType >( i ) );
+                            cameraComponent.Camera.SetProjectionType( static_cast< SceneCamera::ProjectionType >( i ) );
                         }
 
                         if ( isSelected )
@@ -450,8 +450,7 @@ namespace smile::scene
             {
                 const Uint32 bodyTypeCount = 2;
                 const char *bodyTypeStrs[bodyTypeCount]{ "Static", "Dynamic" };
-                const char *currentBodyTypeStr =
-                    bodyTypeStrs[static_cast< Uint32 >( rigidbodyComponent.Type )];
+                const char *currentBodyTypeStr = bodyTypeStrs[static_cast< Uint32 >( rigidbodyComponent.Type )];
                 if ( ImGui::BeginCombo( "Body Type", currentBodyTypeStr ) )
                 {
                     for ( Uint32 i{}; i < bodyTypeCount; ++i )
@@ -557,8 +556,8 @@ namespace smile::scene
 
         auto &component = entity.GetComponent< ComponentType >();
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed |
-                                                   ImGuiTreeNodeFlags_AllowItemOverlap |
-                                                   ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_SpanAvailWidth;
+                                                 ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding |
+                                                 ImGuiTreeNodeFlags_SpanAvailWidth;
 
         ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
         ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2{ 4.f, 4.f } );
@@ -599,7 +598,7 @@ namespace smile::scene
         const Ref< graphic::Shader > &shader = pMaterial->GetShader();
         ImGui::Text( "Material" );
 
-        ImGui::Button( shader->GetName().c_str(), { 100.f, 0.0f } );
+        ImGui::Button( shader->Name.c_str(), { 100.f, 0.0f } );
         if ( ImGui::BeginDragDropTarget() )
         {
             const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
@@ -607,7 +606,7 @@ namespace smile::scene
             {
                 const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                 std::filesystem::path shader_path = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetShader( graphic::Shader::Create( shader_path.string() ) );
+                pMaterial->SetShader( graphic::GraphicsDevice::GetInstance()->CreateShader( shader_path.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -664,7 +663,8 @@ namespace smile::scene
                 {
                     const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                     std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
-                    pMaterial->SetTexture2D( pair.first, graphic::Texture2D::Create( texturePath.string() ) );
+                    pMaterial->SetTexture2D(
+                        pair.first, graphic::GraphicsDevice::GetInstance()->CreateTexture2D( texturePath.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

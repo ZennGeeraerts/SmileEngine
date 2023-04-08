@@ -1,6 +1,7 @@
 #pragma once
 
 #include "smile_engine/graphic/renderer_api.h"
+#include "directx11_device.h"
 #include "directx11_context.h"
 
 namespace smile::graphic
@@ -21,6 +22,7 @@ namespace smile::graphic
 
       private:
         DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
+        DirectX11Device *m_pDirectX11Device = nullptr;
         DirectX11Context *m_pDirectX11Context = nullptr;
     };
 }

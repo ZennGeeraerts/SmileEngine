@@ -5,6 +5,7 @@
 #include "smile_engine/core/window.h"
 #include "smile_engine/graphic/renderer_api.h"
 
+#include "platform/directx11/directx11_device.h"
 #include "platform/directx11/directx11_context.h"
 
 #include "smile_engine/core/logger.h"
@@ -75,6 +76,7 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         Window &window = Application::GetInstance().GetWindow();
+        graphic::GraphicsDevice *pGraphicsDevice = window.GetGraphicsDevice();
         graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
 
         graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
@@ -84,8 +86,11 @@ namespace smile::imgui
             {
                 ImGui_ImplWin32_Init( window.GetNativeWindow() );
 
-                graphic::DirectX11Context *pDirectx11Context = static_cast< graphic::DirectX11Context * >( pGraphicsContext );
-                ImGui_ImplDX11_Init( pDirectx11Context->GetDevice(), pDirectx11Context->GetDeviceContext() );
+                ID3D11Device *pDevice = static_cast< ID3D11Device * >( pGraphicsDevice->GetInternal() );
+                ID3D11DeviceContext *pDeviceContext =
+                    static_cast< ID3D11DeviceContext * >( pGraphicsContext->GetInternal() );
+
+                ImGui_ImplDX11_Init( pDevice, pDeviceContext );
                 break;
             }
             case graphic::RendererAPI::API::SmileRaster:
@@ -239,7 +244,7 @@ namespace smile::imgui
     bool ImGuiLayer::OnWindowResize( WindowResizeEvent &e )
     {
         ImGuiIO &io = ImGui::GetIO();
-        io.DisplaySize = ImVec2{ static_cast< float >( e.getWidth() ), static_cast< float >( e.getHeight() ) };
+        io.DisplaySize = ImVec2{ static_cast< float >( e.GetWidth() ), static_cast< float >( e.GetHeight() ) };
         io.DisplayFramebufferScale = ImVec2{ 1.f, 1.f };
 
         return false;

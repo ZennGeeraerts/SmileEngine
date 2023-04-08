@@ -19,12 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\platform\directx11\directx11_device.h" />
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_rasterizer_state.h" />
     <ClInclude Include="src\Platform\DirectX11\directx11_diagnostics.h" />
     <ClInclude Include="src\Platform\DirectX11\Shader\directx11_buffer.h" />
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_vertex_buffer.h" />
+    <ClInclude Include="src\platform\smileraster\resource\smile_raster_index_buffer.h" />
+    <ClInclude Include="src\platform\smileraster\resource\smile_raster_vertex_buffer.h" />
+    <ClInclude Include="src\platform\smileraster\smile_raster_device.h" />
     <ClInclude Include="src\smile_engine\core\assert.h" />
     <ClInclude Include="src\SmileEngine\Core\GamepadCodes.h" />
+    <ClInclude Include="src\smile_engine\graphic\graphics_device.h" />
     <ClInclude Include="src\smile_engine\math\math.h" />
     <ClInclude Include="src\smile_engine\math\vector.h" />
     <ClInclude Include="src\smile_engine\project\project.h" />
@@ -78,8 +83,8 @@
     <ClInclude Include="src\smile_engine\graphic\mesh\mesh_loader_utils.h" />
     <ClInclude Include="src\smile_engine\graphic\resource\rasterizer_state.h" />
     <ClInclude Include="src\smile_engine\graphic\mesh\skinned_mesh_filter.h" />
-    <ClInclude Include="src\platform\SmileRaster\smileraster_texture.h" />
-    <ClInclude Include="src\platform\SmileRaster\smileraster_shader.h" />
+    <ClInclude Include="src\platform\sdl\resource\sdl_texture.h" />
+    <ClInclude Include="src\platform\smileraster\shader\smileraster_shader.h" />
     <ClInclude Include="src\smile_engine\graphic\animation\mesh_animator.h" />
     <ClInclude Include="src\smile_engine\graphic\animation\bone.h" />
     <ClInclude Include="thirdparty\imguizmo\ImGuizmo.h" />
@@ -120,7 +125,6 @@
     <ClInclude Include="Libs\yaml-cpp\stlemitter.h" />
     <ClInclude Include="Libs\yaml-cpp\traits.h" />
     <ClInclude Include="Libs\yaml-cpp\yaml.h" />
-    <ClInclude Include="src\platform\smileraster\smileraster_buffer.h" />
     <ClInclude Include="src\platform\SmileRaster\smileraster_renderer_api.h" />
     <ClInclude Include="src\platform\smileraster\smileraster_context.h" />
     <ClInclude Include="resource.h" />
@@ -184,20 +188,21 @@
     <ClInclude Include="src\smile_engine\graphic\resource\texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\platform\directx11\directx11_device.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Shader\directx11_buffer.cpp" />
     <ClCompile Include="src\Platform\DirectX11\directx11_diagnostics.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_rasterizer_state.cpp" />
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_vertex_buffer.cpp" />
     <ClCompile Include="src\platform\directx11\shader\directx11_shader_reflection.cpp" />
+    <ClCompile Include="src\platform\smileraster\smile_raster_device.cpp" />
     <ClCompile Include="src\smile_engine\ecs\component_storage.cpp" />
     <ClCompile Include="src\smile_engine\ecs\ecs_engine.cpp" />
     <ClCompile Include="src\smile_engine\ecs\entity_handle_manager.cpp" />
+    <ClCompile Include="src\smile_engine\graphic\graphics_device.cpp" />
     <ClCompile Include="src\smile_engine\imgui\imgui_layer.cpp" />
     <ClCompile Include="src\smile_engine\math\math_utilities.cpp" />
     <ClCompile Include="src\smile_engine\math\vector3.cpp" />
     <ClCompile Include="src\smile_engine\math\vector4.cpp" />
-    <ClCompile Include="src\smile_engine\graphic\resource\index_buffer.cpp" />
-    <ClCompile Include="src\smile_engine\graphic\resource\vertex_buffer.cpp" />
     <ClCompile Include="src\smile_engine\graphic\shader\shader_library.cpp" />
     <ClCompile Include="src\smile_engine\project\project.cpp" />
     <ClCompile Include="src\smile_engine\project\project_serializer.cpp" />
@@ -214,10 +219,9 @@
     <ClCompile Include="src\smile_engine\graphic\mesh\mesh_factory.cpp" />
     <ClCompile Include="src\smile_engine\graphic\mesh\mesh_filter.cpp" />
     <ClCompile Include="src\smile_engine\graphic\mesh\mesh_loader_utils.cpp" />
-    <ClCompile Include="src\smile_engine\graphic\resource\rasterizer_state.cpp" />
     <ClCompile Include="src\smile_engine\graphic\mesh\skinned_mesh_filter.cpp" />
-    <ClCompile Include="src\platform\SmileRaster\smileraster_texture.cpp" />
-    <ClCompile Include="src\platform\SmileRaster\smileraster_shader.cpp" />
+    <ClCompile Include="src\platform\sdl\resource\sdl_texture.cpp" />
+    <ClCompile Include="src\platform\smileraster\shader\smileraster_shader.cpp" />
     <ClCompile Include="src\smile_engine\graphic\animation\mesh_animator.cpp" />
     <ClCompile Include="src\smile_engine\graphic\animation\bone.cpp" />
     <ClCompile Include="thirdparty\imguizmo\ImGuizmo.cpp">
@@ -230,7 +234,6 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Thirdparty/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Thirdparty/ImGui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="src\platform\SmileRaster\smileraster_buffer.cpp" />
     <ClCompile Include="src\platform\SmileRaster\smileraster_renderer_api.cpp" />
     <ClCompile Include="src\platform\smileraster\smileraster_context.cpp" />
     <ClCompile Include="src\smile_engine\graphic\graphics_context.cpp" />
@@ -305,7 +308,6 @@
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\windows_window.cpp" />
     <ClCompile Include="src\Platform\Windows\windows_input.cpp" />
-    <ClCompile Include="src\smile_engine\graphic\resource\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="smile-engine.rc" />

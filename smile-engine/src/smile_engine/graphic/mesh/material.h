@@ -16,7 +16,7 @@ namespace smile::graphic
 
         const BufferLayout &GetBufferLayout() const
         {
-            return m_pShader->GetBufferLayout();
+            return m_pShader->BufferLayout;
         }
         const Ref< Shader > &GetShader() const
         {

@@ -315,9 +315,6 @@
     <ClInclude Include="src\platform\SmileRaster\smileraster_renderer_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\smileraster\smileraster_buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\smile_engine\graphic\animation\bone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -327,10 +324,10 @@
     <ClInclude Include="src\smile_engine\graphic\mesh\static_mesh_filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\SmileRaster\smileraster_shader.h">
+    <ClInclude Include="src\platform\smileraster\shader\smileraster_shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\SmileRaster\smileraster_texture.h">
+    <ClInclude Include="src\platform\sdl\resource\sdl_texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\graphic\mesh\skinned_mesh_filter.h">
@@ -510,6 +507,21 @@
     <ClInclude Include="src\smile_engine\project\project_serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\graphics_device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\directx11\directx11_device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\smileraster\smile_raster_device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\smileraster\resource\smile_raster_index_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\smileraster\resource\smile_raster_vertex_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -558,9 +570,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\smile_engine\graphic\camera\perspective_camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\smile_engine\graphic\resource\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_texture.cpp">
@@ -632,9 +641,6 @@
     <ClCompile Include="src\platform\SmileRaster\smileraster_renderer_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\SmileRaster\smileraster_buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\smile_engine\graphic\animation\bone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -644,10 +650,10 @@
     <ClCompile Include="src\smile_engine\graphic\mesh\static_mesh_filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\SmileRaster\smileraster_shader.cpp">
+    <ClCompile Include="src\platform\smileraster\shader\smileraster_shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\SmileRaster\smileraster_texture.cpp">
+    <ClCompile Include="src\platform\sdl\resource\sdl_texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\smile_engine\graphic\mesh\skinned_mesh_filter.cpp">
@@ -674,9 +680,6 @@
     <ClCompile Include="src\smile_engine\physics\physics_actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\smile_engine\graphic\resource\rasterizer_state.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_rasterizer_state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -698,13 +701,7 @@
     <ClCompile Include="src\Platform\DirectX11\directx11_diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\smile_engine\graphic\resource\vertex_buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_vertex_buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\smile_engine\graphic\resource\index_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX11\Shader\directx11_buffer.cpp">
@@ -744,6 +741,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\smile_engine\project\project_serializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\directx11\directx11_device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\graphic\graphics_device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\smileraster\smile_raster_device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

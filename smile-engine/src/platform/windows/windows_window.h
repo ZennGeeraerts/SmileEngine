@@ -28,6 +28,10 @@ namespace smile
         {
             return m_Data.Height;
         }
+        inline graphic::GraphicsDevice* GetGraphicsDevice() const override
+        {
+            return m_pDevice;
+        }
         inline graphic::GraphicsContext *GetGraphicsContext() const override
         {
             return m_pContext;
@@ -53,12 +57,13 @@ namespace smile
         static LRESULT CALLBACK WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
         LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept;
 
-        void pollEvents();
+        void PollEvents();
 
       private:
         HWND m_WindowHandle;
         WNDCLASSEX m_WindowClass;
         MSG m_Message;
+        graphic::GraphicsDevice *m_pDevice;
         graphic::GraphicsContext *m_pContext;
 
         struct WindowData

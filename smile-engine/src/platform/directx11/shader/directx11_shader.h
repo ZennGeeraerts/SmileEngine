@@ -1,41 +1,19 @@
 #pragma once
 #include "smile_engine/graphic/shader/shader.h"
-#include "smile_engine/graphic/shader/buffer.h"
-
-#include "platform/directx11/directx11_context.h"
 
 #include <d3dx11effect.h>
 
 namespace smile::graphic
 {
-    class DirectX11Shader final : public Shader
+    struct DirectX11Shader final : public Shader
     {
-      public:
-        DirectX11Shader( const std::string &assetFile,
-            const BufferLayout &layout,
-            const std::string &techniqueName = "" );
-
-        DirectX11Shader( const std::string &assetFile, const std::string &techniqueName = "" );
-
+        DirectX11Shader() = default;
         virtual ~DirectX11Shader();
 
         DirectX11Shader( const DirectX11Shader & ) = delete;
         DirectX11Shader( DirectX11Shader && ) = delete;
         DirectX11Shader &operator=( const DirectX11Shader & ) = delete;
         DirectX11Shader &operator=( DirectX11Shader && ) = delete;
-
-        virtual void Bind() const override;
-        virtual void Unbind() const override;
-
-        virtual const std::string &GetName() const override
-        {
-            return m_Name;
-        }
-
-        virtual const BufferLayout &GetBufferLayout() const override
-        {
-            return m_BufferLayout;        
-        }
 
         virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) override;
         virtual void UploadMat4Array( const std::string &sementicName,
@@ -47,35 +25,16 @@ namespace smile::graphic
         virtual void UploadBool( const std::string &sementicName, bool value ) override;
         virtual void UploadFloat( const std::string &sementicName, float value ) override;
 
-        inline ID3DX11Effect *GetEffect() const
+        void *GetData() const override
         {
-            return m_pEffect;
-        }
-        inline ID3DX11EffectTechnique *GetTechnique() const
-        {
-            return m_pTechnique;
+            return pInputLayout;
         }
 
-      private:
-        void Initalize(const std::string& assetFile, const std::string& techniqueName);
-        void SetName( const std::string &assetFile );
-        bool LoadEffect( ID3D11Device *pDevice, const std::string &assetFile );
-
-        void BuildInputLayout( const BufferLayout &layout );
-        void BuildInputLayout();
-       
         ID3DX11EffectVariable *GetEffectVariable( const std::string &sementicName );
 
-      private:
-        std::string m_Name;
-        std::unordered_map< std::string, ID3DX11EffectVariable * > m_EffectVariableMap;
-
-        DirectX11Context *m_pDirectX11Context;
-
-        ID3DX11Effect *m_pEffect;
-        ID3DX11EffectTechnique *m_pTechnique;
-        ID3D11InputLayout *m_pInputLayout;
-
-        BufferLayout m_BufferLayout{};
+        std::unordered_map< std::string, ID3DX11EffectVariable * > EffectVariableMap;
+        ID3DX11Effect *pEffect = nullptr;
+        ID3DX11EffectTechnique *pTechnique = nullptr;
+        ID3D11InputLayout *pInputLayout = nullptr;
     };
 }
