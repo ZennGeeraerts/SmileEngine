@@ -18,7 +18,7 @@ namespace smile::stl
 #endif
     }
 
-    template < typename Type >
+    template < typename Type, bool ExcludeNamespace = false >
     constexpr std::string_view GetTypeName()
     {
         size_t prefixLen = GetFullTypeName< void >().find( "void" );
@@ -27,15 +27,21 @@ namespace smile::stl
         size_t targetLen = ( GetFullTypeName< Type >().size() - dummyLen ) / multiple;
         std::string_view rv = GetFullTypeName< Type >().substr( prefixLen, targetLen );
 
+        if constexpr ( ExcludeNamespace )
+        {
+            size_t pos = rv.find_last_of( ':' );
+            rv = rv.substr( pos + 1 );
+        }
+
         if ( rv.rfind( ' ' ) == rv.npos )
             return rv;
 
         return rv.substr( rv.rfind( ' ' ) + 1 );
     }
 
-    template < typename Type >
+    template < typename Type, bool ExcludeNamespace = false >
     constexpr std::string_view TypeNameOf()
     {
-        return GetTypeName< Type >();
+        return GetTypeName< Type, ExcludeNamespace >();
     }
 }

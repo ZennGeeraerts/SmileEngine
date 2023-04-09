@@ -14,12 +14,12 @@ namespace smile
 
 namespace smile::scene
 {
-    SceneHierarchyPanel::SceneHierarchyPanel( const Ref< Scene > &pScene )
+    SceneHierarchyPanel::SceneHierarchyPanel( Ref< Scene > pScene )
     {
         SetContext( pScene );
     }
 
-    void SceneHierarchyPanel::SetContext( const Ref< Scene > &pScene )
+    void SceneHierarchyPanel::SetContext( Ref< Scene > pScene )
     {
         m_pContext = pScene;
         m_SelectedEntity = {};

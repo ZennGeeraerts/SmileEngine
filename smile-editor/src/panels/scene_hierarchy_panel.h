@@ -16,9 +16,9 @@ namespace smile::scene
     {
       public:
         SceneHierarchyPanel() = default;
-        SceneHierarchyPanel( const Ref< Scene > &pScene );
+        SceneHierarchyPanel( Ref< Scene > pScene );
 
-        void SetContext( const Ref< Scene > &pScene );
+        void SetContext( Ref< Scene > pScene );
 
         void OnImGuiRender();
 

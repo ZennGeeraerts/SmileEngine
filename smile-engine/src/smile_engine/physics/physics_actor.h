@@ -27,6 +27,13 @@ namespace smile::physics
         {
             return m_Entity.GetComponent< scene::RigidbodyComponent >().Type == scene::RigidbodyComponent::BodyType::Dynamic;
         }
+        bool IsKinematic() const
+        {
+            return m_Entity.GetComponent< scene::RigidbodyComponent >().IsKinematic;
+        }
+
+        void AddForce( const DirectX::XMFLOAT3 &force, bool autoAwake = true );
+        void AddTorque( const DirectX::XMFLOAT3 &torque, bool autoAwake = true );
 
       private:
         void AddBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );

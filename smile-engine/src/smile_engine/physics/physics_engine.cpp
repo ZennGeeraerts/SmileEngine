@@ -183,6 +183,8 @@ namespace smile::physics
         if ( it != s_ActorMap.end() )
             return ( *it ).second;
 
+        SM_LOG_ERROR( "PhysicsEngine::GetActorOfEntity > Enity doesn't have a physics actor. Is there a rigidbody "
+                      "component attached?" );
         return nullptr;
     }
 

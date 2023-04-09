@@ -328,28 +328,54 @@ namespace smile::scene
         return Entity{};
     }
 
-    template < typename ComponentType >
+    template < typename... ComponentType >
     static void CopyComponent( ecs::ECSEngine &dst,
         ecs::ECSEngine &src,
         const std::unordered_map< UUID, ecs::EntityHandleType > &entityHandleMap )
     {
-        auto view = src.GetView< ComponentType >();
-        for ( auto entity : view )
-        {
-            UUID uuid = src.GetComponent< IDComponent >( entity ).ID;
-            SM_ASSERT( entityHandleMap.find( uuid ) != entityHandleMap.end(), "Scene::CopyComponent > uuid not found int enttMap" );
-            ecs::EntityHandleType dstHandleID = entityHandleMap.at( uuid );
+        (
+            [&]()
+            {
+                auto view = src.GetView< ComponentType >();
+                for ( auto entity : view )
+                {
+                    UUID uuid = src.GetComponent< IDComponent >( entity ).ID;
+                    SM_ASSERT( entityHandleMap.find( uuid ) != entityHandleMap.end(),
+                        "Scene::CopyComponent > uuid not found int enttMap" );
+                    ecs::EntityHandleType dstHandleID = entityHandleMap.at( uuid );
 
-            auto &component = src.GetComponent< ComponentType >( entity );
-            dst.AddOrReplaceComponent< ComponentType >( dstHandleID, component );
-        }
+                    auto &component = src.GetComponent< ComponentType >( entity );
+                    dst.AddOrReplaceComponent< ComponentType >( dstHandleID, component );
+                }
+            }(),
+            ... );
     }
 
-    template < typename ComponentType >
+    template < typename... ComponentType >
+    static void CopyComponent( ComponentGroup< ComponentType... >,
+        ecs::ECSEngine &dst,
+        ecs::ECSEngine &src,
+        const std::unordered_map< UUID, ecs::EntityHandleType > &entityHandleMap )
+    {
+        CopyComponent< ComponentType... >( dst, src, entityHandleMap );
+    }
+
+    template < typename... ComponentType >
     static void CopyComponentIfExists( Entity dst, Entity src )
     {
-        if ( src.HasComponent< ComponentType >() )
-            dst.AddOrReplaceComponent< ComponentType >( src.GetComponent< ComponentType >() );
+        (
+            [&]()
+            {
+                if ( src.HasComponent< ComponentType >() )
+                    dst.AddOrReplaceComponent< ComponentType >( src.GetComponent< ComponentType >() );
+            }(),
+            ... );
+    }
+
+    template < typename... ComponentType >
+    static void CopyComponentIfExists( ComponentGroup< ComponentType... >, Entity dst, Entity src )
+    {
+        CopyComponentIfExists< ComponentType... >( dst, src );
     }
 
     Ref< Scene > Scene::Copy( const Ref< Scene > &scene )
@@ -373,16 +399,7 @@ namespace smile::scene
         }
 
         // Copy components except IDComponent and TagComponent
-        CopyComponent< TransformComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< MeshRendererComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< StaticMeshComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< SkinnedMeshComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< CameraComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< ScriptComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< RigidbodyComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< BoxColliderComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< SphereColliderComponent >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent< CapsuleColliderComponent >( dstSceneEngine, srcSceneEngine, entityMap );
+        CopyComponent( AllComponents{}, dstSceneEngine, srcSceneEngine, entityMap );
 
         return pNewScene;
     }

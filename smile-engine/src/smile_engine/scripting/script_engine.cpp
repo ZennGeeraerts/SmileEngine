@@ -114,6 +114,7 @@ namespace smile::scripting
         LoadAssembly( "resources/scripts/smile-script-core.dll" );
         LoadAssemblyClasses( s_pData->pCoreAssembly );
 
+        ScriptGlue::RegisterComponentTypes();
         ScriptGlue::RegisterFunctions();
 
         // Retrieve and instantiate class
@@ -212,6 +213,11 @@ namespace smile::scripting
         }
     }
 
+    MonoImage *ScriptEngine::GetCoreAssemblyImage()
+    {
+        return s_pData->pCoreAssemblyImage;
+    }
+
     MonoObject *ScriptEngine::InstantiateClass( MonoClass *pMonoClass )
     {
         MonoObject *pInstance = mono_object_new( s_pData->pAppDomain, pMonoClass );
@@ -303,12 +309,16 @@ namespace smile::scripting
 
     void ScriptInstance::InvokeOnCreate()
     {
-        m_pScriptClass->InvokeMethod( m_pInstance, m_pOnCreateMethod );
+        if ( m_pOnCreateMethod )
+            m_pScriptClass->InvokeMethod( m_pInstance, m_pOnCreateMethod );
     }
 
     void ScriptInstance::InvokeOnUpdate( float deltaTime )
     {
-        void *pParam = &deltaTime;
-        m_pScriptClass->InvokeMethod( m_pInstance, m_pOnUpdateMethod, &pParam );
+        if ( m_pOnUpdateMethod )
+        {
+            void *pParam = &deltaTime;
+            m_pScriptClass->InvokeMethod( m_pInstance, m_pOnUpdateMethod, &pParam );
+        }
     }
 }

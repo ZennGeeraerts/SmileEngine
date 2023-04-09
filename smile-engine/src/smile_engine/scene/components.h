@@ -273,4 +273,20 @@ namespace smile::scene
 
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
+
+    template < typename... Component >
+    struct ComponentGroup
+    {
+    };
+
+    using AllComponents = ComponentGroup< TransformComponent,
+        MeshRendererComponent,
+        StaticMeshComponent,
+        SkinnedMeshComponent,
+        CameraComponent,
+        ScriptComponent,
+        RigidbodyComponent,
+        BoxColliderComponent,
+        SphereColliderComponent,
+        CapsuleColliderComponent >;
 }

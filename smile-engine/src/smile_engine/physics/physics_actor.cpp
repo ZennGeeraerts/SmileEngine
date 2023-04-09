@@ -255,4 +255,28 @@ namespace smile::physics
                             physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
         m_pRigidActor->setGlobalPose( pxTransform );
     }
+
+    void PhysicsActor::AddForce( const DirectX::XMFLOAT3 &force, bool autoAwake )
+    {
+        if ( !m_pRigidActor || !IsDynamic() || IsKinematic() )
+        {
+            SM_LOG_ERROR( "PhysicsActor::AddForce > Cannot add a force to a static or kinematic actor" );
+            return;
+        }
+
+        auto pDynamicActor = static_cast< physx::PxRigidDynamic * >( m_pRigidActor );
+        pDynamicActor->addForce( utils::ConvertToPhysXVector( force ), physx::PxForceMode::eFORCE, autoAwake );
+    }
+
+    void PhysicsActor::AddTorque( const DirectX::XMFLOAT3 &torque, bool autoAwake )
+    {
+        if ( !m_pRigidActor || !IsDynamic() || IsKinematic() )
+        {
+            SM_LOG_ERROR( "PhysicsActor::AddTorque > Cannot add a torque to a static or kinematic actor" );
+            return;
+        }
+
+        auto pDynamicActor = static_cast< physx::PxRigidDynamic * >( m_pRigidActor );
+        pDynamicActor->addTorque( utils::ConvertToPhysXVector( torque ), physx::PxForceMode::eFORCE, autoAwake );
+    }
 }

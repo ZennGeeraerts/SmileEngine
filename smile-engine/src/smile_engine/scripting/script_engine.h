@@ -67,6 +67,8 @@ namespace smile::scripting
         static scene::Scene *GetSceneContext();
         static std::unordered_map< std::string, Ref< ScriptClass > > GetEntityClasses();
 
+        static MonoImage *GetCoreAssemblyImage();
+
       private:
         static void InitializeMono();
         static void ShutDownMono();
@@ -75,5 +77,6 @@ namespace smile::scripting
         static void LoadAssemblyClasses( MonoAssembly *pAssembly );
 
         friend class ScriptClass;
+        friend class ScriptGlue;
     };
 }

@@ -43,10 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\Entity.cs" />
-    <Compile Include="Source\Input.cs" />
-    <Compile Include="Source\KeyCode.cs" />
+    <Compile Include="Source\Smile\Scene\Components.cs" />
+    <Compile Include="Source\Smile\Scene\Entity.cs" />
+    <Compile Include="Source\Smile\Input.cs" />
+    <Compile Include="Source\Smile\InternalCalls.cs" />
+    <Compile Include="Source\Smile\KeyCode.cs" />
     <Compile Include="Source\Player.cs" />
+    <Compile Include="Source\Smile\Vector3.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
