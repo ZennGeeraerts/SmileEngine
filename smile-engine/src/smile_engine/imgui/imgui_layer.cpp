@@ -75,7 +75,7 @@ namespace smile::imgui
 
         SetDarkThemeColors();
 
-        Window &window = Application::GetInstance().GetWindow();
+        Window &window = Application::GetInstance().GetMainWindow();
         graphic::GraphicsDevice *pGraphicsDevice = window.GetGraphicsDevice();
         graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
 
@@ -132,7 +132,7 @@ namespace smile::imgui
     void ImGuiLayer::End()
     {
         ImGuiIO &io = ImGui::GetIO();
-        Window &window = Application::GetInstance().GetWindow();
+        Window &window = Application::GetInstance().GetMainWindow();
         io.DisplaySize =
             ImVec2{ static_cast< float >( window.GetWidth() ), static_cast< float >( window.GetHeight() ) };
 

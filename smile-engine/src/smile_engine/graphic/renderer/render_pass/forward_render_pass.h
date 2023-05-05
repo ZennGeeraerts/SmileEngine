@@ -1,0 +1,21 @@
+#pragma once
+#include "render_pass.h"
+
+namespace smile::graphic
+{
+    class ForwardRenderPass final : public RenderPass
+    {
+      public:
+        ForwardRenderPass( ecs::ECSEngine &ecsEngine ) : RenderPass( ecsEngine )
+        {
+        }
+
+        ForwardRenderPass( const ForwardRenderPass & ) = delete;
+        ForwardRenderPass( ForwardRenderPass && ) = delete;
+        ForwardRenderPass &operator=( const ForwardRenderPass & ) = delete;
+        ForwardRenderPass &operator=( ForwardRenderPass && ) = delete;
+
+        void OnRender() override;
+        void OnRender( const EditorCamera &editorCamera ) override;
+    };
+}

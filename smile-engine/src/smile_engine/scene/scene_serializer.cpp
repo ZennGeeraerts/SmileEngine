@@ -2,7 +2,7 @@
 #include "scene_serializer.h"
 
 #include "smile_engine/core/logger.h"
-#include "smile_engine/graphic/graphics_device.h"
+#include "smile_engine/graphic/render_engine.h"
 #include "entity.h"
 #include "components.h"
 
@@ -524,7 +524,7 @@ namespace smile::scene
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
                             smc.pMaterials[0]->SetTexture2D(
-                                semantic, graphic::GraphicsDevice::GetInstance()->CreateTexture2D( path ) );
+                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path ) );
                     }
                 }
 
@@ -600,7 +600,7 @@ namespace smile::scene
                         auto path = ( *it ).second.as< std::string >();
                         if ( !path.empty() )
                             smc.pMaterials[0]->SetTexture2D(
-                                semantic, graphic::GraphicsDevice::GetInstance()->CreateTexture2D( path ) );
+                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path ) );
                     }
                 }
 

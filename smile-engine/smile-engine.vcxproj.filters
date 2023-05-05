@@ -57,7 +57,7 @@
     <ClInclude Include="src\Platform\DirectX11\Resource\directx11_index_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\graphic\renderer.h">
+    <ClInclude Include="src\smile_engine\graphic\renderer\forward_renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\graphic\shader\shader.h">
@@ -426,10 +426,7 @@
     <ClInclude Include="src\smile_engine\math\vector4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\smile_engine\graphic\render_pass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\smile_engine\graphic\static_mesh_render_pass.h">
+    <ClInclude Include="src\smile_engine\graphic\renderer\render_pass\render_pass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\smile_engine\ecs\ecs_engine.h">
@@ -522,6 +519,33 @@
     <ClInclude Include="src\platform\smileraster\resource\smile_raster_vertex_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\smile_engine\core\window_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\core\singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\windows\windows_window_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\render_engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\renderer\render_pass\forward_render_pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\renderer\wireframe_renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\renderer\render_collector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\renderer\render_pass\wireframe_render_pass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\smile_engine\graphic\renderer\render_pass\render_pass_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\smpch.cpp">
@@ -542,7 +566,7 @@
     <ClCompile Include="src\Platform\DirectX11\Resource\directx11_index_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\smile_engine\graphic\renderer.cpp">
+    <ClCompile Include="src\smile_engine\graphic\renderer\forward_renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\smile_engine\graphic\shader\shader.cpp">
@@ -750,6 +774,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\smileraster\smile_raster_device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\windows\windows_window_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\graphic\render_engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\graphic\renderer\render_pass\forward_render_pass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\graphic\renderer\wireframe_renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\smile_engine\graphic\renderer\render_pass\wireframe_render_pass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

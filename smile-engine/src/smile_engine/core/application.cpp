@@ -3,7 +3,7 @@
 
 #include "logger.h"
 #include "smile_engine/input/input.h"
-#include "smile_engine/graphic/renderer.h"
+#include "smile_engine/graphic/render_engine.h"
 #include "smile_engine/physics/physics_engine.h"
 #include "smile_engine/scripting/script_engine.h"
 
@@ -23,11 +23,12 @@ namespace smile
         if ( !descriptor.WorkingDirectory.empty() )
             std::filesystem::current_path( descriptor.WorkingDirectory );
 
-        m_pWindow = std::unique_ptr< Window >( Window::Create( WindowSettings{ descriptor.Name } ) );
-        m_pWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
-        m_pWindow->SetVSync( false );
+        m_pWindowManager = std::unique_ptr< WindowManager >( WindowManager::Create() );
+        Window *pMainWindow = m_pWindowManager->CreateNewWindow( WindowSettings{ descriptor.Name } );
+        pMainWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
+        pMainWindow->SetVSync( false );
 
-        graphic::Renderer::Initialize();
+        graphic::RenderEngine::Initialize( pMainWindow );
         physics::PhysicsEngine::Initialize();
         scripting::ScriptEngine::Initialize();
 
@@ -39,7 +40,7 @@ namespace smile
     {
         scripting::ScriptEngine::ShutDown();
         physics::PhysicsEngine::ShutDown();
-        graphic::Renderer::ShutDown();
+        graphic::RenderEngine::ShutDown();
     }
 
     void Application::PushLayer( Layer *pLayer )
@@ -87,7 +88,7 @@ namespace smile
                 pLayer->OnImGuiRender();
             m_pImGuiLayer->End();
 
-            m_pWindow->OnUpdate();
+            m_pWindowManager->OnUpdate();
         }
     }
 
@@ -107,7 +108,7 @@ namespace smile
         m_IsMinimized = ( e.GetWidth() == 0 ) || ( e.GetHeight() == 0 );
 
         if ( !m_IsMinimized )
-            graphic::Renderer::OnWindowResize( e.GetWidth(), e.GetHeight() );
+            graphic::RenderEngine::OnWindowResize( e.GetWidth(), e.GetHeight() );
 
         return false;
     }

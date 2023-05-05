@@ -1,6 +1,6 @@
 #include "content_browser_panel.h"
 
-#include "smile_engine/graphic/graphics_device.h"
+#include "smile_engine/graphic/render_engine.h"
 
 #include <thirdparty/imgui/imgui.h>
 
@@ -10,7 +10,7 @@ namespace smile
 
     ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory{ g_AssetPath }
     {
-        graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+        graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
         m_pDirectoryIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/directory_icon.png" );
         m_pFileIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/file_icon.png" );
     }

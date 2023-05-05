@@ -25,7 +25,7 @@
 #include "smile_engine/project/project.h"
 
 /* ---Renderer--- */
-#include "smile_engine/graphic/renderer.h"
+#include "smile_engine/graphic/render_engine.h"
 #include "smile_engine/graphic/render_command.h"
 
 #include "smile_engine/graphic/shader/shader.h"

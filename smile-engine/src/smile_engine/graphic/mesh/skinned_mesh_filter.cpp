@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "skinned_mesh_filter.h"
 
-#include "smile_engine/graphic/graphics_device.h"
+#include "smile_engine/graphic/render_engine.h"
 
 namespace smile::graphic
 {
@@ -66,7 +66,7 @@ namespace smile::graphic
         indexBufferDesc.Count = static_cast< Uint32 >( m_Indices.size() );
         indexBufferDesc.Usage = BufferUsage::Immutable;
 
-        GraphicsDevice *pDevice = GraphicsDevice::GetInstance();
+        GraphicsDevice *pDevice = RenderEngine::GetDevice();
         m_pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
         m_pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
     }

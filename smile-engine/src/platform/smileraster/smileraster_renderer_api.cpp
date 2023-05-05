@@ -1,14 +1,13 @@
 #include "smpch.h"
 #include "smileraster_renderer_api.h"
 
-#include "smile_engine/core/application.h"
+#include "smile_engine/graphic/render_engine.h"
 
 namespace smile::graphic
 {
     void SmileRasterRendererAPI::Initialize()
     {
-        m_pWindow = &Application::GetInstance().GetWindow();
-        m_pSmileRasterContext = static_cast< SmileRasterContext * >( m_pWindow->GetGraphicsContext() );
+        m_pSmileRasterContext = static_cast< SmileRasterContext * >( RenderEngine::GetContext() );
         SM_ASSERT( m_pSmileRasterContext, "SmileRasterRendererAPI > RenderingContext is not a SmileRasterContext" );
     }
 

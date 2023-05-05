@@ -2,20 +2,16 @@
 
 #include "smile_engine/core/core.h"
 #include "timestep.h"
+#include "singleton.h"
 
 #include <chrono>
 
 namespace smile
 {
-    class Timer final
+    class Timer final : public Singleton< Timer >
     {
       public:
-        inline static Timer &GetInstance()
-        {
-            static Timer instance{};
-            return instance;
-        }
-
+        Timer();
         void Run();
         void OnUpdate();
         bool IsCatchingUpInFixedSteps();
@@ -44,9 +40,6 @@ namespace smile
         {
             return m_LastTime;
         }
-
-      private:
-        Timer();
 
       private:
         Uint32 m_MsPerFrame; /* amount of milliseconds per frame for the fixed update */

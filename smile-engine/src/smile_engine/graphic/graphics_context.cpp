@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "graphics_context.h"
 
-#include "renderer.h"
+#include "render_engine.h"
 #include "smile_engine/core/application.h"
 
 #include "platform/directX11/directx11_context.h"
@@ -11,7 +11,7 @@ namespace smile::graphic
 {
     GraphicsContext *GraphicsContext::Create( Window *pWindow )
     {
-        switch ( Renderer::GetAPI() )
+        switch ( RenderEngine::GetAPI() )
         {
             case RendererAPI::API::None:
                 SM_ASSERT( false, "GraphicsContext::Create > return nullptr, no renderer api selected" );
@@ -31,10 +31,5 @@ namespace smile::graphic
             "GraphicsContext::Create > return nullptr, unknown renderer api or renderer api is not supported on this "
             "platform" );
         return nullptr;
-    }
-
-    GraphicsContext* GraphicsContext::GetInstance()
-    {
-        return Application::GetInstance().GetWindow().GetGraphicsContext();
     }
 }

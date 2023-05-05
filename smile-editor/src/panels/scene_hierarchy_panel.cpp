@@ -2,7 +2,6 @@
 
 #include "smile_engine/scene/components.h"
 #include "smile_engine/scripting/script_engine.h"
-#include "smile_engine/graphic/graphics_device.h"
 
 #include <thirdparty/imgui/imgui.h>
 #include <thirdparty/imgui/imgui_internal.h>
@@ -606,7 +605,7 @@ namespace smile::scene
             {
                 const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
                 std::filesystem::path shader_path = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetShader( graphic::GraphicsDevice::GetInstance()->CreateShader( shader_path.string() ) );
+                pMaterial->SetShader( graphic::RenderEngine::GetDevice()->CreateShader( shader_path.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -664,7 +663,7 @@ namespace smile::scene
                     const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                     std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
                     pMaterial->SetTexture2D(
-                        pair.first, graphic::GraphicsDevice::GetInstance()->CreateTexture2D( texturePath.string() ) );
+                        pair.first, graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

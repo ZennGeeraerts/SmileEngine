@@ -29,7 +29,7 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        auto pDevice = graphic::GraphicsDevice::GetInstance();
+        auto pDevice = graphic::RenderEngine::GetDevice();
         m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
         m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
         m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
@@ -41,12 +41,12 @@ namespace smile
 
     void SmileEditorLayer::OnUpdate( Timestep deltaTime )
     {
-        const auto &renderSettings = graphic::Renderer::GetSettings();
+        const auto &renderSettings = graphic::RenderEngine::GetSettings();
         if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( renderSettings.Width ) ) ||
                  !math::AreEqual( m_ViewportSize.y, static_cast< float >( renderSettings.Height ) ) ) &&
              ( m_ViewportSize.x > 0 ) && ( m_ViewportSize.y > 0 ) )
         {
-            graphic::Renderer::ResizeFramebuffer(
+            graphic::RenderEngine::ResizeFramebuffer(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
             m_pActiveScene->OnViewportResize(
@@ -177,7 +177,7 @@ namespace smile
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image( graphic::Renderer::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
+        ImGui::Image( graphic::RenderEngine::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {
@@ -444,6 +444,7 @@ namespace smile
 
             m_pEditorScene->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
+            m_pEditorScene->OnOpen();
             m_SceneHierarchyPanel.SetContext( m_pEditorScene );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
 
@@ -462,6 +463,7 @@ namespace smile
         m_pActiveScene->OnViewportResize(
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
+        m_pActiveScene->OnOpen();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
 
         m_EditorScenePath = std::filesystem::path{};
@@ -474,6 +476,7 @@ namespace smile
 
         m_SceneState = SceneState::Play;
         m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
+        m_pActiveScene->OnOpen();
         m_pActiveScene->OnRuntimeStart();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
@@ -485,6 +488,7 @@ namespace smile
 
         m_SceneState = SceneState::Simulate;
         m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
+        m_pActiveScene->OnOpen();
         m_pActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
@@ -498,6 +502,7 @@ namespace smile
 
         m_SceneState = SceneState::Edit;
         m_pActiveScene = m_pEditorScene;
+        m_pActiveScene->OnOpen();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
     }
 

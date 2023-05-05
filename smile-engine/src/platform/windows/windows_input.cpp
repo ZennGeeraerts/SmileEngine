@@ -20,7 +20,7 @@ namespace smile::input
         POINT point{};
         if ( GetCursorPos( &point ) )
         {
-            auto window = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
+            auto window = static_cast< HWND >( Application::GetInstance().GetMainWindow().GetNativeWindow() );
             ScreenToClient( window, &point );
         }
         return DirectX::XMFLOAT2{ static_cast< float >( point.x ), static_cast< float >( point.y ) };

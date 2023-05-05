@@ -6,13 +6,13 @@
 
 #include "smile_engine/scene/scene_camera.h"
 
-#include "smile_engine/graphic/graphics_device.h"
+#include "smile_engine/graphic/render_engine.h"
 #include "smile_engine/graphic/mesh/mesh_loader.h"
 #include "smile_engine/graphic/mesh/static_mesh_filter.h"
 #include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
 #include "smile_engine/graphic/mesh/material.h"
-#include "smile_engine/graphic/animation/mesh_animator.h"
 #include "smile_engine/graphic/mesh/mesh_factory.h"
+#include "smile_engine/graphic/animation/mesh_animator.h"
 
 #include "smile_engine/physics/physics_material.h"
 
@@ -101,7 +101,7 @@ namespace smile::scene
             const graphic::IndexBufferDescriptor &indexBufferDesc,
             const std::string &shaderFilePath )
         {
-            graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
             pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
             pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
             pShader = pDevice->CreateShader( shaderFilePath );
@@ -116,7 +116,7 @@ namespace smile::scene
     {
         StaticMeshComponent()
         {
-            graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
             auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
             pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
         }
@@ -144,7 +144,7 @@ namespace smile::scene
     {
         SkinnedMeshComponent()
         {
-            graphic::GraphicsDevice *pDevice = graphic::GraphicsDevice::GetInstance();
+            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
             auto pShader = pDevice->CreateShader( "assets/shaders/PBR_Skinned.fx" );
             pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
         }

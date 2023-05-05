@@ -2,7 +2,7 @@
 
 #include "core.h"
 
-#include "window.h"
+#include "window_manager.h"
 #include "smile_engine/core/layer_stack.h"
 #include "smile_engine/core/events/event.h"
 #include "smile_engine/core/events/application_event.h"
@@ -48,9 +48,9 @@ namespace smile
         {
             return *s_Instance;
         }
-        inline Window &GetWindow() const
+        inline Window &GetMainWindow() const
         {
-            return *m_pWindow;
+            return *m_pWindowManager->GetWindow( 0 );
         }
         inline const ApplicationDescriptor &GetDescriptor() const
         {
@@ -63,7 +63,7 @@ namespace smile
 
       private:
         ApplicationDescriptor m_Descriptor;
-        std::unique_ptr< Window > m_pWindow;
+        std::unique_ptr< WindowManager > m_pWindowManager;
         imgui::ImGuiLayer *m_pImGuiLayer;
         bool m_IsRunning = true;
         bool m_IsMinimized = false;

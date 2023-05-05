@@ -5,7 +5,7 @@
 
 namespace smile
 {
-    struct WindowSettings
+    struct WindowSettings final
     {
         WindowSettings( const std::string &title = "Smile Engine", Uint32 width = 1280, Uint32 height = 720 )
             : Title{ title }, Width{ width }, Height{ height }
@@ -29,25 +29,63 @@ namespace smile
       public:
         using EventCallbackFunction = std::function< void( Event & ) >;
 
+        Window() = default;
         virtual ~Window()
         {
         }
+        Window( const Window & ) = delete;
+        Window( Window && ) = delete;
+        Window &operator=( const Window & ) = delete;
+        Window &operator=( Window && ) = delete;
 
         virtual void OnUpdate() = 0;
 
-        virtual Uint32 GetWidth() const = 0;
-        virtual Uint32 GetHeight() const = 0;
-        virtual graphic::GraphicsDevice *GetGraphicsDevice() const = 0;
-        virtual graphic::GraphicsContext *GetGraphicsContext() const = 0;
+        Uint32 GetWidth() const
+        {
+            return m_Data.Settings.Width;
+        }
+        Uint32 GetHeight() const
+        {
+            return m_Data.Settings.Height;
+        }
+        graphic::GraphicsDevice* GetGraphicsDevice() const
+        {
+            return m_pDevice;
+        }
+        graphic::GraphicsContext* GetGraphicsContext() const
+        {
+            return m_pContext;
+        }
 
         // Window attributes
-        virtual void SetEventCallback( const EventCallbackFunction &callback ) = 0;
-        virtual void SetVSync( bool isEnabled ) = 0;
-        virtual bool IsVSync() const = 0;
+        void SetEventCallback(const EventCallbackFunction& callback)
+        {
+            m_Data.EventCallback = callback;
+        }
+        void SetVSync(bool isEnabled)
+        {
+            m_Data.IsVSync = isEnabled;
+        }
+        bool IsVSync() const 
+        {
+            return m_Data.IsVSync;
+        }
 
         // Returns the child window
         virtual void *GetNativeWindow() const = 0;
 
-        static Window *Create( const WindowSettings &settings = WindowSettings{} );
+      protected:
+        struct WindowData
+        {
+            WindowSettings Settings{};
+            bool IsVSync{};
+            EventCallbackFunction EventCallback{};
+        };
+
+        WindowData m_Data;
+        bool m_IsInitialized = false;
+
+        graphic::GraphicsDevice *m_pDevice;
+        graphic::GraphicsContext *m_pContext;
     };
 }

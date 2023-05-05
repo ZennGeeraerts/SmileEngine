@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "graphics_device.h"
 
-#include "renderer.h"
+#include "render_engine.h"
 #include "smile_engine/core/application.h"
 
 #include "platform/directx11/directx11_device.h"
@@ -11,7 +11,7 @@ namespace smile::graphic
 {
     GraphicsDevice *GraphicsDevice::Create()
     {
-        switch ( Renderer::GetAPI() )
+        switch ( RenderEngine::GetAPI() )
         {
             case RendererAPI::API::None:
                 SM_ASSERT( false, "GraphicsDevice::Create > return nullptr, no renderer api selected" );
@@ -32,10 +32,5 @@ namespace smile::graphic
             "GraphicsDevice::Create > return nullptr, unknown renderer api or renderer api is not supported on this "
             "platform" );
         return nullptr;
-    }
-
-    GraphicsDevice *GraphicsDevice::GetInstance()
-    {
-        return Application::GetInstance().GetWindow().GetGraphicsDevice();
     }
 }

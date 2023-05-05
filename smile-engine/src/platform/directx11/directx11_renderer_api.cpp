@@ -2,18 +2,19 @@
 #include "directx11_renderer_api.h"
 
 #include "platform/directX11/shader/directx11_shader.h"
-#include "smile_engine/core/application.h"
 
 #include "directx11_diagnostics.h"
+
+#include "smile_engine/graphic/render_engine.h"
 
 namespace smile::graphic
 {
     void DirectX11RendererAPI::Initialize()
     {
-        m_pDirectX11Device = static_cast< DirectX11Device * >( DirectX11Device::GetInstance() );
+        m_pDirectX11Device = static_cast< DirectX11Device * >( RenderEngine::GetDevice() );
         SM_ASSERT( m_pDirectX11Device, "DirectX11RendererAPI > GraphicsDevice is not a DirectX11Device" );
 
-        m_pDirectX11Context = static_cast< DirectX11Context * >( DirectX11Context::GetInstance() );
+        m_pDirectX11Context = static_cast< DirectX11Context * >( RenderEngine::GetContext() );
         SM_ASSERT( m_pDirectX11Context, "DirectX11RendererAPI > GraphicsContext is not a DirectX11Context" );
     }
 

@@ -21,6 +21,8 @@ namespace smile::scene
         Entity CreateEntity( UUID uuid, const std::string &name );
         void DestroyEntity( Entity entity );
 
+        void OnOpen();
+
         void OnRuntimeStart();
         void OnRuntimeStop();
         void OnSimulationStart();

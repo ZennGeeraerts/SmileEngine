@@ -35,6 +35,5 @@ namespace smile::graphic
         virtual void ResizeFramebuffer( const Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) = 0;
 
         static GraphicsDevice *Create();
-        static GraphicsDevice *GetInstance();
 	};
 }

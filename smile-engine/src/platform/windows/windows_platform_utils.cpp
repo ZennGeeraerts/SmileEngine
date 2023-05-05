@@ -13,7 +13,7 @@ namespace smile::utils
         CHAR szFile[260] = { 0 };
         ZeroMemory( &openFileName, sizeof( OPENFILENAMEA ) );
         openFileName.lStructSize = sizeof( OPENFILENAMEA );
-        openFileName.hwndOwner = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
+        openFileName.hwndOwner = static_cast< HWND >( Application::GetInstance().GetMainWindow().GetNativeWindow() );
         openFileName.lpstrFile = szFile;
         openFileName.nMaxFile = sizeof( szFile );
         openFileName.lpstrFilter = filter;
@@ -32,7 +32,7 @@ namespace smile::utils
         CHAR szFile[260] = { 0 };
         ZeroMemory( &openFileName, sizeof( OPENFILENAMEA ) );
         openFileName.lStructSize = sizeof( OPENFILENAMEA );
-        openFileName.hwndOwner = static_cast< HWND >( Application::GetInstance().GetWindow().GetNativeWindow() );
+        openFileName.hwndOwner = static_cast< HWND >( Application::GetInstance().GetMainWindow().GetNativeWindow() );
         openFileName.lpstrFile = szFile;
         openFileName.nMaxFile = sizeof( szFile );
         openFileName.lpstrFilter = filter;

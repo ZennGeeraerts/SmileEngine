@@ -31,6 +31,5 @@ namespace smile::graphic
         virtual void UnbindRasterizerState() const = 0;
 
         static GraphicsContext *Create( Window *pWindow );
-        static GraphicsContext *GetInstance();
     };
 }

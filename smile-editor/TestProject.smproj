@@ -1,5 +1,5 @@
 Project:
   Name: Untitled
-  StartScene: ""
-  AssetDirectory: ""
+  StartScene: "PhysicsTest2.smile"
+  AssetDirectory: "assets"
   ScriptModulePath: ""
