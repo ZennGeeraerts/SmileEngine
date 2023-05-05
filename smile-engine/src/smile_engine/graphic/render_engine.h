@@ -1,3 +1,7 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
 #pragma once
 
 #include "renderer/render_pass/render_pass_list.h"

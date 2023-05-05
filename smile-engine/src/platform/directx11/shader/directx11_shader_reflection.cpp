@@ -1,3 +1,8 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+
 #include "smpch.h"
 #include "smile_engine/graphic/shader/shader_reflection.h"
 #include "directx11_shader.h"

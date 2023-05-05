@@ -1,4 +1,8 @@
-﻿namespace Smile
+﻿/*=============================================================================*/
+// Copyright 2022-2023 Smile Script Core
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+namespace Smile
 {
     public enum KeyCode
     {

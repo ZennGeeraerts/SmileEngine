@@ -1,4 +1,7 @@
-﻿
+﻿/*=============================================================================*/
+// Copyright 2022-2023 Smile Script Core
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
 using System;
 using System.Collections.Generic;
 using System.Linq;

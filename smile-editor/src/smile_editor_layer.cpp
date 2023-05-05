@@ -1,3 +1,8 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+
 #include "smile_editor_layer.h"
 
 #include "smile_engine/scene/scene_serializer.h"

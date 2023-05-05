@@ -1,3 +1,8 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+
 #include "smpch.h"
 #include "directx11_device.h"
 #include "directx11_context.h"

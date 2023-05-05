@@ -10,6 +10,10 @@
 #include <string>
 #include <sstream>
 #include <vector>
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
 #include <unordered_map>
 #include <unordered_set>
 

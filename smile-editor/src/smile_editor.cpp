@@ -1,3 +1,8 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+
 #include "smile_engine.h"
 #include "smile_engine/core/entry_point.h"
 
