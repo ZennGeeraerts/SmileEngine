@@ -1,3 +1,8 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+
 #include "content_browser_panel.h"
 
 #include "smile_engine/graphic/render_engine.h"
