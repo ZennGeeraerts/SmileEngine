@@ -115,7 +115,13 @@ namespace smile::scripting
         s_pData = new ScriptEngineData{};
 
         InitializeMono();
-        LoadAssembly( "resources/scripts/smile-script-core.dll" );
+
+#ifdef SM_C_DEBUG
+        LoadAssembly( "resources/scripts/Debug/smile-script-core.dll" );
+#elif SM_C_RELEASE
+        LoadAssembly( "resources/scripts/Release/smile-script-core.dll" );
+#endif
+
         LoadAssemblyClasses( s_pData->pCoreAssembly );
 
         ScriptGlue::RegisterComponentTypes();

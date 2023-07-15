@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include <foundation/PxErrorCallback.h>
-#include <foundation/PxAssert.h>
+#include <PhysX/foundation/PxErrorCallback.h>
+#include <PhysX/foundation/PxAssert.h>
 
 namespace smile::physics
 {

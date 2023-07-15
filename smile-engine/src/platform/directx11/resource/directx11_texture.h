@@ -28,4 +28,23 @@ namespace smile::graphic
         ID3D11Resource *pTexture = nullptr;
         ID3D11ShaderResourceView *pShaderResourceView = nullptr;
     };
+
+    struct DirectX11TextureCube : public TextureCube
+    {
+        DirectX11TextureCube() = default;
+        virtual ~DirectX11TextureCube();
+
+        DirectX11TextureCube( const DirectX11TextureCube & ) = delete;
+        DirectX11TextureCube( DirectX11TextureCube && ) = delete;
+        DirectX11TextureCube &operator=( const DirectX11TextureCube & ) = delete;
+        DirectX11TextureCube &operator=( DirectX11TextureCube && ) = delete;
+
+        virtual void *GetData() const override
+        {
+            return pShaderResourceView;
+        }
+
+        ID3D11Resource *pTexture = nullptr;
+        ID3D11ShaderResourceView *pShaderResourceView = nullptr;
+    };
 }

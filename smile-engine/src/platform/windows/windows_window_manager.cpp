@@ -28,7 +28,7 @@ namespace smile
         m_WindowClass.hbrBackground = ( HBRUSH )GetStockObject( NULL_BRUSH );
 
         m_WindowClass.hIcon = static_cast< HICON >( ::LoadImage(
-            NULL, L"assets/icons/logo.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED ) );
+            NULL, L"resources/icons/logo.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED ) );
         m_WindowClass.hIconSm = m_WindowClass.hIcon;
 
         /*if ( !m_WindowClass.hIcon )

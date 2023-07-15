@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include <PxSimulationEventCallback.h>
+#include <PhysX/PxSimulationEventCallback.h>
 
 namespace smile::physics
 {

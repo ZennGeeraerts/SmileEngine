@@ -1,14 +1,22 @@
-cmake_minimum_required(VERSION 3.14)
+project("smile-raster" LANGUAGES CUDA CXX)
 
-project(smile-raster LANGUAGES CXX CUDA)
-enable_language(CUDA)
+find_package(CUDAToolkit)
 
-file(GLOB_RECURSE SOURCE_FILES
-    src/*.cpp
-    src/*.cu
+file(GLOB_RECURSE SOURCE_FILES 
+	src/*.cu
+	src/*.cuh)
+
+set(INCLUDE_DIRS
+    src
+	thirdparty/glm
 )
 
-find_package(CUDAToolkit REQUIRED)
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-add_library(smile-raster STATIC ${SOURCE_FILES})
-target_include_directories(smile-raster PUBLIC ${CMAKE_SOURCE_DIR}/smile-raster/src)
+set_target_properties(${PROJECT_NAME}
+                       PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "50")
+set_target_properties (${PROJECT_NAME} PROPERTIES FOLDER Dependencies)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE CUDA::cudart)

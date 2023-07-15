@@ -1,5 +1,5 @@
 #include <smile_engine.h>
-#include <thirdparty/catch.hpp>
+#include <catch/catch.hpp>
 
 using namespace smile;
 

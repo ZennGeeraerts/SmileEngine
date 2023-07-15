@@ -1,89 +1,76 @@
-set(CMAKE_MFC_FLAG 1)
+include(${CMAKE_SOURCE_DIR}/scripts/CMakeUtils.cmake)
 
-file(GLOB_RECURSE SOURCE_FILES
-    src/*.cpp
-    src/*.hpp
+set(INCLUDE_DIRS
+    src
+    thirdparty/imgui
+    thirdparty/ImGuizmo
+    thirdparty/assimp/include
+    thirdparty/yaml-cpp/include
+    thirdparty/mono/include
+    thirdparty/PhysX/include
+    thirdparty/PhysX/include/PhysX #For internal PhsysX usage
+    thirdparty/dx11effects/include
+    thirdparty/dx11tex/include
+    thirdparty/sdl2_image-2.0.5/include
+    thirdparty/sdl2-2.0.9/include
+    ${CMAKE_SOURCE_DIR}/smile-raster/src
 )
 
-if(NOT WITH_SMILERASTER)
-    message("Not with SmileRaster")
-    file(GLOB_RECURSE SMILERASTER_ITEMS
-    src/platform/smileraster/*.cpp
-    src/platform/smileraster/*.hpp
-    )
+set(LIB_LINKS
+    imgui
+    smile-raster
 
-    set(source_files ${SOURCE_FILES})
-    foreach(item in ${SMILERASTER_ITEMS})
-        list(REMOVE_ITEM ${SOURCE_FILES} item)
-        message(${item})
-    endforeach()
-    #list(REMOVE_ITEM source_files ${SMILERASTER_ITEMS})
-endif()
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/assimp/x64/assimp-vc140-mt.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/mono/lib/$<CONFIG>/libmono-static-sgen.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysX_64.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCharacterKinematic_static_64.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCommon_64.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCooking_64.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXExtensions_static_64.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXFoundation_64.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXPvdSDK_static_64.lib
 
-message(${SOURCE_FILES})
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/sdl2_image-2.0.5/x64/SDL2_image.lib
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/sdl2-2.0.9/x64/SDL2.lib
 
-add_library(smile-engine STATIC ${SOURCE_FILES})
+    ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/dx11tex/x64/$<CONFIG>/DirectXTex.lib
+)
 
 if(WIN32)
-    target_compile_definitions( smile-engine PUBLIC SM_PLATFORM_WINDOWS )
+    set(DX11_LIBS d3d11 dxgi dxguid d3dCompiler)
+    set(WIN32_LIBS Ws2_32 Winmm Version Bcrypt)
+else()
+    set(DX11_LIBS)
+    set(WIN32_LIBS)
 endif()
 
-conan_cmake_run(
-        REQUIRES
-            physx/4.1.1
-            assimp/5.2.2
-            yaml-cpp/0.7.0
-            entt/3.10.1
-            imguizmo/cci.20210223
-            sdl/2.0.20
-            sdl_image/2.0.5
-        BASIC_SETUP CMAKE_TARGETS
-        BUILD missing
-        )
+file(GLOB_RECURSE SOURCE_FILES
+    src/*.h
+    src/*.cpp
+    thirdparty/ImGuizmo/ImGuizmo.cpp
+    thirdparty/ImGuizmo/ImGuizmo.h
+)
 
-if(TARGET CONAN_PKG::physx)
-    target_link_libraries(smile-engine PRIVATE CONAN_PKG::physx)
-endif()
+add_library(smile-engine STATIC ${SOURCE_FILES})
+target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})
+target_link_libraries(smile-engine PUBLIC ${LIB_LINKS} ${DX11_LIBS} ${WIN32_LIBS} 
+    optimized ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/dx11effects/x64/dx11effects.lib 
+    optimized ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/yaml-cpp/x64/yaml-cpp.lib
+    debug ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/dx11effects/x64/dx11effects_d.lib 
+    debug ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/yaml-cpp/x64/yaml-cppd.lib)
 
-if(TARGET CONAN_PKG::assimp)
-    target_link_libraries(smile-engine PRIVATE CONAN_PKG::assimp)
-endif()
+target_precompile_headers(smile-engine PUBLIC "src/smpch.h")
 
-if(TARGET CONAN_PKG::yaml-cpp)
-    target_link_libraries(smile-engine PRIVATE CONAN_PKG::yaml-cpp)
-endif()
+GroupSourcesByFolder(smile-engine)
 
-if(TARGET CONAN_PKG::entt)
-    target_link_libraries(smile-engine PRIVATE CONAN_PKG::entt)
-endif()
+set_property(TARGET smile-engine PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+set_target_properties(smile-engine PROPERTIES FOLDER Core)
 
-if(TARGET CONAN_PKG::imguizmo)
-    target_link_libraries(smile-engine PRIVATE CONAN_PKG::imguizmo)
-endif()
-
-if(WITH_SMILERASTER)
-    if(TARGET CONAN_PKG::sdl)
-        target_link_libraries(smile-engine PRIVATE CONAN_PKG::sdl)
-    endif()
-    if(TARGET CONAN_PKG::sdl_image)
-        target_link_libraries(smile-engine PRIVATE CONAN_PKG::sdl_image)
-    endif()
-endif()
-
-target_link_libraries(smile-engine PRIVATE smile-raster)
-
-target_include_directories(smile-engine
-                            PUBLIC .
-                            PRIVATE $<$<CONFIG:Release>:${CMAKE_CURRENT_BINARY_DIR}>
-                            PRIVATE ${CMAKE_SOURCE_DIR}/smile-engine/src
-                            PUBLIC smile-raster/src
-                            PUBLIC ${CMAKE_SOURCE_DIR}/thirdparty/dx11effects/include
-                            PUBLIC ${CMAKE_SOURCE_DIR}/thirdparty/dx11tex/include)
-
-target_link_directories(smile-engine
-                            PUBLIC ${CMAKE_SOURCE_DIR}/thirdparty/dx11effects/lib
-                            PUBLIC PUBLIC ${CMAKE_SOURCE_DIR}/thirdparty/dx11tex/lib)
+target_compile_definitions(
+    smile-engine
+    PUBLIC
+    $<$<CONFIG:Debug>:SM_C_DEBUG>
+    $<$<CONFIG:Release>:SM_C_RELEASE>
+)
 
 add_definitions(-DUNICODE)
-
-message(STATUS "Configuring SmileEngine... done!")

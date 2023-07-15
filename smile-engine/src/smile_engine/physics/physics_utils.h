@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include <PxPhysicsAPI.h>
+#include <PhysX/PxPhysicsAPI.h>
 
 namespace smile::physics::utils
 {

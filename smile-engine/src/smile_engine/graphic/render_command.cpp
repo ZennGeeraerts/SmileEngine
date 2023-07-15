@@ -6,7 +6,10 @@
 #include "render_command.h"
 
 #include "platform/directx11/directx11_renderer_api.h"
-#include "platform/smileraster/smileraster_renderer_api.h"
+
+#if WITH_SMILERASTER
+    #include "platform/smileraster/smileraster_renderer_api.h"
+#endif
 
 namespace smile::graphic
 {

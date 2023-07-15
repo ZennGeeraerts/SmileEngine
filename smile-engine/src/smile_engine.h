@@ -6,6 +6,7 @@
 
 // Header file to include in Smile Engine applications
 
+#include "smile_engine/core/core.h"
 #include "smile_engine/core/application.h"
 #include "smile_engine/core/layer.h"
 #include "smile_engine/core/logger.h"

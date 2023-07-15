@@ -1,13 +1,19 @@
 #include "main_game.h"
 
 #include <smile_engine/core/entry_point.h>
-#include <thirdparty/imgui/imgui.h>
+#include <imgui/imgui.h>
 
 smile::Application *smile::CreateApplication( smile::ApplicationCommandLineArgs commandLineArgs )
 {
     smile::ApplicationDescriptor descriptor{};
     descriptor.Name = "Main Game";
-    descriptor.WorkingDirectory = "../smile-editor";
+
+#ifdef SM_C_DEBUG
+    descriptor.WorkingDirectory = "../../smile-editor/Debug";
+#elif SM_C_RELEASE
+    descriptor.WorkingDirectory = "../../smile-editor/Release";
+#endif
+
     descriptor.CommandLineArgs = commandLineArgs;
 
     // This application will get passed to the entry point of the engine

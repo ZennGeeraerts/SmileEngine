@@ -264,12 +264,12 @@ namespace smile::graphic
             DirectX::TexMetadata info{};
             DirectX::ScratchImage image{};
 
-            std::wstring file_path_wide = std::wstring{ filePath.begin(), filePath.end() };
+            std::wstring filePathWide = std::wstring{ filePath.begin(), filePath.end() };
 
             HRESULT result{ S_OK };
             if ( !_strcmpi( fileExtension.c_str(), "dds" ) )
             {
-                result = DirectX::LoadFromDDSFile( file_path_wide.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
+                result = DirectX::LoadFromDDSFile( filePathWide.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
                 if ( FAILED( result ) )
                 {
                     SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from DDS file failed: %ls",
@@ -279,7 +279,7 @@ namespace smile::graphic
             }
             else if ( !_strcmpi( fileExtension.c_str(), "tga" ) )
             {
-                result = DirectX::LoadFromTGAFile( file_path_wide.c_str(), &info, image );
+                result = DirectX::LoadFromTGAFile( filePathWide.c_str(), &info, image );
                 if ( FAILED( result ) )
                 {
                     SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from TGA file failed: %ls",
@@ -289,7 +289,7 @@ namespace smile::graphic
             }
             else
             {
-                result = DirectX::LoadFromWICFile( file_path_wide.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
+                result = DirectX::LoadFromWICFile( filePathWide.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
                 if ( FAILED( result ) )
                 {
                     SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from WIC file failed: %ls",
@@ -316,6 +316,81 @@ namespace smile::graphic
             if ( FAILED( result ) )
             {
                 SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create shader resource view: %ls",
+                    GetDirectX11ErrorMessage( result ) );
+                SAFE_RELEASE( pTexture->pShaderResourceView );
+                return false;
+            }
+
+            return true;
+        }
+
+        static bool LoadTextureCube( ID3D11Device *pDevice, const Ref< DirectX11TextureCube > &pTexture )
+        {
+            const std::string &filePath = pTexture->FilePath;
+            if ( filePath.find_last_of( '.' ) == std::string::npos )
+            {
+                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Invalid file extension: %s", filePath.c_str() );
+                return false;
+            }
+
+            std::string fileExtension = filePath.substr( filePath.find_last_of( '.' ) + 1 );
+
+            DirectX::TexMetadata info{};
+            info.miscFlags = DirectX::TEX_MISC_TEXTURECUBE;
+            DirectX::ScratchImage image{};
+
+            std::wstring filePathWide = std::wstring{ filePath.begin(), filePath.end() };
+
+            HRESULT result{ S_OK };
+            if ( !_strcmpi( fileExtension.c_str(), "dds" ) )
+            {
+                result = DirectX::LoadFromDDSFile( filePathWide.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Device::LoadTextureCube > Loading from DDS file failed: %ls",
+                        GetDirectX11ErrorMessage( result ) );
+                    return false;
+                }
+            }
+            /*else if ( !_strcmpi( fileExtension.c_str(), "tga" ) )
+            {
+                result = DirectX::LoadFromTGAFile( filePathWide.c_str(), &info, image );
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from TGA file failed: %ls",
+                        GetDirectX11ErrorMessage( result ) );
+                    return false;
+                }
+            }
+            else
+            {
+                result = DirectX::LoadFromWICFile( filePathWide.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from WIC file failed: %ls",
+                        GetDirectX11ErrorMessage( result ) );
+                    return false;
+                }
+            }*/
+
+            result = DirectX::CreateTexture(
+                pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pTexture->pTexture );
+            if ( FAILED( result ) )
+            {
+                SM_LOG_ERROR( "DirectX11Device::LoadTextureCube > Failed to create texture: %ls",
+                    GetDirectX11ErrorMessage( result ) );
+                SAFE_RELEASE( pTexture->pTexture );
+                return false;
+            }
+
+            result = DirectX::CreateShaderResourceView( pDevice,
+                image.GetImages(),
+                image.GetImageCount(),
+                image.GetMetadata(),
+                &pTexture->pShaderResourceView );
+            if ( FAILED( result ) )
+            {
+                SM_LOG_ERROR( "DirectX11Device::LoadTextureCube > Failed to create shader resource view: %ls",
                     GetDirectX11ErrorMessage( result ) );
                 SAFE_RELEASE( pTexture->pShaderResourceView );
                 return false;
@@ -531,6 +606,28 @@ namespace smile::graphic
 
         pTexture->Width = tex2Ddesc.Width;
         pTexture->Height = tex2Ddesc.Height;
+
+        return pTexture;
+    }
+
+    Ref< TextureCube > DirectX11Device::CreateTextureCube( const std::string &filePath )
+    {
+        Ref< DirectX11TextureCube > pTexture = CreateRef< DirectX11TextureCube >();
+        pTexture->FilePath = filePath;
+
+        if ( !texturehelpers::LoadTextureCube( m_pInternal, pTexture ) )
+        {
+            SAFE_RELEASE( pTexture->pTexture );
+            SAFE_RELEASE( pTexture->pShaderResourceView );
+            SM_ASSERT( false, "DirectX11Device::CreateTexture2D > Failed to load texture" );
+        }
+
+        auto pD11Tex3D = static_cast< ID3D11Texture3D * >( pTexture->pTexture );
+        D3D11_TEXTURE3D_DESC tex3Ddesc;
+        pD11Tex3D->GetDesc( &tex3Ddesc );
+
+        pTexture->Width = tex3Ddesc.Width;
+        pTexture->Height = tex3Ddesc.Height;
 
         return pTexture;
     }

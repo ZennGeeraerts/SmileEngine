@@ -8,8 +8,8 @@
 #include "smile_engine/scene/scene_serializer.h"
 #include "smile_engine/utils/platform_utils.h"
 
-#include <thirdparty/imgui/imgui.h>
-#include <thirdparty/imguizmo/ImGuizmo.h>
+#include <imgui/imgui.h>
+#include <imguizmo/ImGuizmo.h>
 
 namespace smile
 {

@@ -15,7 +15,7 @@ namespace smile::graphic
 {
     class GraphicsContext;
 
-	class GraphicsDevice
+    class GraphicsDevice
     {
       public:
         GraphicsDevice() = default;
@@ -32,6 +32,7 @@ namespace smile::graphic
             const std::string &techniqueName = "" ) = 0;
         virtual Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" ) = 0;
         virtual Ref< Texture2D > CreateTexture2D( const std::string &filePath ) = 0;
+        virtual Ref< TextureCube > CreateTextureCube( const std::string &filePath ) = 0;
         virtual Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;
         virtual Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) = 0;
 
@@ -39,5 +40,5 @@ namespace smile::graphic
         virtual void ResizeFramebuffer( const Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) = 0;
 
         static GraphicsDevice *Create();
-	};
+    };
 }

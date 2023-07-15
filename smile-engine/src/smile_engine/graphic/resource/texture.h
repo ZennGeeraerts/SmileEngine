@@ -27,4 +27,11 @@ namespace smile::graphic
         Texture2D() = default;
         virtual ~Texture2D() = default;
     };
+
+    struct TextureCube : public Texture
+    {
+      public:
+        TextureCube() = default;
+        virtual ~TextureCube() = default;
+    };
 }

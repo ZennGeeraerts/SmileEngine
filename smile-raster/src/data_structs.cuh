@@ -5,7 +5,7 @@
 #pragma once
 #include <stdint.h>
 #include <DirectXMath.h>
-#include <../../smile-raster/thirdparty/glm/glm.hpp>
+#include <glm.hpp>
 #include <unordered_map>
 
 namespace smile

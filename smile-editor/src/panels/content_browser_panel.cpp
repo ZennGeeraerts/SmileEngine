@@ -7,7 +7,7 @@
 
 #include "smile_engine/graphic/render_engine.h"
 
-#include <thirdparty/imgui/imgui.h>
+#include <imgui/imgui.h>
 
 namespace smile
 {

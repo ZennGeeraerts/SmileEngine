@@ -7,9 +7,15 @@
 
 namespace smile
 {
+#ifdef SM_C_DEBUG
     Layer::Layer( const std::string &name ) : m_DebugName{ name }
     {
     }
+#elif SM_C_RELEASE
+    Layer::Layer( const std::string &name )
+    {
+    }
+#endif
 
     Layer::~Layer()
     {

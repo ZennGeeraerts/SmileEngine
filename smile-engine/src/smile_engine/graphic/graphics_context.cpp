@@ -9,7 +9,10 @@
 #include "smile_engine/core/application.h"
 
 #include "platform/directX11/directx11_context.h"
-#include "platform/smileraster/smileraster_context.h"
+
+#ifdef WITH_SMILERASTER
+    #include "platform/smileraster/smileraster_context.h"
+#endif
 
 namespace smile::graphic
 {

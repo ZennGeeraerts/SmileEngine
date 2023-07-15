@@ -27,7 +27,13 @@ namespace smile
     {
         ApplicationDescriptor descriptor{};
         descriptor.Name = "Smile Editor";
-        descriptor.WorkingDirectory = "../smile-editor";
+
+#ifdef SM_C_DEBUG
+        descriptor.WorkingDirectory = "../../smile-editor/Debug";
+#elif SM_C_RELEASE
+        descriptor.WorkingDirectory = "../../smile-editor/Release";
+#endif
+
         descriptor.CommandLineArgs = commandLineArgs;
 
         //project::Project::New()->SaveActive( "TestProject.smproj" );

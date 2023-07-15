@@ -10,7 +10,7 @@
 #include "physics_diagnostics.h"
 #include "contact_listener.h"
 
-#include <PxPhysicsAPI.h>
+#include <PhysX/PxPhysicsAPI.h>
 
 namespace smile::physics
 {

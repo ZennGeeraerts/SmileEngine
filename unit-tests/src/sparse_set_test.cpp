@@ -1,6 +1,6 @@
 #include <smile_engine/core/core.h>
 #include <smile_engine/stl/sparse_set.h>
-#include <thirdparty/catch.hpp>
+#include <catch/catch.hpp>
 #include <iostream>
 
 using namespace smile;

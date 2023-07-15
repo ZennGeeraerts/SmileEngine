@@ -19,7 +19,8 @@ namespace smile
 
     Application::Application( const ApplicationDescriptor &descriptor ) : m_Descriptor{ descriptor }
     {
-        SM_ASSERT( !s_Instance, "SmileGame::SmileGame > There is already an instance of SmileGame, there can only be 1" );
+        SM_ASSERT(
+            !s_Instance, "Application::Application > There is already an instance of SmileGame, there can only be 1" );
         s_Instance = this;
 
         Logger::SetPriority( LogPriority::Trace );

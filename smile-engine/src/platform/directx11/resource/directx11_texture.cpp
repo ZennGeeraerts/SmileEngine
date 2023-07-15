@@ -13,4 +13,10 @@ namespace smile::graphic
         SAFE_RELEASE( pTexture );
         SAFE_RELEASE( pShaderResourceView );
     }
+
+    DirectX11TextureCube::~DirectX11TextureCube()
+    {
+        SAFE_RELEASE( pTexture );
+        SAFE_RELEASE( pShaderResourceView );
+    }
 }

@@ -8,8 +8,8 @@
 #include "smile_engine/scene/components.h"
 #include "smile_engine/scripting/script_engine.h"
 
-#include <thirdparty/imgui/imgui.h>
-#include <thirdparty/imgui/imgui_internal.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 namespace smile
 {

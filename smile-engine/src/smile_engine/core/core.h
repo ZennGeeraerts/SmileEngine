@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "platform_detection.h"
+
 #include <memory>
 
 #ifdef SM_PLATFORM_WINDOWS
@@ -18,10 +20,6 @@
 #    endif
 #else
 #    error SmileEngine only supports Windows
-#endif
-
-#if defined( DEBUG ) || defined( _DEBUG )
-#    define SM_C_DEBUG
 #endif
 
 #ifdef SM_C_DEBUG

@@ -9,7 +9,10 @@
 #include "smile_engine/core/application.h"
 
 #include "platform/directx11/directx11_device.h"
-#include "platform/smileraster/smile_raster_device.h"
+
+#ifdef WITH_SMILERASTER
+    #include "platform/smileraster/smile_raster_device.h"
+#endif
 
 namespace smile::graphic
 {

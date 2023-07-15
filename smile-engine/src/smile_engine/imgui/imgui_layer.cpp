@@ -15,10 +15,10 @@
 #include "smile_engine/core/logger.h"
 #include "smile_engine/input/key_codes.h"
 
-#include <thirdparty/imgui/imgui.h>
-#include <thirdparty/imgui/imgui_impl_win32.h>
-#include <thirdparty/imgui/imgui_impl_dx11.h>
-#include <thirdparty/imguizmo/ImGuizmo.h>
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
+#include <ImGuizmo.h>
 
 namespace smile::imgui
 {
