@@ -99,6 +99,9 @@ namespace smile::scripting
         MonoAssembly *pCoreAssembly = nullptr;
         MonoImage *pCoreAssemblyImage = nullptr;
 
+        MonoAssembly *pAppAssembly = nullptr;
+        MonoImage *pAppAssemblyImage = nullptr;
+
         ScriptClass EntityClass;
 
         std::unordered_map< std::string, Ref< ScriptClass > > EntityClasses;
@@ -118,17 +121,19 @@ namespace smile::scripting
 
 #ifdef SM_C_DEBUG
         LoadAssembly( "resources/scripts/Debug/smile-script-core.dll" );
+        LoadAppAssembly( "sandbox-project/assets/scripts/bin/Debug/sandbox.dll" );
 #elif SM_C_RELEASE
         LoadAssembly( "resources/scripts/Release/smile-script-core.dll" );
+        LoadAppAssembly( "sandbox-project/assets/scripts/bin/Release/sandbox.dll" );
 #endif
 
-        LoadAssemblyClasses( s_pData->pCoreAssembly );
+        LoadAssemblyClasses();
 
         ScriptGlue::RegisterComponentTypes();
         ScriptGlue::RegisterFunctions();
 
         // Retrieve and instantiate class
-        s_pData->EntityClass = ScriptClass{ "Smile", "Entity" };
+        s_pData->EntityClass = ScriptClass{ "Smile", "Entity", true };
 #if 0
         MonoObject *pInstance = s_pData->EntityClass.Instantiate();
 
@@ -180,22 +185,29 @@ namespace smile::scripting
         // utils::printAssemblyTypes( data->coreAssembly );
     }
 
-    void ScriptEngine::LoadAssemblyClasses( MonoAssembly *pAssembly )
+    void ScriptEngine::LoadAppAssembly( const std::filesystem::path &filePath )
+    {
+        s_pData->pAppAssembly = utils::LoadMonoAssembly( filePath );
+        s_pData->pAppAssemblyImage = mono_assembly_get_image( s_pData->pAppAssembly );
+    }
+
+    void ScriptEngine::LoadAssemblyClasses()
     {
         s_pData->EntityClasses.clear();
 
-        MonoImage *pImage = mono_assembly_get_image( pAssembly );
-        const MonoTableInfo *pTypeDefinitionsTable = mono_image_get_table_info( pImage, MONO_TABLE_TYPEDEF );
+        const MonoTableInfo *pTypeDefinitionsTable =
+            mono_image_get_table_info( s_pData->pAppAssemblyImage, MONO_TABLE_TYPEDEF );
         Int32 typeCount = mono_table_info_get_rows( pTypeDefinitionsTable );
-        MonoClass *pEntityClass = mono_class_from_name( pImage, "Smile", "Entity" );
+        MonoClass *pEntityClass = mono_class_from_name( s_pData->pCoreAssemblyImage, "Smile", "Entity" );
 
         for ( Int32 i = 0; i < typeCount; i++ )
         {
             Uint32 cols[MONO_TYPEDEF_SIZE];
             mono_metadata_decode_row( pTypeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE );
 
-            const char *nameSpace = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAMESPACE] );
-            const char *name = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAME] );
+            const char *nameSpace =
+                mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE] );
+            const char *name = mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAME] );
             std::string fullName;
             if ( strlen( nameSpace ) != 0 )
             {
@@ -208,7 +220,7 @@ namespace smile::scripting
                 fullName = name;
             }
 
-            MonoClass *pMonoClass = mono_class_from_name( pImage, nameSpace, name );
+            MonoClass *pMonoClass = mono_class_from_name( s_pData->pAppAssemblyImage, nameSpace, name );
 
             if ( pMonoClass == pEntityClass )
                 continue;
@@ -283,10 +295,12 @@ namespace smile::scripting
         pInstance->InvokeOnUpdate( deltaTime );
     }
 
-    ScriptClass::ScriptClass( const std::string &classNamespace, const std::string &className )
+    ScriptClass::ScriptClass( const std::string &classNamespace, const std::string &className, bool isCore )
         : m_ClassNamespace{ classNamespace }, m_ClassName{ className }
     {
-        m_pMonoClass = mono_class_from_name( s_pData->pCoreAssemblyImage, classNamespace.c_str(), className.c_str() );
+        m_pMonoClass = mono_class_from_name( isCore ? s_pData->pCoreAssemblyImage : s_pData->pAppAssemblyImage,
+            classNamespace.c_str(),
+            className.c_str() );
     }
 
     MonoObject *ScriptClass::Instantiate()

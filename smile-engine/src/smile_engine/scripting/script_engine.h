@@ -24,7 +24,7 @@ namespace smile::scripting
     {
       public:
         ScriptClass() = default;
-        ScriptClass( const std::string &classNamespace, const std::string &className );
+        ScriptClass( const std::string &classNamespace, const std::string &className, bool isCore = false );
 
         MonoObject *Instantiate();
         MonoMethod *GetMethod( const std::string &name, int parameterCount );
@@ -60,6 +60,7 @@ namespace smile::scripting
         static void ShutDown();
 
         static void LoadAssembly( const std::filesystem::path &filePath );
+        static void LoadAppAssembly( const std::filesystem::path &filePath );
 
         static void OnRuntimeStart( scene::Scene *pScene );
         static void OnRuntimeStop();
@@ -78,7 +79,7 @@ namespace smile::scripting
         static void ShutDownMono();
 
         static MonoObject *InstantiateClass( MonoClass *pMonoClass );
-        static void LoadAssemblyClasses( MonoAssembly *pAssembly );
+        static void LoadAssemblyClasses();
 
         friend class ScriptClass;
         friend class ScriptGlue;
