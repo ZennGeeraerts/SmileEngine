@@ -361,13 +361,13 @@ namespace smile::ecs
 
         void DestroyEntity( EntityHandleType entityHandle )
         {
-            m_HandleManager.DestroyEntity( entityHandle );
-
             for ( auto pComponentInterface : m_pComponents )
             {
                 if ( HasComponent( pComponentInterface, entityHandle ) )
                     RemoveComponent( pComponentInterface, entityHandle );
             }
+
+            m_HandleManager.DestroyEntity( entityHandle );
         }
 
         bool IsEntityActive( EntityHandleType entityHandle ) const
