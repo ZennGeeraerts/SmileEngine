@@ -1,0 +1,20 @@
+Scene: Untitled
+Entities:
+  - Entity: 14029070730860424398
+    TagComponent:
+      Tag: Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SkinnedMeshComponent:
+      Mesh: meshes\Zenn.dae
+      Material:
+        AlbedoMap: textures\tr0092_00_Body.tga.png
+        AlbedoColor: [0, 0, 0]
+        MetalnessMap: ""
+        Metalness: 1
+        RoughnessMap: ""
+        Roughness: 0.776000023
+        NormalMap: ""
+        AOMap: ""

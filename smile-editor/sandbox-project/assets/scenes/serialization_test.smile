@@ -1,0 +1,33 @@
+Scene: Untitled
+Entities:
+  - Entity: 9259736921291294851
+    TagComponent:
+      Tag: Entity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SkinnedMeshComponent:
+      Mesh: assets\meshes\model.dae
+      Material:
+        FloatValues:
+          METALNESS: 1
+          ROUGHNESS: 0.5
+        IntValues:
+          {}
+        BoolValues:
+          USEALBEDOMAP: false
+          USENORMALMAP: false
+          USEAOMAP: false
+          USEMETALNESSMAP: false
+          USEROUGHNESSMAP: false
+        Float2Values:
+          {}
+        Float3Values:
+          ALBEDO: [1, 1, 1]
+        Texture2DValues:
+          ALBEDOMAP: assets\textures\base_albedo.jpg
+          NORMALMAP: ""
+          METALNESSMAP: ""
+          ROUGHNESSMAP: ""
+          AOMap: ""
