@@ -27,6 +27,38 @@ add_custom_command(
     TARGET sandbox
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/../../../sandbox-project/assets/scenes"
+        "${CMAKE_SOURCE_DIR}/../../../../out/build/x64-$<CONFIG>/smile-editor/$<CONFIG>/sandbox-project/assets/scenes"
+    )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/../../../sandbox-project/assets/textures"
+        "${CMAKE_SOURCE_DIR}/../../../../out/build/x64-$<CONFIG>/smile-editor/$<CONFIG>/sandbox-project/assets/textures"
+    )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/../../../sandbox-project/assets/meshes"
+        "${CMAKE_SOURCE_DIR}/../../../../out/build/x64-$<CONFIG>/smile-editor/$<CONFIG>/sandbox-project/assets/meshes"
+    )
+    
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/../../../sandbox-project/assets/shaders"
+        "${CMAKE_SOURCE_DIR}/../../../../out/build/x64-$<CONFIG>/smile-editor/$<CONFIG>/sandbox-project/assets/shaders"
+    )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/../../../sandbox-project/assets/scripts/bin"
         "${CMAKE_SOURCE_DIR}/../../../../out/build/x64-$<CONFIG>/smile-editor/$<CONFIG>/sandbox-project/assets/scripts/bin"
     )
