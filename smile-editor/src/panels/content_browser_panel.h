@@ -18,6 +18,7 @@ namespace smile
         void OnImGuiRender();
 
       private:
+        std::filesystem::path m_BaseDirectory;
         std::filesystem::path m_CurrentDirectory;
         Ref< graphic::Texture2D > m_pDirectoryIcon = nullptr;
         Ref< graphic::Texture2D > m_pFileIcon = nullptr;

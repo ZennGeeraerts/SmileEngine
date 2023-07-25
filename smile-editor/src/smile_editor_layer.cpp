@@ -17,8 +17,6 @@ namespace smile
     /*---------------------------------------------- Editor Layer -----------------------------------------------*/
     /*-----------------------------------------------------------------------------------------------------------*/
 
-    extern const std::filesystem::path g_AssetPath;
-
     SmileEditorLayer::SmileEditorLayer() : Layer( "SmileEditorLayer" )
     {
     }
@@ -38,6 +36,18 @@ namespace smile
         m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
         m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
         m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
+
+        auto commandLineArgs = Application::GetInstance().GetDescriptor().CommandLineArgs;
+        if (commandLineArgs.Count > 1)
+        {
+            auto projectFilePath = commandLineArgs[1];
+            OpenProject( projectFilePath );
+        }
+        else
+        {
+            // TODO: prompt the user to select a directory
+            NewProject();
+        }
     }
 
     void SmileEditorLayer::OnDetach()
@@ -172,7 +182,7 @@ namespace smile
         }
 
         m_SceneHierarchyPanel.OnImGuiRender();
-        m_ContentBrowserPanel.OnImGuiRender();
+        m_pContentBrowserPanel->OnImGuiRender();
 
         ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2{} );
         ImGui::Begin( "Viewport" );
@@ -190,7 +200,7 @@ namespace smile
             if ( pPayload )
             {
                 const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                OpenScene( std::filesystem::path{ g_AssetPath } / path );
+                OpenScene( path );
             }
 
             ImGui::EndDragDropTarget();
@@ -388,6 +398,29 @@ namespace smile
         }
 
         return false;
+    }
+
+    void SmileEditorLayer::NewProject()
+    {
+        project::ProjectManager::New();
+    }
+
+    void SmileEditorLayer::OpenProject( const std::filesystem::path &path )
+    {
+        if ( project::ProjectManager::Load( path ) )
+        {
+            //std::filesystem::current_path( path.parent_path() );
+
+            auto startScenePath =
+                project::ProjectManager::GetAssetFileSystemPath( project::ProjectManager::GetActive()->GetConfig().StartScene );
+            OpenScene( startScenePath );
+            m_pContentBrowserPanel = CreateScope< ContentBrowserPanel >();
+        }
+    }
+
+    void SmileEditorLayer::SaveProject()
+    {
+        //project::Project::SaveActive();
     }
 
     void SmileEditorLayer::SaveScene()

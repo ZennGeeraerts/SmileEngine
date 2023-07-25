@@ -6,14 +6,15 @@
 #include "content_browser_panel.h"
 
 #include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/project/project_manager.h"
 
 #include <imgui/imgui.h>
 
 namespace smile
 {
-    extern const std::filesystem::path g_AssetPath = "assets";
-
-    ContentBrowserPanel::ContentBrowserPanel() : m_CurrentDirectory{ g_AssetPath }
+    ContentBrowserPanel::ContentBrowserPanel()
+        : m_BaseDirectory{ project::ProjectManager::GetActive()->GetAssetDirectory() },
+          m_CurrentDirectory{ m_BaseDirectory }
     {
         graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
         m_pDirectoryIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/directory_icon.png" );
@@ -24,7 +25,7 @@ namespace smile
     {
         ImGui::Begin( "Content Browser" );
 
-        if ( m_CurrentDirectory != std::filesystem::path{ g_AssetPath } )
+        if ( m_CurrentDirectory != m_BaseDirectory )
         {
             if ( ImGui::Button( "Back" ) )
             {
@@ -45,16 +46,16 @@ namespace smile
         for ( const auto &directoryEntry : std::filesystem::directory_iterator( m_CurrentDirectory ) )
         {
             const auto &path = directoryEntry.path();
-            auto relativePath = std::filesystem::relative( directoryEntry.path(), g_AssetPath );
-            std::string fileName = relativePath.filename().string();
+            std::string fileName = path.filename().string();
 
             ImGui::PushID( fileName.c_str() );
-            Ref< graphic::Texture2D > icon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
+            Ref< graphic::Texture2D > pIcon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
             ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
-            ImGui::ImageButton( icon->GetData(), { thumbnailSize, thumbnailSize } );
+            ImGui::ImageButton( pIcon->GetData(), { thumbnailSize, thumbnailSize } );
 
             if ( ImGui::BeginDragDropSource() )
             {
+                auto relativePath = std::filesystem::path{ path };
                 const wchar_t *itemPath = relativePath.c_str();
                 ImGui::SetDragDropPayload(
                     "ContentBrowserItem", itemPath, ( wcslen( itemPath ) + 1 ) * sizeof( wchar_t ), ImGuiCond_Once );
@@ -66,7 +67,7 @@ namespace smile
             if ( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) )
             {
                 if ( directoryEntry.is_directory() )
-                    m_CurrentDirectory /= directoryEntry.path().filename();
+                    m_CurrentDirectory /= path.filename();
             }
 
             ImGui::TextWrapped( fileName.c_str() );

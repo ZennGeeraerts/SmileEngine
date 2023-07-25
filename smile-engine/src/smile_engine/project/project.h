@@ -4,8 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/core.h"
-
 #include <filesystem>
 
 namespace smile::project
@@ -21,25 +19,25 @@ namespace smile::project
     class Project final
     {
       public:
-        static const std::filesystem::path &GetAssetDirectory()
+        const std::filesystem::path &GetProjectDirectory() const
         {
-            SM_ASSERT( s_pActiveProject, "Project::GetAssetDirectory > No active project" );
-            return s_pActiveProject->m_Config.AssetDirectory;
+            return m_ProjectDirectory;
         }
 
-        static ProjectConfig &GetConfig()
+        std::filesystem::path GetAssetDirectory()
         {
-            SM_ASSERT( s_pActiveProject, "Project::GetConfig > No active project" );
-            return s_pActiveProject->m_Config;
+            return m_ProjectDirectory / m_Config.AssetDirectory;
         }
 
-        static Ref< Project > New();
-        static Ref< Project > Load( const std::filesystem::path &path );
-        static bool SaveActive( const std::filesystem::path &path );
+        ProjectConfig &GetConfig()
+        {
+            return m_Config;
+        }
 
       private:
         ProjectConfig m_Config;
+        std::filesystem::path m_ProjectDirectory;
 
-        inline static Ref< Project > s_pActiveProject;
+        friend class ProjectManager;
     };
 }

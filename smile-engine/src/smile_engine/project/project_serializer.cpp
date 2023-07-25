@@ -45,11 +45,17 @@ namespace smile::project
     {
         auto &config = m_pContext->GetConfig();
 
-        std::ifstream fileInput{ filePath };
-        std::stringstream strStream{};
-        strStream << fileInput.rdbuf();
+        YAML::Node data;
+        try
+        {
+            data = YAML::LoadFile( filePath.string() );
+        }
+        catch ( YAML::ParserException e )
+        {
+            SM_LOG_CRITICALERROR( "Failed to load project file: %s\n %s", filePath.c_str(), e.what() );
+            return false;
+        }
 
-        YAML::Node data = YAML::Load( strStream.str() );
         YAML::Node projectNode = data["Project"];
         if ( !projectNode )
             return false;

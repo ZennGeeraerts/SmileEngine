@@ -52,6 +52,10 @@ namespace smile
       private:
         bool OnKeyPressed( KeyPressedEvent &e );
 
+        void NewProject();
+        void OpenProject( const std::filesystem::path &path );
+        void SaveProject();
+
         void SaveScene();
         void SaveSceneAs();
         void SerializeScene( const Ref< scene::Scene > &pScene, const std::filesystem::path &filePath );
@@ -90,7 +94,7 @@ namespace smile
 
         // Panels
         scene::SceneHierarchyPanel m_SceneHierarchyPanel;
-        ContentBrowserPanel m_ContentBrowserPanel;
+        Scope< ContentBrowserPanel > m_pContentBrowserPanel;
 
         // Editor resources
         Ref< graphic::Texture2D > m_pIconPlay = nullptr;

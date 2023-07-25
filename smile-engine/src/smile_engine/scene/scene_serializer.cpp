@@ -9,6 +9,7 @@
 #include "smile_engine/graphic/render_engine.h"
 #include "entity.h"
 #include "components.h"
+#include "smile_engine/project/project_manager.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -194,7 +195,18 @@ namespace smile::scene
         const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
         for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
         {
-            output << YAML::Key << ( *it ).first << YAML::Value << ( ( *it ).second ? ( *it ).second->FilePath : "" );
+            if ( ( *it ).second )
+            {
+                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
+                auto fullPath = std::filesystem::path{ ( *it ).second->FilePath };
+                auto relativePath = fullPath.lexically_relative( basePath );
+
+                output << YAML::Key << ( *it ).first << YAML::Value << relativePath.string();
+            }
+            else
+            {
+                output << YAML::Key << ( *it ).first << YAML::Value << "";
+            }
         }
         output << YAML::EndMap;
 
@@ -277,9 +289,19 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &staticMeshComponent = entity.GetComponent< StaticMeshComponent >();
-            output << YAML::Key << "Mesh" << YAML::Value
-                   << ( ( staticMeshComponent.pMeshes.size() > 0 ) ? staticMeshComponent.pMeshes[0]->GetFilePath()
-                                                                   : "" );
+
+            if ( staticMeshComponent.pMeshes.size() > 0 )
+            {
+                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
+                auto fullPath = std::filesystem::path{ staticMeshComponent.pMeshes[0]->GetFilePath() };
+                auto relativePath = fullPath.lexically_relative( basePath );
+
+                output << YAML::Key << "Mesh" << YAML::Value << relativePath.string();
+            }
+            else
+            {
+                output << YAML::Key << "Mesh" << YAML::Value << "";
+            }
 
             SerializeMaterial( output, staticMeshComponent.pMaterials[0] );
 
@@ -292,9 +314,18 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &skinnedMeshComponent = entity.GetComponent< SkinnedMeshComponent >();
-            output << YAML::Key << "Mesh" << YAML::Value
-                   << ( ( skinnedMeshComponent.pMeshes.size() > 0 ) ? skinnedMeshComponent.pMeshes[0]->GetFilePath()
-                                                                    : "" );
+            if ( skinnedMeshComponent.pMeshes.size() > 0 )
+            {
+                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
+                auto fullPath = std::filesystem::path{ skinnedMeshComponent.pMeshes[0]->GetFilePath() };
+                auto relativePath = fullPath.lexically_relative( basePath );
+
+                output << YAML::Key << "Mesh" << YAML::Value << relativePath.string();
+            }
+            else
+            {
+                output << YAML::Key << "Mesh" << YAML::Value << "";
+            }
 
             SerializeMaterial( output, skinnedMeshComponent.pMaterials[0] );
 
@@ -468,10 +499,11 @@ namespace smile::scene
                 {
                     auto &smc = deserializedEntity.AddComponent< StaticMeshComponent >();
 
-                    const auto &meshPath = staticMeshComponent["Mesh"].as< std::string >();
+                    auto meshPath = staticMeshComponent["Mesh"].as< std::string >();
                     if ( !meshPath.empty() )
                     {
-                        smc.pMeshes = graphic::MeshLoader::LoadStaticMesh( meshPath );
+                        auto path = project::ProjectManager::GetAssetFileSystemPath( meshPath );
+                        smc.pMeshes = graphic::MeshLoader::LoadStaticMesh( path.string() );
                         const auto &bufferLayout = smc.pMaterials[0]->GetBufferLayout();
                         for ( const auto &pMesh : smc.pMeshes )
                         {
@@ -525,10 +557,13 @@ namespace smile::scene
                     for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
-                        auto path = ( *it ).second.as< std::string >();
-                        if ( !path.empty() )
+                        auto texturePath = ( *it ).second.as< std::string >();
+                        if ( !texturePath.empty() )
+                        {
+                            auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             smc.pMaterials[0]->SetTexture2D(
-                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path ) );
+                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() ) );
+                        }
                     }
                 }
 
@@ -537,10 +572,11 @@ namespace smile::scene
                 {
                     auto &smc = deserializedEntity.AddComponent< SkinnedMeshComponent >();
 
-                    const auto &meshPath = skinnedMeshComponent["Mesh"].as< std::string >();
+                    auto meshPath = skinnedMeshComponent["Mesh"].as< std::string >();
                     if ( !meshPath.empty() )
                     {
-                        smc.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( meshPath );
+                        auto path = project::ProjectManager::GetAssetFileSystemPath( meshPath );
+                        smc.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( path.string() );
                         const auto &bufferLayout = smc.pMaterials[0]->GetBufferLayout();
                         for ( const auto &mesh : smc.pMeshes )
                         {
@@ -601,10 +637,13 @@ namespace smile::scene
                     for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
-                        auto path = ( *it ).second.as< std::string >();
-                        if ( !path.empty() )
+                        auto texturePath = ( *it ).second.as< std::string >();
+                        if ( !texturePath.empty() )
+                        {
+                            auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             smc.pMaterials[0]->SetTexture2D(
-                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path ) );
+                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() ) );
+                        }
                     }
                 }
 
@@ -688,7 +727,7 @@ namespace smile::scene
 
     bool SceneSerializer::DeserializeRuntime( const std::string &filePath )
     {
-        SM_ASSERT( false, "SceneSerializer::deserializeRuntime > Not implemented" );
+        SM_ASSERT( false, "SceneSerializer::DeserializeRuntime > Not implemented" );
         return false;
     }
 }

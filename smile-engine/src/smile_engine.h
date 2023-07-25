@@ -27,7 +27,7 @@
 #include "smile_engine/scene/entity.h"
 #include "smile_engine/scene/components.h"
 
-#include "smile_engine/project/project.h"
+#include "smile_engine/project/project_manager.h"
 
 /* ---Renderer--- */
 #include "smile_engine/graphic/render_engine.h"

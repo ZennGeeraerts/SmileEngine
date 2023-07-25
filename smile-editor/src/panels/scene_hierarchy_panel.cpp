@@ -11,11 +11,6 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace smile
-{
-    extern const std::filesystem::path g_AssetPath;
-}
-
 namespace smile::scene
 {
     SceneHierarchyPanel::SceneHierarchyPanel( Ref< Scene > pScene )
@@ -380,7 +375,7 @@ namespace smile::scene
                         staticMeshComponent.pMeshes.clear();
 
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path meshPath = std::filesystem::path{ g_AssetPath } / path;
+                        std::filesystem::path meshPath = std::filesystem::path{ path };
 
                         staticMeshComponent.pMeshes = graphic::MeshLoader::LoadStaticMesh( meshPath.string() );
                         const auto &bufferLayout = staticMeshComponent.pMaterials[0]->GetBufferLayout();
@@ -413,7 +408,7 @@ namespace smile::scene
                         skinnedMeshComponent.Animators.clear();
 
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path meshPath = std::filesystem::path{ g_AssetPath } / path;
+                        std::filesystem::path meshPath = std::filesystem::path{ path };
 
                         skinnedMeshComponent.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( meshPath.string() );
                         const auto &bufferLayout = skinnedMeshComponent.pMaterials[0]->GetBufferLayout();
@@ -609,8 +604,8 @@ namespace smile::scene
             if ( payload )
             {
                 const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
-                std::filesystem::path shader_path = std::filesystem::path{ g_AssetPath } / path;
-                pMaterial->SetShader( graphic::RenderEngine::GetDevice()->CreateShader( shader_path.string() ) );
+                std::filesystem::path shaderPath = std::filesystem::path{ path };
+                pMaterial->SetShader( graphic::RenderEngine::GetDevice()->CreateShader( shaderPath.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -666,7 +661,7 @@ namespace smile::scene
                 if ( pPayload )
                 {
                     const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                    std::filesystem::path texturePath = std::filesystem::path{ g_AssetPath } / path;
+                    std::filesystem::path texturePath = std::filesystem::path{ path };
                     pMaterial->SetTexture2D(
                         pair.first, graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() ) );
                 }

@@ -22,7 +22,8 @@ int main( int argc, char **argv )
 #    pragma warning( disable : 28251 )
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdShow )
 {
-    smile::Application *pApplication = smile::CreateApplication( smile::ApplicationCommandLineArgs{} );
+    smile::ApplicationCommandLineArgs commandLineArgs{ __argc, __argv };
+    smile::Application *pApplication = smile::CreateApplication( commandLineArgs );
     pApplication->Run();
     delete pApplication;
     return 0;
