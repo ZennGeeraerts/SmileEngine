@@ -82,22 +82,22 @@ namespace smile::graphic
     void WireframeRenderer::Submit( const scene::BoxColliderComponent &boxColliderComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        DirectX::XMMATRIX finalTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );
+        DirectX::XMMATRIX worldTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );
         DirectX::XMVECTOR translationVec{};
         DirectX::XMVECTOR rotationVec{};
         DirectX::XMVECTOR scaleVec{};
 
-        DirectX::XMMatrixDecompose( &scaleVec, &rotationVec, &translationVec, finalTransformMat );
+        DirectX::XMMatrixDecompose( &scaleVec, &rotationVec, &translationVec, worldTransformMat );
         DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat3( &boxColliderComponent.Offset );
-        auto finalTranslationVec = DirectX::XMVectorAdd( translationVec, offsetVec );
         DirectX::XMVECTOR sizeVec = DirectX::XMLoadFloat3( &boxColliderComponent.Size );
 
         sizeVec = DirectX::XMVectorDivide( sizeVec, DirectX::XMVECTOR{ 2, 2, 2 } );
 
-        auto finalScaleVec = DirectX::XMVectorMultiply( scaleVec, sizeVec );
-        finalTransformMat = DirectX::XMMatrixScalingFromVector( finalScaleVec ) *
-                            DirectX::XMMatrixRotationQuaternion( rotationVec ) *
-                            DirectX::XMMatrixTranslationFromVector( finalTranslationVec );
+        auto colliderTransformMat = DirectX::XMMatrixScalingFromVector( sizeVec ) * 
+                                    DirectX::XMMatrixIdentity() *
+                                    DirectX::XMMatrixTranslationFromVector( offsetVec );
+
+        DirectX::XMMATRIX finalTransformMat = colliderTransformMat * worldTransformMat;
 
         DirectX::XMFLOAT4X4 finalTransform{};
         DirectX::XMStoreFloat4x4( &finalTransform, finalTransformMat );
