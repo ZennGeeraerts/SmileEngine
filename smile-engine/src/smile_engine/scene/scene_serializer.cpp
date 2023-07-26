@@ -216,7 +216,7 @@ namespace smile::scene
     static void SerializeEntity( YAML::Emitter &output, Entity entity )
     {
         SM_ASSERT( entity.HasComponent< IDComponent >(),
-            "SceneSerializer::serializeScene > Entity does not have an IDComponent" );
+            "SceneSerializer::SerializeScene > Entity does not have an IDComponent" );
 
         output << YAML::BeginMap;
         output << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
@@ -430,11 +430,17 @@ namespace smile::scene
 
     bool SceneSerializer::Deserialize( const std::string &filePath )
     {
-        std::ifstream fileInput{ filePath };
-        std::stringstream strStream{};
-        strStream << fileInput.rdbuf();
+        YAML::Node data;
+        try
+        {
+            data = YAML::LoadFile( filePath );
+        }
+        catch ( YAML::ParserException e )
+        {
+            SM_LOG_ERROR( "Failed to load .smile file: %s\n%s", filePath, e.what() );
+            return false;
+        }
 
-        YAML::Node data = YAML::Load( strStream.str() );
         if ( !data["Scene"] )
             return false;
 
