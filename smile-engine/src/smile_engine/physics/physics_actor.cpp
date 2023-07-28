@@ -240,7 +240,16 @@ namespace smile::physics
             }
 
             transform.Translation = utils::ConvertToDirectXVector( actorPose.p ) /* + offset*/;
-            transform.Rotation = math::QuaternionToEuler( utils::ConvertToDirectXQuat( actorPose.q ) );
+
+            DirectX::XMFLOAT3 rotationEuler;
+            DirectX::XMVECTOR rotationEulerVec;
+            float angle;
+            DirectX::XMFLOAT4 rotationQuaternion = utils::ConvertToDirectXQuat( actorPose.q );
+            DirectX::XMVECTOR rotationQuaternionVec = DirectX::XMLoadFloat4( &rotationQuaternion );
+            DirectX::XMQuaternionToAxisAngle( &rotationEulerVec, &angle, rotationQuaternionVec );
+            DirectX::XMStoreFloat3( &rotationEuler, rotationEulerVec );
+
+            transform.Rotation = rotationEuler;
         }
         else
         {

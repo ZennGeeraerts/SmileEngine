@@ -2,7 +2,7 @@ float4x4 gWorld : WORLD;
 float4x4 gViewProjection : VIEWPROJECTION;
 float4x4 gViewInverse : VIEWINVERSE;
 
-float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f) * -1;
+float3 gLightDirection = float3(0.577f, -0.577f, 0.577f);
 float3 gLightColor = float3(1.0f, 1.0f, 1.0f);
 float gLightIntensity = 3.f;
 
@@ -43,6 +43,12 @@ SamplerState gSamLinear
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = Wrap; // or Mirror or Clamp or Border
     AddressV = Wrap; // or Mirror or Clamp or Border
+};
+
+RasterizerState gRasterizerState
+{
+    CullMode = back;
+    FrontCounterClockwise = true;
 };
 
 struct VS_INPUT
@@ -237,6 +243,7 @@ technique11 DefaultTechnique
 {
     pass P0
     {
+        SetRasterizerState( gRasterizerState );
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, PS()));
