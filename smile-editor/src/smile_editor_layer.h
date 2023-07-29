@@ -53,6 +53,7 @@ namespace smile
         bool OnKeyPressed( KeyPressedEvent &e );
 
         void NewProject();
+        bool OpenProject();
         void OpenProject( const std::filesystem::path &path );
         void SaveProject();
 

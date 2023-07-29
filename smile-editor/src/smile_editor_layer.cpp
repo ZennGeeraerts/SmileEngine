@@ -46,7 +46,10 @@ namespace smile
         else
         {
             // TODO: prompt the user to select a directory
-            NewProject();
+            // NewProject();
+
+            if ( !OpenProject() )
+                Application::GetInstance().ShutDown();
         }
     }
 
@@ -161,17 +164,21 @@ namespace smile
         {
             if ( ImGui::BeginMenu( "File" ) )
             {
-                if ( ImGui::MenuItem( "New", "Ctrl+N" ) )
+                if ( ImGui::MenuItem( "Open Project...", "Ctrl+O" ) )
+                    OpenProject();
+
+                ImGui::Separator();
+
+                if ( ImGui::MenuItem( "New Scene", "Ctrl+N" ) )
                     NewScene();
 
-                if ( ImGui::MenuItem( "Open...", "Ctrl+O" ) )
-                    OpenScene();
-
-                if ( ImGui::MenuItem( "Save", "Ctrl+S" ) )
+                if ( ImGui::MenuItem( "Save Scene", "Ctrl+S" ) )
                     SaveScene();
 
-                if ( ImGui::MenuItem( "Save As...", "Ctrl+Shift+S" ) )
+                if ( ImGui::MenuItem( "Save Scene As...", "Ctrl+Shift+S" ) )
                     SaveSceneAs();
+
+                ImGui::Separator();
 
                 if ( ImGui::MenuItem( "Exit" ) )
                     smile::Application::GetInstance().ShutDown();
@@ -298,13 +305,13 @@ namespace smile
             nullptr,
             ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse );
 
-        const float icon_size{ ImGui::GetWindowHeight() - 4.f };
+        const float iconSize{ ImGui::GetWindowHeight() - 4.f };
         {
             Ref< graphic::Texture2D > pStateIcon =
                 ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate ) ? m_pIconPlay : m_pIconStop;
-            ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( icon_size * 0.5f ) );
+            ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
-                     ImVec2{ icon_size, icon_size },
+                     ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
                      0 ) )
@@ -320,7 +327,7 @@ namespace smile
             Ref< graphic::Texture2D > pStateIcon =
                 ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play ) ? m_pIconSimulate : m_pIconStop;
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
-                     ImVec2{ icon_size, icon_size },
+                     ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
                      0 ) )
@@ -369,7 +376,7 @@ namespace smile
                 break;
             case 'O':
                 if ( isControlPressed )
-                    OpenScene();
+                    OpenProject();
                 break;
             case 'N':
                 if ( isControlPressed )
@@ -403,6 +410,16 @@ namespace smile
     void SmileEditorLayer::NewProject()
     {
         project::ProjectManager::New();
+    }
+
+    bool SmileEditorLayer::OpenProject()
+    {
+        std::string filePath = utils::OpenFile( "Smile Project (*.smproj)\0*.smproj\0" );
+        if ( filePath.empty() )
+            return false;
+
+        OpenProject( filePath );
+        return true;
     }
 
     void SmileEditorLayer::OpenProject( const std::filesystem::path &path )
@@ -454,7 +471,8 @@ namespace smile
     void SmileEditorLayer::OpenScene()
     {
         std::string filePath = utils::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
-        OpenScene( filePath );
+        if ( !filePath.empty() )
+            OpenScene( filePath );
     }
 
     void SmileEditorLayer::OpenScene( const std::filesystem::path &filePath )
