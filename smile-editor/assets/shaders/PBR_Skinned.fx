@@ -2,7 +2,7 @@ float4x4 gWorld : WORLD;
 float4x4 gViewProjection : VIEWPROJECTION;
 float4x4 gViewInverse : VIEWINVERSE;
 
-float3 gLightDirection = float3(0.577f, -0.577f, 0.577f);
+float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 float3 gLightColor = float3(1.0f, 1.0f, 1.0f);
 float gLightIntensity = 3.f;
 
@@ -45,10 +45,10 @@ SamplerState gSamLinear
     AddressV = Wrap; // or Mirror or Clamp or Border
 };
 
-RasterizerState gRasterizerState
+RasterizerState gSolid
 {
-    CullMode = back;
-    FrontCounterClockwise = true;
+    FillMode = solid;
+    CullMode = front;
 };
 
 struct VS_INPUT
@@ -109,7 +109,7 @@ float3 SchlickGGX(float nDot, float roughness)
 float3 Smith(float3 normal, float3 viewDirection, float roughness)
 {
     float NdotV = max(dot(normal, -viewDirection), 0.0f);
-    float NdotL = max(dot(normal, gLightDirection), 0.0f);
+    float NdotL = max(dot(normal, -gLightDirection), 0.0f);
     return SchlickGGX(NdotL, roughness) * SchlickGGX(NdotV, roughness);
 }
 
@@ -209,7 +209,7 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_TARGET
     // cooktorrence
     float3 outgoingRadiance = 0.0f;
     {
-        float3 halfVector = normalize(-viewDirection + gLightDirection);
+        float3 halfVector = normalize(-viewDirection + -gLightDirection);
         
         float normalDistribution = TrowbridgeReitzGGX(bumpNormal, halfVector, roughness);
         float geometry = Smith(bumpNormal, viewDirection, roughness);
@@ -220,10 +220,10 @@ PS_OUTPUT PS(VS_OUTPUT input) : SV_TARGET
         kD *= 1.0f - metalness;
     
         float3 numerator = normalDistribution * geometry * fresnel;
-        float denominator = 4.0f * max(dot(bumpNormal, -viewDirection), 0.0f) * max(dot(bumpNormal, gLightDirection), 0.0f) + gEpsilon;
+        float denominator = 4.0f * max(dot(bumpNormal, -viewDirection), 0.0f) * max(dot(bumpNormal, -gLightDirection), 0.0f) + gEpsilon;
         float3 specular = numerator / denominator;
     
-        outgoingRadiance = (kD * albedo / gPI + specular) * radiance * max(dot(bumpNormal, gLightDirection), 0.0f);
+        outgoingRadiance = (kD * albedo / gPI + specular) * radiance * max(dot(bumpNormal, -gLightDirection), 0.0f);
     }
     
     float3 ambient = environment * albedo * ao;
@@ -243,7 +243,7 @@ technique11 DefaultTechnique
 {
     pass P0
     {
-        SetRasterizerState( gRasterizerState );
+        SetRasterizerState( gSolid );
         SetVertexShader(CompileShader(vs_5_0, VS()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_5_0, PS()));
