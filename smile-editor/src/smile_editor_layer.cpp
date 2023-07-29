@@ -9,7 +9,7 @@
 #include "smile_engine/utils/platform_utils.h"
 
 #include <imgui/imgui.h>
-#include <imguizmo/ImGuizmo.h>
+#include <ImGuizmo/ImGuizmo.h>
 
 namespace smile
 {
@@ -98,14 +98,14 @@ namespace smile
 
     void SmileEditorLayer::OnImGuiRender()
     {
-        static bool bOptFullscreen = true;
-        static bool bOptPadding = false;
+        static bool optFullscreen = true;
+        static bool optPadding = false;
         static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         // because it would be confusing to have two docking targets within each others.
         ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        if ( bOptFullscreen )
+        if ( optFullscreen )
         {
             ImGuiViewport *pViewport = ImGui::GetMainViewport();
             ImGui::SetNextWindowPos( pViewport->GetWorkPos() );
@@ -132,15 +132,15 @@ namespace smile
         // all active windows docked into it will lose their parent and become undocked.
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        if ( !bOptPadding )
+        if ( !optPadding )
             ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2( 0.0f, 0.0f ) );
 
-        static bool bDockSpaceOpen = true;
-        ImGui::Begin( "DockSpace Demo", &bDockSpaceOpen, windowFlags );
-        if ( !bOptPadding )
+        static bool dockSpaceOpen = true;
+        ImGui::Begin( "DockSpace Demo", &dockSpaceOpen, windowFlags );
+        if ( !optPadding )
             ImGui::PopStyleVar();
 
-        if ( bOptFullscreen )
+        if ( optFullscreen )
             ImGui::PopStyleVar( 2 );
 
         // DockSpace
@@ -241,7 +241,7 @@ namespace smile
                 DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.z ) };
 
             // Snapping
-            bool snapping = input::Input::IsKeyPressed( input::key::CtrlLeft );
+            bool isSnapping = input::Input::IsKeyPressed( input::key::CtrlLeft );
             float snapValue = 0.5f;
             if ( m_GizmoType == GizmoType::Rotate )
                 snapValue = 45.f;
@@ -257,7 +257,7 @@ namespace smile
                 ImGuizmo::MODE::LOCAL,
                 *entityTransform.m,
                 nullptr,
-                snapping ? snapValues : nullptr );
+                isSnapping ? snapValues : nullptr );
 
             if ( ImGuizmo::IsUsing() )
             {
