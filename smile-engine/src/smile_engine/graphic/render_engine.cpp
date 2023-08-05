@@ -9,6 +9,7 @@
 
 #include "renderer/forward_renderer.h"
 #include "renderer/wireframe_renderer.h"
+#include "smile_engine/graphic/renderer/debug_renderer.h"
 
 namespace smile::graphic
 {
@@ -49,6 +50,7 @@ namespace smile::graphic
 
         ForwardRenderer::Initialize();
         WireframeRenderer::GetInstance().Initialize();
+        DebugRenderer::GetInstance().Initialize();
     }
 
     void RenderEngine::ShutDown()
@@ -57,6 +59,7 @@ namespace smile::graphic
 
         ForwardRenderer::ShutDown();
         WireframeRenderer::GetInstance().ShutDown();
+        DebugRenderer::GetInstance().ShutDown();
 
         RenderCommand::ShutDown();
     }
@@ -79,6 +82,11 @@ namespace smile::graphic
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
         s_RenderPassList.OnRender( editorCamera );
+
+        auto &debugRenderer = DebugRenderer::GetInstance();
+        debugRenderer.BeginScene( editorCamera );
+        debugRenderer.OnRender();
+        debugRenderer.EndScene();
 
         pContext->UnbindFramebuffer();
     }
