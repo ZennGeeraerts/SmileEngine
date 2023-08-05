@@ -153,115 +153,12 @@ namespace smile::scene
     void Scene::OnUpdateSimulation( Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         physics::PhysicsEngine::Simulate( deltaTime );
-        graphic::RenderEngine::OnRender();
-        /*graphic::Renderer::BeginScene( editorCamera );
-
-        {
-            auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] = m_ECSEngine.GetComponents< MeshRendererComponent, TransformComponent >( entity );
-                graphic::Renderer::Submit( mesh, transform.GetTransform() );
-            }
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] = m_ECSEngine.GetComponents< StaticMeshComponent, TransformComponent >( entity );
-                graphic::Renderer::Submit( mesh, transform.GetTransform() );
-            }
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] =
-                    m_ECSEngine.GetComponents< SkinnedMeshComponent, TransformComponent >( entity );
-
-                for ( auto &animator : mesh.Animators )
-                {
-                    animator.OnUpdate( deltaTime );
-                    const auto &boneTransforms = animator.GetBoneTransforms();
-                    for ( const auto &pMaterial : mesh.pMaterials )
-                    {
-                        if ( animator.IsPlaying() )
-                            pMaterial->GetShader()->UploadMat4Array( "Bones", boneTransforms );
-                    }
-                }
-
-                graphic::Renderer::Submit( mesh, transform.GetTransform() );
-            }
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[boxCollider, transform] =
-                    m_ECSEngine.GetComponents< BoxColliderComponent, TransformComponent >( entity );
-                graphic::Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
-            }
-        }
-
-        graphic::Renderer::OnRender();
-
-        graphic::Renderer::EndScene();*/
+        graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         graphic::RenderEngine::OnRender( editorCamera );
-        /*graphic::Renderer::BeginScene( editorCamera );
-
-        {
-            auto group = m_ECSEngine.GetGroup< MeshRendererComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] = m_ECSEngine.GetComponents< MeshRendererComponent, TransformComponent >( entity );
-                graphic::Renderer::Submit( mesh, transform.GetTransform() );
-            }
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< StaticMeshComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] = m_ECSEngine.GetComponents< StaticMeshComponent, TransformComponent >( entity );
-                graphic::Renderer::Submit( mesh, transform.GetTransform() );
-            }
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< SkinnedMeshComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] = m_ECSEngine.GetComponents< SkinnedMeshComponent, TransformComponent >( entity );
-
-                for ( auto &animator : mesh.Animators )
-                {
-                    animator.OnUpdate( deltaTime );
-                    const auto &boneTransforms = animator.GetBoneTransforms();
-                    for ( const auto &pMaterial : mesh.pMaterials )
-                    {
-                        if ( animator.IsPlaying() )
-                            pMaterial->GetShader()->UploadMat4Array( "Bones", boneTransforms );
-                    }
-                }
-
-                graphic::Renderer::Submit( mesh, transform.GetTransform() );
-            }
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< BoxColliderComponent >( ecs::g_Get< TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[boxCollider, transform] =
-                    m_ECSEngine.GetComponents< BoxColliderComponent, TransformComponent >( entity );
-                graphic::Renderer::SubmitWireframe( boxCollider, transform.GetTransform() );
-            }
-        }
-
-        graphic::Renderer::OnRender();
-
-        graphic::Renderer::EndScene();*/
     }
 
     void Scene::OnViewportResize( Uint32 width, Uint32 height )
