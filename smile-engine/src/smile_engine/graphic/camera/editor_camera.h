@@ -49,11 +49,11 @@ namespace smile::graphic
             return m_Position;
         }
 
-        float getPitch() const
+        float GetPitch() const
         {
             return m_Pitch;
         }
-        float getYaw() const
+        float GetYaw() const
         {
             return m_Yaw;
         }
