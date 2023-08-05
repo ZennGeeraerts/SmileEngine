@@ -9,7 +9,7 @@
 namespace smile::physics::utils
 {
     physx::PxVec3 ConvertToPhysXVector( const DirectX::XMFLOAT3 &vector );
-    physx::PxQuat ConvertToPhysxQuat( const DirectX::XMFLOAT4 &quat );
+    physx::PxQuat ConvertToPhysXQuat( const DirectX::XMFLOAT4 &quat );
     physx::PxTransform ConvertToPhysXTransform( const DirectX::XMFLOAT4X4 &transform );
 
     DirectX::XMFLOAT3 ConvertToDirectXVector( const physx::PxVec3 &vector );

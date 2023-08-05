@@ -12,7 +12,7 @@ namespace smile::physics::utils
         return *( physx::PxVec3 * )( &vector );
     }
 
-    physx::PxQuat ConvertToPhysxQuat( const DirectX::XMFLOAT4 &quat )
+    physx::PxQuat ConvertToPhysXQuat( const DirectX::XMFLOAT4 &quat )
     {
         return *( physx::PxQuat * )( &quat );
     }
@@ -31,7 +31,7 @@ namespace smile::physics::utils
         DirectX::XMFLOAT4 rotation{};
         DirectX::XMStoreFloat4( &rotation, rotationVec );
 
-        return physx::PxTransform{ ConvertToPhysXVector( position ), ConvertToPhysxQuat( rotation ) };
+        return physx::PxTransform{ ConvertToPhysXVector( position ), ConvertToPhysXQuat( rotation ) };
     }
 
     DirectX::XMFLOAT3 ConvertToDirectXVector( const physx::PxVec3 &vector )
