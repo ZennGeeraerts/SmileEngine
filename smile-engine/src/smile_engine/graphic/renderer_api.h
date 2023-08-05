@@ -28,6 +28,7 @@ namespace smile::graphic
         virtual void Clear() = 0;
 
         virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) = 0;
 
         inline static API GetAPI()
         {
