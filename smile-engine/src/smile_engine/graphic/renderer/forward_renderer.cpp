@@ -91,6 +91,8 @@ namespace smile::graphic
     {
         GraphicsContext *pContext = RenderEngine::GetContext();
 
+        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+
         for ( const DrawCommand &drawCommand : s_pRenderCollector->DrawList )
         {
             pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
@@ -103,6 +105,8 @@ namespace smile::graphic
 
             RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }
+
+        pContext->UnbindPrimitiveTopology();
     }
 
     void ForwardRenderer::EndScene()

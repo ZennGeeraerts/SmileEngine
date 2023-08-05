@@ -23,10 +23,10 @@ namespace smile::graphic
 
     DirectX11Context::~DirectX11Context()
     {
-        //SAFE_RELEASE( m_pDepthStencilBuffer );
+        // SAFE_RELEASE( m_pDepthStencilBuffer );
         SAFE_RELEASE( m_pRenderTargetBuffer );
         SAFE_RELEASE( m_pCurrentRenderTarget );
-        //SAFE_RELEASE( m_pDepthStencilView );
+        // SAFE_RELEASE( m_pDepthStencilView );
         SAFE_RELEASE( m_pDXGIFactory );
         SAFE_RELEASE( m_pSwapChain );
 
@@ -209,5 +209,48 @@ namespace smile::graphic
     void DirectX11Context::UnbindRasterizerState() const
     {
         m_pInternal->RSSetState( nullptr );
+    }
+
+    static D3D11_PRIMITIVE_TOPOLOGY ConvertToDirectX11PrimitiveTopology( PrimitiveTopology primitiveTopology )
+    {
+        switch ( primitiveTopology )
+        {
+            case smile::graphic::PrimitiveTopology::None:
+                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+            case smile::graphic::PrimitiveTopology::TriangleList:
+                return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            case smile::graphic::PrimitiveTopology::LineList:
+                return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+            default:
+                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+        }
+    }
+
+    void DirectX11Context::BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const
+    {
+        D3D11_PRIMITIVE_TOPOLOGY directX11PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( primitiveTopology );
+        m_pInternal->IASetPrimitiveTopology( directX11PrimitiveTopology );
+    }
+
+    void DirectX11Context::UnbindPrimitiveTopology() const
+    {
+        m_pInternal->IASetPrimitiveTopology( D3D_PRIMITIVE_TOPOLOGY_UNDEFINED );
+    }
+
+    void DirectX11Context::FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer,
+        void *pData,
+        Uint32 vertexCount ) const
+    {
+        auto pDirectX11VertexBuffer = static_cast< ID3D11Buffer * >( pVertexBuffer->GetInternal() );
+
+        D3D11_MAPPED_SUBRESOURCE mappedResource{};
+        m_pInternal->Map( pDirectX11VertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
+
+        if ( vertexCount > 0 )
+        {
+            memcpy( mappedResource.pData, pData, pVertexBuffer->Stride * vertexCount );
+        }
+
+        m_pInternal->Unmap( pDirectX11VertexBuffer, 0 );
     }
 }

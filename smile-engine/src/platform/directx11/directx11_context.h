@@ -45,6 +45,10 @@ namespace smile::graphic
         void ClearFramebuffer( const Ref< Framebuffer > &pFramebuffer ) override;
         void BindRasterizerState( const Ref< RasterizerState > &pRasterizerState ) const override;
         void UnbindRasterizerState() const override;
+        void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
+        void UnbindPrimitiveTopology() const override;
+
+        void FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const override;
 
         inline ID3D11RenderTargetView *GetRenderTargetView() const
         {

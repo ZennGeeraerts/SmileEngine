@@ -61,6 +61,7 @@ namespace smile::graphic
     {
         GraphicsContext *pContext = RenderEngine::GetContext();
 
+        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
         pContext->BindRasterizerState( s_pWireframeRasterizerState );
 
         for ( const DrawCommand &drawCommand : m_pRenderCollector->DrawList )
@@ -77,6 +78,7 @@ namespace smile::graphic
         }
 
         pContext->UnbindRasterizerState();
+        pContext->UnbindPrimitiveTopology();
     }
 
     void WireframeRenderer::Submit( const scene::BoxColliderComponent &boxColliderComponent,

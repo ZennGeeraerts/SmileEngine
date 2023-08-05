@@ -13,6 +13,13 @@ namespace smile
 
 namespace smile::graphic
 {
+    enum class PrimitiveTopology
+    {
+        None = 0,
+        TriangleList,
+        LineList
+    };
+
     class GraphicsContext
     {
       public:
@@ -33,6 +40,10 @@ namespace smile::graphic
         virtual void ClearFramebuffer( const Ref< Framebuffer > &pFramebuffer ) = 0;
         virtual void BindRasterizerState( const Ref< RasterizerState > &pRasterizerState ) const = 0;
         virtual void UnbindRasterizerState() const = 0;
+        virtual void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const = 0;
+        virtual void UnbindPrimitiveTopology() const = 0;
+
+        virtual void FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const = 0;
 
         static GraphicsContext *Create( Window *pWindow );
     };
