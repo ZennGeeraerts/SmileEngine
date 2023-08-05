@@ -117,12 +117,14 @@ namespace smile::graphic
         for ( Uint32 v{}; v < pAiMesh->mNumVertices; ++v )
         {
             aiVector3D &vertex = pAiMesh->mVertices[v];
-            pMesh->AddPosition( utils::convertToVector3( vertex ) );
+            auto position = utils::ConvertToVector3( vertex );
+            position.z *= -1;
+            pMesh->AddPosition( position );
 
             if ( pAiMesh->HasNormals() )
             {
                 aiVector3D &normal = pAiMesh->mNormals[v];
-                pMesh->AddNormal( utils::convertToVector3( normal ) );
+                pMesh->AddNormal( utils::ConvertToVector3( normal ) );
             }
 
             if ( pAiMesh->HasTextureCoords( 0 ) )
@@ -134,13 +136,13 @@ namespace smile::graphic
             if ( pAiMesh->HasTangentsAndBitangents() )
             {
                 aiVector3D &tangent = pAiMesh->mTangents[v];
-                pMesh->AddTangent( utils::convertToVector3( tangent ) );
+                pMesh->AddTangent( utils::ConvertToVector3( tangent ) );
             }
 
             if ( pAiMesh->HasVertexColors( 0 ) )
             {
                 aiColor4D &color = pAiMesh->mColors[0][v];
-                pMesh->AddColor( utils::convertToVector4( color ) );
+                pMesh->AddColor( utils::ConvertToVector4( color ) );
             }
         }
 
