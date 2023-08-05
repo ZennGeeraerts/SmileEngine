@@ -160,7 +160,7 @@ namespace smile::physics
 
     void PhysicsEngine::DestroyScene()
     {
-        SM_ASSERT( s_pScene, "PhysicsEngine::destroyScene > Scene is not valid" );
+        SM_ASSERT( s_pScene, "PhysicsEngine::DestroyScene > Scene is not valid" );
 
         for ( auto &actor : s_ActorMap )
             actor.second.reset();
@@ -179,6 +179,18 @@ namespace smile::physics
         s_ActorMap[entity.GetUUID()] = pActor;
         s_pScene->addActor( *pActor->m_pRigidActor );
         return pActor;
+    }
+
+    void PhysicsEngine::RemoveActor( scene::Entity entity )
+    {
+        SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
+
+        Ref< PhysicsActor > pActor = s_ActorMap.at( entity.GetUUID() );
+        if (pActor)
+        {
+            s_pScene->removeActor( *pActor->m_pRigidActor );
+            s_ActorMap.erase( entity.GetUUID() );
+        }
     }
 
     Ref< PhysicsActor > PhysicsEngine::GetActorOfEntity( scene::Entity entity )

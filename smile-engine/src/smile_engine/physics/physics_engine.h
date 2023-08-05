@@ -60,6 +60,8 @@ namespace smile::physics
         static void DestroyScene();
 
         static Ref< PhysicsActor > CreateActor( scene::Entity entity );
+        static void RemoveActor( scene::Entity entity );
+
         static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
 
         static void Simulate( Timestep deltaTime );
