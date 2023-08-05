@@ -13,5 +13,5 @@
 
 namespace smile::graphic
 {
-    RendererAPI *RenderCommand::s_RendererAPI = new DirectX11RendererAPI{};
+    RendererAPI *RenderCommand::s_pRendererAPI = new DirectX11RendererAPI{};
 }

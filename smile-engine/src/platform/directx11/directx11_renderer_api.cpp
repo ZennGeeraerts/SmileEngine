@@ -131,8 +131,6 @@ namespace smile::graphic
         auto pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
         SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::DrawIndexed > Shader is not a DirectX11Shader" );
 
-        m_pDirectX11Context->m_pInternal->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
         auto pTechnique = pDirectX11Shader->pTechnique;
         D3DX11_TECHNIQUE_DESC techDesc{};
         pTechnique->GetDesc( &techDesc );
@@ -140,6 +138,21 @@ namespace smile::graphic
         {
             pTechnique->GetPassByIndex( p )->Apply( 0, m_pDirectX11Context->m_pInternal );
             m_pDirectX11Context->m_pInternal->DrawIndexed( indexCount, 0, 0 );
+        }
+    }
+
+    void DirectX11RendererAPI::Draw( Uint32 vertexCount, const Ref< Shader > &pShader )
+    {
+        auto pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
+        SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::Draw > Shader is not a DirectX11Shader" );
+
+        auto pTechnique = pDirectX11Shader->pTechnique;
+        D3DX11_TECHNIQUE_DESC techDesc{};
+        pTechnique->GetDesc( &techDesc );
+        for ( UINT p{}; p < techDesc.Passes; ++p )
+        {
+            pTechnique->GetPassByIndex( p )->Apply( 0, m_pDirectX11Context->m_pInternal );
+            m_pDirectX11Context->m_pInternal->Draw( vertexCount, 0 );
         }
     }
 }

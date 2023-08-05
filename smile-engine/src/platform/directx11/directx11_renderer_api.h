@@ -23,6 +23,7 @@ namespace smile::graphic
         virtual void Clear() override;
 
         virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
+        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) override;
 
       private:
         DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
