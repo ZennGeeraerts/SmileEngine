@@ -176,4 +176,11 @@ namespace smile::graphic
         Dynamic,
         Staging
     };
+
+    enum class BufferCPUAccess : Uint8
+    {
+        None,
+        Read,
+        Write
+    };
 }

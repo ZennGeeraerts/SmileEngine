@@ -13,6 +13,7 @@ namespace smile::graphic
         Uint32 Count = 0;
         Uint32 Stride = 0;
         BufferUsage Usage = BufferUsage::Default;
+        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
     };
 
     struct VertexBuffer
