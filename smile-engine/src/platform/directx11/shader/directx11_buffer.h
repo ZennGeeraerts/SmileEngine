@@ -10,4 +10,5 @@
 namespace smile::graphic
 {
     D3D11_USAGE BufferUsageToDirectXType( BufferUsage bufferUsage );
+    UINT BufferCPUAccessToDirectXType( BufferCPUAccess cpuAccess );
 }

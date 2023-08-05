@@ -24,4 +24,19 @@ namespace smile::graphic
                 return D3D11_USAGE_DEFAULT;
         }
     }
+
+    UINT BufferCPUAccessToDirectXType( BufferCPUAccess cpuAccess )
+    {
+        switch (cpuAccess)
+        {
+            case BufferCPUAccess::None:
+                return 0;
+            case BufferCPUAccess::Read:
+                return D3D11_CPU_ACCESS_READ;
+            case BufferCPUAccess::Write:
+                return D3D11_CPU_ACCESS_WRITE;
+            default:
+                return 0;
+        }
+    }
 }

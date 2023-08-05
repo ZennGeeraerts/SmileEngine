@@ -102,19 +102,20 @@ namespace smile::graphic
             {
                 if ( pErrorBlob )
                 {
-                    char *pErrors{ ( char * )pErrorBlob->GetBufferPointer() };
+                    LPVOID longPtrError = pErrorBlob->GetBufferPointer();
+                    char *errors{ ( char * )longPtrError };
 
                     std::wstringstream ss;
-                    for ( unsigned int i{}; i < pErrorBlob->GetBufferSize(); ++i )
+                    for ( Uint32 i{}; i < pErrorBlob->GetBufferSize(); ++i )
                     {
-                        ss << pErrors[i];
+                        ss << errors[i];
                     }
 
                     OutputDebugStringW( ss.str().c_str() );
                     pErrorBlob->Release();
                     pErrorBlob = nullptr;
 
-                    SM_LOG_ERROR( "%s", ss.str() );
+                    SM_LOG_ERROR( "%ls", ss.str() );
                 }
                 else
                 {
@@ -495,13 +496,22 @@ namespace smile::graphic
         bufferDesc.Usage = BufferUsageToDirectXType( vertexBufferDesc.Usage );
         bufferDesc.ByteWidth = vertexBufferDesc.Stride * vertexBufferDesc.Count;
         bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bufferDesc.CPUAccessFlags = 0;
+        bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( vertexBufferDesc.CPUAccess );
         bufferDesc.MiscFlags = 0;
 
-        D3D11_SUBRESOURCE_DATA initData = { 0 };
-        initData.pSysMem = vertexBufferDesc.pVertices;
+        HRESULT result; 
+        if ( vertexBufferDesc.pVertices )
+        {
+            D3D11_SUBRESOURCE_DATA initData = { 0 };
+            initData.pSysMem = vertexBufferDesc.pVertices;
 
-        HRESULT result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pVertexBuffer->pInternal );
+            result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pVertexBuffer->pInternal );
+        }
+        else
+        {
+            result = m_pInternal->CreateBuffer( &bufferDesc, nullptr, &pVertexBuffer->pInternal );
+        }
+
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11Device::CreateVertexBuffer > Failed to create vertex buffer: %ls",
@@ -544,6 +554,7 @@ namespace smile::graphic
     {
         Ref< DirectX11Shader > pShader = CreateRef< DirectX11Shader >();
         pShader->SetName( assetFile );
+        pShader->BufferLayout = layout;
 
         if ( !shaderhelpers::LoadEffect( m_pInternal, pShader, assetFile ) )
         {
