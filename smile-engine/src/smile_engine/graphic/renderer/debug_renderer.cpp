@@ -16,9 +16,6 @@ namespace smile::graphic
     {
         auto &shaderLibrary = RenderEngine::GetShaderLibrary();
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
-
-        // TODO: Move engine shaders to engine directory and load them from that directory instead of the project directory
-        //auto shaderPath = project::ProjectManager::GetAssetFileSystemPath( "shaders/DebugRenderer.fx" );
         m_pShader = shaderLibrary.Load( "assets/shaders/DebugRenderer.fx", bufferLayout );
 
         CreateVertexBuffer();

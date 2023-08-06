@@ -9,7 +9,7 @@
 
 #include "renderer/forward_renderer.h"
 #include "renderer/wireframe_renderer.h"
-#include "smile_engine/graphic/renderer/debug_renderer.h"
+#include "renderer/debug_renderer.h"
 
 namespace smile::graphic
 {
@@ -82,11 +82,6 @@ namespace smile::graphic
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
         s_RenderPassList.OnRender( editorCamera );
-
-        auto &debugRenderer = DebugRenderer::GetInstance();
-        debugRenderer.BeginScene( editorCamera );
-        debugRenderer.OnRender();
-        debugRenderer.EndScene();
 
         pContext->UnbindFramebuffer();
     }

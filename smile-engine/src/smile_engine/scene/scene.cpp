@@ -14,6 +14,7 @@
 
 #include "smile_engine/graphic/renderer/render_pass/forward_render_pass.h"
 #include "smile_engine/graphic/renderer/render_pass/wireframe_render_pass.h"
+#include "smile_engine/graphic/renderer/render_pass/debug_render_pass.h"
 
 namespace smile::scene
 {
@@ -59,6 +60,7 @@ namespace smile::scene
         graphic::RenderEngine::ClearRenderPasses();
         graphic::RenderEngine::AddRenderPass( new graphic::ForwardRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::WireframeRenderPass{ m_ECSEngine } );
+        graphic::RenderEngine::AddRenderPass( new graphic::DebugRenderPass{ m_ECSEngine } );
     }
 
     void Scene::OnRuntimeStart()
