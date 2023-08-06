@@ -104,8 +104,8 @@ namespace smile::graphic
 
         if ( vertexCount > m_BufferSize )
         {
-            CreateVertexBuffer();
             m_BufferSize = vertexCount;
+            CreateVertexBuffer();
         }
 
         GraphicsContext *pContext = RenderEngine::GetContext();
