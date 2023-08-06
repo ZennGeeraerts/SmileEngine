@@ -7,8 +7,8 @@
 
 namespace smile::graphic
 {
-	class DebugRenderPass final : public RenderPass
-	{
+    class DebugRenderPass final : public RenderPass
+    {
       public:
         DebugRenderPass( ecs::ECSEngine &ecsEngine ) : RenderPass( ecsEngine )
         {
@@ -21,5 +21,8 @@ namespace smile::graphic
 
         void OnRender() override;
         void OnRender( const EditorCamera &editorCamera ) override;
-	};
+
+      private:
+        void RenderPhysics();
+    };
 }

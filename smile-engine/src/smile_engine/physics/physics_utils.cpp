@@ -44,6 +44,39 @@ namespace smile::physics::utils
         return *( DirectX::XMFLOAT4 * )( &quat );
     }
 
+    DirectX::XMFLOAT4 ConvertToDirectXColor( physx::PxU32 color )
+    {
+        switch ( color )
+        {
+            case 0xFF000000:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Black );
+            case 0xFFFF0000:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Red );
+            case 0xFF00FF00:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Green );
+            case 0xFF0000FF:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Blue );
+            case 0xFFFFFF00:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Yellow );
+            case 0xFFFF00FF:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Magenta );
+            case 0xFF00FFFF:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Cyan );
+            case 0xFFFFFFFF:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::White );
+            case 0xFF808080:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Gray );
+            case 0x88880000:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed );
+            case 0x88008800:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen );
+            case 0x88000088:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue );
+            default:
+                return static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::Black );
+        }
+    }
+
     physx::PxFilterFlags SmileSimulationFilterShader( physx::PxFilterObjectAttributes attribute0,
         physx::PxFilterData filterData0,
         physx::PxFilterObjectAttributes attribute1,

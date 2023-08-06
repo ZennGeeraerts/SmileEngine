@@ -156,6 +156,11 @@ namespace smile::physics
                 s_pScene->addBroadPhaseRegion( region );
             }
         }
+
+        s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eSCALE, 1.0f );
+        s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f );
+        s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f );
+        s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f );
     }
 
     void PhysicsEngine::DestroyScene()
@@ -250,6 +255,11 @@ namespace smile::physics
     physx::PxPhysics *PhysicsEngine::GetPhysics()
     {
         return s_pPhysics;
+    }
+
+    physx::PxScene *PhysicsEngine::GetScene()
+    {
+        return s_pScene;
     }
 
     physx::PxAllocatorCallback &PhysicsEngine::GetAllocatorCallback()

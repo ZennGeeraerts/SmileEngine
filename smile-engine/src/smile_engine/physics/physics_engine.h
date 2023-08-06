@@ -9,6 +9,7 @@
 namespace physx
 {
     class PxPhysics;
+    class PxScene;
     class PxAllocatorCallback;
 }
 
@@ -67,6 +68,7 @@ namespace smile::physics
         static void Simulate( Timestep deltaTime );
 
         static physx::PxPhysics *GetPhysics();
+        static physx::PxScene *GetScene();
         static physx::PxAllocatorCallback &GetAllocatorCallback();
         static const PhysicsSettings &GetPhysicsSettings()
         {

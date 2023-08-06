@@ -14,6 +14,7 @@ namespace smile::physics::utils
 
     DirectX::XMFLOAT3 ConvertToDirectXVector( const physx::PxVec3 &vector );
     DirectX::XMFLOAT4 ConvertToDirectXQuat( const physx::PxQuat &quat );
+    DirectX::XMFLOAT4 ConvertToDirectXColor( physx::PxU32 color );
 
     physx::PxFilterFlags SmileSimulationFilterShader( physx::PxFilterObjectAttributes attribute0,
         physx::PxFilterData filterData0,
