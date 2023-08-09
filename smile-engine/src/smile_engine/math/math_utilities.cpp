@@ -27,38 +27,32 @@ namespace smile::math
         return distribution( g_GlobalGenerator );
     }
 
-    DirectX::XMFLOAT3 QuaternionToEuler( const DirectX::XMFLOAT4 &quaternion )
+    DirectX::XMFLOAT3 QuaternionToEuler( const DirectX::XMFLOAT4 &q )
     {
-        //DirectX::XMFLOAT3 euler{};
+        const float xx = q.x * q.x;
+        const float yy = q.y * q.y;
+        const float zz = q.z * q.z;
 
-        //// roll (x-axis rotation)
-        //double sinrCosp = 2 * ( quaternion.w * quaternion.x + quaternion.y * quaternion.z );
-        //double cosrCosp = 1 - 2 * ( quaternion.x * quaternion.x + quaternion.y * quaternion.y );
-        //euler.x = static_cast< float >( std::atan2( sinrCosp, cosrCosp ) );
+        const float m31 = 2.f * q.x * q.z + 2.f * q.y * q.w;
+        const float m32 = 2.f * q.y * q.z - 2.f * q.x * q.w;
+        const float m33 = 1.f - 2.f * xx - 2.f * yy;
 
-        //// pitch (y-axis rotation)
-        //float sinp = 2 * ( quaternion.w * quaternion.y - quaternion.z * quaternion.x );
-        //if ( std::abs( sinp ) >= 1 )
-        //    euler.y = std::copysign( g_PIDiv2, sinp ); // use 90 degrees if out of range
-        //else
-        //    euler.y = std::asin( sinp );
+        const float cy = sqrtf( m33 * m33 + m31 * m31 );
+        const float cx = atan2f( -m32, cy );
+        if ( cy > 16.f * FLT_EPSILON )
+        {
+            const float m12 = 2.f * q.x * q.y + 2.f * q.z * q.w;
+            const float m22 = 1.f - 2.f * xx - 2.f * zz;
 
-        //// yaw (z-axis rotation)
-        //float sinyCosp = 2 * ( quaternion.w * quaternion.z + quaternion.x * quaternion.y );
-        //float cosyCosp = 1 - 2 * ( quaternion.y * quaternion.y + quaternion.z * quaternion.z );
-        //euler.z = std::atan2( sinyCosp, cosyCosp );
+            return DirectX::XMFLOAT3{ cx, atan2f( m31, m33 ), atan2f( m12, m22 ) };
+        }
+        else
+        {
+            const float m11 = 1.f - 2.f * yy - 2.f * zz;
+            const float m21 = 2.f * q.x * q.y - 2.f * q.z * q.w;
 
-        //return euler;
-
-        DirectX::XMFLOAT3 euler;
-
-        euler.y = atan2f( 2.f * quaternion.x * quaternion.w + 2.f * quaternion.y * quaternion.z,
-            1.f - 2.f * ( quaternion.z * quaternion.z + quaternion.w * quaternion.w ) );        // Yaw
-        euler.x = asinf( 2.f * ( quaternion.x * quaternion.z - quaternion.w * quaternion.y ) ); // Pitch
-        euler.z = atan2f( 2.f * quaternion.x * quaternion.y + 2.f * quaternion.z * quaternion.w,
-            1.f - 2.f * ( quaternion.y * quaternion.y + quaternion.z * quaternion.z ) ); // Roll
-
-        return euler;
+            return DirectX::XMFLOAT3{ cx, 0.f, atan2f( -m21, m11 ) };
+        }
     }
 
     bool DecomposeMatrix( const DirectX::XMFLOAT4X4 &transform,
@@ -73,8 +67,7 @@ namespace smile::math
             return false;
 
         // First, isolate perspective.  This is the messiest.
-        if ( AreEqual( localMatrix._14, 0.f ) || AreEqual( localMatrix._24, 0.f ) ||
-             AreEqual( localMatrix._34, 0.f ) )
+        if ( AreEqual( localMatrix._14, 0.f ) || AreEqual( localMatrix._24, 0.f ) || AreEqual( localMatrix._34, 0.f ) )
         {
             // Clear the perspective partition
             localMatrix._14 = localMatrix._24 = localMatrix._34 = 0.f;
