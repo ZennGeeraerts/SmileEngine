@@ -167,6 +167,8 @@ namespace smile::physics
 
     PhysicsActor::~PhysicsActor()
     {
+        if ( m_pRigidActor )
+            m_pRigidActor->release();
     }
 
     void PhysicsActor::AddBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size )
@@ -241,15 +243,8 @@ namespace smile::physics
 
             transform.Translation = utils::ConvertToDirectXVector( actorPose.p ) /* + offset*/;
 
-            DirectX::XMFLOAT3 rotationEuler;
-            DirectX::XMVECTOR rotationEulerVec;
-            float angle;
             DirectX::XMFLOAT4 rotationQuaternion = utils::ConvertToDirectXQuat( actorPose.q );
-            DirectX::XMVECTOR rotationQuaternionVec = DirectX::XMLoadFloat4( &rotationQuaternion );
-            DirectX::XMQuaternionToAxisAngle( &rotationEulerVec, &angle, rotationQuaternionVec );
-            DirectX::XMStoreFloat3( &rotationEuler, rotationEulerVec );
-
-            transform.Rotation = rotationEuler;
+            transform.Rotation = math::QuaternionToEuler( rotationQuaternion );
         }
         else
         {
@@ -261,12 +256,55 @@ namespace smile::physics
     {
     }
 
+    void PhysicsActor::Translate(const DirectX::XMFLOAT3& translation)
+    {
+        if ( !m_pRigidActor || !IsDynamic() )
+            return;
+
+        physx::PxTransform pxTransform = m_pRigidActor->getGlobalPose();
+        pxTransform.p = utils::ConvertToPhysXVector( translation );
+        pxTransform.q = utils::ConvertToPhysXQuat( GetRotation() );
+
+        if ( !IsKinematic() )
+            m_pRigidActor->setGlobalPose( pxTransform );
+        else
+            reinterpret_cast< physx::PxRigidDynamic * >( m_pRigidActor )->setKinematicTarget( pxTransform );
+    }
+
     void PhysicsActor::Rotate( const DirectX::XMFLOAT3 &rotation )
     {
+        if ( !m_pRigidActor || !IsDynamic() )
+            return;
+
         physx::PxTransform pxTransform = m_pRigidActor->getGlobalPose();
-        pxTransform.q *= ( physx::PxQuat{ rotation.x, { 1, 0, 0 } } * physx::PxQuat{ rotation.y, { 0, 1, 0 } } *
-                            physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
-        m_pRigidActor->setGlobalPose( pxTransform );
+        pxTransform.p = utils::ConvertToPhysXVector( GetPosition() );
+        pxTransform.q = ( physx::PxQuat{ rotation.x, { 1, 0, 0 } } * physx::PxQuat{ rotation.y, { 0, 1, 0 } } *
+                           physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
+
+        if ( !IsKinematic() )
+            m_pRigidActor->setGlobalPose( pxTransform );
+        else
+            reinterpret_cast< physx::PxRigidDynamic * >( m_pRigidActor )->setKinematicTarget( pxTransform );
+    }
+
+    DirectX::XMFLOAT3 PhysicsActor::GetPosition() const
+    {
+        physx::PxTransform pxTransform{};
+        if ( !IsKinematic() ||
+             !reinterpret_cast< physx::PxRigidDynamic * >( m_pRigidActor )->getKinematicTarget( pxTransform ) )
+            pxTransform = m_pRigidActor->getGlobalPose();
+
+        return DirectX::XMFLOAT3{ pxTransform.p.x, pxTransform.p.y, pxTransform.p.z };
+    }
+
+    DirectX::XMFLOAT4 PhysicsActor::GetRotation() const
+    {
+        physx::PxTransform pxTransform{};
+        if ( !IsKinematic() ||
+             !reinterpret_cast< physx::PxRigidDynamic * >( m_pRigidActor )->getKinematicTarget( pxTransform ) )
+            pxTransform = m_pRigidActor->getGlobalPose();
+
+        return DirectX::XMFLOAT4{ pxTransform.q.x, pxTransform.q.y, pxTransform.q.z, pxTransform.q.w };
     }
 
     void PhysicsActor::AddForce( const DirectX::XMFLOAT3 &force, bool autoAwake )

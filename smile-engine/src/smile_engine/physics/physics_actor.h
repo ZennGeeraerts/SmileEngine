@@ -25,7 +25,11 @@ namespace smile::physics
         PhysicsActor &operator=( PhysicsActor && ) = delete;
 
         void OnFixedUpdate( Timestep deltaTime );
+        void Translate( const DirectX::XMFLOAT3 &translation );
         void Rotate( const DirectX::XMFLOAT3 &rotation );
+
+        DirectX::XMFLOAT3 GetPosition() const;
+        DirectX::XMFLOAT4 GetRotation() const;
 
         bool IsDynamic() const
         {
