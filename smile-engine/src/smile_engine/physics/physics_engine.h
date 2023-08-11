@@ -62,6 +62,7 @@ namespace smile::physics
 
         static Ref< PhysicsActor > CreateActor( scene::Entity entity );
         static void RemoveActor( scene::Entity entity );
+        static bool IsPhysicsActor( scene::Entity entity );
 
         static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
 

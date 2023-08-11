@@ -190,12 +190,17 @@ namespace smile::physics
     {
         SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
 
-        Ref< PhysicsActor > pActor = s_ActorMap.at( entity.GetUUID() );
-        if (pActor)
+        if ( IsPhysicsActor( entity ) )
         {
+            Ref< PhysicsActor > pActor = s_ActorMap.at( entity.GetUUID() );
             s_pScene->removeActor( *pActor->m_pRigidActor );
             s_ActorMap.erase( entity.GetUUID() );
         }
+    }
+
+    bool PhysicsEngine::IsPhysicsActor( scene::Entity entity )
+    {
+        return s_ActorMap.find( entity.GetUUID() ) != s_ActorMap.end();
     }
 
     Ref< PhysicsActor > PhysicsEngine::GetActorOfEntity( scene::Entity entity )

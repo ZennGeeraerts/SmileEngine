@@ -51,6 +51,9 @@ namespace smile::scene
 
     void Scene::DestroyEntity( Entity entity )
     {
+        if ( physics::PhysicsEngine::IsPhysicsActor( entity ) )
+            physics::PhysicsEngine::RemoveActor( entity );
+
         m_EntityMap.erase( entity.GetUUID() );
         m_ECSEngine.DestroyEntity( entity );
     }
@@ -184,8 +187,8 @@ namespace smile::scene
         auto view = m_ECSEngine.GetView< CameraComponent >();
         for ( auto entity : view )
         {
-            auto &camera_component = m_ECSEngine.GetComponent< CameraComponent >( entity );
-            if ( camera_component.IsPrimary )
+            auto &cameraComponent = m_ECSEngine.GetComponent< CameraComponent >( entity );
+            if ( cameraComponent.IsPrimary )
                 return Entity{ entity, this };
         }
         return Entity{};
