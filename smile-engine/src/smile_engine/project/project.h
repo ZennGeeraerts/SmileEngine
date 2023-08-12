@@ -4,6 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile_engine/asset/runtime_asset_manager.h"
+#include "smile_engine/asset/editor_asset_manager.h"
+
 #include <filesystem>
 
 namespace smile::project
@@ -34,9 +37,24 @@ namespace smile::project
             return m_Config;
         }
 
+        std::shared_ptr< asset::AssetManagerBase > GetAssetManager() const
+        {
+            return m_AssetManager;
+        }
+        std::shared_ptr< asset::RuntimeAssetManager > GetRuntimeAssetManager()
+        {
+            return std::static_pointer_cast< asset::RuntimeAssetManager >( m_AssetManager );
+        }
+
+        std::shared_ptr< asset::EditorAssetManager > GetEditorAssetManager()
+        {
+            return std::static_pointer_cast< asset::EditorAssetManager >( m_AssetManager );
+        }
+
       private:
         ProjectConfig m_Config;
         std::filesystem::path m_ProjectDirectory;
+        std::shared_ptr< asset::AssetManagerBase > m_AssetManager;
 
         friend class ProjectManager;
     };
