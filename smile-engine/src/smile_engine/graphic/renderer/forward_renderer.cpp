@@ -10,18 +10,17 @@
 
 namespace smile::graphic
 {
-    RenderCollector *ForwardRenderer::s_pRenderCollector = new RenderCollector{};
+    RenderCollector ForwardRenderer::s_RenderCollector{};
 
     void ForwardRenderer::Initialize()
     {
-        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewInverseMatrix, DirectX::XMMatrixIdentity() );
-        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
     }
 
     void ForwardRenderer::ShutDown()
     {
         ClearDrawlist();
-        SAFE_DELETE( s_pRenderCollector );
     }
 
     void ForwardRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -31,18 +30,18 @@ namespace smile::graphic
         auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
         auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
 
-        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewProjectionMatrix, viewProjectionMatrixMat );
-        DirectX::XMStoreFloat4x4( &s_pRenderCollector->ViewInverseMatrix, cameraTransformMat );
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, cameraTransformMat );
     }
 
     void ForwardRenderer::BeginScene( const EditorCamera &editorCamera )
     {
-        s_pRenderCollector->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
+        s_RenderCollector.ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
 
         DirectX::XMFLOAT4X4 viewMatrix = editorCamera.GetViewMatrix();
         auto viewMatrixMat = DirectX::XMLoadFloat4x4( &viewMatrix );
         DirectX::XMStoreFloat4x4(
-            &s_pRenderCollector->ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
+            &s_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
     }
 
     void ForwardRenderer::Submit( const Ref< VertexBuffer > &pVertexBuffer,
@@ -50,41 +49,25 @@ namespace smile::graphic
         const Ref< Shader > &pShader,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        s_pRenderCollector->DrawList.emplace_back(
-            DrawCommand{ pVertexBuffer, pIndexBuffer, pShader, worldTransform } );
+        s_RenderCollector.DrawList.emplace_back( DrawCommand{ pVertexBuffer, pIndexBuffer, pShader, worldTransform } );
     }
 
     void ForwardRenderer::Submit( const scene::MeshRendererComponent &meshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        Submit( meshRendererComponent.pVertexBuffer,
-            meshRendererComponent.pIndexBuffer,
-            meshRendererComponent.pShader,
+        Submit( meshRendererComponent.pMesh->pVertexBuffer,
+            meshRendererComponent.pMesh->pIndexBuffer,
+            meshRendererComponent.pMaterial->GetShader(),
             worldTransform );
     }
 
-    void ForwardRenderer::Submit( const scene::StaticMeshComponent &staticMeshComponent,
+    void ForwardRenderer::Submit( const scene::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        for ( const auto &mesh : staticMeshComponent.pMeshes )
-        {
-            Submit( mesh->GetVertexBuffer(),
-                mesh->GetIndexBuffer(),
-                staticMeshComponent.pMaterials[0]->GetShader(),
-                worldTransform );
-        }
-    }
-
-    void ForwardRenderer::Submit( const scene::SkinnedMeshComponent &skinnedMeshComponent,
-        const DirectX::XMFLOAT4X4 &worldTransform )
-    {
-        for ( const auto &mesh : skinnedMeshComponent.pMeshes )
-        {
-            Submit( mesh->GetVertexBuffer(),
-                mesh->GetIndexBuffer(),
-                skinnedMeshComponent.pMaterials[0]->GetShader(),
-                worldTransform );
-        }
+        Submit( skinnedMeshRendererComponent.pMesh->pVertexBuffer,
+            skinnedMeshRendererComponent.pMesh->pIndexBuffer,
+            skinnedMeshRendererComponent.pMaterial->GetShader(),
+            worldTransform );
     }
 
     void ForwardRenderer::OnRender()
@@ -93,15 +76,15 @@ namespace smile::graphic
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
-        for ( const DrawCommand &drawCommand : s_pRenderCollector->DrawList )
+        for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )
         {
             pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
             pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
             pContext->BindShader( drawCommand.pShader );
 
-            drawCommand.pShader->UploadMat4( "ViewProjection", s_pRenderCollector->ViewProjectionMatrix );
+            drawCommand.pShader->UploadMat4( "ViewProjection", s_RenderCollector.ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
-            drawCommand.pShader->UploadMat4( "ViewInverse", s_pRenderCollector->ViewInverseMatrix );
+            drawCommand.pShader->UploadMat4( "ViewInverse", s_RenderCollector.ViewInverseMatrix );
 
             RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }
@@ -116,6 +99,6 @@ namespace smile::graphic
 
     void ForwardRenderer::ClearDrawlist()
     {
-        s_pRenderCollector->DrawList.clear();
+        s_RenderCollector.DrawList.clear();
     }
 }

@@ -30,15 +30,13 @@ namespace smile::graphic
             const DirectX::XMFLOAT4X4 &worldTransform );
         static void Submit( const scene::MeshRendererComponent &meshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const scene::StaticMeshComponent &staticMeshComponent,
-            const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const scene::SkinnedMeshComponent &skinnedMeshComponent,
+        static void Submit( const scene::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
 
       private:
         static void ClearDrawlist();
 
       private:
-        static RenderCollector *s_pRenderCollector;
+        static RenderCollector s_RenderCollector;
     };
 }

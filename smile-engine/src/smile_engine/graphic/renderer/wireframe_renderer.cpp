@@ -11,10 +11,8 @@ namespace smile::graphic
 {
     void WireframeRenderer::Initialize()
     {
-        m_pRenderCollector = new RenderCollector{};
-
-        DirectX::XMStoreFloat4x4( &m_pRenderCollector->ViewInverseMatrix, DirectX::XMMatrixIdentity() );
-        DirectX::XMStoreFloat4x4( &m_pRenderCollector->ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
         GraphicsDevice *pDevice = RenderEngine::GetDevice();
         RasterizerStateDescriptor rasterizerStateDesc{};
@@ -28,7 +26,6 @@ namespace smile::graphic
     void WireframeRenderer::ShutDown()
     {
         ClearDrawList();
-        SAFE_DELETE( m_pRenderCollector );
     }
 
     void WireframeRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -38,18 +35,18 @@ namespace smile::graphic
         auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
         auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
 
-        DirectX::XMStoreFloat4x4( &m_pRenderCollector->ViewProjectionMatrix, viewProjectionMatrixMat );
-        DirectX::XMStoreFloat4x4( &m_pRenderCollector->ViewInverseMatrix, cameraTransformMat );
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, cameraTransformMat );
     }
 
     void WireframeRenderer::BeginScene( const EditorCamera &editorCamera )
     {
-        m_pRenderCollector->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
+        m_RenderCollector.ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
 
         DirectX::XMFLOAT4X4 viewMatrix = editorCamera.GetViewMatrix();
         auto viewMatrixMat = DirectX::XMLoadFloat4x4( &viewMatrix );
         DirectX::XMStoreFloat4x4(
-            &m_pRenderCollector->ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
+            &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
     }
 
     void WireframeRenderer::EndScene()
@@ -64,13 +61,13 @@ namespace smile::graphic
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
         pContext->BindRasterizerState( s_pWireframeRasterizerState );
 
-        for ( const DrawCommand &drawCommand : m_pRenderCollector->DrawList )
+        for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
         {
             pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
             pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
             pContext->BindShader( drawCommand.pShader );
 
-            drawCommand.pShader->UploadMat4( "ViewProjection", m_pRenderCollector->ViewProjectionMatrix );
+            drawCommand.pShader->UploadMat4( "ViewProjection", m_RenderCollector.ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             // drawCommand.pShader->UploadMat4( "ViewInverse", s_pRenderCollector->ViewInverseMatrix );
 
@@ -104,15 +101,15 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 finalTransform{};
         DirectX::XMStoreFloat4x4( &finalTransform, finalTransformMat );
 
-        DrawCommand drawCommand{ boxColliderComponent.pWireframeMesh->GetVertexBuffer(),
-            boxColliderComponent.pWireframeMesh->GetIndexBuffer(),
+        DrawCommand drawCommand{ boxColliderComponent.pWireframeMesh->pVertexBuffer,
+            boxColliderComponent.pWireframeMesh->pIndexBuffer,
             RenderEngine::GetShaderLibrary().Get( "PosCol" ),
             finalTransform };
-        m_pRenderCollector->DrawList.emplace_back( drawCommand );
+        m_RenderCollector.DrawList.emplace_back( drawCommand );
     }
 
     void WireframeRenderer::ClearDrawList()
     {
-        m_pRenderCollector->DrawList.clear();
+        m_RenderCollector.DrawList.clear();
     }
 }

@@ -24,11 +24,11 @@ namespace smile::graphic
         m_Texture2DValues.clear();
     }
 
-    void Material::SetShader( const Ref< Shader > &new_shader )
+    void Material::SetShader( const Ref< Shader > &pShader )
     {
-        m_pShader = new_shader;
+        m_pShader = pShader;
 
-        const auto &shaderVariables{ utils::ReflectShaderVariables( new_shader ) };
+        const auto &shaderVariables{ utils::ReflectShaderVariables( pShader ) };
         for ( const ShaderVariable &variable : shaderVariables )
         {
             switch ( variable.Type )

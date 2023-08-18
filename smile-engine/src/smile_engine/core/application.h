@@ -50,7 +50,7 @@ namespace smile
 
         inline static Application &GetInstance()
         {
-            return *s_Instance;
+            return *s_pInstance;
         }
         inline Window &GetMainWindow() const
         {
@@ -74,7 +74,7 @@ namespace smile
         LayerStack m_LayerStack;
 
       private:
-        static Application *s_Instance;
+        static Application *s_pInstance;
     };
 
     // To be defined in client

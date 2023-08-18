@@ -33,7 +33,7 @@ namespace smile::graphic
         void ClearDrawList();
 
       private:
-        RenderCollector *m_pRenderCollector;
+        RenderCollector m_RenderCollector{};
         Ref< RasterizerState > s_pWireframeRasterizerState;
     };
 }

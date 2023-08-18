@@ -15,13 +15,13 @@
 
 namespace smile
 {
-    Application *Application::s_Instance = nullptr;
+    Application *Application::s_pInstance = nullptr;
 
     Application::Application( const ApplicationDescriptor &descriptor ) : m_Descriptor{ descriptor }
     {
         SM_ASSERT(
-            !s_Instance, "Application::Application > There is already an instance of SmileGame, there can only be 1" );
-        s_Instance = this;
+            !s_pInstance, "Application::Application > There is already an instance of SmileGame, there can only be 1" );
+        s_pInstance = this;
 
         Logger::SetPriority( LogPriority::Trace );
 
