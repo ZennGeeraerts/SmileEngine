@@ -23,8 +23,8 @@ TEST_CASE( "Math" )
             DirectX::XMConvertToDegrees( convertedRotationEuler.y ),
             DirectX::XMConvertToDegrees( convertedRotationEuler.z ) };
 
-        REQUIRE( math::AreEqual( rotationEulerDegrees.x, convertedRotationEulerDegrees.x ) );
-        REQUIRE( math::AreEqual( rotationEulerDegrees.y, convertedRotationEulerDegrees.y ) );
-        REQUIRE( math::AreEqual( rotationEulerDegrees.z, convertedRotationEulerDegrees.z ) );
+        REQUIRE( rotationEulerDegrees.x == Approx{ convertedRotationEulerDegrees.x } );
+        REQUIRE( rotationEulerDegrees.y == Approx{ convertedRotationEulerDegrees.y } );
+        REQUIRE( rotationEulerDegrees.z == Approx{ convertedRotationEulerDegrees.z } );
     }
 }
