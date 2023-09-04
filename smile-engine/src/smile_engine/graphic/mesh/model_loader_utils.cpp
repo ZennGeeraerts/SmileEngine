@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "mesh_loader_utils.h"
+#include "model_loader_utils.h"
 
 namespace smile::graphic::utils
 {

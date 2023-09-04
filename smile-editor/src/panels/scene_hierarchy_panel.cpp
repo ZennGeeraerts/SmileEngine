@@ -7,6 +7,8 @@
 
 #include "smile_engine/scene/components.h"
 #include "smile_engine/scripting/script_engine.h"
+#include "smile_engine/graphic/mesh/mesh.h"
+#include "smile_engine/graphic/mesh/mesh_factory.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -118,8 +120,8 @@ namespace smile::scene
         ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth() );
         ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-        float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
-        ImVec2 button_size{ line_height + 3.0f, line_height };
+        float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 buttonSize{ lineHeight + 3.0f, lineHeight };
 
         // X
         ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f } );
@@ -127,7 +129,7 @@ namespace smile::scene
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.1f, 1.0f } );
         ImGui::PushFont( boldFont );
 
-        if ( ImGui::Button( "X", button_size ) )
+        if ( ImGui::Button( "X", buttonSize ) )
             value.x = resetValue;
 
         ImGui::PopFont();
@@ -144,7 +146,7 @@ namespace smile::scene
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f } );
         ImGui::PushFont( boldFont );
 
-        if ( ImGui::Button( "Y", button_size ) )
+        if ( ImGui::Button( "Y", buttonSize ) )
             value.y = resetValue;
 
         ImGui::PopFont();
@@ -161,7 +163,7 @@ namespace smile::scene
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f } );
         ImGui::PushFont( boldFont );
 
-        if ( ImGui::Button( "Z", button_size ) )
+        if ( ImGui::Button( "Z", buttonSize ) )
             value.z = resetValue;
 
         ImGui::PopFont();
@@ -214,15 +216,21 @@ namespace smile::scene
                 ImGui::CloseCurrentPopup();
             }
 
-            if ( ImGui::MenuItem( "Static Mesh" ) )
+            if ( ImGui::MenuItem( "Mesh Renderer" ) )
             {
-                m_SelectedEntity.AddComponent< StaticMeshComponent >();
+                m_SelectedEntity.AddComponent< MeshRendererComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
-            if ( ImGui::MenuItem( "Skinned Mesh" ) )
+            if ( ImGui::MenuItem( "Skinned Mesh Renderer" ) )
             {
-                m_SelectedEntity.AddComponent< SkinnedMeshComponent >();
+                m_SelectedEntity.AddComponent< SkinnedMeshRendererComponent >();
+                ImGui::CloseCurrentPopup();
+            }
+
+            if ( ImGui::MenuItem( "Animator" ) )
+            {
+                m_SelectedEntity.AddComponent< AnimatorComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
@@ -362,84 +370,158 @@ namespace smile::scene
                     ImGui::PopStyleColor();
             } );
 
-        DrawComponent< StaticMeshComponent >( "Static Mesh",
+        DrawComponent< MeshRendererComponent >( "Mesh Renderer",
             entity,
-            []( auto &staticMeshComponent )
+            []( auto &meshRendererComponent )
             {
+                static Ref< graphic::Model > pLoadedModel = nullptr;
+
                 ImGui::Button( "Mesh", { 100.f, 0.0f } );
                 if ( ImGui::BeginDragDropTarget() )
                 {
                     const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                     if ( pPayload )
                     {
-                        staticMeshComponent.pMeshes.clear();
-
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path meshPath = std::filesystem::path{ path };
+                        std::filesystem::path modelPath = std::filesystem::path{ path };
 
-                        staticMeshComponent.pMeshes = graphic::MeshLoader::LoadStaticMesh( meshPath.string() );
-                        const auto &bufferLayout = staticMeshComponent.pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : staticMeshComponent.pMeshes )
-                        {
-                            pMesh->Create( bufferLayout );
-                        }
+                        pLoadedModel = graphic::ModelLoader::LoadModel( modelPath.string() );
                     }
 
                     ImGui::EndDragDropTarget();
                 }
 
-                for ( const auto &pMaterial : staticMeshComponent.pMaterials )
+                if ( pLoadedModel )
+                    ImGui::OpenPopup( "SetMeshPopup" );
+
+                if ( ImGui::BeginPopup( "SetMeshPopup" ) )
                 {
-                    DrawMaterial( pMaterial );
+                    static auto pSelectedMesh = pLoadedModel->GetMeshFilter( 0 );
+
+                    if ( ImGui::BeginCombo( "Mesh", pSelectedMesh->GetName().c_str() ) )
+                    {
+                        for ( Uint32 i{}; i < pLoadedModel->GetMeshCount(); ++i )
+                        {
+                            auto pMeshFilter = pLoadedModel->GetMeshFilter( i );
+                            bool isSelected = pMeshFilter == pSelectedMesh;
+
+                            if ( ImGui::Selectable( pMeshFilter->GetName().c_str(), isSelected ) )
+                            {
+                                pSelectedMesh = pMeshFilter;
+                                meshRendererComponent.pMesh.reset();
+                                meshRendererComponent.pMesh = graphic::MeshFactory::CreateMesh(
+                                    pMeshFilter, meshRendererComponent.pMaterial->GetBufferLayout() );
+
+                                meshRendererComponent.pModel = pLoadedModel;
+                                meshRendererComponent.MeshIndex = i;
+                            }
+
+                            if ( isSelected )
+                                ImGui::SetItemDefaultFocus();
+                        }
+
+                        ImGui::EndCombo();
+                    }
+
+                    if ( ImGui::Button( "Set Mesh", ImVec2{ 100.f, 0.f } ) )
+                    {
+                        pLoadedModel = nullptr;
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::EndPopup();
                 }
+
+                DrawMaterial( meshRendererComponent.pMaterial );
             } );
 
-        DrawComponent< SkinnedMeshComponent >( "Skinned Mesh",
+        DrawComponent< SkinnedMeshRendererComponent >( "Skinned Mesh Renderer",
             entity,
-            []( auto &skinnedMeshComponent )
+            []( auto &skinnedMeshRendererComponent )
             {
-                ImGui::Button( "Mesh", { 100.f, 0.0f } );
+                static Ref< graphic::Model > pLoadedModel = nullptr;
+
+                ImGui::Button( "Skinned Mesh", { 100.f, 0.0f } );
                 if ( ImGui::BeginDragDropTarget() )
                 {
                     const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                     if ( pPayload )
                     {
-                        skinnedMeshComponent.pMeshes.clear();
-                        skinnedMeshComponent.Animators.clear();
+                        skinnedMeshRendererComponent.pSkinnedMesh.reset();
 
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path meshPath = std::filesystem::path{ path };
+                        std::filesystem::path modelPath = std::filesystem::path{ path };
 
-                        skinnedMeshComponent.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( meshPath.string() );
-                        const auto &bufferLayout = skinnedMeshComponent.pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : skinnedMeshComponent.pMeshes )
-                        {
-                            pMesh->Create( bufferLayout );
-
-                            if ( pMesh->HasAnimations() )
-                            {
-                                graphic::MeshAnimator animator{ pMesh };
-                                skinnedMeshComponent.Animators.push_back( animator );
-                                skinnedMeshComponent.Animators.back().SetAnimation( 0 );
-                            }
-                        }
+                        pLoadedModel = graphic::ModelLoader::LoadModel( modelPath.string() );
                     }
 
                     ImGui::EndDragDropTarget();
                 }
 
-                for ( const auto &pMaterial : skinnedMeshComponent.pMaterials )
+                if ( pLoadedModel )
+                    ImGui::OpenPopup( "SetMeshPopup" );
+
+                if ( ImGui::BeginPopup( "SetMeshPopup" ) )
                 {
-                    DrawMaterial( pMaterial );
+                    static auto pSelectedMesh = pLoadedModel->GetSkinnedMeshFilter( 0 );
+
+                    if ( ImGui::BeginCombo( "Skinned Mesh", pSelectedMesh->GetName().c_str() ) )
+                    {
+                        for ( Uint32 i{}; i < pLoadedModel->GetSkinnedMeshCount(); ++i )
+                        {
+                            auto pSkinnedMeshFilter = pLoadedModel->GetSkinnedMeshFilter( i );
+                            bool isSelected = pSkinnedMeshFilter == pSelectedMesh;
+
+                            if ( ImGui::Selectable( pSkinnedMeshFilter->GetName().c_str(), isSelected ) )
+                            {
+                                pSelectedMesh = pSkinnedMeshFilter;
+                                skinnedMeshRendererComponent.pSkinnedMesh.reset();
+                                skinnedMeshRendererComponent.pSkinnedMesh = graphic::MeshFactory::CreateSkinnedMesh(
+                                    pSkinnedMeshFilter, skinnedMeshRendererComponent.pMaterial->GetBufferLayout() );
+
+                                skinnedMeshRendererComponent.pModel = pLoadedModel;
+                                skinnedMeshRendererComponent.MeshIndex = i;
+                            }
+
+                            if ( isSelected )
+                                ImGui::SetItemDefaultFocus();
+                        }
+
+                        ImGui::EndCombo();
+                    }
+
+                    if ( ImGui::Button( "Set Skinned Mesh", ImVec2{ 100.f, 0.f } ) )
+                    {
+                        pLoadedModel = nullptr;
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::EndPopup();
                 }
 
-                for ( auto &animator : skinnedMeshComponent.Animators )
+                DrawMaterial( skinnedMeshRendererComponent.pMaterial );
+            } );
+
+        DrawComponent< AnimatorComponent >( "Animator",
+            entity,
+            []( auto &animatorComponent ) 
+            {
+                ImGui::Button( "Animations", { 100.f, 0.0f } );
+                if ( ImGui::BeginDragDropTarget() )
                 {
-                    ImGui::Text( "Animator" );
-                    if ( ImGui::Button( "Play", { 100.f, 0.0f } ) )
-                        animator.Play();
-                    if ( ImGui::Button( "Pause", { 100.f, 0.0f } ) )
-                        animator.Pause();
+                    const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+                    if ( pPayload )
+                    {
+                        const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
+                        std::filesystem::path modelPath = std::filesystem::path{ path };
+
+                        Ref< graphic::Model > pLoadedModel = graphic::ModelLoader::LoadModel( modelPath.string() );
+                        animatorComponent.pAnimationClips = pLoadedModel->GetAnimationClips();
+                        animatorComponent.CurrentClipIndex = 0;
+                        animatorComponent.pModel = pLoadedModel;
+                    }
+
+                    ImGui::EndDragDropTarget();
                 }
             } );
 
@@ -561,49 +643,49 @@ namespace smile::scene
         ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
         ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2{ 4.f, 4.f } );
 
-        const float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImGui::Separator();
 
-        bool open = ImGui::TreeNodeEx( ( void * )typeid( ComponentType ).hash_code(), treeNodeFlags, label.c_str() );
+        bool isOpen = ImGui::TreeNodeEx( ( void * )typeid( ComponentType ).hash_code(), treeNodeFlags, label.c_str() );
         ImGui::PopStyleVar();
 
-        ImGui::SameLine( contentRegionAvailable.x - line_height * 0.5f );
-        if ( ImGui::Button( "+", ImVec2{ line_height, line_height } ) )
+        ImGui::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
+        if ( ImGui::Button( "+", ImVec2{ lineHeight, lineHeight } ) )
         {
             ImGui::OpenPopup( "ComponentSettings" );
         }
 
-        bool remove_component = false;
+        bool removeComponent = false;
         if ( ImGui::BeginPopup( "ComponentSettings" ) )
         {
             if ( ImGui::MenuItem( "Remove Component" ) )
-                remove_component = true;
+                removeComponent = true;
 
             ImGui::EndPopup();
         }
 
-        if ( open )
+        if ( isOpen )
         {
             uiFunction( component );
             ImGui::TreePop();
         }
 
-        if ( isRemoveable && remove_component )
+        if ( isRemoveable && removeComponent )
             entity.RemoveComponent< ComponentType >();
     }
 
     void SceneHierarchyPanel::DrawMaterial( const Ref< graphic::Material > &pMaterial )
     {
-        const Ref< graphic::Shader > &shader = pMaterial->GetShader();
+        const Ref< graphic::Shader > &pShader = pMaterial->GetShader();
         ImGui::Text( "Material" );
 
-        ImGui::Button( shader->Name.c_str(), { 100.f, 0.0f } );
+        ImGui::Button( pShader->Name.c_str(), { 100.f, 0.0f } );
         if ( ImGui::BeginDragDropTarget() )
         {
-            const ImGuiPayload *payload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
-            if ( payload )
+            const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+            if ( pPayload )
             {
-                const wchar_t *path = static_cast< const wchar_t * >( payload->Data );
+                const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                 std::filesystem::path shaderPath = std::filesystem::path{ path };
                 pMaterial->SetShader( graphic::RenderEngine::GetDevice()->CreateShader( shaderPath.string() ) );
             }

@@ -55,6 +55,9 @@ namespace smile::graphic
     void ForwardRenderer::Submit( const scene::MeshRendererComponent &meshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
+        if ( !meshRendererComponent.pMesh || !meshRendererComponent.pMaterial )
+            return;
+
         Submit( meshRendererComponent.pMesh->pVertexBuffer,
             meshRendererComponent.pMesh->pIndexBuffer,
             meshRendererComponent.pMaterial->GetShader(),
@@ -64,8 +67,11 @@ namespace smile::graphic
     void ForwardRenderer::Submit( const scene::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
-        Submit( skinnedMeshRendererComponent.pMesh->pVertexBuffer,
-            skinnedMeshRendererComponent.pMesh->pIndexBuffer,
+        if ( !skinnedMeshRendererComponent.pSkinnedMesh || !skinnedMeshRendererComponent.pMaterial )
+            return;
+
+        Submit( skinnedMeshRendererComponent.pSkinnedMesh->pVertexBuffer,
+            skinnedMeshRendererComponent.pSkinnedMesh->pIndexBuffer,
             skinnedMeshRendererComponent.pMaterial->GetShader(),
             worldTransform );
     }

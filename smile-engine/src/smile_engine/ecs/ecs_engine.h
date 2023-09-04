@@ -14,6 +14,8 @@
 
 namespace smile::ecs
 {
+    class System;
+
     template < typename... Components >
     constexpr ComponentList< Components... > g_Get{};
 
@@ -354,6 +356,8 @@ namespace smile::ecs
         ECSEngine() = default;
         virtual ~ECSEngine();
 
+        void OnUpdate( Timestep deltaTime );
+        
         EntityHandleType CreateEntity()
         {
             return m_HandleManager.CreateEntity();
@@ -498,6 +502,9 @@ namespace smile::ecs
             return *( static_cast< Group< Owned..., Get... > * >( pNewGroup ) );
         }
 
+        void AddSystem( System *pSystem );
+        void RemoveSystem( System *pSystem );
+
         template < typename FunctionType >
         void Each( FunctionType function )
         {
@@ -573,5 +580,6 @@ namespace smile::ecs
         std::vector< ComponentInterface * > m_pComponents{};
         std::unordered_map< stl::TypeID, ComponentInterface * > m_ComponentMap{};
         std::vector< GroupBase * > m_pGroups{};
+        std::vector< System * > m_pSystems{};
     };
 }

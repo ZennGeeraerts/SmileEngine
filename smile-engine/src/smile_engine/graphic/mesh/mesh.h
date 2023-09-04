@@ -2,17 +2,16 @@
 // Copyright 2022-2023 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "smpch.h"
-#include "skinned_mesh_filter.h"
+#pragma once
 
-#include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/resource/vertex_buffer.h"
+#include "smile_engine/graphic/resource/index_buffer.h"
 
 namespace smile::graphic
 {
-    SkinnedMeshFilter::~SkinnedMeshFilter()
+    struct Mesh final
     {
-        m_BlendIndices.clear();
-        m_BlendWeights.clear();
-        m_SkeletonMap.clear();
-    }
+        Ref< VertexBuffer > pVertexBuffer = nullptr;
+        Ref< IndexBuffer > pIndexBuffer = nullptr;
+    };
 }

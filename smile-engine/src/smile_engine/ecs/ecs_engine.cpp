@@ -5,6 +5,8 @@
 #include "smpch.h"
 #include "ecs_engine.h"
 
+#include "system.h"
+
 namespace smile::ecs
 {
     ECSEngine::~ECSEngine()
@@ -14,6 +16,17 @@ namespace smile::ecs
 
         for ( auto pGroup : m_pGroups )
             delete pGroup;
+
+        for ( auto pSystem : m_pSystems )
+            delete pSystem;
+    }
+
+    void ECSEngine::OnUpdate( Timestep deltaTime )
+    {
+        for ( auto pSystem : m_pSystems )
+        {
+            pSystem->OnUpdate( deltaTime );
+        }
     }
 
     void ECSEngine::RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle )
@@ -42,6 +55,18 @@ namespace smile::ecs
     {
         for ( auto destructor : pComponentInterface->m_Destroy )
             destructor( pData );
+    }
+
+    void ECSEngine::AddSystem( System *pSystem )
+    {
+        pSystem->m_pECSEngine = this;
+        m_pSystems.push_back( pSystem );
+    }
+
+    void ECSEngine::RemoveSystem( System *pSystem )
+    {
+        m_pSystems.erase( std::remove( m_pSystems.begin(), m_pSystems.end(), pSystem ) );
+        delete pSystem;
     }
 
     void ECSEngine::Clear()

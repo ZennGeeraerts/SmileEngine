@@ -2,17 +2,13 @@
 // Copyright 2022-2023 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "smpch.h"
-#include "skinned_mesh_filter.h"
-
-#include "smile_engine/graphic/render_engine.h"
+#pragma once
 
 namespace smile::graphic
 {
-    SkinnedMeshFilter::~SkinnedMeshFilter()
+    struct BoneInfo final
     {
-        m_BlendIndices.clear();
-        m_BlendWeights.clear();
-        m_SkeletonMap.clear();
-    }
+        Uint32 ID{};
+        DirectX::XMFLOAT4X4 Offset{};
+    };
 }

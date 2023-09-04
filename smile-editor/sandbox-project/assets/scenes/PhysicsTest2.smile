@@ -37,8 +37,9 @@ Entities:
       Translation: [1.53699994, 5.28429651, 0]
       Rotation: [0.750491321, 0.40142557, 1.95476854]
       Scale: [1, 1, 1]
-    SkinnedMeshComponent:
-      Mesh: meshes\model.dae
+    SkinnedMeshRendererComponent:
+      Model: meshes\model.dae
+      MeshIndex: 0
       Material:
         FloatValues:
           METALNESS: 1
@@ -89,8 +90,9 @@ Entities:
       Translation: [-0.551638722, 5.28429651, 0]
       Rotation: [0.785398185, 0.209439516, 0]
       Scale: [0.100000001, 0.100000001, 0.100000001]
-    SkinnedMeshComponent:
-      Mesh: meshes\tuktuk.obj
+    MeshRendererComponent:
+      Model: meshes\tuktuk.obj
+      MeshIndex: 0
       Material:
         FloatValues:
           METALNESS: 0
@@ -141,8 +143,9 @@ Entities:
       Translation: [-2.11483455, 5.28429651, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
-    SkinnedMeshComponent:
-      Mesh: meshes\drakefire_pistol_low.obj
+    MeshRendererComponent:
+      Model: meshes\drakefire_pistol_low.obj
+      MeshIndex: 2
       Material:
         FloatValues:
           METALNESS: 0

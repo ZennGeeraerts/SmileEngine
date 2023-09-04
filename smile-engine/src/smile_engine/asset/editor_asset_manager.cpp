@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "editor_asset_manager.h"
 
-#include "importer/asset_importer.h"
+//#include "importer/asset_importer.h"
 
 namespace smile::asset
 {
@@ -25,7 +25,7 @@ namespace smile::asset
         {
             // Load asset
             const AssetMetadata &metadata = GetMetadata( handle );
-            pAsset = AssetImporter::ImportAsset( handle, metadata );
+            //pAsset = AssetImporter::ImportAsset( handle, metadata );
             if (!pAsset)
             {
                 SM_LOG_ERROR( "EditorAssetManager::GetAsset > Failed to import asset" );

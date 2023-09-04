@@ -11,12 +11,11 @@
 #include "smile_engine/scene/scene_camera.h"
 
 #include "smile_engine/graphic/render_engine.h"
-#include "smile_engine/graphic/mesh/mesh_loader.h"
-#include "smile_engine/graphic/mesh/static_mesh_filter.h"
+#include "smile_engine/graphic/mesh/model_loader.h"
+#include "smile_engine/graphic/mesh/mesh_filter.h"
 #include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
 #include "smile_engine/graphic/mesh/material.h"
 #include "smile_engine/graphic/mesh/mesh_factory.h"
-#include "smile_engine/graphic/animation/mesh_animator.h"
 
 #include "smile_engine/physics/physics_material.h"
 
@@ -99,84 +98,74 @@ namespace smile::scene
 
     struct MeshRendererComponent final
     {
-        MeshRendererComponent() = default;
-        MeshRendererComponent( const MeshRendererComponent & ) = default;
-        MeshRendererComponent( const graphic::VertexBufferDescriptor &vertexBufferDesc,
-            const graphic::IndexBufferDescriptor &indexBufferDesc,
-            const std::string &shaderFilePath )
-        {
-            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
-            pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
-            pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
-            pShader = pDevice->CreateShader( shaderFilePath );
-        }
-
-        Ref< graphic::VertexBuffer > pVertexBuffer = nullptr;
-        Ref< graphic::IndexBuffer > pIndexBuffer = nullptr;
-        Ref< graphic::Shader > pShader = nullptr;
-    };
-
-    struct StaticMeshComponent final
-    {
-        StaticMeshComponent()
+        MeshRendererComponent()
         {
             graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
             auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
-            pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
+            pMaterial = CreateRef< graphic::Material >( pShader );
         }
 
-        StaticMeshComponent( const StaticMeshComponent & ) = default;
+        MeshRendererComponent( const MeshRendererComponent & ) = default;
 
-        // For now, only support 1 material
-        StaticMeshComponent( const std::string &assetFile, const Ref< graphic::Material > &pMaterial )
+        MeshRendererComponent( const std::string &assetFile, Uint32 meshIndex, const Ref< graphic::Material > &pMaterial )
+            : pMaterial{ pMaterial }, MeshIndex{ meshIndex }
         {
-            pMaterials.push_back( pMaterial );
-
-            pMeshes = graphic::MeshLoader::LoadStaticMesh( assetFile );
-            const auto &bufferLayout = pMaterials[0]->GetBufferLayout();
-            for ( const auto &pMesh : pMeshes )
-            {
-                pMesh->Create( bufferLayout );
-            }
+            pModel = graphic::ModelLoader::LoadModel( assetFile );
+            Ref< graphic::MeshFilter > pMeshFilter = pModel->GetMeshFilter( meshIndex );
+            pMesh = graphic::MeshFactory::CreateMesh( pMeshFilter, pMaterial->GetBufferLayout() );
         }
 
-        std::vector< Ref< graphic::StaticMeshFilter > > pMeshes = {};
-        std::vector< Ref< graphic::Material > > pMaterials = {};
+        Ref< graphic::Mesh > pMesh = nullptr;
+        Ref< graphic::Material > pMaterial = nullptr;
+
+         // For serialization
+        Ref< graphic::Model > pModel = nullptr;
+        Uint32 MeshIndex = 0;
     };
 
-    struct SkinnedMeshComponent final
+    struct SkinnedMeshRendererComponent final
     {
-        SkinnedMeshComponent()
+        SkinnedMeshRendererComponent()
         {
             graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
             auto pShader = pDevice->CreateShader( "assets/shaders/PBR_Skinned.fx" );
-            pMaterials.push_back( CreateRef< graphic::Material >( pShader ) );
+            pMaterial = CreateRef< graphic::Material >( pShader );
         }
 
-        SkinnedMeshComponent( const SkinnedMeshComponent & ) = default;
+        SkinnedMeshRendererComponent( const SkinnedMeshRendererComponent & ) = default;
 
-        // For now, only support 1 material
-        SkinnedMeshComponent( const std::string &assetFile, const Ref< graphic::Material > &pMaterial )
+        SkinnedMeshRendererComponent( const std::string &assetFile, Uint32 meshIndex, const Ref< graphic::Material > &pMaterial )
+            : pMaterial{ pMaterial }, MeshIndex{ meshIndex }
         {
-            pMaterials.push_back( pMaterial );
-
-            pMeshes = graphic::MeshLoader::LoadSkinnedMesh( assetFile );
-            const auto &bufferLayout = pMaterials[0]->GetBufferLayout();
-            for ( const auto &pMesh : pMeshes )
-            {
-                pMesh->Create( bufferLayout );
-
-                if ( pMesh->HasAnimations() )
-                {
-                    graphic::MeshAnimator animator{ pMesh };
-                    Animators.push_back( animator );
-                }
-            }
+            pModel = graphic::ModelLoader::LoadModel( assetFile );
+            Ref< graphic::SkinnedMeshFilter > pSkinnedMeshFilter = pModel->GetSkinnedMeshFilter( meshIndex );
+            pSkinnedMesh = graphic::MeshFactory::CreateSkinnedMesh( pSkinnedMeshFilter, pMaterial->GetBufferLayout() );
         }
 
-        std::vector< Ref< graphic::SkinnedMeshFilter > > pMeshes = {};
-        std::vector< Ref< graphic::Material > > pMaterials = {};
-        std::vector< graphic::MeshAnimator > Animators = {};
+        Ref< graphic::SkinnedMesh > pSkinnedMesh = nullptr;
+        Ref< graphic::Material > pMaterial = nullptr;
+        
+        // For serialization
+        Ref< graphic::Model > pModel = nullptr;
+        Uint32 MeshIndex = 0;
+    };
+
+    struct AnimatorComponent final
+    {
+        AnimatorComponent() = default;
+        AnimatorComponent( const AnimatorComponent & ) = default;
+
+        std::vector< Ref< graphic::AnimationClip > > pAnimationClips;
+        Uint32 CurrentClipIndex;
+
+        // For serialization
+        Ref< graphic::Model > pModel = nullptr;
+
+        // For internal use
+        std::vector< DirectX::XMFLOAT4X4 > Transforms;
+        float TickCount = 0.f;
+        bool IsPlaying = true;
+        bool IsReversed = false;
     };
 
     struct CameraComponent final
@@ -239,7 +228,6 @@ namespace smile::scene
         {
             graphic::BufferLayout bufferLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
             pWireframeMesh = graphic::MeshFactory::CreateCube( bufferLayout );
-            pWireframeMesh->Create( bufferLayout );
         }
 
         BoxColliderComponent( const BoxColliderComponent & ) = default;
@@ -250,7 +238,7 @@ namespace smile::scene
         bool ShowColliderBounds = true;
 
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
-        Ref< graphic::StaticMeshFilter > pWireframeMesh = nullptr;
+        Ref< graphic::Mesh > pWireframeMesh = nullptr;
     };
 
     struct SphereColliderComponent final
@@ -285,8 +273,8 @@ namespace smile::scene
 
     using AllComponents = ComponentGroup< TransformComponent,
         MeshRendererComponent,
-        StaticMeshComponent,
-        SkinnedMeshComponent,
+        SkinnedMeshRendererComponent,
+        AnimatorComponent,
         CameraComponent,
         ScriptComponent,
         RigidbodyComponent,

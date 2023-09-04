@@ -63,6 +63,6 @@ namespace smile::graphic
         std::string m_Name;
         Uint32 m_ID;
 
-        friend class MeshLoader;
+        friend class ModelLoader;
     };
 }

@@ -283,51 +283,79 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< StaticMeshComponent >() )
+        if ( entity.HasComponent< MeshRendererComponent >() )
         {
-            output << YAML::Key << "SkinnedMeshComponent";
+            output << YAML::Key << "MeshRendererComponent";
             output << YAML::BeginMap;
 
-            auto &staticMeshComponent = entity.GetComponent< StaticMeshComponent >();
+            auto &meshRendererComponent = entity.GetComponent< MeshRendererComponent >();
 
-            if ( staticMeshComponent.pMeshes.size() > 0 )
+            if ( meshRendererComponent.pModel )
             {
                 auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
-                auto fullPath = std::filesystem::path{ staticMeshComponent.pMeshes[0]->GetFilePath() };
+                auto fullPath = std::filesystem::path{ meshRendererComponent.pModel->GetFilePath() };
                 auto relativePath = fullPath.lexically_relative( basePath );
 
-                output << YAML::Key << "Mesh" << YAML::Value << relativePath.string();
+                output << YAML::Key << "Model" << YAML::Value << relativePath.string();
             }
             else
             {
-                output << YAML::Key << "Mesh" << YAML::Value << "";
+                output << YAML::Key << "Model" << YAML::Value << "";
             }
 
-            SerializeMaterial( output, staticMeshComponent.pMaterials[0] );
+            output << YAML::Key << "MeshIndex" << meshRendererComponent.MeshIndex;
+
+            SerializeMaterial( output, meshRendererComponent.pMaterial );
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< SkinnedMeshComponent >() )
+        if ( entity.HasComponent< SkinnedMeshRendererComponent >() )
         {
-            output << YAML::Key << "SkinnedMeshComponent";
+            output << YAML::Key << "SkinnedMeshRendererComponent";
             output << YAML::BeginMap;
 
-            auto &skinnedMeshComponent = entity.GetComponent< SkinnedMeshComponent >();
-            if ( skinnedMeshComponent.pMeshes.size() > 0 )
+            auto &skinnedMeshRendererComponent = entity.GetComponent< SkinnedMeshRendererComponent >();
+            if ( skinnedMeshRendererComponent.pModel )
             {
                 auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
-                auto fullPath = std::filesystem::path{ skinnedMeshComponent.pMeshes[0]->GetFilePath() };
+                auto fullPath = std::filesystem::path{ skinnedMeshRendererComponent.pModel->GetFilePath() };
                 auto relativePath = fullPath.lexically_relative( basePath );
 
-                output << YAML::Key << "Mesh" << YAML::Value << relativePath.string();
+                output << YAML::Key << "Model" << YAML::Value << relativePath.string();
             }
             else
             {
-                output << YAML::Key << "Mesh" << YAML::Value << "";
+                output << YAML::Key << "Model" << YAML::Value << "";
             }
 
-            SerializeMaterial( output, skinnedMeshComponent.pMaterials[0] );
+            output << YAML::Key << "MeshIndex" << skinnedMeshRendererComponent.MeshIndex;
+
+            SerializeMaterial( output, skinnedMeshRendererComponent.pMaterial );
+
+            output << YAML::EndMap;
+        }
+
+        if ( entity.HasComponent< AnimatorComponent >() )
+        {
+            output << YAML::Key << "AnimatorComponent";
+            output << YAML::BeginMap;
+
+            auto &animatorComponent = entity.GetComponent< AnimatorComponent >();
+            if ( animatorComponent.pModel )
+            {
+                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
+                auto fullPath = std::filesystem::path{ animatorComponent.pModel->GetFilePath() };
+                auto relativePath = fullPath.lexically_relative( basePath );
+
+                output << YAML::Key << "Model" << YAML::Value << relativePath.string();
+            }
+            else
+            {
+                output << YAML::Key << "Model" << YAML::Value << "";
+            }
+
+            output << YAML::Key << "ClipIndex" << animatorComponent.CurrentClipIndex;
 
             output << YAML::EndMap;
         }
@@ -500,31 +528,31 @@ namespace smile::scene
                     sc.ClassName = scriptComponent["ClassName"].as< std::string >();
                 }
 
-                auto staticMeshComponent = entity["StaticMeshComponent"];
-                if ( staticMeshComponent )
+                auto meshRendererComponent = entity["MeshRendererComponent"];
+                if ( meshRendererComponent )
                 {
-                    auto &smc = deserializedEntity.AddComponent< StaticMeshComponent >();
+                    auto &mrc = deserializedEntity.AddComponent< MeshRendererComponent >();
 
-                    auto meshPath = staticMeshComponent["Mesh"].as< std::string >();
-                    if ( !meshPath.empty() )
+                    mrc.MeshIndex = meshRendererComponent["MeshIndex"].as< Uint32 >();
+
+                    auto modelPath = meshRendererComponent["Model"].as< std::string >();
+                    if ( !modelPath.empty() )
                     {
-                        auto path = project::ProjectManager::GetAssetFileSystemPath( meshPath );
-                        smc.pMeshes = graphic::MeshLoader::LoadStaticMesh( path.string() );
-                        const auto &bufferLayout = smc.pMaterials[0]->GetBufferLayout();
-                        for ( const auto &pMesh : smc.pMeshes )
-                        {
-                            pMesh->Create( bufferLayout );
-                        }
+                        auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
+                        mrc.pModel = graphic::ModelLoader::LoadModel( path.string() );
+
+                        auto pMeshFilter = mrc.pModel->GetMeshFilter( mrc.MeshIndex );
+                        mrc.pMesh = graphic::MeshFactory::CreateMesh( pMeshFilter, mrc.pMaterial->GetBufferLayout() );
                     }
 
-                    auto material = staticMeshComponent["Material"];
+                    auto material = meshRendererComponent["Material"];
 
                     auto floatValues = material["FloatValues"];
                     for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< float >();
-                        smc.pMaterials[0]->SetFloatValue( semantic, value );
+                        mrc.pMaterial->SetFloatValue( semantic, value );
                     }
 
                     auto intValues = material["IntValues"];
@@ -532,7 +560,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< int >();
-                        smc.pMaterials[0]->SetIntValue( semantic, value );
+                        mrc.pMaterial->SetIntValue( semantic, value );
                     }
 
                     auto boolValues = material["BoolValues"];
@@ -540,7 +568,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< bool >();
-                        smc.pMaterials[0]->SetBoolValue( semantic, value );
+                        mrc.pMaterial->SetBoolValue( semantic, value );
                     }
 
                     auto float2Values = material["Float2Values"];
@@ -548,7 +576,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
-                        smc.pMaterials[0]->SetFloat2Value( semantic, value );
+                        mrc.pMaterial->SetFloat2Value( semantic, value );
                     }
 
                     auto float3Values = material["Float3Values"];
@@ -556,7 +584,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
-                        smc.pMaterials[0]->SetFloat3Value( semantic, value );
+                        mrc.pMaterial->SetFloat3Value( semantic, value );
                     }
 
                     auto texture2DValues = material["Texture2DValues"];
@@ -567,44 +595,38 @@ namespace smile::scene
                         if ( !texturePath.empty() )
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                            smc.pMaterials[0]->SetTexture2D(
+                            mrc.pMaterial->SetTexture2D(
                                 semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() ) );
                         }
                     }
                 }
 
-                auto skinnedMeshComponent = entity["SkinnedMeshComponent"];
-                if ( skinnedMeshComponent )
+                auto skinnedMeshRendererComponent = entity["SkinnedMeshRendererComponent"];
+                if ( skinnedMeshRendererComponent )
                 {
-                    auto &smc = deserializedEntity.AddComponent< SkinnedMeshComponent >();
+                    auto &smrc = deserializedEntity.AddComponent< SkinnedMeshRendererComponent >();
 
-                    auto meshPath = skinnedMeshComponent["Mesh"].as< std::string >();
-                    if ( !meshPath.empty() )
+                    smrc.MeshIndex = skinnedMeshRendererComponent["MeshIndex"].as< Uint32 >();
+
+                    auto modelPath = skinnedMeshRendererComponent["Model"].as< std::string >();
+                    if ( !modelPath.empty() )
                     {
-                        auto path = project::ProjectManager::GetAssetFileSystemPath( meshPath );
-                        smc.pMeshes = graphic::MeshLoader::LoadSkinnedMesh( path.string() );
-                        const auto &bufferLayout = smc.pMaterials[0]->GetBufferLayout();
-                        for ( const auto &mesh : smc.pMeshes )
-                        {
-                            mesh->Create( bufferLayout );
+                        auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
+                        smrc.pModel = graphic::ModelLoader::LoadModel( path.string() );
 
-                            if ( mesh->HasAnimations() )
-                            {
-                                graphic::MeshAnimator animator{ mesh };
-                                smc.Animators.push_back( animator );
-                                smc.Animators.back().SetAnimation( 0 );
-                            }
-                        }
+                        auto pSkinnedMeshFilter = smrc.pModel->GetSkinnedMeshFilter( smrc.MeshIndex );
+                        smrc.pSkinnedMesh = graphic::MeshFactory::CreateSkinnedMesh(
+                            pSkinnedMeshFilter, smrc.pMaterial->GetBufferLayout() );
                     }
 
-                    auto material = skinnedMeshComponent["Material"];
+                    auto material = skinnedMeshRendererComponent["Material"];
 
                     auto floatValues = material["FloatValues"];
                     for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< float >();
-                        smc.pMaterials[0]->SetFloatValue( semantic, value );
+                        smrc.pMaterial->SetFloatValue( semantic, value );
                     }
 
                     auto intValues = material["IntValues"];
@@ -612,7 +634,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< int >();
-                        smc.pMaterials[0]->SetIntValue( semantic, value );
+                        smrc.pMaterial->SetIntValue( semantic, value );
                     }
 
                     auto boolValues = material["BoolValues"];
@@ -620,7 +642,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< bool >();
-                        smc.pMaterials[0]->SetBoolValue( semantic, value );
+                        smrc.pMaterial->SetBoolValue( semantic, value );
                     }
 
                     auto float2Values = material["Float2Values"];
@@ -628,7 +650,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
-                        smc.pMaterials[0]->SetFloat2Value( semantic, value );
+                        smrc.pMaterial->SetFloat2Value( semantic, value );
                     }
 
                     auto float3Values = material["Float3Values"];
@@ -636,7 +658,7 @@ namespace smile::scene
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
                         auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
-                        smc.pMaterials[0]->SetFloat3Value( semantic, value );
+                        smrc.pMaterial->SetFloat3Value( semantic, value );
                     }
 
                     auto texture2DValues = material["Texture2DValues"];
@@ -647,9 +669,25 @@ namespace smile::scene
                         if ( !texturePath.empty() )
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                            smc.pMaterials[0]->SetTexture2D(
+                            smrc.pMaterial->SetTexture2D(
                                 semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() ) );
                         }
+                    }
+                }
+
+                auto animatorComponent = entity["AnimatorComponent"];
+                if ( animatorComponent )
+                {
+                    auto &ac = deserializedEntity.AddComponent< AnimatorComponent >();
+
+                    ac.CurrentClipIndex = animatorComponent["ClipIndex"].as< Uint32 >();
+
+                    auto modelPath = animatorComponent["Model"].as< std::string >();
+                    if ( !modelPath.empty() )
+                    {
+                        auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
+                        ac.pModel = graphic::ModelLoader::LoadModel( path.string() );
+                        ac.pAnimationClips = ac.pModel->GetAnimationClips();
                     }
                 }
 

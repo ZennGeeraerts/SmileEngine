@@ -173,8 +173,9 @@ void ExampleLayer::OnAttach()
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
     m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
-    auto &meshComponent =
-        m_ModelEntity.AddComponent< smile::scene::SkinnedMeshComponent >( "assets/meshes/nanosuit.obj", pMaterial );
+    const smile::Uint32 meshIndex = 0;
+    auto &meshRendererComponent =
+        m_ModelEntity.AddComponent< smile::scene::MeshRendererComponent >( "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
     m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
     m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
     m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };

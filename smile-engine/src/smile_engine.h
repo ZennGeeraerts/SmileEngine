@@ -38,7 +38,8 @@
 #include "smile_engine/graphic/resource/index_buffer.h"
 #include "smile_engine/graphic/resource/frame_buffer.h"
 #include "smile_engine/graphic/resource/texture.h"
-#include "smile_engine/graphic/mesh/static_mesh_filter.h"
+#include "smile_engine/graphic/mesh/mesh_filter.h"
+#include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
 #include "smile_engine/graphic/mesh/material.h"
 
 /* --- DirectX --- */

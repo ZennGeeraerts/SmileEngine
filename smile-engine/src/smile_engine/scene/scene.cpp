@@ -16,10 +16,13 @@
 #include "smile_engine/graphic/renderer/render_pass/wireframe_render_pass.h"
 #include "smile_engine/graphic/renderer/render_pass/debug_render_pass.h"
 
+#include "smile_engine/graphic/animation/animation_system.h"
+
 namespace smile::scene
 {
     Scene::Scene()
     {
+        m_ECSEngine.AddSystem( new graphic::AnimationSystem{} );
     }
 
     Scene::~Scene()
@@ -132,25 +135,7 @@ namespace smile::scene
 
         physics::PhysicsEngine::Simulate( deltaTime );
 
-        {
-            auto group = m_ECSEngine.GetGroup< scene::SkinnedMeshComponent >( ecs::g_Get< scene::TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[mesh, transform] =
-                    m_ECSEngine.GetComponents< scene::SkinnedMeshComponent, scene::TransformComponent >( entity );
-
-                for ( auto &animator : mesh.Animators )
-                {
-                    animator.OnUpdate( deltaTime );
-                    const auto &boneTransforms = animator.GetBoneTransforms();
-                    for ( const auto &pMaterial : mesh.pMaterials )
-                    {
-                        if ( animator.IsPlaying() )
-                            pMaterial->GetShader()->UploadMat4Array( "Bones", boneTransforms );
-                    }
-                }
-            }
-        }
+        m_ECSEngine.OnUpdate( deltaTime );
 
         graphic::RenderEngine::OnRender();
     }
@@ -276,8 +261,8 @@ namespace smile::scene
 
         CopyComponentIfExists< TransformComponent >( newEntity, entity );
         CopyComponentIfExists< MeshRendererComponent >( newEntity, entity );
-        CopyComponentIfExists< StaticMeshComponent >( newEntity, entity );
-        CopyComponentIfExists< SkinnedMeshComponent >( newEntity, entity );
+        CopyComponentIfExists< SkinnedMeshRendererComponent >( newEntity, entity );
+        CopyComponentIfExists< AnimatorComponent >( newEntity, entity );
         CopyComponentIfExists< CameraComponent >( newEntity, entity );
         CopyComponentIfExists< ScriptComponent >( newEntity, entity );
         CopyComponentIfExists< RigidbodyComponent >( newEntity, entity );
@@ -330,12 +315,12 @@ namespace smile::scene
     }
 
     template <>
-    void Scene::OnComponentAdded< StaticMeshComponent >( Entity entity, StaticMeshComponent &component )
+    void Scene::OnComponentAdded< SkinnedMeshRendererComponent >( Entity entity, SkinnedMeshRendererComponent &component )
     {
     }
 
-    template <>
-    void Scene::OnComponentAdded< SkinnedMeshComponent >( Entity entity, SkinnedMeshComponent &component )
+    template<>
+    void Scene::OnComponentAdded< AnimatorComponent >( Entity entity, AnimatorComponent &component )
     {
     }
 
