@@ -258,6 +258,12 @@ namespace smile::scene
                 ImGui::CloseCurrentPopup();
             }
 
+            if ( ImGui::MenuItem( "Sprite Renderer" ) )
+            {
+                m_SelectedEntity.AddComponent< SpriteRendererComponent >();
+                ImGui::CloseCurrentPopup();
+            }
+
             ImGui::EndPopup();
         }
 
@@ -623,6 +629,29 @@ namespace smile::scene
                 ImGui::DragFloat( "Height", &capsuleColliderComponent.Height, 0.03f );
                 ImGui::Checkbox( "Trigger", &capsuleColliderComponent.IsTrigger );
                 ImGui::Checkbox( "Show Collider Bounds", &capsuleColliderComponent.ShowColliderBounds );
+            } );
+
+        DrawComponent< SpriteRendererComponent >( "Sprite Renderer",
+            entity,
+            []( auto &spriteRendererComponent )
+            {
+                ImGui::ColorEdit4( "Color", &spriteRendererComponent.Color.x );
+
+                ImGui::Button( "Texture", { 100.f, 0.0f } );
+                if ( ImGui::BeginDragDropTarget() )
+                {
+                    const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
+                    if ( pPayload )
+                    {
+                        spriteRendererComponent.pTexture.reset();
+
+                        const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
+                        std::filesystem::path texturePath = std::filesystem::path{ path };
+                        spriteRendererComponent.pTexture = graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() );
+                    }
+
+                    ImGui::EndDragDropTarget();
+                }
             } );
     }
 

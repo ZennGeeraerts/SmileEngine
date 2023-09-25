@@ -448,6 +448,28 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
+        if ( entity.HasComponent< SpriteRendererComponent >() )
+        {
+            output << YAML::Key << "SpriteRendererComponent";
+            output << YAML::BeginMap;
+
+            auto &spriteRendererComponent = entity.GetComponent< SpriteRendererComponent >();
+            output << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+
+            if ( spriteRendererComponent.pTexture )
+            {
+                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
+                auto fullPath = std::filesystem::path{ spriteRendererComponent.pTexture->FilePath };
+                auto relativePath = fullPath.lexically_relative( basePath );
+
+                output << YAML::Key << "Texture" << YAML::Value << relativePath.string();
+            }
+            else
+            {
+                output << YAML::Key << "Texture" << YAML::Value << "";
+            }
+        }
+
         output << YAML::EndMap;
     }
 
@@ -762,6 +784,20 @@ namespace smile::scene
                     ccc.Height = capsuleColliderComponent["Height"].as< float >();
                     ccc.IsTrigger = capsuleColliderComponent["bTrigger"].as< bool >();
                     ccc.ShowColliderBounds = capsuleColliderComponent["bShowColliderBounds"].as< bool >();
+                }
+
+                auto spriteRendererComponent = entity["SpriteRendererComponent"];
+                if (spriteRendererComponent)
+                {
+                    auto src = deserializedEntity.AddComponent< SpriteRendererComponent >();
+
+                    src.Color = spriteRendererComponent["Color"].as< DirectX::XMFLOAT4 >();
+                    auto texturePath = spriteRendererComponent["Texture"].as< std::string >();
+                    if ( !texturePath.empty() )
+                    {
+                        auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
+                        src.pTexture = graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() );
+                    }
                 }
             }
         }

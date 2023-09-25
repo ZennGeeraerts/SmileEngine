@@ -266,6 +266,18 @@ namespace smile::scene
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 
+    struct SpriteRendererComponent final
+    {
+        SpriteRendererComponent() = default;
+        SpriteRendererComponent( const SpriteRendererComponent & ) = default;
+        SpriteRendererComponent( const DirectX::XMFLOAT4 &color ) : Color{ color }
+        {
+        }
+
+        DirectX::XMFLOAT4 Color = { 1.f, 1.f, 1.f, 1.f };
+        Ref< graphic::Texture > pTexture = nullptr;
+    };
+
     template < typename... Component >
     struct ComponentGroup
     {
@@ -280,5 +292,6 @@ namespace smile::scene
         RigidbodyComponent,
         BoxColliderComponent,
         SphereColliderComponent,
-        CapsuleColliderComponent >;
+        CapsuleColliderComponent,
+        SpriteRendererComponent >;
 }

@@ -1,6 +1,6 @@
 float4x4 gWorld : WORLD;
 float4x4 gViewProjection : VIEWPROJECTION;
-float3 gColor = float3(1, 1, 1);
+float3 gColor : COLOR = float3(1, 1, 1);
 
 struct VS_INPUT
 {

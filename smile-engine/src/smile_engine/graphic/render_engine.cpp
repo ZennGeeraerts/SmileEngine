@@ -10,6 +10,7 @@
 #include "renderer/forward_renderer.h"
 #include "renderer/wireframe_renderer.h"
 #include "renderer/debug_renderer.h"
+#include "renderer/renderer_2d.h"
 
 namespace smile::graphic
 {
@@ -51,6 +52,7 @@ namespace smile::graphic
         ForwardRenderer::Initialize();
         WireframeRenderer::GetInstance().Initialize();
         DebugRenderer::GetInstance().Initialize();
+        Renderer2D::Initialize();
     }
 
     void RenderEngine::ShutDown()
@@ -60,6 +62,7 @@ namespace smile::graphic
         ForwardRenderer::ShutDown();
         WireframeRenderer::GetInstance().ShutDown();
         DebugRenderer::GetInstance().ShutDown();
+        Renderer2D::ShutDown();
 
         RenderCommand::ShutDown();
     }

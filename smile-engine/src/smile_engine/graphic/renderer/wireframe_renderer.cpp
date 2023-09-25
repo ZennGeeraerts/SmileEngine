@@ -69,7 +69,7 @@ namespace smile::graphic
 
             drawCommand.pShader->UploadMat4( "ViewProjection", m_RenderCollector.ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
-            // drawCommand.pShader->UploadMat4( "ViewInverse", s_pRenderCollector->ViewInverseMatrix );
+            drawCommand.pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ 1, 1, 1 } );
 
             RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }

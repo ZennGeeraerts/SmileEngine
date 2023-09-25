@@ -15,6 +15,7 @@
 #include "smile_engine/graphic/renderer/render_pass/forward_render_pass.h"
 #include "smile_engine/graphic/renderer/render_pass/wireframe_render_pass.h"
 #include "smile_engine/graphic/renderer/render_pass/debug_render_pass.h"
+#include "smile_engine/graphic/renderer/render_pass/render_pass_2d.h"
 
 #include "smile_engine/graphic/animation/animation_system.h"
 
@@ -67,6 +68,7 @@ namespace smile::scene
         graphic::RenderEngine::AddRenderPass( new graphic::ForwardRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::WireframeRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::DebugRenderPass{ m_ECSEngine } );
+        graphic::RenderEngine::AddRenderPass( new graphic::RenderPass2D{ m_ECSEngine } );
     }
 
     void Scene::OnRuntimeStart()
@@ -269,6 +271,7 @@ namespace smile::scene
         CopyComponentIfExists< BoxColliderComponent >( newEntity, entity );
         CopyComponentIfExists< SphereColliderComponent >( newEntity, entity );
         CopyComponentIfExists< CapsuleColliderComponent >( newEntity, entity );
+        CopyComponentIfExists< SpriteRendererComponent >( newEntity, entity );
     }
 
     Entity Scene::GetEntityByUUID( UUID uuid )
@@ -341,6 +344,11 @@ namespace smile::scene
 
     template <>
     void Scene::OnComponentAdded< CapsuleColliderComponent >( Entity entity, CapsuleColliderComponent &component )
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded< SpriteRendererComponent >( Entity entity, SpriteRendererComponent &component )
     {
     }
 }
