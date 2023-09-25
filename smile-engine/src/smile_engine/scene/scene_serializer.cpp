@@ -789,7 +789,7 @@ namespace smile::scene
                 auto spriteRendererComponent = entity["SpriteRendererComponent"];
                 if (spriteRendererComponent)
                 {
-                    auto src = deserializedEntity.AddComponent< SpriteRendererComponent >();
+                    auto &src = deserializedEntity.AddComponent< SpriteRendererComponent >();
 
                     src.Color = spriteRendererComponent["Color"].as< DirectX::XMFLOAT4 >();
                     auto texturePath = spriteRendererComponent["Texture"].as< std::string >();
