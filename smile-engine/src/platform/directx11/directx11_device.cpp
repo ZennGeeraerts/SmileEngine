@@ -115,7 +115,7 @@ namespace smile::graphic
                     pErrorBlob->Release();
                     pErrorBlob = nullptr;
 
-                    SM_LOG_ERROR( "%ls", ss.str() );
+                    SM_LOG_ERROR( "%ls", ss.str().c_str() );
                 }
                 else
                 {
