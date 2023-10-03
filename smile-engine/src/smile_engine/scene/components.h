@@ -275,7 +275,7 @@ namespace smile::scene
         }
 
         DirectX::XMFLOAT4 Color = { 1.f, 1.f, 1.f, 1.f };
-        Ref< graphic::Texture > pTexture = nullptr;
+        Ref< graphic::Texture2D > pTexture = nullptr;
     };
 
     template < typename... Component >

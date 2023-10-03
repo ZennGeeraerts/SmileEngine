@@ -13,6 +13,8 @@ namespace smile::graphic
     {
         Texture() = default;
         virtual ~Texture() = default;
+        Texture( const Texture & ) = delete;
+        Texture( Texture && ) = delete;
 
         virtual void *GetData() const = 0;
 

@@ -31,6 +31,8 @@ namespace smile::graphic
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
         s_ShaderLibrary.Load( "assets/shaders/PosColNorm.fx", bufferLayout );
         s_ShaderLibrary.Load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
+        s_ShaderLibrary.Load( "assets/shaders/PosColTex.fx",
+            { { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } } );
 
         GraphicsDevice *pDevice = GetDevice();
         {

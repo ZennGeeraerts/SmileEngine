@@ -25,6 +25,11 @@ namespace smile::graphic
             const DirectX::XMFLOAT4 &color );
 
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
+            const scene::SpriteRendererComponent &spriteRendererComponent );
+
+        static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color );
+        static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
+            const Ref< Texture2D > &pTexture,
             const DirectX::XMFLOAT4 &color );
     };
 }

@@ -41,7 +41,7 @@ namespace smile::graphic
                     const auto &[spriteRenderer, transform] =
                         m_ECSEngine.GetComponents< scene::SpriteRendererComponent, scene::TransformComponent >(
                             entity );
-                    Renderer2D::DrawQuad( transform.GetTransform(), spriteRenderer.Color );
+                    Renderer2D::DrawQuad( transform.GetTransform(), spriteRenderer );
                 }
             }
 
@@ -62,7 +62,7 @@ namespace smile::graphic
             {
                 const auto &[spriteRenderer, transform] =
                     m_ECSEngine.GetComponents< scene::SpriteRendererComponent, scene::TransformComponent >( entity );
-                Renderer2D::DrawQuad( transform.GetTransform(), spriteRenderer.Color );
+                Renderer2D::DrawQuad( transform.GetTransform(), spriteRenderer );
             }
         }
 

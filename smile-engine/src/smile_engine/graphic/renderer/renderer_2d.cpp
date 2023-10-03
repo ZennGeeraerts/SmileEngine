@@ -25,12 +25,31 @@ namespace smile::graphic
         s_pStorage = new Renderer2DStorage{};
 
         const Uint32 quadVerticesCount = 12;
-        float quadVertices[] = { -0.5f, -0.5f, 0.0f, -0.5f, 0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f };
+        float quadVertices[] = { -0.5f,
+            -0.5f,
+            0.0f,
+            -1,
+            -1,
+            /*1*/ -0.5f,
+            0.5f,
+            0.0f,
+            -1,
+            1,
+            /*2*/ 0.5f,
+            -0.5f,
+            0.0f,
+            1,
+            -1 /*3*/,
+            0.5f,
+            0.5f,
+            0.0f,
+            1,
+            1 /*4*/ };
 
         VertexBufferDescriptor vertexBufferDesc{};
         vertexBufferDesc.pVertices = quadVertices;
         vertexBufferDesc.Count = quadVerticesCount;
-        vertexBufferDesc.Stride = 12;
+        vertexBufferDesc.Stride = sizeof(float) * 5;
 
         s_pStorage->pQuadVertexBuffer = RenderEngine::GetDevice()->CreateVertexBuffer( vertexBufferDesc );
 
@@ -43,7 +62,7 @@ namespace smile::graphic
 
         s_pStorage->pQuadIndexBuffer = RenderEngine::GetDevice()->CreateIndexBuffer( indexBufferDesc );
 
-        s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosCol" );
+        s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosColTex" );
     }
 
     void Renderer2D::ShutDown()
@@ -88,6 +107,15 @@ namespace smile::graphic
         DrawQuad( worldTransform, color );
     }
 
+    void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
+        const scene::SpriteRendererComponent &spriteRendererComponent )
+    {
+        if ( spriteRendererComponent.pTexture )
+            DrawQuad( worldTransform, spriteRendererComponent.pTexture, spriteRendererComponent.Color );
+        else
+            DrawQuad( worldTransform, spriteRendererComponent.Color );
+    }
+
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color )
     {
         GraphicsContext *pContext = RenderEngine::GetContext();
@@ -101,6 +129,30 @@ namespace smile::graphic
         s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
         s_pStorage->pShader->UploadMat4( "World", worldTransform );
         s_pStorage->pShader->UploadFloat3( "color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
+        s_pStorage->pShader->UploadBool( "UseTexture", false );
+
+        RenderCommand::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
+
+        pContext->UnbindPrimitiveTopology();
+    }
+
+    void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
+        const Ref< Texture2D > &pTexture,
+        const DirectX::XMFLOAT4 &color )
+    {
+        GraphicsContext *pContext = RenderEngine::GetContext();
+
+        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+
+        pContext->BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
+        pContext->BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
+        pContext->BindShader( s_pStorage->pShader );
+
+        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
+        s_pStorage->pShader->UploadMat4( "World", worldTransform );
+        s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
+        s_pStorage->pShader->UploadBool( "UseTexture", true );
+        s_pStorage->pShader->UploadTexture2D( "Diffuse", pTexture );
 
         RenderCommand::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
 
