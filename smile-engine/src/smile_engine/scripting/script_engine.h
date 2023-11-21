@@ -8,6 +8,7 @@
 #include "smile_engine/scene/entity.h"
 
 #include <filesystem>
+#include <map>
 
 extern "C"
 {
@@ -16,10 +17,39 @@ extern "C"
     typedef struct _MonoMethod MonoMethod;
     typedef struct _MonoAssembly MonoAssembly;
     typedef struct _MonoImage MonoImage;
+    typedef struct _MonoClassField MonoClassField;
 }
 
 namespace smile::scripting
 {
+    enum class ScriptFieldType
+    {
+        None = 0,
+        Float,
+        Double,
+        Bool,
+        Char,
+        Byte,
+        Short,
+        Int,
+        Long,
+        UByte,
+        UShort,
+        UInt,
+        ULong,
+        Vector2,
+        Vector3,
+        Vector4,
+        Entity
+    };
+
+    struct ScriptField final
+    {
+        ScriptFieldType Type;
+        std::string Name;
+        MonoClassField *pClassField;
+    };
+
     class ScriptClass final
     {
       public:
@@ -30,10 +60,20 @@ namespace smile::scripting
         MonoMethod *GetMethod( const std::string &name, int parameterCount );
         MonoObject *InvokeMethod( MonoObject *pInstance, MonoMethod *pMethod, void **ppParams = nullptr );
 
+        const std::map< std::string, ScriptField > &GetFields() const
+        {
+            return m_Fields;
+        }
+
       private:
         std::string m_ClassNamespace;
         std::string m_ClassName;
+
+        std::map< std::string, ScriptField > m_Fields;
+
         MonoClass *m_pMonoClass = nullptr;
+
+        friend class ScriptEngine;
     };
 
     class ScriptInstance final
@@ -44,6 +84,31 @@ namespace smile::scripting
         void InvokeOnCreate();
         void InvokeOnUpdate( float deltaTime );
 
+        Ref< ScriptClass > GetScriptClass() const
+        {
+            return m_pScriptClass;
+        }
+
+        template < typename Type >
+        Type GetFieldValue( const std::string &name )
+        {
+            bool hasSucceeded = GetFieldValueInternal( name, s_FieldValueBuffer );
+            if ( !hasSucceeded )
+                return Type{};
+
+            return *reinterpret_cast< Type * >( s_FieldValueBuffer );
+        }
+
+        template < typename Type >
+        void SetFieldValue( const std::string &name, const Type &value )
+        {
+            SetFieldValueInternal( name, &value );
+        }
+
+      private:
+        bool GetFieldValueInternal( const std::string &name, void *pBuffer );
+        bool SetFieldValueInternal( const std::string &name, const void *pValue );
+
       private:
         Ref< ScriptClass > m_pScriptClass;
 
@@ -51,6 +116,8 @@ namespace smile::scripting
         MonoMethod *m_pConstructor = nullptr;
         MonoMethod *m_pOnCreateMethod = nullptr;
         MonoMethod *m_pOnUpdateMethod = nullptr;
+
+        inline static Byte s_FieldValueBuffer[8];
     };
 
     class ScriptEngine final
@@ -70,6 +137,8 @@ namespace smile::scripting
         static void OnUpdateEntity( scene::Entity entity, Timestep deltaTime );
 
         static scene::Scene *GetSceneContext();
+        static Ref< ScriptInstance > GetEntityScriptInstance( UUID entityID );
+
         static std::unordered_map< std::string, Ref< ScriptClass > > GetEntityClasses();
 
         static MonoImage *GetCoreAssemblyImage();

@@ -11,9 +11,29 @@
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/tabledefs.h>
 
 namespace smile::scripting
 {
+    static std::unordered_map< std::string, ScriptFieldType > s_ScriptFieldTypeMap{
+        { "System.Single", ScriptFieldType::Float },
+        { "System.Double", ScriptFieldType::Double },
+        { "System.Boolean", ScriptFieldType::Bool },
+        { "System.Char", ScriptFieldType::Char },
+        { "System.Int16", ScriptFieldType::Short },
+        { "System.Int32", ScriptFieldType::Int },
+        { "System.Int64", ScriptFieldType::Long },
+        { "System.Byte", ScriptFieldType::Byte },
+        { "System.UInt16", ScriptFieldType::UShort },
+        { "System.UInt32", ScriptFieldType::UInt },
+        { "System.UInt64", ScriptFieldType::ULong },
+
+        { "Smile.Vector2", ScriptFieldType::Vector2 },
+        { "Smile.Vector3", ScriptFieldType::Vector3 },
+        { "Smile.Vector4", ScriptFieldType::Vector4 },
+
+        { "Smile.Entity", ScriptFieldType::Entity } };
+
     namespace utils
     {
         // TODO: move to FileSystem class
@@ -88,6 +108,63 @@ namespace smile::scripting
 
                 SM_LOG_TRACE( "%s.%s\n", nameSpace, name );
             }
+        }
+
+        ScriptFieldType MonoTypeToScriptFieldType( MonoType *pMonoType )
+        {
+            std::string typeName = mono_type_get_name( pMonoType );
+
+            auto it = s_ScriptFieldTypeMap.find( typeName );
+            if ( it == s_ScriptFieldTypeMap.end() )
+            {
+                SM_LOG_ERROR( "Unknown type: %s", typeName.c_str() );
+                return ScriptFieldType::None;
+            }
+
+            return it->second;
+        }
+
+        const char *ScriptFieldTypeToString( ScriptFieldType type )
+        {
+            switch ( type )
+            {
+                case ScriptFieldType::Float:
+                    return "Float";
+                case ScriptFieldType::Double:
+                    return "Double";
+                case ScriptFieldType::Bool:
+                    return "Bool";
+                case ScriptFieldType::Char:
+                    return "Char";
+                case ScriptFieldType::Byte:
+                    return "Byte";
+                case ScriptFieldType::Short:
+                    return "Short";
+                case ScriptFieldType::Int:
+                    return "Int";
+                case ScriptFieldType::Long:
+                    return "Long";
+
+                case ScriptFieldType::UByte:
+                    return "UByte";
+                case ScriptFieldType::UShort:
+                    return "UShort";
+                case ScriptFieldType::UInt:
+                    return "UInt";
+                case ScriptFieldType::ULong:
+                    return "ULong";
+
+                case ScriptFieldType::Vector2:
+                    return "Vector2";
+                case ScriptFieldType::Vector3:
+                    return "Vector3";
+                case ScriptFieldType::Vector4:
+                    return "Vector4";
+
+                case ScriptFieldType::Entity:
+                    return "Entity";
+            }
+            return "<Invalid>";
         }
     }
 
@@ -207,32 +284,52 @@ namespace smile::scripting
 
             const char *nameSpace =
                 mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE] );
-            const char *name = mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAME] );
+            const char *className = mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAME] );
             std::string fullName;
             if ( strlen( nameSpace ) != 0 )
             {
                 fullName = nameSpace;
                 fullName.append( "." );
-                fullName.append( name );
+                fullName.append( className );
             }
             else
             {
-                fullName = name;
+                fullName = className;
             }
 
-            MonoClass *pMonoClass = mono_class_from_name( s_pData->pAppAssemblyImage, nameSpace, name );
+            MonoClass *pMonoClass = mono_class_from_name( s_pData->pAppAssemblyImage, nameSpace, className );
 
             if ( pMonoClass == pEntityClass )
                 continue;
 
             bool isEntity = mono_class_is_subclass_of( pMonoClass, pEntityClass, false );
-            if ( isEntity )
-            {
-                s_pData->EntityClasses[fullName] = CreateRef< ScriptClass >( nameSpace, name );
-            }
+            if ( !isEntity )
+                continue;
 
-            SM_LOG_TRACE( "%s.%s\n", nameSpace, name );
+            Ref< ScriptClass > pScriptClass = CreateRef< ScriptClass >( nameSpace, className );
+            s_pData->EntityClasses[fullName] = pScriptClass;
+
+            int fieldCount = mono_class_num_fields( pMonoClass );
+            SM_LOG_WARNING( "%s has %d fields:", className, fieldCount );
+            void *pIterator = nullptr;
+            while ( MonoClassField *pField = mono_class_get_fields( pMonoClass, &pIterator ) )
+            {
+                const char *fieldName = mono_field_get_name( pField );
+                const Uint32 flags = mono_field_get_flags( pField );
+
+                if ( flags & FIELD_ATTRIBUTE_PUBLIC )
+                {
+                    MonoType *pMonoType = mono_field_get_type( pField );
+                    ScriptFieldType fieldType = utils::MonoTypeToScriptFieldType( pMonoType );
+
+                    SM_LOG_WARNING( "%s (%s)", fieldName, utils::ScriptFieldTypeToString( fieldType ) );
+
+                    pScriptClass->m_Fields[fieldName] = { fieldType, fieldName, pField };
+                }
+            }
         }
+
+        auto &entityClasses = s_pData->EntityClasses;
     }
 
     MonoImage *ScriptEngine::GetCoreAssemblyImage()
@@ -250,6 +347,15 @@ namespace smile::scripting
     scene::Scene *ScriptEngine::GetSceneContext()
     {
         return s_pData->pSceneContext;
+    }
+
+    Ref< ScriptInstance > ScriptEngine::GetEntityScriptInstance( UUID entityID )
+    {
+        auto it = s_pData->EntityInstances.find( entityID );
+        if ( it == s_pData->EntityInstances.end() )
+            return nullptr;
+
+        return it->second;
     }
 
     std::unordered_map< std::string, Ref< ScriptClass > > ScriptEngine::GetEntityClasses()
@@ -344,5 +450,29 @@ namespace smile::scripting
             void *pParam = &deltaTime;
             m_pScriptClass->InvokeMethod( m_pInstance, m_pOnUpdateMethod, &pParam );
         }
+    }
+
+    bool ScriptInstance::GetFieldValueInternal( const std::string &name, void *pBuffer )
+    {
+        const auto &fields = m_pScriptClass->GetFields();
+        auto it = fields.find( name );
+        if ( it == fields.end() )
+            return false;
+
+        const ScriptField &field = it->second;
+        mono_field_get_value( m_pInstance, field.pClassField, pBuffer );
+        return true;
+    }
+
+    bool ScriptInstance::SetFieldValueInternal( const std::string &name, const void *pValue )
+    {
+        const auto &fields = m_pScriptClass->GetFields();
+        auto it = fields.find( name );
+        if ( it == fields.end() )
+            return false;
+
+        const ScriptField &field = it->second;
+        mono_field_set_value( m_pInstance, field.pClassField, const_cast< void * >( pValue ) );
+        return true;
     }
 }

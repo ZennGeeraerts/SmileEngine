@@ -358,18 +358,40 @@ namespace smile::scene
 
         DrawComponent< ScriptComponent >( "Script",
             entity,
-            []( auto &scriptComponent )
+            [entity]( auto &scriptComponent )
             {
                 bool scriptClassExists = scripting::ScriptEngine::EntityClassExists( scriptComponent.ClassName );
+
+                static char buffer[64];
+                strcpy_s( buffer, scriptComponent.ClassName.c_str() );
 
                 if ( !scriptClassExists )
                     ImGui::PushStyleColor( ImGuiCol_Text, ImVec4{ 0.9f, 0.2f, 0.3f, 1.0f } );
 
-                static char buffer[64];
-                strcpy_s( buffer, scriptComponent.ClassName.c_str() );
                 if ( ImGui::InputText( "Class", buffer, sizeof( buffer ) ) )
                 {
                     scriptComponent.ClassName = buffer;
+                }
+
+                // Fields
+                Ref< scripting::ScriptInstance > pScriptInstance =
+                    scripting::ScriptEngine::GetEntityScriptInstance( entity.GetUUID() );
+
+                if ( pScriptInstance )
+                {
+                    const auto &fields = pScriptInstance->GetScriptClass()->GetFields();
+
+                    for ( const auto &[name, field] : fields )
+                    {
+                        if ( field.Type == scripting::ScriptFieldType::Float )
+                        {
+                            float data = pScriptInstance->GetFieldValue< float >( name );
+                            if ( ImGui::DragFloat( name.c_str(), &data ) )
+                            {
+                                pScriptInstance->SetFieldValue< float >( name, data );
+                            }
+                        }
+                    }
                 }
 
                 if ( !scriptClassExists )
@@ -510,7 +532,7 @@ namespace smile::scene
 
         DrawComponent< AnimatorComponent >( "Animator",
             entity,
-            []( auto &animatorComponent ) 
+            []( auto &animatorComponent )
             {
                 ImGui::Button( "Animations", { 100.f, 0.0f } );
                 if ( ImGui::BeginDragDropTarget() )
@@ -647,7 +669,8 @@ namespace smile::scene
 
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path texturePath = std::filesystem::path{ path };
-                        spriteRendererComponent.pTexture = graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() );
+                        spriteRendererComponent.pTexture =
+                            graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() );
                     }
 
                     ImGui::EndDragDropTarget();

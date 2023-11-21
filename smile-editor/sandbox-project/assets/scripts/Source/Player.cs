@@ -12,6 +12,25 @@ namespace Sandbox
     {
         private TransformComponent transform;
         private RigidbodyComponent rigidbody;
+
+        public bool v0;
+        public char v1;
+        public short v2;
+        public int v3;
+        public long v4;
+
+        public byte v5;
+        public ushort v6;
+        public uint v7;
+        public ulong v8;
+
+        public double v9;
+        public Vector3 V10;
+
+        public float speed;
+        public float time;
+        public Entity other;
+
         void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
@@ -21,11 +40,13 @@ namespace Sandbox
             Console.WriteLine("{0}", hasComponent);
 
             rigidbody = GetComponent<RigidbodyComponent>();
+            speed = 0;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            float speed = 1.0f;
+            time += deltaTime;
+            //float speed = 1.0f;
             Vector3 velocity = Vector3.Zero;
 
             if (Input.IsKeyPressed(KeyCode.W))
@@ -45,9 +66,9 @@ namespace Sandbox
 
             velocity *= speed;
 
-            Vector3 _translation = transform.Translation;
-            _translation += velocity * deltaTime;
-            transform.Translation = _translation;
+            Vector3 translation = transform.Translation;
+            translation += velocity * deltaTime;
+            transform.Translation = translation;
         }
     }
 }
