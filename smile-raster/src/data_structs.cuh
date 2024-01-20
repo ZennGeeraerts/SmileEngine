@@ -7,6 +7,7 @@
 #include <DirectXMath.h>
 #include <glm.hpp>
 #include <unordered_map>
+#include <string>
 
 namespace smile
 {

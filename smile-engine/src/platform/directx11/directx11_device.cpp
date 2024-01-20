@@ -353,12 +353,12 @@ namespace smile::graphic
                     return false;
                 }
             }
-            /*else if ( !_strcmpi( fileExtension.c_str(), "tga" ) )
+            else if ( !_strcmpi( fileExtension.c_str(), "tga" ) )
             {
                 result = DirectX::LoadFromTGAFile( filePathWide.c_str(), &info, image );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from TGA file failed: %ls",
+                    SM_LOG_ERROR( "DirectX11Device::LoadTextureCube > Loading from TGA file failed: %ls",
                         GetDirectX11ErrorMessage( result ) );
                     return false;
                 }
@@ -368,11 +368,11 @@ namespace smile::graphic
                 result = DirectX::LoadFromWICFile( filePathWide.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from WIC file failed: %ls",
+                    SM_LOG_ERROR( "DirectX11Device::LoadTextureCube > Loading from WIC file failed: %ls",
                         GetDirectX11ErrorMessage( result ) );
                     return false;
                 }
-            }*/
+            }
 
             result = DirectX::CreateTexture(
                 pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), &pTexture->pTexture );

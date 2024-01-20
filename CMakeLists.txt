@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION "3.20.0")
+cmake_minimum_required(VERSION "3.25.0")
 
 project(smile-engine)
 set(CMAKE_CXX_STANDARD 17)
@@ -21,6 +21,9 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory(smile-engine/thirdparty/imgui)
+
+message("TEST")
+message(${CMAKE_BUILD_TYPE})
 
 add_subdirectory(smile-raster)
 add_subdirectory(smile-script-core)
