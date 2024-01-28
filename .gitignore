@@ -8,3 +8,6 @@
 /smile-editor/sandbox-project/assets/scripts/out
 /smile-editor/sandbox-project/assets/scripts/bin
 /smile-editor/sandbox-project/assets/scripts/.vs
+
+/conan/Debug
+/conan/Release

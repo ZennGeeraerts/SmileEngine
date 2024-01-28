@@ -1,5 +1,7 @@
 include(${CMAKE_SOURCE_DIR}/scripts/CMakeUtils.cmake)
 
+find_package(box2d REQUIRED)
+
 set(INCLUDE_DIRS
     src
     thirdparty/imgui
@@ -53,7 +55,9 @@ file(GLOB_RECURSE SOURCE_FILES
 
 add_library(smile-engine STATIC ${SOURCE_FILES})
 target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})
-target_link_libraries(smile-engine PUBLIC ${LIB_LINKS} ${DX11_LIBS} ${WIN32_LIBS} 
+target_link_libraries(smile-engine
+    PRIVATE box2d::box2d
+    PUBLIC ${LIB_LINKS} ${DX11_LIBS} ${WIN32_LIBS} 
     optimized ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/dx11effects/x64/dx11effects.lib 
     optimized ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/yaml-cpp/x64/yaml-cpp.lib
     debug ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/dx11effects/x64/dx11effects_d.lib 

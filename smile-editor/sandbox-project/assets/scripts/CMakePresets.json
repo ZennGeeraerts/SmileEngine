@@ -9,7 +9,7 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "architecture": {
         "value": "x64",
-        "strategy": "external"
+        "strategy": "set"
       },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
@@ -25,13 +25,25 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "architecture": {
         "value": "x64",
-        "strategy": "external"
+        "strategy": "set"
       },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
       },
       "vendor": { "microsoft.com/VisualStudioSettings/CMake/1.0": { "hostOS": [ "Windows" ] } }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Release",
+      "configurePreset": "x64-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "Debug",
+      "configurePreset": "x64-Debug",
+      "configuration": "Debug"
     }
   ]
 }

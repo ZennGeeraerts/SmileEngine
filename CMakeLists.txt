@@ -22,9 +22,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory(smile-engine/thirdparty/imgui)
 
-message("TEST")
-message(${CMAKE_BUILD_TYPE})
-
 add_subdirectory(smile-raster)
 add_subdirectory(smile-script-core)
 add_subdirectory(smile-engine)
