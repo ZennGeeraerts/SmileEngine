@@ -1,6 +1,6 @@
 project("smile-raster" LANGUAGES CUDA CXX)
 
-find_package(CUDAToolkit)
+find_package(CUDAToolkit 12.3 REQUIRED)
 
 file(GLOB_RECURSE SOURCE_FILES 
 	src/*.cu

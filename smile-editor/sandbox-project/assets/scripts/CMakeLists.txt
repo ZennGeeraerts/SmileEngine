@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION "3.20.0")
+cmake_minimum_required(VERSION "3.25.0")
 
 file(GLOB_RECURSE ENGINE_SOURCE_FILES ../../../../smile-script-core/Source/*.cs)
 project("smile-script-core" LANGUAGES CSharp)
