@@ -33,8 +33,8 @@ namespace smile::scene
     {
         m_ProjectionType = ProjectionType::Orthographic;
         m_Size = size;
-        m_PerspectiveNearPlane = nearPlane;
-        m_PerspectiveFarPlane = farPlane;
+        m_OrthographicNearPlane = nearPlane;
+        m_OrthographicFarPlane = farPlane;
 
         RecalculateProjectionMatrix();
     }
