@@ -63,9 +63,25 @@ namespace smile::scripting
         }
 
         pPhysicsActor->AddForce( *pForce, autoAwake );
-    } 
+    }
 
-    static bool Input_IsKeyPressed(input::KeyCode keyCode)
+    static void CharacterControllerComponent_Move( UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
+    {
+        scene::Scene *pScene = ScriptEngine::GetSceneContext();
+        scene::Entity entity = pScene->GetEntityByUUID( entityID );
+
+        Ref< physics::CharacterController > pCharacterController =
+            physics::PhysicsEngine::GetCharacterControllerOfEntity( entity );
+        if ( !pCharacterController )
+        {
+            SM_LOG_ERROR( "ScriptGlue::CharacterControllerComponent_Move > Character controller not found" );
+            return;
+        }
+
+        pCharacterController->Move( *pDisplacement, minDist );
+    }
+
+    static bool Input_IsKeyPressed( input::KeyCode keyCode )
     {
         return input::Input::IsKeyPressed( keyCode );
     }
@@ -114,6 +130,8 @@ namespace smile::scripting
         SM_ADD_INTERNAL_CALL( TransformComponent_SetTranslation );
 
         SM_ADD_INTERNAL_CALL( RigidbodyComponent_AddForce );
+
+        SM_ADD_INTERNAL_CALL( CharacterControllerComponent_Move );
 
         SM_ADD_INTERNAL_CALL( Input_IsKeyPressed );
     }

@@ -239,6 +239,16 @@ namespace smile::physics
         return nullptr;
     }
 
+    Ref< CharacterController > PhysicsEngine::GetCharacterControllerOfEntity( scene::Entity entity )
+    {
+        auto it = s_CharacterControllerMap.find( entity.GetUUID() );
+        if ( it != s_CharacterControllerMap.end() )
+            return ( *it ).second;
+
+        SM_LOG_ERROR( "PhysicsEngine::GetCharacterControllerOfEntity > Enity doesn't have a character controller." );
+        return nullptr;
+    }
+
     void PhysicsEngine::Simulate( Timestep deltaTime )
     {
         if ( Advance( deltaTime ) )

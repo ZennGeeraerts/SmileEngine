@@ -11,7 +11,8 @@ namespace Sandbox
     public class Player : Entity
     {
         private TransformComponent transform;
-        private RigidbodyComponent rigidbody;
+        //private RigidbodyComponent rigidbody;
+        private CharacterControllerComponent characterController;
 
         public bool v0;
         public char v1;
@@ -39,7 +40,10 @@ namespace Sandbox
             bool hasComponent = HasComponent<TransformComponent>();
             Console.WriteLine("{0}", hasComponent);
 
-            rigidbody = GetComponent<RigidbodyComponent>();
+            //rigidbody = GetComponent<RigidbodyComponent>();
+            characterController = GetComponent<CharacterControllerComponent>();
+            hasComponent = HasComponent<CharacterControllerComponent>();
+            Console.WriteLine("{0}", hasComponent);
             speed = 0;
         }
 
@@ -59,16 +63,18 @@ namespace Sandbox
             else if (Input.IsKeyPressed(KeyCode.D))
                 velocity.X = 1.0f;
 
-            if (Input.IsKeyPressed(KeyCode.Space))
-            {
-                rigidbody.AddForce(new Vector3(0.0f, 10.0f, 0.0f));
-            }
+            //if (Input.IsKeyPressed(KeyCode.Space))
+            //{
+            //    rigidbody.AddForce(new Vector3(0.0f, 10.0f, 0.0f));
+            //}
 
             velocity *= speed;
 
-            Vector3 translation = transform.Translation;
-            translation += velocity * deltaTime;
-            transform.Translation = translation;
+            characterController.Move(velocity * deltaTime);
+
+            //Vector3 translation = transform.Translation;
+            //translation += velocity * deltaTime;
+            //transform.Translation = translation;
         }
     }
 }

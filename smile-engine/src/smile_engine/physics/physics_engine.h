@@ -68,6 +68,7 @@ namespace smile::physics
         static bool IsPhysicsActor( scene::Entity entity );
 
         static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
+        static Ref< CharacterController > GetCharacterControllerOfEntity( scene::Entity entity );
 
         static void Simulate( Timestep deltaTime );
 
