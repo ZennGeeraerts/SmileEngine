@@ -108,6 +108,16 @@ namespace smile::graphic
         m_RenderCollector.DrawList.emplace_back( drawCommand );
     }
 
+    void WireframeRenderer::Submit( const scene::SphereColliderComponent &sphereColliderComponent,
+        const DirectX::XMFLOAT4X4& worldTransform)
+    {
+        DrawCommand drawCommand{ sphereColliderComponent.pWireframeMesh->pVertexBuffer,
+            sphereColliderComponent.pWireframeMesh->pIndexBuffer,
+            RenderEngine::GetShaderLibrary().Get( "PosCol" ),
+            worldTransform };
+        m_RenderCollector.DrawList.emplace_back( drawCommand );
+    }
+
     void WireframeRenderer::ClearDrawList()
     {
         m_RenderCollector.DrawList.clear();

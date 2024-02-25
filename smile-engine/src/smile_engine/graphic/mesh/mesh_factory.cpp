@@ -6,6 +6,7 @@
 #include "mesh_factory.h"
 
 #include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/math/math.h"
 
 namespace smile::graphic
 {
@@ -313,6 +314,118 @@ namespace smile::graphic
 
         pMeshFilter->m_VertexCount = static_cast< Uint32 >( s_CubePositions.size() );
         pMeshFilter->m_Indices = s_CubeIndices;
+
+        return CreateMesh( pMeshFilter, bufferLayout );
+    }
+
+    Ref< Mesh > MeshFactory::CreateSphere( const BufferLayout &bufferLayout, const float radius, const Uint32 steps )
+    {
+        std::vector< DirectX::XMFLOAT3 > positions{};
+        std::vector< DirectX::XMFLOAT3 > normals{};
+        std::vector< Uint32 > indices{};
+
+        const auto vertCount = steps * ( steps - 1 ) + 2;
+
+        // Vertices
+        const float deltaTheta = math::g_PI / steps;
+        const float deltaPhi = math::g_PI2 / steps;
+        float theta = 0;
+        float phi = 0;
+
+        // TOP
+        positions.push_back( { 0, radius, 0 } );
+        normals.push_back( { 0, 1, 0 } );
+
+        // SPHERE
+        for ( Uint32 i{}; i < steps - 1; ++i )
+        {
+            theta += deltaTheta;
+            for ( Uint32 j{}; j < steps; ++j )
+            {
+                phi += deltaPhi;
+                DirectX::XMFLOAT3 pos{};
+                pos.x = radius * sin( theta ) * cos( phi );
+                pos.z = radius * sin( theta ) * sin( phi );
+                pos.y = radius * cos( theta );
+
+                const DirectX::XMVECTOR vPos = XMLoadFloat3( &pos );
+                DirectX::XMFLOAT3 normal;
+                XMStoreFloat3( &normal, DirectX::XMVector3Normalize( vPos ) );
+
+                positions.push_back( pos );
+                normals.push_back( normal );
+            }
+        }
+
+        // BOTTOM
+        positions.push_back( { 0, -radius, 0 } );
+        normals.push_back( { 0, -1, 0 } );
+
+        // Indices
+        // TOP
+        for ( Uint32 i{}; i < steps + 1; ++i )
+        {
+            indices.push_back( i );
+
+            auto v1 = i + 1;
+            if ( i % steps == 0 )
+                v1 -= steps;
+
+            indices.push_back( v1 );
+            indices.push_back( 0 );
+        }
+
+        // MIDDLE
+        for ( Uint32 i{ 1 }; i < vertCount - 1 - steps; ++i )
+        {
+            const auto v0 = i;
+            auto v1 = i + 1;
+
+            if ( i % steps == 0 )
+                v1 -= steps;
+
+            const auto v2 = v1 + steps;
+            const auto v3 = v0 + steps;
+
+            indices.push_back( v0 );
+            indices.push_back( v1 );
+            indices.push_back( v2 );
+            indices.push_back( v2 );
+            indices.push_back( v3 );
+            indices.push_back( v0 );
+        }
+
+        // BOTTOM
+        for ( Uint32 i{ vertCount - steps - 1 }; i < vertCount - 1; ++i )
+        {
+            indices.push_back( i );;
+
+            auto v1 = i + 1;
+            if ( i % steps == 0 )
+                v1 -= steps;
+
+            indices.push_back( v1 );
+            indices.push_back( vertCount - 1 );
+        }
+
+        Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
+
+        for ( const auto &element : bufferLayout )
+        {
+            if ( element.Name == "POSITION" )
+            {
+                pMeshFilter->AddSemantic( Semantic::Positon );
+                pMeshFilter->m_Positions = positions;
+            }
+            else if ( element.Name == "NORMAL" )
+            {
+                pMeshFilter->AddSemantic( Semantic::Normal );
+                pMeshFilter->m_Normals = normals;
+            }
+        }
+
+        pMeshFilter->m_VertexCount = vertCount;
+        pMeshFilter->m_Indices = indices;
 
         return CreateMesh( pMeshFilter, bufferLayout );
     }

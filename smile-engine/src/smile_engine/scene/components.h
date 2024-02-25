@@ -244,7 +244,13 @@ namespace smile::scene
 
     struct SphereColliderComponent final
     {
-        SphereColliderComponent() = default;
+        SphereColliderComponent()
+        {
+            graphic::BufferLayout bufferLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
+            // TODO: Update wireframe mesh when Radius gets updated
+            pWireframeMesh = graphic::MeshFactory::CreateSphere( bufferLayout, Radius, 10 );
+        }
+
         SphereColliderComponent( const SphereColliderComponent & ) = default;
 
         float Radius = 0.5f;
@@ -252,6 +258,7 @@ namespace smile::scene
         bool ShowColliderBounds = true;
 
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< graphic::Mesh > pWireframeMesh = nullptr;
     };
 
     struct CapsuleColliderComponent final

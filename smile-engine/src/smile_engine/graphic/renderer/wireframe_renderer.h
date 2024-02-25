@@ -28,6 +28,8 @@ namespace smile::graphic
 
         void Submit( const scene::BoxColliderComponent &boxColliderComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
+        void Submit( const scene::SphereColliderComponent &sphereColliderComponent,
+            const DirectX::XMFLOAT4X4 &worldTransform );
 
       private:
         void ClearDrawList();

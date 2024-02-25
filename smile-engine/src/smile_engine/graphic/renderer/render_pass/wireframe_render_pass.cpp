@@ -46,6 +46,17 @@ namespace smile::graphic
                 }
             }
 
+            {
+                auto group =
+                    m_ECSEngine.GetGroup< scene::SphereColliderComponent >( ecs::g_Get< scene::TransformComponent > );
+                for ( auto entity : group )
+                {
+                    const auto &[sphereCollider, transform] =
+                        m_ECSEngine.GetComponents< scene::SphereColliderComponent, scene::TransformComponent >( entity );
+                    wireframeRenderer.Submit( sphereCollider, transform.GetTransform() );
+                }
+            }
+
             wireframeRenderer.OnRender();
 
             wireframeRenderer.EndScene();
@@ -57,6 +68,7 @@ namespace smile::graphic
         WireframeRenderer &wireframeRenderer = WireframeRenderer::GetInstance();
 
         wireframeRenderer.BeginScene( editorCamera );
+
         {
             auto group = m_ECSEngine.GetGroup< scene::BoxColliderComponent >( ecs::g_Get< scene::TransformComponent > );
             for ( auto entity : group )
@@ -64,6 +76,17 @@ namespace smile::graphic
                 const auto &[boxCollider, transform] =
                     m_ECSEngine.GetComponents< scene::BoxColliderComponent, scene::TransformComponent >( entity );
                 wireframeRenderer.Submit( boxCollider, transform.GetTransform() );
+            }
+        }
+
+        {
+            auto group =
+                m_ECSEngine.GetGroup< scene::SphereColliderComponent >( ecs::g_Get< scene::TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[sphereCollider, transform] =
+                    m_ECSEngine.GetComponents< scene::SphereColliderComponent, scene::TransformComponent >( entity );
+                wireframeRenderer.Submit( sphereCollider, transform.GetTransform() );
             }
         }
 
