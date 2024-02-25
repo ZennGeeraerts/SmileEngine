@@ -12,6 +12,11 @@ namespace smile::physics::utils
         return *( physx::PxVec3 * )( &vector );
     }
 
+    physx::PxExtendedVec3 ConvertToPhysXExtendedVector( const DirectX::XMFLOAT3 &vector )
+    {
+        return physx::PxExtendedVec3{ vector.x, vector.y, vector.z };
+    }
+
     physx::PxQuat ConvertToPhysXQuat( const DirectX::XMFLOAT4 &quat )
     {
         return *( physx::PxQuat * )( &quat );
@@ -37,6 +42,13 @@ namespace smile::physics::utils
     DirectX::XMFLOAT3 ConvertToDirectXVector( const physx::PxVec3 &vector )
     {
         return *( DirectX::XMFLOAT3 * )( &vector );
+    }
+
+    DirectX::XMFLOAT3 ConvertToDirectXVector( const physx::PxExtendedVec3 &extendedVec )
+    {
+        return DirectX::XMFLOAT3{ static_cast< float >( extendedVec.x ),
+            static_cast< float >( extendedVec.y ),
+            static_cast< float >( extendedVec.z ) };
     }
 
     DirectX::XMFLOAT4 ConvertToDirectXQuat( const physx::PxQuat &quat )

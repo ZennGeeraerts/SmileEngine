@@ -64,10 +64,8 @@ namespace smile::physics
     PhysicsActor::PhysicsActor( scene::Entity entity ) : m_Entity{ entity }
     {
         auto &rigidbodyComponent = entity.GetComponent< scene::RigidbodyComponent >();
-        if ( rigidbodyComponent.pPhysicsMaterial )
-            m_pPhysicsMaterial = rigidbodyComponent.pPhysicsMaterial;
-        else
-            m_pPhysicsMaterial = PhysicsEngine::GetDefaultPhysicsMaterial();
+        if ( !rigidbodyComponent.pPhysicsMaterial )
+            rigidbodyComponent.pPhysicsMaterial = PhysicsEngine::GetDefaultPhysicsMaterial();
 
         physx::PxPhysics *pPhysics = PhysicsEngine::GetPhysics();
         physx::PxTransform pxTransform = utils::ConvertToPhysXTransform( entity.GetTransform() );
@@ -122,8 +120,9 @@ namespace smile::physics
                 break;
         }
 
-        m_pPxMaterial = pPhysics->createMaterial(
-            m_pPhysicsMaterial->StaticFriction, m_pPhysicsMaterial->DynamicFriction, m_pPhysicsMaterial->Restitution );
+        m_pPxMaterial = pPhysics->createMaterial( rigidbodyComponent.pPhysicsMaterial->StaticFriction,
+            rigidbodyComponent.pPhysicsMaterial->DynamicFriction,
+            rigidbodyComponent.pPhysicsMaterial->Restitution );
 
         auto &transformComponent = entity.GetComponent< scene::TransformComponent >();
         if ( entity.HasComponent< scene::BoxColliderComponent >() )
@@ -184,7 +183,8 @@ namespace smile::physics
 
         physx::PxBoxGeometry boxGeometry =
             physx::PxBoxGeometry( colliderSize.x / 2.0f, colliderSize.y / 2.0f, colliderSize.z / 2.0f );
-        physx::PxShape *pShape = physx::PxRigidActorExt::createExclusiveShape( *m_pRigidActor, boxGeometry, *m_pPxMaterial );
+        physx::PxShape *pShape =
+            physx::PxRigidActorExt::createExclusiveShape( *m_pRigidActor, boxGeometry, *m_pPxMaterial );
 
         pShape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.IsTrigger );
         pShape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.IsTrigger );
@@ -256,7 +256,7 @@ namespace smile::physics
     {
     }
 
-    void PhysicsActor::Translate(const DirectX::XMFLOAT3& translation)
+    void PhysicsActor::Translate( const DirectX::XMFLOAT3 &translation )
     {
         if ( !m_pRigidActor || !IsDynamic() )
             return;
@@ -279,7 +279,7 @@ namespace smile::physics
         physx::PxTransform pxTransform = m_pRigidActor->getGlobalPose();
         pxTransform.p = utils::ConvertToPhysXVector( GetPosition() );
         pxTransform.q = ( physx::PxQuat{ rotation.x, { 1, 0, 0 } } * physx::PxQuat{ rotation.y, { 0, 1, 0 } } *
-                           physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
+                          physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
 
         if ( !IsKinematic() )
             m_pRigidActor->setGlobalPose( pxTransform );

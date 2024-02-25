@@ -140,11 +140,12 @@ namespace smile::imgui
         io.DisplaySize =
             ImVec2{ static_cast< float >( window.GetWidth() ), static_cast< float >( window.GetHeight() ) };
 
+        ImGui::Render();
+
         graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
         switch ( api )
         {
             case graphic::RendererAPI::API::DirectX11:
-                ImGui::Render();
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
 

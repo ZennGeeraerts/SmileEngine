@@ -5,11 +5,13 @@
 #pragma once
 
 #include "physics_actor.h"
+#include "character_controller.h"
 
 namespace physx
 {
     class PxPhysics;
     class PxScene;
+    class PxControllerManager;
     class PxAllocatorCallback;
 }
 
@@ -61,6 +63,7 @@ namespace smile::physics
         static void DestroyScene();
 
         static Ref< PhysicsActor > CreateActor( scene::Entity entity );
+        static Ref< CharacterController > CreateCharacterController( scene::Entity entity );
         static void RemoveActor( scene::Entity entity );
         static bool IsPhysicsActor( scene::Entity entity );
 
@@ -70,6 +73,7 @@ namespace smile::physics
 
         static physx::PxPhysics *GetPhysics();
         static physx::PxScene *GetScene();
+        static physx::PxControllerManager *GetControllerManager();
         static physx::PxAllocatorCallback &GetAllocatorCallback();
         static const PhysicsSettings &GetPhysicsSettings()
         {
@@ -86,6 +90,7 @@ namespace smile::physics
 
       private:
         static std::unordered_map< UUID, Ref< PhysicsActor > > s_ActorMap;
+        static std::unordered_map< UUID, Ref< CharacterController > > s_CharacterControllerMap;
         static PhysicsSettings s_Settings;
         static PhysicsEngineData s_PhysicsEngineData;
     };

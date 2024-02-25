@@ -73,18 +73,7 @@ namespace smile::scene
 
     void Scene::OnRuntimeStart()
     {
-        // Physics
-        {
-            physics::PhysicsEngine::CreateScene();
-
-            // Create physics actors
-            auto view = m_ECSEngine.GetView< RigidbodyComponent >();
-            for ( auto e : view )
-            {
-                Entity entity = { e, this };
-                physics::PhysicsEngine::CreateActor( entity );
-            }
-        }
+        OnSimulationStart();
 
         // Scripting
         {
@@ -117,6 +106,15 @@ namespace smile::scene
             {
                 Entity entity = { e, this };
                 physics::PhysicsEngine::CreateActor( entity );
+            }
+        }
+        // Create character controllers
+        {
+            auto view = m_ECSEngine.GetView< CharacterControllerComponent >();
+            for (auto e : view)
+            {
+                Entity entity = { e, this };
+                physics::PhysicsEngine::CreateCharacterController( entity );
             }
         }
     }
@@ -271,6 +269,7 @@ namespace smile::scene
         CopyComponentIfExists< BoxColliderComponent >( newEntity, entity );
         CopyComponentIfExists< SphereColliderComponent >( newEntity, entity );
         CopyComponentIfExists< CapsuleColliderComponent >( newEntity, entity );
+        CopyComponentIfExists< CharacterControllerComponent >( newEntity, entity );
         CopyComponentIfExists< SpriteRendererComponent >( newEntity, entity );
     }
 
@@ -344,6 +343,11 @@ namespace smile::scene
 
     template <>
     void Scene::OnComponentAdded< CapsuleColliderComponent >( Entity entity, CapsuleColliderComponent &component )
+    {
+    }
+
+    template<>
+    void Scene::OnComponentAdded< CharacterControllerComponent >(Entity entity, CharacterControllerComponent& component)
     {
     }
 

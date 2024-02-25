@@ -448,6 +448,32 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
+        if ( entity.HasComponent< CharacterControllerComponent >() )
+        {
+            output << YAML::Key << "CharacterControllerComponent";
+            output << YAML::BeginMap;
+
+            const auto &characterControllerComponent = entity.GetComponent< CharacterControllerComponent >();
+            output << YAML::Key << "Radius" << YAML::Value << characterControllerComponent.Radius;
+            output << YAML::Key << "Height" << YAML::Value << characterControllerComponent.Height;
+            output << YAML::Key << "ClimbingMode" << YAML::Value
+                   << static_cast< Uint32 >( characterControllerComponent.ClimbingMode );
+            output << YAML::Key << "Name" << YAML::Value << characterControllerComponent.Name;
+            output << YAML::Key << "CollisionGroups" << YAML::Value
+                   << static_cast< Uint32 >( characterControllerComponent.CollisionFlags );
+            output << YAML::Key << "CollisionIgnoreGroups" << YAML::Value
+                   << static_cast< Uint32 >( characterControllerComponent.CollisionIgnoreGroups );
+            output << YAML::Key << "CollisionFlags" << YAML::Value
+                   << static_cast< Uint32 >( characterControllerComponent.CollisionFlags );
+
+            /*auto& pPhysicsMaterial = sphereColliderComponent.pPhysicsMaterial;
+            output << YAML::Key << "StaticFriction" << YAML::Value << pPhysicsMaterial->StaticFriction;
+            output << YAML::Key << "DynamicFriction" << YAML::Value << pPhysicsMaterial->DynamicFriction;
+            output << YAML::Key << "Bounciness" << YAML::Value << pPhysicsMaterial->Bounciness;*/
+
+            output << YAML::EndMap;
+        }
+
         if ( entity.HasComponent< SpriteRendererComponent >() )
         {
             output << YAML::Key << "SpriteRendererComponent";
@@ -784,6 +810,29 @@ namespace smile::scene
                     ccc.Height = capsuleColliderComponent["Height"].as< float >();
                     ccc.IsTrigger = capsuleColliderComponent["bTrigger"].as< bool >();
                     ccc.ShowColliderBounds = capsuleColliderComponent["bShowColliderBounds"].as< bool >();
+                }
+
+                auto characterControllerComponent = entity["CharacterControllerComponent"];
+                if ( characterControllerComponent )
+                {
+                    auto &ccc = deserializedEntity.AddComponent< CharacterControllerComponent >();
+
+                    ccc.Radius = characterControllerComponent["Radius"].as< float >();
+                    ccc.Height = characterControllerComponent["Height"].as< float >();
+                    ccc.ClimbingMode = static_cast< CharacterControllerComponent::ClimbingModeType >(
+                        characterControllerComponent["ClimbingMode"].as< Uint32 >() );
+                    ccc.Name = characterControllerComponent["Name"].as< std::string >();
+                    ccc.CollisionGroups = static_cast< physics::CollisionGroupFlag >(
+                        characterControllerComponent["CollisionGroups"].as< Uint32 >() );
+                    ccc.CollisionIgnoreGroups = static_cast< physics::CollisionGroupFlag >(
+                        characterControllerComponent["CollisionIgnoreGroups"].as< Uint32 >() );
+                    ccc.CollisionFlags = static_cast< CharacterControllerComponent::CollisionFlag >(
+                        characterControllerComponent["CollisionFlags"].as< Uint32 >() );
+
+                    /*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];
+                    bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
+                    bcc.pPhysicsMaterial->DynamicFriction = physicsMaterial["DynamicFriction"].as<float>();
+                    bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
                 }
 
                 auto spriteRendererComponent = entity["SpriteRendererComponent"];

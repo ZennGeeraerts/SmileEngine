@@ -18,6 +18,7 @@
 #include "smile_engine/graphic/mesh/mesh_factory.h"
 
 #include "smile_engine/physics/physics_material.h"
+#include "smile_engine/physics/collision_group.h"
 
 #include <DirectXMath.h>
 
@@ -266,6 +267,38 @@ namespace smile::scene
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 
+    struct CharacterControllerComponent final
+    {
+        enum class ClimbingModeType : Uint8
+        {
+            Easy,
+            Constrained,
+            Last
+        };
+
+        enum class CollisionFlag : Uint8
+        {
+            Sides = BIT( 0 ), // Character is colliding to the sides.
+            Up = BIT( 1 ),    // Character has collision above.
+            Down = BIT( 2 )   // Character has collision below.
+        };
+
+        CharacterControllerComponent() = default;
+        CharacterControllerComponent( const CharacterControllerComponent & ) = default;
+
+        float Radius = 2;
+        float Height = 5;
+        ClimbingModeType ClimbingMode = ClimbingModeType::Easy;
+        std::string Name = "Character";
+
+        physics::CollisionGroupFlag CollisionGroups = physics::CollisionGroupFlag::Group0;
+        physics::CollisionGroupFlag CollisionIgnoreGroups{ 0 };
+
+        CollisionFlag CollisionFlags{ 0 };
+
+        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+    };
+
     struct SpriteRendererComponent final
     {
         SpriteRendererComponent() = default;
@@ -293,5 +326,6 @@ namespace smile::scene
         BoxColliderComponent,
         SphereColliderComponent,
         CapsuleColliderComponent,
+        CharacterControllerComponent,
         SpriteRendererComponent >;
 }

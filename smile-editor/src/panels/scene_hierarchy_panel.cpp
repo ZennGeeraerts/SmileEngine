@@ -258,6 +258,12 @@ namespace smile::scene
                 ImGui::CloseCurrentPopup();
             }
 
+            if (ImGui::MenuItem("Character Controller"))
+            {
+                m_SelectedEntity.AddComponent< CharacterControllerComponent >();
+                ImGui::CloseCurrentPopup();
+            }
+
             if ( ImGui::MenuItem( "Sprite Renderer" ) )
             {
                 m_SelectedEntity.AddComponent< SpriteRendererComponent >();
@@ -651,6 +657,37 @@ namespace smile::scene
                 ImGui::DragFloat( "Height", &capsuleColliderComponent.Height, 0.03f );
                 ImGui::Checkbox( "Trigger", &capsuleColliderComponent.IsTrigger );
                 ImGui::Checkbox( "Show Collider Bounds", &capsuleColliderComponent.ShowColliderBounds );
+            } );
+
+         DrawComponent< CharacterControllerComponent >( "Character Controller",
+            entity,
+            []( auto &characterControllerComponent )
+            {
+                ImGui::DragFloat( "Radius", &characterControllerComponent.Radius, 0.03f );
+                ImGui::DragFloat( "Height", &characterControllerComponent.Height, 0.03f );
+
+                const Uint32 climbingModeCount = 3;
+                const char *climbingModeStrs[climbingModeCount]{ "Easy", "Constrained", "Last" };
+                const char *currentClimbingModeStr =
+                    climbingModeStrs[static_cast< Uint32 >( characterControllerComponent.ClimbingMode )];
+                if ( ImGui::BeginCombo( "Climbing Mode", currentClimbingModeStr ) )
+                {
+                    for ( Uint32 i{}; i < climbingModeCount; ++i )
+                    {
+                        bool isSelected = currentClimbingModeStr == climbingModeStrs[i];
+                        if ( ImGui::Selectable( climbingModeStrs[i], isSelected ) )
+                        {
+                            currentClimbingModeStr = climbingModeStrs[i];
+                            characterControllerComponent.ClimbingMode =
+                                static_cast< CharacterControllerComponent::ClimbingModeType >( i );
+                        }
+
+                        if ( isSelected )
+                            ImGui::SetItemDefaultFocus();
+                    }
+
+                    ImGui::EndCombo();
+                }
             } );
 
         DrawComponent< SpriteRendererComponent >( "Sprite Renderer",

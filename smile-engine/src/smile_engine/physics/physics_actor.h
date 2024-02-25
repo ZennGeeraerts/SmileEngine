@@ -52,7 +52,6 @@ namespace smile::physics
 
       private:
         scene::Entity m_Entity;
-        Ref< PhysicsMaterial > m_pPhysicsMaterial;
 
         physx::PxRigidActor *m_pRigidActor = nullptr;
         physx::PxMaterial *m_pPxMaterial = nullptr;

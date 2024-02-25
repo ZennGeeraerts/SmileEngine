@@ -15,10 +15,12 @@
 namespace smile::physics
 {
     std::unordered_map< UUID, Ref< PhysicsActor > > PhysicsEngine::s_ActorMap{};
+    std::unordered_map< UUID, Ref< CharacterController > > PhysicsEngine::s_CharacterControllerMap{};
     PhysicsSettings PhysicsEngine::s_Settings{};
     PhysicsEngineData PhysicsEngine::s_PhysicsEngineData{};
 
     static physx::PxScene *s_pScene;
+    static physx::PxControllerManager *s_pControllerManager;
 
     static physx::PxDefaultAllocator s_AllocatorCallback;
     static physx::PxDefaultCpuDispatcher *s_pDefaultCpuDispatcher{};
@@ -161,6 +163,9 @@ namespace smile::physics
         s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f );
         s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f );
         s_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f );
+
+        s_pControllerManager = PxCreateControllerManager( *s_pScene );
+        SM_ASSERT( s_pControllerManager, "PhysicsEngine::CreateScene > Failed to create controller manager" );
     }
 
     void PhysicsEngine::DestroyScene()
@@ -171,6 +176,17 @@ namespace smile::physics
             actor.second.reset();
 
         s_ActorMap.clear();
+
+        for ( auto &controller : s_CharacterControllerMap )
+            controller.second.reset();
+
+        s_CharacterControllerMap.clear();
+
+        if ( s_pControllerManager )
+        {
+            s_pControllerManager->release();
+            s_pControllerManager = nullptr;
+        }
 
         s_pScene->release();
         s_pScene = nullptr;
@@ -184,6 +200,15 @@ namespace smile::physics
         s_ActorMap[entity.GetUUID()] = pActor;
         s_pScene->addActor( *pActor->m_pRigidActor );
         return pActor;
+    }
+
+    Ref< CharacterController > PhysicsEngine::CreateCharacterController( scene::Entity entity )
+    {
+        SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
+
+        Ref< CharacterController > pCharacterController = CreateRef< CharacterController >( entity );
+        s_CharacterControllerMap[entity.GetUUID()] = pCharacterController;
+        return pCharacterController;
     }
 
     void PhysicsEngine::RemoveActor( scene::Entity entity )
@@ -265,6 +290,11 @@ namespace smile::physics
     physx::PxScene *PhysicsEngine::GetScene()
     {
         return s_pScene;
+    }
+
+    physx::PxControllerManager *PhysicsEngine::GetControllerManager()
+    {
+        return s_pControllerManager;
     }
 
     physx::PxAllocatorCallback &PhysicsEngine::GetAllocatorCallback()
