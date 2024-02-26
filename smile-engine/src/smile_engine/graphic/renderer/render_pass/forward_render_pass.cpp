@@ -9,57 +9,36 @@
 
 namespace smile::graphic
 {
-    void ForwardRenderPass::OnRender()
+    void ForwardRenderPass::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
     {
-        graphic::Camera *pMainCamera = nullptr;
-        DirectX::XMFLOAT4X4 cameraTransform;
-        {
-            auto view = m_ECSEngine.GetView< scene::TransformComponent, scene::CameraComponent >();
-            for ( auto entity : view )
-            {
-                const auto &[transform, camera] =
-                    m_ECSEngine.GetComponents< scene::TransformComponent, scene::CameraComponent >( entity );
+        graphic::ForwardRenderer::BeginScene( camera, cameraTransform );
 
-                if ( camera.IsPrimary )
-                {
-                    pMainCamera = &camera.Camera;
-                    cameraTransform = transform.GetTransform();
-                    break;
-                }
+        {
+            auto group =
+                m_ECSEngine.GetGroup< scene::MeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[meshRenderer, transform] =
+                    m_ECSEngine.GetComponents< scene::MeshRendererComponent, scene::TransformComponent >( entity );
+                graphic::ForwardRenderer::Submit( meshRenderer, transform.GetTransform() );
+            }
+        }
+        {
+            auto group =
+                m_ECSEngine.GetGroup< scene::SkinnedMeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[skinnedMeshRenderer, transform] =
+                    m_ECSEngine.GetComponents< scene::SkinnedMeshRendererComponent, scene::TransformComponent >(
+                        entity );
+
+                graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetTransform() );
             }
         }
 
-        if ( pMainCamera )
-        {
-            graphic::ForwardRenderer::BeginScene( *pMainCamera, cameraTransform );
+        graphic::ForwardRenderer::OnRender();
 
-            {
-                auto group =
-                    m_ECSEngine.GetGroup< scene::MeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
-                for ( auto entity : group )
-                {
-                    const auto &[meshRenderer, transform] =
-                        m_ECSEngine.GetComponents< scene::MeshRendererComponent, scene::TransformComponent >( entity );
-                    graphic::ForwardRenderer::Submit( meshRenderer, transform.GetTransform() );
-                }
-            }
-            {
-                auto group = m_ECSEngine.GetGroup< scene::SkinnedMeshRendererComponent >(
-                    ecs::g_Get< scene::TransformComponent > );
-                for ( auto entity : group )
-                {
-                    const auto &[skinnedMeshRenderer, transform] =
-                        m_ECSEngine.GetComponents< scene::SkinnedMeshRendererComponent, scene::TransformComponent >(
-                            entity );
-
-                    graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetTransform() );
-                }
-            }
-
-            graphic::ForwardRenderer::OnRender();
-
-            graphic::ForwardRenderer::EndScene();
-        }
+        graphic::ForwardRenderer::EndScene();
     }
 
     void ForwardRenderPass::OnRender( const EditorCamera &editorCamera )
@@ -67,17 +46,8 @@ namespace smile::graphic
         graphic::ForwardRenderer::BeginScene( editorCamera );
 
         {
-            //auto group =
-            //    m_ECSEngine.GetGroup< scene::MeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
-            //for ( auto entity : group )
-            //{
-            //    const auto &[mesh, transform] =
-            //        m_ECSEngine.GetComponents< scene::MeshRendererComponent, scene::TransformComponent >( entity );
-            //    graphic::ForwardRenderer::Submit( mesh, transform.GetTransform() );
-            //}
-        }
-        {
-            auto group = m_ECSEngine.GetGroup< scene::MeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
+            auto group =
+                m_ECSEngine.GetGroup< scene::MeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[meshRenderer, transform] =

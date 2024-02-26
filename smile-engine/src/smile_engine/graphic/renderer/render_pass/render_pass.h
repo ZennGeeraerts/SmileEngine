@@ -22,8 +22,8 @@ namespace smile::graphic
         RenderPass &operator=( const RenderPass & ) = delete;
         RenderPass &operator=( RenderPass && ) = delete;
 
-        virtual void OnRender() = 0;
-        virtual void OnRender( const EditorCamera &editorCamera ) = 0; 
+        virtual void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) = 0;
+        virtual void OnRender( const EditorCamera &editorCamera ) = 0;
 
       protected:
         ecs::ECSEngine &m_ECSEngine;

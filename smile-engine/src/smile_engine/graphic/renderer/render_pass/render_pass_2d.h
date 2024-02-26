@@ -19,7 +19,7 @@ namespace smile::graphic
         RenderPass2D &operator=( const RenderPass2D & ) = delete;
         RenderPass2D &operator=( RenderPass2D && ) = delete;
 
-        void OnRender() override;
+        void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) override;
         void OnRender( const EditorCamera &editorCamera ) override;
     };
 }

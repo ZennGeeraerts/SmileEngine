@@ -16,10 +16,10 @@ namespace smile::graphic
             ClearRenderPasses();
         }
 
-        void OnRender()
+        void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
         {
             for ( auto pRenderPass : m_pRenderPasses )
-                pRenderPass->OnRender();
+                pRenderPass->OnRender( camera, cameraTransform );
         }
 
         void OnRender( const EditorCamera &editorCamera )

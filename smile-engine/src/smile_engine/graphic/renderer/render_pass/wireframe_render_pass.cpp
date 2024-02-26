@@ -9,58 +9,36 @@
 
 namespace smile::graphic
 {
-    void WireframeRenderPass::OnRender()
+    void WireframeRenderPass::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
     {
         WireframeRenderer &wireframeRenderer = WireframeRenderer::GetInstance();
 
-        graphic::Camera *pMainCamera = nullptr;
-        DirectX::XMFLOAT4X4 cameraTransform;
-        {
-            auto view = m_ECSEngine.GetView< scene::TransformComponent, scene::CameraComponent >();
-            for ( auto entity : view )
-            {
-                const auto &[transform, camera] =
-                    m_ECSEngine.GetComponents< scene::TransformComponent, scene::CameraComponent >( entity );
+        wireframeRenderer.BeginScene( camera, cameraTransform );
 
-                if ( camera.IsPrimary )
-                {
-                    pMainCamera = &camera.Camera;
-                    cameraTransform = transform.GetTransform();
-                    break;
-                }
+        {
+            auto group = m_ECSEngine.GetGroup< scene::BoxColliderComponent >( ecs::g_Get< scene::TransformComponent > );
+            for ( auto entity : group )
+            {
+                const auto &[boxCollider, transform] =
+                    m_ECSEngine.GetComponents< scene::BoxColliderComponent, scene::TransformComponent >( entity );
+                wireframeRenderer.Submit( boxCollider, transform.GetTransform() );
             }
         }
 
-        if ( pMainCamera )
         {
-            wireframeRenderer.BeginScene( *pMainCamera, cameraTransform );
-
+            auto group =
+                m_ECSEngine.GetGroup< scene::SphereColliderComponent >( ecs::g_Get< scene::TransformComponent > );
+            for ( auto entity : group )
             {
-                auto group =
-                    m_ECSEngine.GetGroup< scene::BoxColliderComponent >( ecs::g_Get< scene::TransformComponent > );
-                for ( auto entity : group )
-                {
-                    const auto &[boxCollider, transform] =
-                        m_ECSEngine.GetComponents< scene::BoxColliderComponent, scene::TransformComponent >( entity );
-                    wireframeRenderer.Submit( boxCollider, transform.GetTransform() );
-                }
+                const auto &[sphereCollider, transform] =
+                    m_ECSEngine.GetComponents< scene::SphereColliderComponent, scene::TransformComponent >( entity );
+                wireframeRenderer.Submit( sphereCollider, transform.GetTransform() );
             }
-
-            {
-                auto group =
-                    m_ECSEngine.GetGroup< scene::SphereColliderComponent >( ecs::g_Get< scene::TransformComponent > );
-                for ( auto entity : group )
-                {
-                    const auto &[sphereCollider, transform] =
-                        m_ECSEngine.GetComponents< scene::SphereColliderComponent, scene::TransformComponent >( entity );
-                    wireframeRenderer.Submit( sphereCollider, transform.GetTransform() );
-                }
-            }
-
-            wireframeRenderer.OnRender();
-
-            wireframeRenderer.EndScene();
         }
+
+        wireframeRenderer.OnRender();
+
+        wireframeRenderer.EndScene();
     }
 
     void WireframeRenderPass::OnRender( const EditorCamera &editorCamera )
