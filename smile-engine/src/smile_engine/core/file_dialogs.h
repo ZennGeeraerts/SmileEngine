@@ -6,8 +6,12 @@
 
 #include <string>
 
-namespace smile::utils
+namespace smile
 {
-    std::string OpenFile( const char *filter );
-    std::string SaveFile( const char *filter );
+    class FileDialogs final
+    {
+      public:
+        static std::string OpenFile( const char *filter );
+        static std::string SaveFile( const char *filter );
+    };
 }

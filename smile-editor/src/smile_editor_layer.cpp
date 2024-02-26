@@ -6,7 +6,7 @@
 #include "smile_editor_layer.h"
 
 #include "smile_engine/scene/scene_serializer.h"
-#include "smile_engine/utils/platform_utils.h"
+#include "smile_engine/core/file_dialogs.h"
 
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
@@ -37,7 +37,7 @@ namespace smile
         m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
 
         auto commandLineArgs = Application::GetInstance().GetDescriptor().CommandLineArgs;
-        if (commandLineArgs.Count > 1)
+        if ( commandLineArgs.Count > 1 )
         {
             auto projectFilePath = commandLineArgs[1];
             OpenProject( projectFilePath );
@@ -116,7 +116,7 @@ namespace smile
             ImGui::PushStyleVar( ImGuiStyleVar_WindowRounding, 0.0f );
             ImGui::PushStyleVar( ImGuiStyleVar_WindowBorderSize, 0.0f );
             windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                            ImGuiWindowFlags_NoMove;
+                           ImGuiWindowFlags_NoMove;
             windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
         }
         else
@@ -307,7 +307,8 @@ namespace smile
         const float iconSize{ ImGui::GetWindowHeight() - 4.f };
         {
             Ref< graphic::Texture2D > pStateIcon =
-                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate ) ? m_pIconPlay : m_pIconStop;
+                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate ) ? m_pIconPlay
+                                                                                             : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
                      ImVec2{ iconSize, iconSize },
@@ -324,7 +325,8 @@ namespace smile
         ImGui::SameLine();
         {
             Ref< graphic::Texture2D > pStateIcon =
-                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play ) ? m_pIconSimulate : m_pIconStop;
+                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play ) ? m_pIconSimulate
+                                                                                         : m_pIconStop;
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
@@ -413,7 +415,7 @@ namespace smile
 
     bool SmileEditorLayer::OpenProject()
     {
-        std::string filePath = utils::OpenFile( "Smile Project (*.smproj)\0*.smproj\0" );
+        std::string filePath = FileDialogs::OpenFile( "Smile Project (*.smproj)\0*.smproj\0" );
         if ( filePath.empty() )
             return false;
 
@@ -425,10 +427,10 @@ namespace smile
     {
         if ( project::ProjectManager::Load( path ) )
         {
-            //std::filesystem::current_path( path.parent_path() );
+            // std::filesystem::current_path( path.parent_path() );
 
-            auto startScenePath =
-                project::ProjectManager::GetAssetFileSystemPath( project::ProjectManager::GetActive()->GetConfig().StartScene );
+            auto startScenePath = project::ProjectManager::GetAssetFileSystemPath(
+                project::ProjectManager::GetActive()->GetConfig().StartScene );
             OpenScene( startScenePath );
             m_pContentBrowserPanel = CreateScope< ContentBrowserPanel >();
         }
@@ -436,7 +438,7 @@ namespace smile
 
     void SmileEditorLayer::SaveProject()
     {
-        //project::Project::SaveActive();
+        // project::Project::SaveActive();
     }
 
     void SmileEditorLayer::SaveScene()
@@ -451,7 +453,7 @@ namespace smile
 
     void SmileEditorLayer::SaveSceneAs()
     {
-        std::string filePath = utils::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = FileDialogs::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
         {
             SerializeScene( m_pActiveScene, filePath );
@@ -469,7 +471,7 @@ namespace smile
 
     void SmileEditorLayer::OpenScene()
     {
-        std::string filePath = utils::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = FileDialogs::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
             OpenScene( filePath );
     }

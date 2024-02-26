@@ -4,14 +4,14 @@
 /*=============================================================================*/
 #include "smpch.h"
 
-#include "smile_engine/utils/platform_utils.h"
+#include "smile_engine/core/file_dialogs.h"
 #include "smile_engine/core/application.h"
 
 #include <commdlg.h>
 
-namespace smile::utils
+namespace smile
 {
-    std::string OpenFile( const char *filter )
+    std::string FileDialogs::OpenFile( const char *filter )
     {
         OPENFILENAMEA openFileName{};
         CHAR szFile[260] = { 0 };
@@ -30,7 +30,7 @@ namespace smile::utils
         return std::string{};
     }
 
-    std::string SaveFile( const char *filter )
+    std::string FileDialogs::SaveFile( const char *filter )
     {
         OPENFILENAMEA openFileName{};
         CHAR szFile[260] = { 0 };
