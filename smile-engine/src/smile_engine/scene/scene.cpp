@@ -18,12 +18,14 @@
 #include "smile_engine/graphic/renderer/render_pass/render_pass_2d.h"
 
 #include "smile_engine/graphic/animation/animation_system.h"
+#include "smile_engine/graphic/camera/camera_system.h"
 
 namespace smile::scene
 {
     Scene::Scene()
     {
         m_ECSEngine.AddSystem( new graphic::AnimationSystem{} );
+        m_ECSEngine.AddSystem( new graphic::CameraSystem{} );
     }
 
     Scene::~Scene()
@@ -111,7 +113,7 @@ namespace smile::scene
         // Create character controllers
         {
             auto view = m_ECSEngine.GetView< CharacterControllerComponent >();
-            for (auto e : view)
+            for ( auto e : view )
             {
                 Entity entity = { e, this };
                 physics::PhysicsEngine::CreateCharacterController( entity );
@@ -317,11 +319,12 @@ namespace smile::scene
     }
 
     template <>
-    void Scene::OnComponentAdded< SkinnedMeshRendererComponent >( Entity entity, SkinnedMeshRendererComponent &component )
+    void Scene::OnComponentAdded< SkinnedMeshRendererComponent >( Entity entity,
+        SkinnedMeshRendererComponent &component )
     {
     }
 
-    template<>
+    template <>
     void Scene::OnComponentAdded< AnimatorComponent >( Entity entity, AnimatorComponent &component )
     {
     }
@@ -346,12 +349,13 @@ namespace smile::scene
     {
     }
 
-    template<>
-    void Scene::OnComponentAdded< CharacterControllerComponent >(Entity entity, CharacterControllerComponent& component)
+    template <>
+    void Scene::OnComponentAdded< CharacterControllerComponent >( Entity entity,
+        CharacterControllerComponent &component )
     {
     }
 
-    template<>
+    template <>
     void Scene::OnComponentAdded< SpriteRendererComponent >( Entity entity, SpriteRendererComponent &component )
     {
     }

@@ -9,29 +9,9 @@
 
 namespace smile::graphic
 {
-    void RenderPass2D::OnRender()
+    void RenderPass2D::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
     {
-        Camera *pMainCamera = nullptr;
-        DirectX::XMFLOAT4X4 cameraTransform;
-        {
-            auto view = m_ECSEngine.GetView< scene::TransformComponent, scene::CameraComponent >();
-            for ( auto entity : view )
-            {
-                const auto &[transform, camera] =
-                    m_ECSEngine.GetComponents< scene::TransformComponent, scene::CameraComponent >( entity );
-
-                if ( camera.IsPrimary )
-                {
-                    pMainCamera = &camera.Camera;
-                    cameraTransform = transform.GetTransform();
-                    break;
-                }
-            }
-        }
-
-        if ( pMainCamera )
-        {
-            Renderer2D::BeginScene( *pMainCamera, cameraTransform );
+            Renderer2D::BeginScene( camera, cameraTransform );
 
             {
                 auto group =
@@ -48,7 +28,6 @@ namespace smile::graphic
             Renderer2D::OnRender();
 
             Renderer2D::EndScene();
-        }
     }
 
     void RenderPass2D::OnRender( const EditorCamera &editorCamera )

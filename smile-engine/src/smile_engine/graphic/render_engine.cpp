@@ -22,6 +22,8 @@ namespace smile::graphic
     RendererSettings RenderEngine::s_Settings{};
     ShaderLibrary RenderEngine::s_ShaderLibrary{};
 
+    RenderEngine::CameraData RenderEngine::s_CameraData{};
+
     void RenderEngine::Initialize( Window *pWindow )
     {
         s_pWindow = pWindow;
@@ -75,7 +77,10 @@ namespace smile::graphic
         pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
-        s_RenderPassList.OnRender();
+        if ( s_CameraData.pMainCamera )
+        {
+            s_RenderPassList.OnRender( *s_CameraData.pMainCamera, s_CameraData.CameraTransform );
+        }
 
         pContext->UnbindFramebuffer();
     }

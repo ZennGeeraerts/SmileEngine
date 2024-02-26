@@ -15,36 +15,15 @@
 
 namespace smile::graphic
 {
-    void DebugRenderPass::OnRender()
+    void DebugRenderPass::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
     {
-        graphic::Camera *pMainCamera = nullptr;
-        DirectX::XMFLOAT4X4 cameraTransform;
-        {
-            auto view = m_ECSEngine.GetView< scene::TransformComponent, scene::CameraComponent >();
-            for ( auto entity : view )
-            {
-                const auto &[transform, camera] =
-                    m_ECSEngine.GetComponents< scene::TransformComponent, scene::CameraComponent >( entity );
+        auto &debugRenderer = DebugRenderer::GetInstance();
+        debugRenderer.BeginScene( camera, cameraTransform );
 
-                if ( camera.IsPrimary )
-                {
-                    pMainCamera = &camera.Camera;
-                    cameraTransform = transform.GetTransform();
-                    break;
-                }
-            }
-        }
+        RenderPhysics();
+        debugRenderer.OnRender();
 
-        if ( pMainCamera )
-        {
-            auto &debugRenderer = DebugRenderer::GetInstance();
-            debugRenderer.BeginScene( *pMainCamera, cameraTransform );
-
-            RenderPhysics();
-            debugRenderer.OnRender();
-
-            debugRenderer.EndScene();
-        }
+        debugRenderer.EndScene();
     }
 
     void DebugRenderPass::OnRender( const EditorCamera &editorCamera )

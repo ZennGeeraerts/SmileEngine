@@ -46,7 +46,17 @@ namespace smile::graphic
             s_Settings = settings;
         }
 
-        static GraphicsDevice* GetDevice()
+        struct CameraData final
+        {
+            Camera *pMainCamera = nullptr;
+            DirectX::XMFLOAT4X4 CameraTransform{};
+        };
+        static void SetCameraData(const CameraData& cameraData)
+        {
+            s_CameraData = cameraData;
+        }
+
+        static GraphicsDevice *GetDevice()
         {
             return s_pWindow->GetGraphicsDevice();
         }
@@ -79,5 +89,7 @@ namespace smile::graphic
 
         static RendererSettings s_Settings;
         static ShaderLibrary s_ShaderLibrary;
+
+        static CameraData s_CameraData;
     };
 }
