@@ -49,7 +49,7 @@ namespace smile::graphic
         VertexBufferDescriptor vertexBufferDesc{};
         vertexBufferDesc.pVertices = quadVertices;
         vertexBufferDesc.Count = quadVerticesCount;
-        vertexBufferDesc.Stride = sizeof(float) * 5;
+        vertexBufferDesc.Stride = sizeof( float ) * 5;
 
         s_pStorage->pQuadVertexBuffer = RenderEngine::GetDevice()->CreateVertexBuffer( vertexBufferDesc );
 
@@ -76,7 +76,7 @@ namespace smile::graphic
         auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
         auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
         auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
-        
+
         DirectX::XMStoreFloat4x4( &s_pStorage->ViewProjectionMatrix, viewProjectionMatrixMat );
 
         GraphicsContext *pContext = RenderEngine::GetContext();
