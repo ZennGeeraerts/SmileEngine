@@ -49,7 +49,7 @@ namespace smile::graphic
         VertexBufferDescriptor vertexBufferDesc{};
         vertexBufferDesc.pVertices = quadVertices;
         vertexBufferDesc.Count = quadVerticesCount;
-        vertexBufferDesc.Stride = sizeof(float) * 5;
+        vertexBufferDesc.Stride = sizeof( float ) * 5;
 
         s_pStorage->pQuadVertexBuffer = RenderEngine::GetDevice()->CreateVertexBuffer( vertexBufferDesc );
 
@@ -78,11 +78,21 @@ namespace smile::graphic
         auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
 
         DirectX::XMStoreFloat4x4( &s_pStorage->ViewProjectionMatrix, viewProjectionMatrixMat );
+
+        GraphicsContext *pContext = RenderEngine::GetContext();
+        pContext->BindShader( s_pStorage->pShader );
+        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
+        pContext->UnbindShader();
     }
 
     void Renderer2D::BeginScene( const EditorCamera &editorCamera )
     {
         s_pStorage->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
+
+        GraphicsContext *pContext = RenderEngine::GetContext();
+        pContext->BindShader( s_pStorage->pShader );
+        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
+        pContext->UnbindShader();
     }
 
     void Renderer2D::EndScene()
@@ -126,9 +136,8 @@ namespace smile::graphic
         pContext->BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
         pContext->BindShader( s_pStorage->pShader );
 
-        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
         s_pStorage->pShader->UploadMat4( "World", worldTransform );
-        s_pStorage->pShader->UploadFloat3( "color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
+        s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
         s_pStorage->pShader->UploadBool( "UseTexture", false );
 
         RenderCommand::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
@@ -148,7 +157,6 @@ namespace smile::graphic
         pContext->BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
         pContext->BindShader( s_pStorage->pShader );
 
-        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
         s_pStorage->pShader->UploadMat4( "World", worldTransform );
         s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
         s_pStorage->pShader->UploadBool( "UseTexture", true );
