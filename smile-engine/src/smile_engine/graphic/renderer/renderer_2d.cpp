@@ -14,6 +14,8 @@ namespace smile::graphic
         Ref< VertexBuffer > pQuadVertexBuffer;
         Ref< IndexBuffer > pQuadIndexBuffer;
         Ref< Shader > pShader;
+
+        DirectX::XMFLOAT4X4 ViewProjectionMatrix;
     };
 
     static Renderer2DStorage *s_pStorage;
@@ -75,22 +77,21 @@ namespace smile::graphic
         auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
         auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
         
-        DirectX::XMFLOAT4X4 viewProjectionMatrix{};
-        DirectX::XMStoreFloat4x4( &viewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &s_pStorage->ViewProjectionMatrix, viewProjectionMatrixMat );
 
         GraphicsContext *pContext = RenderEngine::GetContext();
         pContext->BindShader( s_pStorage->pShader );
-        s_pStorage->pShader->UploadMat4( "ViewProjection", viewProjectionMatrix );
+        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
         pContext->UnbindShader();
     }
 
     void Renderer2D::BeginScene( const EditorCamera &editorCamera )
     {
-        DirectX::XMFLOAT4X4 viewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
+        s_pStorage->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
 
         GraphicsContext *pContext = RenderEngine::GetContext();
         pContext->BindShader( s_pStorage->pShader );
-        s_pStorage->pShader->UploadMat4( "ViewProjection", viewProjectionMatrix );
+        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
         pContext->UnbindShader();
     }
 
