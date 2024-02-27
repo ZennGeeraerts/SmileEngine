@@ -61,13 +61,18 @@ namespace smile::graphic
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
         pContext->BindRasterizerState( s_pWireframeRasterizerState );
 
+        if ( !m_RenderCollector.DrawList.empty() )
+        {
+            DrawCommand &drawCommand = m_RenderCollector.DrawList[0];
+            pContext->BindShader( drawCommand.pShader );
+            drawCommand.pShader->UploadMat4( "ViewProjection", m_RenderCollector.ViewProjectionMatrix );
+        }
+
         for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
         {
             pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
             pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
-            pContext->BindShader( drawCommand.pShader );
 
-            drawCommand.pShader->UploadMat4( "ViewProjection", m_RenderCollector.ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ 1, 1, 1 } );
 
@@ -92,8 +97,7 @@ namespace smile::graphic
 
         sizeVec = DirectX::XMVectorDivide( sizeVec, DirectX::XMVECTOR{ 2, 2, 2 } );
 
-        auto colliderTransformMat = DirectX::XMMatrixScalingFromVector( sizeVec ) * 
-                                    DirectX::XMMatrixIdentity() *
+        auto colliderTransformMat = DirectX::XMMatrixScalingFromVector( sizeVec ) * DirectX::XMMatrixIdentity() *
                                     DirectX::XMMatrixTranslationFromVector( offsetVec );
 
         DirectX::XMMATRIX finalTransformMat = colliderTransformMat * worldTransformMat;
@@ -109,7 +113,7 @@ namespace smile::graphic
     }
 
     void WireframeRenderer::Submit( const scene::SphereColliderComponent &sphereColliderComponent,
-        const DirectX::XMFLOAT4X4& worldTransform)
+        const DirectX::XMFLOAT4X4 &worldTransform )
     {
         DrawCommand drawCommand{ sphereColliderComponent.pWireframeMesh->pVertexBuffer,
             sphereColliderComponent.pWireframeMesh->pIndexBuffer,
