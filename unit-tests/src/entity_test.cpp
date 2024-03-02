@@ -1,0 +1,67 @@
+#include "smile_engine/scene/entity.h"
+#include "smile_engine/ecs/relationship.h"
+#include <catch/catch.hpp>
+
+using namespace smile;
+
+TEST_CASE( "Entity" )
+{
+    SECTION( "AddChild" )
+    {
+        Ref< scene::Scene > pScene = CreateRef< scene::Scene >();
+
+        scene::Entity parent = pScene->CreateEntity();
+        scene::Entity child1 = pScene->CreateEntity();
+        scene::Entity child2 = pScene->CreateEntity();
+        scene::Entity child3 = pScene->CreateEntity();
+
+        parent.AddChild( child1 );
+
+        const auto &parentRelationship = parent.GetComponent< ecs::Relationship >();
+
+        REQUIRE( parentRelationship.ChildrenCount == 1 );
+        REQUIRE( parentRelationship.First == child1 );
+        REQUIRE( parentRelationship.Next == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( parentRelationship.Prev == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( parentRelationship.Parent == ecs::EntityHandleType::NullHandle() );
+
+        const auto &child1Relationship1 = child1.GetComponent< ecs::Relationship >();
+
+        REQUIRE( child1Relationship1.ChildrenCount == 0 );
+        REQUIRE( child1Relationship1.First == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship1.Next == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship1.Prev == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship1.Parent == parent );
+
+        parent.AddChild( child2 );
+        parent.AddChild( child3 );
+
+        REQUIRE( parentRelationship.ChildrenCount == 3 );
+        REQUIRE( parentRelationship.First == child1 );
+        REQUIRE( parentRelationship.Next == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( parentRelationship.Prev == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( parentRelationship.Parent == ecs::EntityHandleType::NullHandle() );
+
+        REQUIRE( child1Relationship1.ChildrenCount == 0 );
+        REQUIRE( child1Relationship1.First == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship1.Next == child2 );
+        REQUIRE( child1Relationship1.Prev == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship1.Parent == parent );
+
+        const auto &child2Relationship = child2.GetComponent< ecs::Relationship >();
+
+        REQUIRE( child2Relationship.ChildrenCount == 0 );
+        REQUIRE( child2Relationship.First == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child2Relationship.Next == child3 );
+        REQUIRE( child2Relationship.Prev == child1 );
+        REQUIRE( child2Relationship.Parent == parent );
+
+        const auto &child3Relationship = child3.GetComponent< ecs::Relationship >();
+
+        REQUIRE( child3Relationship.ChildrenCount == 0 );
+        REQUIRE( child3Relationship.First == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child3Relationship.Next == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child3Relationship.Prev == child2 );
+        REQUIRE( child3Relationship.Parent == parent );
+    }
+}

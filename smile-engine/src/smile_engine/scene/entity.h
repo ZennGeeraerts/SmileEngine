@@ -16,11 +16,7 @@ namespace smile::scene
     {
       public:
         Entity() = default;
-
-        Entity( ecs::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
-        {
-        }
-
+        Entity( ecs::EntityHandleType handle, Scene *pScene );
         Entity( const Entity & ) = default;
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -77,6 +73,8 @@ namespace smile::scene
         {
             return m_pScene->m_ECSEngine.HasComponent< ComponentType >( m_EntityHandle );
         }
+
+        void AddChild( Entity child );
 
         // Check to see if entity is valid
         operator bool() const

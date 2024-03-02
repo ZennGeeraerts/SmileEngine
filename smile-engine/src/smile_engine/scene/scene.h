@@ -1,10 +1,10 @@
-#pragma once
-
-#include "smile_engine/core/uuid.h"
 /*=============================================================================*/
 // Copyright 2022-2023 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
+#pragma once
+
+#include "smile_engine/core/uuid.h"
 #include "smile_engine/core/timestep.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 

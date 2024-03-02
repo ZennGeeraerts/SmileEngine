@@ -454,16 +454,53 @@ namespace smile::ecs
             return std::tie( GetComponent< Components >( entityHandle )... );
         }
 
-        template < typename Component >
+        template < typename ComponentType >
+        ComponentType *TryGetComponent( EntityHandleType entityHandle )
+        {
+            auto it = m_ComponentMap.find( stl::TypeIDOf< ComponentType >() );
+
+            if ( it == m_ComponentMap.end() )
+                return nullptr;
+
+            return it->second->TryGet< ComponentType >( entityHandle );
+        }
+
+        template < typename ComponentType >
+        const ComponentType *TryGetComponent( EntityHandleType entityHandle ) const
+        {
+            auto it = m_ComponentMap.find( stl::TypeIDOf< ComponentType >() );
+
+            if ( it == m_ComponentMap.end() )
+                return nullptr;
+
+            return it->second->TryGet< ComponentType >( entityHandle );
+        }
+
+        template < typename ComponentType >
         bool HasComponent( EntityHandleType entityHandle ) const
         {
-            const ComponentInterface *pComponentInterface = GetComponentInterface< Component >();
+            const ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
             return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
         }
 
         bool HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
         {
             return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
+        }
+
+        template < typename ComponentType >
+        void Reset()
+        {
+            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+
+            auto view = GetView< ComponentType >();
+            for ( auto entity : view )
+            {
+                RemoveComponent( pComponentInterface, entity );
+            }
+
+            m_pComponents.erase( std::remove( m_pComponents.begin(), m_pComponents.end(), pComponentInterface ) );
+            m_ComponentMap.erase( stl::TypeIDOf< ComponentType >() );
         }
 
         template < typename... C >

@@ -12,3 +12,35 @@ make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 GroupSourcesByFolder(unit-tests)
 set_property(TARGET unit-tests PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 set_target_properties(unit-tests PROPERTIES FOLDER Tools)
+
+add_custom_command(
+    TARGET unit-tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysX_64.dll
+        ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
+    )
+
+add_custom_command(
+    TARGET unit-tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCommon_64.dll
+        ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
+    )
+
+add_custom_command(
+    TARGET unit-tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCooking_64.dll
+        ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
+    )
+
+add_custom_command(
+    TARGET unit-tests
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXFoundation_64.dll
+        ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
+    )

@@ -39,6 +39,34 @@ namespace smile::ecs
             return m_pComponentStorage->Get< ComponentType >( index );
         }
 
+        template < typename ComponentType >
+        ComponentType *TryGet( EntityHandleType entityHandle )
+        {
+            if ( !m_Pool.Contains( entityHandle.GetIndex() ) )
+                return nullptr;
+
+            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+
+            if ( index == EntityHandleType::NullHandle().GetIndex() )
+                return nullptr;
+
+            return &m_pComponentStorage->Get< ComponentType >( index );
+        }
+
+        template < typename ComponentType >
+        const ComponentType *TryGet( EntityHandleType entityHandle ) const
+        {
+            if ( !m_Pool.Contains( entityHandle.GetIndex() ) )
+                return nullptr;
+
+            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+
+            if ( index == EntityHandleType::NullHandle().GetIndex() )
+                return nullptr;
+
+            return &m_pComponentStorage->Get< ComponentType >( index );
+        }
+
         void *GetRaw( EntityHandleType entityHandle )
         {
             const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
