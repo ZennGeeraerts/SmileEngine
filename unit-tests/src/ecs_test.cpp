@@ -21,12 +21,17 @@ struct MyComponent final
     unsigned int z;
 };
 
+struct DataComponent final
+{
+    double MyData;
+};
+
 TEST_CASE( "ECS" )
 {
     SECTION( "Entity" )
     {
         ecs::ECSEngine engine{};
-        //engine.RegisterSystem< TestSystem >();
+        // engine.RegisterSystem< TestSystem >();
 
         ecs::EntityHandleType handle1 = engine.CreateEntity();
         ecs::EntityHandleType handle2 = engine.CreateEntity();
@@ -111,7 +116,7 @@ TEST_CASE( "ECS" )
 
         // engine.group< TestComponent, AnotherComponent, MyComponent >();
 
-        //engine.onUpdate( 1.0f );
+        // engine.onUpdate( 1.0f );
 
         // REQUIRE( my_component.x == 29u );
         // REQUIRE( another_component.name == "modified by system" );
@@ -129,7 +134,7 @@ TEST_CASE( "ECS" )
         engine.AddComponent< TestComponent >( handle1, 10, 2 );
 
         engine.AddComponent< AnotherComponent >( handle2, "this is a string" );
-        //engine.addComponent< TestComponent >( handle2 );
+        // engine.addComponent< TestComponent >( handle2 );
 
         engine.AddComponent< AnotherComponent >( handle3, "name" );
         engine.AddComponent< TestComponent >( handle3, 5, -3 );
@@ -140,7 +145,7 @@ TEST_CASE( "ECS" )
         }
     }
 
-    SECTION( "group" )
+    SECTION( "Group" )
     {
         ecs::ECSEngine engine{};
 
@@ -158,7 +163,7 @@ TEST_CASE( "ECS" )
         engine.AddComponent< TestComponent >( handle3, 5, -3 );
 
         std::vector< ecs::EntityHandleType > handles{};
-        const auto &group = engine.GetGroup< AnotherComponent >( ecs::g_Get< TestComponent > );
+        auto group = engine.GetGroup< AnotherComponent >( ecs::g_Get< TestComponent > );
 
         int i{};
         for ( ecs::EntityHandleType entityHandle : group )
@@ -193,5 +198,36 @@ TEST_CASE( "ECS" )
         Uint32 val2 = handle2.Hash();
 
         engine.Clear();
+    }
+
+    SECTION( "IsComponentOwned" )
+    {
+        ecs::ECSEngine engine{};
+
+        ecs::EntityHandleType handle = engine.CreateEntity();
+
+        engine.AddComponent< AnotherComponent >( handle, "test" );
+        engine.AddComponent< TestComponent >( handle, 10, 2 );
+        engine.AddComponent< DataComponent >( handle, 27.03 );
+        engine.AddComponent< MyComponent >( handle, 16u, 86u, 10u );
+
+        REQUIRE( !engine.IsComponentOwned< AnotherComponent >() );
+        REQUIRE( !engine.IsComponentOwned< TestComponent >() );
+        REQUIRE( !engine.IsComponentOwned< DataComponent >() );
+        REQUIRE( !engine.IsComponentOwned< MyComponent >() );
+
+        auto group1 = engine.GetGroup< AnotherComponent, TestComponent >();
+
+        REQUIRE( engine.IsComponentOwned< AnotherComponent >() );
+        REQUIRE( engine.IsComponentOwned< TestComponent >() );
+        REQUIRE( !engine.IsComponentOwned< DataComponent >() );
+        REQUIRE( !engine.IsComponentOwned< MyComponent >() );
+
+        auto group2 = engine.GetGroup< DataComponent >( ecs::g_Get< MyComponent > );
+
+        REQUIRE( engine.IsComponentOwned< AnotherComponent >() );
+        REQUIRE( engine.IsComponentOwned< TestComponent >() );
+        REQUIRE( engine.IsComponentOwned< DataComponent >() );
+        REQUIRE( !engine.IsComponentOwned< MyComponent >() );
     }
 }

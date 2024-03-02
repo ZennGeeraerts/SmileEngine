@@ -25,13 +25,13 @@ TEST_CASE( "Entity" )
         REQUIRE( parentRelationship.Prev == ecs::EntityHandleType::NullHandle() );
         REQUIRE( parentRelationship.Parent == ecs::EntityHandleType::NullHandle() );
 
-        const auto &child1Relationship1 = child1.GetComponent< ecs::Relationship >();
+        const auto &child1Relationship = child1.GetComponent< ecs::Relationship >();
 
-        REQUIRE( child1Relationship1.ChildrenCount == 0 );
-        REQUIRE( child1Relationship1.First == ecs::EntityHandleType::NullHandle() );
-        REQUIRE( child1Relationship1.Next == ecs::EntityHandleType::NullHandle() );
-        REQUIRE( child1Relationship1.Prev == ecs::EntityHandleType::NullHandle() );
-        REQUIRE( child1Relationship1.Parent == parent );
+        REQUIRE( child1Relationship.ChildrenCount == 0 );
+        REQUIRE( child1Relationship.First == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship.Next == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship.Prev == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship.Parent == parent );
 
         parent.AddChild( child2 );
         parent.AddChild( child3 );
@@ -42,11 +42,11 @@ TEST_CASE( "Entity" )
         REQUIRE( parentRelationship.Prev == ecs::EntityHandleType::NullHandle() );
         REQUIRE( parentRelationship.Parent == ecs::EntityHandleType::NullHandle() );
 
-        REQUIRE( child1Relationship1.ChildrenCount == 0 );
-        REQUIRE( child1Relationship1.First == ecs::EntityHandleType::NullHandle() );
-        REQUIRE( child1Relationship1.Next == child2 );
-        REQUIRE( child1Relationship1.Prev == ecs::EntityHandleType::NullHandle() );
-        REQUIRE( child1Relationship1.Parent == parent );
+        REQUIRE( child1Relationship.ChildrenCount == 0 );
+        REQUIRE( child1Relationship.First == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship.Next == child2 );
+        REQUIRE( child1Relationship.Prev == ecs::EntityHandleType::NullHandle() );
+        REQUIRE( child1Relationship.Parent == parent );
 
         const auto &child2Relationship = child2.GetComponent< ecs::Relationship >();
 

@@ -357,22 +357,13 @@ namespace smile::ecs
         virtual ~ECSEngine();
 
         void OnUpdate( Timestep deltaTime );
-        
+
         EntityHandleType CreateEntity()
         {
             return m_HandleManager.CreateEntity();
         }
 
-        void DestroyEntity( EntityHandleType entityHandle )
-        {
-            for ( auto pComponentInterface : m_pComponents )
-            {
-                if ( HasComponent( pComponentInterface, entityHandle ) )
-                    RemoveComponent( pComponentInterface, entityHandle );
-            }
-
-            m_HandleManager.DestroyEntity( entityHandle );
-        }
+        void DestroyEntity( EntityHandleType entityHandle );
 
         bool IsEntityActive( EntityHandleType entityHandle ) const
         {
@@ -403,8 +394,8 @@ namespace smile::ecs
             return component;
         }
 
-        template< typename ComponentType, typename... ConstructorArgs >
-        ComponentType& AddOrReplaceComponent(EntityHandleType entityHandle, ConstructorArgs&&... constructorArgs)
+        template < typename ComponentType, typename... ConstructorArgs >
+        ComponentType &AddOrReplaceComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
         {
             ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
             if ( pComponentInterface && pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) )
@@ -419,8 +410,6 @@ namespace smile::ecs
             ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
             RemoveComponent( pComponentInterface, entityHandle );
         }
-
-        void RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle );
 
         template < typename ComponentType >
         ComponentType &GetComponent( EntityHandleType entityHandle )
@@ -483,11 +472,6 @@ namespace smile::ecs
             return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
         }
 
-        bool HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
-        {
-            return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
-        }
-
         template < typename ComponentType >
         void Reset()
         {
@@ -503,6 +487,13 @@ namespace smile::ecs
             m_ComponentMap.erase( stl::TypeIDOf< ComponentType >() );
         }
 
+        template < typename ComponentType >
+        bool IsComponentOwned() const
+        {
+            const ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+            return IsComponentOwned( pComponentInterface );
+        }
+
         template < typename... C >
         View< C... > GetView()
         {
@@ -512,9 +503,12 @@ namespace smile::ecs
         template < typename... Owned, typename... Get >
         Group< Owned..., Get... > GetGroup( ComponentList< Get... > get = {} )
         {
+            ( RegisterComponentIfNeeded< Owned >(), ... );
+            ( RegisterComponentIfNeeded< Get >(), ... );
+
             std::vector< ComponentInterface * > pOwnedComponents{ GetComponentInterface< Owned >()... };
             std::vector< ComponentInterface * > pGetComponents{ GetComponentInterface< Get >()... };
-            
+
             auto it = std::find_if( m_pGroups.begin(),
                 m_pGroups.end(),
                 [pOwnedComponents, pGetComponents]( GroupBase *pGroup )
@@ -522,8 +516,7 @@ namespace smile::ecs
                     const auto &pGroupOwned = pGroup->GetOwnedComponents();
                     const auto &pGroupGet = pGroup->GetGetComponents();
 
-                    return pOwnedComponents.size() == pGroupOwned.size() &&
-                           pGetComponents.size() == pGroupGet.size() &&
+                    return pOwnedComponents.size() == pGroupOwned.size() && pGetComponents.size() == pGroupGet.size() &&
                            std::equal( pOwnedComponents.begin(), pOwnedComponents.end(), pGroupOwned.begin() ) &&
                            std::equal( pGetComponents.begin(), pGetComponents.end(), pGroupGet.begin() );
                 } );
@@ -531,7 +524,11 @@ namespace smile::ecs
             if ( it != m_pGroups.end() )
                 return *( static_cast< Group< Owned..., Get... > * >( *it ) );
 
-            //TODO: Check if any of the owned components are already owned by another group
+            SM_ASSERT( std::none_of( pOwnedComponents.cbegin(),
+                           pOwnedComponents.cend(),
+                           [&]( ComponentInterface *pComponentInterface )
+                           { return pComponentInterface && IsComponentOwned( pComponentInterface ); } ),
+                "ECSEngine::GetGroup > Component(s) are already owned by a group" );
 
             GroupBase *pNewGroup = new Group< Owned..., Get... >{ *this, pOwnedComponents, pGetComponents };
             m_pGroups.push_back( pNewGroup );
@@ -551,7 +548,7 @@ namespace smile::ecs
 
         void Clear();
 
-        const EntityHandleManager& GetEntityHandleManager() const
+        const EntityHandleManager &GetEntityHandleManager() const
         {
             return m_HandleManager;
         }
@@ -609,6 +606,10 @@ namespace smile::ecs
 
             return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
         }
+
+        void RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle );
+        bool HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const;
+        bool IsComponentOwned( const ComponentInterface *pComponentInterface ) const;
 
         void CallDestructors( ComponentInterface *pComponentInterface, void *pData );
 

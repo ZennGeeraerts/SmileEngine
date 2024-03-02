@@ -21,6 +21,17 @@ namespace smile::ecs
             delete pSystem;
     }
 
+    void ECSEngine::DestroyEntity( EntityHandleType entityHandle )
+    {
+        for ( auto pComponentInterface : m_pComponents )
+        {
+            if ( HasComponent( pComponentInterface, entityHandle ) )
+                RemoveComponent( pComponentInterface, entityHandle );
+        }
+
+        m_HandleManager.DestroyEntity( entityHandle );
+    }
+
     void ECSEngine::OnUpdate( Timestep deltaTime )
     {
         for ( auto pSystem : m_pSystems )
@@ -51,6 +62,23 @@ namespace smile::ecs
         // RelationalRebuild( pComponentInterface, deadIndex );
     }
 
+    bool ECSEngine::HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
+    {
+        return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
+    }
+
+    bool ECSEngine::IsComponentOwned( const ComponentInterface *pComponentInterface ) const
+    {
+        return std::any_of( m_pGroups.cbegin(),
+            m_pGroups.cend(),
+            [pComponentInterface]( GroupBase *pGroup )
+            {
+                const auto &pOwnedComponents = pGroup->GetOwnedComponents();
+                return std::find( pOwnedComponents.cbegin(), pOwnedComponents.cend(), pComponentInterface ) !=
+                       pOwnedComponents.end();
+            } );
+    }
+
     void ECSEngine::CallDestructors( ComponentInterface *pComponentInterface, void *pData )
     {
         for ( auto destructor : pComponentInterface->m_Destroy )
@@ -77,7 +105,7 @@ namespace smile::ecs
             {
                 CallDestructors( pComponentInterface, pComponentInterface->m_pComponentStorage->GetRaw( i ) );
             }
-            
+
             pComponentInterface->Clear();
         }
 

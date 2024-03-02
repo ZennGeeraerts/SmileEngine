@@ -24,8 +24,8 @@ namespace smile::graphic
             }
         }
         {
-            auto group =
-                m_ECSEngine.GetGroup< scene::SkinnedMeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< scene::SkinnedMeshRendererComponent, scene::AnimatorComponent >(
+                ecs::g_Get< scene::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[skinnedMeshRenderer, transform] =
@@ -56,8 +56,8 @@ namespace smile::graphic
             }
         }
         {
-            auto group =
-                m_ECSEngine.GetGroup< scene::SkinnedMeshRendererComponent >( ecs::g_Get< scene::TransformComponent > );
+            auto group = m_ECSEngine.GetGroup< scene::SkinnedMeshRendererComponent, scene::AnimatorComponent >(
+                ecs::g_Get< scene::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[skinnedMeshRenderer, transform] =
