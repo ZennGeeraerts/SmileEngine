@@ -75,9 +75,9 @@ namespace smile::scene
             while ( currentChildHandle )
             {
                 Entity currentChild{ currentChildHandle, this };
-                DestroyEntity( currentChild );
-
                 currentChildHandle = currentChild.GetComponent< ecs::Relationship >().Next;
+
+                DestroyEntity( currentChild );
             }
         }
 
