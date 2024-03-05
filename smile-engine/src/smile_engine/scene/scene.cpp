@@ -20,6 +20,8 @@
 #include "smile_engine/graphic/animation/animation_system.h"
 #include "smile_engine/graphic/camera/camera_system.h"
 
+#include "smile_engine/ecs/relationship.h"
+
 namespace smile::scene
 {
     Scene::Scene()
@@ -59,6 +61,25 @@ namespace smile::scene
     {
         if ( physics::PhysicsEngine::IsPhysicsActor( entity ) )
             physics::PhysicsEngine::RemoveActor( entity );
+
+        auto pRelationship = entity.TryGetComponent< ecs::Relationship >();
+        if ( pRelationship )
+        {
+            if ( pRelationship->Parent )
+            {
+                Entity parent{ pRelationship->Parent, this };
+                parent.RemoveChild( entity );
+            }
+
+            auto currentChildHandle = pRelationship->First;
+            while ( currentChildHandle )
+            {
+                Entity currentChild{ currentChildHandle, this };
+                DestroyEntity( currentChild );
+
+                currentChildHandle = currentChild.GetComponent< ecs::Relationship >().Next;
+            }
+        }
 
         m_EntityMap.erase( entity.GetUUID() );
         m_ECSEngine.DestroyEntity( entity );
@@ -252,6 +273,7 @@ namespace smile::scene
         }
 
         // Copy components except IDComponent and TagComponent
+        CopyComponent< ecs::Relationship >( dstSceneEngine, srcSceneEngine, entityMap );
         CopyComponent( AllComponents{}, dstSceneEngine, srcSceneEngine, entityMap );
 
         return pNewScene;
@@ -261,6 +283,7 @@ namespace smile::scene
     {
         Entity newEntity = CreateEntity( entity.GetName() );
 
+        CopyComponentIfExists< ecs::Relationship >( newEntity, entity );
         CopyComponentIfExists< TransformComponent >( newEntity, entity );
         CopyComponentIfExists< MeshRendererComponent >( newEntity, entity );
         CopyComponentIfExists< SkinnedMeshRendererComponent >( newEntity, entity );
@@ -285,6 +308,11 @@ namespace smile::scene
     void Scene::OnComponentAdded( Entity entity, ComponentType &component )
     {
         static_assert( sizeof( ComponentType ) == 0 );
+    }
+
+    template <>
+    void Scene::OnComponentAdded< ecs::Relationship >( Entity entity, ecs::Relationship &component )
+    {
     }
 
     template <>

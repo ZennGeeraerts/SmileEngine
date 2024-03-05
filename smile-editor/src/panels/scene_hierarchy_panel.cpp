@@ -9,6 +9,7 @@
 #include "smile_engine/scripting/script_engine.h"
 #include "smile_engine/graphic/mesh/mesh.h"
 #include "smile_engine/graphic/mesh/mesh_factory.h"
+#include "smile_engine/ecs/relationship.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -32,12 +33,27 @@ namespace smile::scene
 
         if ( m_pContext )
         {
+            std::vector< Entity > entitiesToAddChild{};
+
             m_pContext->m_ECSEngine.Each(
                 [&]( auto entityID )
                 {
                     Entity entity{ entityID, m_pContext.get() };
-                    DrawEntityNode( entity );
+
+                    // Draw root nodes
+                    // The root nodes will recursively draw its children
+                    const auto *pRelationship = entity.TryGetComponent< ecs::Relationship >();
+                    if ( !pRelationship || !pRelationship->Parent )
+                    {
+                        DrawEntityNode( entity, entitiesToAddChild );
+                    }
                 } );
+
+            for ( Entity parent : entitiesToAddChild )
+            {
+                Entity child = m_pContext->CreateEntity();
+                parent.AddChild( child );
+            }
 
             // Deselect entities
             if ( ImGui::IsMouseDown( 0 ) && ImGui::IsWindowHovered() )
@@ -67,13 +83,42 @@ namespace smile::scene
         ImGui::End();
     }
 
-    void SceneHierarchyPanel::DrawEntityNode( Entity entity )
+    void SceneHierarchyPanel::DrawEntityNode( Entity entity, std::vector< Entity > &entitiesToAddChild )
     {
+        ImGui::PushID( ( const void * )( Uint64 )entity );
+
         auto &tag = entity.GetComponent< TagComponent >().Tag;
 
         const ImGuiTreeNodeFlags flags = ( ( m_SelectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
                                          ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-        bool isNodeExpanded = ImGui::TreeNodeEx( ( void * )( Uint64 )entity, flags, tag.c_str() );
+        bool isNodeExpanded = ImGui::TreeNodeEx( ( const void * )( Uint64 )entity, flags, tag.c_str() );
+
+        if ( ImGui::BeginDragDropSource() )
+        {
+            ImGui::SetDragDropPayload( "EntityNode", &entity, sizeof( entity ), ImGuiCond_Once );
+            ImGui::EndDragDropSource();
+        }
+
+        if ( ImGui::BeginDragDropTarget() )
+        {
+            const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "EntityNode" );
+            if ( pPayload )
+            {
+                Entity child = *static_cast< Entity * >( pPayload->Data );
+
+                Entity prevParent = child.GetParent();
+                if ( prevParent != entity )
+                {
+                    if ( prevParent )
+                        prevParent.RemoveChild( child );
+
+                    entity.AddChild( child );
+                }
+            }
+
+            ImGui::EndDragDropTarget();
+        }
+
         if ( ImGui::IsItemClicked() )
         {
             m_SelectedEntity = entity;
@@ -82,6 +127,11 @@ namespace smile::scene
         bool isEntityDeleted = false;
         if ( ImGui::BeginPopupContextItem() )
         {
+            if ( ImGui::MenuItem( "Create Child Entity" ) )
+                entitiesToAddChild.push_back( entity );
+
+            ImGui::Separator();
+
             if ( ImGui::MenuItem( "Delete Entity" ) )
                 isEntityDeleted = true;
 
@@ -90,7 +140,27 @@ namespace smile::scene
 
         if ( isNodeExpanded )
         {
+            if ( entity.HasComponent< ecs::Relationship >() )
+            {
+                auto &relationship = entity.GetComponent< ecs::Relationship >();
+                if ( relationship.First )
+                {
+                    Entity child{ relationship.First, m_pContext.get() };
+                    DrawEntityNode( child, entitiesToAddChild );
+                }
+            }
+
             ImGui::TreePop();
+        }
+
+        if ( entity.HasComponent< ecs::Relationship >() )
+        {
+            auto &relationship = entity.GetComponent< ecs::Relationship >();
+            if ( relationship.Next )
+            {
+                Entity child{ relationship.Next, m_pContext.get() };
+                DrawEntityNode( child, entitiesToAddChild );
+            }
         }
 
         if ( isEntityDeleted )
@@ -99,6 +169,8 @@ namespace smile::scene
             if ( m_SelectedEntity == entity )
                 m_SelectedEntity = {};
         }
+
+        ImGui::PopID();
     }
 
     void SceneHierarchyPanel::DrawVector3Control( const std::string &label,
@@ -258,7 +330,7 @@ namespace smile::scene
                 ImGui::CloseCurrentPopup();
             }
 
-            if (ImGui::MenuItem("Character Controller"))
+            if ( ImGui::MenuItem( "Character Controller" ) )
             {
                 m_SelectedEntity.AddComponent< CharacterControllerComponent >();
                 ImGui::CloseCurrentPopup();
@@ -659,7 +731,7 @@ namespace smile::scene
                 ImGui::Checkbox( "Show Collider Bounds", &capsuleColliderComponent.ShowColliderBounds );
             } );
 
-         DrawComponent< CharacterControllerComponent >( "Character Controller",
+        DrawComponent< CharacterControllerComponent >( "Character Controller",
             entity,
             []( auto &characterControllerComponent )
             {

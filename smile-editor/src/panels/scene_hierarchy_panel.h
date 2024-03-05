@@ -32,7 +32,7 @@ namespace smile::scene
         }
 
       private:
-        void DrawEntityNode( Entity entity );
+        void DrawEntityNode( Entity entity, std::vector< Entity > &entitiesToAddChild );
 
         static void DrawVector3Control( const std::string &label,
             DirectX::XMFLOAT3 &values,

@@ -55,6 +55,12 @@ namespace smile::scene
             return m_pScene->m_ECSEngine.GetComponent< ComponentType >( m_EntityHandle );
         }
 
+        template < typename ComponentType >
+        ComponentType *TryGetComponent() const
+        {
+            return m_pScene->m_ECSEngine.TryGetComponent< ComponentType >( m_EntityHandle );
+        }
+
         UUID GetUUID() const
         {
             return GetComponent< IDComponent >().ID;
@@ -75,6 +81,12 @@ namespace smile::scene
         }
 
         void AddChild( Entity child );
+        void RemoveChild( Entity child );
+
+        Uint32 GetChildrenCount() const;
+        Entity GetChildAtIndex( const Uint32 index ) const;
+
+        Entity GetParent() const;
 
         // Check to see if entity is valid
         operator bool() const
