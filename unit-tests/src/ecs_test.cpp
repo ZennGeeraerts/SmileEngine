@@ -230,4 +230,65 @@ TEST_CASE( "ECS" )
         REQUIRE( engine.IsComponentOwned< DataComponent >() );
         REQUIRE( !engine.IsComponentOwned< MyComponent >() );
     }
+
+    SECTION( "SortComponent" )
+    {
+        ecs::ECSEngine engine{};
+
+        ecs::EntityHandleType entity1 = engine.CreateEntity();
+        ecs::EntityHandleType entity2 = engine.CreateEntity();
+        ecs::EntityHandleType entity3 = engine.CreateEntity();
+        ecs::EntityHandleType entity4 = engine.CreateEntity();
+
+        engine.AddComponent< AnotherComponent >( entity1, "test" );
+        engine.AddComponent< AnotherComponent >( entity2, "data" );
+        engine.AddComponent< AnotherComponent >( entity3, "string" );
+        engine.AddComponent< AnotherComponent >( entity4, "another" );
+
+        std::vector< ecs::EntityHandleType > entities{};
+        {
+            auto view = engine.GetView< AnotherComponent >();
+            for ( auto e : view )
+            {
+                entities.push_back( e );
+            }
+        }
+
+        REQUIRE( entities[0] == entity1 );
+        REQUIRE( entities[1] == entity2 );
+        REQUIRE( entities[2] == entity3 );
+        REQUIRE( entities[3] == entity4 );
+
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[0] ).name == "test" );
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[1] ).name == "data" );
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[2] ).name == "string" );
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[3] ).name == "another" );
+
+        engine.SortComponent< AnotherComponent >(
+            [&engine]( const ecs::EntityHandleType lhs, const ecs::EntityHandleType rhs )
+            {
+                const auto &lhsComp = engine.GetComponent< AnotherComponent >( lhs );
+                const auto &rhsComp = engine.GetComponent< AnotherComponent >( rhs );
+                return lhsComp.name < rhsComp.name;
+            } );
+
+        entities.clear();
+        {
+            auto view = engine.GetView< AnotherComponent >();
+            for ( auto e : view )
+            {
+                entities.push_back( e );
+            }
+        }
+
+        REQUIRE( entities[0] == entity4 );
+        REQUIRE( entities[1] == entity2 );
+        REQUIRE( entities[2] == entity3 );
+        REQUIRE( entities[3] == entity1 );
+
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[0] ).name == "another" );
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[1] ).name == "data" );
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[2] ).name == "string" );
+        REQUIRE( engine.GetComponent< AnotherComponent >( entities[3] ).name == "test" );
+    }
 }

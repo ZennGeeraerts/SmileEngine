@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <numeric>
 
 namespace smile::stl
 {
@@ -67,16 +68,43 @@ namespace smile::stl
             m_Dense.clear();
         }
 
-        void Swap( IndexType element1, IndexType element2 )
+        void Swap( IndexType lhs, IndexType rhs )
         {
-            SM_ASSERT( Contains( element1 ) && Contains( element2 ),
-                "SparseSet::Swap > Sparse set doesn't contains this value" );
+            SM_ASSERT( Contains( lhs ) && Contains( rhs ), "SparseSet::Swap > Sparse set doesn't contains this value" );
 
-            if ( element1 == element2 )
+            if ( lhs == rhs )
                 return;
 
-            std::swap( m_Dense[m_Sparse[element1]], m_Dense[m_Sparse[element2]] );
-            std::swap( m_Sparse[element1], m_Sparse[element2] );
+            std::swap( m_Dense[m_Sparse[lhs]], m_Dense[m_Sparse[rhs]] );
+            std::swap( m_Sparse[lhs], m_Sparse[rhs] );
+        }
+
+        template < typename Compare >
+        void Sort( Compare compare )
+        {
+            std::vector< IndexType > copy( m_Dense.size() );
+            std::iota( copy.begin(), copy.end(), IndexType{} );
+
+            std::sort( copy.begin(),
+                copy.end(),
+                [this, compare = std::move( compare )]( const IndexType lhs, const IndexType rhs )
+                { return compare( m_Dense[lhs], m_Dense[rhs] ); } );
+
+            for ( IndexType pos{}; pos < copy.size(); ++pos )
+            {
+                auto curr = pos;
+                auto next = copy[curr];
+
+                while ( curr != next )
+                {
+                    std::swap( m_Dense[copy[curr]], m_Dense[copy[next]] );
+                    std::swap( m_Sparse[m_Dense[copy[curr]]], m_Sparse[m_Dense[copy[next]]] );
+
+                    copy[curr] = curr;
+                    curr = next;
+                    next = copy[curr];
+                }
+            }
         }
 
         Iterator begin()
@@ -123,7 +151,7 @@ namespace smile::stl
             return m_Dense.empty();
         }
 
-      private:
+      public:
         std::vector< IndexType > m_Sparse{};
         std::vector< IndexType > m_Dense{};
     };

@@ -370,6 +370,11 @@ namespace smile::ecs
             return m_HandleManager.IsEntityActive( entityHandle );
         }
 
+        void MarkEntityForDelete( EntityHandleType entityHandle )
+        {
+            m_DeadHandles.push_back( entityHandle );
+        }
+
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &AddComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
         {
@@ -553,6 +558,46 @@ namespace smile::ecs
             return m_HandleManager;
         }
 
+        template < typename ComponentType, typename Compare >
+        void SortComponent( Compare compare )
+        {
+            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+
+            SM_ASSERT(
+                !IsComponentOwned( pComponentInterface ), "ECSEngine::SortComponent > Cannot sort owned component" );
+
+            auto comp = [this, compare = std::move( compare )]( const IndexType lhs, const IndexType rhs )
+            {
+                const EntityHandleType lhsEntity = m_HandleManager.GetEntityHandle( lhs );
+                const EntityHandleType rhsEntity = m_HandleManager.GetEntityHandle( rhs );
+                return compare( lhsEntity, rhsEntity );
+            };
+
+            auto pool = pComponentInterface->m_Pool;
+            auto &poolRef = pComponentInterface->m_Pool;
+
+            std::sort( pool.m_Dense.begin(), pool.m_Dense.end(), std::move( comp ) );
+
+            for ( std::size_t pos{}; pos < pool.GetItemCount(); ++pos )
+            {
+                auto curr = pos;
+                auto next = poolRef.m_Sparse[pool.m_Dense[curr]];
+
+                while ( curr != next )
+                {
+                    std::swap( poolRef.m_Dense[poolRef.m_Sparse[pool.m_Dense[curr]]],
+                        poolRef.m_Dense[poolRef.m_Sparse[pool.m_Dense[next]]] );
+
+                    pComponentInterface->m_pComponentStorage->Swap(
+                        poolRef.m_Sparse[pool.m_Dense[curr]], poolRef.m_Sparse[pool.m_Dense[next]] );
+
+                    poolRef.m_Sparse[pool.m_Dense[curr]] = curr;
+                    curr = next;
+                    next = poolRef.m_Sparse[pool.m_Dense[curr]];
+                }
+            }
+        }
+
       private:
         template < typename ComponentType >
         void RegisterComponent( bool isRelational = false )
@@ -619,5 +664,6 @@ namespace smile::ecs
         std::unordered_map< stl::TypeID, ComponentInterface * > m_ComponentMap{};
         std::vector< GroupBase * > m_pGroups{};
         std::vector< System * > m_pSystems{};
+        std::vector< EntityHandleType > m_DeadHandles{};
     };
 }

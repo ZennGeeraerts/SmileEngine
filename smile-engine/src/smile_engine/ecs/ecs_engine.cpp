@@ -38,6 +38,13 @@ namespace smile::ecs
         {
             pSystem->OnUpdate( deltaTime );
         }
+
+        for ( auto deadHandle : m_DeadHandles )
+        {
+            DestroyEntity( deadHandle );
+        }
+
+        m_DeadHandles.clear();
     }
 
     void ECSEngine::RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle )

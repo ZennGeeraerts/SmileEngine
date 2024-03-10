@@ -26,7 +26,7 @@ namespace smile::ecs
     }
 
     template < typename ComponentType >
-    inline void rawDestructObject( void *pObject )
+    inline void RawDestructObject( void *pObject )
     {
         static_cast< ComponentType * >( pObject )->ComponentType::~ComponentType();
     }
@@ -43,7 +43,7 @@ namespace smile::ecs
             m_Size = 0;
             m_Allocated = 0;
             m_pConstructor = RawConstructObject< ComponentType >;
-            m_pDestructor = rawDestructObject< ComponentType >;
+            m_pDestructor = RawDestructObject< ComponentType >;
             m_ComponentSize = sizeof( ComponentType );
             m_IsOwnerData = isOwnerIncluded;
         }

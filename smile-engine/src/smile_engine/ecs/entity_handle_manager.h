@@ -39,8 +39,8 @@ namespace smile::ecs
                 do
                 {
                     ++It;
-                } while (
-                    It != Entities.end() && ( It->GetIndex() > Entities.size() || Entities[It->GetIndex()].GetIndex() != It->GetIndex() ) );
+                } while ( It != Entities.end() && ( It->GetIndex() > Entities.size() ||
+                                                      Entities[It->GetIndex()].GetIndex() != It->GetIndex() ) );
 
                 return *this;
             }
@@ -58,7 +58,7 @@ namespace smile::ecs
 
         EntityHandleType GetEntityHandle( IndexType index ) const
         {
-            SM_ASSERT( index < m_Entities.size(), "EntityHandleManager::getEntityHandle > Index out of range" );
+            SM_ASSERT( index < m_Entities.size(), "EntityHandleManager::GetEntityHandle > Index out of range" );
             return m_Entities[index];
         }
 
