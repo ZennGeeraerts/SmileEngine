@@ -77,6 +77,15 @@ namespace smile::graphic
         }
     }
 
+    void DirectX11Shader::UploadTextureCube( const std::string &sementicName, const Ref< TextureCube > &pTextureCube )
+    {
+        auto pTextureVariable = GetEffectVariable( sementicName )->AsShaderResource();
+        if ( pTextureVariable->IsValid() )
+        {
+            pTextureVariable->SetResource( ( ID3D11ShaderResourceView * )pTextureCube->GetData() );
+        }
+    }
+
     void DirectX11Shader::UploadBool( const std::string &sementicName, bool value )
     {
         auto pBoolVariable = GetEffectVariable( sementicName )->AsScalar();

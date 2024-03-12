@@ -35,6 +35,10 @@ namespace smile::graphic
         pDeviceContext->UploadTexture2D( sementicName, textureID );
     }
 
+    void SmileRasterShader::UploadTextureCube( const std::string &sementicName, const Ref< TextureCube > &pTextureCube )
+    {
+    }
+
     void SmileRasterShader::UploadBool( const std::string &sementicName, bool value )
     {
     }

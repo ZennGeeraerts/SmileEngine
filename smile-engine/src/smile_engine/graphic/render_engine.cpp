@@ -11,6 +11,7 @@
 #include "renderer/wireframe_renderer.h"
 #include "renderer/debug_renderer.h"
 #include "renderer/renderer_2d.h"
+#include "renderer/skybox_renderer.h"
 
 namespace smile::graphic
 {
@@ -35,6 +36,7 @@ namespace smile::graphic
         s_ShaderLibrary.Load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
         s_ShaderLibrary.Load( "assets/shaders/PosColTex.fx",
             { { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } } );
+        s_ShaderLibrary.Load( "assets/shaders/Skybox.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
         GraphicsDevice *pDevice = GetDevice();
         {
@@ -57,6 +59,7 @@ namespace smile::graphic
         WireframeRenderer::GetInstance().Initialize();
         DebugRenderer::GetInstance().Initialize();
         Renderer2D::Initialize();
+        SkyboxRenderer::Initialize();
     }
 
     void RenderEngine::ShutDown()
@@ -67,6 +70,7 @@ namespace smile::graphic
         WireframeRenderer::GetInstance().ShutDown();
         DebugRenderer::GetInstance().ShutDown();
         Renderer2D::ShutDown();
+        SkyboxRenderer::ShutDown();
 
         RenderCommand::ShutDown();
     }
@@ -80,6 +84,10 @@ namespace smile::graphic
         if ( s_CameraData.pMainCamera )
         {
             s_RenderPassList.OnRender( *s_CameraData.pMainCamera, s_CameraData.CameraTransform );
+
+            SkyboxRenderer::BeginScene( *s_CameraData.pMainCamera, s_CameraData.CameraTransform );
+            SkyboxRenderer::OnRender();
+            SkyboxRenderer::EndScene();
         }
 
         pContext->UnbindFramebuffer();
@@ -92,6 +100,10 @@ namespace smile::graphic
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
         s_RenderPassList.OnRender( editorCamera );
+
+        SkyboxRenderer::BeginScene( editorCamera );
+        SkyboxRenderer::OnRender();
+        SkyboxRenderer::EndScene();
 
         pContext->UnbindFramebuffer();
     }
