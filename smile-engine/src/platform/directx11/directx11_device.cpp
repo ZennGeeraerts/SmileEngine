@@ -301,25 +301,22 @@ namespace smile::graphic
             }
 
             result = DirectX::CreateTexture(
-                pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), pResource );
+                pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), ppResource );
             if ( FAILED( result ) )
             {
                 SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create texture: %ls",
                     GetDirectX11ErrorMessage( result ) );
-                SAFE_RELEASE( (*pResource) );
+                SAFE_RELEASE( ( *ppResource ) );
                 return false;
             }
 
-            result = DirectX::CreateShaderResourceView( pDevice,
-                image.GetImages(),
-                image.GetImageCount(),
-                image.GetMetadata(),
-                pShaderResourceView );
+            result = DirectX::CreateShaderResourceView(
+                pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), ppShaderResourceView );
             if ( FAILED( result ) )
             {
                 SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create shader resource view: %ls",
                     GetDirectX11ErrorMessage( result ) );
-                SAFE_RELEASE( (*pShaderResourceView) );
+                SAFE_RELEASE( ( *ppShaderResourceView ) );
                 return false;
             }
 
@@ -330,15 +327,17 @@ namespace smile::graphic
         {
             DirectX::TexMetadata info{};
 
-            return LoadTexture( pDevice, pTexture->FilePath, &pTexture->pTexture, &pTexture->pShaderResourceView, info );
+            return LoadTexture(
+                pDevice, pTexture->FilePath, &pTexture->pTexture, &pTexture->pShaderResourceView, info );
         }
 
         static bool LoadTextureCube( ID3D11Device *pDevice, const Ref< DirectX11TextureCube > &pTexture )
         {
             DirectX::TexMetadata info{};
             info.miscFlags = DirectX::TEX_MISC_TEXTURECUBE;
-            
-            return LoadTexture( pDevice, pTexture->FilePath, &pTexture->pTexture, &pTexture->pShaderResourceView, info );
+
+            return LoadTexture(
+                pDevice, pTexture->FilePath, &pTexture->pTexture, &pTexture->pShaderResourceView, info );
         }
     }
 
@@ -440,7 +439,7 @@ namespace smile::graphic
         bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( vertexBufferDesc.CPUAccess );
         bufferDesc.MiscFlags = 0;
 
-        HRESULT result; 
+        HRESULT result;
         if ( vertexBufferDesc.pVertices )
         {
             D3D11_SUBRESOURCE_DATA initData = { 0 };
