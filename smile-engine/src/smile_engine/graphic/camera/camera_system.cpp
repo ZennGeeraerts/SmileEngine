@@ -24,7 +24,7 @@ namespace smile::graphic
                 if ( camera.IsPrimary )
                 {
                     pMainCamera = &camera.Camera;
-                    cameraTransform = transform.GetTransform();
+                    cameraTransform = transform.GetWorldTransform();
                     break;
                 }
             }

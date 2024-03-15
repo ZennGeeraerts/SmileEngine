@@ -375,6 +375,27 @@ namespace smile::ecs
             m_DeadHandles.push_back( entityHandle );
         }
 
+        template < typename ComponentType >
+        void RegisterComponent( bool isRelational = false )
+        {
+            ComponentInterface *pComponentInterface = new ComponentInterface{};
+            pComponentInterface->m_IsRelational = isRelational;
+            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( isRelational );
+
+            m_pComponents.push_back( pComponentInterface );
+
+            auto typeID = stl::TypeIDOf< ComponentType >();
+            m_ComponentMap[typeID] = pComponentInterface;
+        }
+
+        template < typename ComponentType >
+        void RegisterComponentIfNeeded( bool isRelational = false )
+        {
+            auto typeID = stl::TypeIDOf< ComponentType >();
+            if ( m_ComponentMap.find( typeID ) == m_ComponentMap.end() )
+                RegisterComponent< ComponentType >( isRelational );
+        }
+
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &AddComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
         {
@@ -599,27 +620,6 @@ namespace smile::ecs
         }
 
       private:
-        template < typename ComponentType >
-        void RegisterComponent( bool isRelational = false )
-        {
-            ComponentInterface *pComponentInterface = new ComponentInterface{};
-            pComponentInterface->m_IsRelational = isRelational;
-            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( isRelational );
-
-            m_pComponents.push_back( pComponentInterface );
-
-            auto typeID = stl::TypeIDOf< ComponentType >();
-            m_ComponentMap[typeID] = pComponentInterface;
-        }
-
-        template < typename ComponentType >
-        void RegisterComponentIfNeeded( bool isRelational = false )
-        {
-            auto typeID = stl::TypeIDOf< ComponentType >();
-            if ( m_ComponentMap.find( typeID ) == m_ComponentMap.end() )
-                RegisterComponent< ComponentType >( isRelational );
-        }
-
         template < typename ComponentType >
         ComponentInterface *GetComponentInterface()
         {

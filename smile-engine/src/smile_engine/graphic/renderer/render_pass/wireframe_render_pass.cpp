@@ -21,7 +21,7 @@ namespace smile::graphic
             {
                 const auto &[boxCollider, transform] =
                     m_ECSEngine.GetComponents< scene::BoxColliderComponent, scene::TransformComponent >( entity );
-                wireframeRenderer.Submit( boxCollider, transform.GetTransform() );
+                wireframeRenderer.Submit( boxCollider, transform.GetWorldTransform() );
             }
         }
 
@@ -32,7 +32,7 @@ namespace smile::graphic
             {
                 const auto &[sphereCollider, transform] =
                     m_ECSEngine.GetComponents< scene::SphereColliderComponent, scene::TransformComponent >( entity );
-                wireframeRenderer.Submit( sphereCollider, transform.GetTransform() );
+                wireframeRenderer.Submit( sphereCollider, transform.GetWorldTransform() );
             }
         }
 
@@ -53,7 +53,7 @@ namespace smile::graphic
             {
                 const auto &[boxCollider, transform] =
                     m_ECSEngine.GetComponents< scene::BoxColliderComponent, scene::TransformComponent >( entity );
-                wireframeRenderer.Submit( boxCollider, transform.GetTransform() );
+                wireframeRenderer.Submit( boxCollider, transform.GetWorldTransform() );
             }
         }
 
@@ -64,7 +64,7 @@ namespace smile::graphic
             {
                 const auto &[sphereCollider, transform] =
                     m_ECSEngine.GetComponents< scene::SphereColliderComponent, scene::TransformComponent >( entity );
-                wireframeRenderer.Submit( sphereCollider, transform.GetTransform() );
+                wireframeRenderer.Submit( sphereCollider, transform.GetWorldTransform() );
             }
         }
 

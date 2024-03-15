@@ -13,6 +13,7 @@
 namespace smile::scene
 {
     class Entity;
+    class TransformSystem;
 
     class Scene final
     {
@@ -55,6 +56,8 @@ namespace smile::scene
         Uint32 m_ViewportHeight = 0;
 
         std::unordered_map< UUID, ecs::EntityHandleType > m_EntityMap{};
+
+        Scope< TransformSystem > m_pTransformSystem;
 
         friend class Entity;
         friend class SceneSerializer;

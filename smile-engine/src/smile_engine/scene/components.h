@@ -66,6 +66,18 @@ namespace smile::scene
             return transform;
         }
 
+        DirectX::XMFLOAT4X4 GetWorldTransform() const
+        {
+            DirectX::XMMATRIX worldTransformMat =
+                DirectX::XMMatrixScaling( WorldScale.x, WorldScale.y, WorldScale.z ) *
+                DirectX::XMMatrixRotationRollPitchYaw( WorldRotation.x, WorldRotation.y, WorldRotation.z ) *
+                DirectX::XMMatrixTranslation( WorldTranslation.x, WorldTranslation.y, WorldTranslation.z );
+
+            DirectX::XMFLOAT4X4 worldTransform{};
+            DirectX::XMStoreFloat4x4( &worldTransform, worldTransformMat );
+            return worldTransform;
+        }
+
         DirectX::XMFLOAT3 GetForward()
         {
             DirectX::XMFLOAT3 forward{ 0, 0, 1 };
@@ -83,6 +95,10 @@ namespace smile::scene
         DirectX::XMFLOAT3 Translation{ 0.f, 0.f, 0.f };
         DirectX::XMFLOAT3 Rotation{ 0.f, 0.f, 0.f };
         DirectX::XMFLOAT3 Scale{ 1.f, 1.f, 1.f };
+
+        DirectX::XMFLOAT3 WorldTranslation{ 0.0f, 0.0f, 0.0f };
+        DirectX::XMFLOAT3 WorldRotation{ 0.0f, 0.0f, 0.0f };
+        DirectX::XMFLOAT3 WorldScale{ 1.0f, 1.0f, 1.0f };
 
       private:
         void RotateVector( DirectX::XMFLOAT3 &v )
@@ -108,7 +124,9 @@ namespace smile::scene
 
         MeshRendererComponent( const MeshRendererComponent & ) = default;
 
-        MeshRendererComponent( const std::string &assetFile, Uint32 meshIndex, const Ref< graphic::Material > &pMaterial )
+        MeshRendererComponent( const std::string &assetFile,
+            Uint32 meshIndex,
+            const Ref< graphic::Material > &pMaterial )
             : pMaterial{ pMaterial }, MeshIndex{ meshIndex }
         {
             pModel = graphic::ModelLoader::LoadModel( assetFile );
@@ -119,7 +137,7 @@ namespace smile::scene
         Ref< graphic::Mesh > pMesh = nullptr;
         Ref< graphic::Material > pMaterial = nullptr;
 
-         // For serialization
+        // For serialization
         Ref< graphic::Model > pModel = nullptr;
         Uint32 MeshIndex = 0;
     };
@@ -135,7 +153,9 @@ namespace smile::scene
 
         SkinnedMeshRendererComponent( const SkinnedMeshRendererComponent & ) = default;
 
-        SkinnedMeshRendererComponent( const std::string &assetFile, Uint32 meshIndex, const Ref< graphic::Material > &pMaterial )
+        SkinnedMeshRendererComponent( const std::string &assetFile,
+            Uint32 meshIndex,
+            const Ref< graphic::Material > &pMaterial )
             : pMaterial{ pMaterial }, MeshIndex{ meshIndex }
         {
             pModel = graphic::ModelLoader::LoadModel( assetFile );
@@ -145,7 +165,7 @@ namespace smile::scene
 
         Ref< graphic::SkinnedMesh > pSkinnedMesh = nullptr;
         Ref< graphic::Material > pMaterial = nullptr;
-        
+
         // For serialization
         Ref< graphic::Model > pModel = nullptr;
         Uint32 MeshIndex = 0;

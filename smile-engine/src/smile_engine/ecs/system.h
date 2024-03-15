@@ -12,6 +12,10 @@ namespace smile::ecs
     {
       public:
         System() = default;
+        System( ECSEngine *pECSEngine ) : m_pECSEngine{ pECSEngine }
+        {
+        }
+
         virtual ~System() = default;
 
         virtual void OnUpdate( Timestep deltaTime ) = 0;

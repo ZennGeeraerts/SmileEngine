@@ -21,7 +21,7 @@ namespace smile::graphic
                     const auto &[spriteRenderer, transform] =
                         m_ECSEngine.GetComponents< scene::SpriteRendererComponent, scene::TransformComponent >(
                             entity );
-                    Renderer2D::DrawQuad( transform.GetTransform(), spriteRenderer );
+                    Renderer2D::DrawQuad( transform.GetWorldTransform(), spriteRenderer );
                 }
             }
 
@@ -41,7 +41,7 @@ namespace smile::graphic
             {
                 const auto &[spriteRenderer, transform] =
                     m_ECSEngine.GetComponents< scene::SpriteRendererComponent, scene::TransformComponent >( entity );
-                Renderer2D::DrawQuad( transform.GetTransform(), spriteRenderer );
+                Renderer2D::DrawQuad( transform.GetWorldTransform(), spriteRenderer );
             }
         }
 

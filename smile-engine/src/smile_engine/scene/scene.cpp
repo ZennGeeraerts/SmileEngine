@@ -17,6 +17,7 @@
 #include "smile_engine/graphic/renderer/render_pass/debug_render_pass.h"
 #include "smile_engine/graphic/renderer/render_pass/render_pass_2d.h"
 
+#include "transform_system.h"
 #include "smile_engine/graphic/animation/animation_system.h"
 #include "smile_engine/graphic/camera/camera_system.h"
 
@@ -26,6 +27,9 @@ namespace smile::scene
 {
     Scene::Scene()
     {
+        m_pTransformSystem = CreateScope< TransformSystem >( &m_ECSEngine );
+        //m_pTransformSystem->m_pECSEngine = &m_ECSEngine;
+
         m_ECSEngine.AddSystem( new graphic::AnimationSystem{} );
         m_ECSEngine.AddSystem( new graphic::CameraSystem{} );
     }
@@ -149,6 +153,8 @@ namespace smile::scene
 
     void Scene::OnUpdateRuntime( Timestep deltaTime )
     {
+        m_pTransformSystem->OnUpdate( deltaTime );
+
         auto view = m_ECSEngine.GetView< ScriptComponent >();
         for ( auto e : view )
         {
@@ -165,12 +171,16 @@ namespace smile::scene
 
     void Scene::OnUpdateSimulation( Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
+        m_pTransformSystem->OnUpdate( deltaTime );
+
         physics::PhysicsEngine::Simulate( deltaTime );
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
+        m_pTransformSystem->OnUpdate( deltaTime );
+
         graphic::RenderEngine::OnRender( editorCamera );
     }
 

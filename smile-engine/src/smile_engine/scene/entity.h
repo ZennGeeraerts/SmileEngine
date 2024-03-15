@@ -71,7 +71,7 @@ namespace smile::scene
         }
         DirectX::XMFLOAT4X4 GetTransform() const
         {
-            return GetComponent< TransformComponent >().GetTransform();
+            return GetComponent< TransformComponent >().GetWorldTransform();
         }
 
         template < typename ComponentType >

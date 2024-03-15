@@ -20,7 +20,7 @@ namespace smile::graphic
             {
                 const auto &[meshRenderer, transform] =
                     m_ECSEngine.GetComponents< scene::MeshRendererComponent, scene::TransformComponent >( entity );
-                graphic::ForwardRenderer::Submit( meshRenderer, transform.GetTransform() );
+                graphic::ForwardRenderer::Submit( meshRenderer, transform.GetWorldTransform() );
             }
         }
         {
@@ -32,7 +32,7 @@ namespace smile::graphic
                     m_ECSEngine.GetComponents< scene::SkinnedMeshRendererComponent, scene::TransformComponent >(
                         entity );
 
-                graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetTransform() );
+                graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetWorldTransform() );
             }
         }
 
@@ -52,7 +52,7 @@ namespace smile::graphic
             {
                 const auto &[meshRenderer, transform] =
                     m_ECSEngine.GetComponents< scene::MeshRendererComponent, scene::TransformComponent >( entity );
-                graphic::ForwardRenderer::Submit( meshRenderer, transform.GetTransform() );
+                graphic::ForwardRenderer::Submit( meshRenderer, transform.GetWorldTransform() );
             }
         }
         {
@@ -64,7 +64,7 @@ namespace smile::graphic
                     m_ECSEngine.GetComponents< scene::SkinnedMeshRendererComponent, scene::TransformComponent >(
                         entity );
 
-                graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetTransform() );
+                graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetWorldTransform() );
             }
         }
 

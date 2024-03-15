@@ -241,10 +241,14 @@ namespace smile
 
             // Entity
             auto &entityTransformComponent = selectedEntity.GetComponent< scene::TransformComponent >();
-            auto entityTransform = entityTransformComponent.GetTransform();
-            auto entityRotation = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.x ),
-                DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.y ),
-                DirectX::XMConvertToDegrees( entityTransformComponent.Rotation.z ) };
+            auto entityTransform = entityTransformComponent.GetWorldTransform();
+            const auto entityTranslation = entityTransformComponent.WorldTranslation;
+            const auto entityRotation = entityTransformComponent.WorldRotation;
+            const auto entityScale = entityTransformComponent.WorldScale;
+
+            const auto entityRotationDeg = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.x ),
+                    DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.y ),
+                    DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.z ) };
 
             // Snapping
             bool isSnapping = input::Input::IsKeyPressed( input::key::CtrlLeft );
@@ -253,9 +257,9 @@ namespace smile
                 snapValue = 45.f;
             float snapValues[3]{ snapValue, snapValue, snapValue };
 
-            ImGuizmo::RecomposeMatrixFromComponents( &entityTransformComponent.Translation.x,
-                &entityRotation.x,
-                &entityTransformComponent.Scale.x,
+            ImGuizmo::RecomposeMatrixFromComponents( &entityTranslation.x,
+                &entityRotationDeg.x,
+                &entityScale.x,
                 *entityTransform.m );
             ImGuizmo::Manipulate( *cameraViewMatrix.m,
                 *cameraProjectionMatrix.m,
@@ -267,13 +271,27 @@ namespace smile
 
             if ( ImGuizmo::IsUsing() )
             {
-                ImGuizmo::DecomposeMatrixToComponents( *entityTransform.m,
-                    &entityTransformComponent.Translation.x,
-                    &entityRotation.x,
-                    &entityTransformComponent.Scale.x );
-                entityTransformComponent.Rotation = { DirectX::XMConvertToRadians( entityRotation.x ),
-                    DirectX::XMConvertToRadians( entityRotation.y ),
-                    DirectX::XMConvertToRadians( entityRotation.z ) };
+                DirectX::XMFLOAT3 newEntityTranslation;
+                DirectX::XMFLOAT3 newEntityRotation;
+                DirectX::XMFLOAT3 newEntityScale;
+
+                ImGuizmo::DecomposeMatrixToComponents(
+                    *entityTransform.m, &newEntityTranslation.x, &newEntityRotation.x, &newEntityScale.x );
+                newEntityRotation = { DirectX::XMConvertToRadians( newEntityRotation.x ),
+                    DirectX::XMConvertToRadians( newEntityRotation.y ),
+                    DirectX::XMConvertToRadians( newEntityRotation.z ) };
+
+                entityTransformComponent.Translation.x += newEntityTranslation.x - entityTranslation.x;
+                entityTransformComponent.Translation.y += newEntityTranslation.y - entityTranslation.y;
+                entityTransformComponent.Translation.z += newEntityTranslation.z - entityTranslation.z;
+
+                entityTransformComponent.Rotation.x += newEntityRotation.x - entityRotation.x;
+                entityTransformComponent.Rotation.y += newEntityRotation.y - entityRotation.y;
+                entityTransformComponent.Rotation.z += newEntityRotation.z - entityRotation.z;
+
+                entityTransformComponent.Scale.x += newEntityScale.x - entityScale.x;
+                entityTransformComponent.Scale.y += newEntityScale.y - entityScale.y;
+                entityTransformComponent.Scale.z += newEntityScale.z - entityScale.z;
             }
         }
 
