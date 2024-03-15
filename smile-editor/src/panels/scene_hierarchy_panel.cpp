@@ -88,9 +88,13 @@ namespace smile::scene
         ImGui::PushID( ( const void * )( Uint64 )entity );
 
         auto &tag = entity.GetComponent< TagComponent >().Tag;
+        auto pRelationship = entity.TryGetComponent< ecs::Relationship >();
 
-        const ImGuiTreeNodeFlags flags = ( ( m_SelectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
-                                         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+        const ImGuiTreeNodeFlags flags =
+            ( ( m_SelectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
+            ( ( !pRelationship || pRelationship->ChildrenCount == 0 ) ? ImGuiTreeNodeFlags_Leaf : 0 ) |
+            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+
         bool isNodeExpanded = ImGui::TreeNodeEx( ( const void * )( Uint64 )entity, flags, tag.c_str() );
 
         if ( ImGui::BeginDragDropSource() )
@@ -140,27 +144,19 @@ namespace smile::scene
 
         if ( isNodeExpanded )
         {
-            if ( entity.HasComponent< ecs::Relationship >() )
+            if ( pRelationship && pRelationship->First )
             {
-                auto &relationship = entity.GetComponent< ecs::Relationship >();
-                if ( relationship.First )
-                {
-                    Entity child{ relationship.First, m_pContext.get() };
-                    DrawEntityNode( child, entitiesToAddChild );
-                }
+                Entity child{ pRelationship->First, m_pContext.get() };
+                DrawEntityNode( child, entitiesToAddChild );
             }
 
             ImGui::TreePop();
         }
 
-        if ( entity.HasComponent< ecs::Relationship >() )
+        if ( pRelationship && pRelationship->Next )
         {
-            auto &relationship = entity.GetComponent< ecs::Relationship >();
-            if ( relationship.Next )
-            {
-                Entity child{ relationship.Next, m_pContext.get() };
-                DrawEntityNode( child, entitiesToAddChild );
-            }
+            Entity child{ pRelationship->Next, m_pContext.get() };
+            DrawEntityNode( child, entitiesToAddChild );
         }
 
         if ( isEntityDeleted )
