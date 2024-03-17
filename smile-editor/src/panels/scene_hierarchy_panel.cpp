@@ -169,11 +169,13 @@ namespace smile::scene
         ImGui::PopID();
     }
 
-    void SceneHierarchyPanel::DrawVector3Control( const std::string &label,
+    bool SceneHierarchyPanel::DrawVector3Control( const std::string &label,
         DirectX::XMFLOAT3 &value,
         float resetValue,
         float columnWidth )
     {
+        bool isValueChanged = false;
+
         ImGuiIO &io = ImGui::GetIO();
         auto boldFont = io.Fonts->Fonts[1];
 
@@ -204,7 +206,10 @@ namespace smile::scene
         ImGui::PopStyleColor( 3 );
 
         ImGui::SameLine();
-        ImGui::DragFloat( "##X", &value.x, 0.03f );
+
+        if ( ImGui::DragFloat( "##X", &value.x, 0.03f ) )
+            isValueChanged = true;
+
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -221,7 +226,10 @@ namespace smile::scene
         ImGui::PopStyleColor( 3 );
 
         ImGui::SameLine();
-        ImGui::DragFloat( "##Y", &value.y, 0.03f );
+
+        if ( ImGui::DragFloat( "##Y", &value.y, 0.03f ) )
+            isValueChanged = true;
+
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -238,7 +246,10 @@ namespace smile::scene
         ImGui::PopStyleColor( 3 );
 
         ImGui::SameLine();
-        ImGui::DragFloat( "##Z", &value.z, 0.03f );
+
+        if ( ImGui::DragFloat( "##Z", &value.z, 0.03f ) )
+            isValueChanged = true;
+
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -247,6 +258,8 @@ namespace smile::scene
         ImGui::Columns( 1 );
 
         ImGui::PopID();
+
+        return isValueChanged;
     }
 
     void SceneHierarchyPanel::DrawComponents( Entity entity )
@@ -348,18 +361,32 @@ namespace smile::scene
             entity,
             []( auto &transformComponent )
             {
-                DrawVector3Control( "Position", transformComponent.Translation );
+                if ( DrawVector3Control( "Position", transformComponent.Translation ) )
+                {
+                    transformComponent.TransformChanged |=
+                        static_cast< Uint32 >( TransformComponent::TransformChanged::Translation );
+                }
 
                 DirectX::XMFLOAT3 rotationDegrees = {};
                 rotationDegrees.x = DirectX::XMConvertToDegrees( transformComponent.Rotation.x );
                 rotationDegrees.y = DirectX::XMConvertToDegrees( transformComponent.Rotation.y );
                 rotationDegrees.z = DirectX::XMConvertToDegrees( transformComponent.Rotation.z );
-                DrawVector3Control( "Rotation", rotationDegrees );
+
+                if ( DrawVector3Control( "Rotation", rotationDegrees ) )
+                {
+                    transformComponent.TransformChanged |=
+                        static_cast< Uint32 >( TransformComponent::TransformChanged::Rotation );
+                }
+
                 transformComponent.Rotation.x = DirectX::XMConvertToRadians( rotationDegrees.x );
                 transformComponent.Rotation.y = DirectX::XMConvertToRadians( rotationDegrees.y );
                 transformComponent.Rotation.z = DirectX::XMConvertToRadians( rotationDegrees.z );
 
-                DrawVector3Control( "Scale", transformComponent.Scale, 1.0f );
+                if ( DrawVector3Control( "Scale", transformComponent.Scale, 1.0f ) )
+                {
+                    transformComponent.TransformChanged |=
+                        static_cast< Uint32 >( TransformComponent::TransformChanged::Scale );
+                }
             },
             false );
 

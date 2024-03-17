@@ -17,6 +17,7 @@ namespace smile::physics
     {
       public:
         CharacterController( scene::Entity entity );
+        ~CharacterController();
 
         void UpdateTransform();
 

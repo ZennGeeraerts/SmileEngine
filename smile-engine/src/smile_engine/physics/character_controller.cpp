@@ -84,6 +84,11 @@ namespace smile::physics
         SetCollisionIgnoreGroups( characterControllerComponent.CollisionIgnoreGroups );
     }
 
+    CharacterController::~CharacterController()
+    {
+        m_pController->release();
+    }
+
     void CharacterController::UpdateTransform()
     {
         scene::TransformComponent &transform = m_Entity.GetComponent< scene::TransformComponent >();

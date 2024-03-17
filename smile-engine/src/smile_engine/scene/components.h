@@ -45,6 +45,14 @@ namespace smile::scene
 
     struct TransformComponent final
     {
+        enum class TransformChanged
+        {
+            None = BIT( 0 ),
+            Translation = BIT( 1 ),
+            Rotation = BIT( 2 ),
+            Scale = BIT( 3 ),
+        };
+
         TransformComponent() = default;
         TransformComponent( const TransformComponent & ) = default;
         TransformComponent( const DirectX::XMFLOAT3 &translation,
@@ -99,6 +107,8 @@ namespace smile::scene
         DirectX::XMFLOAT3 WorldTranslation{ 0.0f, 0.0f, 0.0f };
         DirectX::XMFLOAT3 WorldRotation{ 0.0f, 0.0f, 0.0f };
         DirectX::XMFLOAT3 WorldScale{ 1.0f, 1.0f, 1.0f };
+
+        Uint32 TransformChanged;
 
       private:
         void RotateVector( DirectX::XMFLOAT3 &v )
@@ -177,7 +187,7 @@ namespace smile::scene
         AnimatorComponent( const AnimatorComponent & ) = default;
 
         std::vector< Ref< graphic::AnimationClip > > pAnimationClips;
-        Uint32 CurrentClipIndex;
+        Uint32 CurrentClipIndex = 0;
 
         // For serialization
         Ref< graphic::Model > pModel = nullptr;
@@ -224,7 +234,7 @@ namespace smile::scene
         RigidbodyComponent( const RigidbodyComponent & ) = default;
 
         // Data
-        BodyType Type;
+        BodyType Type = BodyType::Static;
         CollisionDetectionType CollisionDetection = CollisionDetectionType::Discrete;
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
 

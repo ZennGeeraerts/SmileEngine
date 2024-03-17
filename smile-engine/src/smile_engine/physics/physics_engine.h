@@ -63,9 +63,12 @@ namespace smile::physics
         static void DestroyScene();
 
         static Ref< PhysicsActor > CreateActor( scene::Entity entity );
-        static Ref< CharacterController > CreateCharacterController( scene::Entity entity );
         static void RemoveActor( scene::Entity entity );
         static bool IsPhysicsActor( scene::Entity entity );
+
+        static Ref< CharacterController > CreateCharacterController( scene::Entity entity );
+        static void RemoveCharacterController( scene::Entity entity );
+        static bool IsCharacterController( scene::Entity entity );
 
         static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
         static Ref< CharacterController > GetCharacterControllerOfEntity( scene::Entity entity );

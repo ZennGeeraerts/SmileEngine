@@ -202,18 +202,9 @@ namespace smile::physics
         return pActor;
     }
 
-    Ref< CharacterController > PhysicsEngine::CreateCharacterController( scene::Entity entity )
-    {
-        SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
-
-        Ref< CharacterController > pCharacterController = CreateRef< CharacterController >( entity );
-        s_CharacterControllerMap[entity.GetUUID()] = pCharacterController;
-        return pCharacterController;
-    }
-
     void PhysicsEngine::RemoveActor( scene::Entity entity )
     {
-        SM_ASSERT( s_pScene, "PhysicsEngine::CreateActor > Scene is not valid" );
+        SM_ASSERT( s_pScene, "PhysicsEngine::RemoveActor > Scene is not valid" );
 
         if ( IsPhysicsActor( entity ) )
         {
@@ -226,6 +217,26 @@ namespace smile::physics
     bool PhysicsEngine::IsPhysicsActor( scene::Entity entity )
     {
         return s_ActorMap.find( entity.GetUUID() ) != s_ActorMap.end();
+    }
+
+    Ref< CharacterController > PhysicsEngine::CreateCharacterController( scene::Entity entity )
+    {
+        Ref< CharacterController > pCharacterController = CreateRef< CharacterController >( entity );
+        s_CharacterControllerMap[entity.GetUUID()] = pCharacterController;
+        return pCharacterController;
+    }
+
+    void PhysicsEngine::RemoveCharacterController( scene::Entity entity )
+    {
+        if ( IsCharacterController( entity ) )
+        {
+            s_CharacterControllerMap.erase( entity.GetUUID() );
+        }
+    }
+
+    bool PhysicsEngine::IsCharacterController( scene::Entity entity )
+    {
+        return s_CharacterControllerMap.find( entity.GetUUID() ) != s_CharacterControllerMap.end();
     }
 
     Ref< PhysicsActor > PhysicsEngine::GetActorOfEntity( scene::Entity entity )
@@ -255,6 +266,9 @@ namespace smile::physics
         {
             for ( const auto &actor : s_ActorMap )
                 actor.second->UpdateTransform();
+
+            for ( const auto &controller : s_CharacterControllerMap )
+                controller.second->UpdateTransform();
         }
     }
 

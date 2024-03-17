@@ -41,13 +41,17 @@ namespace smile::scripting
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
         *pOutTranslation = entity.GetComponent< scene::TransformComponent >().Translation;
-    } 
+    }
 
     static void TransformComponent_SetTranslation( UUID entityID, DirectX::XMFLOAT3 *pTranslation )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
-        entity.GetComponent< scene::TransformComponent >().Translation = *pTranslation;
+        auto &transformComponent = entity.GetComponent< scene::TransformComponent >();
+
+        transformComponent.Translation = *pTranslation;
+        transformComponent.TransformChanged |=
+            static_cast< Uint32 >( scene::TransformComponent::TransformChanged::Translation );
     }
 
     static void RigidbodyComponent_AddForce( UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )

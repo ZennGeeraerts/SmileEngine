@@ -27,8 +27,7 @@ namespace smile::scene
 {
     Scene::Scene()
     {
-        m_pTransformSystem = CreateScope< TransformSystem >( &m_ECSEngine );
-        //m_pTransformSystem->m_pECSEngine = &m_ECSEngine;
+        m_pTransformSystem = CreateScope< TransformSystem >( &m_ECSEngine, this );
 
         m_ECSEngine.AddSystem( new graphic::AnimationSystem{} );
         m_ECSEngine.AddSystem( new graphic::CameraSystem{} );
