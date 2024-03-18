@@ -16,6 +16,28 @@ namespace smile::graphic
     const DirectX::XMFLOAT2 MeshFactory::s_DefaultFloat2 = DirectX::XMFLOAT2{ 0, 0 };
     const DirectX::XMFLOAT4 MeshFactory::s_DefaultIndices4 = DirectX::XMFLOAT4{ -1, -1, -1, -1 };
 
+    static std::vector< DirectX::XMFLOAT3 > s_PlanePositions
+    {
+        { -1.0f, 0.0f, -1.0f },
+        { 1.0f, 0.0f, -1.0f },
+        { 1.0f, 0.0f, 1.0f },
+        { -1.0f, 0.0f, -1.0f } 
+    };
+
+    static std::vector< DirectX::XMFLOAT3 > s_PlaneNormals
+    {
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f }
+    };
+
+    static std::vector< Uint32 > s_PlaneIndices
+    {
+        0, 1, 2,
+        2, 3, 0
+    };
+
     static std::vector< DirectX::XMFLOAT3 > s_CubePositions
     { 
         // front
@@ -289,6 +311,30 @@ namespace smile::graphic
         return pSkinnedMesh;
     }
 
+    Ref< Mesh > MeshFactory::CreatePlane( const BufferLayout &bufferLayout )
+    {
+        Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
+
+        for ( const auto &element : bufferLayout )
+        {
+            if ( element.Name == "POSITION" )
+            {
+                pMeshFilter->AddSemantic( Semantic::Positon );
+                pMeshFilter->m_Positions = s_PlanePositions;
+            }
+            else if ( element.Name == "NORMAL" )
+            {
+                pMeshFilter->AddSemantic( Semantic::Normal );
+                pMeshFilter->m_Normals = s_PlaneNormals;
+            }
+        }
+
+        pMeshFilter->m_VertexCount = static_cast< Uint32 >( s_PlanePositions.size() );
+        pMeshFilter->m_Indices = s_PlaneIndices;
+
+        return CreateMesh( pMeshFilter, bufferLayout );
+    }
+
     Ref< Mesh > MeshFactory::CreateCube( const BufferLayout &bufferLayout )
     {
         Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
@@ -398,7 +444,7 @@ namespace smile::graphic
         // BOTTOM
         for ( Uint32 i{ vertCount - steps - 1 }; i < vertCount - 1; ++i )
         {
-            indices.push_back( i );;
+            indices.push_back( i );
 
             auto v1 = i + 1;
             if ( i % steps == 0 )

@@ -19,6 +19,7 @@ namespace smile::graphic
         static Ref< SkinnedMesh > CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
             const BufferLayout &layout );
 
+        static Ref< Mesh > CreatePlane( const BufferLayout &bufferLayout );
         static Ref< Mesh > CreateCube( const BufferLayout &bufferLayout );
         static Ref< Mesh > CreateSphere( const BufferLayout &bufferLayout, const float radius, const Uint32 steps );
 
