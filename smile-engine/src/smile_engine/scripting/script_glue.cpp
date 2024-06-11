@@ -7,8 +7,8 @@
 
 #include "script_engine.h"
 
-#include "smile_engine/input/key_codes.h"
-#include "smile_engine/input/input.h"
+#include "smile_engine/core/input/key_codes.h"
+#include "smile_engine/core/input/input.h"
 
 #include "smile_engine/physics/physics_engine.h"
 
@@ -22,7 +22,7 @@ namespace smile::scripting
 
 #define SM_ADD_INTERNAL_CALL( name ) mono_add_internal_call( "Smile.InternalCalls::" #name, name )
 
-    static bool Entity_HasComponent( UUID entityID, MonoReflectionType *pComponentType )
+    static bool Entity_HasComponent( primitive::UUID entityID, MonoReflectionType *pComponentType )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         SM_ASSERT( pScene, "" );
@@ -36,14 +36,14 @@ namespace smile::scripting
         return s_EntityHasComponentFuncs.at( pManagedType )( entity );
     }
 
-    static void TransformComponent_GetTranslation( UUID entityID, DirectX::XMFLOAT3 *pOutTranslation )
+    static void TransformComponent_GetTranslation( primitive::UUID entityID, DirectX::XMFLOAT3 *pOutTranslation )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
         *pOutTranslation = entity.GetComponent< scene::TransformComponent >().Translation;
     }
 
-    static void TransformComponent_SetTranslation( UUID entityID, DirectX::XMFLOAT3 *pTranslation )
+    static void TransformComponent_SetTranslation( primitive::UUID entityID, DirectX::XMFLOAT3 *pTranslation )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
@@ -54,7 +54,7 @@ namespace smile::scripting
             static_cast< Uint32 >( scene::TransformComponent::TransformChanged::Translation );
     }
 
-    static void RigidbodyComponent_AddForce( UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )
+    static void RigidbodyComponent_AddForce( primitive::UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
@@ -69,7 +69,7 @@ namespace smile::scripting
         pPhysicsActor->AddForce( *pForce, autoAwake );
     }
 
-    static void CharacterControllerComponent_Move( UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
+    static void CharacterControllerComponent_Move( primitive::UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
@@ -96,7 +96,7 @@ namespace smile::scripting
         (
             []()
             {
-                std::string_view structName = stl::TypeNameOf< ComponentType, true >();
+                std::string_view structName = compiled::TypeNameOf< ComponentType, true >();
                 std::string managedTypeName = "Smile." + std::string{ structName };
 
                 MonoType *pManagedType =

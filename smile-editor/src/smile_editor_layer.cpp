@@ -5,8 +5,8 @@
 
 #include "smile_editor_layer.h"
 
-#include "smile_engine/scene/scene_serializer.h"
-#include "smile_engine/core/file_dialogs.h"
+#include "smile_engine/core/scene/scene_serializer.h"
+#include "smile_engine/core/window/file_dialog.h"
 
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
@@ -17,7 +17,7 @@ namespace smile
     /*---------------------------------------------- Editor Layer -----------------------------------------------*/
     /*-----------------------------------------------------------------------------------------------------------*/
 
-    SmileEditorLayer::SmileEditorLayer() : Layer( "SmileEditorLayer" )
+    SmileEditorLayer::SmileEditorLayer() : application::Layer( "SmileEditorLayer" )
     {
     }
 
@@ -36,7 +36,7 @@ namespace smile
         m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
         m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
 
-        auto commandLineArgs = Application::GetInstance().GetDescriptor().CommandLineArgs;
+        auto commandLineArgs = application::Application::GetInstance().GetDescriptor().CommandLineArgs;
         if ( commandLineArgs.Count > 1 )
         {
             auto projectFilePath = commandLineArgs[1];
@@ -48,7 +48,7 @@ namespace smile
             // NewProject();
 
             if ( !OpenProject() )
-                Application::GetInstance().ShutDown();
+                application::Application::GetInstance().ShutDown();
         }
     }
 
@@ -56,7 +56,7 @@ namespace smile
     {
     }
 
-    void SmileEditorLayer::OnUpdate( Timestep deltaTime )
+    void SmileEditorLayer::OnUpdate( primitive::Timestep deltaTime )
     {
         const auto &renderSettings = graphic::RenderEngine::GetSettings();
         if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( renderSettings.Width ) ) ||
@@ -153,8 +153,8 @@ namespace smile
 
         if ( io.ConfigFlags & ImGuiConfigFlags_DockingEnable )
         {
-            ImGuiID dockspace_id = ImGui::GetID( "MyDockSpace" );
-            ImGui::DockSpace( dockspace_id, ImVec2( 0.0f, 0.0f ), dockspaceFlags );
+            ImGuiID dockspaceID = ImGui::GetID( "MyDockSpace" );
+            ImGui::DockSpace( dockspaceID, ImVec2( 0.0f, 0.0f ), dockspaceFlags );
         }
 
         style.WindowMinSize.x = standardWindowMinSize;
@@ -180,7 +180,7 @@ namespace smile
                 ImGui::Separator();
 
                 if ( ImGui::MenuItem( "Exit" ) )
-                    smile::Application::GetInstance().ShutDown();
+                    smile::application::Application::GetInstance().ShutDown();
                 ImGui::EndMenu();
             }
 
@@ -363,16 +363,16 @@ namespace smile
         ImGui::End();
     }
 
-    void SmileEditorLayer::OnEvent( Event &e )
+    void SmileEditorLayer::OnEvent( window::Event &e )
     {
         if ( m_IsViewportHovered )
             m_EditorCamera.OnEvent( e );
 
-        EventDispatcher dispatcher{ e };
-        dispatcher.Dispatch< KeyPressedEvent >( SM_BIND_EVENT_FN( SmileEditorLayer::OnKeyPressed ) );
+        window::EventDispatcher dispatcher{ e };
+        dispatcher.Dispatch< window::KeyPressedEvent >( SM_BIND_EVENT_FN( SmileEditorLayer::OnKeyPressed ) );
     }
 
-    bool SmileEditorLayer::OnKeyPressed( KeyPressedEvent &e )
+    bool SmileEditorLayer::OnKeyPressed( window::KeyPressedEvent &e )
     {
         if ( e.GetRepeatCount() > 1 )
             return false;
@@ -433,7 +433,7 @@ namespace smile
 
     bool SmileEditorLayer::OpenProject()
     {
-        std::string filePath = FileDialogs::OpenFile( "Smile Project (*.smproj)\0*.smproj\0" );
+        std::string filePath = window::FileDialog::OpenFile( "Smile Project (*.smproj)\0*.smproj\0" );
         if ( filePath.empty() )
             return false;
 
@@ -471,7 +471,7 @@ namespace smile
 
     void SmileEditorLayer::SaveSceneAs()
     {
-        std::string filePath = FileDialogs::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = window::FileDialog::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
         {
             SerializeScene( m_pActiveScene, filePath );
@@ -489,7 +489,7 @@ namespace smile
 
     void SmileEditorLayer::OpenScene()
     {
-        std::string filePath = FileDialogs::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = window::FileDialog::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
             OpenScene( filePath );
     }

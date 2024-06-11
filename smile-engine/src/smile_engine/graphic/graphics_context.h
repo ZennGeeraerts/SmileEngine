@@ -6,7 +6,7 @@
 
 #include "graphics_device.h"
 
-namespace smile
+namespace smile::window
 {
     class Window;
 }
@@ -45,6 +45,6 @@ namespace smile::graphic
 
         virtual void FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const = 0;
 
-        static GraphicsContext *Create( Window *pWindow );
+        static GraphicsContext *Create( window::Window *pWindow );
     };
 }

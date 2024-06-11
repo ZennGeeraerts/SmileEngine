@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "perspective_camera_controller.h"
 
-#include "smile_engine/input/input.h"
-#include "smile_engine/input/key_codes.h"
+#include "smile_engine/core/input/input.h"
+#include "smile_engine/core/input/key_codes.h"
 
 namespace smile::graphic
 {
@@ -15,7 +15,7 @@ namespace smile::graphic
     {
     }
 
-    void PerspectiveCameraController::OnUpdate( Timestep deltaTime )
+    void PerspectiveCameraController::OnUpdate( primitive::Timestep deltaTime )
     {
         if ( input::Input::IsKeyPressed( input::key::Left ) )
             m_CameraRotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
@@ -58,22 +58,22 @@ namespace smile::graphic
         m_Camera.SetRotation( m_CameraRotation );
     }
 
-    void PerspectiveCameraController::OnEvent( Event &e )
+    void PerspectiveCameraController::OnEvent( window::Event & e )
     {
-        EventDispatcher dispatcher{ e };
-        dispatcher.Dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( PerspectiveCameraController::OnMouseScrolled ) );
-        dispatcher.Dispatch< WindowResizeEvent >(
+        window::EventDispatcher dispatcher{ e };
+        dispatcher.Dispatch< window::MouseScrolledEvent >( SM_BIND_EVENT_FN( PerspectiveCameraController::OnMouseScrolled ) );
+        dispatcher.Dispatch< window::WindowResizeEvent >(
             SM_BIND_EVENT_FN( PerspectiveCameraController::OnWindowResizedEvent ) );
     }
 
-    bool PerspectiveCameraController::OnMouseScrolled( MouseScrolledEvent &e )
+    bool PerspectiveCameraController::OnMouseScrolled( window::MouseScrolledEvent &e )
     {
         m_ZoomLevel -= e.GetOffsetY();
         m_ZoomLevel = std::max( m_ZoomLevel, 0.25f );
         return false;
     }
 
-    bool PerspectiveCameraController::OnWindowResizedEvent( WindowResizeEvent &e )
+    bool PerspectiveCameraController::OnWindowResizedEvent( window::WindowResizeEvent &e )
     {
         m_AspectRatio = e.GetWidth() / static_cast< float >( e.GetHeight() );
         m_Camera.SetProjectionMatrix( m_FOV, m_AspectRatio );

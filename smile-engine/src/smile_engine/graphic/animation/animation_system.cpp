@@ -9,7 +9,7 @@ namespace smile::graphic
 {
     const Uint32 AnimationSystem::s_MaxBoneCount{ 60 };
 
-    void AnimationSystem::OnUpdate( Timestep deltaTime )
+    void AnimationSystem::OnUpdate( primitive::Timestep deltaTime )
     {
         auto group = m_pECSEngine->GetGroup< scene::SkinnedMeshRendererComponent, scene::AnimatorComponent >(
             ecs::g_Get< scene::TransformComponent > );
@@ -29,7 +29,7 @@ namespace smile::graphic
 
     void AnimationSystem::OnUpdateAnimation( const Ref< SkinnedMesh > &pSkinnedMesh,
         scene::AnimatorComponent &animator,
-        Timestep deltaTime )
+        primitive::Timestep deltaTime )
     {
         if ( !animator.IsPlaying )
             return;

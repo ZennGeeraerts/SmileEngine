@@ -5,11 +5,11 @@
 #include "smpch.h"
 #include "editor_camera.h"
 
-#include "smile_engine/input/input.h"
-#include "smile_engine/input/key_codes.h"
-#include "smile_engine/input/mouse_codes.h"
+#include "smile_engine/core/input/input.h"
+#include "smile_engine/core/input/key_codes.h"
+#include "smile_engine/core/input/mouse_codes.h"
 
-#include "smile_engine/math/math.h"
+#include "smile_engine/core/math/math.h"
 
 namespace smile::graphic
 {
@@ -25,7 +25,7 @@ namespace smile::graphic
     {
     }
 
-    void EditorCamera::OnUpdate( Timestep deltaTime )
+    void EditorCamera::OnUpdate( primitive::Timestep deltaTime )
     {
         if ( input::Input::IsKeyPressed( input::key::Alt ) )
         {
@@ -69,10 +69,10 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_ProjectionMatrix, projectionMatrixMat );
     }
 
-    void EditorCamera::OnEvent( Event &e )
+    void EditorCamera::OnEvent( window::Event &e )
     {
-        EventDispatcher dispatcher{ e };
-        dispatcher.Dispatch< MouseScrolledEvent >( SM_BIND_EVENT_FN( EditorCamera::OnMouseScroll ) );
+        window::EventDispatcher dispatcher{ e };
+        dispatcher.Dispatch< window::MouseScrolledEvent >( SM_BIND_EVENT_FN( EditorCamera::OnMouseScroll ) );
     }
 
     DirectX::XMFLOAT4X4 EditorCamera::GetViewProjectionMatrix() const
@@ -84,7 +84,7 @@ namespace smile::graphic
         return viewProjectionMatrix;
     }
 
-    bool EditorCamera::OnMouseScroll( MouseScrolledEvent &e )
+    bool EditorCamera::OnMouseScroll( window::MouseScrolledEvent &e )
     {
         float delta = e.GetOffsetX() * 0.1f;
         MouseZoom( delta );

@@ -73,7 +73,7 @@ namespace smile::physics
         static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
         static Ref< CharacterController > GetCharacterControllerOfEntity( scene::Entity entity );
 
-        static void Simulate( Timestep deltaTime );
+        static void Simulate( primitive::Timestep deltaTime );
 
         static physx::PxPhysics *GetPhysics();
         static physx::PxScene *GetScene();
@@ -89,12 +89,12 @@ namespace smile::physics
         }
 
       private:
-        static bool Advance( Timestep deltaTime );
-        static void SubstepStrategy( Timestep deltaTime );
+        static bool Advance( primitive::Timestep deltaTime );
+        static void SubstepStrategy( primitive::Timestep deltaTime );
 
       private:
-        static std::unordered_map< UUID, Ref< PhysicsActor > > s_ActorMap;
-        static std::unordered_map< UUID, Ref< CharacterController > > s_CharacterControllerMap;
+        static std::unordered_map< primitive::UUID, Ref< PhysicsActor > > s_ActorMap;
+        static std::unordered_map< primitive::UUID, Ref< CharacterController > > s_CharacterControllerMap;
         static PhysicsSettings s_Settings;
         static PhysicsEngineData s_PhysicsEngineData;
     };

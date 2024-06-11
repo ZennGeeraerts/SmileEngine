@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/scene/scene.h"
-#include "smile_engine/scene/entity.h"
+#include "smile_engine/core/scene/scene.h"
+#include "smile_engine/core/scene/entity.h"
 
 #include <filesystem>
 #include <map>
@@ -134,10 +134,10 @@ namespace smile::scripting
 
         static bool EntityClassExists( const std::string &fullClassName );
         static void OnCreateEntity( scene::Entity entity );
-        static void OnUpdateEntity( scene::Entity entity, Timestep deltaTime );
+        static void OnUpdateEntity( scene::Entity entity, primitive::Timestep deltaTime );
 
         static scene::Scene *GetSceneContext();
-        static Ref< ScriptInstance > GetEntityScriptInstance( UUID entityID );
+        static Ref< ScriptInstance > GetEntityScriptInstance( primitive::UUID entityID );
 
         static std::unordered_map< std::string, Ref< ScriptClass > > GetEntityClasses();
 

@@ -4,16 +4,16 @@
 /*=============================================================================*/
 
 #include "smile_engine.h"
-#include "smile_engine/core/entry_point.h"
+#include "smile_engine/core/application/entry_point.h"
 
 #include "smile_editor_layer.h"
 
 namespace smile
 {
-    class SmileEditor final : public Application
+    class SmileEditor final : public application::Application
     {
       public:
-        SmileEditor( const ApplicationDescriptor &descriptor ) : Application{ descriptor }
+        SmileEditor( const application::ApplicationDescriptor &descriptor ) : Application{ descriptor }
         {
             PushLayer( new SmileEditorLayer{} );
         }
@@ -23,9 +23,9 @@ namespace smile
         }
     };
 
-    Application *CreateApplication( ApplicationCommandLineArgs commandLineArgs )
+    application::Application *application::CreateApplication( application::ApplicationCommandLineArgs commandLineArgs )
     {
-        ApplicationDescriptor descriptor{};
+        application::ApplicationDescriptor descriptor{};
         descriptor.Name = "Smile Editor";
 
 #ifdef SM_C_DEBUG
@@ -36,7 +36,7 @@ namespace smile
 
         descriptor.CommandLineArgs = commandLineArgs;
 
-        //project::Project::New()->SaveActive( "TestProject.smproj" );
+        // project::Project::New()->SaveActive( "TestProject.smproj" );
 
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes

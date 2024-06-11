@@ -6,9 +6,9 @@
 #include "graphics_context.h"
 
 #include "render_engine.h"
-#include "smile_engine/core/application.h"
+#include "smile_engine/core/application/application.h"
 
-#include "platform/directX11/directx11_context.h"
+#include "platform/directX11/graphic/directx11_context.h"
 
 #ifdef WITH_SMILERASTER
     #include "platform/smileraster/smileraster_context.h"
@@ -16,7 +16,7 @@
 
 namespace smile::graphic
 {
-    GraphicsContext *GraphicsContext::Create( Window *pWindow )
+    GraphicsContext *GraphicsContext::Create( window::Window *pWindow )
     {
         switch ( RenderEngine::GetAPI() )
         {

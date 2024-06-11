@@ -6,7 +6,7 @@
 #include "debug_render_pass.h"
 
 #include "smile_engine/graphic/renderer/debug_renderer.h"
-#include "smile_engine/scene/components.h"
+#include "smile_engine/core/scene/components.h"
 
 #include "smile_engine/physics/physics_engine.h"
 #include "smile_engine/physics/physics_utils.h"

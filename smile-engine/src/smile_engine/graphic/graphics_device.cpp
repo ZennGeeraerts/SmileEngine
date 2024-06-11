@@ -6,12 +6,12 @@
 #include "graphics_device.h"
 
 #include "render_engine.h"
-#include "smile_engine/core/application.h"
+#include "smile_engine/core/application/application.h"
 
-#include "platform/directx11/directx11_device.h"
+#include "platform/directx11/graphic/directx11_device.h"
 
 #ifdef WITH_SMILERASTER
-    #include "platform/smileraster/smile_raster_device.h"
+    #include "platform/smileraster/graphic/smile_raster_device.h"
 #endif
 
 namespace smile::graphic

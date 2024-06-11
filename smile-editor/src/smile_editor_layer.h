@@ -11,7 +11,7 @@
 
 namespace smile
 {
-    class SmileEditorLayer final : public Layer
+    class SmileEditorLayer final : public application::Layer
     {
       public:
         enum class GizmoType
@@ -45,12 +45,12 @@ namespace smile
         virtual void OnAttach() override;
         virtual void OnDetach() override;
 
-        virtual void OnUpdate( Timestep deltaTime ) override;
+        virtual void OnUpdate( primitive::Timestep deltaTime ) override;
         virtual void OnImGuiRender() override;
-        virtual void OnEvent( Event &e ) override;
+        virtual void OnEvent( window::Event &e ) override;
 
       private:
-        bool OnKeyPressed( KeyPressedEvent &e );
+        bool OnKeyPressed( window::KeyPressedEvent &e );
 
         void NewProject();
         bool OpenProject();

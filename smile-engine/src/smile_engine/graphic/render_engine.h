@@ -10,7 +10,7 @@
 #include "shader/shader_library.h"
 #include "resource/frame_buffer.h"
 
-#include "smile_engine/core/window.h"
+#include "smile_engine/core/window/window.h"
 
 namespace smile::graphic
 {
@@ -23,7 +23,7 @@ namespace smile::graphic
     class RenderEngine final
     {
       public:
-        static void Initialize( Window *pWindow );
+        static void Initialize( window::Window *pWindow );
         static void ShutDown();
 
         static void OnRender();
@@ -83,7 +83,7 @@ namespace smile::graphic
 
       private:
         static RenderPassList s_RenderPassList;
-        static Window *s_pWindow;
+        static window::Window *s_pWindow;
 
         static Ref< Framebuffer > s_pFinalSceneFramebuffer;
 

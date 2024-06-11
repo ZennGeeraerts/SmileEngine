@@ -7,7 +7,7 @@
 
 #include "physics_engine.h"
 #include "physics_utils.h"
-#include "smile_engine/math/math.h"
+#include "smile_engine/core/math/math.h"
 
 #include <PhysX/PxPhysicsAPI.h>
 
@@ -252,7 +252,7 @@ namespace smile::physics
         }
     }
 
-    void PhysicsActor::OnFixedUpdate( Timestep delta_time )
+    void PhysicsActor::OnFixedUpdate( primitive::Timestep delta_time )
     {
     }
 

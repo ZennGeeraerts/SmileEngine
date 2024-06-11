@@ -16,7 +16,7 @@
 namespace smile::graphic
 {
     RenderPassList RenderEngine::s_RenderPassList{};
-    Window *RenderEngine::s_pWindow = nullptr;
+    window::Window *RenderEngine::s_pWindow = nullptr;
 
     Ref< Framebuffer > RenderEngine::s_pFinalSceneFramebuffer{};
 
@@ -25,7 +25,7 @@ namespace smile::graphic
 
     RenderEngine::CameraData RenderEngine::s_CameraData{};
 
-    void RenderEngine::Initialize( Window *pWindow )
+    void RenderEngine::Initialize( window::Window *pWindow )
     {
         s_pWindow = pWindow;
 

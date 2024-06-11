@@ -5,11 +5,11 @@
 
 #include "scene_hierarchy_panel.h"
 
-#include "smile_engine/scene/components.h"
+#include "smile_engine/core/scene/components.h"
 #include "smile_engine/scripting/script_engine.h"
 #include "smile_engine/graphic/mesh/mesh.h"
 #include "smile_engine/graphic/mesh/mesh_factory.h"
-#include "smile_engine/ecs/relationship.h"
+#include "smile_engine/core/ecs/relationship.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

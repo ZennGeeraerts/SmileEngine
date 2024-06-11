@@ -4,12 +4,12 @@
 /*=============================================================================*/
 #pragma once
 #include "perspective_camera.h"
-#include "smile_engine/core/timestep.h"
+#include "smile_engine/common/primitive/timestep.h"
 
-#include "smile_engine/core/events/application_event.h"
-#include "smile_engine/core/events/mouse_event.h"
+#include "smile_engine/core/window/events/application_event.h"
+#include "smile_engine/core/window/events/mouse_event.h"
 
-#include "smile_engine/scene/components.h"
+#include "smile_engine/core/scene/components.h"
 
 namespace smile::graphic
 {
@@ -18,12 +18,12 @@ namespace smile::graphic
      public:
         PerspectiveCameraController( float fov, float aspectRatio );
 
-        void OnUpdate( Timestep deltaTime );
-        void OnEvent( Event &e );
+        void OnUpdate( primitive::Timestep deltaTime );
+        void OnEvent( window::Event &e );
 
      private:
-        bool OnMouseScrolled( MouseScrolledEvent &e );
-        bool OnWindowResizedEvent( WindowResizeEvent &e );
+        bool OnMouseScrolled( window::MouseScrolledEvent &e );
+        bool OnWindowResizedEvent( window::WindowResizeEvent &e );
 
      private:
         float m_FOV = 45.f;

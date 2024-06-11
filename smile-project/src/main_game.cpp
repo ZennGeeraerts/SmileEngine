@@ -1,11 +1,12 @@
 #include "main_game.h"
 
-#include <smile_engine/core/entry_point.h>
+#include <smile_engine/core/application/entry_point.h>
 #include <imgui/imgui.h>
 
-smile::Application *smile::CreateApplication( smile::ApplicationCommandLineArgs commandLineArgs )
+smile::application::Application *smile::application::CreateApplication(
+    smile::application::ApplicationCommandLineArgs commandLineArgs )
 {
-    smile::ApplicationDescriptor descriptor{};
+    smile::application::ApplicationDescriptor descriptor{};
     descriptor.Name = "Main Game";
 
 #ifdef SM_C_DEBUG
@@ -174,8 +175,8 @@ void ExampleLayer::OnAttach()
 
     m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
     const smile::Uint32 meshIndex = 0;
-    auto &meshRendererComponent =
-        m_ModelEntity.AddComponent< smile::scene::MeshRendererComponent >( "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
+    auto &meshRendererComponent = m_ModelEntity.AddComponent< smile::scene::MeshRendererComponent >(
+        "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
     m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
     m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
     m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
@@ -184,7 +185,7 @@ void ExampleLayer::OnAttach()
     m_pActiveScene->OnRuntimeStart();
 }
 
-void ExampleLayer::OnUpdate( smile::Timestep deltaTime )
+void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
 {
     auto &transform = m_CameraEntity.GetComponent< smile::scene::TransformComponent >();
 
@@ -228,28 +229,28 @@ void ExampleLayer::OnUpdate( smile::Timestep deltaTime )
 
     // m_ModelEntity.GetComponent<Smile::TransformComponent>().Rotation.y += 1.f * deltaTime;
 
-    m_PrintTimer += smile::Timer::GetInstance().GetDeltaTime();
+    m_PrintTimer += smile::application::Timer::GetInstance().GetDeltaTime();
     if ( m_PrintTimer >= 1.f )
     {
         m_PrintTimer = 0.f;
-        smile::Logger::LogInfo( "FPS: %d", smile::Timer::GetInstance().GetFPS() );
+        smile::logger::Logger::LogInfo( "FPS: %d", smile::application::Timer::GetInstance().GetFPS() );
     }
 
     smile::graphic::RenderCommand::Clear();
     m_pActiveScene->OnUpdateRuntime( deltaTime );
 }
 
-void ExampleLayer::OnEvent( smile::Event &event )
+void ExampleLayer::OnEvent( smile::window::Event &event )
 {
-    smile::EventDispatcher dispatcher{ event };
-    dispatcher.Dispatch< smile::WindowResizeEvent >( SM_BIND_EVENT_FN( ExampleLayer::OnWindowResize ) );
+    smile::window::EventDispatcher dispatcher{ event };
+    dispatcher.Dispatch< smile::window::WindowResizeEvent >( SM_BIND_EVENT_FN( ExampleLayer::OnWindowResize ) );
 }
 
 void ExampleLayer::OnImGuiRender()
 {
 }
 
-bool ExampleLayer::OnWindowResize( smile::WindowResizeEvent &e )
+bool ExampleLayer::OnWindowResize( smile::window::WindowResizeEvent &e )
 {
     const auto width = e.GetWidth();
     const auto height = e.GetHeight();
@@ -265,7 +266,8 @@ bool ExampleLayer::OnWindowResize( smile::WindowResizeEvent &e )
 /*------------------------------------------------ Main Game ------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
 
-MainGame::MainGame( const smile::ApplicationDescriptor &descriptor ) : smile::Application{ descriptor }
+MainGame::MainGame( const smile::application::ApplicationDescriptor &descriptor )
+    : smile::application::Application{ descriptor }
 {
     PushLayer( new ExampleLayer{} );
 }

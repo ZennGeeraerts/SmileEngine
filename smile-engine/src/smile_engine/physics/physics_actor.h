@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile_engine/scene/entity.h"
+#include "smile_engine/core/scene/entity.h"
 
 namespace physx
 {
@@ -24,7 +24,7 @@ namespace smile::physics
         PhysicsActor &operator=( const PhysicsActor & ) = delete;
         PhysicsActor &operator=( PhysicsActor && ) = delete;
 
-        void OnFixedUpdate( Timestep deltaTime );
+        void OnFixedUpdate( primitive::Timestep deltaTime );
         void Translate( const DirectX::XMFLOAT3 &translation );
         void Rotate( const DirectX::XMFLOAT3 &rotation );
 

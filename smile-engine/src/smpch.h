@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/platform_detection.h"
+#include "smile_engine/common/platform/platform_detection.h"
 
 // Data structures
 #include <iostream>
@@ -19,8 +19,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "smile_engine/core/timestep.h"
-#include "smile_engine/core/timer.h"
+#include "smile_engine/common/primitive/timestep.h"
+#include "smile_engine/core/application/timer.h"
 
 #include <DirectXMath.h>
 

@@ -6,7 +6,7 @@
 #include "mesh_factory.h"
 
 #include "smile_engine/graphic/render_engine.h"
-#include "smile_engine/math/math.h"
+#include "smile_engine/core/math/math.h"
 
 namespace smile::graphic
 {

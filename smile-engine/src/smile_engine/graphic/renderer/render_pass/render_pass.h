@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/ecs/ecs_engine.h"
+#include "smile_engine/core/ecs/ecs_engine.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic

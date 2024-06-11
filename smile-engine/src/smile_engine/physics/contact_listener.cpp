@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "contact_listener.h"
 
-#include "smile_engine/scene/entity.h"
+#include "smile_engine/core/scene/entity.h"
 
 #include <PhysX/PxRigidActor.h>
 

@@ -1,5 +1,5 @@
-#include <smile_engine/core/core.h>
-#include <smile_engine/stl/sparse_set.h>
+#include <smile_engine/common/compiled/compiled.h>
+#include <smile_engine/common/primitive/collection/sparse_set.h>
 #include <catch/catch.hpp>
 #include <iostream>
 
@@ -9,7 +9,7 @@ TEST_CASE( "SparseSet" )
 {
     SECTION( "SparseSet" )
     {
-        stl::SparseSet< Uint32 > sparseSet{};
+        primitive::SparseSet< Uint32 > sparseSet{};
 
         sparseSet.Insert( 15 );
         sparseSet.Insert( 16 );
@@ -53,7 +53,7 @@ TEST_CASE( "SparseSet" )
 
     SECTION( "Sort" )
     {
-        stl::SparseSet< Uint32 > sparseSet{};
+        primitive::SparseSet< Uint32 > sparseSet{};
 
         sparseSet.Insert( 16 );
         sparseSet.Insert( 17 );

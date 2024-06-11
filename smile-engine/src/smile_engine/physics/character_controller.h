@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/scene/entity.h"
+#include "smile_engine/core/scene/entity.h"
 
 namespace physx
 {

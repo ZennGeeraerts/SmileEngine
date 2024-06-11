@@ -5,8 +5,8 @@
 #pragma once
 
 #include "camera.h"
-#include "smile_engine/core/events/event.h"
-#include "smile_engine/core/events/mouse_event.h"
+#include "smile_engine/core/window/events/event.h"
+#include "smile_engine/core/window/events/mouse_event.h"
 
 namespace smile::graphic
 {
@@ -16,8 +16,8 @@ namespace smile::graphic
         EditorCamera() = default;
         EditorCamera( float fov, float aspectRatio, float nearPlane, float farPlane );
 
-        void OnUpdate( Timestep deltaTime );
-        void OnEvent( Event &e );
+        void OnUpdate( primitive::Timestep deltaTime );
+        void OnEvent( window::Event &e );
 
         float GetDistance() const
         {
@@ -62,7 +62,7 @@ namespace smile::graphic
         void UpdateView();
         void UpdateProjection();
 
-        bool OnMouseScroll( MouseScrolledEvent &e );
+        bool OnMouseScroll( window::MouseScrolledEvent &e );
 
         void MousePan( const DirectX::XMFLOAT2 &delta );
         void MouseRotate( const DirectX::XMFLOAT2 &delta );

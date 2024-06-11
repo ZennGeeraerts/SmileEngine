@@ -9,7 +9,7 @@
 #include "smile_engine/graphic/camera/camera.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 
-#include "smile_engine/scene/components.h"
+#include "smile_engine/core/scene/components.h"
 
 namespace smile::graphic
 {

@@ -1,4 +1,4 @@
-#include "smile_engine/ecs/ecs_engine.h"
+#include "smile_engine/core/ecs/ecs_engine.h"
 #include <catch/catch.hpp>
 
 using namespace smile;

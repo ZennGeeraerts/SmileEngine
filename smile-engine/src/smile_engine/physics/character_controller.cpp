@@ -8,7 +8,7 @@
 #include "physics_engine.h"
 #include "physics_utils.h"
 
-#include "smile_engine/scene/components.h"
+#include "smile_engine/core/scene/components.h"
 
 #include <PhysX/PxPhysicsAPI.h>
 

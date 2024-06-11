@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/core.h"
+#include "smile_engine/common/compiled/compiled.h"
 #include <string>
 
 namespace smile::graphic

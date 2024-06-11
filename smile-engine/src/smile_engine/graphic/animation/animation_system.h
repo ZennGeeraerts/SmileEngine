@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/ecs/system.h"
-#include "smile_engine/scene/components.h"
+#include "smile_engine/core/ecs/system.h"
+#include "smile_engine/core/scene/components.h"
 
 namespace smile::graphic
 {
@@ -15,12 +15,12 @@ namespace smile::graphic
         AnimationSystem() = default;
         ~AnimationSystem() = default;
 
-        void OnUpdate( Timestep deltaTime ) override;
+        void OnUpdate( primitive::Timestep deltaTime ) override;
 
       private:
         void OnUpdateAnimation( const Ref< SkinnedMesh > &pSkinnedMesh,
             scene::AnimatorComponent &animator,
-            Timestep deltaTime );
+            primitive::Timestep deltaTime );
         void CalculateBoneTransform( const Ref< SkinnedMesh > &pSkinnedMesh,
             scene::AnimatorComponent &animator,
             AnimationNode *pNode,

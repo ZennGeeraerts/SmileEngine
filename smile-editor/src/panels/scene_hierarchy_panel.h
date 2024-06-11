@@ -4,10 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/core.h"
-#include "smile_engine/core/logger.h"
-#include "smile_engine/scene/scene.h"
-#include "smile_engine/scene/entity.h"
+#include "smile_engine/common/compiled/compiled.h"
+#include "smile_engine/common/logger/logger.h"
+#include "smile_engine/core/scene/scene.h"
+#include "smile_engine/core/scene/entity.h"
 
 namespace smile::graphic
 {

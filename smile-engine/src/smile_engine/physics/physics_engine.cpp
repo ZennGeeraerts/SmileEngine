@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "physics_engine.h"
 
-#include "smile_engine/core/logger.h"
+#include "smile_engine/common/logger/logger.h"
 #include "physics_utils.h"
 #include "physics_diagnostics.h"
 #include "contact_listener.h"
@@ -14,8 +14,8 @@
 
 namespace smile::physics
 {
-    std::unordered_map< UUID, Ref< PhysicsActor > > PhysicsEngine::s_ActorMap{};
-    std::unordered_map< UUID, Ref< CharacterController > > PhysicsEngine::s_CharacterControllerMap{};
+    std::unordered_map< primitive::UUID, Ref< PhysicsActor > > PhysicsEngine::s_ActorMap{};
+    std::unordered_map< primitive::UUID, Ref< CharacterController > > PhysicsEngine::s_CharacterControllerMap{};
     PhysicsSettings PhysicsEngine::s_Settings{};
     PhysicsEngineData PhysicsEngine::s_PhysicsEngineData{};
 
@@ -260,7 +260,7 @@ namespace smile::physics
         return nullptr;
     }
 
-    void PhysicsEngine::Simulate( Timestep deltaTime )
+    void PhysicsEngine::Simulate( primitive::Timestep deltaTime )
     {
         if ( Advance( deltaTime ) )
         {
@@ -272,7 +272,7 @@ namespace smile::physics
         }
     }
 
-    bool PhysicsEngine::Advance( Timestep deltaTime )
+    bool PhysicsEngine::Advance( primitive::Timestep deltaTime )
     {
         SubstepStrategy( deltaTime );
 
@@ -288,7 +288,7 @@ namespace smile::physics
         return true;
     }
 
-    void PhysicsEngine::SubstepStrategy( Timestep deltaTime )
+    void PhysicsEngine::SubstepStrategy( primitive::Timestep deltaTime )
     {
         if ( s_PhysicsEngineData.Accumulator > s_Settings.FixedTimestep )
             s_PhysicsEngineData.Accumulator = 0.0f;

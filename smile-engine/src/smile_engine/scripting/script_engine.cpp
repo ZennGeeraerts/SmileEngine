@@ -182,7 +182,7 @@ namespace smile::scripting
         ScriptClass EntityClass;
 
         std::unordered_map< std::string, Ref< ScriptClass > > EntityClasses;
-        std::unordered_map< UUID, Ref< ScriptInstance > > EntityInstances;
+        std::unordered_map< primitive::UUID, Ref< ScriptInstance > > EntityInstances;
 
         // Runtime
         scene::Scene *pSceneContext = nullptr;
@@ -349,7 +349,7 @@ namespace smile::scripting
         return s_pData->pSceneContext;
     }
 
-    Ref< ScriptInstance > ScriptEngine::GetEntityScriptInstance( UUID entityID )
+    Ref< ScriptInstance > ScriptEngine::GetEntityScriptInstance( primitive::UUID entityID )
     {
         auto it = s_pData->EntityInstances.find( entityID );
         if ( it == s_pData->EntityInstances.end() )
@@ -391,9 +391,9 @@ namespace smile::scripting
         }
     }
 
-    void ScriptEngine::OnUpdateEntity( scene::Entity entity, Timestep deltaTime )
+    void ScriptEngine::OnUpdateEntity( scene::Entity entity, primitive::Timestep deltaTime )
     {
-        UUID entityUUID = entity.GetUUID();
+        primitive::UUID entityUUID = entity.GetUUID();
         SM_ASSERT( s_pData->EntityInstances.find( entityUUID ) != s_pData->EntityInstances.end(),
             "ScriptEngine::OnUpdateEntity > Entity instance not found" );
 
@@ -432,7 +432,7 @@ namespace smile::scripting
         m_pOnCreateMethod = pScriptClass->GetMethod( "OnCreate", 0 );
         m_pOnUpdateMethod = pScriptClass->GetMethod( "OnUpdate", 1 );
 
-        UUID entityID = entity.GetUUID();
+        primitive::UUID entityID = entity.GetUUID();
         void *pParam = &entityID;
         pScriptClass->InvokeMethod( m_pInstance, m_pConstructor, &pParam );
     }
