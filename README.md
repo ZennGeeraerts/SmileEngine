@@ -14,7 +14,7 @@
 ```
     conan profile detect
 ```
-    this will create a default profile
+   this will create a default profile
 6. Edit the default conan profile under C:\User\.conan2\profiles\default
    - Use the MSVC compiler
    - The project uses C++ 17
@@ -30,7 +30,7 @@
 ```
    Always use the configuration name as the output folder name so CMakePresets can find it
    Debug/ or Release/ folders will also get ignored by git because of the .gitignore file
-8. Open 3_Software/ as a folder in Visual Studio 2022
+8. Open the repo as a folder in Visual Studio 2022
    If you have "C++ CMake tools for Windows" installed, CMake will automaticly generate the project
 9. Tell Visual Studio to use the CMakePresets.json file under Options > CMake > General > CMake configuration file: > Always use CMake Presets
 10. Regenerate with CMake and build the project
