@@ -8,7 +8,7 @@
 
 namespace smile::graphic
 {
-	struct SmileRasterIndexBuffer : public IndexBuffer
+	struct SmileRasterIndexBuffer final : public IndexBuffer
 	{
         void *GetInternal() const override
         {

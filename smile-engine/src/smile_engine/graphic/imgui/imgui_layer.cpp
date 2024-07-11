@@ -80,8 +80,8 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::GraphicsDevice *pGraphicsDevice = window.GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
+        graphic::GraphicsDevice *pGraphicsDevice = graphic::RendererAPI::GetGraphicsDevice();
+        graphic::GraphicsContext *pGraphicsContext = graphic::RendererAPI::GetGraphicsContext();
 
         graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
         switch ( api )

@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "mesh_factory.h"
 
-#include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/renderer_api.h"
 #include "smile_engine/core/math/math.h"
 
 namespace smile::graphic
@@ -220,7 +220,7 @@ namespace smile::graphic
 
         Ref< Mesh > pMesh = CreateRef< Mesh >();
 
-        GraphicsDevice *pDevice = RenderEngine::GetDevice();
+        GraphicsDevice *pDevice = RendererAPI::GetGraphicsDevice();
         pMesh->pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
         pMesh->pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
 
@@ -302,7 +302,7 @@ namespace smile::graphic
 
         Ref< SkinnedMesh > pSkinnedMesh = CreateRef< SkinnedMesh >();
 
-        GraphicsDevice *pDevice = RenderEngine::GetDevice();
+        GraphicsDevice *pDevice = RendererAPI::GetGraphicsDevice();
         pSkinnedMesh->pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
         pSkinnedMesh->pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
         pSkinnedMesh->SkeletonMap = pSkinnedMeshFilter->m_SkeletonMap;

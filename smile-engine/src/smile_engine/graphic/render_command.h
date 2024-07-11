@@ -12,9 +12,11 @@ namespace smile::graphic
     class RenderCommand final
     {
       public:
-        inline static void Initalize()
+        static void Create( RendererAPI::API api );
+
+        inline static void Initalize( window::Window *pWindow )
         {
-            s_pRendererAPI->Initialize();
+            s_pRendererAPI->Initialize( pWindow );
         }
 
         inline static void ShutDown()
@@ -45,6 +47,11 @@ namespace smile::graphic
         inline static void Draw( Uint32 vertexCount, const Ref< Shader > &pShader )
         {
             s_pRendererAPI->Draw( vertexCount, pShader );
+        }
+
+        inline static void Present()
+        {
+            s_pRendererAPI->Present();
         }
 
       private:

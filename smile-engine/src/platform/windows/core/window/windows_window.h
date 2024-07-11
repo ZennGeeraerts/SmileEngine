@@ -5,7 +5,6 @@
 #pragma once
 
 #include "smile_engine/core/window/window.h"
-#include "smile_engine/graphic/graphics_context.h"
 
 #define HINSTANCE() GetModuleHandle( NULL ) // this function returns the hInstance
 
@@ -21,8 +20,6 @@ namespace smile::window
         WindowsWindow( WindowsWindow && ) = delete;
         WindowsWindow &operator=( const WindowsWindow & ) = delete;
         WindowsWindow &operator=( WindowsWindow && ) = delete;
-
-        void OnUpdate() override;
 
         inline virtual void *GetNativeWindow() const override
         {

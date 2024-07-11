@@ -6,22 +6,34 @@
 
 #include "smile_engine/graphic/renderer_api.h"
 #include "smileraster_context.h"
+#include "smile_raster_device.h"
 
 namespace smile::graphic
 {
     class SmileRasterRendererAPI final : public RendererAPI
     {
       public:
-        virtual void Initialize() override;
-        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) override;
-        virtual void Clear() override;
+        SmileRasterRendererAPI() = default;
+        ~SmileRasterRendererAPI();
 
-        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
+        void Initialize( window::Window *pWindow ) override;
+
+        void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
+        void Present() override;
+        void Clear() override;
+        void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
 
       private:
-        DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
         window::Window *m_pWindow = nullptr;
+        SmileRasterDevice *m_pSmileRasterDevice = nullptr;
         SmileRasterContext *m_pSmileRasterContext = nullptr;
+
+        HDC m_HDC = nullptr;
+        HBITMAP m_Bitmap = nullptr;
+        HBITMAP m_BitmapOld = nullptr;
+        BITMAPINFO m_BitmapInfo{};
+
+        Uint8 *m_pColorBuffer{};
+        Raster::BufferID m_Framebuffer = SMR_INVALID_BUFFER_ID;
     };
 }

@@ -802,7 +802,7 @@ namespace smile::scene
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path texturePath = std::filesystem::path{ path };
                         spriteRendererComponent.pTexture =
-                            graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() );
+                            graphic::RendererAPI::GetGraphicsDevice()->CreateTexture2D( texturePath.string() );
                     }
 
                     ImGui::EndDragDropTarget();
@@ -871,7 +871,7 @@ namespace smile::scene
             {
                 const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                 std::filesystem::path shaderPath = std::filesystem::path{ path };
-                pMaterial->SetShader( graphic::RenderEngine::GetDevice()->CreateShader( shaderPath.string() ) );
+                pMaterial->SetShader( graphic::RendererAPI::GetGraphicsDevice()->CreateShader( shaderPath.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -928,8 +928,8 @@ namespace smile::scene
                 {
                     const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                     std::filesystem::path texturePath = std::filesystem::path{ path };
-                    pMaterial->SetTexture2D(
-                        pair.first, graphic::RenderEngine::GetDevice()->CreateTexture2D( texturePath.string() ) );
+                    pMaterial->SetTexture2D( pair.first,
+                        graphic::RendererAPI::GetGraphicsDevice()->CreateTexture2D( texturePath.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

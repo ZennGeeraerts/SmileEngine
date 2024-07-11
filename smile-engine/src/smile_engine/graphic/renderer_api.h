@@ -4,8 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
+#include "graphics_device.h"
 #include "graphics_context.h"
-#include "shader/shader.h"
+
+namespace window
+{
+    class Window;
+}
 
 namespace smile::graphic
 {
@@ -22,18 +27,40 @@ namespace smile::graphic
       public:
         virtual ~RendererAPI() = default;
 
-        virtual void Initialize() = 0;
-        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) = 0;
+        virtual void Initialize( window::Window *pWindow ) = 0;
+
+        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void Present() = 0;
         virtual void Clear() = 0;
 
-        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
-        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
         inline static API GetAPI()
         {
             return s_API;
         }
+
+        inline static GraphicsDevice *GetGraphicsDevice()
+        {
+            return s_pDevice;
+        }
+
+        inline static GraphicsContext *GetGraphicsContext()
+        {
+            return s_pContext;
+        }
+
+        inline void SetClearColor( const DirectX::XMFLOAT4 &color )
+        {
+            m_ClearColor = color;
+        }
+
+      protected:
+        static GraphicsDevice *s_pDevice;
+        static GraphicsContext *s_pContext;
+
+        DirectX::XMFLOAT4 m_ClearColor{};
 
       private:
         static API s_API;

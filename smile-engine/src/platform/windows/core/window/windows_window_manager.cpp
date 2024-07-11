@@ -9,7 +9,7 @@
 
 namespace smile::window
 {
-    WindowManager* WindowManager::Create()
+    WindowManager *WindowManager::Create()
     {
         return new WindowsWindowManager{};
     }
@@ -72,14 +72,6 @@ namespace smile::window
         auto pWindow = new WindowsWindow{ windowSettings, className };
         m_pWindows.push_back( pWindow );
         return pWindow;
-    }
-
-    void WindowsWindowManager::OnUpdate()
-    {
-        PollEvents();
-
-        for ( const auto &pWindow : m_pWindows )
-            pWindow->OnUpdate();
     }
 
     void WindowsWindowManager::PollEvents()

@@ -36,9 +36,6 @@ namespace smile::window
     void WindowsWindow::ShutDown()
     {
         DestroyWindow( m_WindowHandle );
-        
-        delete m_pContext;
-        delete m_pDevice;
     }
 
     void WindowsWindow::Initialize( const WindowSettings &settings, const std::string &className )
@@ -75,27 +72,12 @@ namespace smile::window
 
         SM_ASSERT( m_WindowHandle, "WindowsWindow::Initialize > Could not create window!" );
 
-        // Init device and context
-        m_pDevice = graphic::GraphicsDevice::Create();
-        m_pContext = graphic::GraphicsContext::Create( this );
-
-        m_pDevice->Initialize( m_pContext );
-        m_pContext->Initialize( m_pDevice );
-
         ShowWindow( m_WindowHandle, SW_SHOW );
         UpdateWindow( m_WindowHandle );
         SM_LOG_INFO( "WindowsWindow::Initialize > Window '%s' created", settings.Title.c_str() );
 
         SetVSync( true );
         m_IsInitialized = true;
-    }
-
-    void WindowsWindow::OnUpdate()
-    {
-        if ( !m_IsInitialized )
-            return;
-
-        m_pContext->Present();
     }
 
     LRESULT WindowsWindow::WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept

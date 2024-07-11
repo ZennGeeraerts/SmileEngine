@@ -8,4 +8,6 @@
 namespace smile::graphic
 {
     RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX11;
+    GraphicsDevice *RendererAPI::s_pDevice = nullptr;
+    GraphicsContext *RendererAPI::s_pContext = nullptr;
 }

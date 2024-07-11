@@ -17,7 +17,7 @@ namespace smile::graphic
     class SmileRasterContext final : public GraphicsContext
     {
       public:
-        SmileRasterContext( window::Window *pWindow );
+        SmileRasterContext();
         virtual ~SmileRasterContext();
 
         SmileRasterContext( const SmileRasterContext & ) = delete;
@@ -25,31 +25,34 @@ namespace smile::graphic
         SmileRasterContext &operator=( const SmileRasterContext & ) = delete;
         SmileRasterContext &operator=( SmileRasterContext && ) = delete;
 
-        virtual void Initialize( GraphicsDevice *pGraphicsDevice ) override;
-        virtual void Present() override;
-
-        Raster::DeviceContext *GetDeviceContext() const
+        void *GetInternal() const override
         {
             return m_pDeviceContext;
         }
+
+        void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) override;
+        void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
+        void Clear( const DirectX::XMFLOAT4 &clearColor ) override;
 
         void BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const override;
         void UnbindVertexBuffer() const override;
         void BindIndexBuffer( const Ref< IndexBuffer > &pIndexBuffer ) const override;
         void UnbindIndexBuffer() const override;
+        void BindShader( const Ref< Shader > &pShader ) const override;
+        void UnbindShader() const override;
+        void BindFramebuffer( const Ref< Framebuffer > &pFramebuffer ) const override;
+        void UnbindFramebuffer() const override;
+        void ClearFramebuffer( const Ref< Framebuffer > &pFramebuffer ) override;
+        void BindRasterizerState( const Ref< RasterizerState > &pRasterizerState ) const override;
+        void UnbindRasterizerState() const override;
+        void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
+        void UnbindPrimitiveTopology() const override;
+
+        void
+        FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const override;
 
       private:
-        window::Window *m_pWindow = nullptr;
-
         Raster::DeviceContext *m_pDeviceContext = nullptr;
-
-        HDC m_HDC = nullptr;
-        HBITMAP m_Bitmap = nullptr;
-        HBITMAP m_BitmapOld = nullptr;
-        BITMAPINFO m_BitmapInfo{};
-
-        Uint8 *m_pColorBuffer{};
-        Raster::BufferID m_Framebuffer = SMR_INVALID_BUFFER_ID;
 
         friend class SmileRasterRendererAPI;
     };

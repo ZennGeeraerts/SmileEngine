@@ -10,7 +10,7 @@
 
 #include "smile_engine/core/scene/scene_camera.h"
 
-#include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/renderer_api.h"
 #include "smile_engine/graphic/mesh/model_loader.h"
 #include "smile_engine/graphic/mesh/mesh_filter.h"
 #include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
@@ -127,7 +127,7 @@ namespace smile::scene
     {
         MeshRendererComponent()
         {
-            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
+            graphic::GraphicsDevice *pDevice = graphic::RendererAPI::GetGraphicsDevice();
             auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
             pMaterial = CreateRef< graphic::Material >( pShader );
         }
@@ -156,7 +156,7 @@ namespace smile::scene
     {
         SkinnedMeshRendererComponent()
         {
-            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetDevice();
+            graphic::GraphicsDevice *pDevice = graphic::RendererAPI::GetGraphicsDevice();
             auto pShader = pDevice->CreateShader( "assets/shaders/PBR_Skinned.fx" );
             pMaterial = CreateRef< graphic::Material >( pShader );
         }

@@ -13,6 +13,10 @@
 
 namespace smile::graphic
 {
+    SmileRasterDevice::SmileRasterDevice( Raster::DeviceContext *pContext ) : m_pDeviceContext{ pContext }
+    {
+    }
+
     Ref< VertexBuffer > SmileRasterDevice::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
     {
         Ref< SmileRasterVertexBuffer > pVertexBuffer = CreateRef< SmileRasterVertexBuffer >();
@@ -44,8 +48,7 @@ namespace smile::graphic
         return pShader;
     }
 
-    Ref< Shader > SmileRasterDevice::CreateShader( const std::string &assetFile,
-        const std::string &techniqueName )
+    Ref< Shader > SmileRasterDevice::CreateShader( const std::string &assetFile, const std::string &techniqueName )
     {
         return Ref< Shader >();
     }
@@ -67,13 +70,17 @@ namespace smile::graphic
         return pTexture;
     }
 
+    Ref< TextureCube > SmileRasterDevice::CreateTextureCube( const std::string &filePath )
+    {
+        return Ref< TextureCube >();
+    }
+
     Ref< Framebuffer > SmileRasterDevice::CreateFramebuffer( const FramebufferDescriptor &descriptor )
     {
         return Ref< Framebuffer >();
     }
 
-    Ref< RasterizerState > SmileRasterDevice::CreateRasterizerState(
-        const RasterizerStateDescriptor &descriptor )
+    Ref< RasterizerState > SmileRasterDevice::CreateRasterizerState( const RasterizerStateDescriptor &descriptor )
     {
         return Ref< RasterizerState >();
     }
