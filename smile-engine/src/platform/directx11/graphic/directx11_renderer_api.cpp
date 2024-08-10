@@ -40,7 +40,9 @@ namespace smile::graphic
         // FIXME
         auto pDirectX11Context = new DirectX11Context{};
         m_pContext = pDirectX11Context;
+
         m_pDevice = new DirectX11Device{ m_pContext };
+
         auto pDirectX11SwapChain = new DirectX11SwapChain{ m_pDevice, m_pContext, pWindow, m_pDXGIFactory };
         m_pSwapChain = pDirectX11SwapChain;
         pDirectX11Context->m_pSwapChain = pDirectX11SwapChain;
