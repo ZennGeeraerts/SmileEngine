@@ -6,6 +6,7 @@
 
 #include "graphics_device.h"
 #include "graphics_context.h"
+#include "swap_chain.h"
 
 namespace window
 {
@@ -29,38 +30,30 @@ namespace smile::graphic
 
         virtual void Initialize( window::Window *pWindow ) = 0;
 
-        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) = 0;
-        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
-        virtual void Present() = 0;
-        virtual void Clear() = 0;
-
-        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
-
         inline static API GetAPI()
         {
             return s_API;
         }
 
-        inline static GraphicsDevice *GetGraphicsDevice()
+        inline GraphicsDevice *GetGraphicsDevice() const
         {
-            return s_pDevice;
+            return m_pDevice;
         }
 
-        inline static GraphicsContext *GetGraphicsContext()
+        inline GraphicsContext *GetGraphicsContext() const
         {
-            return s_pContext;
+            return m_pContext;
         }
 
-        inline void SetClearColor( const DirectX::XMFLOAT4 &color )
+        inline SwapChain* GetSwapChain() const
         {
-            m_ClearColor = color;
+            return m_pSwapChain;
         }
 
       protected:
-        static GraphicsDevice *s_pDevice;
-        static GraphicsContext *s_pContext;
-
-        DirectX::XMFLOAT4 m_ClearColor{};
+        GraphicsDevice *m_pDevice;
+        GraphicsContext *m_pContext;
+        SwapChain *m_pSwapChain;
 
       private:
         static API s_API;

@@ -32,6 +32,7 @@ namespace smile::graphic
 
     void SmileRasterContext::Clear( const DirectX::XMFLOAT4 &clearColor )
     {
+        m_pDeviceContext->Clear( m_pSwapChain->GetFramebuffer(), clearColor, true );
     }
 
     void SmileRasterContext::BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const

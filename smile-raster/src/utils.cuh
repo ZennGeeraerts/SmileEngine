@@ -2,10 +2,12 @@
 // Copyright 2022-2023 Smile Raster
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
+#pragma once
 #include <curand_kernel.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <DirectXMath.h>
+#include <glm.hpp>
 
 namespace smile
 {

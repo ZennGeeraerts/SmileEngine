@@ -2,13 +2,6 @@
 #include "smile_engine/graphic/swap_chain.h"
 #include "resource/directx11_frame_buffer.h"
 
-#include <d3d11.h>
-
-namespace smile::window
-{
-    class Window;
-}
-
 namespace smile::graphic
 {
     class GraphicsDevice;

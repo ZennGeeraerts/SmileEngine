@@ -4,14 +4,16 @@
 /*=============================================================================*/
 #include "rasterizer.cuh"
 
-#include "Utils.cuh"
+#include "utils.cuh"
 
 // Pipeline
-#include "pipeline/input_assembler.cu"
-#include "pipeline/vertex_shader.cu"
-#include "pipeline/primitive_assembler.cu"
-#include "pipeline/rasterizer_stage.cu"
-#include "pipeline/pixel_shader.cu"
+#include "pipeline/input_assembler.cuh"
+#include "pipeline/vertex_shader.cuh"
+#include "pipeline/primitive_assembler.cuh"
+#include "pipeline/rasterizer_stage.cuh"
+#include "pipeline/bin_rasterizer.cuh"
+#include "pipeline/fine_rasterizer.cuh"
+#include "pipeline/pixel_shader.cuh"
 
 #include <iostream>
 

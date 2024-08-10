@@ -14,6 +14,7 @@
 namespace smile::graphic
 {
     RendererAPI *RenderCommand::s_pRendererAPI = nullptr;
+    DirectX::XMFLOAT4 RenderCommand::s_ClearColor{};
 
     void RenderCommand::Create( RendererAPI::API api )
     {

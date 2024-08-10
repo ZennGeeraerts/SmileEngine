@@ -5,7 +5,6 @@
 #include "smpch.h"
 #include "forward_renderer.h"
 
-#include "smile_engine/graphic/renderer_api.h"
 #include "smile_engine/graphic/render_command.h"
 
 namespace smile::graphic
@@ -78,7 +77,7 @@ namespace smile::graphic
 
     void ForwardRenderer::OnRender()
     {
-        GraphicsContext *pContext = RendererAPI::GetGraphicsContext();
+        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 

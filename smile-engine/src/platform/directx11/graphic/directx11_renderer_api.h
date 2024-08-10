@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile_engine/graphic/renderer_api.h"
-#include "directx11_swap_chain.h"
+#include <d3d11.h>
 
 namespace smile::graphic
 {
@@ -19,16 +19,7 @@ namespace smile::graphic
 
         void Initialize( window::Window *pWindow ) override;
 
-        void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) override;
-        void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
-        void Present() override;
-        void Clear() override;
-
-        void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
-
       private:
-        DirectX11SwapChain *m_pSwapChain = nullptr;
-
         IDXGIFactory *m_pDXGIFactory = nullptr;
     };
 }

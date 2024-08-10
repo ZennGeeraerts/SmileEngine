@@ -2,6 +2,7 @@
 // Copyright 2022-2023 Smile Raster
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
+#pragma once
 #include "data_structs.cuh"
 
 #include <cuda_runtime.h>

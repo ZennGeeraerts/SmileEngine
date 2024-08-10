@@ -5,7 +5,7 @@
 
 #include "content_browser_panel.h"
 
-#include "smile_engine/graphic/renderer_api.h"
+#include "smile_engine/graphic/render_command.h"
 #include "smile_engine/core/project/project_manager.h"
 
 #include <imgui/imgui.h>
@@ -16,7 +16,7 @@ namespace smile
         : m_BaseDirectory{ project::ProjectManager::GetActive()->GetAssetDirectory() },
           m_CurrentDirectory{ m_BaseDirectory }
     {
-        graphic::GraphicsDevice *pDevice = graphic::RendererAPI::GetGraphicsDevice();
+        graphic::GraphicsDevice *pDevice = graphic::RenderCommand::GetGraphicsDevice();
         m_pDirectoryIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/directory_icon.png" );
         m_pFileIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/file_icon.png" );
     }

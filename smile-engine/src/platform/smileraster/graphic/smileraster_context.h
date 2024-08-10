@@ -4,8 +4,9 @@
 /*=============================================================================*/
 #pragma once
 #include "smile_engine/graphic/graphics_context.h"
+#include "smile_raster_swap_chain.h"
 
-#include <DeviceContext.cuh>
+#include <device_context.cuh>
 
 namespace smile::window
 {
@@ -53,6 +54,7 @@ namespace smile::graphic
 
       private:
         Raster::DeviceContext *m_pDeviceContext = nullptr;
+        SmileRasterSwapChain *m_pSwapChain = nullptr;
 
         friend class SmileRasterRendererAPI;
     };

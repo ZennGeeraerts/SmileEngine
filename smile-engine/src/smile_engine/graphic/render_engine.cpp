@@ -48,7 +48,7 @@ namespace smile::graphic
             frameBufferDesc.Height = s_Settings.Height;
             frameBufferDesc.IsSwapChainTarget = false;
 
-            s_pFinalSceneFramebuffer = RendererAPI::GetGraphicsDevice()->CreateFramebuffer( frameBufferDesc );
+            s_pFinalSceneFramebuffer = RenderCommand::GetGraphicsDevice()->CreateFramebuffer( frameBufferDesc );
             s_pFinalSceneFramebuffer->ClearColor = { DirectX::Colors::DodgerBlue.f[0],
                 DirectX::Colors::DodgerBlue.f[1],
                 DirectX::Colors::DodgerBlue.f[2],
@@ -77,7 +77,7 @@ namespace smile::graphic
 
     void RenderEngine::OnRender()
     {
-        auto pContext = RendererAPI::GetGraphicsContext();
+        auto pContext = RenderCommand::GetGraphicsContext();
         pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
@@ -95,7 +95,7 @@ namespace smile::graphic
 
     void RenderEngine::OnRender( const EditorCamera &editorCamera )
     {
-        GraphicsContext *pContext = RendererAPI::GetGraphicsContext();
+        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
         pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
@@ -118,7 +118,7 @@ namespace smile::graphic
         s_Settings.Width = width;
         s_Settings.Height = height;
 
-        auto pDevice = RendererAPI::GetGraphicsDevice();
+        auto pDevice = RenderCommand::GetGraphicsDevice();
         pDevice->ResizeFramebuffer( s_pFinalSceneFramebuffer, width, height );
     }
 }
