@@ -6,6 +6,8 @@
 
 #include "smile_engine/graphic/resource/index_buffer.h"
 
+#include <device_context.cuh>
+
 namespace smile::graphic
 {
 	struct SmileRasterIndexBuffer final : public IndexBuffer

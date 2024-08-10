@@ -12,6 +12,7 @@ namespace smile::graphic
     {
       public:
         SmileRasterRendererAPI() = default;
+        ~SmileRasterRendererAPI();
 
         void Initialize( window::Window *pWindow ) override;
 

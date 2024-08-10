@@ -6,6 +6,8 @@
 
 #include "smile_engine/graphic/resource/vertex_buffer.h"
 
+#include <device_context.cuh>
+
 namespace smile::graphic
 {
     struct SmileRasterVertexBuffer final : public VertexBuffer

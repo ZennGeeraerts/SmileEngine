@@ -11,6 +11,13 @@
 
 namespace smile::graphic
 {
+    SmileRasterRendererAPI::~SmileRasterRendererAPI()
+    {
+        delete m_pDevice;
+        delete m_pContext;
+        delete m_pSwapChain;
+    }
+
     void SmileRasterRendererAPI::Initialize( window::Window *pWindow )
     {
         m_pWindow = pWindow;
