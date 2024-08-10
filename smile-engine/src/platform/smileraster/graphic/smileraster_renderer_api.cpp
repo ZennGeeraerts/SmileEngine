@@ -5,51 +5,28 @@
 #include "smpch.h"
 #include "smileraster_renderer_api.h"
 
-#include "smile_engine/graphic/render_engine.h"
+#include "smileraster_context.h"
+#include "smile_raster_device.h"
+#include "smile_engine/core/window/window.h"
 
 namespace smile::graphic
 {
-    void SmileRasterRendererAPI::Initialize()
+    SmileRasterRendererAPI::~SmileRasterRendererAPI()
     {
-        m_pSmileRasterContext = static_cast< SmileRasterContext * >( RenderEngine::GetContext() );
-        SM_ASSERT( m_pSmileRasterContext, "SmileRasterRendererAPI > RenderingContext is not a SmileRasterContext" );
+        delete m_pDevice;
+        delete m_pContext;
+        delete m_pSwapChain;
     }
 
-    void SmileRasterRendererAPI::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
+    void SmileRasterRendererAPI::Initialize( window::Window *pWindow )
     {
-        m_pSmileRasterContext->m_BitmapInfo.bmiHeader.biWidth = width;
-        m_pSmileRasterContext->m_BitmapInfo.bmiHeader.biHeight = -static_cast< int >( height );
-        m_pSmileRasterContext->m_BitmapInfo.bmiHeader.biSizeImage = width * height * 3;
+        m_pWindow = pWindow;
 
-        m_pSmileRasterContext->m_Bitmap = CreateDIBSection( m_pSmileRasterContext->m_HDC,
-            &m_pSmileRasterContext->m_BitmapInfo,
-            DIB_RGB_COLORS,
-            reinterpret_cast< void ** >( &m_pSmileRasterContext->m_pColorBuffer ),
-            NULL,
-            0 );
-        SM_ASSERT(
-            m_pSmileRasterContext->m_Bitmap, "SmileRasterRendererAPI::ResizeWindow > Failed to create BitmapDIB" );
-
-        m_pSmileRasterContext->m_BitmapOld =
-            static_cast< HBITMAP >( SelectObject( m_pSmileRasterContext->m_HDC, m_pSmileRasterContext->m_Bitmap ) );
-        memset( m_pSmileRasterContext->m_pColorBuffer, 0, width * height * 3 );
-
-        m_pSmileRasterContext->m_pDeviceContext->Resize(
-            m_pSmileRasterContext->m_Framebuffer, width, height, m_pSmileRasterContext->m_pColorBuffer );
-    }
-
-    void SmileRasterRendererAPI::SetClearColor( const DirectX::XMFLOAT4 &color )
-    {
-        m_ClearColor = color;
-    }
-
-    void SmileRasterRendererAPI::Clear()
-    {
-        m_pSmileRasterContext->m_pDeviceContext->Clear( m_pSmileRasterContext->m_Framebuffer, m_ClearColor, true );
-    }
-
-    void SmileRasterRendererAPI::DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader )
-    {
-        m_pSmileRasterContext->m_pDeviceContext->DrawIndexed( indexCount );
+        auto pSmileRasterContext = new SmileRasterContext{};
+        m_pContext = pSmileRasterContext;
+        auto pSmileRasterDevice = new SmileRasterDevice{ pSmileRasterContext->m_pDeviceContext };
+        m_pDevice = pSmileRasterDevice;
+        auto pSmileRasterSwapChain = new SmileRasterSwapChain{ pSmileRasterContext->m_pDeviceContext, pWindow };
+        m_pSwapChain = pSmileRasterSwapChain;
     }
 }

@@ -6,6 +6,7 @@
 #include "wireframe_renderer.h"
 
 #include "smile_engine/graphic/render_command.h"
+#include "smile_engine/graphic/render_engine.h"
 
 namespace smile::graphic
 {
@@ -14,7 +15,7 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
-        GraphicsDevice *pDevice = RenderEngine::GetDevice();
+        GraphicsDevice *pDevice = RenderCommand::GetGraphicsDevice();
         RasterizerStateDescriptor rasterizerStateDesc{};
         rasterizerStateDesc.CullMode = CullMode::None;
         rasterizerStateDesc.FillMode = FillMode::WireFrame;
@@ -56,7 +57,7 @@ namespace smile::graphic
 
     void WireframeRenderer::OnRender()
     {
-        GraphicsContext *pContext = RenderEngine::GetContext();
+        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
         pContext->BindRasterizerState( s_pWireframeRasterizerState );

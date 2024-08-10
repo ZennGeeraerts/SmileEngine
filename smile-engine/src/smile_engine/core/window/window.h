@@ -7,12 +7,6 @@
 #include "events/event.h"
 #include "smile_engine/common/compiled/compiled.h"
 
-namespace smile::graphic
-{
-    class GraphicsDevice;
-    class GraphicsContext;
-}
-
 namespace smile::window
 {
     struct WindowSettings final
@@ -42,8 +36,6 @@ namespace smile::window
         Window &operator=( const Window & ) = delete;
         Window &operator=( Window && ) = delete;
 
-        virtual void OnUpdate() = 0;
-
         Uint32 GetWidth() const
         {
             return m_Data.Settings.Width;
@@ -51,14 +43,6 @@ namespace smile::window
         Uint32 GetHeight() const
         {
             return m_Data.Settings.Height;
-        }
-        graphic::GraphicsDevice* GetGraphicsDevice() const
-        {
-            return m_pDevice;
-        }
-        graphic::GraphicsContext* GetGraphicsContext() const
-        {
-            return m_pContext;
         }
 
         // Window attributes
@@ -88,8 +72,5 @@ namespace smile::window
 
         WindowData m_Data;
         bool m_IsInitialized = false;
-
-        graphic::GraphicsDevice *m_pDevice;
-        graphic::GraphicsContext *m_pContext;
     };
 }

@@ -394,7 +394,7 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Device::Initialize( GraphicsContext *pGraphicsContext )
+    DirectX11Device::DirectX11Device( GraphicsContext *pContext )
     {
         // Create Device and Device context, using hardware acceleration
         D3D_FEATURE_LEVEL featureLevel{ D3D_FEATURE_LEVEL_11_0 };
@@ -402,7 +402,7 @@ namespace smile::graphic
 #ifdef SM_C_DEBUG
         createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-        DirectX11Context *pDirectX11Context = static_cast< DirectX11Context * >( pGraphicsContext );
+        DirectX11Context *pDirectX11Context = static_cast< DirectX11Context * >( pContext );
 
         HRESULT result = D3D11CreateDevice( 0,
             D3D_DRIVER_TYPE_HARDWARE,

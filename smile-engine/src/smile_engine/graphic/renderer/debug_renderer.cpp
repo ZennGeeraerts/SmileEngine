@@ -76,7 +76,7 @@ namespace smile::graphic
         descriptor.Count = m_BufferSize;
         descriptor.CPUAccess = BufferCPUAccess::Write;
 
-        m_pVertexBuffer = RenderEngine::GetDevice()->CreateVertexBuffer( descriptor );
+        m_pVertexBuffer = RenderCommand::GetGraphicsDevice()->CreateVertexBuffer( descriptor );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -108,7 +108,7 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        GraphicsContext *pContext = RenderEngine::GetContext();
+        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
 
         pContext->FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
 

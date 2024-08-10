@@ -31,7 +31,7 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        auto pDevice = graphic::RenderEngine::GetDevice();
+        auto pDevice = graphic::RenderCommand::GetGraphicsDevice();
         m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
         m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
         m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
@@ -246,7 +246,8 @@ namespace smile
             const auto entityRotation = entityTransformComponent.WorldRotation;
             const auto entityScale = entityTransformComponent.WorldScale;
 
-            const auto entityRotationDeg = DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.x ),
+            const auto entityRotationDeg =
+                DirectX::XMFLOAT3{ DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.x ),
                     DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.y ),
                     DirectX::XMConvertToDegrees( entityTransformComponent.WorldRotation.z ) };
 
@@ -257,10 +258,8 @@ namespace smile
                 snapValue = 45.f;
             float snapValues[3]{ snapValue, snapValue, snapValue };
 
-            ImGuizmo::RecomposeMatrixFromComponents( &entityTranslation.x,
-                &entityRotationDeg.x,
-                &entityScale.x,
-                *entityTransform.m );
+            ImGuizmo::RecomposeMatrixFromComponents(
+                &entityTranslation.x, &entityRotationDeg.x, &entityScale.x, *entityTransform.m );
             ImGuizmo::Manipulate( *cameraViewMatrix.m,
                 *cameraProjectionMatrix.m,
                 static_cast< ImGuizmo::OPERATION >( m_GizmoType ),

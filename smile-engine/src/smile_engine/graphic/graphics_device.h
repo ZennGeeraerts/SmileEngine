@@ -13,15 +13,11 @@
 
 namespace smile::graphic
 {
-    class GraphicsContext;
-
     class GraphicsDevice
     {
       public:
         GraphicsDevice() = default;
         virtual ~GraphicsDevice() = default;
-
-        virtual void Initialize( GraphicsContext *pGraphicsContext ) = 0;
 
         virtual void *GetInternal() const = 0;
 
@@ -38,7 +34,5 @@ namespace smile::graphic
 
         virtual void InvalidateFramebuffer( const Ref< Framebuffer > &pFramebuffer ) = 0;
         virtual void ResizeFramebuffer( const Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) = 0;
-
-        static GraphicsDevice *Create();
     };
 }

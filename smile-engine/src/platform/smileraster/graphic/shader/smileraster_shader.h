@@ -4,7 +4,8 @@
 /*=============================================================================*/
 #pragma once
 #include "smile_engine/graphic/shader/shader.h"
-#include "platform/smileraster/graphic/smileraster_context.h"
+
+#include <device_context.cuh>
 
 namespace smile::graphic
 {

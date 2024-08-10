@@ -6,7 +6,6 @@
 #include "scene_serializer.h"
 
 #include "smile_engine/common/logger/logger.h"
-#include "smile_engine/graphic/render_engine.h"
 #include "entity.h"
 #include "components.h"
 #include "smile_engine/core/project/project_manager.h"
@@ -643,8 +642,8 @@ namespace smile::scene
                         if ( !texturePath.empty() )
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                            mrc.pMaterial->SetTexture2D(
-                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() ) );
+                            mrc.pMaterial->SetTexture2D( semantic,
+                                graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( path.string() ) );
                         }
                     }
                 }
@@ -717,8 +716,8 @@ namespace smile::scene
                         if ( !texturePath.empty() )
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                            smrc.pMaterial->SetTexture2D(
-                                semantic, graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() ) );
+                            smrc.pMaterial->SetTexture2D( semantic,
+                                graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( path.string() ) );
                         }
                     }
                 }
@@ -836,7 +835,7 @@ namespace smile::scene
                 }
 
                 auto spriteRendererComponent = entity["SpriteRendererComponent"];
-                if (spriteRendererComponent)
+                if ( spriteRendererComponent )
                 {
                     auto &src = deserializedEntity.AddComponent< SpriteRendererComponent >();
 
@@ -845,7 +844,7 @@ namespace smile::scene
                     if ( !texturePath.empty() )
                     {
                         auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                        src.pTexture = graphic::RenderEngine::GetDevice()->CreateTexture2D( path.string() );
+                        src.pTexture = graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( path.string() );
                     }
                 }
             }

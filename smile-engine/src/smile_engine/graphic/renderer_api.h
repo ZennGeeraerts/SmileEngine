@@ -4,8 +4,14 @@
 /*=============================================================================*/
 #pragma once
 
+#include "graphics_device.h"
 #include "graphics_context.h"
-#include "shader/shader.h"
+#include "swap_chain.h"
+
+namespace window
+{
+    class Window;
+}
 
 namespace smile::graphic
 {
@@ -22,18 +28,32 @@ namespace smile::graphic
       public:
         virtual ~RendererAPI() = default;
 
-        virtual void Initialize() = 0;
-        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) = 0;
-        virtual void Clear() = 0;
-
-        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
-        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void Initialize( window::Window *pWindow ) = 0;
 
         inline static API GetAPI()
         {
             return s_API;
         }
+
+        inline GraphicsDevice *GetGraphicsDevice() const
+        {
+            return m_pDevice;
+        }
+
+        inline GraphicsContext *GetGraphicsContext() const
+        {
+            return m_pContext;
+        }
+
+        inline SwapChain* GetSwapChain() const
+        {
+            return m_pSwapChain;
+        }
+
+      protected:
+        GraphicsDevice *m_pDevice;
+        GraphicsContext *m_pContext;
+        SwapChain *m_pSwapChain;
 
       private:
         static API s_API;

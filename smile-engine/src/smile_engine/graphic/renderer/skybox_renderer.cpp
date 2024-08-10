@@ -16,7 +16,7 @@ namespace smile::graphic
 
     void SkyboxRenderer::Initialize()
     {
-        auto pDevice = RenderEngine::GetDevice();
+        auto pDevice = RenderCommand::GetGraphicsDevice();
 
         Ref< TextureCube > pCubeTexture = pDevice->CreateTextureCube( "assets/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
@@ -70,7 +70,7 @@ namespace smile::graphic
 
     void SkyboxRenderer::OnRender()
     {
-        auto pContext = RenderEngine::GetContext();
+        auto pContext = RenderCommand::GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 

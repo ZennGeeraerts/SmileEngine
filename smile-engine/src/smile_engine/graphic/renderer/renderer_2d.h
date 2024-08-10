@@ -5,6 +5,7 @@
 #pragma once
 #include "smile_engine/common/compiled/singleton.h"
 #include "smile_engine/core/scene/components.h"
+#include "smile_engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic
 {

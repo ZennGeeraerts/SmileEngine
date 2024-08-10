@@ -5,13 +5,13 @@
 #include "smpch.h"
 #include "vertex_array.h"
 
-#include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/renderer_api.h"
 
 namespace smile::graphic
 {
     VertexBuffer *VertexArray::Create()
     {
-        switch ( RenderEngine::GetAPI() )
+        switch ( RendererAPI::GetAPI() )
         {
             case RendererAPI::API::None:
                 SM_ASSERT( false, "VertexArray::Create > return nullptr, no renderer api selected" );

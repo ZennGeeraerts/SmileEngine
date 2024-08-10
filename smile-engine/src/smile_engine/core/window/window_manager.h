@@ -18,7 +18,7 @@ namespace smile::window
         }
 
         virtual Window *CreateNewWindow( const WindowSettings &windowSettings ) = 0;
-        virtual void OnUpdate() = 0;
+        virtual void PollEvents() = 0;
 
         Window *GetWindow( Uint32 index )
         {

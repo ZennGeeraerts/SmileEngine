@@ -7,7 +7,7 @@
 
 #include "smile_engine/core/application/application.h"
 #include "smile_engine/core/window/window.h"
-#include "smile_engine/graphic/renderer_api.h"
+#include "smile_engine/graphic/render_command.h"
 
 #include "platform/directx11/graphic/directx11_device.h"
 #include "platform/directx11/graphic/directx11_context.h"
@@ -80,8 +80,8 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::GraphicsDevice *pGraphicsDevice = window.GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = window.GetGraphicsContext();
+        graphic::GraphicsDevice *pGraphicsDevice = graphic::RenderCommand::GetGraphicsDevice();
+        graphic::GraphicsContext *pGraphicsContext = graphic::RenderCommand::GetGraphicsContext();
 
         graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
         switch ( api )

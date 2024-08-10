@@ -6,6 +6,7 @@
 #include "camera_system.h"
 
 #include "smile_engine/graphic/camera/camera.h"
+#include "smile_engine/graphic/render_engine.h"
 #include "smile_engine/core/scene/components.h"
 
 namespace smile::graphic

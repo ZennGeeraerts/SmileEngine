@@ -24,10 +24,12 @@ namespace smile::graphic
     {
       public:
         virtual ~GraphicsContext() = default;
-        virtual void Initialize( GraphicsDevice *pGraphicsDevice ) = 0;
-        virtual void Present() = 0;
 
         virtual void *GetInternal() const = 0;
+
+        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) = 0;
+        virtual void Clear( const DirectX::XMFLOAT4 &clearColor ) = 0;
 
         virtual void BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const = 0;
         virtual void UnbindVertexBuffer() const = 0;
@@ -43,8 +45,7 @@ namespace smile::graphic
         virtual void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const = 0;
         virtual void UnbindPrimitiveTopology() const = 0;
 
-        virtual void FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const = 0;
-
-        static GraphicsContext *Create( window::Window *pWindow );
+        virtual void
+        FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const = 0;
     };
 }

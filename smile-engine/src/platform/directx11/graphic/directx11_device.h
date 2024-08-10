@@ -9,13 +9,13 @@
 
 namespace smile::graphic
 {
+    class GraphicsContext;
+
     class DirectX11Device final : public GraphicsDevice
     {
       public:
-        DirectX11Device() = default;
+        DirectX11Device( GraphicsContext *pContext );
         ~DirectX11Device();
-
-        void Initialize( GraphicsContext *pGraphicsContext ) override;
 
         void *GetInternal() const override
         {
@@ -38,7 +38,5 @@ namespace smile::graphic
 
       private:
         ID3D11Device *m_pInternal = nullptr;
-
-        friend class DirectX11RendererAPI;
     };
 }

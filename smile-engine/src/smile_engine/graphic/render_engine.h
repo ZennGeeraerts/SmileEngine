@@ -56,18 +56,6 @@ namespace smile::graphic
             s_CameraData = cameraData;
         }
 
-        static GraphicsDevice *GetDevice()
-        {
-            return s_pWindow->GetGraphicsDevice();
-        }
-        static GraphicsContext *GetContext()
-        {
-            return s_pWindow->GetGraphicsContext();
-        }
-        static RendererAPI::API GetAPI()
-        {
-            return RendererAPI::GetAPI();
-        }
         static const RendererSettings &GetSettings()
         {
             return s_Settings;

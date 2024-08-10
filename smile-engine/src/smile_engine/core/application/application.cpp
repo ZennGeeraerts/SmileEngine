@@ -8,6 +8,7 @@
 #include "smile_engine/common/logger/logger.h"
 #include "smile_engine/core/input/input.h"
 #include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/render_command.h"
 #include "smile_engine/physics/physics_engine.h"
 #include "smile_engine/scripting/script_engine.h"
 
@@ -93,7 +94,8 @@ namespace smile::application
                 pLayer->OnImGuiRender();
             m_pImGuiLayer->End();
 
-            m_pWindowManager->OnUpdate();
+            m_pWindowManager->PollEvents();
+            graphic::RenderCommand::Present();
         }
     }
 

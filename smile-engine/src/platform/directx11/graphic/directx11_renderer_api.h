@@ -5,8 +5,7 @@
 #pragma once
 
 #include "smile_engine/graphic/renderer_api.h"
-#include "directx11_device.h"
-#include "directx11_context.h"
+#include <d3d11.h>
 
 namespace smile::graphic
 {
@@ -14,20 +13,13 @@ namespace smile::graphic
     {
       public:
         DirectX11RendererAPI() = default;
+        ~DirectX11RendererAPI();
         DirectX11RendererAPI( const DirectX11RendererAPI & ) = delete;
         DirectX11RendererAPI( DirectX11RendererAPI && ) = delete;
 
-        virtual void Initialize() override;
-        virtual void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
-        virtual void SetClearColor( const DirectX::XMFLOAT4 &color ) override;
-        virtual void Clear() override;
-
-        virtual void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
-        virtual void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) override;
+        void Initialize( window::Window *pWindow ) override;
 
       private:
-        DirectX::XMFLOAT4 m_ClearColor = { 1.f, 1.f, 1.f, 1.f };
-        DirectX11Device *m_pDirectX11Device = nullptr;
-        DirectX11Context *m_pDirectX11Context = nullptr;
+        IDXGIFactory *m_pDXGIFactory = nullptr;
     };
 }

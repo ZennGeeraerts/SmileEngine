@@ -14,11 +14,9 @@ namespace smile::window
         virtual ~WindowsWindowManager();
 
         Window *CreateNewWindow( const WindowSettings &windowSettings ) override;
-        void OnUpdate() override;
+        void PollEvents() override;
 
       private:
-        void PollEvents();
-
         static LRESULT CALLBACK WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
       private:
