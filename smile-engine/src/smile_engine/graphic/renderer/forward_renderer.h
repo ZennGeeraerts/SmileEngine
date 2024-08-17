@@ -9,7 +9,8 @@
 #include "smile_engine/graphic/camera/camera.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 
-#include "smile_engine/core/scene/components.h"
+#include "smile_engine/graphic/mesh/ecs/mesh_renderer_component.h"
+#include "smile_engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
 
 namespace smile::graphic
 {
@@ -28,13 +29,13 @@ namespace smile::graphic
             const Ref< IndexBuffer > &pIndexBuffer,
             const Ref< Shader > &pShader,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const scene::MeshRendererComponent &meshRendererComponent,
+        static void Submit( const ecs::MeshRendererComponent &meshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        static void Submit( const scene::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
+        static void Submit( const ecs::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
 
       private:
-        static void ClearDrawlist();
+        static void ClearDrawList();
 
       private:
         static RenderCollector s_RenderCollector;

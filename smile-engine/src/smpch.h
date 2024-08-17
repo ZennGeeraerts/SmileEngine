@@ -4,8 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/common/platform/platform_detection.h"
-
 // Data structures
 #include <iostream>
 #include <memory>
@@ -19,25 +17,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "smile_engine/common/compiled/compiled.h"
 #include "smile_engine/common/primitive/timestep.h"
-#include "smile_engine/core/application/timer.h"
-
-#include <DirectXMath.h>
-
-// Platform specific headers
-#ifdef SM_PLATFORM_WINDOWS
-#    define NOMINMAX
-#    include <Windows.h>
-#    include <windowsx.h>
-
-#    if defined( DEBUG ) || defined( _DEBUG )
-#        pragma comment( lib, "dx11effects_d.lib" )
-#    else
-#        pragma comment( lib, "dx11effects.lib" )
-#    endif
-#endif
-
-#include <DirectXMath.h>
-#include <DirectXColors.h>
-#include <DirectXPackedVector.h>
-#include <DirectXCollision.h>
+#include "smile_engine/common/logger/logger.h"

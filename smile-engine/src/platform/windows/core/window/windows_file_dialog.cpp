@@ -7,6 +7,7 @@
 #include "smile_engine/core/window/file_dialog.h"
 #include "smile_engine/core/application/application.h"
 
+#include <Windows.h>
 #include <commdlg.h>
 
 namespace smile::window

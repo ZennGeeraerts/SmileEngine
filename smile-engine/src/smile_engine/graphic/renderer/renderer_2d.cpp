@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "renderer_2d.h"
 
-#include "smile_engine/graphic/render_command.h"
-#include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/renderer/render_command.h"
+#include "smile_engine/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
@@ -119,7 +119,7 @@ namespace smile::graphic
     }
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-        const scene::SpriteRendererComponent &spriteRendererComponent )
+        const ecs::SpriteRendererComponent &spriteRendererComponent )
     {
         if ( spriteRendererComponent.pTexture )
             DrawQuad( worldTransform, spriteRendererComponent.pTexture, spriteRendererComponent.Color );

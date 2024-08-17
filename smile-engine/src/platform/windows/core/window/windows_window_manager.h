@@ -5,6 +5,8 @@
 #pragma once
 #include "smile_engine/core/window/window_manager.h"
 
+#include <Windows.h>
+
 namespace smile::window
 {
 	class WindowsWindowManager final : public WindowManager

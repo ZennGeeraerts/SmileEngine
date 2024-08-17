@@ -6,6 +6,7 @@
 #include "script_engine.h"
 
 #include "script_glue.h"
+#include "ecs/script_component.h"
 
 #include <fstream>
 
@@ -381,7 +382,7 @@ namespace smile::scripting
 
     void ScriptEngine::OnCreateEntity( scene::Entity entity )
     {
-        const auto &scriptComponent = entity.GetComponent< scene::ScriptComponent >();
+        const auto &scriptComponent = entity.GetComponent< ecs::ScriptComponent >();
         if ( EntityClassExists( scriptComponent.ClassName ) )
         {
             Ref< ScriptInstance > pInstance =

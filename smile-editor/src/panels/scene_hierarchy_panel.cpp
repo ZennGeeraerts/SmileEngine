@@ -42,7 +42,7 @@ namespace smile::scene
 
                     // Draw root nodes
                     // The root nodes will recursively draw its children
-                    const auto *pRelationship = entity.TryGetComponent< ecs::Relationship >();
+                    const auto *pRelationship = entity.TryGetComponent< smile::ecs::Relationship >();
                     if ( !pRelationship || !pRelationship->Parent )
                     {
                         DrawEntityNode( entity, entitiesToAddChild );
@@ -87,8 +87,8 @@ namespace smile::scene
     {
         ImGui::PushID( ( const void * )( Uint64 )entity );
 
-        auto &tag = entity.GetComponent< TagComponent >().Tag;
-        auto pRelationship = entity.TryGetComponent< ecs::Relationship >();
+        auto &tag = entity.GetComponent< ecs::TagComponent >().Tag;
+        auto pRelationship = entity.TryGetComponent< smile::ecs::Relationship >();
 
         const ImGuiTreeNodeFlags flags =
             ( ( m_SelectedEntity == entity ) ? ImGuiTreeNodeFlags_Selected : 0 ) |
@@ -264,9 +264,9 @@ namespace smile::scene
 
     void SceneHierarchyPanel::DrawComponents( Entity entity )
     {
-        if ( entity.HasComponent< TagComponent >() )
+        if ( entity.HasComponent< ecs::TagComponent >() )
         {
-            auto &tag = entity.GetComponent< TagComponent >().Tag;
+            auto &tag = entity.GetComponent< ecs::TagComponent >().Tag;
 
             char tagBuffer[256];
             memset( tagBuffer, 0, sizeof( tagBuffer ) );
@@ -287,67 +287,67 @@ namespace smile::scene
         {
             if ( ImGui::MenuItem( "Camera" ) )
             {
-                m_SelectedEntity.AddComponent< CameraComponent >();
+                m_SelectedEntity.AddComponent< graphic::ecs::CameraComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Script" ) )
             {
-                m_SelectedEntity.AddComponent< ScriptComponent >();
+                m_SelectedEntity.AddComponent< scripting::ecs::ScriptComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Mesh Renderer" ) )
             {
-                m_SelectedEntity.AddComponent< MeshRendererComponent >();
+                m_SelectedEntity.AddComponent< graphic::ecs::MeshRendererComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Skinned Mesh Renderer" ) )
             {
-                m_SelectedEntity.AddComponent< SkinnedMeshRendererComponent >();
+                m_SelectedEntity.AddComponent< graphic::ecs::SkinnedMeshRendererComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Animator" ) )
             {
-                m_SelectedEntity.AddComponent< AnimatorComponent >();
+                m_SelectedEntity.AddComponent< graphic::ecs::AnimatorComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Rigid Body" ) )
             {
-                m_SelectedEntity.AddComponent< RigidbodyComponent >();
+                m_SelectedEntity.AddComponent< physics::ecs::RigidbodyComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Box Collider" ) )
             {
-                m_SelectedEntity.AddComponent< BoxColliderComponent >();
+                m_SelectedEntity.AddComponent< physics::ecs::BoxColliderComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Sphere Collider" ) )
             {
-                m_SelectedEntity.AddComponent< SphereColliderComponent >();
+                m_SelectedEntity.AddComponent< physics::ecs::SphereColliderComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Capsule Collider" ) )
             {
-                m_SelectedEntity.AddComponent< CapsuleColliderComponent >();
+                m_SelectedEntity.AddComponent< physics::ecs::CapsuleColliderComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Character Controller" ) )
             {
-                m_SelectedEntity.AddComponent< CharacterControllerComponent >();
+                m_SelectedEntity.AddComponent< physics::ecs::CharacterControllerComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
             if ( ImGui::MenuItem( "Sprite Renderer" ) )
             {
-                m_SelectedEntity.AddComponent< SpriteRendererComponent >();
+                m_SelectedEntity.AddComponent< graphic::ecs::SpriteRendererComponent >();
                 ImGui::CloseCurrentPopup();
             }
 
@@ -356,7 +356,7 @@ namespace smile::scene
 
         ImGui::PopItemWidth();
 
-        DrawComponent< TransformComponent >(
+        DrawComponent< ecs::TransformComponent >(
             "Transform",
             entity,
             []( auto &transformComponent )
@@ -364,7 +364,7 @@ namespace smile::scene
                 if ( DrawVector3Control( "Position", transformComponent.Translation ) )
                 {
                     transformComponent.TransformChanged |=
-                        static_cast< Uint32 >( TransformComponent::TransformChanged::Translation );
+                        static_cast< Uint32 >( ecs::TransformComponent::TransformChanged::Translation );
                 }
 
                 DirectX::XMFLOAT3 rotationDegrees = {};
@@ -375,7 +375,7 @@ namespace smile::scene
                 if ( DrawVector3Control( "Rotation", rotationDegrees ) )
                 {
                     transformComponent.TransformChanged |=
-                        static_cast< Uint32 >( TransformComponent::TransformChanged::Rotation );
+                        static_cast< Uint32 >( ecs::TransformComponent::TransformChanged::Rotation );
                 }
 
                 transformComponent.Rotation.x = DirectX::XMConvertToRadians( rotationDegrees.x );
@@ -385,12 +385,12 @@ namespace smile::scene
                 if ( DrawVector3Control( "Scale", transformComponent.Scale, 1.0f ) )
                 {
                     transformComponent.TransformChanged |=
-                        static_cast< Uint32 >( TransformComponent::TransformChanged::Scale );
+                        static_cast< Uint32 >( ecs::TransformComponent::TransformChanged::Scale );
                 }
             },
             false );
 
-        DrawComponent< CameraComponent >( "Camera",
+        DrawComponent< graphic::ecs::CameraComponent >( "Camera",
             entity,
             []( auto &cameraComponent )
             {
@@ -408,7 +408,8 @@ namespace smile::scene
                         if ( ImGui::Selectable( projectionTypeStrs[i], isSelected ) )
                         {
                             currentProjectionTypeStr = projectionTypeStrs[i];
-                            cameraComponent.Camera.SetProjectionType( static_cast< SceneCamera::ProjectionType >( i ) );
+                            cameraComponent.Camera.SetProjectionType(
+                                static_cast< graphic::SceneCamera::ProjectionType >( i ) );
                         }
 
                         if ( isSelected )
@@ -420,7 +421,7 @@ namespace smile::scene
 
                 switch ( cameraComponent.Camera.GetProjectionType() )
                 {
-                    case SceneCamera::ProjectionType::Perspective:
+                    case graphic::SceneCamera::ProjectionType::Perspective:
                     {
                         float fov = cameraComponent.Camera.GetFOV();
                         if ( ImGui::DragFloat( "FOV", &fov, 0.03f, 0.03f ) )
@@ -436,7 +437,7 @@ namespace smile::scene
 
                         break;
                     }
-                    case SceneCamera::ProjectionType::Orthographic:
+                    case graphic::SceneCamera::ProjectionType::Orthographic:
                     {
                         float size = cameraComponent.Camera.GetSize();
                         if ( ImGui::DragFloat( "Size", &size, 0.03f, 0.03f ) )
@@ -457,7 +458,7 @@ namespace smile::scene
                 }
             } );
 
-        DrawComponent< ScriptComponent >( "Script",
+        DrawComponent< scripting::ecs::ScriptComponent >( "Script",
             entity,
             [entity]( auto &scriptComponent )
             {
@@ -499,7 +500,7 @@ namespace smile::scene
                     ImGui::PopStyleColor();
             } );
 
-        DrawComponent< MeshRendererComponent >( "Mesh Renderer",
+        DrawComponent< graphic::ecs::MeshRendererComponent >( "Mesh Renderer",
             entity,
             []( auto &meshRendererComponent )
             {
@@ -564,7 +565,7 @@ namespace smile::scene
                 DrawMaterial( meshRendererComponent.pMaterial );
             } );
 
-        DrawComponent< SkinnedMeshRendererComponent >( "Skinned Mesh Renderer",
+        DrawComponent< graphic::ecs::SkinnedMeshRendererComponent >( "Skinned Mesh Renderer",
             entity,
             []( auto &skinnedMeshRendererComponent )
             {
@@ -631,7 +632,7 @@ namespace smile::scene
                 DrawMaterial( skinnedMeshRendererComponent.pMaterial );
             } );
 
-        DrawComponent< AnimatorComponent >( "Animator",
+        DrawComponent< graphic::ecs::AnimatorComponent >( "Animator",
             entity,
             []( auto &animatorComponent )
             {
@@ -654,7 +655,7 @@ namespace smile::scene
                 }
             } );
 
-        DrawComponent< RigidbodyComponent >( "Rigidbody",
+        DrawComponent< physics::ecs::RigidbodyComponent >( "Rigidbody",
             entity,
             []( auto &rigidbodyComponent )
             {
@@ -669,7 +670,7 @@ namespace smile::scene
                         if ( ImGui::Selectable( bodyTypeStrs[i], isSelected ) )
                         {
                             currentBodyTypeStr = bodyTypeStrs[i];
-                            rigidbodyComponent.Type = static_cast< RigidbodyComponent::BodyType >( i );
+                            rigidbodyComponent.Type = static_cast< physics::ecs::RigidbodyComponent::BodyType >( i );
                         }
 
                         if ( isSelected )
@@ -692,7 +693,7 @@ namespace smile::scene
                         {
                             currentCollisionDetectionStr = collisionDetectionStrs[i];
                             rigidbodyComponent.CollisionDetection =
-                                static_cast< RigidbodyComponent::CollisionDetectionType >( i );
+                                static_cast< physics::ecs::RigidbodyComponent::CollisionDetectionType >( i );
                         }
 
                         if ( isSelected )
@@ -723,7 +724,7 @@ namespace smile::scene
                 ImGui::Checkbox( "Lock Rotation Z", &rigidbodyComponent.LockRotationZ );
             } );
 
-        DrawComponent< BoxColliderComponent >( "Box Collider",
+        DrawComponent< physics::ecs::BoxColliderComponent >( "Box Collider",
             entity,
             []( auto &boxColliderComponent )
             {
@@ -735,7 +736,7 @@ namespace smile::scene
                 // TODO: Physics Material
             } );
 
-        DrawComponent< SphereColliderComponent >( "Sphere Collider",
+        DrawComponent< physics::ecs::SphereColliderComponent >( "Sphere Collider",
             entity,
             []( auto &sphereColliderComponent )
             {
@@ -744,7 +745,7 @@ namespace smile::scene
                 ImGui::Checkbox( "Show Collider Bounds", &sphereColliderComponent.ShowColliderBounds );
             } );
 
-        DrawComponent< CapsuleColliderComponent >( "Capsule Collider",
+        DrawComponent< physics::ecs::CapsuleColliderComponent >( "Capsule Collider",
             entity,
             []( auto &capsuleColliderComponent )
             {
@@ -754,7 +755,7 @@ namespace smile::scene
                 ImGui::Checkbox( "Show Collider Bounds", &capsuleColliderComponent.ShowColliderBounds );
             } );
 
-        DrawComponent< CharacterControllerComponent >( "Character Controller",
+        DrawComponent< physics::ecs::CharacterControllerComponent >( "Character Controller",
             entity,
             []( auto &characterControllerComponent )
             {
@@ -774,7 +775,7 @@ namespace smile::scene
                         {
                             currentClimbingModeStr = climbingModeStrs[i];
                             characterControllerComponent.ClimbingMode =
-                                static_cast< CharacterControllerComponent::ClimbingModeType >( i );
+                                static_cast< physics::ecs::CharacterControllerComponent::ClimbingModeType >( i );
                         }
 
                         if ( isSelected )
@@ -785,7 +786,7 @@ namespace smile::scene
                 }
             } );
 
-        DrawComponent< SpriteRendererComponent >( "Sprite Renderer",
+        DrawComponent< graphic::ecs::SpriteRendererComponent >( "Sprite Renderer",
             entity,
             []( auto &spriteRendererComponent )
             {
@@ -871,7 +872,8 @@ namespace smile::scene
             {
                 const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                 std::filesystem::path shaderPath = std::filesystem::path{ path };
-                pMaterial->SetShader( graphic::RenderCommand::GetGraphicsDevice()->CreateShader( shaderPath.string() ) );
+                pMaterial->SetShader(
+                    graphic::RenderCommand::GetGraphicsDevice()->CreateShader( shaderPath.string() ) );
             }
 
             ImGui::EndDragDropTarget();

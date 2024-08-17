@@ -13,7 +13,11 @@
 namespace smile::scene
 {
     class Entity;
-    class TransformSystem;
+
+    namespace ecs
+    {
+        class TransformSystem;
+    }
 
     class Scene final
     {
@@ -51,13 +55,13 @@ namespace smile::scene
         void OnComponentAdded( Entity entity, ComponentType &component );
 
       private:
-        ecs::ECSEngine m_ECSEngine;
+        smile::ecs::ECSEngine m_ECSEngine;
         Uint32 m_ViewportWidth = 0;
         Uint32 m_ViewportHeight = 0;
 
-        std::unordered_map< primitive::UUID, ecs::EntityHandleType > m_EntityMap{};
+        std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > m_EntityMap{};
 
-        Scope< TransformSystem > m_pTransformSystem;
+        Scope< ecs::TransformSystem > m_pTransformSystem;
 
         friend class Entity;
         friend class SceneSerializer;

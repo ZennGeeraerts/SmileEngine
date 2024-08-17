@@ -6,7 +6,9 @@
 
 #include "smile_engine/common/primitive/uuid.h"
 #include "scene.h"
-#include "components.h"
+#include "ecs/id_component.h"
+#include "ecs/tag_component.h"
+#include "ecs/transform_component.h"
 
 #include "smile_engine/core/ecs/ecs_engine.h"
 
@@ -16,7 +18,7 @@ namespace smile::scene
     {
       public:
         Entity() = default;
-        Entity( ecs::EntityHandleType handle, Scene *pScene );
+        Entity( smile::ecs::EntityHandleType handle, Scene *pScene );
         Entity( const Entity & ) = default;
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -63,15 +65,15 @@ namespace smile::scene
 
         primitive::UUID GetUUID() const
         {
-            return GetComponent< IDComponent >().ID;
+            return GetComponent< ecs::IDComponent >().ID;
         }
         const std::string &GetName() const
         {
-            return GetComponent< TagComponent >().Tag;
+            return GetComponent< ecs::TagComponent >().Tag;
         }
         DirectX::XMFLOAT4X4 GetTransform() const
         {
-            return GetComponent< TransformComponent >().GetWorldTransform();
+            return GetComponent< ecs::TransformComponent >().GetWorldTransform();
         }
 
         template < typename ComponentType >
@@ -91,9 +93,9 @@ namespace smile::scene
         // Check to see if entity is valid
         operator bool() const
         {
-            return m_EntityHandle != ecs::EntityHandleType::NullHandle();
+            return m_EntityHandle != smile::ecs::EntityHandleType::NullHandle();
         }
-        operator ecs::EntityHandleType() const
+        operator smile::ecs::EntityHandleType() const
         {
             return m_EntityHandle;
         }
@@ -116,7 +118,7 @@ namespace smile::scene
         }
 
       private:
-        ecs::EntityHandleType m_EntityHandle = ecs::EntityHandleType::NullHandle();
+        smile::ecs::EntityHandleType m_EntityHandle = smile::ecs::EntityHandleType::NullHandle();
         Scene *m_pScene = nullptr;
     };
 }

@@ -1,4 +1,4 @@
-include(${CMAKE_SOURCE_DIR}/scripts/CMakeUtils.cmake)
+include(${CMAKE_SOURCE_DIR}/scripts/cmake_utils.cmake)
 
 set(INCLUDE_DIRS src thirdparty ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty)
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.h thirdparty/catch.hpp)
@@ -9,7 +9,7 @@ target_include_directories(unit-tests PRIVATE ${INCLUDE_DIRS})
 
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 
-GroupSourcesByFolder(unit-tests)
+group_sources_by_folder(unit-tests)
 set_property(TARGET unit-tests PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 set_target_properties(unit-tests PROPERTIES FOLDER Tools)
 

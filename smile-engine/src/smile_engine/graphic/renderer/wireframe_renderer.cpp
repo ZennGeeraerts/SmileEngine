@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "wireframe_renderer.h"
 
-#include "smile_engine/graphic/render_command.h"
-#include "smile_engine/graphic/render_engine.h"
+#include "smile_engine/graphic/renderer/render_command.h"
+#include "smile_engine/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
@@ -84,7 +84,7 @@ namespace smile::graphic
         pContext->UnbindPrimitiveTopology();
     }
 
-    void WireframeRenderer::Submit( const scene::BoxColliderComponent &boxColliderComponent,
+    void WireframeRenderer::Submit( const physics::ecs::BoxColliderComponent &boxColliderComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         DirectX::XMMATRIX worldTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );
@@ -113,7 +113,7 @@ namespace smile::graphic
         m_RenderCollector.DrawList.emplace_back( drawCommand );
     }
 
-    void WireframeRenderer::Submit( const scene::SphereColliderComponent &sphereColliderComponent,
+    void WireframeRenderer::Submit( const physics::ecs::SphereColliderComponent &sphereColliderComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         DrawCommand drawCommand{ sphereColliderComponent.pWireframeMesh->pVertexBuffer,

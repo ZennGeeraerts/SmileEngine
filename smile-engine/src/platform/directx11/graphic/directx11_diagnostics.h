@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include <Windows.h>
+
 namespace smile::graphic
 {
     LPTSTR GetDirectX11ErrorMessage( HRESULT result );

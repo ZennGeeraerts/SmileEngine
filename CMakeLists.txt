@@ -20,11 +20,4 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_subdirectory(smile-engine/thirdparty/imgui)
-
-add_subdirectory(smile-raster)
-add_subdirectory(smile-script-core)
-add_subdirectory(smile-engine)
 add_subdirectory(smile-editor)
-add_subdirectory(smile-project)
-add_subdirectory(unit-tests)

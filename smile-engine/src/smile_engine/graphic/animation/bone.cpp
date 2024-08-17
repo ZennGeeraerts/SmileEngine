@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #include "smpch.h"
 #include "bone.h"
-#include "smile_engine/common/logger/logger.h"
 
 namespace smile::graphic
 {

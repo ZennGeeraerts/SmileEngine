@@ -9,6 +9,8 @@
 #include "key_codes.h"
 #include "mouse_codes.h"
 
+#include <DirectXMath.h>
+
 namespace smile::input
 {
     class Input

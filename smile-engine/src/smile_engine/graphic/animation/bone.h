@@ -1,8 +1,10 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-20234 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
+#include <DirectXMath.h>
 
 namespace smile::graphic
 {

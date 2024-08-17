@@ -6,6 +6,8 @@
 
 #include "smile_engine/common/logger/logger.h"
 
+#include <DirectXMath.h>
+
 namespace smile::math
 {
     constexpr float g_PI = 3.14159265358979323846264338327950288419716939937510f;

@@ -14,4 +14,4 @@ add_library(imgui
     "imstb_textedit.h"
     "imstb_truetype.h"
 )
-set_target_properties(imgui PROPERTIES FOLDER Dependencies)
+set_target_properties(imgui PROPERTIES FOLDER dependencies)

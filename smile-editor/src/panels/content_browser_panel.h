@@ -1,12 +1,12 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include <filesystem>
+#include "smile_engine/graphic/renderer_api/resource/texture.h"
 
-#include "smile_engine/graphic/resource/texture.h"
+#include <filesystem>
 
 namespace smile
 {

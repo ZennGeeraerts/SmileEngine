@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "smile_engine/common/compiled/singleton.h"
-#include "smile_engine/core/scene/components.h"
+#include "smile_engine/graphic/sprite/ecs/sprite_renderer_component.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic
@@ -26,7 +26,7 @@ namespace smile::graphic
             const DirectX::XMFLOAT4 &color );
 
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-            const scene::SpriteRendererComponent &spriteRendererComponent );
+            const graphic::ecs::SpriteRendererComponent &spriteRendererComponent );
 
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color );
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,

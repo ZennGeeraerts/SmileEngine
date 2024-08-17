@@ -7,6 +7,8 @@
 
 #include "script_engine.h"
 
+#include "smile_engine/core/scene/components.h"
+
 #include "smile_engine/core/input/key_codes.h"
 #include "smile_engine/core/input/input.h"
 
@@ -40,18 +42,18 @@ namespace smile::scripting
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
-        *pOutTranslation = entity.GetComponent< scene::TransformComponent >().Translation;
+        *pOutTranslation = entity.GetComponent< scene::ecs::TransformComponent >().Translation;
     }
 
     static void TransformComponent_SetTranslation( primitive::UUID entityID, DirectX::XMFLOAT3 *pTranslation )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );
-        auto &transformComponent = entity.GetComponent< scene::TransformComponent >();
+        auto &transformComponent = entity.GetComponent< scene::ecs::TransformComponent >();
 
         transformComponent.Translation = *pTranslation;
         transformComponent.TransformChanged |=
-            static_cast< Uint32 >( scene::TransformComponent::TransformChanged::Translation );
+            static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::Translation );
     }
 
     static void RigidbodyComponent_AddForce( primitive::UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )
@@ -69,7 +71,8 @@ namespace smile::scripting
         pPhysicsActor->AddForce( *pForce, autoAwake );
     }
 
-    static void CharacterControllerComponent_Move( primitive::UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
+    static void
+    CharacterControllerComponent_Move( primitive::UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
         scene::Entity entity = pScene->GetEntityByUUID( entityID );

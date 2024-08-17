@@ -1,11 +1,40 @@
-include(${CMAKE_SOURCE_DIR}/scripts/CMakeUtils.cmake)
+cmake_minimum_required(VERSION "3.25.0")
 
-set(INCLUDE_DIRS src ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty)
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.h)
+project(smile-editor)
+set(CMAKE_CXX_STANDARD 17)
+
+get_filename_component(ENGINE_PATH "../smile-engine" ABSOLUTE)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ENGINE_PATH})
+message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
+
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(smile-editor ${SOURCE_FILES})
-target_link_libraries(smile-editor PRIVATE smile-engine)
+
+include(${ENGINE_PATH}/smile-engine.cmake)
+
+add_subdirectory(${ENGINE_PATH} engine)
+
+add_module(common)
+add_module(core)
+add_module(graphic)
+add_module(physics)
+add_module(scripting)
+
+add_platform(directx11)
+
+set(LIB_DIRS
+    smile-engine
+)
+
+set(INCLUDE_DIRS
+    src
+    ${ENGINE_PATH}/thirdparty
+)
+
 target_include_directories(smile-editor PRIVATE ${INCLUDE_DIRS})
+target_link_libraries(smile-editor PRIVATE ${LIB_DIRS})
 
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 
@@ -82,6 +111,5 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
-GroupSourcesByFolder(smile-editor)
+group_sources_by_folder(smile-editor)
 set_property(TARGET smile-editor PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-set_target_properties (smile-editor PROPERTIES FOLDER Tools)

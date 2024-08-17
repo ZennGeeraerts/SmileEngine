@@ -5,8 +5,6 @@
 #include "smpch.h"
 #include "skinned_mesh_filter.h"
 
-#include "smile_engine/graphic/render_engine.h"
-
 namespace smile::graphic
 {
     SkinnedMeshFilter::~SkinnedMeshFilter()

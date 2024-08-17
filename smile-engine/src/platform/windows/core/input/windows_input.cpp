@@ -6,6 +6,8 @@
 #include "smile_engine/core/input/input.h"
 #include "smile_engine/core/application/application.h"
 
+#include <Windows.h>
+
 namespace smile::input
 {
     bool Input::IsKeyPressed( KeyCode keyCode )

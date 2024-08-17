@@ -5,6 +5,7 @@
 #pragma once
 
 #include <PhysX/PxPhysicsAPI.h>
+#include <DirectXMath.h>
 
 namespace smile::physics::utils
 {

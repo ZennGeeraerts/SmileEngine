@@ -11,9 +11,11 @@
 #include "smile_engine/core/window/events/key_event.h"
 #include "smile_engine/core/input/input.h"
 
-#include "smile_engine/graphic/graphics_context.h"
+#include "smile_engine/graphic/renderer_api/graphics_context.h"
 
 #include "windows_window_manager.h"
+
+#include <windowsx.h>
 
 //#include "SmileEngine/../../resource.h"
 

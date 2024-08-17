@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile_engine/core/scene/entity.h"
+#include "collision_group.h"
 
 namespace physx
 {

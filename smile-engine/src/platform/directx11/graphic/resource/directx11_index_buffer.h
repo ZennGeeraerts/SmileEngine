@@ -4,7 +4,7 @@
 /*=============================================================================*/
 
 #pragma once
-#include "smile_engine/graphic/resource/index_buffer.h"
+#include "smile_engine/graphic/renderer_api/resource/index_buffer.h"
 
 #include <d3d11.h>
 

@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile_engine/graphic/graphics_device.h"
+#include "smile_engine/graphic/renderer_api/graphics_device.h"
 
 #include <d3d11.h>
 

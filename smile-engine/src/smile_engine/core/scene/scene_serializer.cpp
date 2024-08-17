@@ -214,29 +214,29 @@ namespace smile::scene
 
     static void SerializeEntity( YAML::Emitter &output, Entity entity )
     {
-        SM_ASSERT( entity.HasComponent< IDComponent >(),
+        SM_ASSERT( entity.HasComponent< ecs::IDComponent >(),
             "SceneSerializer::SerializeScene > Entity does not have an IDComponent" );
 
         output << YAML::BeginMap;
         output << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
-        if ( entity.HasComponent< TagComponent >() )
+        if ( entity.HasComponent< ecs::TagComponent >() )
         {
             output << YAML::Key << "TagComponent";
             output << YAML::BeginMap;
 
-            auto &tag = entity.GetComponent< TagComponent >().Tag;
+            auto &tag = entity.GetComponent< ecs::TagComponent >().Tag;
             output << YAML::Key << "Tag" << YAML::Value << tag;
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< TransformComponent >() )
+        if ( entity.HasComponent< ecs::TransformComponent >() )
         {
             output << YAML::Key << "TransformComponent";
             output << YAML::BeginMap;
 
-            auto &transformComponent = entity.GetComponent< TransformComponent >();
+            auto &transformComponent = entity.GetComponent< ecs::TransformComponent >();
             output << YAML::Key << "Translation" << YAML::Value << transformComponent.Translation;
             output << YAML::Key << "Rotation" << YAML::Value << transformComponent.Rotation;
             output << YAML::Key << "Scale" << YAML::Value << transformComponent.Scale;
@@ -244,12 +244,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< CameraComponent >() )
+        if ( entity.HasComponent< graphic::ecs::CameraComponent >() )
         {
             output << YAML::Key << "CameraComponent";
             output << YAML::BeginMap;
 
-            auto &cameraComponent = entity.GetComponent< CameraComponent >();
+            auto &cameraComponent = entity.GetComponent< graphic::ecs::CameraComponent >();
             auto &camera = cameraComponent.Camera;
             output << YAML::Key << "Camera" << YAML::Value;
             output << YAML::BeginMap;
@@ -271,23 +271,23 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< ScriptComponent >() )
+        if ( entity.HasComponent< scripting::ecs::ScriptComponent >() )
         {
             output << YAML::Key << "ScriptComponent";
             output << YAML::BeginMap;
 
-            auto &scriptComponent = entity.GetComponent< ScriptComponent >();
+            auto &scriptComponent = entity.GetComponent< scripting::ecs::ScriptComponent >();
             output << YAML::Key << "ClassName" << YAML::Value << scriptComponent.ClassName;
 
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< MeshRendererComponent >() )
+        if ( entity.HasComponent< graphic::ecs::MeshRendererComponent >() )
         {
             output << YAML::Key << "MeshRendererComponent";
             output << YAML::BeginMap;
 
-            auto &meshRendererComponent = entity.GetComponent< MeshRendererComponent >();
+            auto &meshRendererComponent = entity.GetComponent< graphic::ecs::MeshRendererComponent >();
 
             if ( meshRendererComponent.pModel )
             {
@@ -309,12 +309,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< SkinnedMeshRendererComponent >() )
+        if ( entity.HasComponent< graphic::ecs::SkinnedMeshRendererComponent >() )
         {
             output << YAML::Key << "SkinnedMeshRendererComponent";
             output << YAML::BeginMap;
 
-            auto &skinnedMeshRendererComponent = entity.GetComponent< SkinnedMeshRendererComponent >();
+            auto &skinnedMeshRendererComponent = entity.GetComponent< graphic::ecs::SkinnedMeshRendererComponent >();
             if ( skinnedMeshRendererComponent.pModel )
             {
                 auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
@@ -335,12 +335,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< AnimatorComponent >() )
+        if ( entity.HasComponent< graphic::ecs::AnimatorComponent >() )
         {
             output << YAML::Key << "AnimatorComponent";
             output << YAML::BeginMap;
 
-            auto &animatorComponent = entity.GetComponent< AnimatorComponent >();
+            auto &animatorComponent = entity.GetComponent< graphic::ecs::AnimatorComponent >();
             if ( animatorComponent.pModel )
             {
                 auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
@@ -359,12 +359,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< RigidbodyComponent >() )
+        if ( entity.HasComponent< physics::ecs::RigidbodyComponent >() )
         {
             output << YAML::Key << "RigidbodyComponent";
             output << YAML::BeginMap;
 
-            auto &rigidbodyComponent = entity.GetComponent< RigidbodyComponent >();
+            auto &rigidbodyComponent = entity.GetComponent< physics::ecs::RigidbodyComponent >();
             output << YAML::Key << "BodyType" << YAML::Value << static_cast< Uint32 >( rigidbodyComponent.Type );
             output << YAML::Key << "CollisionDetectionType" << YAML::Value
                    << static_cast< Uint32 >( rigidbodyComponent.CollisionDetection );
@@ -396,12 +396,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< BoxColliderComponent >() )
+        if ( entity.HasComponent< physics::ecs::BoxColliderComponent >() )
         {
             output << YAML::Key << "BoxColliderComponent";
             output << YAML::BeginMap;
 
-            auto &boxColliderComponent = entity.GetComponent< BoxColliderComponent >();
+            auto &boxColliderComponent = entity.GetComponent< physics::ecs::BoxColliderComponent >();
             output << YAML::Key << "Size" << YAML::Value << boxColliderComponent.Size;
             output << YAML::Key << "Offset" << YAML::Value << boxColliderComponent.Offset;
             output << YAML::Key << "bTrigger" << YAML::Value << boxColliderComponent.IsTrigger;
@@ -415,12 +415,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< SphereColliderComponent >() )
+        if ( entity.HasComponent< physics::ecs::SphereColliderComponent >() )
         {
             output << YAML::Key << "SphereColliderComponent";
             output << YAML::BeginMap;
 
-            auto &sphereColliderComponent = entity.GetComponent< SphereColliderComponent >();
+            auto &sphereColliderComponent = entity.GetComponent< physics::ecs::SphereColliderComponent >();
             output << YAML::Key << "Radius" << YAML::Value << sphereColliderComponent.Radius;
             output << YAML::Key << "bTrigger" << YAML::Value << sphereColliderComponent.IsTrigger;
             output << YAML::Key << "bShowColliderBounds" << YAML::Value << sphereColliderComponent.ShowColliderBounds;
@@ -433,12 +433,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< CapsuleColliderComponent >() )
+        if ( entity.HasComponent< physics::ecs::CapsuleColliderComponent >() )
         {
             output << YAML::Key << "CapsuleColliderComponent";
             output << YAML::BeginMap;
 
-            auto &capsuleColliderComponent = entity.GetComponent< CapsuleColliderComponent >();
+            auto &capsuleColliderComponent = entity.GetComponent< physics::ecs::CapsuleColliderComponent >();
             output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.Radius;
             output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.Height;
             output << YAML::Key << "bTrigger" << YAML::Value << capsuleColliderComponent.IsTrigger;
@@ -447,12 +447,13 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< CharacterControllerComponent >() )
+        if ( entity.HasComponent< physics::ecs::CharacterControllerComponent >() )
         {
             output << YAML::Key << "CharacterControllerComponent";
             output << YAML::BeginMap;
 
-            const auto &characterControllerComponent = entity.GetComponent< CharacterControllerComponent >();
+            const auto &characterControllerComponent =
+                entity.GetComponent< physics::ecs::CharacterControllerComponent >();
             output << YAML::Key << "Radius" << YAML::Value << characterControllerComponent.Radius;
             output << YAML::Key << "Height" << YAML::Value << characterControllerComponent.Height;
             output << YAML::Key << "ClimbingMode" << YAML::Value
@@ -473,12 +474,12 @@ namespace smile::scene
             output << YAML::EndMap;
         }
 
-        if ( entity.HasComponent< SpriteRendererComponent >() )
+        if ( entity.HasComponent< graphic::ecs::SpriteRendererComponent >() )
         {
             output << YAML::Key << "SpriteRendererComponent";
             output << YAML::BeginMap;
 
-            auto &spriteRendererComponent = entity.GetComponent< SpriteRendererComponent >();
+            auto &spriteRendererComponent = entity.GetComponent< graphic::ecs::SpriteRendererComponent >();
             output << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 
             if ( spriteRendererComponent.pTexture )
@@ -541,7 +542,7 @@ namespace smile::scene
                 auto transformComponent = entity["TransformComponent"];
                 if ( transformComponent )
                 {
-                    auto &tc = deserializedEntity.GetComponent< TransformComponent >();
+                    auto &tc = deserializedEntity.GetComponent< ecs::TransformComponent >();
                     tc.Translation = transformComponent["Translation"].as< DirectX::XMFLOAT3 >();
                     tc.Rotation = transformComponent["Rotation"].as< DirectX::XMFLOAT3 >();
                     tc.Scale = transformComponent["Scale"].as< DirectX::XMFLOAT3 >();
@@ -550,11 +551,11 @@ namespace smile::scene
                 auto cameraComponent = entity["CameraComponent"];
                 if ( cameraComponent )
                 {
-                    auto &cc = deserializedEntity.AddComponent< CameraComponent >();
+                    auto &cc = deserializedEntity.AddComponent< graphic::ecs::CameraComponent >();
 
                     auto cameraProps = cameraComponent["Camera"];
-                    cc.Camera.SetProjectionType(
-                        static_cast< SceneCamera::ProjectionType >( cameraProps["ProjectionType"].as< int >() ) );
+                    cc.Camera.SetProjectionType( static_cast< graphic::SceneCamera::ProjectionType >(
+                        cameraProps["ProjectionType"].as< int >() ) );
 
                     cc.Camera.SetFOV( cameraProps["FOV"].as< float >() );
                     cc.Camera.SetPerspectiveNearPlane( cameraProps["PerspectiveNearPlane"].as< float >() );
@@ -571,14 +572,14 @@ namespace smile::scene
                 auto scriptComponent = entity["ScriptComponent"];
                 if ( scriptComponent )
                 {
-                    auto &sc = deserializedEntity.AddComponent< ScriptComponent >();
+                    auto &sc = deserializedEntity.AddComponent< scripting::ecs::ScriptComponent >();
                     sc.ClassName = scriptComponent["ClassName"].as< std::string >();
                 }
 
                 auto meshRendererComponent = entity["MeshRendererComponent"];
                 if ( meshRendererComponent )
                 {
-                    auto &mrc = deserializedEntity.AddComponent< MeshRendererComponent >();
+                    auto &mrc = deserializedEntity.AddComponent< graphic::ecs::MeshRendererComponent >();
 
                     mrc.MeshIndex = meshRendererComponent["MeshIndex"].as< Uint32 >();
 
@@ -651,7 +652,7 @@ namespace smile::scene
                 auto skinnedMeshRendererComponent = entity["SkinnedMeshRendererComponent"];
                 if ( skinnedMeshRendererComponent )
                 {
-                    auto &smrc = deserializedEntity.AddComponent< SkinnedMeshRendererComponent >();
+                    auto &smrc = deserializedEntity.AddComponent< graphic::ecs::SkinnedMeshRendererComponent >();
 
                     smrc.MeshIndex = skinnedMeshRendererComponent["MeshIndex"].as< Uint32 >();
 
@@ -725,7 +726,7 @@ namespace smile::scene
                 auto animatorComponent = entity["AnimatorComponent"];
                 if ( animatorComponent )
                 {
-                    auto &ac = deserializedEntity.AddComponent< AnimatorComponent >();
+                    auto &ac = deserializedEntity.AddComponent< graphic::ecs::AnimatorComponent >();
 
                     ac.CurrentClipIndex = animatorComponent["ClipIndex"].as< Uint32 >();
 
@@ -741,11 +742,11 @@ namespace smile::scene
                 auto rigidbodyComponent = entity["RigidbodyComponent"];
                 if ( rigidbodyComponent )
                 {
-                    auto &rbc = deserializedEntity.AddComponent< RigidbodyComponent >();
+                    auto &rbc = deserializedEntity.AddComponent< physics::ecs::RigidbodyComponent >();
 
-                    rbc.Type =
-                        static_cast< RigidbodyComponent::BodyType >( rigidbodyComponent["BodyType"].as< int >() );
-                    rbc.CollisionDetection = static_cast< RigidbodyComponent::CollisionDetectionType >(
+                    rbc.Type = static_cast< physics::ecs::RigidbodyComponent::BodyType >(
+                        rigidbodyComponent["BodyType"].as< int >() );
+                    rbc.CollisionDetection = static_cast< physics::ecs::RigidbodyComponent::CollisionDetectionType >(
                         rigidbodyComponent["CollisionDetectionType"].as< int >() );
 
                     auto physicsMaterial = rigidbodyComponent["PhysicsMaterial"];
@@ -772,7 +773,7 @@ namespace smile::scene
                 auto boxColliderComponent = entity["BoxColliderComponent"];
                 if ( boxColliderComponent )
                 {
-                    auto &bcc = deserializedEntity.AddComponent< BoxColliderComponent >();
+                    auto &bcc = deserializedEntity.AddComponent< physics::ecs::BoxColliderComponent >();
 
                     bcc.Size = boxColliderComponent["Size"].as< DirectX::XMFLOAT3 >();
                     bcc.Offset = boxColliderComponent["Offset"].as< DirectX::XMFLOAT3 >();
@@ -788,7 +789,7 @@ namespace smile::scene
                 auto sphereColliderComponent = entity["SphereColliderComponent"];
                 if ( sphereColliderComponent )
                 {
-                    auto &scc = deserializedEntity.AddComponent< SphereColliderComponent >();
+                    auto &scc = deserializedEntity.AddComponent< physics::ecs::SphereColliderComponent >();
 
                     scc.Radius = sphereColliderComponent["Radius"].as< float >();
                     scc.IsTrigger = sphereColliderComponent["bTrigger"].as< bool >();
@@ -803,7 +804,7 @@ namespace smile::scene
                 auto capsuleColliderComponent = entity["CapsuleColliderComponent"];
                 if ( capsuleColliderComponent )
                 {
-                    auto &ccc = deserializedEntity.AddComponent< CapsuleColliderComponent >();
+                    auto &ccc = deserializedEntity.AddComponent< physics::ecs::CapsuleColliderComponent >();
 
                     ccc.Radius = capsuleColliderComponent["Radius"].as< float >();
                     ccc.Height = capsuleColliderComponent["Height"].as< float >();
@@ -814,18 +815,18 @@ namespace smile::scene
                 auto characterControllerComponent = entity["CharacterControllerComponent"];
                 if ( characterControllerComponent )
                 {
-                    auto &ccc = deserializedEntity.AddComponent< CharacterControllerComponent >();
+                    auto &ccc = deserializedEntity.AddComponent< physics::ecs::CharacterControllerComponent >();
 
                     ccc.Radius = characterControllerComponent["Radius"].as< float >();
                     ccc.Height = characterControllerComponent["Height"].as< float >();
-                    ccc.ClimbingMode = static_cast< CharacterControllerComponent::ClimbingModeType >(
+                    ccc.ClimbingMode = static_cast< physics::ecs::CharacterControllerComponent::ClimbingModeType >(
                         characterControllerComponent["ClimbingMode"].as< Uint32 >() );
                     ccc.Name = characterControllerComponent["Name"].as< std::string >();
                     ccc.CollisionGroups = static_cast< physics::CollisionGroupFlag >(
                         characterControllerComponent["CollisionGroups"].as< Uint32 >() );
                     ccc.CollisionIgnoreGroups = static_cast< physics::CollisionGroupFlag >(
                         characterControllerComponent["CollisionIgnoreGroups"].as< Uint32 >() );
-                    ccc.CollisionFlags = static_cast< CharacterControllerComponent::CollisionFlag >(
+                    ccc.CollisionFlags = static_cast< physics::ecs::CharacterControllerComponent::CollisionFlag >(
                         characterControllerComponent["CollisionFlags"].as< Uint32 >() );
 
                     /*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];
@@ -837,7 +838,7 @@ namespace smile::scene
                 auto spriteRendererComponent = entity["SpriteRendererComponent"];
                 if ( spriteRendererComponent )
                 {
-                    auto &src = deserializedEntity.AddComponent< SpriteRendererComponent >();
+                    auto &src = deserializedEntity.AddComponent< graphic::ecs::SpriteRendererComponent >();
 
                     src.Color = spriteRendererComponent["Color"].as< DirectX::XMFLOAT4 >();
                     auto texturePath = spriteRendererComponent["Texture"].as< std::string >();

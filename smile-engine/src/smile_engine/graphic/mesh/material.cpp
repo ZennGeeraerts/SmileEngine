@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "material.h"
 
-#include "smile_engine/graphic/shader/shader_reflection.h"
+#include "smile_engine/graphic/renderer_api/shader/shader_reflection.h"
 
 namespace smile::graphic
 {

@@ -4,9 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/graphic/shader/shader.h"
-#include "smile_engine/graphic/shader/shader_reflection.h"
-#include "smile_engine/graphic/resource/texture.h"
+#include "smile_engine/graphic/renderer_api/shader/shader.h"
+#include "smile_engine/graphic/renderer_api/shader/shader_reflection.h"
+#include "smile_engine/graphic/renderer_api/resource/texture.h"
+
+#include <DirectXMath.h>
 
 namespace smile::graphic
 {

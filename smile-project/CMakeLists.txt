@@ -1,4 +1,4 @@
-include(${CMAKE_SOURCE_DIR}/scripts/CMakeUtils.cmake)
+include(${CMAKE_SOURCE_DIR}/scripts/cmake_utils.cmake)
 
 set(INCLUDE_DIRS src ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty)
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.h)
@@ -58,6 +58,6 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
-GroupSourcesByFolder(smile-project)
+group_sources_by_folder(smile-project)
 set_property(TARGET smile-project PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 set_target_properties (smile-project PROPERTIES FOLDER Misc)

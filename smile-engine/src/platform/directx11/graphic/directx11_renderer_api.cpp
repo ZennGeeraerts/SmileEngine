@@ -6,14 +6,10 @@
 #include "smpch.h"
 #include "directx11_renderer_api.h"
 
-#include "platform/directx11/graphic/shader/directx11_shader.h"
-
 #include "directx11_device.h"
 #include "directx11_context.h"
 #include "directx11_swap_chain.h"
 #include "directx11_diagnostics.h"
-
-#include "smile_engine/graphic/render_engine.h"
 
 namespace smile::graphic
 {

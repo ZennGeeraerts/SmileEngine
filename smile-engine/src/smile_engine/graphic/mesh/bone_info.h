@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include <DirectXMath.h>
+
 namespace smile::graphic
 {
     struct BoneInfo final

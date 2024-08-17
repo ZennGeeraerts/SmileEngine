@@ -7,10 +7,12 @@
 
 #include "smile_engine/common/logger/logger.h"
 #include "smile_engine/core/input/input.h"
-#include "smile_engine/graphic/render_engine.h"
-#include "smile_engine/graphic/render_command.h"
+#include "smile_engine/graphic/renderer/render_engine.h"
+#include "smile_engine/graphic/renderer/render_command.h"
 #include "smile_engine/physics/physics_engine.h"
 #include "smile_engine/scripting/script_engine.h"
+
+#include "timer.h"
 
 #include <filesystem>
 

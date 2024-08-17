@@ -3,7 +3,13 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
 #include "smile_engine/core/scene/entity.h"
+
+#include "smile_engine/physics/ecs/rigidbody_component.h"
+#include "smile_engine/physics/ecs/box_collider_component.h"
+#include "smile_engine/physics/ecs/sphere_collider_component.h"
+#include "smile_engine/physics/ecs/capsule_collider_component.h"
 
 namespace physx
 {
@@ -33,20 +39,21 @@ namespace smile::physics
 
         bool IsDynamic() const
         {
-            return m_Entity.GetComponent< scene::RigidbodyComponent >().Type == scene::RigidbodyComponent::BodyType::Dynamic;
+            return m_Entity.GetComponent< ecs::RigidbodyComponent >().Type ==
+                   ecs::RigidbodyComponent::BodyType::Dynamic;
         }
         bool IsKinematic() const
         {
-            return m_Entity.GetComponent< scene::RigidbodyComponent >().IsKinematic;
+            return m_Entity.GetComponent< ecs::RigidbodyComponent >().IsKinematic;
         }
 
         void AddForce( const DirectX::XMFLOAT3 &force, bool autoAwake = true );
         void AddTorque( const DirectX::XMFLOAT3 &torque, bool autoAwake = true );
 
       private:
-        void AddBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );
-        void AddSphereCollider( const scene::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size );
-        void AddCapsuleCollider( const scene::CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddBoxCollider( const ecs::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddSphereCollider( const ecs::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size );
+        void AddCapsuleCollider( const ecs::CapsuleColliderComponent &component, const DirectX::XMFLOAT3 &size );
 
         void UpdateTransform();
 

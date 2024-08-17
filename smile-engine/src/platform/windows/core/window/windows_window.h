@@ -6,6 +6,8 @@
 
 #include "smile_engine/core/window/window.h"
 
+#include <Windows.h>
+
 #define HINSTANCE() GetModuleHandle( NULL ) // this function returns the hInstance
 
 namespace smile::window

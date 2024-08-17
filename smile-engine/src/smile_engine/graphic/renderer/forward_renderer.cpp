@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "forward_renderer.h"
 
-#include "smile_engine/graphic/render_command.h"
+#include "smile_engine/graphic/renderer/render_command.h"
 
 namespace smile::graphic
 {
@@ -19,7 +19,7 @@ namespace smile::graphic
 
     void ForwardRenderer::ShutDown()
     {
-        ClearDrawlist();
+        ClearDrawList();
     }
 
     void ForwardRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -51,7 +51,7 @@ namespace smile::graphic
         s_RenderCollector.DrawList.emplace_back( DrawCommand{ pVertexBuffer, pIndexBuffer, pShader, worldTransform } );
     }
 
-    void ForwardRenderer::Submit( const scene::MeshRendererComponent &meshRendererComponent,
+    void ForwardRenderer::Submit( const ecs::MeshRendererComponent &meshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         if ( !meshRendererComponent.pMesh || !meshRendererComponent.pMaterial )
@@ -63,7 +63,7 @@ namespace smile::graphic
             worldTransform );
     }
 
-    void ForwardRenderer::Submit( const scene::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
+    void ForwardRenderer::Submit( const ecs::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         if ( !skinnedMeshRendererComponent.pSkinnedMesh || !skinnedMeshRendererComponent.pMaterial )
@@ -99,10 +99,10 @@ namespace smile::graphic
 
     void ForwardRenderer::EndScene()
     {
-        ClearDrawlist();
+        ClearDrawList();
     }
 
-    void ForwardRenderer::ClearDrawlist()
+    void ForwardRenderer::ClearDrawList()
     {
         s_RenderCollector.DrawList.clear();
     }

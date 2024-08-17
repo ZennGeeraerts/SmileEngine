@@ -15,43 +15,43 @@
 namespace smile::physics
 {
     static physx::PxCapsuleClimbingMode::Enum ClimbingModeToPhysXType(
-        scene::CharacterControllerComponent::ClimbingModeType climbingMode )
+        ecs::CharacterControllerComponent::ClimbingModeType climbingMode )
     {
         switch ( climbingMode )
         {
-            case scene::CharacterControllerComponent::ClimbingModeType::Easy:
+            case ecs::CharacterControllerComponent::ClimbingModeType::Easy:
                 return physx::PxCapsuleClimbingMode::Enum::eEASY;
-            case scene::CharacterControllerComponent::ClimbingModeType::Constrained:
+            case ecs::CharacterControllerComponent::ClimbingModeType::Constrained:
                 return physx::PxCapsuleClimbingMode::Enum::eCONSTRAINED;
-            case scene::CharacterControllerComponent::ClimbingModeType::Last:
+            case ecs::CharacterControllerComponent::ClimbingModeType::Last:
                 return physx::PxCapsuleClimbingMode::Enum::eLAST;
         }
     }
 
     // TODO: Change function name to be shorter :)
-    static scene::CharacterControllerComponent::CollisionFlag
+    static ecs::CharacterControllerComponent::CollisionFlag
     PhysXCharacterControllerCollisionFlagsToCharacterControllerCollisionFlagsType(
         physx::PxControllerCollisionFlags physxCollisionFlags )
     {
         Uint8 collisionFlags{};
 
         if ( physxCollisionFlags.isSet( physx::PxControllerCollisionFlag::eCOLLISION_SIDES ) )
-            collisionFlags |= static_cast< Uint8 >( scene::CharacterControllerComponent::CollisionFlag::Sides );
+            collisionFlags |= static_cast< Uint8 >( ecs::CharacterControllerComponent::CollisionFlag::Sides );
 
         if ( physxCollisionFlags.isSet( physx::PxControllerCollisionFlag::eCOLLISION_UP ) )
-            collisionFlags |= static_cast< Uint8 >( scene::CharacterControllerComponent::CollisionFlag::Up );
+            collisionFlags |= static_cast< Uint8 >( ecs::CharacterControllerComponent::CollisionFlag::Up );
 
         if ( physxCollisionFlags.isSet( physx::PxControllerCollisionFlag::eCOLLISION_DOWN ) )
-            collisionFlags |= static_cast< Uint8 >( scene::CharacterControllerComponent::CollisionFlag::Down );
+            collisionFlags |= static_cast< Uint8 >( ecs::CharacterControllerComponent::CollisionFlag::Down );
 
-        return static_cast< scene::CharacterControllerComponent::CollisionFlag >( collisionFlags );
+        return static_cast< ecs::CharacterControllerComponent::CollisionFlag >( collisionFlags );
     }
 
     CharacterController::CharacterController( scene::Entity entity ) : m_Entity{ entity }
     {
         auto pControllerManager = PhysicsEngine::GetControllerManager();
 
-        auto &characterControllerComponent = entity.GetComponent< scene::CharacterControllerComponent >();
+        auto &characterControllerComponent = entity.GetComponent< ecs::CharacterControllerComponent >();
         if ( !characterControllerComponent.pPhysicsMaterial )
             characterControllerComponent.pPhysicsMaterial = PhysicsEngine::GetDefaultPhysicsMaterial();
 
@@ -63,7 +63,7 @@ namespace smile::physics
         desc.upDirection = physx::PxVec3{ 0, 1, 0 };
         desc.contactOffset = 0.1f;
 
-        const auto translation = entity.GetComponent< scene::TransformComponent >().Translation;
+        const auto translation = entity.GetComponent< scene::ecs::TransformComponent >().Translation;
         desc.position = utils::ConvertToPhysXExtendedVector( translation );
 
         // TODO: Make centralized storage for PxMaterials
@@ -91,7 +91,7 @@ namespace smile::physics
 
     void CharacterController::UpdateTransform()
     {
-        scene::TransformComponent &transform = m_Entity.GetComponent< scene::TransformComponent >();
+        scene::ecs::TransformComponent &transform = m_Entity.GetComponent< scene::ecs::TransformComponent >();
 
         transform.Translation = GetPosition();
     }
@@ -110,7 +110,7 @@ namespace smile::physics
         auto physxControllerCollisionFlags =
             m_pController->move( utils::ConvertToPhysXVector( displacement ), minDist, 0, nullptr, nullptr );
 
-        auto &characterControllerComponent = m_Entity.GetComponent< scene::CharacterControllerComponent >();
+        auto &characterControllerComponent = m_Entity.GetComponent< ecs::CharacterControllerComponent >();
 
         characterControllerComponent.CollisionFlags =
             PhysXCharacterControllerCollisionFlagsToCharacterControllerCollisionFlagsType(
@@ -119,7 +119,7 @@ namespace smile::physics
 
     void CharacterController::SetCollisionGroups( const CollisionGroupFlag groups )
     {
-        auto &characterControllerComponent = m_Entity.GetComponent< scene::CharacterControllerComponent >();
+        auto &characterControllerComponent = m_Entity.GetComponent< ecs::CharacterControllerComponent >();
         characterControllerComponent.CollisionIgnoreGroups = groups;
 
         physx::PxFilterData filterData{ static_cast< Uint32 >( characterControllerComponent.CollisionGroups ),
@@ -146,7 +146,7 @@ namespace smile::physics
 
     void CharacterController::SetCollisionIgnoreGroups( const CollisionGroupFlag ignoreGroups )
     {
-        auto &characterControllerComponent = m_Entity.GetComponent< scene::CharacterControllerComponent >();
+        auto &characterControllerComponent = m_Entity.GetComponent< ecs::CharacterControllerComponent >();
         characterControllerComponent.CollisionIgnoreGroups = ignoreGroups;
 
         physx::PxFilterData filterData{ static_cast< Uint32 >( characterControllerComponent.CollisionGroups ),

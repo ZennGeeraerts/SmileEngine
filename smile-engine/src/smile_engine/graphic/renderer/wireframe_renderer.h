@@ -10,7 +10,7 @@
 #include "smile_engine/graphic/camera/camera.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 
-#include "smile_engine/graphic/resource/rasterizer_state.h"
+#include "smile_engine/graphic/renderer_api/resource/rasterizer_state.h"
 #include "smile_engine/core/scene/components.h"
 
 namespace smile::graphic
@@ -26,9 +26,9 @@ namespace smile::graphic
         void EndScene();
         void OnRender();
 
-        void Submit( const scene::BoxColliderComponent &boxColliderComponent,
+        void Submit( const physics::ecs::BoxColliderComponent &boxColliderComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
-        void Submit( const scene::SphereColliderComponent &sphereColliderComponent,
+        void Submit( const physics::ecs::SphereColliderComponent &sphereColliderComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
 
       private:

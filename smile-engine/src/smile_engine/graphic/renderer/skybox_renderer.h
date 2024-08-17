@@ -7,7 +7,7 @@
 #include "smile_engine/graphic/camera/camera.h"
 #include "smile_engine/graphic/camera/editor_camera.h"
 #include "smile_engine/graphic/mesh/mesh.h"
-#include "smile_engine/graphic/shader/shader.h"
+#include "smile_engine/graphic/renderer_api/shader/shader.h"
 
 namespace smile::graphic
 {

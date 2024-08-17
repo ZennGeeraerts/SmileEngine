@@ -5,9 +5,9 @@
 #include "smpch.h"
 #include "skybox_renderer.h"
 
-#include "smile_engine/graphic/render_engine.h"
+#include "render_engine.h"
+#include "render_command.h"
 #include "smile_engine/graphic/mesh/mesh_factory.h"
-#include "smile_engine/graphic/render_command.h"
 
 namespace smile::graphic
 {

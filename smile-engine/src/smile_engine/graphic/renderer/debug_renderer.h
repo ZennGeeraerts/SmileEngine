@@ -5,8 +5,8 @@
 #pragma once
 #include "smile_engine/common/compiled/singleton.h"
 
-#include "smile_engine/graphic/resource/vertex_buffer.h"
-#include "smile_engine/graphic/shader/shader.h"
+#include "smile_engine/graphic/renderer_api/resource/vertex_buffer.h"
+#include "smile_engine/graphic/renderer_api/shader/shader.h"
 
 #include "smile_engine/graphic/camera/camera.h"
 #include "smile_engine/graphic/camera/editor_camera.h"

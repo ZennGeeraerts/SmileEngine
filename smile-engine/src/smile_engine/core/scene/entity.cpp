@@ -5,28 +5,28 @@
 
 namespace smile::scene
 {
-    Entity::Entity( ecs::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
+    Entity::Entity( smile::ecs::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
     {
     }
 
     void Entity::AddChild( Entity child )
     {
-        auto pRelationShip = TryGetComponent< ecs::Relationship >();
+        auto pRelationShip = TryGetComponent< smile::ecs::Relationship >();
         if ( !pRelationShip )
         {
             // Create a new relationship component and assign it to the relationship pointer
             // Maybe get the pointer from ECSEngine in the future?
             auto ppRelationship = &pRelationShip;
-            auto &comp = AddComponent< ecs::Relationship >();
+            auto &comp = AddComponent< smile::ecs::Relationship >();
             *ppRelationship = &comp;
         }
 
-        auto pChildRel = child.TryGetComponent< ecs::Relationship >();
+        auto pChildRel = child.TryGetComponent< smile::ecs::Relationship >();
         if ( !pChildRel )
         {
             // Create a new relationship component and assign it to the child relationship pointer
             auto ppChildRel = &pChildRel;
-            auto &comp = child.AddComponent< ecs::Relationship >();
+            auto &comp = child.AddComponent< smile::ecs::Relationship >();
             *ppChildRel = &comp;
         }
 
@@ -35,17 +35,17 @@ namespace smile::scene
             pRelationShip->First = child;
         }
 
-        ecs::EntityHandleType end = pRelationShip->First;
-        ecs::EntityHandleType next = m_pScene->m_ECSEngine.GetComponent< ecs::Relationship >( end ).Next;
+        smile::ecs::EntityHandleType end = pRelationShip->First;
+        smile::ecs::EntityHandleType next = m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
         while ( next )
         {
             end = next;
-            next = m_pScene->m_ECSEngine.GetComponent< ecs::Relationship >( end ).Next;
+            next = m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
         }
 
         if ( pRelationShip->ChildrenCount != 0 )
         {
-            auto &endRel = m_pScene->m_ECSEngine.GetComponent< ecs::Relationship >( end );
+            auto &endRel = m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end );
             endRel.Next = child;
             pChildRel->Prev = end;
         }
@@ -57,11 +57,11 @@ namespace smile::scene
 
     void Entity::RemoveChild( Entity child )
     {
-        SM_ASSERT( HasComponent< ecs::Relationship >() && child.HasComponent< ecs::Relationship >(),
+        SM_ASSERT( HasComponent< smile::ecs::Relationship >() && child.HasComponent< smile::ecs::Relationship >(),
             "Entity::RemoveChild > Child does not exist" );
 
-        auto &relationship = GetComponent< ecs::Relationship >();
-        auto &childRel = child.GetComponent< ecs::Relationship >();
+        auto &relationship = GetComponent< smile::ecs::Relationship >();
+        auto &childRel = child.GetComponent< smile::ecs::Relationship >();
 
         SM_ASSERT( relationship.ChildrenCount > 0, "Entity::RemoveChild > Entity does not have children" );
         SM_ASSERT( childRel.Parent == m_EntityHandle, "Entity::RemoveChild > Not a child of this entity" );
@@ -70,29 +70,30 @@ namespace smile::scene
             relationship.First = childRel.Next;
 
         if ( childRel.Next )
-            m_pScene->m_ECSEngine.GetComponent< ecs::Relationship >( childRel.Next ).Prev = childRel.Prev;
+            m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Next ).Prev = childRel.Prev;
 
         if ( childRel.Prev )
-            m_pScene->m_ECSEngine.GetComponent< ecs::Relationship >( childRel.Prev ).Next = childRel.Next;
+            m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Prev ).Next = childRel.Next;
 
-        childRel.Next = ecs::EntityHandleType::NullHandle();
-        childRel.Prev = ecs::EntityHandleType::NullHandle();
-        childRel.Parent = ecs::EntityHandleType::NullHandle();
+        childRel.Next = smile::ecs::EntityHandleType::NullHandle();
+        childRel.Prev = smile::ecs::EntityHandleType::NullHandle();
+        childRel.Parent = smile::ecs::EntityHandleType::NullHandle();
 
         --relationship.ChildrenCount;
     }
 
     Uint32 Entity::GetChildrenCount() const
     {
-        auto pRelationShip = TryGetComponent< ecs::Relationship >();
+        auto pRelationShip = TryGetComponent< smile::ecs::Relationship >();
         return pRelationShip ? pRelationShip->ChildrenCount : 0;
     }
 
     Entity Entity::GetChildAtIndex( const Uint32 index ) const
     {
-        SM_ASSERT( HasComponent< ecs::Relationship >(), "Entity::GetChildAtIndex > Entity does not have children" );
+        SM_ASSERT(
+            HasComponent< smile::ecs::Relationship >(), "Entity::GetChildAtIndex > Entity does not have children" );
 
-        auto &relationship = GetComponent< ecs::Relationship >();
+        auto &relationship = GetComponent< smile::ecs::Relationship >();
 
         SM_ASSERT( relationship.ChildrenCount > index, "Entity::GetChildAtIndex > Index out of range" );
 
@@ -102,7 +103,8 @@ namespace smile::scene
             if ( i == index )
                 return Entity{ currentChildHandle, m_pScene };
 
-            currentChildHandle = m_pScene->m_ECSEngine.GetComponent< ecs::Relationship >( currentChildHandle ).Next;
+            currentChildHandle =
+                m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( currentChildHandle ).Next;
         }
 
         SM_ASSERT( false, "Entity::GetChildAtIndex > Failed to get child at index: %d", index );
@@ -111,7 +113,7 @@ namespace smile::scene
 
     Entity Entity::GetParent() const
     {
-        auto pRelationShip = TryGetComponent< ecs::Relationship >();
+        auto pRelationShip = TryGetComponent< smile::ecs::Relationship >();
         if ( !pRelationShip || !pRelationShip->Parent )
             return Entity{};
 

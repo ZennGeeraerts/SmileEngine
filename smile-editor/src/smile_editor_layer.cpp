@@ -7,6 +7,7 @@
 
 #include "smile_engine/core/scene/scene_serializer.h"
 #include "smile_engine/core/window/file_dialog.h"
+#include "smile_engine/graphic/renderer/render_engine.h"
 
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
@@ -240,7 +241,7 @@ namespace smile
             const DirectX::XMFLOAT4X4 &cameraViewMatrix = m_EditorCamera.GetViewMatrix();
 
             // Entity
-            auto &entityTransformComponent = selectedEntity.GetComponent< scene::TransformComponent >();
+            auto &entityTransformComponent = selectedEntity.GetComponent< scene::ecs::TransformComponent >();
             auto entityTransform = entityTransformComponent.GetWorldTransform();
             const auto entityTranslation = entityTransformComponent.WorldTranslation;
             const auto entityRotation = entityTransformComponent.WorldRotation;

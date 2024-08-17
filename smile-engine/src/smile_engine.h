@@ -29,15 +29,15 @@
 
 #include "smile_engine/core/project/project_manager.h"
 
-/* ---Renderer--- */
-#include "smile_engine/graphic/render_engine.h"
-#include "smile_engine/graphic/render_command.h"
-
-#include "smile_engine/graphic/shader/shader.h"
-#include "smile_engine/graphic/resource/vertex_buffer.h"
-#include "smile_engine/graphic/resource/index_buffer.h"
-#include "smile_engine/graphic/resource/frame_buffer.h"
-#include "smile_engine/graphic/resource/texture.h"
+/* ---Graphic--- */
+//#include "smile_engine/graphic/render_engine.h"
+//#include "smile_engine/graphic/render_command.h"
+//
+//#include "smile_engine/graphic/shader/shader.h"
+//#include "smile_engine/graphic/resource/vertex_buffer.h"
+//#include "smile_engine/graphic/resource/index_buffer.h"
+//#include "smile_engine/graphic/resource/frame_buffer.h"
+//#include "smile_engine/graphic/resource/texture.h"
 #include "smile_engine/graphic/mesh/mesh_filter.h"
 #include "smile_engine/graphic/mesh/skinned_mesh_filter.h"
 #include "smile_engine/graphic/mesh/material.h"

@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile_engine/graphic/shader/shader.h"
+#include "smile_engine/graphic/renderer_api/shader/shader.h"
 
 #include <d3dx11effect.h>
 
@@ -26,7 +26,8 @@ namespace smile::graphic
         virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) override;
         virtual void UploadInt( const std::string &sementicName, int value ) override;
         virtual void UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D ) override;
-        virtual void UploadTextureCube( const std::string &sementicName, const Ref< TextureCube > &pTextureCube ) override;
+        virtual void UploadTextureCube( const std::string &sementicName,
+            const Ref< TextureCube > &pTextureCube ) override;
         virtual void UploadBool( const std::string &sementicName, bool value ) override;
         virtual void UploadFloat( const std::string &sementicName, float value ) override;
 

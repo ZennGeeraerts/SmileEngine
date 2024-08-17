@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile_engine/graphic/shader/buffer.h"
+#include "smile_engine/graphic/renderer_api/shader/buffer.h"
 
 #include <d3d11.h>
 

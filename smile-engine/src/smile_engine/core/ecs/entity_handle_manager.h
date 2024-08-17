@@ -7,6 +7,7 @@
 #include "ecs_types.h"
 
 #include <vector>
+#include <limits>
 
 namespace smile::ecs
 {

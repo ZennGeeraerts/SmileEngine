@@ -13,7 +13,7 @@
 
 namespace smile::physics
 {
-    static void SetPhysicsMaterial( const scene::BoxColliderComponent &component, physx::PxMaterial *pOutMaterial )
+    static void SetPhysicsMaterial( const ecs::BoxColliderComponent &component, physx::PxMaterial *pOutMaterial )
     {
         if ( component.pPhysicsMaterial )
         {
@@ -29,7 +29,7 @@ namespace smile::physics
         }
     }
 
-    static void SetPhysicsMaterial( const scene::SphereColliderComponent &component, physx::PxMaterial *pOutMaterial )
+    static void SetPhysicsMaterial( const ecs::SphereColliderComponent &component, physx::PxMaterial *pOutMaterial )
     {
         if ( component.pPhysicsMaterial )
         {
@@ -45,7 +45,7 @@ namespace smile::physics
         }
     }
 
-    static void SetPhysicsMaterial( const scene::CapsuleColliderComponent &component, physx::PxMaterial *pOutMaterial )
+    static void SetPhysicsMaterial( const ecs::CapsuleColliderComponent &component, physx::PxMaterial *pOutMaterial )
     {
         if ( component.pPhysicsMaterial )
         {
@@ -63,7 +63,7 @@ namespace smile::physics
 
     PhysicsActor::PhysicsActor( scene::Entity entity ) : m_Entity{ entity }
     {
-        auto &rigidbodyComponent = entity.GetComponent< scene::RigidbodyComponent >();
+        auto &rigidbodyComponent = entity.GetComponent< ecs::RigidbodyComponent >();
         if ( !rigidbodyComponent.pPhysicsMaterial )
             rigidbodyComponent.pPhysicsMaterial = PhysicsEngine::GetDefaultPhysicsMaterial();
 
@@ -72,13 +72,13 @@ namespace smile::physics
 
         switch ( rigidbodyComponent.Type )
         {
-            case scene::RigidbodyComponent::BodyType::Static:
+            case ecs::RigidbodyComponent::BodyType::Static:
             {
                 physx::PxRigidStatic *pRigidStaticActor = pPhysics->createRigidStatic( pxTransform );
                 m_pRigidActor = pRigidStaticActor;
                 break;
             }
-            case scene::RigidbodyComponent::BodyType::Dynamic:
+            case ecs::RigidbodyComponent::BodyType::Dynamic:
             {
                 const PhysicsSettings &settings = PhysicsEngine::GetPhysicsSettings();
 
@@ -90,7 +90,7 @@ namespace smile::physics
                     physx::PxRigidBodyFlag::eKINEMATIC, rigidbodyComponent.IsKinematic );
                 pRigidDynamicActor->setRigidBodyFlag( physx::PxRigidBodyFlag::eENABLE_CCD,
                     rigidbodyComponent.CollisionDetection ==
-                        scene::RigidbodyComponent::CollisionDetectionType::Continuous );
+                        ecs::RigidbodyComponent::CollisionDetectionType::Continuous );
 
                 pRigidDynamicActor->setRigidDynamicLockFlag(
                     physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, rigidbodyComponent.LockPositionX );
@@ -124,24 +124,24 @@ namespace smile::physics
             rigidbodyComponent.pPhysicsMaterial->DynamicFriction,
             rigidbodyComponent.pPhysicsMaterial->Restitution );
 
-        auto &transformComponent = entity.GetComponent< scene::TransformComponent >();
-        if ( entity.HasComponent< scene::BoxColliderComponent >() )
+        auto &transformComponent = entity.GetComponent< scene::ecs::TransformComponent >();
+        if ( entity.HasComponent< ecs::BoxColliderComponent >() )
         {
-            scene::BoxColliderComponent &boxColliderComponent = entity.GetComponent< scene::BoxColliderComponent >();
+            ecs::BoxColliderComponent &boxColliderComponent = entity.GetComponent< ecs::BoxColliderComponent >();
             SetPhysicsMaterial( boxColliderComponent, m_pPxMaterial );
             AddBoxCollider( boxColliderComponent, transformComponent.Scale );
         }
-        if ( entity.HasComponent< scene::SphereColliderComponent >() )
+        if ( entity.HasComponent< ecs::SphereColliderComponent >() )
         {
-            scene::SphereColliderComponent &sphereColliderComponent =
-                entity.GetComponent< scene::SphereColliderComponent >();
+            ecs::SphereColliderComponent &sphereColliderComponent =
+                entity.GetComponent< ecs::SphereColliderComponent >();
             SetPhysicsMaterial( sphereColliderComponent, m_pPxMaterial );
             AddSphereCollider( sphereColliderComponent, transformComponent.Scale );
         }
-        if ( entity.HasComponent< scene::CapsuleColliderComponent >() )
+        if ( entity.HasComponent< ecs::CapsuleColliderComponent >() )
         {
-            scene::CapsuleColliderComponent &capsuleColliderComponent =
-                entity.GetComponent< scene::CapsuleColliderComponent >();
+            ecs::CapsuleColliderComponent &capsuleColliderComponent =
+                entity.GetComponent< ecs::CapsuleColliderComponent >();
             SetPhysicsMaterial( capsuleColliderComponent, m_pPxMaterial );
             AddCapsuleCollider( capsuleColliderComponent, transformComponent.Scale );
         }
@@ -170,7 +170,7 @@ namespace smile::physics
             m_pRigidActor->release();
     }
 
-    void PhysicsActor::AddBoxCollider( const scene::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size )
+    void PhysicsActor::AddBoxCollider( const ecs::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size )
     {
         DirectX::XMFLOAT3 colliderSize = component.Size;
 
@@ -198,8 +198,7 @@ namespace smile::physics
         pShape->setLocalPose( utils::ConvertToPhysXTransform( transform ) );
     }
 
-    void PhysicsActor::AddSphereCollider( const scene::SphereColliderComponent &component,
-        const DirectX::XMFLOAT3 &size )
+    void PhysicsActor::AddSphereCollider( const ecs::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size )
     {
         float colliderRadius = component.Radius;
 
@@ -213,7 +212,7 @@ namespace smile::physics
         pShape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, component.IsTrigger );
     }
 
-    void PhysicsActor::AddCapsuleCollider( const scene::CapsuleColliderComponent &component,
+    void PhysicsActor::AddCapsuleCollider( const ecs::CapsuleColliderComponent &component,
         const DirectX::XMFLOAT3 &size )
     {
         const float radiusScale = std::max( size.x, size.z );
@@ -231,13 +230,13 @@ namespace smile::physics
     {
         if ( IsDynamic() )
         {
-            scene::TransformComponent &transform = m_Entity.GetComponent< scene::TransformComponent >();
+            scene::ecs::TransformComponent &transform = m_Entity.GetComponent< scene::ecs::TransformComponent >();
             physx::PxTransform actorPose = m_pRigidActor->getGlobalPose();
             DirectX::XMFLOAT3 offset{ 0, 0, 0 };
 
-            if ( m_Entity.HasComponent< scene::BoxColliderComponent >() )
+            if ( m_Entity.HasComponent< ecs::BoxColliderComponent >() )
             {
-                const auto &boxColliderComponent = m_Entity.GetComponent< scene::BoxColliderComponent >();
+                const auto &boxColliderComponent = m_Entity.GetComponent< ecs::BoxColliderComponent >();
                 offset = boxColliderComponent.Offset;
             }
 

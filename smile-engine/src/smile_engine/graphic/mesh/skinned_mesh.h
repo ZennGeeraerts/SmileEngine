@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/graphic/resource/vertex_buffer.h"
-#include "smile_engine/graphic/resource/index_buffer.h"
+#include "smile_engine/graphic/renderer_api/resource/vertex_buffer.h"
+#include "smile_engine/graphic/renderer_api/resource/index_buffer.h"
 #include "bone_info.h"
 
 namespace smile::graphic

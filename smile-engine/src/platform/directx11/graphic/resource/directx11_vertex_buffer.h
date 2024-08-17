@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile_engine/graphic/resource/vertex_buffer.h"
+#include "smile_engine/graphic/renderer_api/resource/vertex_buffer.h"
 
 #include <d3d11.h>
 
