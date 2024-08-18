@@ -21,3 +21,4 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory(smile-editor)
+add_subdirectory(smile-engine/tests/unit-tests)
