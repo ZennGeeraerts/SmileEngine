@@ -1,28 +1,35 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include "ecs_engine.h"
+#include "base_system.h"
 
 namespace smile::ecs
 {
-    class System
-    {
+    class ECSEngine;
+
+	class System : public BaseSystem
+	{
       public:
         System() = default;
-        System( ECSEngine *pECSEngine ) : m_pECSEngine{ pECSEngine }
-        {
-        }
-
         virtual ~System() = default;
 
-        virtual void OnUpdate( primitive::Timestep deltaTime ) = 0;
+        virtual void OnAdd( ECSEngine &ecsEngine ) override
+        {
+            m_pECSEngine = &ecsEngine;
+        };
+
+        virtual void OnRemove( ECSEngine &ecsEngine ) override
+        {
+            SM_ASSERT( m_pECSEngine == &ecsEngine, "System does not belong to this ecs engine" );
+            m_pECSEngine = nullptr;
+        };
+
+        virtual void OnUpdate() = 0;
 
       protected:
         ECSEngine *m_pECSEngine = nullptr;
-
-        friend class ECSEngine;
-    };
+	};
 }

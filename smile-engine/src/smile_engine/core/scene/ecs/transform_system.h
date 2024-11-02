@@ -10,14 +10,20 @@ namespace smile::scene
     class Scene;
 }
 
+namespace smile::ecs
+{
+    class ECSEngine;
+}
+
 namespace smile::scene::ecs
 {
     class TransformSystem final : public smile::ecs::System
     {
       public:
-        TransformSystem( smile::ecs::ECSEngine *pECSEngine, Scene *pScene );
+        TransformSystem( Scene *pScene );
 
-        void OnUpdate( primitive::Timestep deltaTime ) override;
+        void OnAdd( smile::ecs::ECSEngine &ecsEngine ) override;
+        void OnUpdate() override;
 
       private:
         Scene *m_pScene;

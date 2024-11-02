@@ -6,6 +6,7 @@
 #include "transform_system.h"
 
 #include "transform_component.h"
+#include "smile_engine/core/ecs/ecs_engine.h"
 #include "smile_engine/core/ecs/relationship.h"
 #include "smile_engine/core/math/math_utilities.h"
 #include "smile_engine/core/scene/scene.h"
@@ -13,14 +14,18 @@
 
 namespace smile::scene::ecs
 {
-    TransformSystem::TransformSystem( smile::ecs::ECSEngine *pECSEngine, Scene *pScene )
-        : System{ pECSEngine }, m_pScene{ pScene }
+    TransformSystem::TransformSystem( Scene *pScene ) : m_pScene{ pScene }
     {
-        m_pECSEngine->RegisterComponentIfNeeded< smile::ecs::Relationship >();
-        m_pECSEngine->RegisterComponentIfNeeded< TransformComponent >();
     }
 
-    void TransformSystem::OnUpdate( primitive::Timestep deltaTime )
+    void TransformSystem::OnAdd( smile::ecs::ECSEngine &ecsEngine )
+    {
+        ecsEngine.RegisterComponentIfNeeded< smile::ecs::Relationship >();
+        ecsEngine.RegisterComponentIfNeeded< TransformComponent >();
+        System::OnAdd( ecsEngine );
+    }
+
+    void TransformSystem::OnUpdate()
     {
         // TODO: Implement dirty flag component and only update the transforms that are dirty
         // For now sort relationship component so that parents and children are grouped

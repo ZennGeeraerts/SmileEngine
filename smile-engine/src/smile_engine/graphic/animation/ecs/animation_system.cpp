@@ -5,6 +5,7 @@
 #include "smpch.h"
 #include "animation_system.h"
 
+#include "smile_engine/core/ecs/ecs_engine.h"
 #include "smile_engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
 #include "smile_engine/graphic/animation/ecs/animator_component.h"
 #include "smile_engine/core/scene/ecs/transform_component.h"

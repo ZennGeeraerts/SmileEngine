@@ -9,15 +9,13 @@
 #include "smile_engine/graphic/camera/editor_camera.h"
 
 #include "smile_engine/core/ecs/ecs_engine.h"
+#include "ecs/transform_system.h"
+#include "smile_engine/graphic/animation/ecs/animation_system.h"
+#include "smile_engine/graphic/camera/ecs/camera_system.h"
 
 namespace smile::scene
 {
     class Entity;
-
-    namespace ecs
-    {
-        class TransformSystem;
-    }
 
     class Scene final
     {
@@ -61,7 +59,9 @@ namespace smile::scene
 
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > m_EntityMap{};
 
-        Scope< ecs::TransformSystem > m_pTransformSystem;
+        ecs::TransformSystem m_TransformSystem;
+        graphic::ecs::AnimationSystem m_AnimationSystem;
+        graphic::ecs::CameraSystem m_CameraSystem;
 
         friend class Entity;
         friend class SceneSerializer;

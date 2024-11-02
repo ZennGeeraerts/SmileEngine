@@ -4,19 +4,19 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/ecs/system.h"
+#include "smile_engine/core/ecs/timed_system.h"
 #include "smile_engine/graphic/mesh/skinned_mesh.h"
 #include "animator_component.h"
 
 namespace smile::graphic::ecs
 {
-    class AnimationSystem final : public smile::ecs::System
+    class AnimationSystem final : public smile::ecs::TimedSystem< AnimationSystem >
     {
       public:
         AnimationSystem() = default;
         ~AnimationSystem() = default;
 
-        void OnUpdate( primitive::Timestep deltaTime ) override;
+        void OnUpdate( primitive::Timestep deltaTime );
 
       private:
         void OnUpdateAnimation( const Ref< SkinnedMesh > &pSkinnedMesh,

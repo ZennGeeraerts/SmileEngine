@@ -17,8 +17,8 @@ namespace smile::ecs
         for ( auto pGroup : m_pGroups )
             delete pGroup;
 
-        for ( auto pSystem : m_pSystems )
-            delete pSystem;
+        while ( !m_pSystems.empty() )
+            RemoveSystem( m_pSystems.back() );
     }
 
     void ECSEngine::DestroyEntity( EntityHandleType entityHandle )
@@ -32,11 +32,11 @@ namespace smile::ecs
         m_HandleManager.DestroyEntity( entityHandle );
     }
 
-    void ECSEngine::OnUpdate( primitive::Timestep deltaTime )
+    void ECSEngine::OnUpdate()
     {
         for ( auto pSystem : m_pSystems )
         {
-            pSystem->OnUpdate( deltaTime );
+            pSystem->OnUpdate();
         }
 
         for ( auto deadHandle : m_DeadHandles )
@@ -94,14 +94,14 @@ namespace smile::ecs
 
     void ECSEngine::AddSystem( System *pSystem )
     {
-        pSystem->m_pECSEngine = this;
         m_pSystems.push_back( pSystem );
+        pSystem->OnAdd( *this );
     }
 
     void ECSEngine::RemoveSystem( System *pSystem )
     {
         m_pSystems.erase( std::remove( m_pSystems.begin(), m_pSystems.end(), pSystem ) );
-        delete pSystem;
+        pSystem->OnRemove( *this );
     }
 
     void ECSEngine::Clear()

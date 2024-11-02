@@ -7,6 +7,7 @@
 #include "entity_handle_manager.h"
 #include "component_interface.h"
 #include "component_list.h"
+#include "system.h"
 
 #include "smile_engine/common/compiled/type_id.h"
 
@@ -14,8 +15,6 @@
 
 namespace smile::ecs
 {
-    class System;
-
     template < typename... Components >
     constexpr ComponentList< Components... > g_Get{};
 
@@ -356,7 +355,7 @@ namespace smile::ecs
         ECSEngine() = default;
         virtual ~ECSEngine();
 
-        void OnUpdate( primitive::Timestep deltaTime );
+        void OnUpdate();
 
         EntityHandleType CreateEntity()
         {

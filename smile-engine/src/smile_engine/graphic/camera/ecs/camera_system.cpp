@@ -11,7 +11,14 @@
 
 namespace smile::graphic::ecs
 {
-    void CameraSystem::OnUpdate( primitive::Timestep deltaTime )
+    void CameraSystem::OnAdd( smile::ecs::ECSEngine &ecsEngine )
+    {
+        ecsEngine.RegisterComponentIfNeeded< scene::ecs::TransformComponent >();
+        ecsEngine.RegisterComponentIfNeeded< CameraComponent >();
+        System::OnAdd( ecsEngine );
+    }
+
+    void CameraSystem::OnUpdate()
     {
         Camera *pMainCamera = nullptr;
         DirectX::XMFLOAT4X4 cameraTransform{};
