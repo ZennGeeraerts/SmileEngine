@@ -23,6 +23,7 @@ add_module(physics)
 add_module(scripting)
 
 add_platform(directx11)
+add_platform(physx)
 
 set(LIB_DIRS
     smile-engine

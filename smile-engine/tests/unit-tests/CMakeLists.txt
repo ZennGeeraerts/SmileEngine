@@ -8,7 +8,7 @@ get_filename_component(ENGINE_PATH "../../" ABSOLUTE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ENGINE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
-file(GLOB_RECURSE SOURCE_FILES *.cpp thirdparty/catch.hpp)
+file(GLOB_RECURSE SOURCE_FILES *.cpp)
 
 add_executable(unit-tests ${SOURCE_FILES})
 

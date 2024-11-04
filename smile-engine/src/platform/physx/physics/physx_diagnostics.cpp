@@ -3,16 +3,14 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "physics_diagnostics.h"
+#include "physx_diagnostics.h"
 
 #include "smile_engine/common/logger/logger.h"
 
 namespace smile::physics
 {
-    void PhysicsErrorCallback::reportError( physx::PxErrorCode::Enum code,
-        const char *message,
-        const char *file,
-        int line )
+    void
+    PhysXErrorCallback::reportError( physx::PxErrorCode::Enum code, const char *message, const char *file, int line )
     {
         std::stringstream stringStream{};
         stringStream << "PHYSX CALLBACK REPORT:" << std::endl;
@@ -46,7 +44,7 @@ namespace smile::physics
         }
     }
 
-    void PhysicsAssertHandler::operator()( const char *exp, const char *file, int line, bool &ignore )
+    void PhysXAssertHandler::operator()( const char *exp, const char *file, int line, bool &ignore )
     {
 #ifdef SM_DEBUG
         SM_LOG_CRITICALERROR( "[PhysX Error]: %s:%d - %s", file, line, exp );

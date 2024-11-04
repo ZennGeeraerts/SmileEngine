@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "physics_utils.h"
+#include "physx_utils.h"
 
 #include <DirectXColors.h>
 
