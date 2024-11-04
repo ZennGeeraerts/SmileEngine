@@ -17,13 +17,6 @@ namespace smile::physics::ecs
             Last
         };
 
-        enum class CollisionFlag : Uint8
-        {
-            Sides = BIT( 0 ), // Character is colliding to the sides.
-            Up = BIT( 1 ),    // Character has collision above.
-            Down = BIT( 2 )   // Character has collision below.
-        };
-
         CharacterControllerComponent() = default;
         CharacterControllerComponent( const CharacterControllerComponent & ) = default;
 

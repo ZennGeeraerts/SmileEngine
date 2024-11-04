@@ -14,39 +14,6 @@
 
 namespace smile::physics
 {
-    static physx::PxCapsuleClimbingMode::Enum ClimbingModeToPhysXType(
-        ecs::CharacterControllerComponent::ClimbingModeType climbingMode )
-    {
-        switch ( climbingMode )
-        {
-            case ecs::CharacterControllerComponent::ClimbingModeType::Easy:
-                return physx::PxCapsuleClimbingMode::Enum::eEASY;
-            case ecs::CharacterControllerComponent::ClimbingModeType::Constrained:
-                return physx::PxCapsuleClimbingMode::Enum::eCONSTRAINED;
-            case ecs::CharacterControllerComponent::ClimbingModeType::Last:
-                return physx::PxCapsuleClimbingMode::Enum::eLAST;
-        }
-    }
-
-    // TODO: Change function name to be shorter :)
-    static ecs::CharacterControllerComponent::CollisionFlag
-    PhysXCharacterControllerCollisionFlagsToCharacterControllerCollisionFlagsType(
-        physx::PxControllerCollisionFlags physxCollisionFlags )
-    {
-        Uint8 collisionFlags{};
-
-        if ( physxCollisionFlags.isSet( physx::PxControllerCollisionFlag::eCOLLISION_SIDES ) )
-            collisionFlags |= static_cast< Uint8 >( ecs::CharacterControllerComponent::CollisionFlag::Sides );
-
-        if ( physxCollisionFlags.isSet( physx::PxControllerCollisionFlag::eCOLLISION_UP ) )
-            collisionFlags |= static_cast< Uint8 >( ecs::CharacterControllerComponent::CollisionFlag::Up );
-
-        if ( physxCollisionFlags.isSet( physx::PxControllerCollisionFlag::eCOLLISION_DOWN ) )
-            collisionFlags |= static_cast< Uint8 >( ecs::CharacterControllerComponent::CollisionFlag::Down );
-
-        return static_cast< ecs::CharacterControllerComponent::CollisionFlag >( collisionFlags );
-    }
-
     CharacterController::CharacterController( scene::Entity entity ) : m_Entity{ entity }
     {
         auto pControllerManager = PhysicsEngine::GetControllerManager();
@@ -84,37 +51,11 @@ namespace smile::physics
         SetCollisionIgnoreGroups( characterControllerComponent.CollisionIgnoreGroups );
     }
 
-    CharacterController::~CharacterController()
-    {
-        m_pController->release();
-    }
-
     void CharacterController::UpdateTransform()
     {
         scene::ecs::TransformComponent &transform = m_Entity.GetComponent< scene::ecs::TransformComponent >();
 
         transform.Translation = GetPosition();
-    }
-
-    void CharacterController::Translate( const DirectX::XMFLOAT3 &translation )
-    {
-        SM_ASSERT( m_pController, "CharacterController::Translate > Controller is null" );
-
-        m_pController->setPosition( utils::ConvertToPhysXExtendedVector( translation ) );
-    }
-
-    void CharacterController::Move( const DirectX::XMFLOAT3 &displacement, float minDist )
-    {
-        SM_ASSERT( m_pController, "CharacterController::Move > Controller is null" );
-
-        auto physxControllerCollisionFlags =
-            m_pController->move( utils::ConvertToPhysXVector( displacement ), minDist, 0, nullptr, nullptr );
-
-        auto &characterControllerComponent = m_Entity.GetComponent< ecs::CharacterControllerComponent >();
-
-        characterControllerComponent.CollisionFlags =
-            PhysXCharacterControllerCollisionFlagsToCharacterControllerCollisionFlagsType(
-                physxControllerCollisionFlags );
     }
 
     void CharacterController::SetCollisionGroups( const CollisionGroupFlag groups )
@@ -169,19 +110,5 @@ namespace smile::physics
             // TODO: shouldn't the query filter data be set as well?
         }
         delete[] pShapes;
-    }
-
-    DirectX::XMFLOAT3 CharacterController::GetPosition() const
-    {
-        SM_ASSERT( m_pController, "CharacterController::GetPosition > Controller is null" );
-
-        return utils::ConvertToDirectXVector( m_pController->getPosition() );
-    }
-
-    DirectX::XMFLOAT3 CharacterController::GetFootPosition() const
-    {
-        SM_ASSERT( m_pController, "CharacterController::GetFootPosition > Controller is null" );
-
-        return utils::ConvertToDirectXVector( m_pController->getFootPosition() );
     }
 }

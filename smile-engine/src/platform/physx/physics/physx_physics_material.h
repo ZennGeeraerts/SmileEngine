@@ -1,15 +1,15 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+#include "smile_engine/physics/physics_material.h"
 
 namespace smile::physics
 {
-    struct PhysicsMaterial
+    class PhysXPhysicsMaterial final : public PhysicsMaterial
     {
-        float StaticFriction = 0.3f;
-        float DynamicFriction = 0.3f;
-        float Restitution = 0.3f;
+      public:
+        PhysXPhysicsMaterial();
     };
 }

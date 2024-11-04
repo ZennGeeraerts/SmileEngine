@@ -7,32 +7,31 @@
 #include "smile_engine/core/scene/entity.h"
 #include "collision_group.h"
 
-namespace physx
-{
-    class PxController;
-}
-
 namespace smile::physics
 {
-    class CharacterController final
+    class CharacterController
     {
       public:
-        CharacterController( scene::Entity entity );
-        ~CharacterController();
+        enum class CollisionFlag : Uint8
+        {
+            Sides = BIT( 0 ), // Character is colliding to the sides.
+            Up = BIT( 1 ),    // Character has collision above.
+            Down = BIT( 2 )   // Character has collision below.
+        };
+
+      public:
+        CharacterController() = default;
+        virtual ~CharacterController() = default;
 
         void UpdateTransform();
 
-        void Translate( const DirectX::XMFLOAT3 &translation );
-        void Move( const DirectX::XMFLOAT3 &displacement, float minDist = 0 );
+        virtual void Translate( const DirectX::XMFLOAT3 &translation ) = 0;
+        virtual CollisionFlag Move( const DirectX::XMFLOAT3 &displacement, float minDist = 0 ) = 0;
 
         void SetCollisionGroups( const CollisionGroupFlag groups );
         void SetCollisionIgnoreGroups( const CollisionGroupFlag ignoreGroups );
 
-        DirectX::XMFLOAT3 GetPosition() const;
-        DirectX::XMFLOAT3 GetFootPosition() const;
-
-      private:
-        scene::Entity m_Entity;
-        physx::PxController *m_pController;
+        virtual DirectX::XMFLOAT3 GetPosition() const = 0;
+        virtual DirectX::XMFLOAT3 GetFootPosition() const = 0;
     };
 }

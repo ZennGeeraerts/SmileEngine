@@ -14,11 +14,6 @@
 
 namespace smile::physics
 {
-    std::unordered_map< primitive::UUID, Ref< PhysicsActor > > PhysicsEngine::s_ActorMap{};
-    std::unordered_map< primitive::UUID, Ref< CharacterController > > PhysicsEngine::s_CharacterControllerMap{};
-    PhysicsSettings PhysicsEngine::s_Settings{};
-    PhysicsEngineData PhysicsEngine::s_PhysicsEngineData{};
-
     static physx::PxScene *s_pScene;
     static physx::PxControllerManager *s_pControllerManager;
 
@@ -29,8 +24,6 @@ namespace smile::physics
     static physx::PxPhysics *s_pPhysics{};
     static physx::PxCooking *s_pCookingFactory{};
 
-    static PhysicsErrorCallback s_ErrorCallback;
-    static PhysicsAssertHandler s_AssertHandler{};
     static ContactListener s_ContactListener{};
 
     void PhysicsEngine::Initialize()
@@ -74,57 +67,6 @@ namespace smile::physics
     {
         if ( s_pScene )
             DestroyScene();
-
-        if ( s_pCookingFactory )
-        {
-            s_pCookingFactory->release();
-            s_pCookingFactory = nullptr;
-        }
-        if ( s_pPhysics )
-        {
-            s_pPhysics->release();
-            s_pPhysics = nullptr;
-        }
-        if ( s_pDefaultCpuDispatcher )
-        {
-            s_pDefaultCpuDispatcher->release();
-            s_pDefaultCpuDispatcher = nullptr;
-        }
-        if ( s_pFoundation )
-        {
-            s_pFoundation->release();
-            s_pFoundation = nullptr;
-        }
-    }
-
-    static physx::PxBroadPhaseType::Enum SmileToPhysXBroadPhaseType( BroadPhaseType type )
-    {
-        switch ( type )
-        {
-            case BroadPhaseType::SweepAndPrune:
-                return physx::PxBroadPhaseType::eSAP;
-            case BroadPhaseType::MultiBoxPrune:
-                return physx::PxBroadPhaseType::eMBP;
-            case BroadPhaseType::AutomaticBoxPrune:
-                return physx::PxBroadPhaseType::eABP;
-            default:
-                return physx::PxBroadPhaseType::eABP;
-        }
-    }
-
-    static physx::PxFrictionType::Enum SmileToPhysXFrictionType( FrictionType type )
-    {
-        switch ( type )
-        {
-            case FrictionType::Patch:
-                return physx::PxFrictionType::ePATCH;
-            case FrictionType::OneDirectional:
-                return physx::PxFrictionType::eONE_DIRECTIONAL;
-            case FrictionType::TwoDirectional:
-                return physx::PxFrictionType::eTWO_DIRECTIONAL;
-            default:
-                return physx::PxFrictionType::ePATCH;
-        }
     }
 
     void PhysicsEngine::CreateScene()

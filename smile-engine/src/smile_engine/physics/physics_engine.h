@@ -4,8 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
+#include "physics_world.h"
 #include "physics_actor.h"
 #include "character_controller.h"
+
+#include "smile_engine/common/compiled/singleton.h"
 
 namespace physx
 {
@@ -53,49 +56,52 @@ namespace smile::physics
         Ref< PhysicsMaterial > pDefaultPhysicsMaterial;
     };
 
-    class PhysicsEngine final
+    class PhysicsEngine : public compiled::Singleton< PhysicsEngine >
     {
       public:
-        static void Initialize();
-        static void ShutDown();
+        PhysicsEngine() = default;
+        virtual ~PhysicsEngine() = default;
 
-        static void CreateScene();
-        static void DestroyScene();
+        virtual void CreateWorld() = 0;
+        virtual void DestroyWorld() = 0;
 
-        static Ref< PhysicsActor > CreateActor( scene::Entity entity );
-        static void RemoveActor( scene::Entity entity );
-        static bool IsPhysicsActor( scene::Entity entity );
+        virtual void *GetPhysics() const = 0;
 
-        static Ref< CharacterController > CreateCharacterController( scene::Entity entity );
-        static void RemoveCharacterController( scene::Entity entity );
-        static bool IsCharacterController( scene::Entity entity );
+        Ref< PhysicsActor > CreateActor( scene::Entity entity );
+        void RemoveActor( scene::Entity entity );
+        bool IsPhysicsActor( scene::Entity entity );
 
-        static Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
-        static Ref< CharacterController > GetCharacterControllerOfEntity( scene::Entity entity );
+        Ref< CharacterController > CreateCharacterController( scene::Entity entity );
+        void RemoveCharacterController( scene::Entity entity );
+        bool IsCharacterController( scene::Entity entity );
 
-        static void Simulate( primitive::Timestep deltaTime );
+        Ref< PhysicsActor > GetActorOfEntity( scene::Entity entity );
+        Ref< CharacterController > GetCharacterControllerOfEntity( scene::Entity entity );
 
-        static physx::PxPhysics *GetPhysics();
-        static physx::PxScene *GetScene();
-        static physx::PxControllerManager *GetControllerManager();
-        static physx::PxAllocatorCallback &GetAllocatorCallback();
-        static const PhysicsSettings &GetPhysicsSettings()
+        void Simulate( primitive::Timestep deltaTime );
+
+        physx::PxPhysics *GetPhysics();
+        physx::PxScene *GetScene();
+        physx::PxControllerManager *GetControllerManager();
+        physx::PxAllocatorCallback &GetAllocatorCallback();
+        const PhysicsSettings &GetPhysicsSettings()
         {
             return s_Settings;
         }
-        static const Ref< PhysicsMaterial > &GetDefaultPhysicsMaterial()
+        const Ref< PhysicsMaterial > &GetDefaultPhysicsMaterial()
         {
             return s_Settings.pDefaultPhysicsMaterial;
         }
 
       private:
-        static bool Advance( primitive::Timestep deltaTime );
-        static void SubstepStrategy( primitive::Timestep deltaTime );
+        bool Advance( primitive::Timestep deltaTime );
+        void SubstepStrategy( primitive::Timestep deltaTime );
+
+      protected:
+        std::vector< Scope< PhysicsWorld > > m_pWorlds{};
 
       private:
-        static std::unordered_map< primitive::UUID, Ref< PhysicsActor > > s_ActorMap;
-        static std::unordered_map< primitive::UUID, Ref< CharacterController > > s_CharacterControllerMap;
-        static PhysicsSettings s_Settings;
-        static PhysicsEngineData s_PhysicsEngineData;
+        PhysicsSettings s_Settings;
+        PhysicsEngineData s_PhysicsEngineData;
     };
 }
