@@ -528,7 +528,7 @@ namespace smile::scene
         {
             for ( auto entity : entities )
             {
-                uint64_t uuid = entity["Entity"].as< Uint64 >();
+                Uint64 uuid = entity["Entity"].as< Uint64 >();
 
                 std::string name{};
                 auto tagComponent = entity["TagComponent"];

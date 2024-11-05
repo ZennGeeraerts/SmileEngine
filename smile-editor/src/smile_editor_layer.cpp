@@ -530,9 +530,10 @@ namespace smile
 
     void SmileEditorLayer::NewScene()
     {
-        if ( m_SceneState == SceneState::Play )
+        if ( m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate )
             OnSceneStop();
 
+        m_pActiveScene->OnClose();
         m_pActiveScene = CreateRef< scene::Scene >();
         m_pEditorScene = m_pActiveScene;
         m_pActiveScene->OnViewportResize(
@@ -551,6 +552,7 @@ namespace smile
 
         m_SceneState = SceneState::Play;
         m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
+        m_pEditorScene->OnClose();
         m_pActiveScene->OnOpen();
         m_pActiveScene->OnRuntimeStart();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
@@ -563,6 +565,7 @@ namespace smile
 
         m_SceneState = SceneState::Simulate;
         m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
+        m_pEditorScene->OnClose();
         m_pActiveScene->OnOpen();
         m_pActiveScene->OnSimulationStart();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );
@@ -576,6 +579,7 @@ namespace smile
             m_pActiveScene->OnSimulationStop();
 
         m_SceneState = SceneState::Edit;
+        m_pActiveScene->OnClose();
         m_pActiveScene = m_pEditorScene;
         m_pActiveScene->OnOpen();
         m_SceneHierarchyPanel.SetContext( m_pActiveScene );

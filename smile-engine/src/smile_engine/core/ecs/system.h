@@ -4,24 +4,22 @@
 /*=============================================================================*/
 #pragma once
 
-#include "base_system.h"
-
 namespace smile::ecs
 {
     class ECSEngine;
 
-	class System : public BaseSystem
+	class System
 	{
       public:
         System() = default;
         virtual ~System() = default;
 
-        virtual void OnAdd( ECSEngine &ecsEngine ) override
+        virtual void OnAdd( ECSEngine &ecsEngine )
         {
             m_pECSEngine = &ecsEngine;
         };
 
-        virtual void OnRemove( ECSEngine &ecsEngine ) override
+        virtual void OnRemove( ECSEngine &ecsEngine )
         {
             SM_ASSERT( m_pECSEngine == &ecsEngine, "System does not belong to this ecs engine" );
             m_pECSEngine = nullptr;

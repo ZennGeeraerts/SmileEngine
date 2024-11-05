@@ -29,6 +29,7 @@ namespace smile::scene
         void DestroyEntity( Entity entity );
 
         void OnOpen();
+        void OnClose();
 
         void OnRuntimeStart();
         void OnRuntimeStop();

@@ -84,16 +84,23 @@ namespace smile::scene
 
     void Scene::OnOpen()
     {
-        m_ECSEngine.Clear();
         m_ECSEngine.AddSystem( &m_TransformSystem );
         m_ECSEngine.AddSystem( &m_AnimationSystem );
         m_ECSEngine.AddSystem( &m_CameraSystem );
 
-        graphic::RenderEngine::ClearRenderPasses();
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::ForwardRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::WireframeRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::DebugRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::RenderPass2D{ m_ECSEngine } );
+    }
+
+    void Scene::OnClose()
+    {
+        m_ECSEngine.RemoveSystem( &m_TransformSystem );
+        m_ECSEngine.RemoveSystem( &m_AnimationSystem );
+        m_ECSEngine.RemoveSystem( &m_CameraSystem );
+
+        graphic::RenderEngine::ClearRenderPasses();
     }
 
     void Scene::OnRuntimeStart()
