@@ -8,8 +8,8 @@ namespace smile::ecs
 {
     class ECSEngine;
 
-	class System
-	{
+    class System
+    {
       public:
         System() = default;
         virtual ~System() = default;
@@ -29,5 +29,5 @@ namespace smile::ecs
 
       protected:
         ECSEngine *m_pECSEngine = nullptr;
-	};
+    };
 }
