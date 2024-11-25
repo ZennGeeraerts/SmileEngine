@@ -10,9 +10,6 @@
 
 namespace smile::ecs
 {
-    using ConstructorType = void ( * )( void * );
-    using DestructorType = void ( * )( void * );
-
     template < typename ComponentType, typename... Args >
     inline void RawConstructObject( void *pObject, Args &&...params )
     {
@@ -34,10 +31,14 @@ namespace smile::ecs
     class ComponentStorage
     {
       protected:
+        using ConstructorType = void ( * )( void * );
+        using DestructorType = void ( * )( void * );
+
+      protected:
         ComponentStorage() = default;
 
         template < typename ComponentType >
-        void Initialize( bool isOwnerIncluded )
+        void Initialize()
         {
             m_pData = nullptr;
             m_Size = 0;
@@ -45,7 +46,6 @@ namespace smile::ecs
             m_pConstructor = RawConstructObject< ComponentType >;
             m_pDestructor = RawDestructObject< ComponentType >;
             m_ComponentSize = sizeof( ComponentType );
-            m_IsOwnerData = isOwnerIncluded;
         }
 
       public:
@@ -122,7 +122,6 @@ namespace smile::ecs
         Uint32 m_ComponentSize = 0;
         Uint32 m_Allocated = 0;
         Uint32 m_Size = 0;
-        bool m_IsOwnerData = false;
         Byte *m_pData{ nullptr };
         IndexType *m_pIndices{ nullptr };
 
@@ -134,9 +133,9 @@ namespace smile::ecs
     class ComponentStorageHandler final : public ComponentStorage
     {
       public:
-        ComponentStorageHandler( bool isOwnerStored )
+        ComponentStorageHandler()
         {
-            Initialize< ComponentType >( isOwnerStored );
+            Initialize< ComponentType >();
         }
 
         ComponentType *GetData()

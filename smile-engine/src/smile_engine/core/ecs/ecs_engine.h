@@ -375,11 +375,10 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        void RegisterComponent( bool isRelational = false )
+        void RegisterComponent()
         {
             ComponentInterface *pComponentInterface = new ComponentInterface{};
-            pComponentInterface->m_IsRelational = isRelational;
-            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( isRelational );
+            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >();
 
             m_pComponents.push_back( pComponentInterface );
 
@@ -388,11 +387,11 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        void RegisterComponentIfNeeded( bool isRelational = false )
+        void RegisterComponentIfNeeded()
         {
             auto typeID = compiled::TypeIDOf< ComponentType >();
             if ( m_ComponentMap.find( typeID ) == m_ComponentMap.end() )
-                RegisterComponent< ComponentType >( isRelational );
+                RegisterComponent< ComponentType >();
         }
 
         template < typename ComponentType, typename... ConstructorArgs >

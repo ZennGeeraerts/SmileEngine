@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -11,13 +11,14 @@
 
 namespace smile::ecs
 {
-    using createHandler = std::function< void( EntityHandleType, void * ) >;
-    using destroyHandler = std::function< void( void * ) >;
-
     class ComponentInterface final
     {
+      private:
+        using CreateHandler = std::function< void( EntityHandleType, void * ) >;
+        using DestroyHandler = std::function< void( void * ) >;
+
       public:
-        virtual ~ComponentInterface()
+        ~ComponentInterface()
         {
             SAFE_DELETE( m_pComponentStorage );
         }
@@ -86,11 +87,10 @@ namespace smile::ecs
         }
 
       public:
-        bool m_IsRelational;
         SparseSetType m_Pool{};
         ComponentStorage *m_pComponentStorage;
 
-        std::vector< createHandler > m_Create;
-        std::vector< destroyHandler > m_Destroy;
+        std::vector< CreateHandler > m_Create;
+        std::vector< DestroyHandler > m_Destroy;
     };
 }

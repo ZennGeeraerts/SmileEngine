@@ -74,9 +74,7 @@ namespace smile::ecs
     void ComponentStorage::Reallocate( Uint32 newSize )
     {
         m_pData = reinterpret_cast< Byte * >( realloc( m_pData, newSize * m_ComponentSize ) );
-
-        if ( !m_IsOwnerData )
-            m_pIndices = reinterpret_cast< Uint32 * >( realloc( m_pIndices, newSize * sizeof( Uint32 ) ) );
+        m_pIndices = reinterpret_cast< Uint32 * >( realloc( m_pIndices, newSize * sizeof( Uint32 ) ) );
 
         m_Allocated = newSize;
 
