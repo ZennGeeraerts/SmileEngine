@@ -5,7 +5,10 @@
 #pragma once
 
 #include "physics_material.h"
-#include "smile_engine/common/compiled/compiled.h"
+#include "rigidbody.h"
+#include "character_controller.h"
+
+#include "smile_engine/core/scene/ecs/transform_component.h"
 
 #include <DirectXMath.h>
 
@@ -29,8 +32,6 @@ namespace smile::physics
 
     struct PhysicsWorldSettings final
     {
-        float FixedTimestep = 0.01f;
-        Uint32 MaxSubsteps = 8;
         DirectX::XMFLOAT3 Gravity = { 0, -9.81f, 0 };
 
         BroadPhaseType BroadPhaseAlgorithm = BroadPhaseType::AutomaticBoxPrune;
@@ -43,15 +44,32 @@ namespace smile::physics
         Ref< PhysicsMaterial > pDefaultPhysicsMaterial;
     };
 
-    class PhysicsWorld
+    class PhysicsWorld final
     {
+      private:
+        struct Opaque;
+
       public:
-        PhysicsWorld( PhysicsEngine *pPhysicsEngine, const PhysicsWorldSettings &settings );
+        PhysicsWorld( const PhysicsEngine *pPhysicsEngine, const PhysicsWorldSettings &settings );
+        ~PhysicsWorld();
 
-        virtual void *GetInternal() const = 0;
+        Ref< Rigidbody > CreateRigidbody( RigidbodyType bodyType, const DirectX::XMFLOAT4X4 &initialTransform );
+        void DestroyRigidbody( Ref< Rigidbody > pRigidbody );
 
-      protected:
-        PhysicsEngine *m_pPhysicsEngine;
-        PhysicsWorldSettings m_Settings;
+        Ref< CharacterController > CreateCharacterController( float radius,
+            float height,
+            CharacterController::ClimbingModeType climbingMode,
+            const DirectX::XMFLOAT3 &initialTranslation );
+        void DestroyCharacterController( Ref< CharacterController > pCharacterController );
+
+        void OnSimulate( primitive::Timestep fixedDeltaTime );
+        void OnDebugRender();
+
+        void *GetInternal() const;
+        void *GetControllerManager() const;
+        const PhysicsWorldSettings &GetSettings() const;
+
+      private:
+        compiled::PImpl< Opaque > m_pImplementation;
     };
 }

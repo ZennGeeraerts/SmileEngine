@@ -1,0 +1,113 @@
+/*=============================================================================*/
+// Copyright 2022-2024 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+#include "smpch.h"
+#include "smile_engine/physics/physics_shape.h"
+
+#include "smile_engine/physics/rigidbody.h"
+#include "physx_utils.h"
+
+#include <PhysX/PxPhysicsAPI.h>
+
+namespace smile::physics
+{
+    struct PhysicsShape::Opaque
+    {
+        const Rigidbody *pRigidbody;
+        Ref< PhysicsMaterial > pPhysicsMaterial = nullptr;
+        physx::PxShape *pShape = nullptr;
+    };
+
+    PhysicsShape::PhysicsShape( const Rigidbody *pRigidbody,
+        const PhysicsGeometry &geometry,
+        Ref< PhysicsMaterial > pPhysicsMaterial )
+    {
+        m_pImplementation->pRigidbody = pRigidbody;
+        m_pImplementation->pPhysicsMaterial = pPhysicsMaterial;
+
+        switch ( geometry.Type )
+        {
+            case PhysicsGeometryType::Box:
+            {
+                const auto boxGeometry = *static_cast< const PhysicsBoxGeometry * >( &geometry );
+                physx::PxBoxGeometry pxBoxGeometry = physx::PxBoxGeometry{
+                    boxGeometry.Box.Size.x, boxGeometry.Box.Size.y, boxGeometry.Box.Size.z };
+
+                auto pRigidActor =
+                    reinterpret_cast< physx::PxRigidActor * >( m_pImplementation->pRigidbody->GetInternal() );
+                auto pPxMaterial =
+                    reinterpret_cast< physx::PxMaterial * >( m_pImplementation->pPhysicsMaterial->GetInternal() );
+                m_pImplementation->pShape =
+                    physx::PxRigidActorExt::createExclusiveShape( *pRigidActor, pxBoxGeometry, *pPxMaterial );
+
+                DirectX::XMMATRIX transformMat =
+                    DirectX::XMMatrixScaling( 1.f, 1.f, 1.f ) * DirectX::XMMatrixRotationRollPitchYaw( 0.f, 0.f, 0.f ) *
+                    DirectX::XMMatrixTranslation(
+                        boxGeometry.Box.Center.x, boxGeometry.Box.Center.y, boxGeometry.Box.Center.z );
+                DirectX::XMFLOAT4X4 transform{};
+                DirectX::XMStoreFloat4x4( &transform, transformMat );
+
+                m_pImplementation->pShape->setLocalPose( utils::ConvertToPhysXTransform( transform ) );
+                break;
+            }
+            case PhysicsGeometryType::Sphere:
+            {
+                const auto sphereGeometry = *static_cast< const PhysicsSphereGeometry * >( &geometry );
+                physx::PxSphereGeometry pxSphereGeometry = physx::PxSphereGeometry{ sphereGeometry.Sphere.Radius };
+
+                auto pRigidActor =
+                    reinterpret_cast< physx::PxRigidActor * >( m_pImplementation->pRigidbody->GetInternal() );
+                auto pPxMaterial =
+                    reinterpret_cast< physx::PxMaterial * >( m_pImplementation->pPhysicsMaterial->GetInternal() );
+                m_pImplementation->pShape =
+                    physx::PxRigidActorExt::createExclusiveShape( *pRigidActor, pxSphereGeometry, *pPxMaterial );
+                // TODO: Add way to offset sphere colliders
+                break;
+            }
+            case PhysicsGeometryType::Capsule:
+            {
+                const auto capsuleGeometry = *static_cast< const PhysicsCapsuleGeometry * >( &geometry );
+
+                physx::PxCapsuleGeometry pxCapsuleGeometry =
+                    physx::PxCapsuleGeometry{ capsuleGeometry.Capsule.Radius, capsuleGeometry.Capsule.Height };
+
+                auto pRigidActor =
+                    reinterpret_cast< physx::PxRigidActor * >( m_pImplementation->pRigidbody->GetInternal() );
+                auto pPxMaterial =
+                    reinterpret_cast< physx::PxMaterial * >( m_pImplementation->pPhysicsMaterial->GetInternal() );
+                m_pImplementation->pShape =
+                    physx::PxRigidActorExt::createExclusiveShape( *pRigidActor, pxCapsuleGeometry, *pPxMaterial );
+
+                m_pImplementation->pShape->setLocalPose(
+                    physx::PxTransform{ physx::PxQuat{ physx::PxHalfPi, physx::PxVec3{ 0, 0, 1 } } } );
+                break;
+            }
+            case PhysicsGeometryType::Undefined:
+            default:
+                SM_ASSERT( false, "PhysicsShape > Unsupported shape" )
+                break;
+        }
+
+        physx::PxFilterData filterData{};
+        filterData.word0 = BIT( 0 );
+        filterData.word1 = BIT( 0 );
+        m_pImplementation->pShape->setSimulationFilterData( filterData );
+    }
+
+    PhysicsShape::~PhysicsShape()
+    {
+        if ( m_pImplementation->pShape && m_pImplementation->pRigidbody &&
+             m_pImplementation->pRigidbody->GetInternal() )
+        {
+            m_pImplementation->pShape->release();
+            m_pImplementation->pShape = nullptr;
+        }
+    }
+
+    void PhysicsShape::SetTrigger( bool isTrigger )
+    {
+        m_pImplementation->pShape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !isTrigger );
+        m_pImplementation->pShape->setFlag( physx::PxShapeFlag::eTRIGGER_SHAPE, isTrigger );
+    }
+}

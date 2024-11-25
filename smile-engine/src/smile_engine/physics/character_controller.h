@@ -4,14 +4,28 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/scene/entity.h"
+#include "smile_engine/common/compiled/pimpl.h"
 #include "collision_group.h"
+
+#include <DirectXMath.h>
 
 namespace smile::physics
 {
-    class CharacterController
+    class PhysicsWorld;
+
+    class CharacterController final
     {
+      private:
+        struct Opaque;
+
       public:
+        enum class ClimbingModeType : Uint8
+        {
+            Easy,
+            Constrained,
+            Last
+        };
+
         enum class CollisionFlag : Uint8
         {
             Sides = BIT( 0 ), // Character is colliding to the sides.
@@ -20,18 +34,24 @@ namespace smile::physics
         };
 
       public:
-        CharacterController() = default;
-        virtual ~CharacterController() = default;
+        CharacterController( const PhysicsWorld *pPhysicsWorld,
+            float radius,
+            float height,
+            ClimbingModeType climbingMode,
+            const DirectX::XMFLOAT3 &initialTranslation );
+        ~CharacterController();
 
-        void UpdateTransform();
+        void Translate( const DirectX::XMFLOAT3 &translation );
+        CollisionFlag Move( const DirectX::XMFLOAT3 &displacement, float minDist = 0 );
 
-        virtual void Translate( const DirectX::XMFLOAT3 &translation ) = 0;
-        virtual CollisionFlag Move( const DirectX::XMFLOAT3 &displacement, float minDist = 0 ) = 0;
+        void SetCollisionGroups( const CollisionGroupFlag groups, const CollisionGroupFlag ignoreGroups );
 
-        void SetCollisionGroups( const CollisionGroupFlag groups );
-        void SetCollisionIgnoreGroups( const CollisionGroupFlag ignoreGroups );
+        void SetName( const std::string &name );
 
-        virtual DirectX::XMFLOAT3 GetPosition() const = 0;
-        virtual DirectX::XMFLOAT3 GetFootPosition() const = 0;
+        DirectX::XMFLOAT3 GetPosition() const;
+        DirectX::XMFLOAT3 GetFootPosition() const;
+
+      private:
+        compiled::PImpl< Opaque > m_pImplementation;
     };
 }

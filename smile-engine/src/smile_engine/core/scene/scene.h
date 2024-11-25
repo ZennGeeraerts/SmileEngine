@@ -10,6 +10,7 @@
 
 #include "smile_engine/core/ecs/ecs_engine.h"
 #include "ecs/transform_system.h"
+#include "smile_engine/physics/ecs/physics_system.h"
 #include "smile_engine/graphic/animation/ecs/animation_system.h"
 #include "smile_engine/graphic/camera/ecs/camera_system.h"
 
@@ -61,6 +62,7 @@ namespace smile::scene
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > m_EntityMap{};
 
         ecs::TransformSystem m_TransformSystem;
+        physics::ecs::PhysicsSystem m_PhysicsSystem;
         graphic::ecs::AnimationSystem m_AnimationSystem;
         graphic::ecs::CameraSystem m_CameraSystem;
 

@@ -4,32 +4,26 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile_engine/physics/character_controller.h"
 #include "smile_engine/physics/collision_group.h"
 
 namespace smile::physics::ecs
 {
     struct CharacterControllerComponent final
     {
-        enum class ClimbingModeType : Uint8
-        {
-            Easy,
-            Constrained,
-            Last
-        };
-
         CharacterControllerComponent() = default;
         CharacterControllerComponent( const CharacterControllerComponent & ) = default;
 
         float Radius = 2;
         float Height = 5;
-        ClimbingModeType ClimbingMode = ClimbingModeType::Easy;
+        CharacterController::ClimbingModeType ClimbingMode = CharacterController::ClimbingModeType::Easy;
         std::string Name = "Character";
 
         physics::CollisionGroupFlag CollisionGroups = physics::CollisionGroupFlag::Group0;
         physics::CollisionGroupFlag CollisionIgnoreGroups{};
 
-        CollisionFlag CollisionFlags{};
+        CharacterController::CollisionFlag CollisionFlags{};
 
-        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        Ref< PhysicsMaterial > pPhysicsMaterial = nullptr;
     };
 }

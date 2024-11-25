@@ -3,17 +3,31 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "physx_physics_world.h"
+#include "smile_engine/physics/physics_world.h"
+
+#include "smile_engine/physics/physics_engine.h"
+#include "smile_engine/physics/rigidbody.h"
 
 #include "physx_utils.h"
-#include "physx_physics_engine.h"
 #include "contact_listener.h"
+
+#include "smile_engine/graphic/renderer/debug_renderer.h"
 
 #include <PhysX/PxPhysicsAPI.h>
 
 namespace smile::physics
 {
-    static ContactListener s_ContactListener{};
+    struct PhysicsWorld::Opaque
+    {
+        const PhysicsEngine *pPhysicsEngine;
+        PhysicsWorldSettings Settings;
+        std::vector< Ref< Rigidbody > > pRigidbodies;
+        std::vector< Ref< CharacterController > > pCharacterControllers;
+
+        ContactListener ContactListener{};
+        physx::PxScene *pScene;
+        physx::PxControllerManager *pControllerManager;
+    };
 
     static physx::PxBroadPhaseType::Enum SmileToPhysXBroadPhaseType( BroadPhaseType type )
     {
@@ -45,46 +59,139 @@ namespace smile::physics
         }
     }
 
-    PhysXPhysicsWorld::PhysXPhysicsWorld( PhysicsEngine *pPhysicsEngine, const PhysicsWorldSettings &settings )
-        : PhysicsWorld{ pPhysicsEngine, settings }
+    PhysicsWorld::PhysicsWorld( const PhysicsEngine *pPhysicsEngine, const PhysicsWorldSettings &settings )
     {
-        auto pPhysics = static_cast< physx::PxPhysics * >( pPhysicsEngine->GetPhysics() );
-        const auto pPhysXPhysicsEngine = static_cast< const PhysXPhysicsEngine * >( pPhysicsEngine );
+        m_pImplementation->pPhysicsEngine = pPhysicsEngine;
+        m_pImplementation->Settings = settings;
+
+        auto pPhysics = static_cast< physx::PxPhysics * >( m_pImplementation->pPhysicsEngine->GetPhysics() );
 
         physx::PxSceneDesc sceneDesc{ pPhysics->getTolerancesScale() };
-        sceneDesc.gravity = utils::ConvertToPhysXVector( m_Settings.Gravity );
+        sceneDesc.gravity = utils::ConvertToPhysXVector( m_pImplementation->Settings.Gravity );
         sceneDesc.filterShader = utils::SmileSimulationFilterShader;
-        sceneDesc.cpuDispatcher = pPhysXPhysicsEngine->GetDefaultCpuDispatcher();
-        sceneDesc.simulationEventCallback = &s_ContactListener;
-        sceneDesc.broadPhaseType = SmileToPhysXBroadPhaseType( m_Settings.BroadPhaseAlgorithm );
-        sceneDesc.frictionType = SmileToPhysXFrictionType( m_Settings.FrictionModel );
+        sceneDesc.cpuDispatcher =
+            static_cast< physx::PxCpuDispatcher * >( m_pImplementation->pPhysicsEngine->GetDefaultCpuDispatcher() );
+        sceneDesc.simulationEventCallback = &m_pImplementation->ContactListener;
+        sceneDesc.broadPhaseType = SmileToPhysXBroadPhaseType( m_pImplementation->Settings.BroadPhaseAlgorithm );
+        sceneDesc.frictionType = SmileToPhysXFrictionType( m_pImplementation->Settings.FrictionModel );
         sceneDesc.flags |= physx::PxSceneFlag::eENABLE_CCD; // Enable continuous collision detection
 
-        SM_ASSERT( sceneDesc.isValid(), "PhysXPhysicsWorld::PhysXPhysicsWorld > Scene descriptor is not valid" );
-        m_pScene = pPhysics->createScene( sceneDesc );
+        SM_ASSERT( sceneDesc.isValid(), "PhysicsWorld::PhysicsWorld > Scene descriptor is not valid" );
+        m_pImplementation->pScene = pPhysics->createScene( sceneDesc );
 
-        if ( m_Settings.BroadPhaseAlgorithm != BroadPhaseType::AutomaticBoxPrune )
+        if ( m_pImplementation->Settings.BroadPhaseAlgorithm != BroadPhaseType::AutomaticBoxPrune )
         {
             physx::PxBounds3 *pRegionBounds = nullptr;
-            physx::PxBounds3 globalBounds{ utils::ConvertToPhysXVector( m_Settings.WorldBoundsMin ),
-                utils::ConvertToPhysXVector( m_Settings.WorldBoundsMax ) };
+            physx::PxBounds3 globalBounds{ utils::ConvertToPhysXVector( m_pImplementation->Settings.WorldBoundsMin ),
+                utils::ConvertToPhysXVector( m_pImplementation->Settings.WorldBoundsMax ) };
             Uint32 regionCount = physx::PxBroadPhaseExt::createRegionsFromWorldBounds(
-                pRegionBounds, globalBounds, m_Settings.WorldBoundsSubdivisions );
+                pRegionBounds, globalBounds, m_pImplementation->Settings.WorldBoundsSubdivisions );
 
             for ( Uint32 i{}; i < regionCount; ++i )
             {
                 physx::PxBroadPhaseRegion region{};
                 region.bounds = pRegionBounds[i];
-                m_pScene->addBroadPhaseRegion( region );
+                m_pImplementation->pScene->addBroadPhaseRegion( region );
             }
         }
 
-        m_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eSCALE, 1.0f );
-        m_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f );
-        m_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f );
-        m_pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f );
+        m_pImplementation->pScene->setVisualizationParameter( physx::PxVisualizationParameter::eSCALE, 1.0f );
+        m_pImplementation->pScene->setVisualizationParameter(
+            physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f );
+        m_pImplementation->pScene->setVisualizationParameter( physx::PxVisualizationParameter::eJOINT_LIMITS, 1.0f );
+        m_pImplementation->pScene->setVisualizationParameter(
+            physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f );
 
-        s_pControllerManager = PxCreateControllerManager( *m_pScene );
-        SM_ASSERT( s_pControllerManager, "PhysicsEngine::CreateScene > Failed to create controller manager" );
+        m_pImplementation->pControllerManager = PxCreateControllerManager( *m_pImplementation->pScene );
+        SM_ASSERT( m_pImplementation->pControllerManager, "PhysicsWorld > Failed to create controller manager" );
+    }
+
+    PhysicsWorld::~PhysicsWorld()
+    {
+        if ( m_pImplementation->pControllerManager )
+        {
+            m_pImplementation->pControllerManager->release();
+            m_pImplementation->pControllerManager = nullptr;
+        }
+
+        if ( m_pImplementation->pScene )
+        {
+            m_pImplementation->pScene->release();
+            m_pImplementation->pScene = nullptr;
+        }
+    }
+
+    Ref< Rigidbody > PhysicsWorld::CreateRigidbody( RigidbodyType bodyType,
+        const DirectX::XMFLOAT4X4 &initialTransform )
+    {
+        auto pRigidbody = CreateRef< Rigidbody >( this, bodyType, initialTransform );
+        m_pImplementation->pRigidbodies.emplace_back( pRigidbody );
+        return pRigidbody;
+    }
+
+    void PhysicsWorld::DestroyRigidbody( Ref< Rigidbody > pRigidbody )
+    {
+        m_pImplementation->pRigidbodies.erase(
+            std::remove( m_pImplementation->pRigidbodies.begin(), m_pImplementation->pRigidbodies.end(), pRigidbody ) );
+    }
+
+    Ref< CharacterController > PhysicsWorld::CreateCharacterController( float radius,
+        float height,
+        CharacterController::ClimbingModeType climbingMode,
+        const DirectX::XMFLOAT3 &initialTranslation )
+    {
+        auto pCharacterController =
+            CreateRef< CharacterController >( this, radius, height, climbingMode, initialTranslation );
+        m_pImplementation->pCharacterControllers.emplace_back( pCharacterController );
+        return pCharacterController;
+    }
+
+    void PhysicsWorld::DestroyCharacterController( Ref< CharacterController > pCharacterController )
+    {
+        m_pImplementation->pCharacterControllers.erase( std::remove( m_pImplementation->pCharacterControllers.begin(),
+            m_pImplementation->pCharacterControllers.end(),
+            pCharacterController ) );
+    }
+
+    void PhysicsWorld::OnSimulate( primitive::Timestep fixedDeltaTime )
+    {
+        m_pImplementation->pScene->simulate( fixedDeltaTime );
+        m_pImplementation->pScene->fetchResults( true );
+    }
+
+    void PhysicsWorld::OnDebugRender()
+    {
+        if ( !m_pImplementation->pScene )
+            return;
+
+        const auto pRenderBuffer = &m_pImplementation->pScene->getRenderBuffer();
+        const auto pDebugLines = pRenderBuffer->getLines();
+
+        for ( Uint32 i{}; i < pRenderBuffer->getNbLines(); ++i )
+        {
+            const auto &line = pDebugLines[i];
+
+            const DirectX::XMFLOAT3 start = physics::utils::ConvertToDirectXVector( line.pos0 );
+            const DirectX::XMFLOAT3 end = physics::utils::ConvertToDirectXVector( line.pos1 );
+            const auto colorStart = physics::utils::ConvertToDirectXColor( line.color0 );
+            const auto colorEnd = physics::utils::ConvertToDirectXColor( line.color1 );
+
+            graphic::DebugRenderer::GetInstance().SubmitLine( start, end, colorStart, colorEnd );
+        }
+    }
+
+    void *PhysicsWorld::GetInternal() const
+    {
+        return m_pImplementation->pScene;
+    }
+
+    void *PhysicsWorld::GetControllerManager() const
+    {
+        return m_pImplementation->pControllerManager;
+    }
+
+    const PhysicsWorldSettings &PhysicsWorld::GetSettings() const
+    {
+        return m_pImplementation->Settings;
     }
 }
