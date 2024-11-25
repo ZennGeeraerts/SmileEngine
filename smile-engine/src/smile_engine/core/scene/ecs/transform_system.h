@@ -20,12 +20,9 @@ namespace smile::scene::ecs
     class TransformSystem final : public smile::ecs::System
     {
       public:
-        TransformSystem( Scene *pScene );
+        TransformSystem() = default;
 
         void OnAdd( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnUpdate() override;
-
-      private:
-        Scene *m_pScene;
     };
 }

@@ -23,7 +23,7 @@
 
 namespace smile::scene
 {
-    Scene::Scene() : m_TransformSystem{ this }, m_AnimationSystem{}, m_CameraSystem{}
+    Scene::Scene() : m_TransformSystem{}, m_PhysicsSystem{}, m_AnimationSystem{}, m_CameraSystem{}
     {
     }
 
@@ -123,37 +123,18 @@ namespace smile::scene
 
     void Scene::OnRuntimeStop()
     {
-        physics::PhysicsEngine::DestroyScene();
+        OnSimulationStop();
         scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void Scene::OnSimulationStart()
     {
-        physics::PhysicsEngine::CreateScene();
-
-        // Create physisc actors
-        {
-            auto view = m_ECSEngine.GetView< physics::ecs::RigidbodyComponent >();
-            for ( auto e : view )
-            {
-                Entity entity = { e, this };
-                physics::PhysicsEngine::CreateActor( entity );
-            }
-        }
-        // Create character controllers
-        {
-            auto view = m_ECSEngine.GetView< physics::ecs::CharacterControllerComponent >();
-            for ( auto e : view )
-            {
-                Entity entity = { e, this };
-                physics::PhysicsEngine::CreateCharacterController( entity );
-            }
-        }
+        m_ECSEngine.AddSystem( &m_PhysicsSystem );
     }
 
     void Scene::OnSimulationStop()
     {
-        physics::PhysicsEngine::DestroyScene();
+        m_ECSEngine.AddSystem( &m_PhysicsSystem );
     }
 
     void Scene::OnUpdateRuntime( primitive::Timestep deltaTime )
@@ -165,8 +146,6 @@ namespace smile::scene
             scripting::ScriptEngine::OnUpdateEntity( entity, deltaTime );
         }
 
-        physics::PhysicsEngine::Simulate( deltaTime );
-
         m_ECSEngine.OnUpdate();
 
         graphic::RenderEngine::OnRender();
@@ -174,17 +153,13 @@ namespace smile::scene
 
     void Scene::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
-        physics::PhysicsEngine::Simulate( deltaTime );
-
         m_ECSEngine.OnUpdate();
-
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-
         graphic::RenderEngine::OnRender( editorCamera );
     }
 

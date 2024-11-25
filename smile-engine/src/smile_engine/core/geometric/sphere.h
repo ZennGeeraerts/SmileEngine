@@ -8,9 +8,13 @@
 
 namespace smile::geometric
 {
-    struct Box
+    struct Sphere final
     {
-        DirectX::XMFLOAT3 Center = { 0.0f, 0.0f, 0.0f };
-        DirectX::XMFLOAT3 Size = { 1.0f, 1.0f, 1.0f };
+        Sphere( const DirectX::XMFLOAT3 &center, float radius ) : Center{ center }, Radius{ radius }
+        {
+        }
+
+        DirectX::XMFLOAT3 Center{ 0.0f, 0.0f, 0.0f };
+        float Radius{ 0.0f };
     };
 }

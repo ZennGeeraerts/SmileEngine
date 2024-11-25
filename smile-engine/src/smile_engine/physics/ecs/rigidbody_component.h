@@ -4,28 +4,17 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/physics/physics_material.h"
+#include "smile_engine/physics/rigidbody.h"
 
 namespace smile::physics::ecs
 {
     struct RigidbodyComponent final
     {
-        enum class BodyType
-        {
-            Static = 0,
-            Dynamic = 1
-        };
-        enum class CollisionDetectionType
-        {
-            Discrete = 0,
-            Continuous = 1
-        };
-
         RigidbodyComponent() = default;
         RigidbodyComponent( const RigidbodyComponent & ) = default;
 
         // Data
-        BodyType Type = BodyType::Static;
+        RigidbodyType BodyType = RigidbodyType::Static;
         CollisionDetectionType CollisionDetection = CollisionDetectionType::Discrete;
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
 

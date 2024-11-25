@@ -3,62 +3,166 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "physx_physics_engine.h"
+#include "smile_engine/physics/physics_engine.h"
+
+#include "physx_diagnostics.h"
 
 #include <PhysX/PxPhysicsAPI.h>
 
 namespace smile::physics
 {
-    PhysXPhysicsEngine::PhysXPhysicsEngine()
+    struct PhysicsEngine::Opaque final
+    {
+        std::vector< Ref< PhysicsWorld > > pWorlds{};
+        std::vector< Ref< PhysicsMaterial > > pMaterials{};
+
+        PhysicsEngineData PhysicsEngineData{};
+
+        physx::PxDefaultAllocator AllocatorCallback;
+        physx::PxDefaultCpuDispatcher *pDefaultCpuDispatcher{};
+        physx::PxFoundation *pFoundation{};
+        physx::PxPvd *pPvd{};
+        physx::PxPhysics *pPhysics{};
+        physx::PxCooking *pCookingFactory{};
+
+        PhysXErrorCallback ErrorCallback;
+        PhysXAssertHandler AssertHandler{};
+    };
+
+    PhysicsEngine::PhysicsEngine()
     {
         // Setup the foundation
-        m_pFoundation = PxCreateFoundation( PX_PHYSICS_VERSION, m_AllocatorCallback, m_ErrorCallback );
-        SM_ASSERT( m_pFoundation, "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX foundation" );
+        m_pImplementation->pFoundation = PxCreateFoundation(
+            PX_PHYSICS_VERSION, m_pImplementation->AllocatorCallback, m_pImplementation->ErrorCallback );
+        SM_ASSERT( m_pImplementation->pFoundation,
+            "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX foundation" );
 
         // Create a PDV instance
-        m_pPvd = PxCreatePvd( *m_pFoundation );
-        if ( m_pPvd )
+        m_pImplementation->pPvd = PxCreatePvd( *m_pImplementation->pFoundation );
+        if ( m_pImplementation->pPvd )
         {
             physx::PxPvdTransport *pTransport = physx::PxDefaultPvdSocketTransportCreate( "localhost", 0001, 10 );
-            m_pPvd->connect( *pTransport, physx::PxPvdInstrumentationFlag::eALL );
+            m_pImplementation->pPvd->connect( *pTransport, physx::PxPvdInstrumentationFlag::eALL );
         }
 
         // Create an instance of the PhysX physics SDK
         physx::PxTolerancesScale scale = physx::PxTolerancesScale();
         scale.length = 10;
-        m_pPhysics = PxCreatePhysics( PX_PHYSICS_VERSION, *m_pFoundation, scale, true, m_pPvd );
-        SM_ASSERT( m_pPhysics, "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX physics" );
+        m_pImplementation->pPhysics = PxCreatePhysics(
+            PX_PHYSICS_VERSION, *m_pImplementation->pFoundation, scale, true, m_pImplementation->pPvd );
+        SM_ASSERT( m_pImplementation->pPhysics, "PhysicsEngine::PhysicsEngine > Failed to create PhysX physics" );
 
         // Create the cooking factory
-        m_pCookingFactory = PxCreateCooking( PX_PHYSICS_VERSION, *m_pFoundation, m_pPhysics->getTolerancesScale() );
-        SM_ASSERT( m_pCookingFactory, "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX cooking" );
-        m_pDefaultCpuDispatcher = physx::PxDefaultCpuDispatcherCreate( 1 );
-        PxSetAssertHandler( m_AssertHandler );
+        m_pImplementation->pCookingFactory = PxCreateCooking(
+            PX_PHYSICS_VERSION, *m_pImplementation->pFoundation, m_pImplementation->pPhysics->getTolerancesScale() );
+        SM_ASSERT( m_pImplementation->pCookingFactory,
+            "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX cooking" );
+        m_pImplementation->pDefaultCpuDispatcher = physx::PxDefaultCpuDispatcherCreate( 1 );
+        PxSetAssertHandler( m_pImplementation->AssertHandler );
 
         SM_LOG_INFO( "Initialized PhysX Physics Engine" );
     }
 
-    PhysXPhysicsEngine::~PhysXPhysicsEngine()
+    PhysicsEngine::~PhysicsEngine()
     {
-        if ( m_pCookingFactory )
+        if ( m_pImplementation->pCookingFactory )
         {
-            m_pCookingFactory->release();
-            m_pCookingFactory = nullptr;
+            m_pImplementation->pCookingFactory->release();
+            m_pImplementation->pCookingFactory = nullptr;
         }
-        if ( m_pPhysics )
+        if ( m_pImplementation->pPhysics )
         {
-            m_pPhysics->release();
-            m_pPhysics = nullptr;
+            m_pImplementation->pPhysics->release();
+            m_pImplementation->pPhysics = nullptr;
         }
-        if ( m_pDefaultCpuDispatcher )
+        if ( m_pImplementation->pDefaultCpuDispatcher )
         {
-            m_pDefaultCpuDispatcher->release();
-            m_pDefaultCpuDispatcher = nullptr;
+            m_pImplementation->pDefaultCpuDispatcher->release();
+            m_pImplementation->pDefaultCpuDispatcher = nullptr;
         }
-        if ( m_pFoundation )
+        if ( m_pImplementation->pFoundation )
         {
-            m_pFoundation->release();
-            m_pFoundation = nullptr;
+            m_pImplementation->pFoundation->release();
+            m_pImplementation->pFoundation = nullptr;
         }
+    }
+
+    Ref< PhysicsWorld > PhysicsEngine::CreateWorld( const PhysicsWorldSettings &worldSettings )
+    {
+        auto pWorld = CreateRef< PhysicsWorld >( this, worldSettings );
+        m_pImplementation->pWorlds.emplace_back( pWorld );
+        return pWorld;
+    }
+
+    void PhysicsEngine::DestroyWorld( Ref< PhysicsWorld > pPhysicsWorld )
+    {
+        m_pImplementation->pWorlds.erase(
+            std::remove( m_pImplementation->pWorlds.begin(), m_pImplementation->pWorlds.end(), pPhysicsWorld ) );
+    }
+
+    Ref< PhysicsMaterial >
+    PhysicsEngine::CreateMaterial( float staticFriction, float dynamicFriction, float restitution )
+    {
+        auto pMaterial = CreateRef< PhysicsMaterial >( staticFriction, dynamicFriction, restitution );
+        m_pImplementation->pMaterials.emplace_back( pMaterial );
+        return pMaterial;
+    }
+
+    void PhysicsEngine::DestroyMaterial( Ref< PhysicsMaterial > pPhysicsMaterial )
+    {
+        m_pImplementation->pMaterials.erase( std::remove(
+            m_pImplementation->pMaterials.begin(), m_pImplementation->pMaterials.end(), pPhysicsMaterial ) );
+    }
+
+    bool PhysicsEngine::OnSimulate( primitive::Timestep deltaTime )
+    {
+        return Advance( deltaTime );
+    }
+
+    bool PhysicsEngine::Advance( primitive::Timestep deltaTime )
+    {
+        SubstepStrategy( deltaTime );
+
+        if ( m_pImplementation->PhysicsEngineData.SubstepCount == 0 )
+            return false;
+
+        for ( Uint32 i{}; i < m_pImplementation->PhysicsEngineData.SubstepCount; ++i )
+        {
+            for ( auto pWorld : m_pImplementation->pWorlds )
+                pWorld->OnSimulate( m_pImplementation->PhysicsEngineData.FixedTimestep );
+        }
+
+        return true;
+    }
+
+    void PhysicsEngine::SubstepStrategy( primitive::Timestep deltaTime )
+    {
+        if ( m_pImplementation->PhysicsEngineData.Accumulator > m_pImplementation->PhysicsEngineData.FixedTimestep )
+            m_pImplementation->PhysicsEngineData.Accumulator = 0.0f;
+
+        m_pImplementation->PhysicsEngineData.Accumulator += deltaTime;
+        if ( m_pImplementation->PhysicsEngineData.Accumulator < m_pImplementation->PhysicsEngineData.FixedTimestep )
+        {
+            m_pImplementation->PhysicsEngineData.SubstepCount = 0;
+            return;
+        }
+
+        m_pImplementation->PhysicsEngineData.SubstepCount =
+            std::min( static_cast< Uint32 >( m_pImplementation->PhysicsEngineData.Accumulator /
+                                             m_pImplementation->PhysicsEngineData.FixedTimestep ),
+                m_pImplementation->PhysicsEngineData.MaxSubsteps );
+
+        m_pImplementation->PhysicsEngineData.Accumulator -=
+            m_pImplementation->PhysicsEngineData.SubstepCount * m_pImplementation->PhysicsEngineData.FixedTimestep;
+    }
+
+    void *PhysicsEngine::GetPhysics() const
+    {
+        return m_pImplementation->pPhysics;
+    }
+
+    void *PhysicsEngine::GetDefaultCpuDispatcher() const
+    {
+        return m_pImplementation->pDefaultCpuDispatcher;
     }
 }

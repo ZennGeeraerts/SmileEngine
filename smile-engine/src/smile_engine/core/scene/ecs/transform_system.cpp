@@ -14,10 +14,6 @@
 
 namespace smile::scene::ecs
 {
-    TransformSystem::TransformSystem( Scene *pScene ) : m_pScene{ pScene }
-    {
-    }
-
     void TransformSystem::OnAdd( smile::ecs::ECSEngine &ecsEngine )
     {
         ecsEngine.RegisterComponentIfNeeded< smile::ecs::Relationship >();
@@ -46,42 +42,6 @@ namespace smile::scene::ecs
         for ( auto entityHandle : view )
         {
             auto &transform = m_pECSEngine->GetComponent< TransformComponent >( entityHandle );
-
-            Entity entity{ entityHandle, m_pScene };
-
-            SM_ASSERT( !( physics::PhysicsEngine::IsPhysicsActor( entity ) &&
-                           physics::PhysicsEngine::IsCharacterController( entity ) ),
-                "TransformSystem::OnUpdate >> Entity cannot be a physics actor and character controller" );
-
-            if ( physics::PhysicsEngine::IsPhysicsActor( entity ) )
-            {
-                Ref< physics::PhysicsActor > pActor = physics::PhysicsEngine::GetActorOfEntity( entity );
-
-                if ( transform.TransformChanged &
-                     static_cast< Uint32 >( TransformComponent::TransformChanged::Translation ) )
-                {
-                    pActor->Translate( transform.Translation );
-                }
-
-                if ( transform.TransformChanged &
-                     static_cast< Uint32 >( TransformComponent::TransformChanged::Rotation ) )
-                {
-                    pActor->Rotate( transform.Rotation );
-                }
-            }
-            else if ( physics::PhysicsEngine::IsCharacterController( entity ) )
-            {
-                Ref< physics::CharacterController > pController =
-                    physics::PhysicsEngine::GetCharacterControllerOfEntity( entity );
-
-                if ( transform.TransformChanged &
-                     static_cast< Uint32 >( TransformComponent::TransformChanged::Translation ) )
-                {
-                    pController->Translate( transform.Translation );
-                }
-            }
-
-            transform.TransformChanged = static_cast< Uint32 >( TransformComponent::TransformChanged::None );
 
             DirectX::XMMATRIX worldTransformMat = DirectX::XMLoadFloat4x4( &transform.GetTransform() );
 
