@@ -183,7 +183,7 @@ namespace smile::ecs
             Group( ECSEngine &engine,
                 const std::vector< ComponentInterface * > &pOwned,
                 const std::vector< ComponentInterface * > &pGet )
-                : m_Engine{ engine }
+                : GroupBase{ engine }
             {
                 std::vector< SparseSetType * > pPools{};
 
@@ -233,89 +233,12 @@ namespace smile::ecs
                 }
             }
 
-            void AddEntity( IndexType entityIndex ) override
-            {
-                if ( HasEntity( entityIndex ) )
-                {
-                    for ( auto pComponent : m_pOwnedPools )
-                    {
-                        IndexType index = pComponent->m_Pool.GetIndex( entityIndex );
-                        pComponent->m_Pool.Swap( pComponent->m_Pool.GetElement( m_EndIndex ), entityIndex );
-                        pComponent->m_pComponentStorage->Swap( m_EndIndex, index );
-                    }
-
-                    ++m_EndIndex;
-                }
-            }
-
-            void RemoveEntity( IndexType entityIndex ) override
-            {
-                if ( HasEntity( entityIndex ) )
-                {
-                    for ( auto pComponent : m_pOwnedPools )
-                    {
-                        IndexType index = pComponent->m_Pool.GetIndex( entityIndex );
-                        pComponent->m_Pool.Swap( pComponent->m_Pool.GetElement( m_EndIndex - 1 ), entityIndex );
-                        pComponent->m_pComponentStorage->Swap( m_EndIndex - 1, index );
-                    }
-
-                    --m_EndIndex;
-                }
-            }
-
-            template < typename Component >
-            bool HasComponent() const
-            {
-                auto pComponentInterface = m_Engine.GetComponentInterface< Component >();
-                return HasComponent( pComponentInterface );
-            }
-
-            bool HasComponent( ComponentInterface *pComponent ) const override
-            {
-                return ( std::find( m_pOwnedPools.begin(), m_pOwnedPools.end(), pComponent ) != m_pOwnedPools.end() ) ||
-                       ( std::find( m_pGetPools.begin(), m_pGetPools.end(), pComponent ) != m_pGetPools.end() );
-            }
-
             bool HasEntity( IndexType entityIndex ) const override
             {
                 GatherComponents< Components... > gatherComponents{ m_Engine };
                 auto entityHandle = m_Engine.GetEntityHandleManager().GetEntityHandle( entityIndex );
                 return gatherComponents.Run( entityHandle );
             }
-
-            GroupIterator begin() const override
-            {
-                if ( !m_pOwnedPools.empty() )
-                    return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() };
-                else
-                    return GroupIterator{ m_Engine, SparseSetType::ConstIterator{} };
-            }
-
-            GroupIterator end() const override
-            {
-                if ( !m_pOwnedPools.empty() )
-                    return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() + m_EndIndex };
-                else
-                    return GroupIterator{ m_Engine, SparseSetType::ConstIterator{} };
-            }
-
-            const std::vector< ComponentInterface * > &GetOwnedComponents() const override
-            {
-                return m_pOwnedPools;
-            }
-
-            const std::vector< ComponentInterface * > &GetGetComponents() const override
-            {
-                return m_pGetPools;
-            }
-
-          private:
-            ECSEngine &m_Engine;
-
-            std::vector< ComponentInterface * > m_pOwnedPools{};
-            std::vector< ComponentInterface * > m_pGetPools{};
-
-            IndexType m_EndIndex{ 0 };
         };
 
       public:
@@ -379,7 +302,7 @@ namespace smile::ecs
             for ( auto &pGroup : m_pGroups )
             {
                 if ( pGroup->HasComponent( pComponentInterface ) )
-                    pGroup->AddEntity( entityHandle.GetIndex() );
+                    pGroup->AddEntity( entityHandle );
             }
 
             return component;

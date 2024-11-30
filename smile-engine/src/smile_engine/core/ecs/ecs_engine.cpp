@@ -59,14 +59,11 @@ namespace smile::ecs
         for ( auto &pGroup : m_pGroups )
         {
             if ( pGroup->HasComponent( pComponentInterface ) )
-                pGroup->RemoveEntity( entityHandle.GetIndex() );
+                pGroup->RemoveEntity( entityHandle );
         }
 
         const IndexType deadIndex = pComponentInterface->m_Pool.Erase( entityHandle.GetIndex() );
         pComponentInterface->m_pComponentStorage->RemoveSwap( deadIndex );
-
-        // if ( pComponentInterface->m_IsRelational )
-        // RelationalRebuild( pComponentInterface, deadIndex );
     }
 
     bool ECSEngine::HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
