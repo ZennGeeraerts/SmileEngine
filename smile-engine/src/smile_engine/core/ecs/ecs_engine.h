@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -8,6 +8,7 @@
 #include "component_interface.h"
 #include "component_list.h"
 #include "system.h"
+#include "group_base.h"
 
 #include "smile_engine/common/compiled/type_id.h"
 
@@ -22,7 +23,7 @@ namespace smile::ecs
     {
       public:
         template < typename... Components >
-        struct GatherComponents final
+        class GatherComponents final
         {
           public:
             GatherComponents( ECSEngine &engine )
@@ -61,59 +62,68 @@ namespace smile::ecs
             {
             }
 
-          public:
+          private:
             static constexpr Uint32 s_Size = sizeof...( Components );
             ComponentInterface *m_pComponentInterfaces[s_Size];
+        };
+
+        template < typename... Components >
+        class ViewIterator final
+        {
+          public:
+            ViewIterator( ECSEngine &engine, SparseSetType::ConstIterator it, SparseSetType::ConstIterator endIt )
+                : m_Engine{ engine }, m_Iterator{ it }, m_EndIterator{ endIt }
+            {
+            }
+
+            EntityHandleType operator*() const
+            {
+                return m_Engine.GetEntityHandleManager().GetEntityHandle( *m_Iterator );
+            }
+
+            bool operator==( const ViewIterator &other ) const
+            {
+                return m_Iterator == other.m_Iterator ||
+                       ( *m_Iterator ) == m_Engine.GetEntityHandleManager().GetEntityCount();
+            }
+
+            bool operator!=( const ViewIterator &other ) const
+            {
+                return m_Iterator != other.m_Iterator &&
+                       ( *m_Iterator ) != m_Engine.GetEntityHandleManager().GetEntityCount();
+            }
+
+            ViewIterator &operator++()
+            {
+                const EntityHandleManager &handleManager = m_Engine.GetEntityHandleManager();
+                SparseSetType::ConstIterator oldIt;
+                do
+                {
+                    oldIt = m_Iterator;
+
+                    GatherComponents< Components... > gatherComponents{ m_Engine };
+                    if ( gatherComponents.Run( handleManager.GetEntityHandle( *m_Iterator ) ) )
+                    {
+                        ++m_Iterator;
+                        break;
+                    }
+                } while ( ( m_Iterator != m_EndIterator ) && ( m_Iterator != oldIt ) &&
+                          ( handleManager.GetEntityHandle( *m_Iterator ).IsValid() ) );
+
+                return *this;
+            }
+
+          private:
+            ECSEngine &m_Engine;
+            SparseSetType::ConstIterator m_Iterator;
+            SparseSetType::ConstIterator m_EndIterator;
         };
 
         template < typename... Components >
         class View final
         {
           public:
-            struct Iterator final
-            {
-                Iterator( ECSEngine &engine, SparseSetType::ConstIterator it, SparseSetType::ConstIterator endIt )
-                    : Engine{ engine }, It{ it }, EndIt{ endIt }
-                {
-                }
-
-                EntityHandleType operator*() const
-                {
-                    return Engine.GetEntityHandleManager().GetEntityHandle( *It );
-                }
-                bool operator==( const Iterator &other ) const
-                {
-                    return It == other.It || ( *It ) == Engine.GetEntityHandleManager().GetEntityCount();
-                }
-                bool operator!=( const Iterator &other ) const
-                {
-                    return It != other.It && ( *It ) != Engine.GetEntityHandleManager().GetEntityCount();
-                }
-
-                Iterator &operator++()
-                {
-                    const EntityHandleManager &handleManager = Engine.GetEntityHandleManager();
-                    SparseSetType::ConstIterator oldIt;
-                    do
-                    {
-                        oldIt = It;
-
-                        GatherComponents< Components... > gatherComponents{ Engine };
-                        if ( gatherComponents.Run( handleManager.GetEntityHandle( *It ) ) )
-                        {
-                            ++It;
-                            break;
-                        }
-                    } while (
-                        ( It != EndIt ) && ( It != oldIt ) && ( handleManager.GetEntityHandle( *It ).IsValid() ) );
-
-                    return *this;
-                }
-
-                ECSEngine &Engine;
-                SparseSetType::ConstIterator It;
-                SparseSetType::ConstIterator EndIt;
-            };
+            using ViewIteratorType = ViewIterator< Components... >;
 
           public:
             View( ECSEngine &engine ) : m_Engine{ engine }
@@ -136,27 +146,27 @@ namespace smile::ecs
                 m_pMinPool = ( it != pPools.end() ) ? *it : nullptr;
             }
 
-            const Iterator begin() const
+            const ViewIteratorType begin() const
             {
                 if ( m_pMinPool )
                 {
-                    return Iterator{ m_Engine, m_pMinPool->begin(), m_pMinPool->end() };
+                    return ViewIteratorType{ m_Engine, m_pMinPool->begin(), m_pMinPool->end() };
                 }
                 else
                 {
-                    return Iterator{ m_Engine, SparseSetType::ConstIterator{}, SparseSetType::ConstIterator{} };
+                    return ViewIteratorType{ m_Engine, SparseSetType::ConstIterator{}, SparseSetType::ConstIterator{} };
                 }
             }
 
-            const Iterator end() const
+            const ViewIteratorType end() const
             {
                 if ( m_pMinPool )
                 {
-                    return Iterator{ m_Engine, m_pMinPool->end(), m_pMinPool->end() };
+                    return ViewIteratorType{ m_Engine, m_pMinPool->end(), m_pMinPool->end() };
                 }
                 else
                 {
-                    return Iterator{ m_Engine, SparseSetType::ConstIterator{}, SparseSetType::ConstIterator{} };
+                    return ViewIteratorType{ m_Engine, SparseSetType::ConstIterator{}, SparseSetType::ConstIterator{} };
                 }
             }
 
@@ -164,50 +174,6 @@ namespace smile::ecs
             static constexpr Uint32 s_Size = sizeof...( Components );
             ECSEngine &m_Engine;
             SparseSetType *m_pMinPool;
-        };
-
-        class GroupBase
-        {
-          public:
-            struct Iterator final
-            {
-                Iterator( ECSEngine &engine, SparseSetType::ConstIterator it ) : Engine{ engine }, It{ it }
-                {
-                }
-
-                EntityHandleType operator*() const
-                {
-                    return Engine.GetEntityHandleManager().GetEntityHandle( *It );
-                }
-                bool operator==( const Iterator &other ) const
-                {
-                    return It == other.It || ( *It ) == Engine.GetEntityHandleManager().GetEntityCount();
-                }
-                bool operator!=( const Iterator &other ) const
-                {
-                    return It != other.It && ( *It ) != Engine.GetEntityHandleManager().GetEntityCount();
-                }
-                Iterator &operator++()
-                {
-                    ++It;
-                    return *this;
-                }
-
-                ECSEngine &Engine;
-                SparseSetType::ConstIterator It;
-            };
-
-          public:
-            virtual void AddEntity( IndexType entityIndex ) = 0;
-            virtual void RemoveEntity( IndexType entityIndex ) = 0;
-            virtual bool HasComponent( ComponentInterface *pComponent ) const = 0;
-            virtual bool HasEntity( IndexType entityIndex ) const = 0;
-
-            virtual Iterator begin() const = 0;
-            virtual Iterator end() const = 0;
-
-            virtual const std::vector< ComponentInterface * > &GetOwnedComponents() const = 0;
-            virtual const std::vector< ComponentInterface * > &GetGetComponents() const = 0;
         };
 
         template < typename... Components >
@@ -267,7 +233,7 @@ namespace smile::ecs
                 }
             }
 
-            virtual void AddEntity( IndexType entityIndex ) override
+            void AddEntity( IndexType entityIndex ) override
             {
                 if ( HasEntity( entityIndex ) )
                 {
@@ -282,7 +248,7 @@ namespace smile::ecs
                 }
             }
 
-            virtual void RemoveEntity( IndexType entityIndex ) override
+            void RemoveEntity( IndexType entityIndex ) override
             {
                 if ( HasEntity( entityIndex ) )
                 {
@@ -304,40 +270,41 @@ namespace smile::ecs
                 return HasComponent( pComponentInterface );
             }
 
-            virtual bool HasComponent( ComponentInterface *pComponent ) const override
+            bool HasComponent( ComponentInterface *pComponent ) const override
             {
                 return ( std::find( m_pOwnedPools.begin(), m_pOwnedPools.end(), pComponent ) != m_pOwnedPools.end() ) ||
                        ( std::find( m_pGetPools.begin(), m_pGetPools.end(), pComponent ) != m_pGetPools.end() );
             }
 
-            virtual bool HasEntity( IndexType entityIndex ) const override
+            bool HasEntity( IndexType entityIndex ) const override
             {
                 GatherComponents< Components... > gatherComponents{ m_Engine };
                 auto entityHandle = m_Engine.GetEntityHandleManager().GetEntityHandle( entityIndex );
                 return gatherComponents.Run( entityHandle );
             }
 
-            virtual Iterator begin() const override
+            GroupIterator begin() const override
             {
                 if ( !m_pOwnedPools.empty() )
-                    return Iterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() };
+                    return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() };
                 else
-                    return Iterator{ m_Engine, SparseSetType::ConstIterator{} };
+                    return GroupIterator{ m_Engine, SparseSetType::ConstIterator{} };
             }
 
-            virtual Iterator end() const override
+            GroupIterator end() const override
             {
                 if ( !m_pOwnedPools.empty() )
-                    return Iterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() + m_EndIndex };
+                    return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() + m_EndIndex };
                 else
-                    return Iterator{ m_Engine, SparseSetType::ConstIterator{} };
+                    return GroupIterator{ m_Engine, SparseSetType::ConstIterator{} };
             }
 
-            virtual const std::vector< ComponentInterface * > &GetOwnedComponents() const override
+            const std::vector< ComponentInterface * > &GetOwnedComponents() const override
             {
                 return m_pOwnedPools;
             }
-            virtual const std::vector< ComponentInterface * > &GetGetComponents() const override
+
+            const std::vector< ComponentInterface * > &GetGetComponents() const override
             {
                 return m_pGetPools;
             }
@@ -353,7 +320,7 @@ namespace smile::ecs
 
       public:
         ECSEngine() = default;
-        virtual ~ECSEngine();
+        ~ECSEngine();
 
         void OnUpdate();
 
