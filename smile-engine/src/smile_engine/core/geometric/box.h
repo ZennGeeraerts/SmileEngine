@@ -8,8 +8,13 @@
 
 namespace smile::geometric
 {
-    struct Box
+    struct Box final
     {
+        Box() = default;
+        Box( const DirectX::XMFLOAT3 &center, const DirectX::XMFLOAT3 &size ) : Center{ center }, Size{ size }
+        {
+        }
+
         DirectX::XMFLOAT3 Center = { 0.0f, 0.0f, 0.0f };
         DirectX::XMFLOAT3 Size = { 1.0f, 1.0f, 1.0f };
     };

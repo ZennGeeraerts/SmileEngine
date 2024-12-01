@@ -23,8 +23,8 @@ namespace smile::physics::ecs
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 
-        Ref< PhysicsMaterial > pPhysicsMaterial = nullptr;
-        Ref< graphic::Mesh > pWireframeMesh =
-            nullptr; // TODO: Get rid of mesh, use geometry instead and render geometry
+        Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
+        // TODO: Get rid of mesh, use geometry instead and render geometry
+        Ref< graphic::Mesh > pWireframeMesh = nullptr;
     };
 }

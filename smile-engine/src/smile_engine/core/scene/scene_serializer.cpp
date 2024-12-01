@@ -421,7 +421,7 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &sphereColliderComponent = entity.GetComponent< physics::ecs::SphereColliderComponent >();
-            output << YAML::Key << "Radius" << YAML::Value << sphereColliderComponent.Radius;
+            output << YAML::Key << "Radius" << YAML::Value << sphereColliderComponent.Sphere.Radius;
             output << YAML::Key << "bTrigger" << YAML::Value << sphereColliderComponent.IsTrigger;
             output << YAML::Key << "bShowColliderBounds" << YAML::Value << sphereColliderComponent.ShowColliderBounds;
 
@@ -439,8 +439,8 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &capsuleColliderComponent = entity.GetComponent< physics::ecs::CapsuleColliderComponent >();
-            output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.Radius;
-            output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.Height;
+            output << YAML::Key << "Radius" << YAML::Value << capsuleColliderComponent.Capsule.Radius;
+            output << YAML::Key << "Height" << YAML::Value << capsuleColliderComponent.Capsule.Height;
             output << YAML::Key << "bTrigger" << YAML::Value << capsuleColliderComponent.IsTrigger;
             output << YAML::Key << "bShowColliderBounds" << YAML::Value << capsuleColliderComponent.ShowColliderBounds;
 
@@ -790,7 +790,7 @@ namespace smile::scene
                 {
                     auto &scc = deserializedEntity.AddComponent< physics::ecs::SphereColliderComponent >();
 
-                    scc.Radius = sphereColliderComponent["Radius"].as< float >();
+                    scc.Sphere.Radius = sphereColliderComponent["Radius"].as< float >();
                     scc.IsTrigger = sphereColliderComponent["bTrigger"].as< bool >();
                     scc.ShowColliderBounds = sphereColliderComponent["bShowColliderBounds"].as< bool >();
 
@@ -805,8 +805,8 @@ namespace smile::scene
                 {
                     auto &ccc = deserializedEntity.AddComponent< physics::ecs::CapsuleColliderComponent >();
 
-                    ccc.Radius = capsuleColliderComponent["Radius"].as< float >();
-                    ccc.Height = capsuleColliderComponent["Height"].as< float >();
+                    ccc.Capsule.Radius = capsuleColliderComponent["Radius"].as< float >();
+                    ccc.Capsule.Height = capsuleColliderComponent["Height"].as< float >();
                     ccc.IsTrigger = capsuleColliderComponent["bTrigger"].as< bool >();
                     ccc.ShowColliderBounds = capsuleColliderComponent["bShowColliderBounds"].as< bool >();
                 }

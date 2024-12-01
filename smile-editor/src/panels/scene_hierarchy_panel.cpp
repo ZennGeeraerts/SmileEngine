@@ -740,7 +740,7 @@ namespace smile::scene
             entity,
             []( auto &sphereColliderComponent )
             {
-                ImGui::DragFloat( "Radius", &sphereColliderComponent.Radius, 0.03f );
+                ImGui::DragFloat( "Radius", &sphereColliderComponent.Sphere.Radius, 0.03f );
                 ImGui::Checkbox( "Trigger", &sphereColliderComponent.IsTrigger );
                 ImGui::Checkbox( "Show Collider Bounds", &sphereColliderComponent.ShowColliderBounds );
             } );
@@ -749,8 +749,8 @@ namespace smile::scene
             entity,
             []( auto &capsuleColliderComponent )
             {
-                ImGui::DragFloat( "Radius", &capsuleColliderComponent.Radius, 0.03f );
-                ImGui::DragFloat( "Height", &capsuleColliderComponent.Height, 0.03f );
+                ImGui::DragFloat( "Radius", &capsuleColliderComponent.Capsule.Radius, 0.03f );
+                ImGui::DragFloat( "Height", &capsuleColliderComponent.Capsule.Height, 0.03f );
                 ImGui::Checkbox( "Trigger", &capsuleColliderComponent.IsTrigger );
                 ImGui::Checkbox( "Show Collider Bounds", &capsuleColliderComponent.ShowColliderBounds );
             } );
