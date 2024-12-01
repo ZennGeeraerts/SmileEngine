@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile_engine/core/geometric/capsule.h"
 #include "smile_engine/physics/physics_material.h"
 
 namespace smile::physics::ecs
@@ -13,8 +14,7 @@ namespace smile::physics::ecs
         CapsuleColliderComponent() = default;
         CapsuleColliderComponent( const CapsuleColliderComponent & ) = default;
 
-        float Radius = 0.5f;
-        float Height = 1.0f;
+        geometric::Capsule Capsule{ DirectX::XMFLOAT3{ 0.0f, 0.0f, 0.0f }, 0.5f, 1.0f };
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 

@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile_engine/core/geometric/box.h"
 #include "smile_engine/graphic/mesh/mesh_factory.h"
 
 namespace smile::physics::ecs
@@ -18,12 +19,12 @@ namespace smile::physics::ecs
 
         BoxColliderComponent( const BoxColliderComponent & ) = default;
 
-        DirectX::XMFLOAT3 Size = { 1.0f, 1.0f, 1.0f };
-        DirectX::XMFLOAT3 Offset = { 0.0f, 0.0f, 0.0f };
+        geometric::Box Box{};
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
-        Ref< graphic::Mesh > pWireframeMesh = nullptr; // TODO: Get rid of mesh, use geometry instead and render geometry
+        // TODO: Get rid of mesh, use geometry instead and render geometry
+        Ref< graphic::Mesh > pWireframeMesh = nullptr;
     };
 }

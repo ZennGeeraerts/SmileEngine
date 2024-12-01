@@ -93,10 +93,10 @@ namespace smile::graphic
         DirectX::XMVECTOR scaleVec{};
 
         DirectX::XMMatrixDecompose( &scaleVec, &rotationVec, &translationVec, worldTransformMat );
-        DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat3( &boxColliderComponent.Offset );
-        DirectX::XMVECTOR sizeVec = DirectX::XMLoadFloat3( &boxColliderComponent.Size );
+        DirectX::XMVECTOR offsetVec = DirectX::XMLoadFloat3( &boxColliderComponent.Box.Center );
+        DirectX::XMVECTOR sizeVec = DirectX::XMLoadFloat3( &boxColliderComponent.Box.Size );
 
-        sizeVec = DirectX::XMVectorDivide( sizeVec, DirectX::XMVECTOR{ 2, 2, 2 } );
+        sizeVec = DirectX::XMVectorDivide( sizeVec, DirectX::XMVECTOR{ 1, 1, 1 } );
 
         auto colliderTransformMat = DirectX::XMMatrixScalingFromVector( sizeVec ) * DirectX::XMMatrixIdentity() *
                                     DirectX::XMMatrixTranslationFromVector( offsetVec );

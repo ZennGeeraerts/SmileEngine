@@ -172,7 +172,7 @@ namespace smile::physics
 
     void PhysicsActor::AddBoxCollider( const ecs::BoxColliderComponent &component, const DirectX::XMFLOAT3 &size )
     {
-        DirectX::XMFLOAT3 colliderSize = component.Size;
+        DirectX::XMFLOAT3 colliderSize = component.Box.Size;
 
         if ( size.x != 0.0f )
             colliderSize.x *= size.x;
@@ -191,7 +191,7 @@ namespace smile::physics
 
         DirectX::XMMATRIX transformMat =
             DirectX::XMMatrixScaling( 1.f, 1.f, 1.f ) * DirectX::XMMatrixRotationRollPitchYaw( 0.f, 0.f, 0.f ) *
-            DirectX::XMMatrixTranslation( component.Offset.x, component.Offset.y, component.Offset.z );
+            DirectX::XMMatrixTranslation( component.Box.Center.x, component.Box.Center.y, component.Box.Center.z );
         DirectX::XMFLOAT4X4 transform{};
         DirectX::XMStoreFloat4x4( &transform, transformMat );
 
@@ -200,7 +200,7 @@ namespace smile::physics
 
     void PhysicsActor::AddSphereCollider( const ecs::SphereColliderComponent &component, const DirectX::XMFLOAT3 &size )
     {
-        float colliderRadius = component.Radius;
+        float colliderRadius = component.Sphere.Radius;
 
         if ( size.x != 0.0f )
             colliderRadius *= size.x;
@@ -218,7 +218,7 @@ namespace smile::physics
         const float radiusScale = std::max( size.x, size.z );
 
         physx::PxCapsuleGeometry capsuleGeometry =
-            physx::PxCapsuleGeometry( component.Radius * radiusScale, component.Height / 2.f * size.y );
+            physx::PxCapsuleGeometry( component.Capsule.Radius * radiusScale, component.Capsule.Height / 2.f * size.y );
         physx::PxShape *pShape =
             physx::PxRigidActorExt::createExclusiveShape( *m_pRigidActor, capsuleGeometry, *m_pPxMaterial );
         pShape->setFlag( physx::PxShapeFlag::eSIMULATION_SHAPE, !component.IsTrigger );
@@ -237,7 +237,7 @@ namespace smile::physics
             if ( m_Entity.HasComponent< ecs::BoxColliderComponent >() )
             {
                 const auto &boxColliderComponent = m_Entity.GetComponent< ecs::BoxColliderComponent >();
-                offset = boxColliderComponent.Offset;
+                offset = boxColliderComponent.Box.Center;
             }
 
             transform.Translation = utils::ConvertToDirectXVector( actorPose.p ) /* + offset*/;

@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile_engine/core/geometric/sphere.h"
+
 namespace smile::physics::ecs
 {
     struct SphereColliderComponent final
@@ -12,16 +14,17 @@ namespace smile::physics::ecs
         {
             graphic::BufferLayout bufferLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
             // TODO: Update wireframe mesh when Radius gets updated
-            pWireframeMesh = graphic::MeshFactory::CreateSphere( bufferLayout, Radius, 10 );
+            pWireframeMesh = graphic::MeshFactory::CreateSphere( bufferLayout, 0.5f, 10 );
         }
 
         SphereColliderComponent( const SphereColliderComponent & ) = default;
 
-        float Radius = 0.5f;
+        geometric::Sphere Sphere{ DirectX::XMFLOAT3{ 0.0f, 0.0f, 0.0f }, 0.5f };
         bool IsTrigger = false;
         bool ShowColliderBounds = true;
 
         Ref< physics::PhysicsMaterial > pPhysicsMaterial = nullptr;
-        Ref< graphic::Mesh > pWireframeMesh = nullptr;  // TODO: Get rid of mesh, use geometry instead and render geometry
+        // TODO: Get rid of mesh, use geometry instead and render geometry
+        Ref< graphic::Mesh > pWireframeMesh = nullptr;
     };
 }
