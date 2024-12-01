@@ -29,7 +29,8 @@ namespace smile::physics::ecs
         {
             auto group = ecsEngine.GetGroup< RigidbodyComponent >(
                 smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
-            for ( auto entity : group )
+
+            m_AddRigidbodyToEntity = [&]( smile::ecs::EntityHandleType entity )
             {
                 const auto &[rigidbodyComponent, idComponent, transformComponent] =
                     ecsEngine
@@ -39,16 +40,21 @@ namespace smile::physics::ecs
                 Ref< Rigidbody > pRigidbody =
                     m_pPhysicsWorld->CreateRigidbody( rigidbodyComponent.BodyType, transformComponent.GetTransform() );
 
-                pRigidbody->SetLinearDrag( rigidbodyComponent.LinearDrag );
-                pRigidbody->SetAngularDrag( rigidbodyComponent.AngularDrag );
-                pRigidbody->SetKinematic( rigidbodyComponent.IsKinematic );
-                pRigidbody->SetCollisionDetection( rigidbodyComponent.CollisionDetection );
-                pRigidbody->LockTranslation( rigidbodyComponent.LockPositionX,
-                    rigidbodyComponent.LockPositionY,
-                    rigidbodyComponent.LockPositionZ );
-                pRigidbody->LockRotation( rigidbodyComponent.LockRotationX,
-                    rigidbodyComponent.LockRotationY,
-                    rigidbodyComponent.LockRotationZ );
+                if ( pRigidbody->IsDynamic() )
+                {
+                    pRigidbody->SetLinearDrag( rigidbodyComponent.LinearDrag );
+                    pRigidbody->SetAngularDrag( rigidbodyComponent.AngularDrag );
+                    pRigidbody->SetKinematic( rigidbodyComponent.IsKinematic );
+                    pRigidbody->SetCollisionDetection( rigidbodyComponent.CollisionDetection );
+                    pRigidbody->LockTranslation( rigidbodyComponent.LockPositionX,
+                        rigidbodyComponent.LockPositionY,
+                        rigidbodyComponent.LockPositionZ );
+                    pRigidbody->LockRotation( rigidbodyComponent.LockRotationX,
+                        rigidbodyComponent.LockRotationY,
+                        rigidbodyComponent.LockRotationZ );
+                    pRigidbody->SetMass( rigidbodyComponent.Mass );
+                }
+
                 pRigidbody->SetDisableGravity( rigidbodyComponent.DisableGravity );
 
                 if ( auto pBoxColliderComponent = ecsEngine.TryGetComponent< ecs::BoxColliderComponent >( entity ) )
@@ -91,16 +97,22 @@ namespace smile::physics::ecs
                     pPhysicsShape->SetTrigger( pCapsuleColliderComponent->IsTrigger );
                 }
 
-                pRigidbody->SetMass( rigidbodyComponent.Mass );
-
                 m_RigidbodyMap[idComponent.ID] = pRigidbody;
+            };
+
+            group.AddOnEntityAddedListener( &m_AddRigidbodyToEntity );
+
+            for ( auto entityHandle : group )
+            {
+                m_AddRigidbodyToEntity( entityHandle );
             }
         }
         // Create character controllers
         {
             auto group = ecsEngine.GetGroup< CharacterControllerComponent >(
                 smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
-            for ( auto entity : group )
+
+            m_AddCharacterControllerToEntity = [&]( smile::ecs::EntityHandleType entity )
             {
                 const auto &[characterControllerComponent, idComponent, transformComponent] =
                     ecsEngine.GetComponents< CharacterControllerComponent,
@@ -118,12 +130,32 @@ namespace smile::physics::ecs
                     characterControllerComponent.CollisionGroups, characterControllerComponent.CollisionIgnoreGroups );
 
                 m_CharacterControllerMap[idComponent.ID] = pCharacterController;
+            };
+
+            group.AddOnEntityAddedListener( &m_AddCharacterControllerToEntity );
+
+            for ( auto entityHandle : group )
+            {
+                m_AddCharacterControllerToEntity( entityHandle );
             }
         }
     }
 
     void PhysicsSystem::OnRemove( smile::ecs::ECSEngine &ecsEngine )
     {
+        {
+            auto group = ecsEngine.GetGroup< RigidbodyComponent >(
+                smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
+            group.RemoveOnEntityAddedListener( &m_AddRigidbodyToEntity );
+            //group.RemoveOnEntityRemovedListener( &m_RemoveRigidbodyFromEntity );
+        }
+        {
+            auto group = ecsEngine.GetGroup< CharacterControllerComponent >(
+                smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
+            group.RemoveOnEntityAddedListener( &m_AddCharacterControllerToEntity );
+            //group.RemoveOnEntityRemovedListener( &m_RemoveCharacterControllerFromEntity );
+        }
+
         System::OnRemove( ecsEngine );
 
         PhysicsEngine::GetInstance().DestroyWorld( m_pPhysicsWorld );
@@ -204,25 +236,5 @@ namespace smile::physics::ecs
         graphic::DebugRenderer::GetInstance().BeginScene( editorCamera );
         m_pPhysicsWorld->OnDebugRender();
         graphic::DebugRenderer::GetInstance().EndScene();
-    }
-
-    void PhysicsSystem::OnRigidbodyAdd(smile::ecs::EntityHandleType entityHandle)
-    {
-
-    }
-
-    void PhysicsSystem::OnRigidbodyRemove(smile::ecs::EntityHandleType entityHandle)
-    {
-
-    }
-
-    void PhysicsSystem::OnCharacterControllerAdd( smile::ecs::EntityHandleType entityHandle )
-    {
-
-    }
-
-    void PhysicsSystem::OnCharacterControllerRemove( smile::ecs::EntityHandleType entityHandle )
-    {
-
     }
 }

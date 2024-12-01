@@ -365,7 +365,7 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &rigidbodyComponent = entity.GetComponent< physics::ecs::RigidbodyComponent >();
-            output << YAML::Key << "BodyType" << YAML::Value << static_cast< Uint32 >( rigidbodyComponent.Type );
+            output << YAML::Key << "BodyType" << YAML::Value << static_cast< Uint32 >( rigidbodyComponent.BodyType );
             output << YAML::Key << "CollisionDetectionType" << YAML::Value
                    << static_cast< Uint32 >( rigidbodyComponent.CollisionDetection );
 
@@ -402,8 +402,8 @@ namespace smile::scene
             output << YAML::BeginMap;
 
             auto &boxColliderComponent = entity.GetComponent< physics::ecs::BoxColliderComponent >();
-            output << YAML::Key << "Size" << YAML::Value << boxColliderComponent.Size;
-            output << YAML::Key << "Offset" << YAML::Value << boxColliderComponent.Offset;
+            output << YAML::Key << "Size" << YAML::Value << boxColliderComponent.Box.Size;
+            output << YAML::Key << "Offset" << YAML::Value << boxColliderComponent.Box.Center;
             output << YAML::Key << "bTrigger" << YAML::Value << boxColliderComponent.IsTrigger;
             output << YAML::Key << "bShowColliderBounds" << YAML::Value << boxColliderComponent.ShowColliderBounds;
 
@@ -744,9 +744,8 @@ namespace smile::scene
                 {
                     auto &rbc = deserializedEntity.AddComponent< physics::ecs::RigidbodyComponent >();
 
-                    rbc.Type = static_cast< physics::ecs::RigidbodyComponent::BodyType >(
-                        rigidbodyComponent["BodyType"].as< int >() );
-                    rbc.CollisionDetection = static_cast< physics::ecs::RigidbodyComponent::CollisionDetectionType >(
+                    rbc.BodyType = static_cast< physics::RigidbodyType >( rigidbodyComponent["BodyType"].as< int >() );
+                    rbc.CollisionDetection = static_cast< physics::CollisionDetectionType >(
                         rigidbodyComponent["CollisionDetectionType"].as< int >() );
 
                     auto physicsMaterial = rigidbodyComponent["PhysicsMaterial"];
@@ -775,8 +774,8 @@ namespace smile::scene
                 {
                     auto &bcc = deserializedEntity.AddComponent< physics::ecs::BoxColliderComponent >();
 
-                    bcc.Size = boxColliderComponent["Size"].as< DirectX::XMFLOAT3 >();
-                    bcc.Offset = boxColliderComponent["Offset"].as< DirectX::XMFLOAT3 >();
+                    bcc.Box.Size = boxColliderComponent["Size"].as< DirectX::XMFLOAT3 >();
+                    bcc.Box.Center = boxColliderComponent["Offset"].as< DirectX::XMFLOAT3 >();
                     bcc.IsTrigger = boxColliderComponent["bTrigger"].as< bool >();
                     bcc.ShowColliderBounds = boxColliderComponent["bShowColliderBounds"].as< bool >();
 
@@ -819,14 +818,14 @@ namespace smile::scene
 
                     ccc.Radius = characterControllerComponent["Radius"].as< float >();
                     ccc.Height = characterControllerComponent["Height"].as< float >();
-                    ccc.ClimbingMode = static_cast< physics::ecs::CharacterControllerComponent::ClimbingModeType >(
+                    ccc.ClimbingMode = static_cast< physics::CharacterController::ClimbingModeType >(
                         characterControllerComponent["ClimbingMode"].as< Uint32 >() );
                     ccc.Name = characterControllerComponent["Name"].as< std::string >();
                     ccc.CollisionGroups = static_cast< physics::CollisionGroupFlag >(
                         characterControllerComponent["CollisionGroups"].as< Uint32 >() );
                     ccc.CollisionIgnoreGroups = static_cast< physics::CollisionGroupFlag >(
                         characterControllerComponent["CollisionIgnoreGroups"].as< Uint32 >() );
-                    ccc.CollisionFlags = static_cast< physics::ecs::CharacterControllerComponent::CollisionFlag >(
+                    ccc.CollisionFlags = static_cast< physics::CharacterController::CollisionFlag >(
                         characterControllerComponent["CollisionFlags"].as< Uint32 >() );
 
                     /*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];

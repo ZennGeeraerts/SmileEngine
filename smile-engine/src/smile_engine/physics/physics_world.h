@@ -41,7 +41,7 @@ namespace smile::physics
         Uint32 WorldBoundsSubdivisions = 2;
         Uint32 SolverIterations = 6;
         Uint32 SolverVelocityIterations = 1;
-        Ref< PhysicsMaterial > pDefaultPhysicsMaterial;
+        Ref< PhysicsMaterial > pDefaultPhysicsMaterial = CreateRef< PhysicsMaterial >();
     };
 
     class PhysicsWorld final

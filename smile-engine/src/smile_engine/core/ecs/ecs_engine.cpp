@@ -11,14 +11,14 @@ namespace smile::ecs
 {
     ECSEngine::~ECSEngine()
     {
+        while ( !m_pSystems.empty() )
+            RemoveSystem( m_pSystems.back() );
+
         for ( auto pComponentInterface : m_pComponents )
             delete pComponentInterface;
 
         for ( auto pGroup : m_pGroups )
             delete pGroup;
-
-        while ( !m_pSystems.empty() )
-            RemoveSystem( m_pSystems.back() );
     }
 
     void ECSEngine::DestroyEntity( EntityHandleType entityHandle )
@@ -112,6 +112,9 @@ namespace smile::ecs
 
             pComponentInterface->Clear();
         }
+
+        while ( !m_pSystems.empty() )
+            RemoveSystem( m_pSystems.back() );
 
         for ( auto pGroup : m_pGroups )
             delete pGroup;

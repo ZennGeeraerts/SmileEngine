@@ -661,7 +661,7 @@ namespace smile::scene
             {
                 const Uint32 bodyTypeCount = 2;
                 const char *bodyTypeStrs[bodyTypeCount]{ "Static", "Dynamic" };
-                const char *currentBodyTypeStr = bodyTypeStrs[static_cast< Uint32 >( rigidbodyComponent.Type )];
+                const char *currentBodyTypeStr = bodyTypeStrs[static_cast< Uint32 >( rigidbodyComponent.BodyType )];
                 if ( ImGui::BeginCombo( "Body Type", currentBodyTypeStr ) )
                 {
                     for ( Uint32 i{}; i < bodyTypeCount; ++i )
@@ -670,7 +670,7 @@ namespace smile::scene
                         if ( ImGui::Selectable( bodyTypeStrs[i], isSelected ) )
                         {
                             currentBodyTypeStr = bodyTypeStrs[i];
-                            rigidbodyComponent.Type = static_cast< physics::ecs::RigidbodyComponent::BodyType >( i );
+                            rigidbodyComponent.BodyType = static_cast< physics::RigidbodyType >( i );
                         }
 
                         if ( isSelected )
@@ -693,7 +693,7 @@ namespace smile::scene
                         {
                             currentCollisionDetectionStr = collisionDetectionStrs[i];
                             rigidbodyComponent.CollisionDetection =
-                                static_cast< physics::ecs::RigidbodyComponent::CollisionDetectionType >( i );
+                                static_cast< physics::CollisionDetectionType >( i );
                         }
 
                         if ( isSelected )
@@ -728,8 +728,8 @@ namespace smile::scene
             entity,
             []( auto &boxColliderComponent )
             {
-                ImGui::DragFloat3( "Size", &boxColliderComponent.Size.x, 0.03f );
-                ImGui::DragFloat3( "Offset", &boxColliderComponent.Offset.x, 0.03f );
+                ImGui::DragFloat3( "Size", &boxColliderComponent.Box.Size.x, 0.03f );
+                ImGui::DragFloat3( "Offset", &boxColliderComponent.Box.Center.x, 0.03f );
                 ImGui::Checkbox( "Trigger", &boxColliderComponent.IsTrigger );
                 ImGui::Checkbox( "Show Collider Bounds", &boxColliderComponent.ShowColliderBounds );
 
@@ -775,7 +775,7 @@ namespace smile::scene
                         {
                             currentClimbingModeStr = climbingModeStrs[i];
                             characterControllerComponent.ClimbingMode =
-                                static_cast< physics::ecs::CharacterControllerComponent::ClimbingModeType >( i );
+                                static_cast< physics::CharacterController::ClimbingModeType >( i );
                         }
 
                         if ( isSelected )

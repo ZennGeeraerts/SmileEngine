@@ -197,9 +197,69 @@ namespace smile::physics
         return pRigidbody->getMass();
     }
 
-    bool Rigidbody::IsDynamic() const
+    void Rigidbody::Translate( const DirectX::XMFLOAT3 &translation )
     {
-        return m_pImplementation->BodyType == RigidbodyType::Dynamic;
+        if ( !IsDynamic() )
+            return;
+
+        physx::PxTransform pxTransform = m_pImplementation->pRigidActor->getGlobalPose();
+        pxTransform.p = utils::ConvertToPhysXVector( translation );
+        pxTransform.q = utils::ConvertToPhysXQuat( GetRotation() );
+
+        if ( !IsKinematic() )
+        {
+            m_pImplementation->pRigidActor->setGlobalPose( pxTransform );
+        }
+        else
+        {
+            auto pRigidDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
+            pRigidDynamic->setKinematicTarget( pxTransform );
+        }
+    }
+
+    void Rigidbody::Rotate( const DirectX::XMFLOAT3 &rotation )
+    {
+        if ( !IsDynamic() )
+            return;
+
+        physx::PxTransform pxTransform = m_pImplementation->pRigidActor->getGlobalPose();
+        pxTransform.p = utils::ConvertToPhysXVector( GetPosition() );
+        pxTransform.q = ( physx::PxQuat{ rotation.x, { 1, 0, 0 } } * physx::PxQuat{ rotation.y, { 0, 1, 0 } } *
+                          physx::PxQuat{ rotation.z, { 0, 0, 1 } } );
+
+        if ( !IsKinematic() )
+        {
+            m_pImplementation->pRigidActor->setGlobalPose( pxTransform );
+        }
+        else
+        {
+            auto pRigidDynamic = reinterpret_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
+            pRigidDynamic->setKinematicTarget( pxTransform );
+        }
+    }
+
+    void Rigidbody::AddForce( const DirectX::XMFLOAT3 &force, bool autoAwake )
+    {
+        if ( !IsDynamic() || IsKinematic() )
+        {
+            SM_LOG_ERROR( "Rigidbody::AddForce > Cannot add a force to a static or kinematic actor" );
+            return;
+        }
+
+        auto pRigidDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
+        pRigidDynamic->addForce( utils::ConvertToPhysXVector( force ), physx::PxForceMode::eFORCE, autoAwake );
+    }
+
+    void Rigidbody::AddTorque( const DirectX::XMFLOAT3 &torque, bool autoAwake )
+    {
+        if ( !IsDynamic() || IsKinematic() )
+        {
+            SM_LOG_ERROR( "Rigidbody::AddTorque > Cannot add a torque to a static or kinematic actor" );
+            return;
+        }
+
+        auto pRigidDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
+        pRigidDynamic->addTorque( utils::ConvertToPhysXVector( torque ), physx::PxForceMode::eFORCE, autoAwake );
     }
 
     DirectX::XMFLOAT3 Rigidbody::GetPosition() const
@@ -224,6 +284,11 @@ namespace smile::physics
         }
 
         return utils::ConvertToDirectXQuat( pxTransform.q );
+    }
+
+    bool Rigidbody::IsDynamic() const
+    {
+        return m_pImplementation->BodyType == RigidbodyType::Dynamic;
     }
 
     Ref< PhysicsMaterial > Rigidbody::GetPhysicsMaterial() const
