@@ -12,6 +12,9 @@ namespace smile::ecs
 
     class GroupBase
     {
+        using OnEntityAddedListenerType = std::function< void( EntityHandleType ) >;
+        using OnEntityRemovedListenerType = std::function< void( EntityHandleType ) >;
+
       public:
         GroupBase( ECSEngine &engine );
         virtual ~GroupBase() = default;
@@ -21,13 +24,24 @@ namespace smile::ecs
         void AddEntity( EntityHandleType entityHandle );
         void RemoveEntity( EntityHandleType entityHandle );
 
-        void SetOnEntityAddedFunc( const std::function< void( EntityHandleType ) > &onEntityAddedFunc )
+        void AddOnEntityAddedListener( const OnEntityAddedListenerType *pOnEntityAddedListener )
         {
-            m_OnEntityAddedFunc = onEntityAddedFunc;
+            m_pOnEntityAddedListeners.emplace_back( pOnEntityAddedListener );
         }
-        void SetOnEntityRemovedFunc( const std::function< void( EntityHandleType ) > &onEntityRemovedFunc )
+        void RemoveOnEntityAddedListener( const OnEntityAddedListenerType *pOnEntityAddedListener )
         {
-            m_OnEntityRemovedFunc = onEntityRemovedFunc;
+            m_pOnEntityAddedListeners.erase( std::remove(
+                m_pOnEntityAddedListeners.begin(), m_pOnEntityAddedListeners.end(), pOnEntityAddedListener ) );
+        }
+
+        void AddOnEntityRemovedListener( const OnEntityRemovedListenerType *pOnEntityRemovedListener )
+        {
+            m_pOnEntityRemovedListeners.emplace_back( pOnEntityRemovedListener );
+        }
+        void RemoveOnEntityRemovedListener( const OnEntityRemovedListenerType *pOnEntityRemovedListener )
+        {
+            m_pOnEntityRemovedListeners.erase( std::remove(
+                m_pOnEntityRemovedListeners.begin(), m_pOnEntityRemovedListeners.end(), pOnEntityRemovedListener ) );
         }
 
         template < typename Component >
@@ -60,7 +74,7 @@ namespace smile::ecs
         IndexType m_EndIndex{ 0 };
 
       private:
-        std::function< void( EntityHandleType ) > m_OnEntityAddedFunc;
-        std::function< void( EntityHandleType ) > m_OnEntityRemovedFunc;
+        std::vector< const OnEntityAddedListenerType * > m_pOnEntityAddedListeners;
+        std::vector< const OnEntityRemovedListenerType * > m_pOnEntityRemovedListeners;
     };
 }

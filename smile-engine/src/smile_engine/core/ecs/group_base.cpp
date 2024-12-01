@@ -28,8 +28,8 @@ namespace smile::ecs
 
             ++m_EndIndex;
 
-            if ( m_OnEntityAddedFunc )
-                m_OnEntityAddedFunc( entityHandle );
+            for ( auto pOnEntityAddedListener : m_pOnEntityAddedListeners )
+                ( *pOnEntityAddedListener )( entityHandle );
         }
     }
 
@@ -48,8 +48,8 @@ namespace smile::ecs
 
             --m_EndIndex;
 
-            if ( m_OnEntityRemovedFunc )
-                m_OnEntityRemovedFunc( entityHandle );
+            for ( auto pOnEntityRemovedListener : m_pOnEntityRemovedListeners )
+                ( *pOnEntityRemovedListener )( entityHandle );
         }
     }
 

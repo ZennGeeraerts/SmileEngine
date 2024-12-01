@@ -56,9 +56,6 @@ namespace smile::scene
 
     void Scene::DestroyEntity( Entity entity )
     {
-        if ( physics::PhysicsEngine::IsPhysicsActor( entity ) )
-            physics::PhysicsEngine::RemoveActor( entity );
-
         auto pRelationship = entity.TryGetComponent< smile::ecs::Relationship >();
         if ( pRelationship )
         {
@@ -134,7 +131,7 @@ namespace smile::scene
 
     void Scene::OnSimulationStop()
     {
-        m_ECSEngine.AddSystem( &m_PhysicsSystem );
+        m_ECSEngine.RemoveSystem( &m_PhysicsSystem );
     }
 
     void Scene::OnUpdateRuntime( primitive::Timestep deltaTime )

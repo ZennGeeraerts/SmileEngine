@@ -50,6 +50,11 @@ namespace smile::scene
 
         Entity GetEntityByUUID( primitive::UUID uuid );
 
+        const physics::ecs::PhysicsSystem &GetPhysicsSystem() const
+        {
+            return m_PhysicsSystem;
+        }
+
       private:
         template < typename ComponentType >
         void OnComponentAdded( Entity entity, ComponentType &component );
