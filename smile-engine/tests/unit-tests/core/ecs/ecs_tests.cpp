@@ -291,4 +291,39 @@ TEST_CASE( "ECS" )
         REQUIRE( engine.GetComponent< AnotherComponent >( entities[2] ).name == "string" );
         REQUIRE( engine.GetComponent< AnotherComponent >( entities[3] ).name == "test" );
     }
+
+    SECTION( "On construction callback should execute after adding a component" )
+    {
+        ecs::ECSEngine engine{};
+        auto entity = engine.CreateEntity();
+
+        engine.RegisterComponent< TestComponent >();
+        engine.OnConstruction< TestComponent >().emplace_back(
+            []( ecs::ECSEngine &ecsEngine, ecs::EntityHandleType entityHandle )
+            {
+                TestComponent &component = ecsEngine.GetComponent< TestComponent >( entityHandle );
+                REQUIRE( component.x == 10 );
+                REQUIRE( component.y == 20 );
+            } );
+
+        engine.AddComponent< TestComponent >( entity, 10, 20 );
+    }
+
+    SECTION( "On destruction callback should execute after adding a component" )
+    {
+        ecs::ECSEngine engine{};
+        auto entity = engine.CreateEntity();
+
+        engine.RegisterComponent< TestComponent >();
+        engine.OnDestruction< TestComponent >().emplace_back(
+            []( ecs::ECSEngine &ecsEngine, ecs::EntityHandleType entityHandle )
+            {
+                TestComponent &component = ecsEngine.GetComponent< TestComponent >( entityHandle );
+                REQUIRE( component.x == 10 );
+                REQUIRE( component.y == 20 );
+            } );
+
+        engine.AddComponent< TestComponent >( entity, 10, 20 );
+        engine.RemoveComponent< TestComponent >( entity );
+    }
 }

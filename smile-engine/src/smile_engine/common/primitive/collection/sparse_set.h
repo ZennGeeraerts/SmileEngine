@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <numeric>
+#include <initializer_list>
 
 namespace smile::primitive
 {
@@ -19,6 +20,11 @@ namespace smile::primitive
         using ConstIterator = typename std::vector< IndexType >::const_iterator;
 
         SparseSet() = default;
+        SparseSet( const std::initializer_list< IndexType > &elements )
+        {
+            for ( IndexType element : elements )
+                Insert( element );
+        }
 
         ~SparseSet()
         {
