@@ -6,6 +6,7 @@
 
 #include "entity_handle_manager.h"
 #include "component_interface.h"
+#include "component_storage_handler.h"
 #include "component_list.h"
 #include "system.h"
 #include "group_base.h"
@@ -268,7 +269,7 @@ namespace smile::ecs
         void RegisterComponent()
         {
             ComponentInterface *pComponentInterface = new ComponentInterface{};
-            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >();
+            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( *this );
 
             m_pComponents.push_back( pComponentInterface );
 
@@ -290,7 +291,7 @@ namespace smile::ecs
             RegisterComponentIfNeeded< ComponentType >();
 
             ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            ComponentStorage *pComponentStorage = GetComponentStorage< ComponentType >();
+            auto *pComponentStorage = GetComponentStorage< ComponentType >();
 
             const IndexType index = pComponentInterface->m_Pool.Insert( entityHandle.GetIndex() );
 
@@ -505,6 +506,20 @@ namespace smile::ecs
                     next = poolRef.m_Sparse[pool.m_Dense[curr]];
                 }
             }
+        }
+
+        template < typename ComponentType >
+        auto &OnConstruction()
+        {
+            auto *pComponentStorage = GetComponentStorage< ComponentType >();
+            return pComponentStorage->OnConstruction();
+        }
+
+        template < typename ComponentType >
+        auto &OnDestruction()
+        {
+            auto *pComponentStorage = GetComponentStorage< ComponentType >();
+            return pComponentStorage->OnDestruction();
         }
 
       private:
