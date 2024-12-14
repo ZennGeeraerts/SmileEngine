@@ -13,7 +13,7 @@
 
 #include "smile_engine/graphic/renderer/debug_renderer.h"
 
-#include <PhysX/PxPhysicsAPI.h>
+#include <PxPhysicsAPI.h>
 
 namespace smile::physics
 {

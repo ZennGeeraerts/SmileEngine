@@ -10,7 +10,7 @@
 
 #include "physx_utils.h"
 
-#include <PhysX/PxPhysicsAPI.h>
+#include <PxPhysicsAPI.h>
 
 namespace smile::physics
 {

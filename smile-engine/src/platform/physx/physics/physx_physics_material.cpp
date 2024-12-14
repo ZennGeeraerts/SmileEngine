@@ -7,7 +7,7 @@
 
 #include "smile_engine/physics/physics_engine.h"
 
-#include <PhysX/PxPhysicsAPI.h>
+#include <PxPhysicsAPI.h>
 
 namespace smile::physics
 {
