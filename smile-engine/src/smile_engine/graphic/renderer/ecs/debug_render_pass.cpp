@@ -8,8 +8,6 @@
 #include "smile_engine/graphic/renderer/debug_renderer.h"
 #include "smile_engine/core/scene/components.h"
 
-#include <PhysX/PxPhysicsAPI.h>
-
 namespace smile::graphic::ecs
 {
     void DebugRenderPass::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )

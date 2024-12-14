@@ -8,7 +8,7 @@
 #include "smile_engine/physics/rigidbody.h"
 #include "physx_utils.h"
 
-#include <PhysX/PxPhysicsAPI.h>
+#include <PxPhysicsAPI.h>
 
 namespace smile::physics
 {
@@ -38,8 +38,10 @@ namespace smile::physics
                     reinterpret_cast< physx::PxRigidActor * >( m_pImplementation->pRigidbody->GetInternal() );
                 auto pPxMaterial =
                     reinterpret_cast< physx::PxMaterial * >( m_pImplementation->pPhysicsMaterial->GetInternal() );
+
                 m_pImplementation->pShape =
                     physx::PxRigidActorExt::createExclusiveShape( *pRigidActor, pxBoxGeometry, *pPxMaterial );
+                SM_ASSERT( m_pImplementation->pShape, "PhysicsShape::PhysicsShape > Failed to create PhysX Shape" );
 
                 DirectX::XMMATRIX transformMat =
                     DirectX::XMMatrixScaling( 1.f, 1.f, 1.f ) * DirectX::XMMatrixRotationRollPitchYaw( 0.f, 0.f, 0.f ) *

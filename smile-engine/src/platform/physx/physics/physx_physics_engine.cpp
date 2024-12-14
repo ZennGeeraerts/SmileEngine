@@ -7,7 +7,7 @@
 
 #include "physx_diagnostics.h"
 
-#include <PhysX/PxPhysicsAPI.h>
+#include <PxPhysicsAPI.h>
 
 namespace smile::physics
 {

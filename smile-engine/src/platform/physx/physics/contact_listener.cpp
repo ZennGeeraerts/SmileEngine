@@ -7,7 +7,7 @@
 
 #include "smile_engine/core/scene/entity.h"
 
-#include <PhysX/PxRigidActor.h>
+#include <PxRigidActor.h>
 
 namespace smile::physics
 {
