@@ -292,6 +292,22 @@ namespace smile::scene
         return Entity{ m_EntityMap.at( uuid ), this };
     }
 
+    void Scene::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
+    {
+        Entity entity = GetEntityByUUID( entityID );
+        Ref< physics::Rigidbody > pRigidbody = m_PhysicsSystem.GetRigidbody( entityID );
+        pRigidbody->AddForce( force, autoAwake );
+    }
+
+    void
+    Scene::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
+    {
+        Entity entity = GetEntityByUUID( entityID );
+        Ref< physics::CharacterController > pCharacterController = m_PhysicsSystem.GetCharacterController( entityID );
+        auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();
+        characterControllerComponent.CollisionFlags = pCharacterController->Move( displacement, minDist );
+    }
+
     template < typename ComponentType >
     void Scene::OnComponentAdded( Entity entity, ComponentType &component )
     {

@@ -59,32 +59,14 @@ namespace smile::scripting
     static void RigidbodyComponent_AddForce( primitive::UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
-
-        const auto &physicsSystem = pScene->GetPhysicsSystem();
-        Ref< physics::Rigidbody > pRigidbody = physicsSystem.GetRigidbody( entityID );
-        if ( !pRigidbody )
-        {
-            SM_LOG_ERROR( "ScriptGlue::RigidbodyComponent_AddForce > Physics actor not found" );
-            return;
-        }
-
-        pRigidbody->AddForce( *pForce, autoAwake );
+        pScene->AddForce( entityID, *pForce, autoAwake );
     }
 
     static void
     CharacterControllerComponent_Move( primitive::UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
     {
         scene::Scene *pScene = ScriptEngine::GetSceneContext();
-
-        const auto &physicsSystem = pScene->GetPhysicsSystem();
-        Ref< physics::CharacterController > pCharacterController = physicsSystem.GetCharacterController( entityID );
-        if ( !pCharacterController )
-        {
-            SM_LOG_ERROR( "ScriptGlue::CharacterControllerComponent_Move > Character controller not found" );
-            return;
-        }
-
-        pCharacterController->Move( *pDisplacement, minDist );
+        pScene->MoveCharacterController( entityID, *pDisplacement, minDist );
     }
 
     static bool Input_IsKeyPressed( input::KeyCode keyCode )

@@ -50,10 +50,8 @@ namespace smile::scene
 
         Entity GetEntityByUUID( primitive::UUID uuid );
 
-        const physics::ecs::PhysicsSystem &GetPhysicsSystem() const
-        {
-            return m_PhysicsSystem;
-        }
+        void AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake );
+        void MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist );
 
       private:
         template < typename ComponentType >
