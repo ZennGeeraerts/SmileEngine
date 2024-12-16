@@ -27,9 +27,6 @@ namespace smile::ecs
             }
 
             ++m_EndIndex;
-
-            for ( auto pOnEntityAddedListener : m_pOnEntityAddedListeners )
-                ( *pOnEntityAddedListener )( entityHandle );
         }
     }
 
@@ -47,9 +44,6 @@ namespace smile::ecs
             }
 
             --m_EndIndex;
-
-            for ( auto pOnEntityRemovedListener : m_pOnEntityRemovedListeners )
-                ( *pOnEntityRemovedListener )( entityHandle );
         }
     }
 

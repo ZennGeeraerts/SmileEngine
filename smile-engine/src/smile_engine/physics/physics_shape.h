@@ -17,7 +17,7 @@ namespace smile::physics
 
       public:
         PhysicsShape( const Rigidbody *pRigidbody,
-            const PhysicsGeometry &geometry,
+            const PhysicsGeometry *pGeometry,
             Ref< PhysicsMaterial > pPhysicsMaterial );
         ~PhysicsShape();
 

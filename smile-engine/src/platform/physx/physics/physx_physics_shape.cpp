@@ -20,17 +20,17 @@ namespace smile::physics
     };
 
     PhysicsShape::PhysicsShape( const Rigidbody *pRigidbody,
-        const PhysicsGeometry &geometry,
+        const PhysicsGeometry *pGeometry,
         Ref< PhysicsMaterial > pPhysicsMaterial )
     {
         m_pImplementation->pRigidbody = pRigidbody;
         m_pImplementation->pPhysicsMaterial = pPhysicsMaterial;
 
-        switch ( geometry.Type )
+        switch ( pGeometry->Type )
         {
             case PhysicsGeometryType::Box:
             {
-                const auto boxGeometry = *static_cast< const PhysicsBoxGeometry * >( &geometry );
+                const auto boxGeometry = *static_cast< const PhysicsBoxGeometry * >( pGeometry );
                 physx::PxBoxGeometry pxBoxGeometry = physx::PxBoxGeometry{
                     boxGeometry.Box.Size.x, boxGeometry.Box.Size.y, boxGeometry.Box.Size.z };
 
@@ -55,7 +55,7 @@ namespace smile::physics
             }
             case PhysicsGeometryType::Sphere:
             {
-                const auto sphereGeometry = *static_cast< const PhysicsSphereGeometry * >( &geometry );
+                const auto sphereGeometry = *static_cast< const PhysicsSphereGeometry * >( pGeometry );
                 physx::PxSphereGeometry pxSphereGeometry = physx::PxSphereGeometry{ sphereGeometry.Sphere.Radius };
 
                 auto pRigidActor =
@@ -69,7 +69,7 @@ namespace smile::physics
             }
             case PhysicsGeometryType::Capsule:
             {
-                const auto capsuleGeometry = *static_cast< const PhysicsCapsuleGeometry * >( &geometry );
+                const auto capsuleGeometry = *static_cast< const PhysicsCapsuleGeometry * >( pGeometry );
 
                 physx::PxCapsuleGeometry pxCapsuleGeometry =
                     physx::PxCapsuleGeometry{ capsuleGeometry.Capsule.Radius, capsuleGeometry.Capsule.Height };
@@ -95,6 +95,7 @@ namespace smile::physics
         filterData.word0 = BIT( 0 );
         filterData.word1 = BIT( 0 );
         m_pImplementation->pShape->setSimulationFilterData( filterData );
+        m_pImplementation->pShape->userData = this;
     }
 
     PhysicsShape::~PhysicsShape()
@@ -102,8 +103,8 @@ namespace smile::physics
         if ( m_pImplementation->pShape && m_pImplementation->pRigidbody &&
              m_pImplementation->pRigidbody->GetInternal() )
         {
-            m_pImplementation->pShape->release();
-            m_pImplementation->pShape = nullptr;
+            auto pRigidActor = static_cast< physx::PxRigidActor * >( m_pImplementation->pRigidbody->GetInternal() );
+            pRigidActor->detachShape( *m_pImplementation->pShape );
         }
     }
 

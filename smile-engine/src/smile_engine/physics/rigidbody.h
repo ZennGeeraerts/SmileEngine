@@ -45,7 +45,7 @@ namespace smile::physics
         Rigidbody &operator=( const Rigidbody & ) = delete;
         Rigidbody &operator=( Rigidbody && ) = delete;
 
-        Ref< PhysicsShape > CreateShape( const PhysicsGeometry &geometry );
+        Ref< PhysicsShape > CreateShape( const PhysicsGeometry *pGeometry );
         void RemoveShape( Ref< PhysicsShape > pPhysicsShape );
 
         void SetLinearDrag( float linearDrag );

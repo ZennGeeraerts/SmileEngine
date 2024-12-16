@@ -12,9 +12,6 @@ namespace smile::ecs
 
     class GroupBase
     {
-        using OnEntityAddedListenerType = std::function< void( EntityHandleType ) >;
-        using OnEntityRemovedListenerType = std::function< void( EntityHandleType ) >;
-
       public:
         GroupBase( ECSEngine &engine );
         virtual ~GroupBase() = default;
@@ -23,26 +20,6 @@ namespace smile::ecs
 
         void AddEntity( EntityHandleType entityHandle );
         void RemoveEntity( EntityHandleType entityHandle );
-
-        void AddOnEntityAddedListener( const OnEntityAddedListenerType *pOnEntityAddedListener )
-        {
-            m_pOnEntityAddedListeners.emplace_back( pOnEntityAddedListener );
-        }
-        void RemoveOnEntityAddedListener( const OnEntityAddedListenerType *pOnEntityAddedListener )
-        {
-            m_pOnEntityAddedListeners.erase( std::remove(
-                m_pOnEntityAddedListeners.begin(), m_pOnEntityAddedListeners.end(), pOnEntityAddedListener ) );
-        }
-
-        void AddOnEntityRemovedListener( const OnEntityRemovedListenerType *pOnEntityRemovedListener )
-        {
-            m_pOnEntityRemovedListeners.emplace_back( pOnEntityRemovedListener );
-        }
-        void RemoveOnEntityRemovedListener( const OnEntityRemovedListenerType *pOnEntityRemovedListener )
-        {
-            m_pOnEntityRemovedListeners.erase( std::remove(
-                m_pOnEntityRemovedListeners.begin(), m_pOnEntityRemovedListeners.end(), pOnEntityRemovedListener ) );
-        }
 
         template < typename Component >
         bool HasComponent() const
@@ -72,9 +49,5 @@ namespace smile::ecs
         std::vector< ComponentInterface * > m_pGetPools{};
 
         IndexType m_EndIndex{ 0 };
-
-      private:
-        std::vector< const OnEntityAddedListenerType * > m_pOnEntityAddedListeners;
-        std::vector< const OnEntityRemovedListenerType * > m_pOnEntityRemovedListeners;
     };
 }
