@@ -30,7 +30,7 @@ namespace smile::physics::ecs
             auto group = ecsEngine.GetGroup< RigidbodyComponent >(
                 smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
 
-            m_AddRigidbodyToEntity = [&]( smile::ecs::EntityHandleType entity )
+            auto onRigidbodyAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandleType entity )
             {
                 const auto &[rigidbodyComponent, idComponent, transformComponent] =
                     ecsEngine
@@ -68,43 +68,43 @@ namespace smile::physics::ecs
                         box.Size.z = box.Size.z * transformComponent.WorldScale.z / 2.0f;
 
                     auto boxGeometry = PhysicsBoxGeometry{ box };
-                    Ref< PhysicsShape > pPhysicsShape = pRigidbody->CreateShape( boxGeometry );
+                    Ref< PhysicsShape > pPhysicsShape = pRigidbody->CreateShape( &boxGeometry );
                     pPhysicsShape->SetTrigger( pBoxColliderComponent->IsTrigger );
                 }
 
                 if ( auto pSphereColliderComponent =
                          ecsEngine.TryGetComponent< ecs::SphereColliderComponent >( entity ) )
                 {
-                    float radius = pSphereColliderComponent->Radius;
+                    float radius = pSphereColliderComponent->Sphere.Radius;
                     if ( transformComponent.WorldScale.x != 0.0f )
                         radius *= transformComponent.WorldScale.x;
 
                     auto sphereGeometry = PhysicsSphereGeometry{ geometric::Sphere{ DirectX::XMFLOAT3{}, radius } };
-                    Ref< PhysicsShape > pPhysicsShape = pRigidbody->CreateShape( sphereGeometry );
+                    Ref< PhysicsShape > pPhysicsShape = pRigidbody->CreateShape( &sphereGeometry );
                     pPhysicsShape->SetTrigger( pSphereColliderComponent->IsTrigger );
                 }
 
                 if ( auto pCapsuleColliderComponent =
                          ecsEngine.TryGetComponent< ecs::CapsuleColliderComponent >( entity ) )
                 {
-                    const float radius = pCapsuleColliderComponent->Radius *
+                    const float radius = pCapsuleColliderComponent->Capsule.Radius *
                                          std::max( transformComponent.WorldScale.x, transformComponent.WorldScale.z );
 
                     auto capsuleGeometry = PhysicsCapsuleGeometry{ geometric::Capsule{ DirectX::XMFLOAT3{},
                         radius,
-                        pCapsuleColliderComponent->Height / 2.0f * transformComponent.WorldScale.y } };
-                    Ref< PhysicsShape > pPhysicsShape = pRigidbody->CreateShape( capsuleGeometry );
+                        pCapsuleColliderComponent->Capsule.Height / 2.0f * transformComponent.WorldScale.y } };
+                    Ref< PhysicsShape > pPhysicsShape = pRigidbody->CreateShape( &capsuleGeometry );
                     pPhysicsShape->SetTrigger( pCapsuleColliderComponent->IsTrigger );
                 }
 
                 m_RigidbodyMap[idComponent.ID] = pRigidbody;
             };
 
-            group.AddOnEntityAddedListener( &m_AddRigidbodyToEntity );
+            ecsEngine.OnConstruction< RigidbodyComponent >().emplace_back( onRigidbodyAddedFunc );
 
             for ( auto entityHandle : group )
             {
-                m_AddRigidbodyToEntity( entityHandle );
+                onRigidbodyAddedFunc( ecsEngine, entityHandle );
             }
         }
         // Create character controllers
@@ -112,7 +112,7 @@ namespace smile::physics::ecs
             auto group = ecsEngine.GetGroup< CharacterControllerComponent >(
                 smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
 
-            m_AddCharacterControllerToEntity = [&]( smile::ecs::EntityHandleType entity )
+            auto onCharacterControllerAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandleType entity )
             {
                 const auto &[characterControllerComponent, idComponent, transformComponent] =
                     ecsEngine.GetComponents< CharacterControllerComponent,
@@ -132,37 +132,27 @@ namespace smile::physics::ecs
                 m_CharacterControllerMap[idComponent.ID] = pCharacterController;
             };
 
-            group.AddOnEntityAddedListener( &m_AddCharacterControllerToEntity );
+            ecsEngine.OnConstruction< CharacterControllerComponent >().emplace_back( onCharacterControllerAddedFunc );
 
             for ( auto entityHandle : group )
             {
-                m_AddCharacterControllerToEntity( entityHandle );
+                onCharacterControllerAddedFunc( ecsEngine, entityHandle );
             }
         }
     }
 
     void PhysicsSystem::OnRemove( smile::ecs::ECSEngine &ecsEngine )
     {
-        {
-            auto group = ecsEngine.GetGroup< RigidbodyComponent >(
-                smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
-            group.RemoveOnEntityAddedListener( &m_AddRigidbodyToEntity );
-            //group.RemoveOnEntityRemovedListener( &m_RemoveRigidbodyFromEntity );
-        }
-        {
-            auto group = ecsEngine.GetGroup< CharacterControllerComponent >(
-                smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
-            group.RemoveOnEntityAddedListener( &m_AddCharacterControllerToEntity );
-            //group.RemoveOnEntityRemovedListener( &m_RemoveCharacterControllerFromEntity );
-        }
+        ecsEngine.OnConstruction< RigidbodyComponent >().clear();
+        ecsEngine.OnConstruction< CharacterControllerComponent >().clear();
 
         System::OnRemove( ecsEngine );
 
-        PhysicsEngine::GetInstance().DestroyWorld( m_pPhysicsWorld );
-        m_pPhysicsWorld = nullptr;
-
         m_RigidbodyMap.clear();
         m_CharacterControllerMap.clear();
+
+        PhysicsEngine::GetInstance().DestroyWorld( m_pPhysicsWorld );
+        m_pPhysicsWorld = nullptr;
     }
 
     void PhysicsSystem::OnUpdate( primitive::Timestep deltaTime )
@@ -224,17 +214,11 @@ namespace smile::physics::ecs
         }
     }
 
-    void PhysicsSystem::OnDebugRender( const graphic::Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    void PhysicsSystem::OnDebugRender()
     {
-        graphic::DebugRenderer::GetInstance().BeginScene( camera, cameraTransform );
-        m_pPhysicsWorld->OnDebugRender();
-        graphic::DebugRenderer::GetInstance().EndScene();
-    }
+        if ( !m_pPhysicsWorld )
+            return;
 
-    void PhysicsSystem::OnDebugRender( const graphic::EditorCamera &editorCamera )
-    {
-        graphic::DebugRenderer::GetInstance().BeginScene( editorCamera );
         m_pPhysicsWorld->OnDebugRender();
-        graphic::DebugRenderer::GetInstance().EndScene();
     }
 }

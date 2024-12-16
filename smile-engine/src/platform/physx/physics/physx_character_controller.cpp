@@ -116,7 +116,7 @@ namespace smile::physics
     {
         physx::PxFilterData filterData{ static_cast< Uint32 >( groups ), static_cast< Uint32 >( ignoreGroups ), 0, 0 };
 
-        SM_ASSERT( !m_pImplementation->pController, "CharacterController::SetCollisionGroups > Controller is null" );
+        SM_ASSERT( m_pImplementation->pController, "CharacterController::SetCollisionGroups > Controller is null" );
 
         const auto pActor = m_pImplementation->pController->getActor();
         const auto shapeCount = pActor->getNbShapes();

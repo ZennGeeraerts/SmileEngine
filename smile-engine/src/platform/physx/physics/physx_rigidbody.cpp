@@ -62,17 +62,18 @@ namespace smile::physics
 
     Rigidbody::~Rigidbody()
     {
-        if ( m_pImplementation->pRigidActor && m_pImplementation->pPhysicsWorld &&
-             m_pImplementation->pPhysicsWorld->GetInternal() )
+        m_pImplementation->pShapes.clear();
+
+        if ( m_pImplementation->pRigidActor )
         {
             m_pImplementation->pRigidActor->release();
             m_pImplementation->pRigidActor = nullptr;
         }
     }
 
-    Ref< PhysicsShape > Rigidbody::CreateShape( const PhysicsGeometry &geometry )
+    Ref< PhysicsShape > Rigidbody::CreateShape( const PhysicsGeometry *pGeometry )
     {
-        auto pShape = CreateRef< PhysicsShape >( this, geometry, m_pImplementation->pPhysicsMaterial );
+        auto pShape = CreateRef< PhysicsShape >( this, pGeometry, m_pImplementation->pPhysicsMaterial );
         m_pImplementation->pShapes.emplace_back( pShape );
         return pShape;
     }

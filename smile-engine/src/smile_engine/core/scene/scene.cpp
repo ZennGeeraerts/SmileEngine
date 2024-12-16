@@ -144,19 +144,21 @@ namespace smile::scene
         }
 
         m_ECSEngine.OnUpdate();
-
+        m_PhysicsSystem.OnDebugRender();
         graphic::RenderEngine::OnRender();
     }
 
     void Scene::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
+        m_PhysicsSystem.OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
+        m_PhysicsSystem.OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 

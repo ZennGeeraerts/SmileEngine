@@ -108,6 +108,9 @@ namespace smile::physics
 
     PhysicsWorld::~PhysicsWorld()
     {
+        m_pImplementation->pRigidbodies.clear();
+        m_pImplementation->pCharacterControllers.clear();
+
         if ( m_pImplementation->pControllerManager )
         {
             m_pImplementation->pControllerManager->release();
@@ -125,6 +128,7 @@ namespace smile::physics
         const DirectX::XMFLOAT4X4 &initialTransform )
     {
         auto pRigidbody = CreateRef< Rigidbody >( this, bodyType, initialTransform );
+        m_pImplementation->pScene->addActor( *static_cast< physx::PxActor * >( pRigidbody->GetInternal() ) );
         m_pImplementation->pRigidbodies.emplace_back( pRigidbody );
         return pRigidbody;
     }
@@ -171,10 +175,10 @@ namespace smile::physics
         {
             const auto &line = pDebugLines[i];
 
-            const DirectX::XMFLOAT3 start = physics::utils::ConvertToDirectXVector( line.pos0 );
-            const DirectX::XMFLOAT3 end = physics::utils::ConvertToDirectXVector( line.pos1 );
-            const auto colorStart = physics::utils::ConvertToDirectXColor( line.color0 );
-            const auto colorEnd = physics::utils::ConvertToDirectXColor( line.color1 );
+            const DirectX::XMFLOAT3 start = utils::ConvertToDirectXVector( line.pos0 );
+            const DirectX::XMFLOAT3 end = utils::ConvertToDirectXVector( line.pos1 );
+            const auto colorStart = utils::ConvertToDirectXColor( line.color0 );
+            const auto colorEnd = utils::ConvertToDirectXColor( line.color1 );
 
             graphic::DebugRenderer::GetInstance().SubmitLine( start, end, colorStart, colorEnd );
         }

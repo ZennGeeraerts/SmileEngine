@@ -30,8 +30,7 @@ namespace smile::physics::ecs
         void OnRemove( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnUpdate( primitive::Timestep deltaTime );
 
-        void OnDebugRender( const graphic::Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
-        void OnDebugRender( const graphic::EditorCamera &editorCamera );
+        void OnDebugRender();
 
         Ref< Rigidbody > GetRigidbody( primitive::UUID entityID ) const
         {
@@ -52,11 +51,5 @@ namespace smile::physics::ecs
         Ref< PhysicsWorld > m_pPhysicsWorld;
         mutable std::unordered_map< primitive::UUID, Ref< Rigidbody > > m_RigidbodyMap;
         mutable std::unordered_map< primitive::UUID, Ref< CharacterController > > m_CharacterControllerMap;
-
-        std::function< void( smile::ecs::EntityHandleType ) > m_AddRigidbodyToEntity;
-        std::function< void( smile::ecs::EntityHandleType ) > m_RemoveRigidbodyFromEntity;
-
-        std::function< void( smile::ecs::EntityHandleType ) > m_AddCharacterControllerToEntity;
-        std::function< void( smile::ecs::EntityHandleType ) > m_RemoveCharacterControllerFromEntity;
     };
 }
