@@ -4,35 +4,54 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile_engine/core/scene/entity.h"
+#include "smile_engine/common/compiled/pimpl.h"
 #include "collision_group.h"
 
-namespace physx
-{
-    class PxController;
-}
+#include <DirectXMath.h>
 
 namespace smile::physics
 {
+    class PhysicsWorld;
+
     class CharacterController final
     {
+      private:
+        struct Opaque;
+
       public:
-        CharacterController( scene::Entity entity );
+        enum class ClimbingModeType : Uint8
+        {
+            Easy,
+            Constrained,
+            Last
+        };
+
+        enum class CollisionFlag : Uint8
+        {
+            Sides = BIT( 0 ), // Character is colliding to the sides.
+            Up = BIT( 1 ),    // Character has collision above.
+            Down = BIT( 2 )   // Character has collision below.
+        };
+
+      public:
+        CharacterController( const PhysicsWorld *pPhysicsWorld,
+            float radius,
+            float height,
+            ClimbingModeType climbingMode,
+            const DirectX::XMFLOAT3 &initialTranslation );
         ~CharacterController();
 
-        void UpdateTransform();
-
         void Translate( const DirectX::XMFLOAT3 &translation );
-        void Move( const DirectX::XMFLOAT3 &displacement, float minDist = 0 );
+        CollisionFlag Move( const DirectX::XMFLOAT3 &displacement, float minDist = 0 );
 
-        void SetCollisionGroups( const CollisionGroupFlag groups );
-        void SetCollisionIgnoreGroups( const CollisionGroupFlag ignoreGroups );
+        void SetCollisionGroups( const CollisionGroupFlag groups, const CollisionGroupFlag ignoreGroups );
+
+        void SetName( const std::string &name );
 
         DirectX::XMFLOAT3 GetPosition() const;
         DirectX::XMFLOAT3 GetFootPosition() const;
 
       private:
-        scene::Entity m_Entity;
-        physx::PxController *m_pController;
+        compiled::PImpl< Opaque > m_pImplementation;
     };
 }

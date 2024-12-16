@@ -23,6 +23,7 @@ add_module(physics)
 add_module(scripting)
 
 add_platform(directx11)
+add_platform(physx)
 
 set(LIB_DIRS
     smile-engine
@@ -83,7 +84,7 @@ add_custom_command(
     TARGET smile-editor
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysX_64.dll
+        ${CMAKE_SOURCE_DIR}/conan/$<CONFIG>/PhysX.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -91,7 +92,7 @@ add_custom_command(
     TARGET smile-editor
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCommon_64.dll
+        ${CMAKE_SOURCE_DIR}/conan/$<CONFIG>/PhysXCommon.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -99,7 +100,7 @@ add_custom_command(
     TARGET smile-editor
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXCooking_64.dll
+        ${CMAKE_SOURCE_DIR}/conan/$<CONFIG>/PhysXCooking.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -107,7 +108,7 @@ add_custom_command(
     TARGET smile-editor
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/PhysX/lib/$<CONFIG>/PhysXFoundation_64.dll
+        ${CMAKE_SOURCE_DIR}/conan/$<CONFIG>/PhysXFoundation.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 

@@ -21,15 +21,6 @@ namespace smile::ecs
         void AddEntity( EntityHandleType entityHandle );
         void RemoveEntity( EntityHandleType entityHandle );
 
-        void SetOnEntityAddedFunc( const std::function< void( EntityHandleType ) > &onEntityAddedFunc )
-        {
-            m_OnEntityAddedFunc = onEntityAddedFunc;
-        }
-        void SetOnEntityRemovedFunc( const std::function< void( EntityHandleType ) > &onEntityRemovedFunc )
-        {
-            m_OnEntityRemovedFunc = onEntityRemovedFunc;
-        }
-
         template < typename Component >
         bool HasComponent() const
         {
@@ -58,9 +49,5 @@ namespace smile::ecs
         std::vector< ComponentInterface * > m_pGetPools{};
 
         IndexType m_EndIndex{ 0 };
-
-      private:
-        std::function< void( EntityHandleType ) > m_OnEntityAddedFunc;
-        std::function< void( EntityHandleType ) > m_OnEntityRemovedFunc;
     };
 }

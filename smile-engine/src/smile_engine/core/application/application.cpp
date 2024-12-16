@@ -9,7 +9,6 @@
 #include "smile_engine/core/input/input.h"
 #include "smile_engine/graphic/renderer/render_engine.h"
 #include "smile_engine/graphic/renderer/render_command.h"
-#include "smile_engine/physics/physics_engine.h"
 #include "smile_engine/scripting/script_engine.h"
 
 #include "timer.h"
@@ -37,7 +36,6 @@ namespace smile::application
         pMainWindow->SetVSync( false );
 
         graphic::RenderEngine::Initialize( pMainWindow );
-        physics::PhysicsEngine::Initialize();
         scripting::ScriptEngine::Initialize();
 
         m_pImGuiLayer = new imgui::ImGuiLayer{};
@@ -47,7 +45,6 @@ namespace smile::application
     Application::~Application()
     {
         scripting::ScriptEngine::ShutDown();
-        physics::PhysicsEngine::ShutDown();
         graphic::RenderEngine::ShutDown();
     }
 

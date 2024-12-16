@@ -23,7 +23,7 @@
 
 namespace smile::scene
 {
-    Scene::Scene() : m_TransformSystem{ this }, m_AnimationSystem{}, m_CameraSystem{}
+    Scene::Scene() : m_TransformSystem{}, m_PhysicsSystem{}, m_AnimationSystem{}, m_CameraSystem{}
     {
     }
 
@@ -56,9 +56,6 @@ namespace smile::scene
 
     void Scene::DestroyEntity( Entity entity )
     {
-        if ( physics::PhysicsEngine::IsPhysicsActor( entity ) )
-            physics::PhysicsEngine::RemoveActor( entity );
-
         auto pRelationship = entity.TryGetComponent< smile::ecs::Relationship >();
         if ( pRelationship )
         {
@@ -123,37 +120,18 @@ namespace smile::scene
 
     void Scene::OnRuntimeStop()
     {
-        physics::PhysicsEngine::DestroyScene();
+        OnSimulationStop();
         scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void Scene::OnSimulationStart()
     {
-        physics::PhysicsEngine::CreateScene();
-
-        // Create physisc actors
-        {
-            auto view = m_ECSEngine.GetView< physics::ecs::RigidbodyComponent >();
-            for ( auto e : view )
-            {
-                Entity entity = { e, this };
-                physics::PhysicsEngine::CreateActor( entity );
-            }
-        }
-        // Create character controllers
-        {
-            auto view = m_ECSEngine.GetView< physics::ecs::CharacterControllerComponent >();
-            for ( auto e : view )
-            {
-                Entity entity = { e, this };
-                physics::PhysicsEngine::CreateCharacterController( entity );
-            }
-        }
+        m_ECSEngine.AddSystem( &m_PhysicsSystem );
     }
 
     void Scene::OnSimulationStop()
     {
-        physics::PhysicsEngine::DestroyScene();
+        m_ECSEngine.RemoveSystem( &m_PhysicsSystem );
     }
 
     void Scene::OnUpdateRuntime( primitive::Timestep deltaTime )
@@ -165,26 +143,22 @@ namespace smile::scene
             scripting::ScriptEngine::OnUpdateEntity( entity, deltaTime );
         }
 
-        physics::PhysicsEngine::Simulate( deltaTime );
-
         m_ECSEngine.OnUpdate();
-
+        m_PhysicsSystem.OnDebugRender();
         graphic::RenderEngine::OnRender();
     }
 
     void Scene::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
-        physics::PhysicsEngine::Simulate( deltaTime );
-
         m_ECSEngine.OnUpdate();
-
+        m_PhysicsSystem.OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-
+        m_PhysicsSystem.OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
@@ -316,6 +290,22 @@ namespace smile::scene
     {
         SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "Scene::GetEntityByUUID > Invalid UUID" )
         return Entity{ m_EntityMap.at( uuid ), this };
+    }
+
+    void Scene::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
+    {
+        Entity entity = GetEntityByUUID( entityID );
+        Ref< physics::Rigidbody > pRigidbody = m_PhysicsSystem.GetRigidbody( entityID );
+        pRigidbody->AddForce( force, autoAwake );
+    }
+
+    void
+    Scene::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
+    {
+        Entity entity = GetEntityByUUID( entityID );
+        Ref< physics::CharacterController > pCharacterController = m_PhysicsSystem.GetCharacterController( entityID );
+        auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();
+        characterControllerComponent.CollisionFlags = pCharacterController->Move( displacement, minDist );
     }
 
     template < typename ComponentType >

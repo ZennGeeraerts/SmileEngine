@@ -27,9 +27,6 @@ namespace smile::ecs
             }
 
             ++m_EndIndex;
-
-            if ( m_OnEntityAddedFunc )
-                m_OnEntityAddedFunc( entityHandle );
         }
     }
 
@@ -47,9 +44,6 @@ namespace smile::ecs
             }
 
             --m_EndIndex;
-
-            if ( m_OnEntityRemovedFunc )
-                m_OnEntityRemovedFunc( entityHandle );
         }
     }
 

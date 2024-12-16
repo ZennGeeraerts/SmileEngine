@@ -1,5 +1,3 @@
-include(smile-engine)
-
 set(LIB_LINKS
     Ws2_32
     Winmm

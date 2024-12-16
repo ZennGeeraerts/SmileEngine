@@ -3,21 +3,25 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-
-#include "smile_engine/common/compiled/pimpl.h"
+#include "physics_geometry.h"
+#include "physics_material.h"
 
 namespace smile::physics
 {
-    class PhysicsMaterial final
+    class Rigidbody;
+
+    class PhysicsShape final
     {
       private:
         struct Opaque;
 
       public:
-        PhysicsMaterial( float staticFriction = 0.3f, float dynamicFriction = 0.3f, float restitution = 0.3f );
-        ~PhysicsMaterial();
+        PhysicsShape( const Rigidbody *pRigidbody,
+            const PhysicsGeometry *pGeometry,
+            Ref< PhysicsMaterial > pPhysicsMaterial );
+        ~PhysicsShape();
 
-        void *GetInternal() const;
+        void SetTrigger( bool isTrigger );
 
       private:
         compiled::PImpl< Opaque > m_pImplementation;

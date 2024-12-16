@@ -1,5 +1,3 @@
-include(smile-engine)
-
 add_subdirectory(smile-raster)
 
 set(INCLUDE_DIRS
