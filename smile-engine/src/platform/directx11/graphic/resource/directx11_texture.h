@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -10,17 +10,17 @@
 
 namespace smile::graphic
 {
-    struct DirectX11Texture2D final : public Texture2D
+    struct DirectX11Texture : public Texture
     {
-        DirectX11Texture2D() = default;
-        virtual ~DirectX11Texture2D();
+        DirectX11Texture() = default;
+        virtual ~DirectX11Texture();
 
-        DirectX11Texture2D( const DirectX11Texture2D & ) = delete;
-        DirectX11Texture2D( DirectX11Texture2D && ) = delete;
-        DirectX11Texture2D &operator=( const DirectX11Texture2D & ) = delete;
-        DirectX11Texture2D &operator=( DirectX11Texture2D && ) = delete;
+        DirectX11Texture( const DirectX11Texture & ) = delete;
+        DirectX11Texture( DirectX11Texture && ) = delete;
+        DirectX11Texture &operator=( const DirectX11Texture & ) = delete;
+        DirectX11Texture &operator=( DirectX11Texture && ) = delete;
 
-        virtual void *GetData() const override
+        void *GetData() const override
         {
             return pShaderResourceView;
         }
@@ -29,22 +29,13 @@ namespace smile::graphic
         ID3D11ShaderResourceView *pShaderResourceView = nullptr;
     };
 
-    struct DirectX11TextureCube : public TextureCube
+    struct DirectX11Texture2D final : public DirectX11Texture
+    {
+        DirectX11Texture2D() = default;
+    };
+
+    struct DirectX11TextureCube final : public DirectX11Texture
     {
         DirectX11TextureCube() = default;
-        virtual ~DirectX11TextureCube();
-
-        DirectX11TextureCube( const DirectX11TextureCube & ) = delete;
-        DirectX11TextureCube( DirectX11TextureCube && ) = delete;
-        DirectX11TextureCube &operator=( const DirectX11TextureCube & ) = delete;
-        DirectX11TextureCube &operator=( DirectX11TextureCube && ) = delete;
-
-        virtual void *GetData() const override
-        {
-            return pShaderResourceView;
-        }
-
-        ID3D11Resource *pTexture = nullptr;
-        ID3D11ShaderResourceView *pShaderResourceView = nullptr;
     };
 }

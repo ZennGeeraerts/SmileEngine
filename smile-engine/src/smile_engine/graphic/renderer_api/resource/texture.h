@@ -22,18 +22,4 @@ namespace smile::graphic
         Uint32 Width = 0;
         Uint32 Height = 0;
     };
-
-    struct Texture2D : public Texture
-    {
-      public:
-        Texture2D() = default;
-        virtual ~Texture2D() = default;
-    };
-
-    struct TextureCube : public Texture
-    {
-      public:
-        TextureCube() = default;
-        virtual ~TextureCube() = default;
-    };
 }

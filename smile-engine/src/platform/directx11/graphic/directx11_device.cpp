@@ -539,7 +539,7 @@ namespace smile::graphic
         return pShader;
     }
 
-    Ref< Texture2D > DirectX11Device::CreateTexture2D( const std::string &filePath )
+    Ref< Texture > DirectX11Device::CreateTexture2D( const std::string &filePath )
     {
         Ref< DirectX11Texture2D > pTexture = CreateRef< DirectX11Texture2D >();
         pTexture->FilePath = filePath;
@@ -561,7 +561,7 @@ namespace smile::graphic
         return pTexture;
     }
 
-    Ref< TextureCube > DirectX11Device::CreateTextureCube( const std::string &filePath )
+    Ref< Texture > DirectX11Device::CreateTextureCube( const std::string &filePath )
     {
         Ref< DirectX11TextureCube > pTexture = CreateRef< DirectX11TextureCube >();
         pTexture->FilePath = filePath;

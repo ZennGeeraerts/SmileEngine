@@ -34,7 +34,7 @@ namespace smile::graphic
         void SetBoolValue( const std::string &semantic, bool value );
         void SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
         void SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
-        void SetTexture2D( const std::string &semantic, const Ref< Texture2D > &value );
+        void SetTexture2D( const std::string &semantic, const Ref< Texture > &value );
 
         float GetFloatValue( const std::string &semantic ) const;
         int GetIntValue( const std::string &semantic ) const;
@@ -62,7 +62,7 @@ namespace smile::graphic
         {
             return m_Float3Values;
         }
-        const std::unordered_map< std::string, Ref< Texture2D > > &GetTexture2DValues() const
+        const std::unordered_map< std::string, Ref< Texture > > &GetTexture2DValues() const
         {
             return m_Texture2DValues;
         }
@@ -73,7 +73,7 @@ namespace smile::graphic
         std::unordered_map< std::string, bool > m_BoolValues{};
         std::unordered_map< std::string, DirectX::XMFLOAT2 > m_Float2Values{};
         std::unordered_map< std::string, DirectX::XMFLOAT3 > m_Float3Values{};
-        std::unordered_map< std::string, Ref< Texture2D > > m_Texture2DValues{};
+        std::unordered_map< std::string, Ref< Texture > > m_Texture2DValues{};
 
         Ref< Shader > m_pShader = nullptr;
     };

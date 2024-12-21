@@ -147,7 +147,7 @@ namespace smile::graphic
     }
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-        const Ref< Texture2D > &pTexture,
+        const Ref< Texture > &pTexture,
         const DirectX::XMFLOAT4 &color )
     {
         GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
@@ -161,7 +161,7 @@ namespace smile::graphic
         s_pStorage->pShader->UploadMat4( "World", worldTransform );
         s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
         s_pStorage->pShader->UploadBool( "UseTexture", true );
-        s_pStorage->pShader->UploadTexture2D( "Diffuse", pTexture );
+        s_pStorage->pShader->UploadTexture( "Diffuse", pTexture );
 
         RenderCommand::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
 

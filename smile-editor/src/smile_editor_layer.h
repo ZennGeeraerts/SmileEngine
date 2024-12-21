@@ -98,8 +98,8 @@ namespace smile
         Scope< ContentBrowserPanel > m_pContentBrowserPanel;
 
         // Editor resources
-        Ref< graphic::Texture2D > m_pIconPlay = nullptr;
-        Ref< graphic::Texture2D > m_pIconSimulate = nullptr;
-        Ref< graphic::Texture2D > m_pIconStop = nullptr;
+        Ref< graphic::Texture > m_pIconPlay = nullptr;
+        Ref< graphic::Texture > m_pIconSimulate = nullptr;
+        Ref< graphic::Texture > m_pIconStop = nullptr;
     };
 }

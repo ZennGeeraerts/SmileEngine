@@ -18,10 +18,10 @@ namespace smile::graphic
     {
         auto pDevice = RenderCommand::GetGraphicsDevice();
 
-        Ref< TextureCube > pCubeTexture = pDevice->CreateTextureCube( "assets/textures/SkyBox.dds" );
+        Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "assets/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
-        s_pSkyboxShader->UploadTextureCube( "CubeMap", pCubeTexture );
+        s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture );
 
         DirectX::XMFLOAT4X4 worldMatrix;
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );

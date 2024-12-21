@@ -20,7 +20,7 @@ namespace smile
       private:
         std::filesystem::path m_BaseDirectory;
         std::filesystem::path m_CurrentDirectory;
-        Ref< graphic::Texture2D > m_pDirectoryIcon = nullptr;
-        Ref< graphic::Texture2D > m_pFileIcon = nullptr;
+        Ref< graphic::Texture > m_pDirectoryIcon = nullptr;
+        Ref< graphic::Texture > m_pFileIcon = nullptr;
     };
 }

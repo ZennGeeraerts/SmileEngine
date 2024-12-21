@@ -68,21 +68,12 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Shader::UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D )
+    void DirectX11Shader::UploadTexture( const std::string &sementicName, const Ref< Texture > &pTexture )
     {
         auto pTextureVariable = GetEffectVariable( sementicName )->AsShaderResource();
         if ( pTextureVariable->IsValid() )
         {
-            pTextureVariable->SetResource( ( ID3D11ShaderResourceView * )pTexture2D->GetData() );
-        }
-    }
-
-    void DirectX11Shader::UploadTextureCube( const std::string &sementicName, const Ref< TextureCube > &pTextureCube )
-    {
-        auto pTextureVariable = GetEffectVariable( sementicName )->AsShaderResource();
-        if ( pTextureVariable->IsValid() )
-        {
-            pTextureVariable->SetResource( ( ID3D11ShaderResourceView * )pTextureCube->GetData() );
+            pTextureVariable->SetResource( static_cast< ID3D11ShaderResourceView * >( pTexture->GetData() ) );
         }
     }
 

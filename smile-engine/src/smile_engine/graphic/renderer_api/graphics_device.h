@@ -27,8 +27,8 @@ namespace smile::graphic
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) = 0;
         virtual Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" ) = 0;
-        virtual Ref< Texture2D > CreateTexture2D( const std::string &filePath ) = 0;
-        virtual Ref< TextureCube > CreateTextureCube( const std::string &filePath ) = 0;
+        virtual Ref< Texture > CreateTexture2D( const std::string &filePath ) = 0;
+        virtual Ref< Texture > CreateTextureCube( const std::string &filePath ) = 0;
         virtual Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;
         virtual Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) = 0;
 

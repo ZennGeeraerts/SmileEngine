@@ -23,8 +23,7 @@ namespace smile::graphic
         virtual void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) = 0;
         virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) = 0;
         virtual void UploadInt( const std::string &sementicName, int value ) = 0;
-        virtual void UploadTexture2D( const std::string &sementicName, const Ref< Texture2D > &pTexture2D ) = 0;
-        virtual void UploadTextureCube( const std::string &sementicName, const Ref< TextureCube > &pTextureCube ) = 0;
+        virtual void UploadTexture( const std::string &sementicName, const Ref< Texture > &pTexture ) = 0;
         virtual void UploadBool( const std::string &sementicName, bool value ) = 0;
         virtual void UploadFloat( const std::string &sementicName, float value ) = 0;
 

@@ -19,6 +19,6 @@ namespace smile::graphic::ecs
         }
 
         DirectX::XMFLOAT4 Color = { 1.f, 1.f, 1.f, 1.f };
-        Ref< Texture2D > pTexture = nullptr;
+        Ref< Texture > pTexture = nullptr;
     };
 }

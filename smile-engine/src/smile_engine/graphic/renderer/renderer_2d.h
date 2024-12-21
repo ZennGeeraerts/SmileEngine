@@ -30,7 +30,7 @@ namespace smile::graphic
 
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color );
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-            const Ref< Texture2D > &pTexture,
+            const Ref< Texture > &pTexture,
             const DirectX::XMFLOAT4 &color );
     };
 }
