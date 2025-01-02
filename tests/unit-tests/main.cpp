@@ -1,4 +1,3 @@
-#include <smile_engine.h>
 #define CATCH_CONFIG_RUNNER
 #include <catch/catch.hpp>
 

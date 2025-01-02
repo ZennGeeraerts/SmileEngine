@@ -22,7 +22,7 @@ add_custom_command(
     TARGET smile-project
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/smile-engine/thirdparty/assimp/x64/assimp-vc140-mt.dll
+        ${CMAKE_SOURCE_DIR}/thirdparty/assimp/x64/assimp-vc140-mt.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
