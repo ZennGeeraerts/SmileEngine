@@ -3,11 +3,11 @@
 /build
 /out
 
-/smile-editor/resources/scripts
+/resources/scripts
 
-/smile-editor/sandbox-project/assets/scripts/out
-/smile-editor/sandbox-project/assets/scripts/bin
-/smile-editor/sandbox-project/assets/scripts/.vs
+/tests/sandbox-project/assets/scripts/out
+/tests/sandbox-project/assets/scripts/bin
+/tests/sandbox-project/assets/scripts/.vs
 
 /conan/Debug
 /conan/Release

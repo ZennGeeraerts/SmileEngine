@@ -1,0 +1,66 @@
+cmake_minimum_required(VERSION "3.25.0")
+
+set(ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../")
+
+file(GLOB_RECURSE ENGINE_SOURCE_FILES "${ENGINE_PATH}/src/smile/script_core/Source/*.cs")
+project("smile-script-core" LANGUAGES CSharp)
+add_library("smile-script-core" SHARED ${ENGINE_SOURCE_FILES})
+
+set_target_properties("smile-script-core"
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${ENGINE_PATH}/resources/scripts"
+    LIBRARY_OUTPUT_DIRECTORY "${ENGINE_PATH}/resources/scripts"
+    RUNTIME_OUTPUT_DIRECTORY "${ENGINE_PATH}/resources/scripts"
+)
+
+file(GLOB_RECURSE APP_SOURCE_FILES Source/*.cs)
+project("sandbox" LANGUAGES CSharp)
+add_library("sandbox" SHARED ${APP_SOURCE_FILES})
+target_link_libraries("sandbox" smile-script-core)
+
+set_target_properties("sandbox"
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/bin"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/bin"
+)
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/../scenes"
+        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/scenes"
+    )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/../textures"
+        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/textures"
+    )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/../meshes"
+        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/meshes"
+    )
+    
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/../shaders"
+        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/shaders"
+    )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/bin"
+        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/scripts/bin"
+    )
