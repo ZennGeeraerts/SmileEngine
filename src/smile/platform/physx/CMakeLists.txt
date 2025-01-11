@@ -1,4 +1,4 @@
-include(smile-engine)
+include(smile)
 
 find_package(PhysX REQUIRED)
 

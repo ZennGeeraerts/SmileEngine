@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include <smile_engine.h>
+#include "smile.h"
 #include "panels/scene_hierarchy_panel.h"
 #include "panels/content_browser_panel.h"
 

@@ -1,6 +1,6 @@
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
-include(smile-engine.cmake)
+include(smile.cmake)
 
 set(INCLUDE_DIRS
     ${CMAKE_CURRENT_LIST_DIR}

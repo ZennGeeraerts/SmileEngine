@@ -12,7 +12,7 @@ file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(smile-editor ${SOURCE_FILES})
 
-include(${ENGINE_PATH}/smile-engine.cmake)
+include(${ENGINE_PATH}/smile.cmake)
 
 add_subdirectory(${ENGINE_PATH} engine)
 

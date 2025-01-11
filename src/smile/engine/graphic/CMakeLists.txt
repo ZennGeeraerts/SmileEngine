@@ -1,4 +1,4 @@
-include(smile-engine)
+include(smile)
 
 add_subdirectory(${ENGINE_PATH}/../../thirdparty/imgui imgui)
 

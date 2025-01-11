@@ -1,4 +1,4 @@
-#include "smile_engine.h"
+#include "smile.h"
 #include <catch/catch.hpp>
 
 namespace smile

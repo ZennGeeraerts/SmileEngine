@@ -1,4 +1,4 @@
-include(smile-engine)
+include(smile)
 
 set(INCLUDE_DIRS
     ${ENGINE_PATH}/../../thirdparty/mono/include

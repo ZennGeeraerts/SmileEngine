@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 
-#include "smile_engine.h"
+#include "smile.h"
 #include "engine/core/application/entry_point.h"
 
 #include "smile_editor_layer.h"

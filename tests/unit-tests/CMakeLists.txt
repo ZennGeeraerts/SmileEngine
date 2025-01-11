@@ -13,7 +13,7 @@ file(GLOB_RECURSE SOURCE_FILES main.cpp)
 add_executable(smile-engine ${SOURCE_FILES})
 set_target_properties(smile-engine PROPERTIES OUTPUT_NAME unit-tests)
 
-include(${ENGINE_PATH}/smile-engine.cmake)
+include(${ENGINE_PATH}/smile.cmake)
 
 add_subdirectory(${ENGINE_PATH} engine)
 

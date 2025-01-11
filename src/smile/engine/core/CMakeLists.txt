@@ -1,4 +1,4 @@
-include(smile-engine)
+include(smile)
 
 if(WIN32)
     add_platform(windows)
