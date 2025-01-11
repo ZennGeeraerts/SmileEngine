@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/camera/scene_camera.h"
+#include "engine/graphic/camera/scene_camera.h"
 
 namespace smile::graphic::ecs
 {

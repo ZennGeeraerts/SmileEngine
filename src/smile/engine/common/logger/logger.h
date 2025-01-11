@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/common/compiled/compiled.h"
+#include "compiled/compiled.h"
 #include <mutex>
 
 #define SM_NRM "\x1B[0m"

@@ -17,6 +17,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "smile/engine/common/compiled/compiled.h"
-#include "smile/engine/common/primitive/timestep.h"
-#include "smile/engine/common/logger/logger.h"
+#include "engine/common/compiled/compiled.h"
+#include "engine/common/primitive/timestep.h"
+#include "engine/common/logger/logger.h"

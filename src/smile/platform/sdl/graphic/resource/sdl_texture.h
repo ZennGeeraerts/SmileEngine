@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/resource/texture.h"
+#include "engine/graphic/resource/texture.h"
 #include "platform/smileraster/graphic/smileraster_context.h"
 
 #include <SDL_image.h>

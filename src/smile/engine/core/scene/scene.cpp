@@ -6,20 +6,20 @@
 #include "scene.h"
 
 #include "components.h"
-#include "smile/engine/graphic/renderer/render_engine.h"
-#include "smile/engine/physics/physics_engine.h"
-#include "smile/engine/scripting/script_engine.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/physics/physics_engine.h"
+#include "engine/scripting/script_engine.h"
 
 #include "entity.h"
 
-#include "smile/engine/graphic/renderer/ecs/forward_render_pass.h"
-#include "smile/engine/graphic/renderer/ecs/wireframe_render_pass.h"
-#include "smile/engine/graphic/renderer/ecs/debug_render_pass.h"
-#include "smile/engine/graphic/renderer/ecs/render_pass_2d.h"
+#include "engine/graphic/renderer/ecs/forward_render_pass.h"
+#include "engine/graphic/renderer/ecs/wireframe_render_pass.h"
+#include "engine/graphic/renderer/ecs/debug_render_pass.h"
+#include "engine/graphic/renderer/ecs/render_pass_2d.h"
 
-#include "smile/engine/graphic/camera/ecs/camera_system.h"
+#include "engine/graphic/camera/ecs/camera_system.h"
 
-#include "smile/engine/core/ecs/relationship.h"
+#include "engine/core/ecs/relationship.h"
 
 namespace smile::scene
 {

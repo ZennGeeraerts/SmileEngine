@@ -5,8 +5,8 @@
 #pragma once
 
 #include "entity_handle.h"
-#include "smile/engine/common/primitive/collection/sparse_set.h"
-#include "smile/engine/common/compiled/compiled.h"
+#include "engine/common/primitive/collection/sparse_set.h"
+#include "engine/common/compiled/compiled.h"
 
 namespace smile::ecs
 {

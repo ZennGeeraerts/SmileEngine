@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/singleton.h"
+#include "engine/common/compiled/singleton.h"
 #include "physics_world.h"
 
 namespace smile::physics

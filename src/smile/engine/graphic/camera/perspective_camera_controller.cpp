@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "perspective_camera_controller.h"
 
-#include "smile/engine/core/input/input.h"
-#include "smile/engine/core/input/key_codes.h"
+#include "engine/core/input/input.h"
+#include "engine/core/input/key_codes.h"
 
 namespace smile::graphic
 {

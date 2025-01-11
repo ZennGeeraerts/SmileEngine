@@ -1,8 +1,8 @@
 include(smile-engine)
 
 set(INCLUDE_DIRS
-    ${CMAKE_SOURCE_DIR}/thirdparty/dx11effects/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/dx11tex/include
+    ${ENGINE_PATH}/../../thirdparty/dx11effects/include
+    ${ENGINE_PATH}/../../thirdparty/dx11tex/include
 )
 
 set(LIB_LINKS
@@ -10,9 +10,9 @@ set(LIB_LINKS
     dxgi
     dxguid
     d3dCompiler
-    ${CMAKE_SOURCE_DIR}/thirdparty/dx11tex/x64/$<CONFIG>/DirectXTex.lib
-    optimized ${CMAKE_SOURCE_DIR}/thirdparty/dx11effects/x64/dx11effects.lib
-    debug ${CMAKE_SOURCE_DIR}/thirdparty/dx11effects/x64/dx11effects_d.lib
+    ${ENGINE_PATH}/../../thirdparty/dx11tex/x64/$<CONFIG>/DirectXTex.lib
+    optimized ${ENGINE_PATH}/../../thirdparty/dx11effects/x64/dx11effects.lib
+    debug ${ENGINE_PATH}/../../thirdparty/dx11effects/x64/dx11effects_d.lib
 )
 
 target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})

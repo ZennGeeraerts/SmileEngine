@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "debug_render_pass.h"
 
-#include "smile/engine/graphic/renderer/debug_renderer.h"
-#include "smile/engine/core/scene/components.h"
+#include "engine/graphic/renderer/debug_renderer.h"
+#include "engine/core/scene/components.h"
 
 namespace smile::graphic::ecs
 {

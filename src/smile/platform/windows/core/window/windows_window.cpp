@@ -4,14 +4,14 @@
 /*=============================================================================*/
 #include "smpch.h"
 #include "windows_window.h"
-#include "smile/engine/common/logger/logger.h"
+#include "engine/common/logger/logger.h"
 
-#include "smile/engine/core/window/events/application_event.h"
-#include "smile/engine/core/window/events/mouse_event.h"
-#include "smile/engine/core/window/events/key_event.h"
-#include "smile/engine/core/input/input.h"
+#include "engine/core/window/events/application_event.h"
+#include "engine/core/window/events/mouse_event.h"
+#include "engine/core/window/events/key_event.h"
+#include "engine/core/input/input.h"
 
-#include "smile/engine/graphic/renderer_api/graphics_context.h"
+#include "engine/graphic/renderer_api/graphics_context.h"
 
 #include "windows_window_manager.h"
 

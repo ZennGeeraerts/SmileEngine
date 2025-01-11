@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/common/compiled/singleton.h"
+#include "engine/common/compiled/singleton.h"
 #include "window.h"
 
 namespace smile::window

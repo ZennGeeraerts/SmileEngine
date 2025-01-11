@@ -6,7 +6,7 @@
 
 #include "asset_manager_base.h"
 
-#include "smile/engine/core/project/project_manager.h"
+#include "engine/core/project/project_manager.h"
 
 namespace smile::asset
 {

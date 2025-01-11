@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/physics/rigidbody.h"
+#include "engine/physics/rigidbody.h"
 
 namespace smile::physics::ecs
 {

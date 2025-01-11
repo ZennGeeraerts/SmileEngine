@@ -3,15 +3,15 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/physics/physics_world.h"
+#include "engine/physics/physics_world.h"
 
-#include "smile/engine/physics/physics_engine.h"
-#include "smile/engine/physics/rigidbody.h"
+#include "engine/physics/physics_engine.h"
+#include "engine/physics/rigidbody.h"
 
 #include "physx_utils.h"
 #include "contact_listener.h"
 
-#include "smile/engine/graphic/renderer/debug_renderer.h"
+#include "engine/graphic/renderer/debug_renderer.h"
 
 #include <PxPhysicsAPI.h>
 

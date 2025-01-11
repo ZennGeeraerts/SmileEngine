@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/graphics_context.h"
+#include "engine/graphic/graphics_context.h"
 #include "smile_raster_swap_chain.h"
 
 #include <device_context.cuh>

@@ -3,10 +3,10 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/physics/character_controller.h"
+#include "engine/physics/character_controller.h"
 
-#include "smile/engine/physics/physics_world.h"
-#include "smile/engine/physics/physics_material.h"
+#include "engine/physics/physics_world.h"
+#include "engine/physics/physics_material.h"
 
 #include "physx_utils.h"
 

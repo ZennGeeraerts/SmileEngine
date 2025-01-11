@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "wireframe_render_pass.h"
 
-#include "smile/engine/graphic/renderer/wireframe_renderer.h"
+#include "engine/graphic/renderer/wireframe_renderer.h"
 
 namespace smile::graphic::ecs
 {

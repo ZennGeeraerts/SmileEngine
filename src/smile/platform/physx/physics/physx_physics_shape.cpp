@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/physics/physics_shape.h"
+#include "engine/physics/physics_shape.h"
 
-#include "smile/engine/physics/rigidbody.h"
+#include "engine/physics/rigidbody.h"
 #include "physx_utils.h"
 
 #include <PxPhysicsAPI.h>

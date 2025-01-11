@@ -1,4 +1,4 @@
-#include "smile/engine/core/ecs/ecs_engine.h"
+#include "engine/core/ecs/ecs_engine.h"
 #include <catch/catch.hpp>
 
 struct TestComponent final

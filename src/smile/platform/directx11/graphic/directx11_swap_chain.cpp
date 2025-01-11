@@ -5,7 +5,7 @@
 #include "directx11_context.h"
 #include "directx11_diagnostics.h"
 
-#include "smile/engine/core/window/window.h"
+#include "engine/core/window/window.h"
 
 namespace smile::graphic
 {

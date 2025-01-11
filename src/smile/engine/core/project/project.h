@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/core/asset/runtime_asset_manager.h"
-#include "smile/engine/core/asset/editor_asset_manager.h"
+#include "engine/core/asset/runtime_asset_manager.h"
+#include "engine/core/asset/editor_asset_manager.h"
 
 #include <filesystem>
 

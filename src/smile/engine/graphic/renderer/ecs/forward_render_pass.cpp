@@ -5,9 +5,9 @@
 #include "smpch.h"
 #include "forward_render_pass.h"
 
-#include "smile/engine/graphic/renderer/forward_renderer.h"
-#include "smile/engine/graphic/animation/ecs/animator_component.h"
-#include "smile/engine/core/scene/ecs/transform_component.h"
+#include "engine/graphic/renderer/forward_renderer.h"
+#include "engine/graphic/animation/ecs/animator_component.h"
+#include "engine/core/scene/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {

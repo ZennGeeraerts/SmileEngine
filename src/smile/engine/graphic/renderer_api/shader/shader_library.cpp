@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "shader_library.h"
 
-#include "smile/engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_command.h"
 
 namespace smile::graphic
 {

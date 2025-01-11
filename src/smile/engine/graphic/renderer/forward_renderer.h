@@ -6,11 +6,11 @@
 
 #include "render_collector.h"
 
-#include "smile/engine/graphic/camera/camera.h"
-#include "smile/engine/graphic/camera/editor_camera.h"
+#include "engine/graphic/camera/camera.h"
+#include "engine/graphic/camera/editor_camera.h"
 
-#include "smile/engine/graphic/mesh/ecs/mesh_renderer_component.h"
-#include "smile/engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
+#include "engine/graphic/mesh/ecs/mesh_renderer_component.h"
+#include "engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
 
 namespace smile::graphic
 {

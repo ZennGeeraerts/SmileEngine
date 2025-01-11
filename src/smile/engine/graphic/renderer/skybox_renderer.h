@@ -4,10 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/graphic/camera/camera.h"
-#include "smile/engine/graphic/camera/editor_camera.h"
-#include "smile/engine/graphic/mesh/mesh.h"
-#include "smile/engine/graphic/renderer_api/shader/shader.h"
+#include "engine/graphic/camera/camera.h"
+#include "engine/graphic/camera/editor_camera.h"
+#include "engine/graphic/mesh/mesh.h"
+#include "engine/graphic/renderer_api/shader/shader.h"
 
 namespace smile::graphic
 {

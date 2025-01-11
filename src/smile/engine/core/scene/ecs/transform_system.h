@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/core/ecs/system.h"
+#include "engine/core/ecs/system.h"
 
 namespace smile::scene
 {

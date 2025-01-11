@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/common/primitive/uuid.h"
+#include "engine/common/primitive/uuid.h"
 
 namespace smile::scene::ecs
 {

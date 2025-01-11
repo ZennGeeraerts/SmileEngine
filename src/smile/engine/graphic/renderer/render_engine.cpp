@@ -35,11 +35,11 @@ namespace smile::graphic
         RenderCommand::Initalize( pWindow );
 
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
-        s_ShaderLibrary.Load( "assets/shaders/PosColNorm.fx", bufferLayout );
-        s_ShaderLibrary.Load( "assets/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
-        s_ShaderLibrary.Load( "assets/shaders/PosColTex.fx",
+        s_ShaderLibrary.Load( "resources/shaders/PosColNorm.fx", bufferLayout );
+        s_ShaderLibrary.Load( "resources/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
+        s_ShaderLibrary.Load( "resources/shaders/PosColTex.fx",
             { { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } } );
-        s_ShaderLibrary.Load( "assets/shaders/Skybox.fx", { { ShaderDataType::Float3, "POSITION" } } );
+        s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
         {
             FramebufferDescriptor frameBufferDesc{};

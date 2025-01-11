@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "mesh_factory.h"
 
-#include "smile/engine/graphic/renderer/render_command.h"
-#include "smile/engine/core/math/math.h"
+#include "engine/graphic/renderer/render_command.h"
+#include "engine/core/math/math.h"
 
 namespace smile::graphic
 {

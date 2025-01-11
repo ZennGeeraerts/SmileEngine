@@ -5,12 +5,13 @@ if(WIN32)
 endif()
 
 set(INCLUDE_DIRS
-    ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/include
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${ENGINE_PATH}/../../thirdparty/yaml-cpp/include
 )
 
 set(LIB_LINKS
-    optimized ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/x64/yaml-cpp.lib
-    debug ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/x64/yaml-cppd.lib
+    optimized ${ENGINE_PATH}/../../thirdparty/yaml-cpp/x64/yaml-cpp.lib
+    debug ${ENGINE_PATH}/../../thirdparty/yaml-cpp/x64/yaml-cppd.lib
 )
 
 target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})

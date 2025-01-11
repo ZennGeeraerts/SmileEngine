@@ -5,9 +5,9 @@
 #include "smpch.h"
 #include "camera_system.h"
 
-#include "smile/engine/graphic/camera/camera.h"
-#include "smile/engine/graphic/renderer/render_engine.h"
-#include "smile/engine/core/scene/components.h"
+#include "engine/graphic/camera/camera.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/core/scene/components.h"
 
 namespace smile::graphic::ecs
 {

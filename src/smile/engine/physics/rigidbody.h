@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/pimpl.h"
+#include "compiled/pimpl.h"
 #include "physics_shape.h"
 
 #include "ecs/box_collider_component.h"

@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/common/compiled/singleton.h"
-#include "smile/engine/graphic/sprite/ecs/sprite_renderer_component.h"
-#include "smile/engine/graphic/camera/editor_camera.h"
+#include "engine/common/compiled/singleton.h"
+#include "engine/graphic/sprite/ecs/sprite_renderer_component.h"
+#include "engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic
 {

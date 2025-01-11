@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "smile_raster_swap_chain.h"
 
-#include "smile/engine/core/window/window.h"
+#include "engine/core/window/window.h"
 
 namespace smile::graphic
 {

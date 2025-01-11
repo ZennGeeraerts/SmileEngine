@@ -4,12 +4,12 @@
 /*=============================================================================*/
 #pragma once
 #include "perspective_camera.h"
-#include "smile/engine/common/primitive/timestep.h"
+#include "engine/common/primitive/timestep.h"
 
-#include "smile/engine/core/window/events/application_event.h"
-#include "smile/engine/core/window/events/mouse_event.h"
+#include "engine/core/window/events/application_event.h"
+#include "engine/core/window/events/mouse_event.h"
 
-#include "smile/engine/core/scene/components.h"
+#include "engine/core/scene/components.h"
 
 namespace smile::graphic
 {

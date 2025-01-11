@@ -5,15 +5,15 @@
 #include "smpch.h"
 #include "imgui_layer.h"
 
-#include "smile/engine/core/application/application.h"
-#include "smile/engine/core/window/window.h"
-#include "smile/engine/graphic/renderer/render_command.h"
+#include "engine/core/application/application.h"
+#include "engine/core/window/window.h"
+#include "engine/graphic/renderer/render_command.h"
 
-#include "smile/platform/directx11/graphic/directx11_device.h"
-#include "smile/platform/directx11/graphic/directx11_context.h"
+#include "platform/directx11/graphic/directx11_device.h"
+#include "platform/directx11/graphic/directx11_context.h"
 
-#include "smile/engine/common/logger/logger.h"
-#include "smile/engine/core/input/key_codes.h"
+#include "engine/common/logger/logger.h"
+#include "engine/core/input/key_codes.h"
 
 #include <imgui.h>
 #include <imgui_impl_win32.h>

@@ -4,15 +4,15 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/primitive/uuid.h"
-#include "smile/engine/common/primitive/timestep.h"
-#include "smile/engine/graphic/camera/editor_camera.h"
+#include "engine/common/primitive/uuid.h"
+#include "engine/common/primitive/timestep.h"
+#include "engine/graphic/camera/editor_camera.h"
 
-#include "smile/engine/core/ecs/ecs_engine.h"
+#include "engine/core/ecs/ecs_engine.h"
 #include "ecs/transform_system.h"
-#include "smile/engine/physics/ecs/physics_system.h"
-#include "smile/engine/graphic/animation/ecs/animation_system.h"
-#include "smile/engine/graphic/camera/ecs/camera_system.h"
+#include "engine/physics/ecs/physics_system.h"
+#include "engine/graphic/animation/ecs/animation_system.h"
+#include "engine/graphic/camera/ecs/camera_system.h"
 
 namespace smile::scene
 {

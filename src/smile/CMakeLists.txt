@@ -3,8 +3,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 include(smile-engine.cmake)
 
 set(INCLUDE_DIRS
-    .
-    ${CMAKE_SOURCE_DIR}/thirdparty)
+    ${CMAKE_CURRENT_LIST_DIR}
+    ${ENGINE_PATH}/../../thirdparty)
 
 if (NOT TARGET smile-engine)
     add_library(smile-engine STATIC)

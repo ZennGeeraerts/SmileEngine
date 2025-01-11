@@ -1,4 +1,4 @@
-#include "smile/engine/core/math/math_utilities.h"
+#include "engine/core/math/math_utilities.h"
 #include <catch/catch.hpp>
 
 namespace smile

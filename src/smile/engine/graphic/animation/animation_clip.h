@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/graphic/animation/bone.h"
+#include "engine/graphic/animation/bone.h"
 
 namespace smile::graphic
 {

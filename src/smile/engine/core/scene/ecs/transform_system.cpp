@@ -6,11 +6,11 @@
 #include "transform_system.h"
 
 #include "transform_component.h"
-#include "smile/engine/core/ecs/ecs_engine.h"
-#include "smile/engine/core/ecs/relationship.h"
-#include "smile/engine/core/math/math_utilities.h"
-#include "smile/engine/core/scene/scene.h"
-#include "smile/engine/physics/physics_engine.h"
+#include "engine/core/ecs/ecs_engine.h"
+#include "engine/core/ecs/relationship.h"
+#include "engine/core/math/math_utilities.h"
+#include "engine/core/scene/scene.h"
+#include "engine/physics/physics_engine.h"
 
 namespace smile::scene::ecs
 {

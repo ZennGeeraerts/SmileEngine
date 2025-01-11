@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/core/ecs/system.h"
-#include "smile/engine/graphic/camera/camera.h"
+#include "engine/core/ecs/system.h"
+#include "engine/graphic/camera/camera.h"
 
 namespace smile::ecs
 {

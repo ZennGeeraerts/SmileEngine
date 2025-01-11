@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/graphic/resource/index_buffer.h"
+#include "engine/graphic/resource/index_buffer.h"
 
 #include <device_context.cuh>
 

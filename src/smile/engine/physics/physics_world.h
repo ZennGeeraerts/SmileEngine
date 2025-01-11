@@ -8,7 +8,7 @@
 #include "rigidbody.h"
 #include "character_controller.h"
 
-#include "smile/engine/core/scene/ecs/transform_component.h"
+#include "engine/core/scene/ecs/transform_component.h"
 
 #include <DirectXMath.h>
 

@@ -5,10 +5,10 @@
 #include "smpch.h"
 #include "scene_serializer.h"
 
-#include "smile/engine/common/logger/logger.h"
+#include "engine/common/logger/logger.h"
 #include "entity.h"
 #include "components.h"
-#include "smile/engine/core/project/project_manager.h"
+#include "engine/core/project/project_manager.h"
 
 #include <yaml-cpp/yaml.h>
 

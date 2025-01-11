@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/graphic/graphics_device.h"
+#include "engine/graphic/graphics_device.h"
 #include <device_context.cuh>
 
 namespace smile::graphic

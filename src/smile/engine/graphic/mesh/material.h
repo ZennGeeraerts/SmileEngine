@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/graphic/renderer_api/shader/shader.h"
-#include "smile/engine/graphic/renderer_api/shader/shader_reflection.h"
-#include "smile/engine/graphic/renderer_api/resource/texture.h"
+#include "engine/graphic/renderer_api/shader/shader.h"
+#include "engine/graphic/renderer_api/shader/shader_reflection.h"
+#include "engine/graphic/renderer_api/resource/texture.h"
 
 #include <DirectXMath.h>
 

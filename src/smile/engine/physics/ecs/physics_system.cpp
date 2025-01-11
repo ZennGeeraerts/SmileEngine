@@ -5,17 +5,17 @@
 #include "smpch.h"
 #include "physics_system.h"
 
-#include "smile/engine/core/ecs/ecs_engine.h"
-#include "smile/engine/core/scene/ecs/id_component.h"
-#include "smile/engine/core/scene/ecs/transform_component.h"
-#include "smile/engine/core/math/math.h"
+#include "engine/core/ecs/ecs_engine.h"
+#include "engine/core/scene/ecs/id_component.h"
+#include "engine/core/scene/ecs/transform_component.h"
+#include "engine/core/math/math.h"
 
 #include "rigidbody_component.h"
 #include "character_controller_component.h"
 
-#include "smile/engine/physics/physics_engine.h"
+#include "engine/physics/physics_engine.h"
 
-#include "smile/engine/graphic/renderer/debug_renderer.h"
+#include "engine/graphic/renderer/debug_renderer.h"
 
 namespace smile::physics::ecs
 {

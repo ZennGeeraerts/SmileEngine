@@ -5,11 +5,11 @@
 #include "smpch.h"
 #include "editor_camera.h"
 
-#include "smile/engine/core/input/input.h"
-#include "smile/engine/core/input/key_codes.h"
-#include "smile/engine/core/input/mouse_codes.h"
+#include "engine/core/input/input.h"
+#include "engine/core/input/key_codes.h"
+#include "engine/core/input/mouse_codes.h"
 
-#include "smile/engine/core/math/math.h"
+#include "engine/core/math/math.h"
 
 namespace smile::graphic
 {

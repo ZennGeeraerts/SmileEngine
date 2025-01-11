@@ -5,7 +5,7 @@
 #pragma once
 
 #include "event.h"
-#include "smile/engine/core/input/key_codes.h"
+#include "engine/core/input/key_codes.h"
 
 namespace smile::window
 {

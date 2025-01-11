@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/core/geometric/sphere.h"
+#include "engine/core/geometric/sphere.h"
 
 namespace smile::physics::ecs
 {

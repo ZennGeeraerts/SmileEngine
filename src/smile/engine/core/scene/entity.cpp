@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "entity.h"
 
-#include "smile/engine/core/ecs/relationship.h"
+#include "engine/core/ecs/relationship.h"
 
 namespace smile::scene
 {

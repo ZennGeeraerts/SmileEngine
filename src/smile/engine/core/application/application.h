@@ -4,14 +4,14 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/compiled.h"
+#include "engine/common/compiled/compiled.h"
 
 #include "layer_stack.h"
-#include "smile/engine/core/window/window_manager.h"
-#include "smile/engine/core/window/events/event.h"
-#include "smile/engine/core/window/events/application_event.h"
+#include "engine/core/window/window_manager.h"
+#include "engine/core/window/events/event.h"
+#include "engine/core/window/events/application_event.h"
 
-#include "smile/engine/graphic/imgui/imgui_layer.h"
+#include "engine/graphic/imgui/imgui_layer.h"
 
 namespace smile::application
 {

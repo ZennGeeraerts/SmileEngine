@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/graphic/renderer_api/resource/vertex_buffer.h"
-#include "smile/engine/graphic/renderer_api/resource/index_buffer.h"
-#include "smile/engine/graphic/renderer_api/shader/shader.h"
+#include "engine/graphic/renderer_api/resource/vertex_buffer.h"
+#include "engine/graphic/renderer_api/resource/index_buffer.h"
+#include "engine/graphic/renderer_api/shader/shader.h"
 
 #include <vector>
 #include <DirectXMath.h>

@@ -5,10 +5,10 @@
 #include "smpch.h"
 #include "animation_system.h"
 
-#include "smile/engine/core/ecs/ecs_engine.h"
-#include "smile/engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
-#include "smile/engine/graphic/animation/ecs/animator_component.h"
-#include "smile/engine/core/scene/ecs/transform_component.h"
+#include "engine/core/ecs/ecs_engine.h"
+#include "engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
+#include "engine/graphic/animation/ecs/animator_component.h"
+#include "engine/core/scene/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {

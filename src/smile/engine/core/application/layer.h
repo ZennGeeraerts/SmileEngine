@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/compiled.h"
-#include "smile/engine/core/window/events/event.h"
+#include "engine/common/compiled/compiled.h"
+#include "engine/core/window/events/event.h"
 
 namespace smile::application
 {

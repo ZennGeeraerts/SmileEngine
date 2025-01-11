@@ -5,7 +5,7 @@
 #pragma once
 #include "system.h"
 
-#include "smile/engine/core/application/timer.h"
+#include "engine/core/application/timer.h"
 
 namespace smile::ecs
 {

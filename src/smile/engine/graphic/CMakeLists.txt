@@ -1,16 +1,16 @@
 include(smile-engine)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/thirdparty/imgui imgui)
+add_subdirectory(${ENGINE_PATH}/../../thirdparty/imgui imgui)
 
 set(INCLUDE_DIRS
-    ${CMAKE_SOURCE_DIR}/thirdparty/imgui
-    ${CMAKE_SOURCE_DIR}/thirdparty/ImGuizmo
-    ${CMAKE_SOURCE_DIR}/thirdparty/assimp/include
+    ${ENGINE_PATH}/../../thirdparty/imgui
+    ${ENGINE_PATH}/../../thirdparty/ImGuizmo
+    ${ENGINE_PATH}/../../thirdparty/assimp/include
 )
 
 set(LIB_LINKS
     imgui
-    ${CMAKE_SOURCE_DIR}/thirdparty/assimp/x64/assimp-vc140-mt.lib
+    ${ENGINE_PATH}/../../thirdparty/assimp/x64/assimp-vc140-mt.lib
 )
 
 target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})
@@ -18,6 +18,6 @@ target_link_libraries(smile-engine PRIVATE ${LIB_LINKS})
 
 file(GLOB_RECURSE SOURCE_FILES
     *.cpp
-    ${CMAKE_SOURCE_DIR}/thirdparty/ImGuizmo/ImGuizmo.cpp
+    ${ENGINE_PATH}/../../thirdparty/ImGuizmo/ImGuizmo.cpp
 )
 target_sources(smile-engine PRIVATE ${SOURCE_FILES})

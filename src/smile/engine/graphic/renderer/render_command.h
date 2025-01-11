@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/compiled.h"
-#include "smile/engine/graphic/renderer_api/renderer_api.h"
+#include "engine/common/compiled/compiled.h"
+#include "engine/graphic/renderer_api/renderer_api.h"
 
 namespace smile::graphic
 {

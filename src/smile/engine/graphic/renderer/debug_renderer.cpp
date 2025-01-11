@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "debug_renderer.h"
 
-#include "smile/engine/graphic/renderer/render_engine.h"
-#include "smile/engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/render_command.h"
 
 #include <DirectXColors.h>
 
@@ -16,7 +16,7 @@ namespace smile::graphic
     {
         auto &shaderLibrary = RenderEngine::GetShaderLibrary();
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
-        m_pShader = shaderLibrary.Load( "assets/shaders/DebugRenderer.fx", bufferLayout );
+        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", bufferLayout );
 
         CreateVertexBuffer();
     }
@@ -118,7 +118,7 @@ namespace smile::graphic
         pContext->BindShader( m_pShader );
 
         m_pShader->UploadMat4( "ViewProjection", m_ViewProjectionMatrix );
-        
+
         DirectX::XMFLOAT4X4 worldMatrix{};
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
         m_pShader->UploadMat4( "World", worldMatrix );

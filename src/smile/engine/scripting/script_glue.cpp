@@ -7,12 +7,12 @@
 
 #include "script_engine.h"
 
-#include "smile/engine/core/scene/components.h"
+#include "engine/core/scene/components.h"
 
-#include "smile/engine/core/input/key_codes.h"
-#include "smile/engine/core/input/input.h"
+#include "engine/core/input/key_codes.h"
+#include "engine/core/input/input.h"
 
-#include "smile/engine/physics/physics_engine.h"
+#include "engine/physics/physics_engine.h"
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>

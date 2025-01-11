@@ -4,13 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/primitive/uuid.h"
+#include "engine/common/primitive/uuid.h"
 #include "scene.h"
 #include "ecs/id_component.h"
 #include "ecs/tag_component.h"
 #include "ecs/transform_component.h"
 
-#include "smile/engine/core/ecs/ecs_engine.h"
+#include "engine/core/ecs/ecs_engine.h"
 
 namespace smile::scene
 {

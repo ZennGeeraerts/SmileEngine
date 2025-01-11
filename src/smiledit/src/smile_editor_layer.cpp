@@ -5,9 +5,9 @@
 
 #include "smile_editor_layer.h"
 
-#include "smile/engine/core/scene/scene_serializer.h"
-#include "smile/engine/core/window/file_dialog.h"
-#include "smile/engine/graphic/renderer/render_engine.h"
+#include "engine/core/scene/scene_serializer.h"
+#include "engine/core/window/file_dialog.h"
+#include "engine/graphic/renderer/render_engine.h"
 
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>

@@ -5,11 +5,11 @@
 #include "smpch.h"
 #include "application.h"
 
-#include "smile/engine/common/logger/logger.h"
-#include "smile/engine/core/input/input.h"
-#include "smile/engine/graphic/renderer/render_engine.h"
-#include "smile/engine/graphic/renderer/render_command.h"
-#include "smile/engine/scripting/script_engine.h"
+#include "engine/common/logger/logger.h"
+#include "engine/core/input/input.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/render_command.h"
+#include "engine/scripting/script_engine.h"
 
 #include "timer.h"
 

@@ -1,4 +1,4 @@
-#include "smile/engine/common/compiled/type_id.h"
+#include "engine/common/compiled/type_id.h"
 
 struct MyStruct;
 class MyClass;

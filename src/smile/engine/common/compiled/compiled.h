@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/platform/platform_detection.h"
+#include "platform/platform_detection.h"
 
 #include <memory>
 
@@ -79,5 +79,5 @@ namespace smile
     using Byte = unsigned char;
 }
 
-#include "smile/engine/common/logger/logger.h"
+#include "logger/logger.h"
 #include "assert.h"

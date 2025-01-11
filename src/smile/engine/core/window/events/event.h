@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "smpch.h"
-#include "smile/engine/common/compiled/compiled.h"
+#include "engine/common/compiled/compiled.h"
 
 namespace smile::window
 {

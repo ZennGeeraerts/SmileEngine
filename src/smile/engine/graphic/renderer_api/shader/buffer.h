@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/common/logger/logger.h"
+#include "engine/common/logger/logger.h"
 
 namespace smile::graphic
 {

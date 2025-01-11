@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/shader/shader.h"
+#include "engine/graphic/shader/shader.h"
 
 #include <device_context.cuh>
 

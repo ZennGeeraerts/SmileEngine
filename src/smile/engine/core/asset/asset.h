@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/compiled.h"
-#include "smile/engine/common/primitive/uuid.h"
+#include "engine/common/compiled/compiled.h"
+#include "engine/common/primitive/uuid.h"
 
 namespace smile::asset
 {

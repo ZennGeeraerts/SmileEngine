@@ -5,12 +5,12 @@
 #pragma once
 
 #include "ecs/render_pass_list.h"
-#include "smile/engine/graphic/renderer_api/renderer_api.h"
+#include "engine/graphic/renderer_api/renderer_api.h"
 
-#include "smile/engine/graphic/renderer_api/shader/shader_library.h"
-#include "smile/engine/graphic/renderer_api/resource/frame_buffer.h"
+#include "engine/graphic/renderer_api/shader/shader_library.h"
+#include "engine/graphic/renderer_api/resource/frame_buffer.h"
 
-#include "smile/engine/core/window/window.h"
+#include "engine/core/window/window.h"
 
 namespace smile::graphic
 {

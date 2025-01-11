@@ -27,10 +27,10 @@ endfunction()
 
 macro(add_module name)
     message("Adding module <" ${name} ">")
-    add_subdirectory(${ENGINE_PATH}/smile/engine/${name} ${name})
+    add_subdirectory(${ENGINE_PATH}/engine/${name} ${name})
 endmacro()
 
 macro(add_platform name)
     message("Adding platform <" ${name} ">")
-    add_subdirectory(${ENGINE_PATH}/smile/platform/${name} ${name})
+    add_subdirectory(${ENGINE_PATH}/platform/${name} ${name})
 endmacro(add_platform)

@@ -7,7 +7,7 @@
 #include "panels/scene_hierarchy_panel.h"
 #include "panels/content_browser_panel.h"
 
-#include "smile/engine/graphic/camera/editor_camera.h"
+#include "engine/graphic/camera/editor_camera.h"
 
 namespace smile
 {

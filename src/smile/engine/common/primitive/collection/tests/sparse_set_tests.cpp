@@ -2,7 +2,7 @@
 // Copyright 2022-2024 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "smile/engine/common/primitive/collection/sparse_set.h"
+#include "engine/common/primitive/collection/sparse_set.h"
 
 #include <catch/catch.hpp>
 

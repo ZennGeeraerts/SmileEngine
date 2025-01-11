@@ -5,8 +5,8 @@
 #pragma once
 
 #include "camera.h"
-#include "smile/engine/core/window/events/event.h"
-#include "smile/engine/core/window/events/mouse_event.h"
+#include "engine/core/window/events/event.h"
+#include "engine/core/window/events/mouse_event.h"
 
 namespace smile::graphic
 {

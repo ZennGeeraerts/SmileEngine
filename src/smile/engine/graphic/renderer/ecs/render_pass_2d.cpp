@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "render_pass_2d.h"
 
-#include "smile/engine/graphic/renderer/renderer_2d.h"
-#include "smile/engine/core/scene/ecs/transform_component.h"
+#include "engine/graphic/renderer/renderer_2d.h"
+#include "engine/core/scene/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {

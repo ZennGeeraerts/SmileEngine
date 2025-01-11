@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/pimpl.h"
+#include "engine/common/compiled/pimpl.h"
 #include "collision_group.h"
 
 #include <DirectXMath.h>

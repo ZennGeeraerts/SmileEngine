@@ -5,7 +5,7 @@
 #pragma once
 
 #include "compiled.h"
-#include "smile/engine/common/logger/logger.h"
+#include "logger/logger.h"
 
 #ifdef SM_ENABLE_ASSERTS
 #    define SM_ASSERT( x, ... )                                                                                        \

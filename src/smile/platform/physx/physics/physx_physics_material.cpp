@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/physics/physics_material.h"
+#include "engine/physics/physics_material.h"
 
-#include "smile/engine/physics/physics_engine.h"
+#include "engine/physics/physics_engine.h"
 
 #include <PxPhysicsAPI.h>
 

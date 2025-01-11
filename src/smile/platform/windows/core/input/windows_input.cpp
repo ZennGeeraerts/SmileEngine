@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/core/input/input.h"
-#include "smile/engine/core/application/application.h"
+#include "engine/core/input/input.h"
+#include "engine/core/application/application.h"
 
 #include <Windows.h>
 

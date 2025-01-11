@@ -1,5 +1,5 @@
-#include "smile/engine/core/scene/entity.h"
-#include "smile/engine/core/ecs/relationship.h"
+#include "engine/core/scene/entity.h"
+#include "engine/core/ecs/relationship.h"
 #include <catch/catch.hpp>
 
 namespace smile

@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #include "smpch.h"
 
-#include "smile/engine/core/window/file_dialog.h"
-#include "smile/engine/core/application/application.h"
+#include "engine/core/window/file_dialog.h"
+#include "engine/core/application/application.h"
 
 #include <Windows.h>
 #include <commdlg.h>

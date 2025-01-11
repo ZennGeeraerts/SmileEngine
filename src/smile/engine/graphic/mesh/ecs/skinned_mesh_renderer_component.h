@@ -3,10 +3,10 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/renderer/render_command.h"
-#include "smile/engine/graphic/mesh/model_loader.h"
-#include "smile/engine/graphic/mesh/mesh_factory.h"
-#include "smile/engine/graphic/mesh/material.h"
+#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/mesh/model_loader.h"
+#include "engine/graphic/mesh/mesh_factory.h"
+#include "engine/graphic/mesh/material.h"
 
 namespace smile::graphic::ecs
 {
@@ -16,7 +16,7 @@ namespace smile::graphic::ecs
         {
             // TODO: Get shader from shader library in render engine
             graphic::GraphicsDevice *pDevice = graphic::RenderCommand::GetGraphicsDevice();
-            auto pShader = pDevice->CreateShader( "assets/shaders/PBR_Skinned.fx" );
+            auto pShader = pDevice->CreateShader( "resources/shaders/PBR_Skinned.fx" );
             pMaterial = CreateRef< graphic::Material >( pShader );
         }
 

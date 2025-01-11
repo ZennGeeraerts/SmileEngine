@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION "3.25.0")
 
-set(ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../")
+get_filename_component(ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../../" ABSOLUTE)
 
 file(GLOB_RECURSE ENGINE_SOURCE_FILES "${ENGINE_PATH}/src/smile/script_core/Source/*.cs")
 project("smile-script-core" LANGUAGES CSharp)
@@ -30,7 +30,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../scenes"
-        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/scenes"
+        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scenes"
     )
 
 add_custom_command(
@@ -38,7 +38,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../textures"
-        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/textures"
+        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/textures"
     )
 
 add_custom_command(
@@ -46,7 +46,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../meshes"
-        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/meshes"
+        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/meshes"
     )
     
 add_custom_command(
@@ -54,7 +54,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../shaders"
-        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/shaders"
+        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/shaders"
     )
 
 add_custom_command(
@@ -62,5 +62,5 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/bin"
-        "${ENGINE_PATH}/out/build/x64-$<CONFIG>/src/smile/editor/$<CONFIG>/sandbox-project/assets/scripts/bin"
+        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scripts/bin"
     )

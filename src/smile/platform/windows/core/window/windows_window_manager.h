@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/core/window/window_manager.h"
+#include "engine/core/window/window_manager.h"
 
 #include <Windows.h>
 

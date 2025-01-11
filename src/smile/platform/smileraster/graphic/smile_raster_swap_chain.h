@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/swap_chain.h"
+#include "engine/graphic/swap_chain.h"
 #include <device_context.cuh>
 
 namespace smile::graphic

@@ -7,7 +7,7 @@
 
 #include "render_engine.h"
 #include "render_command.h"
-#include "smile/engine/graphic/mesh/mesh_factory.h"
+#include "engine/graphic/mesh/mesh_factory.h"
 
 namespace smile::graphic
 {
@@ -18,7 +18,7 @@ namespace smile::graphic
     {
         auto pDevice = RenderCommand::GetGraphicsDevice();
 
-        Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "assets/textures/SkyBox.dds" );
+        Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "resources/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
         s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture );

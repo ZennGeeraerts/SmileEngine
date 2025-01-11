@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/common/compiled/compiled.h"
+#include "engine/common/compiled/compiled.h"
 #include "buffer.h"
-#include "smile/engine/graphic/renderer_api/resource/texture.h"
+#include "engine/graphic/renderer_api/resource/texture.h"
 
 #include <DirectXMath.h>
 

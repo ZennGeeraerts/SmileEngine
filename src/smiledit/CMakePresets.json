@@ -15,7 +15,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/conan/Debug/conan_toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "../../conan/Debug/conan_toolchain.cmake"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -39,7 +39,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/conan/Release/conan_toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "../../conan/Release/conan_toolchain.cmake"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {

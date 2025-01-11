@@ -5,7 +5,7 @@
 #pragma once
 
 #include "event.h"
-#include "smile/engine/core/input/mouse_codes.h"
+#include "engine/core/input/mouse_codes.h"
 
 namespace smile::window
 {

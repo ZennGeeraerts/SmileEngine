@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/core/geometric/box.h"
-#include "smile/engine/graphic/mesh/mesh_factory.h"
+#include "engine/core/geometric/box.h"
+#include "engine/graphic/mesh/mesh_factory.h"
 
 namespace smile::physics::ecs
 {

@@ -6,7 +6,7 @@
 
 #include "mesh_filter.h"
 #include "skinned_mesh_filter.h"
-#include "smile/engine/graphic/animation/animation_clip.h"
+#include "engine/graphic/animation/animation_clip.h"
 
 namespace smile::graphic
 {

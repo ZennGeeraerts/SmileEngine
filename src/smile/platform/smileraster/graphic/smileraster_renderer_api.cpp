@@ -7,7 +7,7 @@
 
 #include "smileraster_context.h"
 #include "smile_raster_device.h"
-#include "smile/engine/core/window/window.h"
+#include "engine/core/window/window.h"
 
 namespace smile::graphic
 {

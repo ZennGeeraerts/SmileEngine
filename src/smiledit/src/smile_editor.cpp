@@ -4,7 +4,7 @@
 /*=============================================================================*/
 
 #include "smile_engine.h"
-#include "smile/engine/core/application/entry_point.h"
+#include "engine/core/application/entry_point.h"
 
 #include "smile_editor_layer.h"
 
@@ -28,10 +28,11 @@ namespace smile
         application::ApplicationDescriptor descriptor{};
         descriptor.Name = "Smile Editor";
 
+        std::filesystem::path path = std::filesystem::current_path();
 #ifdef SM_C_DEBUG
-        descriptor.WorkingDirectory = "../../editor/Debug";
+        descriptor.WorkingDirectory = ".";
 #elif SM_C_RELEASE
-        descriptor.WorkingDirectory = "../../editor/Release";
+        descriptor.WorkingDirectory = "../../smiledit/Release";
 #endif
 
         descriptor.CommandLineArgs = commandLineArgs;

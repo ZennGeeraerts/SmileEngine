@@ -3,10 +3,10 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/physics/rigidbody.h"
+#include "engine/physics/rigidbody.h"
 
-#include "smile/engine/physics/physics_world.h"
-#include "smile/engine/physics/physics_engine.h"
+#include "engine/physics/physics_world.h"
+#include "engine/physics/physics_engine.h"
 
 #include "physx_utils.h"
 

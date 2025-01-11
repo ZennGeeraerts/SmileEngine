@@ -3,15 +3,15 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/core/ecs/timed_system.h"
-#include "smile/engine/core/ecs/ecs_types.h"
-#include "smile/engine/common/primitive/uuid.h"
+#include "engine/core/ecs/timed_system.h"
+#include "engine/core/ecs/ecs_types.h"
+#include "engine/common/primitive/uuid.h"
 
-#include "smile/engine/physics/rigidbody.h"
-#include "smile/engine/physics/character_controller.h"
+#include "engine/physics/rigidbody.h"
+#include "engine/physics/character_controller.h"
 
-#include "smile/engine/graphic/camera/camera.h"
-#include "smile/engine/graphic/camera/editor_camera.h"
+#include "engine/graphic/camera/camera.h"
+#include "engine/graphic/camera/editor_camera.h"
 
 namespace smile::ecs
 {

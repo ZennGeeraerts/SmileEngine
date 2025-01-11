@@ -3,11 +3,11 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/core/application/layer.h"
+#include "engine/core/application/layer.h"
 
-#include "smile/engine/core/window/events/mouse_event.h"
-#include "smile/engine/core/window/events/application_event.h"
-#include "smile/engine/core/window/events/key_event.h"
+#include "engine/core/window/events/mouse_event.h"
+#include "engine/core/window/events/application_event.h"
+#include "engine/core/window/events/key_event.h"
 
 namespace smile::imgui
 {

@@ -5,8 +5,8 @@
 
 #include "content_browser_panel.h"
 
-#include "smile/engine/graphic/renderer/render_command.h"
-#include "smile/engine/core/project/project_manager.h"
+#include "engine/graphic/renderer/render_command.h"
+#include "engine/core/project/project_manager.h"
 
 #include <imgui/imgui.h>
 

@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/physics/character_controller.h"
-#include "smile/engine/physics/collision_group.h"
+#include "engine/physics/character_controller.h"
+#include "engine/physics/collision_group.h"
 
 namespace smile::physics::ecs
 {

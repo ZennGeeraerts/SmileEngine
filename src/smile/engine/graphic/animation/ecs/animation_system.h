@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/engine/core/ecs/timed_system.h"
-#include "smile/engine/graphic/mesh/skinned_mesh.h"
+#include "engine/core/ecs/timed_system.h"
+#include "engine/graphic/mesh/skinned_mesh.h"
 #include "animator_component.h"
 
 namespace smile::graphic::ecs

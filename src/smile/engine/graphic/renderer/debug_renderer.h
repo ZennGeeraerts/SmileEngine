@@ -3,13 +3,13 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/common/compiled/singleton.h"
+#include "engine/common/compiled/singleton.h"
 
-#include "smile/engine/graphic/renderer_api/resource/vertex_buffer.h"
-#include "smile/engine/graphic/renderer_api/shader/shader.h"
+#include "engine/graphic/renderer_api/resource/vertex_buffer.h"
+#include "engine/graphic/renderer_api/shader/shader.h"
 
-#include "smile/engine/graphic/camera/camera.h"
-#include "smile/engine/graphic/camera/editor_camera.h"
+#include "engine/graphic/camera/camera.h"
+#include "engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic
 {

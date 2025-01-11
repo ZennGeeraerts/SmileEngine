@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "vertex_array.h"
 
-#include "smile/engine/graphic/renderer_api/renderer_api.h"
+#include "engine/graphic/renderer_api/renderer_api.h"
 
 namespace smile::graphic
 {

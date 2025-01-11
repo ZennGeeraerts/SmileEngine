@@ -1,13 +1,8 @@
-﻿/.vs
-
-/build
-/out
+﻿out/
+bin/
+.vs/
 
 /resources/scripts
-
-/tests/sandbox-project/assets/scripts/out
-/tests/sandbox-project/assets/scripts/bin
-/tests/sandbox-project/assets/scripts/.vs
 
 /conan/Debug
 /conan/Release

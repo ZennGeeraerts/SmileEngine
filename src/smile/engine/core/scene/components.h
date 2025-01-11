@@ -6,19 +6,19 @@
 
 #include "ecs/transform_component.h"
 
-#include "smile/engine/graphic/mesh/ecs/mesh_renderer_component.h"
-#include "smile/engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
-#include "smile/engine/graphic/sprite/ecs/sprite_renderer_component.h"
-#include "smile/engine/graphic/animation/ecs/animator_component.h"
-#include "smile/engine/graphic/camera/ecs/camera_component.h"
+#include "engine/graphic/mesh/ecs/mesh_renderer_component.h"
+#include "engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
+#include "engine/graphic/sprite/ecs/sprite_renderer_component.h"
+#include "engine/graphic/animation/ecs/animator_component.h"
+#include "engine/graphic/camera/ecs/camera_component.h"
 
-#include "smile/engine/scripting/ecs/script_component.h"
+#include "engine/scripting/ecs/script_component.h"
 
-#include "smile/engine/physics/ecs/rigidbody_component.h"
-#include "smile/engine/physics/ecs/box_collider_component.h"
-#include "smile/engine/physics/ecs/sphere_collider_component.h"
-#include "smile/engine/physics/ecs/capsule_collider_component.h"
-#include "smile/engine/physics/ecs/character_controller_component.h"
+#include "engine/physics/ecs/rigidbody_component.h"
+#include "engine/physics/ecs/box_collider_component.h"
+#include "engine/physics/ecs/sphere_collider_component.h"
+#include "engine/physics/ecs/capsule_collider_component.h"
+#include "engine/physics/ecs/character_controller_component.h"
 
 namespace smile::scene
 {

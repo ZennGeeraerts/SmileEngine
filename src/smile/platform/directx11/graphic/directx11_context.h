@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/engine/graphic/renderer_api/graphics_context.h"
+#include "engine/graphic/renderer_api/graphics_context.h"
 #include "directx11_swap_chain.h"
 
 #include <d3d11.h>

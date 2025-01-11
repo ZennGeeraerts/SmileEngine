@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "smile/engine/physics/physics_engine.h"
+#include "engine/physics/physics_engine.h"
 
 #include "physx_diagnostics.h"
 
