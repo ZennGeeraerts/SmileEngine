@@ -1,4 +1,4 @@
-add_subdirectory(${ENGINE_PATH}/smile/raster)
+add_subdirectory(${ENGINE_PATH}/raster)
 
 set(INCLUDE_DIRS
     ${ENGINE_PATH}/smile/raster/src
