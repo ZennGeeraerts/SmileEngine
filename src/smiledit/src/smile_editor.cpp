@@ -29,15 +29,8 @@ namespace smile
         descriptor.Name = "Smile Editor";
 
         std::filesystem::path path = std::filesystem::current_path();
-#ifdef SM_C_DEBUG
         descriptor.WorkingDirectory = ".";
-#elif SM_C_RELEASE
-        descriptor.WorkingDirectory = "../../smiledit/Release";
-#endif
-
         descriptor.CommandLineArgs = commandLineArgs;
-
-        // project::Project::New()->SaveActive( "TestProject.smproj" );
 
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes
