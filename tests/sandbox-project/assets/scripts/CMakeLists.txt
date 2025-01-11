@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION "3.25.0")
 
-get_filename_component(ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../../" ABSOLUTE)
+get_filename_component(ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../" ABSOLUTE)
+message("PATH: " ${ENGINE_PATH})
 
 file(GLOB_RECURSE ENGINE_SOURCE_FILES "${ENGINE_PATH}/src/smile/script_core/Source/*.cs")
 project("smile-script-core" LANGUAGES CSharp)
