@@ -4,7 +4,8 @@ include(smile.cmake)
 
 set(INCLUDE_DIRS
     ${CMAKE_CURRENT_LIST_DIR}
-    ${ENGINE_PATH}/../../thirdparty)
+    ${THIRDPARTY_PATH}
+)
 
 if (NOT TARGET smile)
     add_library(smile STATIC)

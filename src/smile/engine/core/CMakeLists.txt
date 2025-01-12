@@ -6,12 +6,12 @@ endif()
 
 set(INCLUDE_DIRS
     ${CMAKE_CURRENT_LIST_DIR}
-    ${ENGINE_PATH}/../../thirdparty/yaml-cpp/include
+    ${THIRDPARTY_PATH}/yaml-cpp/include
 )
 
 set(LIB_LINKS
-    optimized ${ENGINE_PATH}/../../thirdparty/yaml-cpp/x64/yaml-cpp.lib
-    debug ${ENGINE_PATH}/../../thirdparty/yaml-cpp/x64/yaml-cppd.lib
+    optimized ${THIRDPARTY_PATH}/yaml-cpp/x64/yaml-cpp.lib
+    debug ${THIRDPARTY_PATH}/yaml-cpp/x64/yaml-cppd.lib
 )
 
 target_include_directories(smile PUBLIC ${INCLUDE_DIRS})

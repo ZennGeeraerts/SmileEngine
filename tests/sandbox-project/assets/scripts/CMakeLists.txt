@@ -1,17 +1,18 @@
 cmake_minimum_required(VERSION "3.25.0")
 
-get_filename_component(ENGINE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../" ABSOLUTE)
-message("PATH: " ${ENGINE_PATH})
+get_filename_component(SMILE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../src/smile" ABSOLUTE)
+get_filename_component(SMILEDIT_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../src/smiledit" ABSOLUTE)
+message("PATH: " ${SMILE_PATH})
 
-file(GLOB_RECURSE ENGINE_SOURCE_FILES "${ENGINE_PATH}/src/smile/script_core/Source/*.cs")
+file(GLOB_RECURSE ENGINE_SOURCE_FILES "${SMILE_PATH}/script_core/Source/*.cs")
 project("smile-script-core" LANGUAGES CSharp)
 add_library("smile-script-core" SHARED ${ENGINE_SOURCE_FILES})
 
 set_target_properties("smile-script-core"
     PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${ENGINE_PATH}/resources/scripts"
-    LIBRARY_OUTPUT_DIRECTORY "${ENGINE_PATH}/resources/scripts"
-    RUNTIME_OUTPUT_DIRECTORY "${ENGINE_PATH}/resources/scripts"
+    ARCHIVE_OUTPUT_DIRECTORY "${SMILE_PATH}/../../resources/scripts"
+    LIBRARY_OUTPUT_DIRECTORY "${SMILE_PATH}/../../resources/scripts"
+    RUNTIME_OUTPUT_DIRECTORY "${SMILE_PATH}/../../resources/scripts"
 )
 
 file(GLOB_RECURSE APP_SOURCE_FILES Source/*.cs)
@@ -31,7 +32,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../scenes"
-        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scenes"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scenes"
     )
 
 add_custom_command(
@@ -39,7 +40,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../textures"
-        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/textures"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/textures"
     )
 
 add_custom_command(
@@ -47,7 +48,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../meshes"
-        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/meshes"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/meshes"
     )
     
 add_custom_command(
@@ -55,7 +56,7 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../shaders"
-        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/shaders"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/shaders"
     )
 
 add_custom_command(
@@ -63,5 +64,5 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/bin"
-        "${ENGINE_PATH}/src/smiledit/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scripts/bin"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scripts/bin"
     )

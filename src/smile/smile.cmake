@@ -1,4 +1,6 @@
-set(ENGINE_PATH ${CMAKE_CURRENT_LIST_DIR})
+set(SMILE_PATH ${CMAKE_CURRENT_LIST_DIR})
+set(THIRDPARTY_PATH ${CMAKE_CURRENT_LIST_DIR}/../../thirdparty)
+set(CONAN_PATH ${CMAKE_CURRENT_LIST_DIR}/../../conan)
 
 function(group_sources_by_folder target)
   set(SOURCE_GROUP_DELIMITER "/")
@@ -27,10 +29,10 @@ endfunction()
 
 macro(add_module name)
     message("Adding module <" ${name} ">")
-    add_subdirectory(${ENGINE_PATH}/engine/${name} ${name})
+    add_subdirectory(${SMILE_PATH}/engine/${name} ${name})
 endmacro()
 
 macro(add_platform name)
     message("Adding platform <" ${name} ">")
-    add_subdirectory(${ENGINE_PATH}/platform/${name} ${name})
+    add_subdirectory(${SMILE_PATH}/platform/${name} ${name})
 endmacro(add_platform)

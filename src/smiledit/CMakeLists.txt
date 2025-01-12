@@ -3,18 +3,18 @@ cmake_minimum_required(VERSION "3.25.0")
 project(smiledit)
 set(CMAKE_CXX_STANDARD 17)
 
-get_filename_component(ENGINE_PATH "../smile/" ABSOLUTE)
+get_filename_component(SMILE_PATH "../smile/" ABSOLUTE)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ENGINE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(smiledit ${SOURCE_FILES})
 
-include(${ENGINE_PATH}/smile.cmake)
+include(${SMILE_PATH}/smile.cmake)
 
-add_subdirectory(${ENGINE_PATH} engine)
+add_subdirectory(${SMILE_PATH} engine)
 
 add_module(common)
 add_module(core)
@@ -31,8 +31,8 @@ set(LIB_DIRS
 
 set(INCLUDE_DIRS
     src
-    ${ENGINE_PATH}
-    ${ENGINE_PATH}/../../thirdparty
+    ${SMILE_PATH}
+    ${THIRDPARTY_PATH}
 )
 
 target_include_directories(smiledit PRIVATE ${INCLUDE_DIRS})
@@ -44,7 +44,7 @@ add_custom_command(
     TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${ENGINE_PATH}/../../resources"
+        "${SMILE_PATH}/../../resources"
         "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/resources"
     )
 
@@ -69,7 +69,7 @@ add_custom_command(
     TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${ENGINE_PATH}/../../thirdparty/assimp/x64/assimp-vc140-mt.dll
+        ${THIRDPARTY_PATH}/assimp/x64/assimp-vc140-mt.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -77,7 +77,7 @@ add_custom_command(
     TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysX.dll
+        ${CONAN_PATH}/$<CONFIG>/PhysX.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -85,7 +85,7 @@ add_custom_command(
     TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXCommon.dll
+        ${CONAN_PATH}/$<CONFIG>/PhysXCommon.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -93,7 +93,7 @@ add_custom_command(
     TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXCooking.dll
+        ${CONAN_PATH}/$<CONFIG>/PhysXCooking.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
@@ -101,7 +101,7 @@ add_custom_command(
     TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-        ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXFoundation.dll
+        ${CONAN_PATH}/$<CONFIG>/PhysXFoundation.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
