@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION "3.25.0")
 
-project(smile-editor)
+project(smiledit)
 set(CMAKE_CXX_STANDARD 17)
 
 get_filename_component(ENGINE_PATH "../smile/" ABSOLUTE)
@@ -10,7 +10,7 @@ message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
-add_executable(smile-editor ${SOURCE_FILES})
+add_executable(smiledit ${SOURCE_FILES})
 
 include(${ENGINE_PATH}/smile.cmake)
 
@@ -35,13 +35,13 @@ set(INCLUDE_DIRS
     ${ENGINE_PATH}/../../thirdparty
 )
 
-target_include_directories(smile-editor PRIVATE ${INCLUDE_DIRS})
-target_link_libraries(smile-editor PRIVATE ${LIB_DIRS})
+target_include_directories(smiledit PRIVATE ${INCLUDE_DIRS})
+target_link_libraries(smiledit PRIVATE ${LIB_DIRS})
 
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${ENGINE_PATH}/../../resources"
@@ -49,7 +49,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/mono"
@@ -57,7 +57,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_SOURCE_DIR}/imgui.ini"
@@ -66,7 +66,7 @@ add_custom_command(
 
 # Copy the dlls to the binary directory
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../thirdparty/assimp/x64/assimp-vc140-mt.dll
@@ -74,7 +74,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysX.dll
@@ -82,7 +82,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXCommon.dll
@@ -90,7 +90,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXCooking.dll
@@ -98,12 +98,12 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-editor
+    TARGET smiledit
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXFoundation.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
-group_sources_by_folder(smile-editor)
-set_property(TARGET smile-editor PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+group_sources_by_folder(smiledit)
+set_property(TARGET smiledit PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
