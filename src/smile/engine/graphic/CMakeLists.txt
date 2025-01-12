@@ -13,11 +13,11 @@ set(LIB_LINKS
     ${ENGINE_PATH}/../../thirdparty/assimp/x64/assimp-vc140-mt.lib
 )
 
-target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})
-target_link_libraries(smile-engine PRIVATE ${LIB_LINKS})
+target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
+target_link_libraries(smile PRIVATE ${LIB_LINKS})
 
 file(GLOB_RECURSE SOURCE_FILES
     *.cpp
     ${ENGINE_PATH}/../../thirdparty/ImGuizmo/ImGuizmo.cpp
 )
-target_sources(smile-engine PRIVATE ${SOURCE_FILES})
+target_sources(smile PRIVATE ${SOURCE_FILES})

@@ -10,8 +10,8 @@ message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
 file(GLOB_RECURSE SOURCE_FILES main.cpp)
 
-add_executable(smile-engine ${SOURCE_FILES})
-set_target_properties(smile-engine PROPERTIES OUTPUT_NAME unit-tests)
+add_executable(smile ${SOURCE_FILES})
+set_target_properties(smile PROPERTIES OUTPUT_NAME unit-tests)
 
 include(${ENGINE_PATH}/smile.cmake)
 
@@ -27,7 +27,7 @@ add_platform(directx11)
 add_platform(physx)
 
 add_custom_command(
-    TARGET smile-engine
+    TARGET smile
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../thirdparty/assimp/x64/assimp-vc140-mt.dll
@@ -35,7 +35,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-engine
+    TARGET smile
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysX.dll
@@ -43,7 +43,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-engine
+    TARGET smile
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXCommon.dll
@@ -51,7 +51,7 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-engine
+    TARGET smile
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXCooking.dll
@@ -59,12 +59,12 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smile-engine
+    TARGET smile
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${ENGINE_PATH}/../../conan/$<CONFIG>/PhysXFoundation.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
-group_sources_by_folder(smile-engine)
+group_sources_by_folder(smile)
 add_definitions(-DUNICODE)

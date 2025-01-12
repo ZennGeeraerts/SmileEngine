@@ -26,7 +26,7 @@ add_platform(directx11)
 add_platform(physx)
 
 set(LIB_DIRS
-    smile-engine
+    smile
 )
 
 set(INCLUDE_DIRS

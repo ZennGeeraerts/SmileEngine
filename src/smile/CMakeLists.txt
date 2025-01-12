@@ -6,19 +6,19 @@ set(INCLUDE_DIRS
     ${CMAKE_CURRENT_LIST_DIR}
     ${ENGINE_PATH}/../../thirdparty)
 
-if (NOT TARGET smile-engine)
-    add_library(smile-engine STATIC)
+if (NOT TARGET smile)
+    add_library(smile STATIC)
 endif()
 
-target_include_directories(smile-engine PUBLIC ${INCLUDE_DIRS})
+target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
 
-target_precompile_headers(smile-engine PUBLIC "smpch.h")
+target_precompile_headers(smile PUBLIC "smpch.h")
 
-set_property(TARGET smile-engine PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-set_target_properties(smile-engine PROPERTIES FOLDER Core)
+set_property(TARGET smile PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+set_target_properties(smile PROPERTIES FOLDER Core)
 
 target_compile_definitions(
-    smile-engine
+    smile
     PUBLIC
     $<$<CONFIG:Debug>:SM_C_DEBUG>
     $<$<CONFIG:Release>:SM_C_RELEASE>

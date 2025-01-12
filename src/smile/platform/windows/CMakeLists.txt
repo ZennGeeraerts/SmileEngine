@@ -5,7 +5,7 @@ set(LIB_LINKS
     Bcrypt
 )
 
-target_link_libraries(smile-engine PRIVATE ${LIB_LINKS})
+target_link_libraries(smile PRIVATE ${LIB_LINKS})
 
 file(GLOB_RECURSE SOURCE_FILES *.cpp)
-target_sources(smile-engine PRIVATE ${SOURCE_FILES})
+target_sources(smile PRIVATE ${SOURCE_FILES})
