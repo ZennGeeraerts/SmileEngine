@@ -4,6 +4,9 @@ project(smiledit)
 set(CMAKE_CXX_STANDARD 17)
 
 get_filename_component(SMILE_PATH "../smile/" ABSOLUTE)
+get_filename_component(CMAKE_PATH "../../cmake" ABSOLUTE)
+
+include(${CMAKE_PATH}/prevent_in_source_builds.cmake)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
@@ -105,5 +108,7 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
+include(${CMAKE_PATH}/group_sources_by_folder.cmake)
 group_sources_by_folder(smiledit)
+
 set_property(TARGET smiledit PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
