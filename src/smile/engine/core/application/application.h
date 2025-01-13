@@ -1,0 +1,82 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+#pragma once
+
+#include "engine/common/compiled/compiled.h"
+
+#include "layer_stack.h"
+#include "engine/core/window/window_manager.h"
+#include "engine/core/window/events/event.h"
+#include "engine/core/window/events/application_event.h"
+
+#include "engine/graphic/imgui/imgui_layer.h"
+
+namespace smile::application
+{
+    struct ApplicationCommandLineArgs final
+    {
+        int Count{ 0 };
+        char **Args{ nullptr };
+
+        const char *operator[]( int index ) const
+        {
+            SM_ASSERT( index < Count, "ApplicationCommandLineArgs::*operator > Index out of range" );
+            return Args[index];
+        }
+    };
+
+    struct ApplicationDescriptor final
+    {
+        std::string Name = "Smile Game";
+        std::string WorkingDirectory;
+        ApplicationCommandLineArgs CommandLineArgs;
+    };
+
+    class Application
+    {
+      public:
+        Application( const ApplicationDescriptor &descriptor );
+        virtual ~Application();
+
+        void Run();
+        void ShutDown();
+
+        void OnEvent( window::Event &e );
+
+        void PushLayer( Layer *pLayer );
+        void PushOverlay( Layer *pOverlay );
+
+        inline static Application &GetInstance()
+        {
+            return *s_pInstance;
+        }
+        inline window::Window &GetMainWindow() const
+        {
+            return *m_pWindowManager->GetWindow( 0 );
+        }
+        inline const ApplicationDescriptor &GetDescriptor() const
+        {
+            return m_Descriptor;
+        }
+
+      private:
+        bool OnWindowClose( window::WindowCloseEvent &e );
+        bool OnWindowResize( window::WindowResizeEvent &e );
+
+      private:
+        ApplicationDescriptor m_Descriptor;
+        std::unique_ptr< window::WindowManager > m_pWindowManager;
+        imgui::ImGuiLayer *m_pImGuiLayer;
+        bool m_IsRunning = true;
+        bool m_IsMinimized = false;
+        LayerStack m_LayerStack;
+
+      private:
+        static Application *s_pInstance;
+    };
+
+    // To be defined in client
+    Application *CreateApplication( ApplicationCommandLineArgs commandLineArgs );
+}

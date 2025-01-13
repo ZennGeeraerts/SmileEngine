@@ -1,13 +1,8 @@
-﻿/.vs
+﻿out/
+bin/
+.vs/
 
-/build
-/out
-
-/smile-editor/resources/scripts
-
-/smile-editor/sandbox-project/assets/scripts/out
-/smile-editor/sandbox-project/assets/scripts/bin
-/smile-editor/sandbox-project/assets/scripts/.vs
+/resources/scripts
 
 /conan/Debug
 /conan/Release
