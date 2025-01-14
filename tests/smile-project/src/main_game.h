@@ -1,5 +1,7 @@
 #pragma once
-#include <smile/engine/.h>
+#include "application/application.h"
+#include "scene/scene.h"
+#include "scene/entity.h"
 
 class ExampleLayer final : public smile::application::Layer
 {

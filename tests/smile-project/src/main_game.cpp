@@ -1,20 +1,26 @@
 #include "main_game.h"
 
-#include <smile/engine/core/application/entry_point.h>
+#include "application/entry_point.h"
+
+#include "input/input.h"
+
+#include "scene/ecs/transform_component.h"
+
+#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/mesh/material.h"
+#include "engine/graphic/camera/ecs/camera_component.h"
+#include "engine/graphic/renderer_api/resource/texture.h"
+#include "engine/graphic/mesh/ecs/mesh_renderer_component.h"
+
 #include <imgui/imgui.h>
+#include <DirectXColors.h>
 
 smile::application::Application *smile::application::CreateApplication(
     smile::application::ApplicationCommandLineArgs commandLineArgs )
 {
     smile::application::ApplicationDescriptor descriptor{};
     descriptor.Name = "Main Game";
-
-#ifdef SM_C_DEBUG
-    descriptor.WorkingDirectory = "../../smile-editor/Debug";
-#elif SM_C_RELEASE
-    descriptor.WorkingDirectory = "../../smile-editor/Release";
-#endif
-
+    descriptor.WorkingDirectory = ".";
     descriptor.CommandLineArgs = commandLineArgs;
 
     // This application will get passed to the entry point of the engine
@@ -155,7 +161,7 @@ void ExampleLayer::OnAttach()
     m_pActiveScene.reset( new smile::scene::Scene{} );
 
     m_CameraEntity = m_pActiveScene->CreateEntity( "Camera" );
-    auto &camera = m_CameraEntity.AddComponent< smile::scene::CameraComponent >();
+    auto &camera = m_CameraEntity.AddComponent< smile::graphic::ecs::CameraComponent >();
     camera.IsPrimary = true;
 
     /*auto cube = m_pActiveScene->CreateEntity("Cube");
@@ -170,16 +176,16 @@ void ExampleLayer::OnAttach()
     auto pDevice = smile::graphic::RenderCommand::GetGraphicsDevice();
     auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
     auto pMaterial = smile::CreateRef< smile::graphic::Material >( pShader );
-    smile::Ref< smile::graphic::Texture2D > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
+    smile::Ref< smile::graphic::Texture > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
     m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
     const smile::Uint32 meshIndex = 0;
-    auto &meshRendererComponent = m_ModelEntity.AddComponent< smile::scene::MeshRendererComponent >(
+    auto &meshRendererComponent = m_ModelEntity.AddComponent< smile::graphic::ecs::MeshRendererComponent >(
         "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
-    m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
-    m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
-    m_ModelEntity.GetComponent< smile::scene::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
+    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
+    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
+    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
     m_pActiveScene->OnViewportResize( 1280, 720 );
     m_pActiveScene->OnRuntimeStart();
@@ -187,7 +193,7 @@ void ExampleLayer::OnAttach()
 
 void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
 {
-    auto &transform = m_CameraEntity.GetComponent< smile::scene::TransformComponent >();
+    auto &transform = m_CameraEntity.GetComponent< smile::scene::ecs::TransformComponent >();
 
     if ( smile::input::Input::IsKeyPressed( smile::input::key::Left ) )
         transform.Rotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
