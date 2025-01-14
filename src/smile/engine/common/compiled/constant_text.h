@@ -17,7 +17,7 @@ namespace smile::compiled
         }
 
         template < int CharCount >
-        constexpr ConstantText( const char ( &text )[CharCount] ) : m_Text{ text }, m_CharCount{ CharCount }
+        constexpr ConstantText( const char ( &text )[CharCount] ) : m_Text{ text }, m_CharCount{ CharCount - 1 }
         {
         }
 
@@ -56,7 +56,7 @@ namespace smile::compiled
         {
             return m_CharCount >= 0 &&
                    ( ( charCount == 0 ) ||
-                       ( *m_Text == *startingText && Skip( 1 ).StartsWith( startingText + 1, charCount ) ) );
+                       ( *m_Text == *startingText && Skip( 1 ).StartsWith( startingText + 1, charCount - 1 ) ) );
         }
 
         char operator[]( const Uint32 index ) const
@@ -72,7 +72,7 @@ namespace smile::compiled
             for ( Uint32 i{}; i < m_CharCount; ++i )
             {
                 if ( m_Text[i] != other.m_Text[i] )
-                    return false
+                    return false;
             }
 
             return true;
@@ -81,7 +81,7 @@ namespace smile::compiled
         template < int CharCount >
         constexpr bool operator==( const char ( &other )[CharCount] ) const
         {
-            if ( CharCount != m_CharCount )
+            if ( ( CharCount - 1 ) != m_CharCount )
                 return false;
 
             for ( Uint32 i{}; i < m_CharCount; ++i )
@@ -97,6 +97,6 @@ namespace smile::compiled
 
       private:
         const char *m_Text{ nullptr };
-        Uint32 m_CharCount;
+        Uint32 m_CharCount = 0;
     };
 }
