@@ -64,10 +64,10 @@ namespace smile::scene
 
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > m_EntityMap{};
 
-        ecs::TransformSystem m_TransformSystem;
-        physics::ecs::PhysicsSystem m_PhysicsSystem;
-        graphic::ecs::AnimationSystem m_AnimationSystem;
-        graphic::ecs::CameraSystem m_CameraSystem;
+        Ref< ecs::TransformSystem >  m_pTransformSystem;
+        Ref< physics::ecs::PhysicsSystem > m_pPhysicsSystem;
+        Ref< graphic::ecs::AnimationSystem > m_pAnimationSystem;
+        Ref< graphic::ecs::CameraSystem > m_pCameraSystem;
 
         friend class Entity;
         friend class SceneSerializer;

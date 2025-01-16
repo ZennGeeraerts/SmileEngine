@@ -8,7 +8,7 @@
 #include "component_interface.h"
 #include "component_storage_handler.h"
 #include "component_list.h"
-#include "system.h"
+#include "base_system.h"
 #include "group_base.h"
 
 #include "engine/common/compiled/type_id.h"
@@ -451,8 +451,8 @@ namespace smile::ecs
             return *( static_cast< Group< Owned..., Get... > * >( pNewGroup ) );
         }
 
-        void AddSystem( System *pSystem );
-        void RemoveSystem( System *pSystem );
+        void AddSystem( Ref< BaseSystem > pSystem );
+        void RemoveSystem( Ref< BaseSystem > pSystem );
 
         template < typename FunctionType >
         void Each( FunctionType function )
@@ -566,7 +566,7 @@ namespace smile::ecs
         std::vector< ComponentInterface * > m_pComponents{};
         std::unordered_map< compiled::TypeID, ComponentInterface * > m_ComponentMap{};
         std::vector< GroupBase * > m_pGroups{};
-        std::vector< System * > m_pSystems{};
+        std::vector< Ref< BaseSystem > > m_pSystems{};
         std::vector< EntityHandleType > m_DeadHandles{};
     };
 }

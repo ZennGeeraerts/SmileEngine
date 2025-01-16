@@ -17,7 +17,7 @@ namespace smile::ecs
 
 namespace smile::scene::ecs
 {
-    class TransformSystem final : public smile::ecs::System
+    class TransformSystem final : public smile::ecs::System< TransformSystem >
     {
       public:
         TransformSystem() = default;

@@ -90,13 +90,13 @@ namespace smile::ecs
             destructor( pData );
     }
 
-    void ECSEngine::AddSystem( System *pSystem )
+    void ECSEngine::AddSystem( Ref< BaseSystem > pSystem )
     {
-        m_pSystems.push_back( pSystem );
+        m_pSystems.emplace_back( pSystem );
         pSystem->OnAdd( *this );
     }
 
-    void ECSEngine::RemoveSystem( System *pSystem )
+    void ECSEngine::RemoveSystem( Ref< BaseSystem > pSystem )
     {
         m_pSystems.erase( std::remove( m_pSystems.begin(), m_pSystems.end(), pSystem ) );
         pSystem->OnRemove( *this );

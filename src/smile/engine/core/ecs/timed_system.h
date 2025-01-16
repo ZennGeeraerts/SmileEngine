@@ -10,7 +10,7 @@
 namespace smile::ecs
 {
     template < typename DerivedType >
-    class TimedSystem : public System
+    class TimedSystem : public System< DerivedType >
     {
       public:
         TimedSystem() = default;

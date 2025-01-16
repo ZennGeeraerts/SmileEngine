@@ -23,7 +23,11 @@
 
 namespace smile::scene
 {
-    Scene::Scene() : m_TransformSystem{}, m_PhysicsSystem{}, m_AnimationSystem{}, m_CameraSystem{}
+    Scene::Scene()
+        : m_pTransformSystem{ CreateRef< ecs::TransformSystem >() },
+          m_pPhysicsSystem{ CreateRef< physics::ecs::PhysicsSystem >() },
+          m_pAnimationSystem{ CreateRef< graphic::ecs::AnimationSystem >() },
+          m_pCameraSystem{ CreateRef< graphic::ecs::CameraSystem >() }
     {
     }
 
@@ -81,9 +85,9 @@ namespace smile::scene
 
     void Scene::OnOpen()
     {
-        m_ECSEngine.AddSystem( &m_TransformSystem );
-        m_ECSEngine.AddSystem( &m_AnimationSystem );
-        m_ECSEngine.AddSystem( &m_CameraSystem );
+        m_ECSEngine.AddSystem( m_pTransformSystem );
+        m_ECSEngine.AddSystem( m_pAnimationSystem );
+        m_ECSEngine.AddSystem( m_pCameraSystem );
 
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::ForwardRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::WireframeRenderPass{ m_ECSEngine } );
@@ -93,9 +97,9 @@ namespace smile::scene
 
     void Scene::OnClose()
     {
-        m_ECSEngine.RemoveSystem( &m_TransformSystem );
-        m_ECSEngine.RemoveSystem( &m_AnimationSystem );
-        m_ECSEngine.RemoveSystem( &m_CameraSystem );
+        m_ECSEngine.RemoveSystem( m_pTransformSystem );
+        m_ECSEngine.RemoveSystem( m_pAnimationSystem );
+        m_ECSEngine.RemoveSystem( m_pCameraSystem );
 
         graphic::RenderEngine::ClearRenderPasses();
     }
@@ -126,12 +130,12 @@ namespace smile::scene
 
     void Scene::OnSimulationStart()
     {
-        m_ECSEngine.AddSystem( &m_PhysicsSystem );
+        m_ECSEngine.AddSystem( m_pPhysicsSystem );
     }
 
     void Scene::OnSimulationStop()
     {
-        m_ECSEngine.RemoveSystem( &m_PhysicsSystem );
+        m_ECSEngine.RemoveSystem( m_pPhysicsSystem );
     }
 
     void Scene::OnUpdateRuntime( primitive::Timestep deltaTime )
@@ -144,21 +148,21 @@ namespace smile::scene
         }
 
         m_ECSEngine.OnUpdate();
-        m_PhysicsSystem.OnDebugRender();
+        m_pPhysicsSystem->OnDebugRender();
         graphic::RenderEngine::OnRender();
     }
 
     void Scene::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        m_PhysicsSystem.OnDebugRender();
+        m_pPhysicsSystem->OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        m_PhysicsSystem.OnDebugRender();
+        m_pPhysicsSystem->OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
@@ -295,7 +299,7 @@ namespace smile::scene
     void Scene::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
     {
         Entity entity = GetEntityByUUID( entityID );
-        Ref< physics::Rigidbody > pRigidbody = m_PhysicsSystem.GetRigidbody( entityID );
+        Ref< physics::Rigidbody > pRigidbody = m_pPhysicsSystem->GetRigidbody( entityID );
         pRigidbody->AddForce( force, autoAwake );
     }
 
@@ -303,7 +307,7 @@ namespace smile::scene
     Scene::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
     {
         Entity entity = GetEntityByUUID( entityID );
-        Ref< physics::CharacterController > pCharacterController = m_PhysicsSystem.GetCharacterController( entityID );
+        Ref< physics::CharacterController > pCharacterController = m_pPhysicsSystem->GetCharacterController( entityID );
         auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();
         characterControllerComponent.CollisionFlags = pCharacterController->Move( displacement, minDist );
     }

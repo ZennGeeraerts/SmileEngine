@@ -13,7 +13,7 @@ namespace smile::ecs
 
 namespace smile::graphic::ecs
 {
-    class CameraSystem final : public smile::ecs::System
+    class CameraSystem final : public smile::ecs::System< CameraSystem >
     {
       public:
         void OnAdd( smile::ecs::ECSEngine &ecsEngine ) override;

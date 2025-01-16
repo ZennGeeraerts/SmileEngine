@@ -3,12 +3,13 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+#include "base_system.h"
+#include "compiled/type_name.h"
 
 namespace smile::ecs
 {
-    class ECSEngine;
-
-    class System
+    template< typename DerivedType >
+    class System : public BaseSystem
     {
       public:
         System() = default;
@@ -25,7 +26,15 @@ namespace smile::ecs
             m_pECSEngine = nullptr;
         };
 
-        virtual void OnUpdate() = 0;
+        std::string_view GetName() const override
+        {
+            return GetStaticName();
+        }
+
+        static std::string_view GetStaticName()
+        {
+            return compiled::TypeNameOf< DerivedType >();
+        }
 
       protected:
         ECSEngine *m_pECSEngine = nullptr;
