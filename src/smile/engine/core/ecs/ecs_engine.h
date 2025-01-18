@@ -454,6 +454,11 @@ namespace smile::ecs
         void AddSystem( Ref< BaseSystem > pSystem );
         void RemoveSystem( Ref< BaseSystem > pSystem );
 
+        const std::vector< Ref< BaseSystem > > &GetSystems() const
+        {
+            return m_pSystems;
+        }
+
         template < typename FunctionType >
         void Each( FunctionType function )
         {
