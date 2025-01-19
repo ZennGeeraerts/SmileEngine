@@ -29,6 +29,7 @@ namespace smile::ecs
 
             std::vector< std::string > GetStates() const;
             State &GetState( const std::string &name ) const;
+            Ref< BaseSystem > GetSystem( const std::string &name ) const;
 
           private:
             Ref< BaseSystem > GetOrCreateSystem( const std::string &systemName );

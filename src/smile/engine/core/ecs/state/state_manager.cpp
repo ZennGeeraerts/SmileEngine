@@ -114,6 +114,11 @@ namespace smile::ecs::state
         return *m_StateMap.at( name );
     }
 
+    Ref< BaseSystem > StateManager::GetSystem( const std::string &name ) const
+    {
+        return m_SystemMap.at( name );
+    }
+
     Ref< BaseSystem > StateManager::GetOrCreateSystem( const std::string &systemName )
     {
         auto systemIt = m_SystemMap.find( systemName );

@@ -20,15 +20,39 @@
 #include "engine/graphic/camera/ecs/camera_system.h"
 
 #include "engine/core/ecs/relationship.h"
+#include "ecs/state/system_factory.h"
+
+#include "ecs/transform_system.h"
+#include "engine/physics/ecs/physics_system.h"
+#include "engine/graphic/animation/ecs/animation_system.h"
+#include "engine/graphic/camera/ecs/camera_system.h"
 
 namespace smile::scene
 {
     Scene::Scene()
-        : m_pTransformSystem{ CreateRef< ecs::TransformSystem >() },
-          m_pPhysicsSystem{ CreateRef< physics::ecs::PhysicsSystem >() },
-          m_pAnimationSystem{ CreateRef< graphic::ecs::AnimationSystem >() },
-          m_pCameraSystem{ CreateRef< graphic::ecs::CameraSystem >() }
     {
+        smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::CameraSystem >();
+
+        auto pEditorState = CreateRef< smile::ecs::state::State >();
+        pEditorState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
+        m_StateManager.AddState( "editor", pEditorState );
+
+        auto pSimulateState = CreateRef< smile::ecs::state::State >();
+        pSimulateState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
+        pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        m_StateManager.AddState( "simulate", pSimulateState );
+
+        auto pRuntimeState = CreateRef< smile::ecs::state::State >();
+        pRuntimeState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
+        m_StateManager.AddState( "runtime", pRuntimeState );
+
+        m_StateManager.Initialize( &m_ECSEngine, "editor" );
     }
 
     Scene::~Scene()
@@ -85,9 +109,7 @@ namespace smile::scene
 
     void Scene::OnOpen()
     {
-        m_ECSEngine.AddSystem( m_pTransformSystem );
-        m_ECSEngine.AddSystem( m_pAnimationSystem );
-        m_ECSEngine.AddSystem( m_pCameraSystem );
+        m_StateManager.ChangeState( "editor" );
 
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::ForwardRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::WireframeRenderPass{ m_ECSEngine } );
@@ -97,16 +119,12 @@ namespace smile::scene
 
     void Scene::OnClose()
     {
-        m_ECSEngine.RemoveSystem( m_pTransformSystem );
-        m_ECSEngine.RemoveSystem( m_pAnimationSystem );
-        m_ECSEngine.RemoveSystem( m_pCameraSystem );
-
         graphic::RenderEngine::ClearRenderPasses();
     }
 
     void Scene::OnRuntimeStart()
     {
-        OnSimulationStart();
+        m_StateManager.ChangeState( "runtime" );
 
         // Scripting
         {
@@ -124,18 +142,18 @@ namespace smile::scene
 
     void Scene::OnRuntimeStop()
     {
-        OnSimulationStop();
+        m_StateManager.ChangeState( "editor" );
         scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void Scene::OnSimulationStart()
     {
-        m_ECSEngine.AddSystem( m_pPhysicsSystem );
+        m_StateManager.ChangeState( "simulate" );
     }
 
     void Scene::OnSimulationStop()
     {
-        m_ECSEngine.RemoveSystem( m_pPhysicsSystem );
+        m_StateManager.ChangeState( "editor" );
     }
 
     void Scene::OnUpdateRuntime( primitive::Timestep deltaTime )
@@ -148,21 +166,28 @@ namespace smile::scene
         }
 
         m_ECSEngine.OnUpdate();
-        m_pPhysicsSystem->OnDebugRender();
+
+        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
+            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
+        pPhysicsSystem->OnDebugRender();
+
         graphic::RenderEngine::OnRender();
     }
 
     void Scene::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        m_pPhysicsSystem->OnDebugRender();
+        
+        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
+            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
+        pPhysicsSystem->OnDebugRender();
+
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void Scene::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        m_pPhysicsSystem->OnDebugRender();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
@@ -299,7 +324,11 @@ namespace smile::scene
     void Scene::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
     {
         Entity entity = GetEntityByUUID( entityID );
-        Ref< physics::Rigidbody > pRigidbody = m_pPhysicsSystem->GetRigidbody( entityID );
+
+        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
+            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
+
+        Ref< physics::Rigidbody > pRigidbody = pPhysicsSystem->GetRigidbody( entityID );
         pRigidbody->AddForce( force, autoAwake );
     }
 
@@ -307,7 +336,11 @@ namespace smile::scene
     Scene::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
     {
         Entity entity = GetEntityByUUID( entityID );
-        Ref< physics::CharacterController > pCharacterController = m_pPhysicsSystem->GetCharacterController( entityID );
+
+        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
+            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
+
+        Ref< physics::CharacterController > pCharacterController = pPhysicsSystem->GetCharacterController( entityID );
         auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();
         characterControllerComponent.CollisionFlags = pCharacterController->Move( displacement, minDist );
     }
