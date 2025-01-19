@@ -9,10 +9,7 @@
 #include "engine/graphic/camera/editor_camera.h"
 
 #include "engine/core/ecs/ecs_engine.h"
-#include "ecs/transform_system.h"
-#include "engine/physics/ecs/physics_system.h"
-#include "engine/graphic/animation/ecs/animation_system.h"
-#include "engine/graphic/camera/ecs/camera_system.h"
+#include "ecs/state/state_manager.h"
 
 namespace smile::scene
 {
@@ -64,10 +61,7 @@ namespace smile::scene
 
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > m_EntityMap{};
 
-        Ref< ecs::TransformSystem >  m_pTransformSystem;
-        Ref< physics::ecs::PhysicsSystem > m_pPhysicsSystem;
-        Ref< graphic::ecs::AnimationSystem > m_pAnimationSystem;
-        Ref< graphic::ecs::CameraSystem > m_pCameraSystem;
+        smile::ecs::state::StateManager m_StateManager;
 
         friend class Entity;
         friend class SceneSerializer;
