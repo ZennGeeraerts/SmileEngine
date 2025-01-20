@@ -6,6 +6,7 @@
 #include "script_engine.h"
 
 #include "script_glue.h"
+#include "script_field.h"
 #include "ecs/script_component.h"
 
 #include <fstream>
@@ -338,6 +339,16 @@ namespace smile::scripting
         return s_pData->pCoreAssemblyImage;
     }
 
+    MonoImage *ScriptEngine::GetAppAssemblyImage()
+    {
+        return s_pData->pAppAssemblyImage;
+    }
+
+    ScriptClass &ScriptEngine::GetEntityClass()
+    {
+        return s_pData->EntityClass;
+    }
+
     MonoObject *ScriptEngine::InstantiateClass( MonoClass *pMonoClass )
     {
         MonoObject *pInstance = mono_object_new( s_pData->pAppDomain, pMonoClass );
@@ -400,80 +411,5 @@ namespace smile::scripting
 
         Ref< ScriptInstance > pInstance = s_pData->EntityInstances[entityUUID];
         pInstance->InvokeOnUpdate( deltaTime );
-    }
-
-    ScriptClass::ScriptClass( const std::string &classNamespace, const std::string &className, bool isCore )
-        : m_ClassNamespace{ classNamespace }, m_ClassName{ className }
-    {
-        m_pMonoClass = mono_class_from_name( isCore ? s_pData->pCoreAssemblyImage : s_pData->pAppAssemblyImage,
-            classNamespace.c_str(),
-            className.c_str() );
-    }
-
-    MonoObject *ScriptClass::Instantiate()
-    {
-        return ScriptEngine::InstantiateClass( m_pMonoClass );
-    }
-
-    MonoMethod *ScriptClass::GetMethod( const std::string &name, int parameterCount )
-    {
-        return mono_class_get_method_from_name( m_pMonoClass, name.c_str(), parameterCount );
-    }
-
-    MonoObject *ScriptClass::InvokeMethod( MonoObject *pInstance, MonoMethod *pMethod, void **ppParams )
-    {
-        return mono_runtime_invoke( pMethod, pInstance, ppParams, nullptr );
-    }
-
-    ScriptInstance::ScriptInstance( Ref< ScriptClass > pScriptClass, scene::Entity entity )
-        : m_pScriptClass{ pScriptClass }
-    {
-        m_pInstance = pScriptClass->Instantiate();
-        m_pConstructor = s_pData->EntityClass.GetMethod( ".ctor", 1 );
-        m_pOnCreateMethod = pScriptClass->GetMethod( "OnCreate", 0 );
-        m_pOnUpdateMethod = pScriptClass->GetMethod( "OnUpdate", 1 );
-
-        primitive::UUID entityID = entity.GetUUID();
-        void *pParam = &entityID;
-        pScriptClass->InvokeMethod( m_pInstance, m_pConstructor, &pParam );
-    }
-
-    void ScriptInstance::InvokeOnCreate()
-    {
-        if ( m_pOnCreateMethod )
-            m_pScriptClass->InvokeMethod( m_pInstance, m_pOnCreateMethod );
-    }
-
-    void ScriptInstance::InvokeOnUpdate( float deltaTime )
-    {
-        if ( m_pOnUpdateMethod )
-        {
-            void *pParam = &deltaTime;
-            m_pScriptClass->InvokeMethod( m_pInstance, m_pOnUpdateMethod, &pParam );
-        }
-    }
-
-    bool ScriptInstance::GetFieldValueInternal( const std::string &name, void *pBuffer )
-    {
-        const auto &fields = m_pScriptClass->GetFields();
-        auto it = fields.find( name );
-        if ( it == fields.end() )
-            return false;
-
-        const ScriptField &field = it->second;
-        mono_field_get_value( m_pInstance, field.pClassField, pBuffer );
-        return true;
-    }
-
-    bool ScriptInstance::SetFieldValueInternal( const std::string &name, const void *pValue )
-    {
-        const auto &fields = m_pScriptClass->GetFields();
-        auto it = fields.find( name );
-        if ( it == fields.end() )
-            return false;
-
-        const ScriptField &field = it->second;
-        mono_field_set_value( m_pInstance, field.pClassField, const_cast< void * >( pValue ) );
-        return true;
     }
 }
