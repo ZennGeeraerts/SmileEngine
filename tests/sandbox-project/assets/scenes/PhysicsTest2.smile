@@ -261,3 +261,20 @@ Entities:
       Offset: [0, 0, 0]
       bTrigger: false
       bShowColliderBounds: true
+  - Entity: 9711405850924986432
+    TagComponent:
+      Tag: Character
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1.00000011e-06, 1, 1]
+    ScriptComponent:
+      ClassName: Sandbox.Player
+    CharacterControllerComponent:
+      Radius: 2
+      Height: 5
+      ClimbingMode: 0
+      Name: Character
+      CollisionGroups: 0
+      CollisionIgnoreGroups: 0
+      CollisionFlags: 0
