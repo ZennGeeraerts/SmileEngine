@@ -1,6 +1,7 @@
 #include "main_game.h"
 
 #include "application/entry_point.h"
+#include "application/timer.h"
 
 #include "input/input.h"
 
