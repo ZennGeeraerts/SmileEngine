@@ -7,9 +7,6 @@
 
 #include "engine/common/logger/logger.h"
 #include "engine/core/input/input.h"
-#include "engine/graphic/renderer/render_engine.h"
-#include "engine/graphic/renderer/render_command.h"
-#include "engine/scripting/script_engine.h"
 
 #include "timer.h"
 
@@ -34,18 +31,6 @@ namespace smile::application
         window::Window *pMainWindow = m_pWindowManager->CreateNewWindow( window::WindowSettings{ descriptor.Name } );
         pMainWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
         pMainWindow->SetVSync( false );
-
-        graphic::RenderEngine::Initialize( pMainWindow );
-        scripting::ScriptEngine::Initialize();
-
-        m_pImGuiLayer = new imgui::ImGuiLayer{};
-        PushOverlay( m_pImGuiLayer );
-    }
-
-    Application::~Application()
-    {
-        scripting::ScriptEngine::ShutDown();
-        graphic::RenderEngine::ShutDown();
     }
 
     void Application::PushLayer( Layer *pLayer )
@@ -88,13 +73,7 @@ namespace smile::application
                     pLayer->OnUpdate( deltaTime );
             }
 
-            m_pImGuiLayer->Begin();
-            for ( Layer *pLayer : m_LayerStack )
-                pLayer->OnImGuiRender();
-            m_pImGuiLayer->End();
-
             m_pWindowManager->PollEvents();
-            graphic::RenderCommand::Present();
         }
     }
 
@@ -112,10 +91,6 @@ namespace smile::application
     bool Application::OnWindowResize( window::WindowResizeEvent &e )
     {
         m_IsMinimized = ( e.GetWidth() == 0 ) || ( e.GetHeight() == 0 );
-
-        if ( !m_IsMinimized )
-            graphic::RenderEngine::OnWindowResize( e.GetWidth(), e.GetHeight() );
-
         return false;
     }
 }
