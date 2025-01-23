@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/compiled/compiled.h"
+#include "engine/common/foundation/compiled.h"
 #include "engine/common/logger/logger.h"
 #include "engine/core/scene/scene.h"
 #include "engine/core/scene/entity.h"

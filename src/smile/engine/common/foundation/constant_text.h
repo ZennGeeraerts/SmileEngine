@@ -5,7 +5,7 @@
 #pragma once
 #include "compiled.h"
 
-namespace smile::compiled
+namespace smile::foundation
 {
     class ConstantText final
     {

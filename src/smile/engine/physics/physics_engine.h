@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/compiled/singleton.h"
+#include "engine/common/foundation/singleton.h"
 #include "physics_world.h"
 
 namespace smile::physics
@@ -17,7 +17,7 @@ namespace smile::physics
         Uint32 SubstepCount = 0;
     };
 
-    class PhysicsEngine final : public compiled::Singleton< PhysicsEngine >
+    class PhysicsEngine final : public foundation::Singleton< PhysicsEngine >
     {
       private:
         struct Opaque;
@@ -42,6 +42,6 @@ namespace smile::physics
         void SubstepStrategy( primitive::Timestep deltaTime );
 
       private:
-        compiled::PImpl< Opaque > m_pImplementation;
+        foundation::PImpl< Opaque > m_pImplementation;
     };
 }

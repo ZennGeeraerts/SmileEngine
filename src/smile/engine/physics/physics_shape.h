@@ -24,6 +24,6 @@ namespace smile::physics
         void SetTrigger( bool isTrigger );
 
       private:
-        compiled::PImpl< Opaque > m_pImplementation;
+        foundation::PImpl< Opaque > m_pImplementation;
     };
 }

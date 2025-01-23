@@ -2,10 +2,10 @@
 // Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "compiled/compiled.h"
-#include "compiled/constant_text.h"
+#include "foundation/compiled.h"
+#include "foundation/constant_text.h"
 
-namespace smile::compiled
+namespace smile::foundation
 {
     namespace constanttexttest
     {

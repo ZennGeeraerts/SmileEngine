@@ -4,15 +4,15 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/compiled/compiled.h"
-#include "engine/common/compiled/singleton.h"
+#include "engine/common/foundation/compiled.h"
+#include "engine/common/foundation/singleton.h"
 #include "engine/common/primitive/timestep.h"
 
 #include <chrono>
 
 namespace smile::application
 {
-    class Timer final : public compiled::Singleton< Timer >
+    class Timer final : public foundation::Singleton< Timer >
     {
       public:
         Timer();

@@ -70,6 +70,6 @@ namespace smile::physics
         const PhysicsWorldSettings &GetSettings() const;
 
       private:
-        compiled::PImpl< Opaque > m_pImplementation;
+        foundation::PImpl< Opaque > m_pImplementation;
     };
 }

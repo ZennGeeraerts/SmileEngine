@@ -14,7 +14,7 @@
 #include "shader/directx11_shader.h"
 
 #include "engine/core/window/window.h"
-#include "engine/common/compiled/compiled.h"
+#include "engine/common/foundation/compiled.h"
 #include "engine/common/logger/logger.h"
 
 namespace smile::graphic

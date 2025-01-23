@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/compiled/pimpl.h"
+#include "engine/common/foundation/pimpl.h"
 
 namespace smile::physics
 {
@@ -20,6 +20,6 @@ namespace smile::physics
         void *GetInternal() const;
 
       private:
-        compiled::PImpl< Opaque > m_pImplementation;
+        foundation::PImpl< Opaque > m_pImplementation;
     };
 }

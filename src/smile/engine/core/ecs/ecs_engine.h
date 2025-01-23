@@ -11,7 +11,7 @@
 #include "base_system.h"
 #include "group_base.h"
 
-#include "engine/common/compiled/type_id.h"
+#include "engine/common/foundation/type_id.h"
 
 #include <algorithm>
 
@@ -273,14 +273,14 @@ namespace smile::ecs
 
             m_pComponents.push_back( pComponentInterface );
 
-            auto typeID = compiled::TypeIDOf< ComponentType >();
+            auto typeID = foundation::TypeIDOf< ComponentType >();
             m_ComponentMap[typeID] = pComponentInterface;
         }
 
         template < typename ComponentType >
         void RegisterComponentIfNeeded()
         {
-            auto typeID = compiled::TypeIDOf< ComponentType >();
+            auto typeID = foundation::TypeIDOf< ComponentType >();
             if ( m_ComponentMap.find( typeID ) == m_ComponentMap.end() )
                 RegisterComponent< ComponentType >();
         }
@@ -329,7 +329,7 @@ namespace smile::ecs
         template < typename ComponentType >
         ComponentType &GetComponent( EntityHandleType entityHandle )
         {
-            auto it = m_ComponentMap.find( compiled::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
 
             SM_ASSERT( it != m_ComponentMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
@@ -339,7 +339,7 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentType &GetComponent( EntityHandleType entityHandle ) const
         {
-            auto it = m_ComponentMap.find( compiled::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
 
             SM_ASSERT( it != m_ComponentMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
@@ -361,7 +361,7 @@ namespace smile::ecs
         template < typename ComponentType >
         ComponentType *TryGetComponent( EntityHandleType entityHandle )
         {
-            auto it = m_ComponentMap.find( compiled::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
 
             if ( it == m_ComponentMap.end() )
                 return nullptr;
@@ -372,7 +372,7 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentType *TryGetComponent( EntityHandleType entityHandle ) const
         {
-            auto it = m_ComponentMap.find( compiled::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
 
             if ( it == m_ComponentMap.end() )
                 return nullptr;
@@ -399,7 +399,7 @@ namespace smile::ecs
             }
 
             m_pComponents.erase( std::remove( m_pComponents.begin(), m_pComponents.end(), pComponentInterface ) );
-            m_ComponentMap.erase( compiled::TypeIDOf< ComponentType >() );
+            m_ComponentMap.erase( foundation::TypeIDOf< ComponentType >() );
         }
 
         template < typename ComponentType >
@@ -531,21 +531,21 @@ namespace smile::ecs
         template < typename ComponentType >
         ComponentInterface *GetComponentInterface()
         {
-            auto typeID = compiled::TypeIDOf< ComponentType >();
+            auto typeID = foundation::TypeIDOf< ComponentType >();
             return m_ComponentMap.find( typeID ) != m_ComponentMap.end() ? m_ComponentMap[typeID] : nullptr;
         }
 
         template < typename ComponentType >
         const ComponentInterface *GetComponentInterface() const
         {
-            auto typeID = compiled::TypeIDOf< ComponentType >();
+            auto typeID = foundation::TypeIDOf< ComponentType >();
             return m_ComponentMap.find( typeID ) != m_ComponentMap.end() ? m_ComponentMap.at( typeID ) : nullptr;
         }
 
         template < typename ComponentType >
         ComponentStorageHandler< ComponentType > *GetComponentStorage()
         {
-            auto typeID = compiled::TypeIDOf< ComponentType >();
+            auto typeID = foundation::TypeIDOf< ComponentType >();
             auto pComponentInterface = m_ComponentMap[typeID];
 
             return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
@@ -554,7 +554,7 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentStorageHandler< ComponentType > *GetComponentStorage() const
         {
-            auto typeID = compiled::TypeIDOf< ComponentType >();
+            auto typeID = foundation::TypeIDOf< ComponentType >();
             auto pComponentInterface = m_ComponentMap[typeID];
 
             return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
@@ -569,7 +569,7 @@ namespace smile::ecs
       private:
         EntityHandleManager m_HandleManager{};
         std::vector< ComponentInterface * > m_pComponents{};
-        std::unordered_map< compiled::TypeID, ComponentInterface * > m_ComponentMap{};
+        std::unordered_map< foundation::TypeID, ComponentInterface * > m_ComponentMap{};
         std::vector< GroupBase * > m_pGroups{};
         std::vector< Ref< BaseSystem > > m_pSystems{};
         std::vector< EntityHandleType > m_DeadHandles{};

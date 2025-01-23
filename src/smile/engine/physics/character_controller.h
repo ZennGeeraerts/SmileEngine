@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/compiled/pimpl.h"
+#include "engine/common/foundation/pimpl.h"
 #include "collision_group.h"
 
 #include <DirectXMath.h>
@@ -52,6 +52,6 @@ namespace smile::physics
         DirectX::XMFLOAT3 GetFootPosition() const;
 
       private:
-        compiled::PImpl< Opaque > m_pImplementation;
+        foundation::PImpl< Opaque > m_pImplementation;
     };
 }

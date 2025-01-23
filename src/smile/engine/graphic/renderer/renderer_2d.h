@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/common/compiled/singleton.h"
+#include "engine/common/foundation/singleton.h"
 #include "engine/graphic/sprite/ecs/sprite_renderer_component.h"
 #include "engine/graphic/camera/editor_camera.h"
 

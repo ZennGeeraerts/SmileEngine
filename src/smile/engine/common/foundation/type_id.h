@@ -7,7 +7,7 @@
 #include "type_name.h"
 #include "identifier.h"
 
-namespace smile::compiled
+namespace smile::foundation
 {
     class TypeID final
     {
@@ -58,9 +58,9 @@ namespace smile::compiled
 namespace std
 {
     template <>
-    struct hash< smile::compiled::TypeID >
+    struct hash< smile::foundation::TypeID >
     {
-        size_t operator()( const smile::compiled::TypeID &typeID ) const
+        size_t operator()( const smile::foundation::TypeID &typeID ) const
         {
             return typeID.GetHashCode();
         }

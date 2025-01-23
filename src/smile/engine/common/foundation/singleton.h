@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-namespace smile::compiled
+namespace smile::foundation
 {
     template < typename ObjectType >
     class Singleton

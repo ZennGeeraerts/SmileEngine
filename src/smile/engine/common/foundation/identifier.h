@@ -6,7 +6,7 @@
 
 #include <string_view>
 
-namespace smile::compiled::identifier
+namespace smile::foundation::identifier
 {
     constexpr size_t g_InitialValue = 2166136261u;
 

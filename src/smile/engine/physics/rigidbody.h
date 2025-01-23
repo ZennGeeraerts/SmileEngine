@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "compiled/pimpl.h"
+#include "foundation/pimpl.h"
 #include "physics_shape.h"
 
 #include "ecs/box_collider_component.h"
@@ -83,6 +83,6 @@ namespace smile::physics
         void *GetInternal() const;
 
       private:
-        compiled::PImpl< Opaque > m_pImplementation;
+        foundation::PImpl< Opaque > m_pImplementation;
     };
 }

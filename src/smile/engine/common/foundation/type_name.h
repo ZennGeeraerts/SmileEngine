@@ -8,7 +8,7 @@
 
 #include <string_view>
 
-namespace smile::compiled
+namespace smile::foundation
 {
     template < typename Type >
     constexpr std::string_view GetFullTypeName()

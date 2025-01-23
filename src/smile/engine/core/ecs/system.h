@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "base_system.h"
-#include "compiled/type_name.h"
+#include "foundation/type_name.h"
 
 namespace smile::ecs
 {
@@ -33,7 +33,7 @@ namespace smile::ecs
 
         static std::string_view GetStaticName()
         {
-            return compiled::TypeNameOf< DerivedType >();
+            return foundation::TypeNameOf< DerivedType >();
         }
 
       protected:

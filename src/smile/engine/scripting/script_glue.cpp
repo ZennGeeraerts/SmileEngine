@@ -80,7 +80,7 @@ namespace smile::scripting
         (
             []()
             {
-                std::string_view structName = compiled::TypeNameOf< ComponentType, true >();
+                std::string_view structName = foundation::TypeNameOf< ComponentType, true >();
                 std::string managedTypeName = "Smile." + std::string{ structName };
 
                 MonoType *pManagedType =
