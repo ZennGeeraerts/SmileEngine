@@ -7,7 +7,6 @@
 
 #include "engine/graphic/renderer/render_engine.h"
 #include "engine/graphic/renderer/render_command.h"
-#include "engine/scripting/script_engine.h"
 
 #include "application/timer.h"
 
@@ -18,7 +17,6 @@ namespace smile::graphic
     {
         window::Window &mainWindow = GetMainWindow();
         RenderEngine::Initialize( &mainWindow );
-        scripting::ScriptEngine::Initialize();
 
         m_pImGuiLayer = new imgui::ImGuiLayer{};
         PushOverlay( m_pImGuiLayer );
@@ -26,7 +24,6 @@ namespace smile::graphic
 
     GraphicApplication::~GraphicApplication()
     {
-        scripting::ScriptEngine::ShutDown();
         RenderEngine::ShutDown();
     }
 

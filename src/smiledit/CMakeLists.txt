@@ -24,6 +24,7 @@ add_module(core)
 add_module(graphic)
 add_module(physics)
 add_module(scripting)
+add_module(blueprint)
 
 add_platform(directx11)
 add_platform(physx)
