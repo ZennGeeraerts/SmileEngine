@@ -4,14 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/compiled/compiled.h"
+#include "compiled/compiled.h"
 
 #include "layer_stack.h"
-#include "engine/core/window/window_manager.h"
-#include "engine/core/window/events/event.h"
-#include "engine/core/window/events/application_event.h"
-
-#include "engine/graphic/imgui/imgui_layer.h"
+#include "window/window_manager.h"
+#include "window/events/event.h"
+#include "window/events/application_event.h"
 
 namespace smile::application
 {
@@ -38,9 +36,9 @@ namespace smile::application
     {
       public:
         Application( const ApplicationDescriptor &descriptor );
-        virtual ~Application();
+        virtual ~Application() = default;
 
-        void Run();
+        virtual void Run();
         void ShutDown();
 
         void OnEvent( window::Event &e );
@@ -61,14 +59,17 @@ namespace smile::application
             return m_Descriptor;
         }
 
+      protected:
+        virtual bool OnWindowResize( window::WindowResizeEvent &e );
+
       private:
         bool OnWindowClose( window::WindowCloseEvent &e );
-        bool OnWindowResize( window::WindowResizeEvent &e );
 
       private:
         ApplicationDescriptor m_Descriptor;
+
+      protected:
         std::unique_ptr< window::WindowManager > m_pWindowManager;
-        imgui::ImGuiLayer *m_pImGuiLayer;
         bool m_IsRunning = true;
         bool m_IsMinimized = false;
         LayerStack m_LayerStack;

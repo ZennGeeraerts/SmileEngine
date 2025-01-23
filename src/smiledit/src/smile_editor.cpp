@@ -4,16 +4,17 @@
 /*=============================================================================*/
 
 #include "smile.h"
-#include "engine/core/application/entry_point.h"
+#include "application/entry_point.h"
+#include "engine/graphic/application/graphic_application.h"
 
 #include "smile_editor_layer.h"
 
 namespace smile
 {
-    class SmileEditor final : public application::Application
+    class SmileEditor final : public graphic::GraphicApplication
     {
       public:
-        SmileEditor( const application::ApplicationDescriptor &descriptor ) : Application{ descriptor }
+        SmileEditor( const application::ApplicationDescriptor &descriptor ) : graphic::GraphicApplication{ descriptor }
         {
             PushLayer( new SmileEditorLayer{} );
         }
