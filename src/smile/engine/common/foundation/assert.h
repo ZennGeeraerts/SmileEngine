@@ -5,14 +5,14 @@
 #pragma once
 
 #include "compiled.h"
-#include "logger/logger.h"
+#include "logger/logging.h"
 
 #ifdef SM_ENABLE_ASSERTS
 #    define SM_ASSERT( x, ... )                                                                                        \
         {                                                                                                              \
             if ( !( x ) )                                                                                              \
             {                                                                                                          \
-                SM_LOG_ERROR( "Assertion Failed: %s", __VA_ARGS__ );                                                   \
+                SM_LOG_ERROR( "Assertion Failed: {}", __VA_ARGS__ );                                                   \
                 SM_DEBUGBREAK();                                                                                       \
             }                                                                                                          \
         }

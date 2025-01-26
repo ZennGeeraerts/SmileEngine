@@ -103,7 +103,7 @@ namespace smile::graphic
         auto pEffectVariable = pEffect->GetVariableBySemantic( sementicName.c_str() );
         if ( !pEffectVariable->IsValid() )
         {
-            SM_LOG_WARNING( "DirectX11Shader::GetEffectVariable > Invalid effect variable: %s", sementicName );
+            SM_LOG_WARNING( "DirectX11Shader::GetEffectVariable > Invalid effect variable: {}", sementicName );
             return nullptr;
         }
 

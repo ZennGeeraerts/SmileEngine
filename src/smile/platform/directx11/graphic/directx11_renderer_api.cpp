@@ -28,8 +28,8 @@ namespace smile::graphic
         HRESULT result = CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_pDXGIFactory ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "DirectXContext::Initialize > Failed to create DXGIFactory: %ls", GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectXContext::Initialize > Failed to create DXGIFactory: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 

@@ -114,14 +114,12 @@ namespace smile::graphic
                     OutputDebugStringW( ss.str().c_str() );
                     pErrorBlob->Release();
                     pErrorBlob = nullptr;
-
-                    SM_LOG_ERROR( "%ls", ss.str().c_str() );
                 }
                 else
                 {
-                    SM_LOG_ERROR( "DirectX11Device::LoadEffect > Failed to CreateEffectFromFile: %s , error: %ls",
-                        assetFile.c_str(),
-                        GetDirectX11ErrorMessage( result ) );
+                    SM_LOG_ERROR( "DirectX11Device::LoadEffect > Failed to CreateEffectFromFile: {0} , error: {1}",
+                        assetFile,
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                 }
 
                 return false;
@@ -156,8 +154,8 @@ namespace smile::graphic
                 &pShader->pInputLayout );
 
             if ( FAILED( result ) )
-                SM_LOG_ERROR( "DirectX11Device::BuildInputLayout > Failed to create input layout: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Device::BuildInputLayout > Failed to create input layout: {}",
+                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
         }
 
         static void BuildInputLayout( ID3D11Device *pDevice, const Ref< DirectX11Shader > &pShader )
@@ -244,8 +242,8 @@ namespace smile::graphic
                 &pShader->pInputLayout );
 
             if ( FAILED( result ) )
-                SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout: {}",
+                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
         }
     }
 
@@ -259,7 +257,7 @@ namespace smile::graphic
         {
             if ( filePath.find_last_of( '.' ) == std::string::npos )
             {
-                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Invalid file extension: %s", filePath.c_str() );
+                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Invalid file extension: {}", filePath );
                 return false;
             }
 
@@ -274,8 +272,8 @@ namespace smile::graphic
                 result = DirectX::LoadFromDDSFile( filePathWide.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from DDS file failed: %ls",
-                        GetDirectX11ErrorMessage( result ) );
+                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from DDS file failed: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                     return false;
                 }
             }
@@ -284,8 +282,8 @@ namespace smile::graphic
                 result = DirectX::LoadFromTGAFile( filePathWide.c_str(), &info, image );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from TGA file failed: %ls",
-                        GetDirectX11ErrorMessage( result ) );
+                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from TGA file failed: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                     return false;
                 }
             }
@@ -294,8 +292,8 @@ namespace smile::graphic
                 result = DirectX::LoadFromWICFile( filePathWide.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from WIC file failed: %ls",
-                        GetDirectX11ErrorMessage( result ) );
+                    SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from WIC file failed: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                     return false;
                 }
             }
@@ -304,8 +302,8 @@ namespace smile::graphic
                 pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), ppResource );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create texture: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create texture: {}",
+                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                 SAFE_RELEASE( ( *ppResource ) );
                 return false;
             }
@@ -314,8 +312,8 @@ namespace smile::graphic
                 pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), ppShaderResourceView );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create shader resource view: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create shader resource view: {}",
+                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                 SAFE_RELEASE( ( *ppShaderResourceView ) );
                 return false;
             }
@@ -416,8 +414,8 @@ namespace smile::graphic
             &pDirectX11Context->m_pInternal );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "DirectX11Device::Initialize > Failed to create D3D11Device: %ls", GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11Device::Initialize > Failed to create D3D11Device: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
     }
@@ -454,8 +452,8 @@ namespace smile::graphic
 
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11Device::CreateVertexBuffer > Failed to create vertex buffer: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11Device::CreateVertexBuffer > Failed to create vertex buffer: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return nullptr;
         }
 
@@ -480,8 +478,8 @@ namespace smile::graphic
         HRESULT result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pIndexBuffer->pInternal );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "DirectX11IndexBuffer > Failed to create index buffer: %ls", GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11IndexBuffer > Failed to create index buffer: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return nullptr;
         }
 
@@ -613,8 +611,8 @@ namespace smile::graphic
         HRESULT result = m_pInternal->CreateRasterizerState( &rasterizerDesc, &pRasterizerState->pInternal );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11Device::CreateRasterizerState > Failed to create rasterizer state: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11Device::CreateRasterizerState > Failed to create rasterizer state: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
         }
 
         return pRasterizerState;
@@ -669,8 +667,8 @@ namespace smile::graphic
                     m_pInternal->CreateTexture2D( &textureDesc, nullptr, &pD11Framebuffer->pColorAttachments[i] );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create Texture2D: %ls",
-                        GetDirectX11ErrorMessage( result ) );
+                    SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create Texture2D: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                     return;
                 }
 
@@ -684,8 +682,8 @@ namespace smile::graphic
                     &pD11Framebuffer->pRenderTargetViews[i] );
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create render target view: %ls",
-                        GetDirectX11ErrorMessage( result ) );
+                    SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create render target view: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                     return;
                 }
 
@@ -697,8 +695,8 @@ namespace smile::graphic
                     if ( FAILED( result ) )
                     {
                         SM_LOG_ERROR(
-                            "DirectX11Device::InvalidateFramebuffer > Failed to create shader resource view: %ls",
-                            GetDirectX11ErrorMessage( result ) );
+                            "DirectX11Device::InvalidateFramebuffer > Failed to create shader resource view: {}",
+                            fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                         return;
                     }
                 }
@@ -732,8 +730,8 @@ namespace smile::graphic
                 m_pInternal->CreateTexture2D( &depthStencilDesc, 0, &pD11Framebuffer->pDepthStencilAttachment );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create depth stencil buffer: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create depth stencil buffer: {}",
+                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                 return;
             }
 
@@ -741,8 +739,8 @@ namespace smile::graphic
                 pD11Framebuffer->pDepthStencilAttachment, &depthStencilViewDesc, &pD11Framebuffer->pDepthStencilView );
             if ( FAILED( result ) )
             {
-                SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create depth stencil view: %ls",
-                    GetDirectX11ErrorMessage( result ) );
+                SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create depth stencil view: {}",
+                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
                 return;
             }
         }
@@ -831,7 +829,7 @@ namespace smile::graphic
         if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
              ( height > pFramebuffer->MaxFramebufferSize ) )
         {
-            SM_LOG_WARNING( "DirectX11Device::ResizeFramebuffer > Invalid framebuffer size: %d, %d", width, height );
+            SM_LOG_WARNING( "DirectX11Device::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
             return;
         }
 

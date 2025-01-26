@@ -108,7 +108,7 @@ namespace smile::scripting
                 const char *nameSpace = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAMESPACE] );
                 const char *name = mono_metadata_string_heap( pImage, cols[MONO_TYPEDEF_NAME] );
 
-                SM_LOG_TRACE( "%s.%s\n", nameSpace, name );
+                SM_LOG_TRACE( "{0}.{1}\n", nameSpace, name );
             }
         }
 
@@ -119,7 +119,7 @@ namespace smile::scripting
             auto it = s_ScriptFieldTypeMap.find( typeName );
             if ( it == s_ScriptFieldTypeMap.end() )
             {
-                SM_LOG_ERROR( "Unknown type: %s", typeName.c_str() );
+                SM_LOG_ERROR( "Unknown type: {}", typeName.c_str() );
                 return ScriptFieldType::None;
             }
 
@@ -312,7 +312,7 @@ namespace smile::scripting
             s_pData->EntityClasses[fullName] = pScriptClass;
 
             int fieldCount = mono_class_num_fields( pMonoClass );
-            SM_LOG_WARNING( "%s has %d fields:", className, fieldCount );
+            SM_LOG_WARNING( "{0} has {1} fields:", className, fieldCount );
             void *pIterator = nullptr;
             while ( MonoClassField *pField = mono_class_get_fields( pMonoClass, &pIterator ) )
             {
@@ -324,7 +324,7 @@ namespace smile::scripting
                     MonoType *pMonoType = mono_field_get_type( pField );
                     ScriptFieldType fieldType = utils::MonoTypeToScriptFieldType( pMonoType );
 
-                    SM_LOG_WARNING( "%s (%s)", fieldName, utils::ScriptFieldTypeToString( fieldType ) );
+                    SM_LOG_WARNING( "{0} ({1})", fieldName, utils::ScriptFieldTypeToString( fieldType ) );
 
                     pScriptClass->m_Fields[fieldName] = { fieldType, fieldName, pField };
                 }

@@ -52,7 +52,7 @@ namespace smile::project
         }
         catch ( YAML::ParserException e )
         {
-            SM_LOG_CRITICALERROR( "Failed to load project file: %s\n %s", filePath.c_str(), e.what() );
+            SM_LOG_CRITICALERROR( "Failed to load project file: {0}\n {1}", filePath, e.what() );
             return false;
         }
 

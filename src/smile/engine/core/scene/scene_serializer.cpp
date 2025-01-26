@@ -513,7 +513,7 @@ namespace smile::scene
         }
         catch ( YAML::ParserException e )
         {
-            SM_LOG_ERROR( "Failed to load .smile file: %s\n%s", filePath, e.what() );
+            SM_LOG_ERROR( "Failed to load .smile file: {0}\n{1}", filePath, e.what() );
             return false;
         }
 
@@ -521,7 +521,7 @@ namespace smile::scene
             return false;
 
         std::string sceneName = data["Scene"].as< std::string >();
-        SM_LOG_TRACE( "Deserializing scene '%s'", sceneName.c_str() );
+        SM_LOG_TRACE( "Deserializing scene '{}'", sceneName );
 
         auto entities = data["Entities"];
         if ( entities )
@@ -535,7 +535,7 @@ namespace smile::scene
                 if ( tagComponent )
                     name = tagComponent["Tag"].as< std::string >();
 
-                SM_LOG_TRACE( "Deserialized entity with ID: %llu, name: %s", uuid, name.c_str() );
+                SM_LOG_TRACE( "Deserialized entity with ID: {0}, name: {1}", uuid, name.c_str() );
 
                 Entity deserializedEntity = m_pScene->CreateEntity( uuid, name );
 

@@ -4,12 +4,12 @@
 /*=============================================================================*/
 #include "smpch.h"
 #include "windows_window.h"
-#include "engine/common/logger/logger.h"
+#include "engine/common/logger/logging.h"
 
-#include "engine/core/window/events/application_event.h"
-#include "engine/core/window/events/mouse_event.h"
-#include "engine/core/window/events/key_event.h"
-#include "engine/core/input/input.h"
+#include "window/events/application_event.h"
+#include "window/events/mouse_event.h"
+#include "window/events/key_event.h"
+#include "input/input.h"
 
 #include "engine/graphic/renderer_api/graphics_context.h"
 
@@ -44,7 +44,7 @@ namespace smile::window
     {
         m_Data.Settings = settings;
 
-        SM_LOG_INFO( "WindowsWindow::Initialize > Creating window: %s (%d, %d)",
+        SM_LOG_INFO( "WindowsWindow::Initialize > Creating window: {0} ({1}, {2})",
             settings.Title.c_str(),
             settings.Width,
             settings.Height );
@@ -76,7 +76,7 @@ namespace smile::window
 
         ShowWindow( m_WindowHandle, SW_SHOW );
         UpdateWindow( m_WindowHandle );
-        SM_LOG_INFO( "WindowsWindow::Initialize > Window '%s' created", settings.Title.c_str() );
+        SM_LOG_INFO( "WindowsWindow::Initialize > Window '{}' created", settings.Title.c_str() );
 
         SetVSync( true );
         m_IsInitialized = true;

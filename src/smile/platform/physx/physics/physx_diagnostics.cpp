@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "physx_diagnostics.h"
 
-#include "engine/common/logger/logger.h"
+#include "logger/logging.h"
 
 namespace smile::physics
 {
@@ -47,7 +47,7 @@ namespace smile::physics
     void PhysXAssertHandler::operator()( const char *exp, const char *file, int line, bool &ignore )
     {
 #ifdef SM_DEBUG
-        SM_LOG_CRITICALERROR( "[PhysX Error]: %s:%d - %s", file, line, exp );
+        SM_LOG_CRITICALERROR( "[PhysX Error]: {0}:{1} - {2}", file, line, exp );
 #endif
     }
 }

@@ -44,8 +44,8 @@ namespace smile::graphic
         HRESULT result = pDXGIFactory->CreateSwapChain( pInternalDevice, &swapChainDesc, &m_pSwapChain );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "DirectXContext::Initialize > Failed to create swap chain: %ls", GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectXContext::Initialize > Failed to create swap chain: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
@@ -66,16 +66,16 @@ namespace smile::graphic
             0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &m_pRenderTargetBuffer ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Initialize > Failed to get buffer from swap chain: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectXContext::Initialize > Failed to get buffer from swap chain: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
         result = pInternalDevice->CreateRenderTargetView( m_pRenderTargetBuffer, 0, &m_pCurrentRenderTarget );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectXContext::Initialize > Failed to create render target view: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectXContext::Initialize > Failed to create render target view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
@@ -132,8 +132,8 @@ namespace smile::graphic
         HRESULT result = m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "DirectX11SwapChain::Resize > Failed to resize buffers: %ls", GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11SwapChain::Resize > Failed to resize buffers: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
@@ -141,8 +141,8 @@ namespace smile::graphic
         result = pInternalDevice->CreateTexture2D( &depthStencilDesc, 0, &m_pSwapChainTarget->pDepthStencilAttachment );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil buffer: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil buffer: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
@@ -151,8 +151,8 @@ namespace smile::graphic
             &m_pSwapChainTarget->pDepthStencilView );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil view: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create depth stencil view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
@@ -161,16 +161,16 @@ namespace smile::graphic
             0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &m_pRenderTargetBuffer ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to get buffer from swap chain: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to get buffer from swap chain: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 
         result = pInternalDevice->CreateRenderTargetView( m_pRenderTargetBuffer, 0, &m_pCurrentRenderTarget );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create render target view: %ls",
-                GetDirectX11ErrorMessage( result ) );
+            SM_LOG_ERROR( "DirectX11RendererAPI::ResizeWindow > Failed to create render target view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
 

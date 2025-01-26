@@ -82,7 +82,7 @@ namespace smile::ecs::state
             }
             else
             {
-                SM_LOG_WARNING( "StateManager::ChangeState > While transitionning to state %s, System %s was not "
+                SM_LOG_WARNING( "StateManager::ChangeState > While transitionning to state {0}, System {1} was not "
                                 "found, while the states difference reports as to be removed",
                     name,
                     toBeRemoved );

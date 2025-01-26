@@ -79,5 +79,5 @@ namespace smile
     using Byte = unsigned char;
 }
 
-#include "logger/logger.h"
+#include "logger/logging.h"
 #include "assert.h"

@@ -59,7 +59,7 @@ namespace smile::graphic
     {
         if ( m_FloatValues.find( semantic ) == m_FloatValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetFloatValue > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::SetFloatValue > Couldn't find semantic: {}", semantic.c_str() );
             return;
         }
 
@@ -71,7 +71,7 @@ namespace smile::graphic
     {
         if ( m_IntValues.find( semantic ) == m_IntValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetIntValue > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::SetIntValue > Couldn't find semantic: {}", semantic.c_str() );
             return;
         }
 
@@ -83,7 +83,7 @@ namespace smile::graphic
     {
         if ( m_BoolValues.find( semantic ) == m_BoolValues.end() )
         {
-            SM_LOG_WARNING( "Material::setBoolValue > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::setBoolValue > Couldn't find semantic: {}", semantic.c_str() );
             return;
         }
 
@@ -95,7 +95,7 @@ namespace smile::graphic
     {
         if ( m_Float2Values.find( semantic ) == m_Float2Values.end() )
         {
-            SM_LOG_WARNING( "Material::SetFloat2Value > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::SetFloat2Value > Couldn't find semantic: {}", semantic.c_str() );
             return;
         }
 
@@ -107,7 +107,7 @@ namespace smile::graphic
     {
         if ( m_Float3Values.find( semantic ) == m_Float3Values.end() )
         {
-            SM_LOG_WARNING( "Material::SetFloat3Value > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::SetFloat3Value > Couldn't find semantic: {}", semantic.c_str() );
             return;
         }
 
@@ -119,7 +119,7 @@ namespace smile::graphic
     {
         if ( m_Texture2DValues.find( semantic ) == m_Texture2DValues.end() )
         {
-            SM_LOG_WARNING( "Material::SetTexture2D > Couldn't find semantic: %s", semantic.c_str() );
+            SM_LOG_WARNING( "Material::SetTexture2D > Couldn't find semantic: {}", semantic.c_str() );
             return;
         }
 
