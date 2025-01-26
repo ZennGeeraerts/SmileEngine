@@ -10,6 +10,7 @@ class SmileEngine(ConanFile):
 		self.requires("glad/0.1.36")
 		self.requires("sdl/2.30.5")
 		self.requires("physx/4.1.2")
+		self.requires("fmt/11.1.1")
 
 	def build_requirements(self):
 		self.tool_requires("cmake/[>=3.25]")
