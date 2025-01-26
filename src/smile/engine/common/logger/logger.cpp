@@ -1,17 +1,23 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
 #include "logger.h"
 
-namespace smile::logger
+namespace smile::logging
 {
-    LogPriority Logger::m_Priority = LogPriority::Trace;
-    std::mutex Logger::m_Mutex{};
-
-    void Logger::SetPriority( LogPriority logPriority )
+    void Logger::AddSink( Ref< LogSink > pSink )
     {
-        m_Priority = logPriority;
+        m_pSinks.emplace_back( pSink );
+    }
+
+    void Logger::BroadcastToSinks( const LogMessage &message )
+    {
+        for ( auto pSink : m_pSinks )
+        {
+            if ( pSink->ShouldLog( message.Level ) )
+                pSink->Log( message );
+        }
     }
 }

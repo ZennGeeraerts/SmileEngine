@@ -1,10 +1,11 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 #include "foundation/compiled.h"
-#include <mutex>
+#include "log_sink.h"
+#include "memory_buffer.h"
 
 #define SM_NRM "\x1B[0m"
 #define SM_RED "\x1B[31m"
@@ -15,85 +16,76 @@
 #define SM_CYN "\x1B[36m"
 #define SM_WHT "\x1B[37m"
 
-namespace smile::logger
+namespace smile::logging
 {
-    enum class LogPriority
-    {
-        Trace,
-        Debug,
-        Info,
-        Warning,
-        Error,
-        CriticalError
-    };
-
-    class Logger final
+    class Logger final : public BaseLogger
     {
       public:
-        static void SetPriority( LogPriority logPriority );
-
-        template < typename... Args >
-        static void LogTrace( const char *message, Args... args )
+        Logger( const std::string &name ) : BaseLogger{ LogLevel::Info }, m_Name{ name }
         {
-            Log( LogPriority::Trace, "Trace", SM_NRM, message, args... );
         }
 
         template < typename... Args >
-        static void LogDebug( const char *message, Args... args )
+        void Trace( fmt::format_string< Args... > message, Args &&...args )
         {
-            Log( LogPriority::Debug, "Debug", SM_CYN, message, args... );
+            Log( LogLevel::Trace, message, std::forward< Args >( args )... );
         }
 
         template < typename... Args >
-        static void LogInfo( const char *message, Args... args )
+        void Debug( fmt::format_string< Args... > message, Args &&...args )
         {
-            Log( LogPriority::Info, "Info", SM_GRN, message, args... );
+            Log( LogLevel::Debug, message, std::forward< Args >( args )... );
         }
 
         template < typename... Args >
-        static void LogWarning( const char *message, Args... args )
+        void Info( fmt::format_string< Args... > message, Args &&...args )
         {
-            Log( LogPriority::Warning, "Warning", SM_YEL, message, args... );
+            Log( LogLevel::Info, message, std::forward< Args >( args )... );
         }
 
         template < typename... Args >
-        static void LogError( const char *message, Args... args )
+        void Warning( fmt::format_string< Args... > message, Args &&...args )
         {
-            Log( LogPriority::Error, "Error", SM_MAG, message, args... );
+            Log( LogLevel::Warning, message, std::forward< Args >( args )... );
         }
 
         template < typename... Args >
-        static void LogCriticalError( const char *message, Args... args )
+        void Error( fmt::format_string< Args... > message, Args &&...args )
         {
-            Log( LogPriority::CriticalError, "CriticalError", SM_RED, message, args... );
+            Log( LogLevel::Error, message, std::forward< Args >( args )... );
         }
+
+        template < typename... Args >
+        void CriticalError( fmt::format_string< Args... > message, Args &&...args )
+        {
+            Log( LogLevel::CriticalError, message, std::forward< Args >( args )... );
+        }
+
+        void AddSink( Ref< LogSink > pSink );
 
       private:
         template < typename... Args >
-        static void
-        Log( LogPriority logPriority, const char *logName, const char *color, const char *message, Args... args )
+        void Log( LogLevel level, fmt::format_string< Args... > message, Args &&...args )
         {
-            if ( m_Priority <= logPriority )
-            {
-                std::lock_guard< std::mutex > lock{ m_Mutex };
-                printf( "%s", color );
-                printf( "[%s]\t", logName );
-                printf( message, args... );
-                printf( "\n" );
-                printf( "%s", SM_NRM );
-            }
+            Log( LogSource{}, level, message, std::forward< Args >( args )... );
         }
 
+        template < typename... Args >
+        void Log( LogSource source, LogLevel level, fmt::format_string< Args... > message, Args &&...args )
+        {
+            MemoryBuffer buffer;
+            fmt::vformat_to( fmt::appender{ buffer }, message, fmt::make_format_args( args... ) );
+
+            LogMessage logMessage{ m_Name, level, std::string_view{ buffer.data(), buffer.size() }, source };
+
+            if ( ShouldLog( level ) )
+                BroadcastToSinks( logMessage );
+        }
+
+        void BroadcastToSinks( const LogMessage &message );
+
       private:
-        static LogPriority m_Priority;
-        static std::mutex m_Mutex;
+        std::string m_Name;
+        std::vector< Ref< LogSink > > m_pSinks;
     };
 }
-
-// Macro's are used for the log functions, so the functionality can easily be removed if we want a distribution build
-#define SM_LOG_TRACE( ... ) ::smile::logger::Logger::LogTrace( __VA_ARGS__ )
-#define SM_LOG_DEBUG( ... ) ::smile::logger::Logger::LogDebug( __VA_ARGS__ )
-#define SM_LOG_INFO( ... ) ::smile::logger::Logger::LogInfo( __VA_ARGS__ )
-#define SM_LOG_WARNING( ... ) ::smile::logger::Logger::LogWarning( __VA_ARGS__ )
-#define SM_LOG_ERROR( ... ) ::smile::logger::Logger::LogError( __VA_ARGS__ )
-#define SM_LOG_CRITICALERROR( ... ) ::smile::logger::Logger::LogCriticalError( __VA_ARGS__ )
