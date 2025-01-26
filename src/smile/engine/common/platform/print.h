@@ -6,5 +6,6 @@
 
 namespace smile::platform
 {
-    void Print( const char *text );
+    void Print( const char *text, Uint32 length );
+    const char *EOL();
 }

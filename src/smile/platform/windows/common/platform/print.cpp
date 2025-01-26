@@ -6,13 +6,22 @@
 #include "platform/print.h"
 
 #include <Windows.h>
+#include <io.h>
 
 namespace smile::platform
 {
-    void Print( const char *text )
+    static HANDLE s_pHandle = reinterpret_cast< HANDLE >( ::_get_osfhandle( ::_fileno( stdout ) ) );
+
+    void Print( const char *text, Uint32 length )
     {
-        printf( text );
-        //OutputDebugStringA( ( std::string{ text } + '\n' ).c_str() );
-        //puts( text );
+        DWORD bytesWritten = 0;
+        ::WriteFile( s_pHandle, text, length, &bytesWritten, nullptr );
+
+        ::fflush( stdout );
+    }
+
+    const char *EOL()
+    {
+        return "\r\n";
     }
 }

@@ -17,6 +17,10 @@ namespace smile::logging
     {
         std::lock_guard< std::mutex > lock{ m_Mutex };
 
-        platform::Print( message.Payload.data() );
+        MemoryBuffer buffer;
+        AppendStringView( buffer, message.Payload );
+        AppendStringView( buffer, platform::EOL() );
+
+        platform::Print( buffer.data(), buffer.size() );
     }
 }

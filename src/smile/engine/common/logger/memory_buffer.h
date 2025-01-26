@@ -9,4 +9,10 @@
 namespace smile::logging
 {
     using MemoryBuffer = fmt::basic_memory_buffer< char, 250 >;
+
+    inline void AppendStringView( MemoryBuffer &dest, std::string_view view )
+    {
+        auto *pBuffer = view.data();
+        dest.append( pBuffer, pBuffer + view.size() );
+    }
 }
