@@ -88,8 +88,8 @@ namespace smile::scripting
 
                 if ( !pManagedType )
                 {
-                    SM_LOG_ERROR( "ScriptGlue::RegisterComponentType > Managed type not found in assembly: {}",
-                        managedTypeName.c_str() );
+                    SM_LOG_ERROR(
+                        "ScriptGlue::RegisterComponentType > Managed type not found in assembly: {}", managedTypeName );
                     return;
                 }
 

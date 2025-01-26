@@ -11,7 +11,8 @@ namespace smile::platform
 {
     void Print( const char *text )
     {
-        OutputDebugStringA( ( std::string{ text } + '\n' ).c_str() );
-        puts( text );
+        printf( text );
+        //OutputDebugStringA( ( std::string{ text } + '\n' ).c_str() );
+        //puts( text );
     }
 }

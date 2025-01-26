@@ -45,7 +45,7 @@ namespace smile::window
         m_Data.Settings = settings;
 
         SM_LOG_INFO( "WindowsWindow::Initialize > Creating window: {0} ({1}, {2})",
-            settings.Title.c_str(),
+            settings.Title,
             settings.Width,
             settings.Height );
 
@@ -76,7 +76,7 @@ namespace smile::window
 
         ShowWindow( m_WindowHandle, SW_SHOW );
         UpdateWindow( m_WindowHandle );
-        SM_LOG_INFO( "WindowsWindow::Initialize > Window '{}' created", settings.Title.c_str() );
+        SM_LOG_INFO( "WindowsWindow::Initialize > Window '{}' created", settings.Title );
 
         SetVSync( true );
         m_IsInitialized = true;

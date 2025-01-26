@@ -535,7 +535,7 @@ namespace smile::scene
                 if ( tagComponent )
                     name = tagComponent["Tag"].as< std::string >();
 
-                SM_LOG_TRACE( "Deserialized entity with ID: {0}, name: {1}", uuid, name.c_str() );
+                SM_LOG_TRACE( "Deserialized entity with ID: {0}, name: {1}", uuid, name );
 
                 Entity deserializedEntity = m_pScene->CreateEntity( uuid, name );
 

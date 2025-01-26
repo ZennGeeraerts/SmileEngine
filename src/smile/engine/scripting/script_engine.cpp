@@ -119,7 +119,7 @@ namespace smile::scripting
             auto it = s_ScriptFieldTypeMap.find( typeName );
             if ( it == s_ScriptFieldTypeMap.end() )
             {
-                SM_LOG_ERROR( "Unknown type: {}", typeName.c_str() );
+                SM_LOG_ERROR( "Unknown type: {}", typeName );
                 return ScriptFieldType::None;
             }
 

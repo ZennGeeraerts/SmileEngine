@@ -22,24 +22,24 @@ namespace smile::physics
         {
             case physx::PxErrorCode::eNO_ERROR:
             case physx::PxErrorCode::eDEBUG_INFO:
-                SM_LOG_INFO( stringStream.str().c_str() );
+                SM_LOG_INFO( stringStream.str() );
                 break;
             case physx::PxErrorCode::ePERF_WARNING:
             case physx::PxErrorCode::eDEBUG_WARNING:
-                SM_LOG_WARNING( stringStream.str().c_str() );
+                SM_LOG_WARNING( stringStream.str() );
                 break;
             case physx::PxErrorCode::eINVALID_PARAMETER:
             case physx::PxErrorCode::eINVALID_OPERATION:
             case physx::PxErrorCode::eOUT_OF_MEMORY:
             case physx::PxErrorCode::eINTERNAL_ERROR:
-                SM_LOG_ERROR( stringStream.str().c_str() );
+                SM_LOG_ERROR( stringStream.str() );
                 break;
             case physx::PxErrorCode::eABORT:
             case physx::PxErrorCode::eMASK_ALL:
-                SM_LOG_CRITICALERROR( stringStream.str().c_str() );
+                SM_LOG_CRITICALERROR( stringStream.str() );
                 break;
             default:
-                SM_LOG_ERROR( stringStream.str().c_str() );
+                SM_LOG_ERROR( stringStream.str() );
                 break;
         }
     }
