@@ -4,15 +4,19 @@
 /*=============================================================================*/
 #pragma once
 
-#include "flag_formatter.h"
+#include "logging/base_logger.h"
+#include "logging/log_message.h"
 
 namespace smile::logging
 {
-    class FullFormatter final : public Formatter
+    class LogSink : public BaseLogger
     {
       public:
-        FullFormatter() = default;
+        LogSink() : BaseLogger{ LogLevel::Trace }
+        {
+        }
+        virtual ~LogSink() = default;
 
-        void Format( const LogMessage &message, MemoryBuffer &buffer ) override;
+        virtual void Log( const LogMessage &message ) = 0;
     };
 }

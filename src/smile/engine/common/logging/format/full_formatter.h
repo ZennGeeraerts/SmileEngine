@@ -4,17 +4,15 @@
 /*=============================================================================*/
 #pragma once
 
-#include "logger/memory_buffer.h"
-#include "logger/log_message.h"
+#include "formatter.h"
 
 namespace smile::logging
 {
-    class Formatter
+    class FullFormatter final : public Formatter
     {
       public:
-        Formatter() = default;
-        virtual ~Formatter() = default;
+        FullFormatter() = default;
 
-        virtual void Format( const LogMessage &message, MemoryBuffer &buffer ) = 0;
+        void Format( const LogMessage &message, MemoryBuffer &buffer ) override;
     };
 }

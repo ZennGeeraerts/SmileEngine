@@ -5,7 +5,7 @@
 #pragma once
 
 #include "log_sink.h"
-#include "logger/console_mutex.h"
+#include "logging/console_mutex.h"
 
 namespace smile::logging
 {

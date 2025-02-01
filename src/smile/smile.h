@@ -7,7 +7,7 @@
 // Header file to include in Smile Engine applications
 
 #include "engine/common/foundation/compiled.h"
-#include "engine/common/logger/logging.h"
+#include "engine/common/logging/logging.h"
 #include "engine/core/application/application.h"
 #include "engine/core/application/layer.h"
 

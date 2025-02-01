@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "scene_serializer.h"
 
-#include "engine/common/logger/logger.h"
+#include "engine/common/logging/logger.h"
 #include "entity.h"
 #include "components.h"
 #include "engine/core/project/project_manager.h"

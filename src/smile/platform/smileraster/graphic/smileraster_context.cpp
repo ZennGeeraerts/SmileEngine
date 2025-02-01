@@ -6,7 +6,7 @@
 #include "smileraster_context.h"
 
 #include "window/window.h"
-#include "logger/logging.h"
+#include "logging/logging.h"
 
 namespace smile::graphic
 {

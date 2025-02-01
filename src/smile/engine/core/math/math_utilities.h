@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/logger/logger.h"
+#include "engine/common/logging/logger.h"
 
 #include <DirectXMath.h>
 

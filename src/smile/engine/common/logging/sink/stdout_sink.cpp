@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "stdout_sink.h"
 
-#include "logger/format/pattern_formatter.h"
+#include "logging/format/pattern_formatter.h"
 #include "platform/print.h"
 
 namespace smile::logging

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "compiled.h"
-#include "logger/logging.h"
+#include "logging/logging.h"
 
 #ifdef SM_ENABLE_ASSERTS
 #    define SM_ASSERT( x, ... )                                                                                        \

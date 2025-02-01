@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "physx_diagnostics.h"
 
-#include "logger/logging.h"
+#include "logging/logging.h"
 
 namespace smile::physics
 {

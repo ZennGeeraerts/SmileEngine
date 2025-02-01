@@ -15,7 +15,7 @@
 
 #include "window/window.h"
 #include "foundation/compiled.h"
-#include "logger/logging.h"
+#include "logging/logging.h"
 
 namespace smile::graphic
 {
