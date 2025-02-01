@@ -3,24 +3,23 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "stdout_sink.h"
+#include "pattern_formatter.h"
 
+#include "full_formatter.h"
 #include "platform/print.h"
 
 namespace smile::logging
 {
-    StdoutSink::StdoutSink() : m_Mutex{ ConsoleMutex::GetMutex() }
+    PatternFormatter::PatternFormatter()
     {
+        m_pFormatters.push_back( CreateScope< FullFormatter >() );
     }
 
-    void StdoutSink::Log( const LogMessage &message )
+    void PatternFormatter::Format( const LogMessage &message, MemoryBuffer &buffer )
     {
-        std::lock_guard< std::mutex > lock{ m_Mutex };
+        for ( auto &pFormatter : m_pFormatters )
+            pFormatter->Format( message, buffer );
 
-        MemoryBuffer buffer;
-        AppendStringView( buffer, message.Payload );
         AppendStringView( buffer, platform::EOL() );
-
-        platform::Print( buffer.data(), buffer.size() );
     }
 }

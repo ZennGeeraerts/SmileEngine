@@ -4,19 +4,17 @@
 /*=============================================================================*/
 #pragma once
 
-#include "base_logger.h"
-#include "log_message.h"
+#include "logger/memory_buffer.h"
+#include "logger/log_message.h"
 
 namespace smile::logging
 {
-    class LogSink : public BaseLogger
+    class Formatter
     {
       public:
-        LogSink() : BaseLogger{ LogLevel::Trace }
-        {
-        }
-        virtual ~LogSink() = default;
+        Formatter() = default;
+        virtual ~Formatter() = default;
 
-        virtual void Log( const LogMessage &message ) = 0;
+        virtual void Format( const LogMessage &message, MemoryBuffer &buffer ) = 0;
     };
 }

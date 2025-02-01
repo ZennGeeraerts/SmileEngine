@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "foundation/compiled.h"
-#include "log_sink.h"
+#include "sink/log_sink.h"
 #include "memory_buffer.h"
 
 #define SM_NRM "\x1B[0m"
@@ -62,6 +62,8 @@ namespace smile::logging
         }
 
         void AddSink( Ref< LogSink > pSink );
+
+        void SetFormatter( Scope< Formatter > pFormatter ) override;
 
       private:
         template < typename... Args >

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "log_level.h"
+#include "format/formatter.h"
 
 namespace smile::logging
 {
@@ -16,6 +17,8 @@ namespace smile::logging
 
         void SetLevel( LogLevel level );
         bool ShouldLog( LogLevel level ) const;
+
+        virtual void SetFormatter( Scope< Formatter > pFormatter ) = 0;
 
       protected:
         std::atomic< LogLevel > m_Level;

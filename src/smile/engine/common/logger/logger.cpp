@@ -12,6 +12,11 @@ namespace smile::logging
         m_pSinks.emplace_back( pSink );
     }
 
+    void Logger::SetFormatter( Scope< Formatter > pFormatter )
+    {
+        // TODO
+    }
+
     void Logger::BroadcastToSinks( const LogMessage &message )
     {
         for ( auto pSink : m_pSinks )

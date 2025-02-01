@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "logger_registry.h"
 
-#include "stdout_sink.h"
+#include "sink/stdout_sink.h"
 
 namespace smile::logging
 {

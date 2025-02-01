@@ -4,20 +4,19 @@
 /*=============================================================================*/
 #pragma once
 
-#include "log_sink.h"
-#include "console_mutex.h"
+#include "logger/base_logger.h"
+#include "logger/log_message.h"
 
 namespace smile::logging
 {
-    class StdoutSink final : public LogSink
+    class LogSink : public BaseLogger
     {
       public:
-        StdoutSink();
-        virtual ~StdoutSink() = default;
+        LogSink() : BaseLogger{ LogLevel::Trace }
+        {
+        }
+        virtual ~LogSink() = default;
 
-        void Log( const LogMessage &message ) override;
-
-      private:
-        std::mutex &m_Mutex;
+        virtual void Log( const LogMessage &message ) = 0;
     };
 }
