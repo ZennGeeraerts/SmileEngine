@@ -24,4 +24,14 @@ namespace smile::platform
     {
         return "\r\n";
     }
+
+    void SetConsoleColor( Uint16 attributes )
+    {
+        CONSOLE_SCREEN_BUFFER_INFO originalBufferInfo;
+        ::GetConsoleScreenBufferInfo( s_pHandle, &originalBufferInfo );
+
+        auto newAttributes = static_cast< WORD >( attributes ) | ( originalBufferInfo.wAttributes & 0xfff0 );
+        auto ignored = ::SetConsoleTextAttribute( s_pHandle, static_cast< WORD >( newAttributes ) );
+        ( void )( ignored );
+    }
 }

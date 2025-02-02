@@ -8,12 +8,15 @@
 
 namespace smile::logging
 {
-    class StdoutSink final : public LogSink
+    class StdoutColorSink final : public LogSink
     {
       public:
-        StdoutSink() = default;
-        virtual ~StdoutSink() = default;
+        StdoutColorSink();
+        virtual ~StdoutColorSink() = default;
 
         void Log( const LogMessage &message ) override;
+
+      private:
+        std::unordered_map< LogLevel, Uint16 > m_ColorMap;
     };
 }

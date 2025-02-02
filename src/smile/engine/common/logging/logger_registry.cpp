@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "logger_registry.h"
 
-#include "sink/stdout_sink.h"
+#include "sink/stdout_color_sink.h"
 
 namespace smile::logging
 {
@@ -13,8 +13,8 @@ namespace smile::logging
     {
         std::string defaultLoggerName = "";
         m_pDefaultLogger = CreateRef< Logger >( defaultLoggerName );
-        auto pStdoutSink = CreateRef< StdoutSink >();
-        m_pDefaultLogger->AddSink( std::move( pStdoutSink ) );
+        auto pStdoutColorSink = CreateRef< StdoutColorSink >();
+        m_pDefaultLogger->AddSink( std::move( pStdoutColorSink ) );
 
         m_LoggerMap[defaultLoggerName] = m_pDefaultLogger;
     }

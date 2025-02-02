@@ -7,15 +7,6 @@
 #include "sink/log_sink.h"
 #include "memory_buffer.h"
 
-#define SM_NRM "\x1B[0m"
-#define SM_RED "\x1B[31m"
-#define SM_GRN "\x1B[32m"
-#define SM_YEL "\x1B[33m"
-#define SM_BLU "\x1B[34m"
-#define SM_MAG "\x1B[35m"
-#define SM_CYN "\x1B[36m"
-#define SM_WHT "\x1B[37m"
-
 namespace smile::logging
 {
     class Logger final : public BaseLogger
