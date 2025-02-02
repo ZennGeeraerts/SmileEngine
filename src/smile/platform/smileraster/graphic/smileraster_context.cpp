@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "smileraster_context.h"
 
-#include "engine/core/window/window.h"
-#include "engine/common/logger/logger.h"
+#include "window/window.h"
+#include "logging/logging.h"
 
 namespace smile::graphic
 {

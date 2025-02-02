@@ -5,7 +5,6 @@
 #include "smpch.h"
 #include "application.h"
 
-#include "engine/common/logger/logger.h"
 #include "engine/core/input/input.h"
 
 #include "timer.h"
@@ -21,8 +20,6 @@ namespace smile::application
         SM_ASSERT(
             !s_pInstance, "Application::Application > There is already an instance of SmileGame, there can only be 1" );
         s_pInstance = this;
-
-        logger::Logger::SetPriority( logger::LogPriority::Trace );
 
         if ( !descriptor.WorkingDirectory.empty() )
             std::filesystem::current_path( descriptor.WorkingDirectory );

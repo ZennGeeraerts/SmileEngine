@@ -12,7 +12,7 @@
 #include "platform/directx11/graphic/directx11_device.h"
 #include "platform/directx11/graphic/directx11_context.h"
 
-#include "engine/common/logger/logger.h"
+#include "engine/common/logging/logger.h"
 #include "engine/core/input/key_codes.h"
 
 #include <imgui.h>

@@ -25,7 +25,7 @@ namespace smile::graphic
         if ( !pAiScene )
         {
             SM_LOG_WARNING(
-                "ModelLoader::LoadModel > Could not load file: %s: %s", filePath.string(), aiGetErrorString() );
+                "ModelLoader::LoadModel > Could not load file: {0}: {1}", filePath.string(), aiGetErrorString() );
             aiReleaseImport( pAiScene );
             aiReleasePropertyStore( pPropertyStore );
             return nullptr;

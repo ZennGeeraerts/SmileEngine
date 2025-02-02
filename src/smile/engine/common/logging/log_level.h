@@ -1,12 +1,18 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-namespace smile::platform
+namespace smile::logging
 {
-    void Print( const char *text, Uint32 length );
-    const char *EOL();
-    void SetConsoleColor( Uint16 attributes );
+    enum class LogLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warning,
+        Error,
+        CriticalError
+    };
 }

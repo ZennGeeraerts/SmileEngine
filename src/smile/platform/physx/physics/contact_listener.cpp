@@ -23,7 +23,9 @@ namespace smile::physics
         {
             physx::PxActor &actor = *ppActors[i];
             scene::Entity &entity = *reinterpret_cast< scene::Entity * >( actor.userData );
-            SM_LOG_INFO( "Physics actor waking up: UUID: %llu, Name: %s", entity.GetUUID(), entity.GetName() );
+            SM_LOG_INFO( "Physics actor waking up: UUID: {0}, Name: {1}",
+                static_cast< Uint64 >( entity.GetUUID() ),
+                entity.GetName() );
         }
     }
 
@@ -33,7 +35,9 @@ namespace smile::physics
         {
             physx::PxActor &actor = *ppActors[i];
             scene::Entity &entity = *reinterpret_cast< scene::Entity * >( actor.userData );
-            SM_LOG_INFO( "Physics actor going to sleep: UUID: %llu, Name: %s", entity.GetUUID(), entity.GetName() );
+            SM_LOG_INFO( "Physics actor going to sleep: UUID: {0}, Name: {1}",
+                static_cast< Uint64 >( entity.GetUUID() ),
+                entity.GetName() );
         }
     }
 
