@@ -33,13 +33,13 @@ namespace smile::foundation
             return m_HashCode < other.m_HashCode;
         }
 
-        inline constexpr size_t GetHashCode() const
+        inline constexpr HashCode GetHashCode() const
         {
             return m_HashCode;
         }
 
       private:
-        size_t m_HashCode;
+        HashCode m_HashCode;
     };
 
     template < typename Type >

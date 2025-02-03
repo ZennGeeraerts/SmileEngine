@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/foundation/compiled.h"
+#include "foundation/compiled.h"
 
 namespace smile::ecs
 {
@@ -28,7 +28,7 @@ namespace smile::ecs
         {
         }
 
-        size_t Hash() const
+        foundation::HashCode Hash() const
         {
             return m_Generation << s_IndexBits | m_Index;
         }
