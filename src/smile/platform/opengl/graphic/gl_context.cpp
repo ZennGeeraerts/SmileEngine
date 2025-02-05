@@ -39,7 +39,6 @@ namespace smile::graphic
     void GLContext::BindVertexBuffer( std::shared_ptr< VertexBuffer > pVertexBuffer ) const
     {
         glBindBuffer( GL_ARRAY_BUFFER, reinterpret_cast< Uint32 >( pVertexBuffer->GetInternal() ) );
-        ;
     }
 
     void GLContext::UnbindVertexBuffer() const
@@ -113,7 +112,7 @@ namespace smile::graphic
     }
 
     int GLContext::ReadFramebufferPixel( std::shared_ptr< Framebuffer > pFramebuffer,
-        uint32_t attachmentIndex,
+        Uint32 attachmentIndex,
         int x,
         int y ) const
     {
@@ -128,7 +127,7 @@ namespace smile::graphic
     }
 
     std::vector< int > GLContext::ReadFramebufferPixels( std::shared_ptr< Framebuffer > pFramebuffer,
-        uint32_t attachmentIndex,
+        Uint32 attachmentIndex,
         int x,
         int y,
         int width,
@@ -146,7 +145,7 @@ namespace smile::graphic
     }
 
     void GLContext::ClearFramebufferAttachment( std::shared_ptr< Framebuffer > pFramebuffer,
-        uint32_t attachmentIndex,
+        Uint32 attachmentIndex,
         int value ) const
     {
         std::shared_ptr< GLFramebuffer > pGLFramebuffer = std::static_pointer_cast< GLFramebuffer >( pFramebuffer );
