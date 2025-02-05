@@ -1,3 +1,7 @@
+/*=============================================================================*/
+// Copyright 2022-2025 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
 #pragma once
 #include "engine/graphic/renderer_api/swap_chain.h"
 #include "resource/directx11_frame_buffer.h"
