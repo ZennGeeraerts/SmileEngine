@@ -645,7 +645,7 @@ namespace smile::graphic
             pD11Framebuffer->pRenderTargetViews.resize( pD11Framebuffer->ColorAttachmentData.size() );
             pD11Framebuffer->pColorShaderResourceViews.resize( pD11Framebuffer->ColorAttachmentData.size() );
 
-            for ( uint32_t i{}; i < pD11Framebuffer->pColorAttachments.size(); ++i )
+            for ( Uint32 i{}; i < pD11Framebuffer->pColorAttachments.size(); ++i )
             {
                 D3D11_TEXTURE2D_DESC textureDesc = {};
                 textureDesc.Width = pD11Framebuffer->Descriptor.Width;
