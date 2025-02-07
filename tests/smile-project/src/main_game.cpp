@@ -184,7 +184,8 @@ void ExampleLayer::OnAttach()
     const smile::Uint32 meshIndex = 0;
     auto &meshRendererComponent = m_ModelEntity.AddComponent< smile::graphic::ecs::MeshRendererComponent >(
         "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
-    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Translation = DirectX::XMFLOAT3{ 0, -0.1f, 1 };
+    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Translation =
+        DirectX::XMFLOAT3{ 0, -0.1f, 1 };
     m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
     m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
@@ -240,7 +241,7 @@ void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
     if ( m_PrintTimer >= 1.f )
     {
         m_PrintTimer = 0.f;
-        smile::logger::Logger::LogInfo( "FPS: %d", smile::application::Timer::GetInstance().GetFPS() );
+        SM_LOG_INFO( "FPS: {}", smile::application::Timer::GetInstance().GetFPS() );
     }
 
     smile::graphic::RenderCommand::Clear();

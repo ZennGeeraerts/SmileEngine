@@ -5,6 +5,7 @@
 #pragma once
 
 #include "foundation/compiled.h"
+#include "foundation/hash_code.h"
 
 namespace smile::ecs
 {
