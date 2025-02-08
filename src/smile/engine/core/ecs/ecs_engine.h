@@ -36,8 +36,7 @@ namespace smile::ecs
             {
                 for ( Uint32 i{}; i < s_Size; ++i )
                 {
-                    if ( !m_pComponentInterfaces[i] ||
-                         !m_pComponentInterfaces[i]->m_Pool.Contains( entityHandle.GetIndex() ) )
+                    if ( !m_pComponentInterfaces[i] || !m_pComponentInterfaces[i]->Contains( entityHandle ) )
                         return false;
                 }
 
@@ -72,7 +71,9 @@ namespace smile::ecs
         class ViewIterator final
         {
           public:
-            ViewIterator( ECSEngine &engine, SparseSetType::ConstIterator it, SparseSetType::ConstIterator endIt )
+            ViewIterator( ECSEngine &engine,
+                ComponentInterface::ConstIterator it,
+                ComponentInterface::ConstIterator endIt )
                 : m_Engine{ engine }, m_Iterator{ it }, m_EndIterator{ endIt }
             {
             }
@@ -97,7 +98,7 @@ namespace smile::ecs
             ViewIterator &operator++()
             {
                 const EntityHandleManager &handleManager = m_Engine.GetEntityHandleManager();
-                SparseSetType::ConstIterator oldIt;
+                ComponentInterface::ConstIterator oldIt;
                 do
                 {
                     oldIt = m_Iterator;
@@ -116,8 +117,8 @@ namespace smile::ecs
 
           private:
             ECSEngine &m_Engine;
-            SparseSetType::ConstIterator m_Iterator;
-            SparseSetType::ConstIterator m_EndIterator;
+            ComponentInterface::ConstIterator m_Iterator;
+            ComponentInterface::ConstIterator m_EndIterator;
         };
 
         template < typename... Components >
@@ -129,22 +130,21 @@ namespace smile::ecs
           public:
             View( ECSEngine &engine ) : m_Engine{ engine }
             {
-                const std::vector< ComponentInterface * > pComponents{
-                    engine.GetComponentInterface< Components >()... };
+                std::vector< ComponentInterface * > pComponents{ engine.GetComponentInterface< Components >()... };
 
-                std::vector< SparseSetType * > pPools{};
-                for ( auto pComponent : pComponents )
-                {
-                    if ( pComponent )
-                        pPools.push_back( &pComponent->m_Pool );
-                }
+                // Remove non existent component interfaces
+                pComponents.erase(
+                    std::remove_if( std::begin( pComponents ),
+                        std::end( pComponents ),
+                        []( const ComponentInterface *pComponentInterface ) { return !pComponentInterface; } ),
+                    std::end( pComponents ) );
 
-                auto it = std::min_element( std::begin( pPools ),
-                    std::end( pPools ),
-                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                auto it = std::min_element( std::begin( pComponents ),
+                    std::end( pComponents ),
+                    []( const ComponentInterface *pLhs, const ComponentInterface *pRhs )
                     { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
-                m_pMinPool = ( it != pPools.end() ) ? *it : nullptr;
+                m_pMinPool = ( it != pComponents.end() ) ? *it : nullptr;
             }
 
             const ViewIteratorType begin() const
@@ -174,7 +174,7 @@ namespace smile::ecs
           private:
             static constexpr Uint32 s_Size = sizeof...( Components );
             ECSEngine &m_Engine;
-            SparseSetType *m_pMinPool;
+            ComponentInterface *m_pMinPool;
         };
 
         template < typename... Components >
@@ -234,10 +234,9 @@ namespace smile::ecs
                 }
             }
 
-            bool HasEntity( IndexType entityIndex ) const override
+            bool HasEntity( EntityHandleType entityHandle ) const override
             {
                 GatherComponents< Components... > gatherComponents{ m_Engine };
-                auto entityHandle = m_Engine.GetEntityHandleManager().GetEntityHandle( entityIndex );
                 return gatherComponents.Run( entityHandle );
             }
         };
@@ -313,7 +312,7 @@ namespace smile::ecs
         ComponentType &AddOrReplaceComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
         {
             ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            if ( pComponentInterface && pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) )
+            if ( pComponentInterface && pComponentInterface->Contains( entityHandle ) )
                 RemoveComponent< ComponentType >( entityHandle );
 
             return AddComponent< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
@@ -384,7 +383,7 @@ namespace smile::ecs
         bool HasComponent( EntityHandleType entityHandle ) const
         {
             const ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
+            return pComponentInterface ? pComponentInterface->Contains( entityHandle ) : false;
         }
 
         template < typename ComponentType >

@@ -16,7 +16,7 @@ namespace smile::ecs
         GroupBase( ECSEngine &engine );
         virtual ~GroupBase() = default;
 
-        virtual bool HasEntity( IndexType entityIndex ) const = 0;
+        virtual bool HasEntity( EntityHandleType entityHandle ) const = 0;
 
         void AddEntity( EntityHandleType entityHandle );
         void RemoveEntity( EntityHandleType entityHandle );

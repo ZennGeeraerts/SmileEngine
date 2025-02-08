@@ -13,6 +13,10 @@ namespace smile::ecs
 {
     class ComponentInterface final
     {
+      public:
+        using Iterator = SparseSetType::Iterator;
+        using ConstIterator = SparseSetType::ConstIterator;
+
       private:
         using CreateHandler = std::function< void( EntityHandleType, void * ) >;
         using DestroyHandler = std::function< void( void * ) >;
@@ -84,6 +88,37 @@ namespace smile::ecs
         {
             m_pComponentStorage->Clear();
             m_Pool.Clear();
+        }
+
+        bool Contains( EntityHandleType entityHandle ) const
+        {
+            return m_Pool.Contains( entityHandle.GetIndex() );
+        }
+
+        void Swap( IndexType lhs, IndexType rhs )
+        {
+            m_Pool.Swap( m_Pool.GetElement( lhs ), m_Pool.GetElement( rhs ) );
+            m_pComponentStorage->Swap( lhs, rhs );
+        }
+
+        Uint32 GetItemCount() const
+        {
+            return m_Pool.GetItemCount();
+        }
+
+        IndexType GetIndex( EntityHandleType entityHandle ) const
+        {
+            return m_Pool.GetIndex( entityHandle.GetIndex() );
+        }
+
+        ConstIterator begin() const
+        {
+            return m_Pool.begin();
+        }
+
+        ConstIterator end() const
+        {
+            return m_Pool.end();
         }
 
       public:

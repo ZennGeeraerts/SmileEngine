@@ -3,7 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "ecs_types.h"
+
+#include "component_interface.h"
 
 namespace smile::ecs
 {
@@ -12,7 +13,7 @@ namespace smile::ecs
     class GroupIterator final
     {
       public:
-        GroupIterator( ECSEngine &engine, SparseSetType::ConstIterator it );
+        GroupIterator( ECSEngine &engine, ComponentInterface::ConstIterator it );
         ~GroupIterator() = default;
 
         EntityHandleType operator*() const;
@@ -24,6 +25,6 @@ namespace smile::ecs
 
       private:
         ECSEngine &m_Engine;
-        SparseSetType::ConstIterator m_Iterator;
+        ComponentInterface::ConstIterator m_Iterator;
     };
 }

@@ -69,7 +69,7 @@ namespace smile::ecs
 
     bool ECSEngine::HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
     {
-        return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
+        return pComponentInterface ? pComponentInterface->Contains( entityHandle ) : false;
     }
 
     bool ECSEngine::IsComponentOwned( const ComponentInterface *pComponentInterface ) const
