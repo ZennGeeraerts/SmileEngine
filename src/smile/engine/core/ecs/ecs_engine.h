@@ -14,6 +14,7 @@
 #include "engine/common/foundation/type_id.h"
 
 #include <algorithm>
+#include <array>
 
 namespace smile::ecs
 {
@@ -34,13 +35,9 @@ namespace smile::ecs
 
             bool Run( EntityHandleType entityHandle )
             {
-                for ( Uint32 i{}; i < s_Size; ++i )
-                {
-                    if ( !m_pComponentPools[i] || !m_pComponentPools[i]->Contains( entityHandle ) )
-                        return false;
-                }
-
-                return true;
+                return std::all_of( std::begin( m_pComponentPools ),
+                    std::end( m_pComponentPools ),
+                    [entityHandle]( const ComponentPool *pPool ) { return pPool && pPool->Contains( entityHandle ); } );
             }
 
             template < typename Component >
@@ -64,7 +61,7 @@ namespace smile::ecs
 
           private:
             static constexpr Uint32 s_Size = sizeof...( Components );
-            ComponentPool *m_pComponentPools[s_Size];
+            std::array< ComponentPool *, s_Size > m_pComponentPools;
         };
 
         template < typename... Components >
