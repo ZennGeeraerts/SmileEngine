@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2024 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -13,7 +13,7 @@ namespace smile::ecs
 {
     class ECSEngine;
 
-    class ComponentInterface final
+    class ComponentPool final
     {
       public:
         using Iterator = SparseSetType::Iterator;
@@ -24,15 +24,15 @@ namespace smile::ecs
         using DestroyHandler = std::function< void( void * ) >;
 
       public:
-        ComponentInterface( const ECSEngine &ecsEngine );
-        ~ComponentInterface();
+        ComponentPool( const ECSEngine &ecsEngine );
+        ~ComponentPool();
 
         template < typename ComponentType >
         ComponentType &Get( EntityHandleType entityHandle )
         {
-            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
-            SM_ASSERT( index != EntityHandleType::NullHandle().GetIndex(), "ComponentInterface::Get > Invalid index" );
+            SM_ASSERT( index != EntityHandleType::NullHandle().GetIndex(), "ComponentPool::Get > Invalid index" );
 
             return m_pComponentStorage->Get< ComponentType >( index );
         }
@@ -40,17 +40,17 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentType &Get( EntityHandleType entityHandle ) const
         {
-            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
         ComponentType *TryGet( EntityHandleType entityHandle )
         {
-            if ( !m_Pool.Contains( entityHandle.GetIndex() ) )
+            if ( !m_SparseSet.Contains( entityHandle.GetIndex() ) )
                 return nullptr;
 
-            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
             if ( index == EntityHandleType::NullHandle().GetIndex() )
                 return nullptr;
@@ -61,10 +61,10 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentType *TryGet( EntityHandleType entityHandle ) const
         {
-            if ( !m_Pool.Contains( entityHandle.GetIndex() ) )
+            if ( !m_SparseSet.Contains( entityHandle.GetIndex() ) )
                 return nullptr;
 
-            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
             if ( index == EntityHandleType::NullHandle().GetIndex() )
                 return nullptr;
@@ -74,58 +74,58 @@ namespace smile::ecs
 
         void *GetRaw( EntityHandleType entityHandle )
         {
-            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->GetRaw( index );
         }
 
         const void *GetRaw( EntityHandleType entityHandle ) const
         {
-            const IndexType index = m_Pool.GetIndex( entityHandle.GetIndex() );
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->GetRaw( index );
         }
 
         void Clear()
         {
             m_pComponentStorage->Clear();
-            m_Pool.Clear();
+            m_SparseSet.Clear();
         }
 
         bool Contains( EntityHandleType entityHandle ) const
         {
-            return m_Pool.Contains( entityHandle.GetIndex() );
+            return m_SparseSet.Contains( entityHandle.GetIndex() );
         }
 
         void Swap( IndexType lhs, IndexType rhs )
         {
-            m_Pool.Swap( m_Pool.GetElement( lhs ), m_Pool.GetElement( rhs ) );
+            m_SparseSet.Swap( m_SparseSet.GetElement( lhs ), m_SparseSet.GetElement( rhs ) );
             m_pComponentStorage->Swap( lhs, rhs );
         }
 
         Uint32 GetItemCount() const
         {
-            return m_Pool.GetItemCount();
+            return m_SparseSet.GetItemCount();
         }
 
         IndexType GetIndex( EntityHandleType entityHandle ) const
         {
-            return m_Pool.GetIndex( entityHandle.GetIndex() );
+            return m_SparseSet.GetIndex( entityHandle.GetIndex() );
         }
 
         EntityHandleType GetEntityHandle( IndexType index ) const;
 
         ConstIterator begin() const
         {
-            return m_Pool.begin();
+            return m_SparseSet.begin();
         }
 
         ConstIterator end() const
         {
-            return m_Pool.end();
+            return m_SparseSet.end();
         }
 
       public:
         const ECSEngine &m_ECSEngine;
-        SparseSetType m_Pool{};
+        SparseSetType m_SparseSet{};
         ComponentStorage *m_pComponentStorage = nullptr;
 
         std::vector< CreateHandler > m_Create;

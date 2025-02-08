@@ -9,7 +9,7 @@
 
 namespace smile::ecs
 {
-    GroupIterator::GroupIterator( ECSEngine &engine, ComponentInterface::ConstIterator it )
+    GroupIterator::GroupIterator( ECSEngine &engine, ComponentPool::ConstIterator it )
         : m_Engine{ engine }, m_Iterator{ it }
     {
     }

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "component_interface.h"
+#include "component_pool.h"
 
 namespace smile::ecs
 {
@@ -13,7 +13,7 @@ namespace smile::ecs
     class GroupIterator final
     {
       public:
-        GroupIterator( ECSEngine &engine, ComponentInterface::ConstIterator it );
+        GroupIterator( ECSEngine &engine, ComponentPool::ConstIterator it );
         ~GroupIterator() = default;
 
         EntityHandleType operator*() const;
@@ -25,6 +25,6 @@ namespace smile::ecs
 
       private:
         ECSEngine &m_Engine;
-        ComponentInterface::ConstIterator m_Iterator;
+        ComponentPool::ConstIterator m_Iterator;
     };
 }

@@ -14,8 +14,8 @@ namespace smile::ecs
         while ( !m_pSystems.empty() )
             RemoveSystem( m_pSystems.back() );
 
-        for ( auto pComponentInterface : m_pComponents )
-            delete pComponentInterface;
+        for ( auto pPool : m_pComponentPools )
+            delete pPool;
 
         for ( auto pGroup : m_pGroups )
             delete pGroup;
@@ -23,10 +23,10 @@ namespace smile::ecs
 
     void ECSEngine::DestroyEntity( EntityHandleType entityHandle )
     {
-        for ( auto pComponentInterface : m_pComponents )
+        for ( auto pPool : m_pComponentPools )
         {
-            if ( HasComponent( pComponentInterface, entityHandle ) )
-                RemoveComponent( pComponentInterface, entityHandle );
+            if ( HasComponent( pPool, entityHandle ) )
+                RemoveComponent( pPool, entityHandle );
         }
 
         m_HandleManager.DestroyEntity( entityHandle );
@@ -47,46 +47,45 @@ namespace smile::ecs
         m_DeadHandles.clear();
     }
 
-    void ECSEngine::RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle )
+    void ECSEngine::RemoveComponent( ComponentPool *pPool, EntityHandleType entityHandle )
     {
-        void *pComponentData = pComponentInterface->GetRaw( entityHandle );
+        void *pComponentData = pPool->GetRaw( entityHandle );
 
         if ( pComponentData == nullptr )
             return;
 
-        CallDestructors( pComponentInterface, pComponentData );
+        CallDestructors( pPool, pComponentData );
 
         for ( auto &pGroup : m_pGroups )
         {
-            if ( pGroup->HasComponent( pComponentInterface ) )
+            if ( pGroup->ContainsComponentPool( pPool ) )
                 pGroup->RemoveEntity( entityHandle );
         }
 
-        const IndexType deadEIndex = pComponentInterface->m_Pool.GetIndex( entityHandle.GetIndex() );
-        pComponentInterface->m_pComponentStorage->RemoveSwap( deadEIndex );
-        pComponentInterface->m_Pool.Erase( entityHandle.GetIndex() );
+        const IndexType deadEIndex = pPool->m_SparseSet.GetIndex( entityHandle.GetIndex() );
+        pPool->m_pComponentStorage->RemoveSwap( deadEIndex );
+        pPool->m_SparseSet.Erase( entityHandle.GetIndex() );
     }
 
-    bool ECSEngine::HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const
+    bool ECSEngine::HasComponent( const ComponentPool *pPool, EntityHandleType entityHandle ) const
     {
-        return pComponentInterface ? pComponentInterface->Contains( entityHandle ) : false;
+        return pPool ? pPool->Contains( entityHandle ) : false;
     }
 
-    bool ECSEngine::IsComponentOwned( const ComponentInterface *pComponentInterface ) const
+    bool ECSEngine::IsComponentOwned( const ComponentPool *pPool ) const
     {
         return std::any_of( m_pGroups.cbegin(),
             m_pGroups.cend(),
-            [pComponentInterface]( GroupBase *pGroup )
+            [pPool]( const GroupBase *pGroup )
             {
-                const auto &pOwnedComponents = pGroup->GetOwnedComponents();
-                return std::find( pOwnedComponents.cbegin(), pOwnedComponents.cend(), pComponentInterface ) !=
-                       pOwnedComponents.end();
+                const auto &pOwnedPools = pGroup->GetOwnedPools();
+                return std::find( pOwnedPools.cbegin(), pOwnedPools.cend(), pPool ) != pOwnedPools.end();
             } );
     }
 
-    void ECSEngine::CallDestructors( ComponentInterface *pComponentInterface, void *pData )
+    void ECSEngine::CallDestructors( ComponentPool *pPool, void *pData )
     {
-        for ( auto destructor : pComponentInterface->m_Destroy )
+        for ( auto destructor : pPool->m_Destroy )
             destructor( pData );
     }
 
@@ -104,14 +103,14 @@ namespace smile::ecs
 
     void ECSEngine::Clear()
     {
-        for ( auto pComponentInterface : m_pComponents )
+        for ( auto pPool : m_pComponentPools )
         {
-            for ( Uint32 i{}; i < pComponentInterface->m_pComponentStorage->GetSize(); ++i )
+            for ( Uint32 i{}; i < pPool->m_pComponentStorage->GetSize(); ++i )
             {
-                CallDestructors( pComponentInterface, pComponentInterface->m_pComponentStorage->GetRaw( i ) );
+                CallDestructors( pPool, pPool->m_pComponentStorage->GetRaw( i ) );
             }
 
-            pComponentInterface->Clear();
+            pPool->Clear();
         }
 
         while ( !m_pSystems.empty() )
