@@ -4,13 +4,15 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/primitive/collection/sparse_set.h"
+#include "primitive/collection/sparse_set.h"
 #include "component_storage.h"
 
 #include <functional>
 
 namespace smile::ecs
 {
+    class ECSEngine;
+
     class ComponentInterface final
     {
       public:
@@ -22,10 +24,8 @@ namespace smile::ecs
         using DestroyHandler = std::function< void( void * ) >;
 
       public:
-        ~ComponentInterface()
-        {
-            SAFE_DELETE( m_pComponentStorage );
-        }
+        ComponentInterface( const ECSEngine &ecsEngine );
+        ~ComponentInterface();
 
         template < typename ComponentType >
         ComponentType &Get( EntityHandleType entityHandle )
@@ -111,6 +111,8 @@ namespace smile::ecs
             return m_Pool.GetIndex( entityHandle.GetIndex() );
         }
 
+        EntityHandleType GetEntityHandle( IndexType index ) const;
+
         ConstIterator begin() const
         {
             return m_Pool.begin();
@@ -122,8 +124,9 @@ namespace smile::ecs
         }
 
       public:
+        const ECSEngine &m_ECSEngine;
         SparseSetType m_Pool{};
-        ComponentStorage *m_pComponentStorage;
+        ComponentStorage *m_pComponentStorage = nullptr;
 
         std::vector< CreateHandler > m_Create;
         std::vector< DestroyHandler > m_Destroy;

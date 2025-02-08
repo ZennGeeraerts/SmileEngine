@@ -9,7 +9,10 @@
 
 namespace smile::ecs
 {
-    GroupBase::GroupBase( ECSEngine &engine ) : m_Engine{ engine }
+    GroupBase::GroupBase( ECSEngine &engine,
+        const std::vector< ComponentInterface * > &pOwned,
+        const std::vector< ComponentInterface * > &pGet )
+        : m_Engine{ engine }, m_pOwnedPools{ pOwned }, m_pGetPools{ pGet }
     {
     }
 

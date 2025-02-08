@@ -13,7 +13,10 @@ namespace smile::ecs
     class GroupBase
     {
       public:
-        GroupBase( ECSEngine &engine );
+        GroupBase( ECSEngine &engine,
+            const std::vector< ComponentInterface * > &pOwned,
+            const std::vector< ComponentInterface * > &pGet );
+
         virtual ~GroupBase() = default;
 
         virtual bool HasEntity( EntityHandleType entityHandle ) const = 0;

@@ -184,49 +184,31 @@ namespace smile::ecs
             Group( ECSEngine &engine,
                 const std::vector< ComponentInterface * > &pOwned,
                 const std::vector< ComponentInterface * > &pGet )
-                : GroupBase{ engine }
+                : GroupBase{ engine, pOwned, pGet }
             {
-                std::vector< SparseSetType * > pPools{};
-
-                for ( auto pComponent : pOwned )
-                {
-                    if ( pComponent )
-                    {
-                        pPools.push_back( &pComponent->m_Pool );
-                        m_pOwnedPools.push_back( pComponent );
-                    }
-                }
-
-                for ( auto pComponent : pGet )
-                {
-                    if ( pComponent )
-                    {
-                        pPools.push_back( &pComponent->m_Pool );
-                        m_pGetPools.push_back( pComponent );
-                    }
-                }
+                std::vector< ComponentInterface * > pPools{};
+                pPools.reserve( pOwned.size() + pGet.size() );
+                pPools.insert( pPools.end(), pOwned.begin(), pOwned.end() );
+                pPools.insert( pPools.end(), pGet.begin(), pGet.end() );
 
                 if ( pPools.empty() )
                     return;
 
-                SparseSetType *pMinPool = *std::min_element( std::begin( pPools ),
+                const ComponentInterface *pMinPool = *std::min_element( std::begin( pPools ),
                     std::end( pPools ),
-                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                    []( const ComponentInterface *pLhs, const ComponentInterface *pRhs )
                     { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
                 GatherComponents< Components... > gatherComponents{ m_Engine };
-                for ( Uint32 i{}; i < pMinPool->GetItemCount(); ++i )
+                for ( IndexType i{}; i < pMinPool->GetItemCount(); ++i )
                 {
-                    auto entityIndex = pMinPool->GetElement( i );
-                    auto entityHandle = m_Engine.GetEntityHandleManager().GetEntityHandle( entityIndex );
+                    auto entityHandle = pMinPool->GetEntityHandle( i );
 
                     if ( gatherComponents.Run( entityHandle ) )
                     {
                         for ( auto pPool : m_pOwnedPools )
                         {
-                            IndexType index = pPool->m_Pool.GetIndex( entityIndex );
-                            pPool->m_Pool.Swap( pPool->m_Pool.GetElement( i ), entityIndex );
-                            pPool->m_pComponentStorage->Swap( i, index );
+                            pPool->Swap( i, pPool->GetIndex( entityHandle ) );
                         }
 
                         ++m_EndIndex;
@@ -267,7 +249,7 @@ namespace smile::ecs
         template < typename ComponentType >
         void RegisterComponent()
         {
-            ComponentInterface *pComponentInterface = new ComponentInterface{};
+            ComponentInterface *pComponentInterface = new ComponentInterface{ *this };
             pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( *this );
 
             m_pComponents.push_back( pComponentInterface );
