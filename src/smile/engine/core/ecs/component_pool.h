@@ -28,6 +28,25 @@ namespace smile::ecs
         ~ComponentPool();
 
         template < typename ComponentType >
+        void Initialize()
+        {
+            SM_ASSERT( !m_pComponentStorage, "ComponentPool::Initialize > Storage already created" );
+
+            m_pComponentStorage = new ComponentStorageHandler< ComponentType >( m_ECSEngine );
+        }
+
+        template < typename ComponentType, typename... ConstructorArgs >
+        ComponentType &Add( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
+        {
+            const IndexType index = m_SparseSet.Insert( entityHandle.GetIndex() );
+
+            SM_ASSERT( index == m_pComponentStorage->GetSize(), "ComponentPool::Add > Failed to add component" );
+
+            return m_pComponentStorage->Append< ComponentType >(
+                entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
+        }
+
+        template < typename ComponentType >
         ComponentType &Get( EntityHandleType entityHandle )
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
@@ -112,6 +131,7 @@ namespace smile::ecs
         }
 
         EntityHandleType GetEntityHandle( IndexType index ) const;
+        void Sort( std::function< bool( const IndexType, const IndexType ) > compare );
 
         ConstIterator begin() const
         {

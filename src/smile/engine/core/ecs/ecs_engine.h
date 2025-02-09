@@ -11,7 +11,7 @@
 #include "base_system.h"
 #include "group_base.h"
 
-#include "engine/common/foundation/type_id.h"
+#include "foundation/type_id.h"
 
 #include <algorithm>
 #include <array>
@@ -244,7 +244,7 @@ namespace smile::ecs
         void RegisterComponent()
         {
             ComponentPool *pPool = new ComponentPool{ *this };
-            pPool->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( *this );
+            pPool->Initialize< ComponentType >();
 
             m_pComponentPools.push_back( pPool );
 
@@ -266,14 +266,8 @@ namespace smile::ecs
             RegisterComponentIfNeeded< ComponentType >();
 
             ComponentPool *pPool = GetComponentPool< ComponentType >();
-            auto *pComponentStorage = GetComponentStorage< ComponentType >();
-
-            const IndexType index = pPool->m_SparseSet.Insert( entityHandle.GetIndex() );
-
-            SM_ASSERT( index == pComponentStorage->GetSize(), "ECSEngine::AddComponent > Failed to add component" );
-
-            ComponentType &component = pComponentStorage->Append< ComponentType >(
-                entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
+            ComponentType &component =
+                pPool->Add< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
 
             for ( auto &pGroup : m_pGroups )
             {
@@ -461,29 +455,7 @@ namespace smile::ecs
                 return compare( lhsEntity, rhsEntity );
             };
 
-            auto pool = pPool->m_SparseSet;
-            auto &poolRef = pPool->m_SparseSet;
-
-            std::sort( pool.m_Dense.begin(), pool.m_Dense.end(), std::move( comp ) );
-
-            for ( std::size_t pos{}; pos < pool.GetItemCount(); ++pos )
-            {
-                auto curr = pos;
-                auto next = poolRef.m_Sparse[pool.m_Dense[curr]];
-
-                while ( curr != next )
-                {
-                    std::swap( poolRef.m_Dense[poolRef.m_Sparse[pool.m_Dense[curr]]],
-                        poolRef.m_Dense[poolRef.m_Sparse[pool.m_Dense[next]]] );
-
-                    pPool->m_pComponentStorage->Swap(
-                        poolRef.m_Sparse[pool.m_Dense[curr]], poolRef.m_Sparse[pool.m_Dense[next]] );
-
-                    poolRef.m_Sparse[pool.m_Dense[curr]] = curr;
-                    curr = next;
-                    next = poolRef.m_Sparse[pool.m_Dense[curr]];
-                }
-            }
+            pPool->Sort( comp );
         }
 
         template < typename ComponentType >
