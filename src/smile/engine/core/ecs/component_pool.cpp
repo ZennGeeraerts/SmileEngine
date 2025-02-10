@@ -9,13 +9,25 @@
 
 namespace smile::ecs
 {
-    ComponentPool::ComponentPool( const ECSEngine &ecsEngine ) : m_ECSEngine{ ecsEngine }
+    ComponentPool::ComponentPool( ECSEngine &ecsEngine ) : m_ECSEngine{ ecsEngine }
     {
     }
 
     ComponentPool::~ComponentPool()
     {
         SAFE_DELETE( m_pComponentStorage );
+    }
+
+    void ComponentPool::Remove(EntityHandleType entityHandle)
+    {
+        void *pComponentData = GetRaw( entityHandle );
+
+        if ( !pComponentData )
+            return;
+
+        const IndexType deadEntityIndex = m_SparseSet.GetIndex( entityHandle.GetIndex() );
+        m_pComponentStorage->RemoveSwap( deadEntityIndex );
+        m_SparseSet.Erase( entityHandle.GetIndex() );
     }
 
     EntityHandleType ComponentPool::GetEntityHandle( IndexType index ) const

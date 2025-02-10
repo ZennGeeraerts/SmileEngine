@@ -19,12 +19,8 @@ namespace smile::ecs
         using Iterator = SparseSetType::Iterator;
         using ConstIterator = SparseSetType::ConstIterator;
 
-      private:
-        using CreateHandler = std::function< void( EntityHandleType, void * ) >;
-        using DestroyHandler = std::function< void( void * ) >;
-
       public:
-        ComponentPool( const ECSEngine &ecsEngine );
+        ComponentPool( ECSEngine &ecsEngine );
         ~ComponentPool();
 
         template < typename ComponentType >
@@ -32,7 +28,7 @@ namespace smile::ecs
         {
             SM_ASSERT( !m_pComponentStorage, "ComponentPool::Initialize > Storage already created" );
 
-            m_pComponentStorage = new ComponentStorageHandler< ComponentType >( m_ECSEngine );
+            m_pComponentStorage = new ComponentStorageHandler< ComponentType >{ m_ECSEngine };
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -45,6 +41,8 @@ namespace smile::ecs
             return m_pComponentStorage->Append< ComponentType >(
                 entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
         }
+
+        void Remove( EntityHandleType entityHandle );
 
         template < typename ComponentType >
         ComponentType &Get( EntityHandleType entityHandle )
@@ -144,11 +142,8 @@ namespace smile::ecs
         }
 
       public:
-        const ECSEngine &m_ECSEngine;
+        ECSEngine &m_ECSEngine;
         SparseSetType m_SparseSet{};
         ComponentStorage *m_pComponentStorage = nullptr;
-
-        std::vector< CreateHandler > m_Create;
-        std::vector< DestroyHandler > m_Destroy;
     };
 }

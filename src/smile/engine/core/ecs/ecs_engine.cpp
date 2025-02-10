@@ -14,8 +14,8 @@ namespace smile::ecs
         while ( !m_pSystems.empty() )
             RemoveSystem( m_pSystems.back() );
 
-        for ( auto pPool : m_pComponentPools )
-            delete pPool;
+        for ( auto pCPool : m_pComponentPools )
+            delete pCPool;
 
         for ( auto pGroup : m_pGroups )
             delete pGroup;
@@ -23,10 +23,10 @@ namespace smile::ecs
 
     void ECSEngine::DestroyEntity( EntityHandleType entityHandle )
     {
-        for ( auto pPool : m_pComponentPools )
+        for ( auto pCPool : m_pComponentPools )
         {
-            if ( HasComponent( pPool, entityHandle ) )
-                RemoveComponent( pPool, entityHandle );
+            if ( HasComponent( pCPool, entityHandle ) )
+                RemoveComponent( pCPool, entityHandle );
         }
 
         m_HandleManager.DestroyEntity( entityHandle );
@@ -47,46 +47,31 @@ namespace smile::ecs
         m_DeadHandles.clear();
     }
 
-    void ECSEngine::RemoveComponent( ComponentPool *pPool, EntityHandleType entityHandle )
+    void ECSEngine::RemoveComponent( ComponentPool *pCPool, EntityHandleType entityHandle )
     {
-        void *pComponentData = pPool->GetRaw( entityHandle );
-
-        if ( pComponentData == nullptr )
-            return;
-
-        CallDestructors( pPool, pComponentData );
-
         for ( auto &pGroup : m_pGroups )
         {
-            if ( pGroup->ContainsComponentPool( pPool ) )
+            if ( pGroup->ContainsComponentPool( pCPool ) )
                 pGroup->RemoveEntity( entityHandle );
         }
 
-        const IndexType deadEIndex = pPool->m_SparseSet.GetIndex( entityHandle.GetIndex() );
-        pPool->m_pComponentStorage->RemoveSwap( deadEIndex );
-        pPool->m_SparseSet.Erase( entityHandle.GetIndex() );
+        pCPool->Remove( entityHandle );
     }
 
-    bool ECSEngine::HasComponent( const ComponentPool *pPool, EntityHandleType entityHandle ) const
+    bool ECSEngine::HasComponent( const ComponentPool *pCPool, EntityHandleType entityHandle ) const
     {
-        return pPool ? pPool->Contains( entityHandle ) : false;
+        return pCPool ? pCPool->Contains( entityHandle ) : false;
     }
 
-    bool ECSEngine::IsComponentOwned( const ComponentPool *pPool ) const
+    bool ECSEngine::IsComponentOwned( const ComponentPool *pCPool ) const
     {
         return std::any_of( m_pGroups.cbegin(),
             m_pGroups.cend(),
-            [pPool]( const GroupBase *pGroup )
+            [pCPool]( const GroupBase *pGroup )
             {
                 const auto &pOwnedPools = pGroup->GetOwnedPools();
-                return std::find( pOwnedPools.cbegin(), pOwnedPools.cend(), pPool ) != pOwnedPools.end();
+                return std::find( pOwnedPools.cbegin(), pOwnedPools.cend(), pCPool ) != pOwnedPools.end();
             } );
-    }
-
-    void ECSEngine::CallDestructors( ComponentPool *pPool, void *pData )
-    {
-        for ( auto destructor : pPool->m_Destroy )
-            destructor( pData );
     }
 
     void ECSEngine::AddSystem( Ref< BaseSystem > pSystem )
@@ -103,14 +88,9 @@ namespace smile::ecs
 
     void ECSEngine::Clear()
     {
-        for ( auto pPool : m_pComponentPools )
+        for ( auto pCPool : m_pComponentPools )
         {
-            for ( Uint32 i{}; i < pPool->m_pComponentStorage->GetSize(); ++i )
-            {
-                CallDestructors( pPool, pPool->m_pComponentStorage->GetRaw( i ) );
-            }
-
-            pPool->Clear();
+            pCPool->Clear();
         }
 
         while ( !m_pSystems.empty() )
