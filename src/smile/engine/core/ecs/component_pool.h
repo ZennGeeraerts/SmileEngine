@@ -5,7 +5,7 @@
 #pragma once
 
 #include "primitive/collection/sparse_set.h"
-#include "component_storage.h"
+#include "component_storage_handler.h"
 
 #include <functional>
 
@@ -19,6 +19,10 @@ namespace smile::ecs
         using Iterator = SparseSetType::Iterator;
         using ConstIterator = SparseSetType::ConstIterator;
 
+      private:
+        using ListenerType = std::function< void( ECSEngine &, EntityHandleType ) >;
+        using ListenerContainer = std::vector< ListenerType >;
+
       public:
         ComponentPool( ECSEngine &ecsEngine );
         ~ComponentPool();
@@ -28,7 +32,7 @@ namespace smile::ecs
         {
             SM_ASSERT( !m_pComponentStorage, "ComponentPool::Initialize > Storage already created" );
 
-            m_pComponentStorage = new ComponentStorageHandler< ComponentType >{ m_ECSEngine };
+            m_pComponentStorage = new ComponentStorageHandler< ComponentType >{};
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -38,8 +42,16 @@ namespace smile::ecs
 
             SM_ASSERT( index == m_pComponentStorage->GetSize(), "ComponentPool::Add > Failed to add component" );
 
-            return m_pComponentStorage->Append< ComponentType >(
+            auto &component = m_pComponentStorage->Append< ComponentType >(
                 entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
+
+            for ( const auto &listenerFunc : m_ContructionListeners )
+            {
+                auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetEntityHandle( index );
+                listenerFunc( m_ECSEngine, entityHandle );
+            }
+
+            return component;
         }
 
         void Remove( EntityHandleType entityHandle );
@@ -131,6 +143,16 @@ namespace smile::ecs
         EntityHandleType GetEntityHandle( IndexType index ) const;
         void Sort( std::function< bool( const IndexType, const IndexType ) > compare );
 
+        ListenerContainer &OnConstruction()
+        {
+            return m_ContructionListeners;
+        }
+
+        ListenerContainer &OnDestruction()
+        {
+            return m_DestructionListeners;
+        }
+
         ConstIterator begin() const
         {
             return m_SparseSet.begin();
@@ -145,5 +167,8 @@ namespace smile::ecs
         ECSEngine &m_ECSEngine;
         SparseSetType m_SparseSet{};
         ComponentStorage *m_pComponentStorage = nullptr;
+
+        ListenerContainer m_ContructionListeners;
+        ListenerContainer m_DestructionListeners;
     };
 }

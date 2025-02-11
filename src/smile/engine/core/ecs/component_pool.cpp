@@ -26,6 +26,13 @@ namespace smile::ecs
             return;
 
         const IndexType deadEntityIndex = m_SparseSet.GetIndex( entityHandle.GetIndex() );
+
+        for ( const auto &listenerFunc : m_DestructionListeners )
+        {
+            auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetEntityHandle( deadEntityIndex );
+            listenerFunc( m_ECSEngine, entityHandle );
+        }
+
         m_pComponentStorage->RemoveSwap( deadEntityIndex );
         m_SparseSet.Erase( entityHandle.GetIndex() );
     }

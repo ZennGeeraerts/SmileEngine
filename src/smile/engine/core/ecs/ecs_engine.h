@@ -6,7 +6,6 @@
 
 #include "entity_handle_manager.h"
 #include "component_pool.h"
-#include "component_storage_handler.h"
 #include "component_list.h"
 #include "base_system.h"
 #include "group_base.h"
@@ -462,15 +461,15 @@ namespace smile::ecs
         template < typename ComponentType >
         auto &OnConstruction()
         {
-            auto *pComponentStorage = GetComponentStorage< ComponentType >();
-            return pComponentStorage->OnConstruction();
+            auto *pCPool = GetComponentPool< ComponentType >();
+            return pCPool->OnConstruction();
         }
 
         template < typename ComponentType >
         auto &OnDestruction()
         {
-            auto *pComponentStorage = GetComponentStorage< ComponentType >();
-            return pComponentStorage->OnDestruction();
+            auto *pCPool = GetComponentPool< ComponentType >();
+            return pCPool->OnDestruction();
         }
 
       private:
@@ -487,24 +486,6 @@ namespace smile::ecs
             auto typeID = foundation::TypeIDOf< ComponentType >();
             return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap.at( typeID )
                                                                                  : nullptr;
-        }
-
-        template < typename ComponentType >
-        ComponentStorageHandler< ComponentType > *GetComponentStorage()
-        {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
-            auto pCPool = m_ComponentPoolMap[typeID];
-
-            return ComponentStorageCast< ComponentType >( pCPool->m_pComponentStorage );
-        }
-
-        template < typename ComponentType >
-        const ComponentStorageHandler< ComponentType > *GetComponentStorage() const
-        {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
-            auto pCPool = m_ComponentPoolMap[typeID];
-
-            return ComponentStorageCast< ComponentType >( pCPool->m_pComponentStorage );
         }
 
         void RemoveComponent( ComponentPool *pCPool, EntityHandleType entityHandle );
