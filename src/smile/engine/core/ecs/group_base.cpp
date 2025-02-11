@@ -9,21 +9,20 @@
 
 namespace smile::ecs
 {
-    GroupBase::GroupBase( ECSEngine &engine ) : m_Engine{ engine }
+    GroupBase::GroupBase( ECSEngine &engine,
+        const std::vector< ComponentPool * > &pOwned,
+        const std::vector< ComponentPool * > &pGet )
+        : m_Engine{ engine }, m_pOwnedPools{ pOwned }, m_pGetPools{ pGet }
     {
     }
 
     void GroupBase::AddEntity( EntityHandleType entityHandle )
     {
-        const IndexType entityIndex = entityHandle.GetIndex();
-
-        if ( HasEntity( entityIndex ) )
+        if ( ContainsEntity( entityHandle ) )
         {
             for ( auto pComponent : m_pOwnedPools )
             {
-                IndexType index = pComponent->m_Pool.GetIndex( entityIndex );
-                pComponent->m_Pool.Swap( pComponent->m_Pool.GetElement( m_EndIndex ), entityIndex );
-                pComponent->m_pComponentStorage->Swap( m_EndIndex, index );
+                pComponent->Swap( pComponent->GetIndex( entityHandle ), m_EndIndex - 1 );
             }
 
             ++m_EndIndex;
@@ -32,40 +31,36 @@ namespace smile::ecs
 
     void GroupBase::RemoveEntity( EntityHandleType entityHandle )
     {
-        const IndexType entityIndex = entityHandle.GetIndex();
-
-        if ( HasEntity( entityIndex ) )
+        if ( ContainsEntity( entityHandle ) )
         {
             for ( auto pComponent : m_pOwnedPools )
             {
-                IndexType index = pComponent->m_Pool.GetIndex( entityIndex );
-                pComponent->m_Pool.Swap( pComponent->m_Pool.GetElement( m_EndIndex - 1 ), entityIndex );
-                pComponent->m_pComponentStorage->Swap( m_EndIndex - 1, index );
+                pComponent->Swap( pComponent->GetIndex( entityHandle ), m_EndIndex - 1 );
             }
 
             --m_EndIndex;
         }
     }
 
-    bool GroupBase::HasComponent( ComponentInterface *pComponent ) const
+    bool GroupBase::ContainsComponentPool( ComponentPool *pPool ) const
     {
-        return ( std::find( m_pOwnedPools.begin(), m_pOwnedPools.end(), pComponent ) != m_pOwnedPools.end() ) ||
-               ( std::find( m_pGetPools.begin(), m_pGetPools.end(), pComponent ) != m_pGetPools.end() );
+        return ( std::find( m_pOwnedPools.begin(), m_pOwnedPools.end(), pPool ) != m_pOwnedPools.end() ) ||
+               ( std::find( m_pGetPools.begin(), m_pGetPools.end(), pPool ) != m_pGetPools.end() );
     }
 
     GroupIterator GroupBase::begin() const
     {
         if ( !m_pOwnedPools.empty() )
-            return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() };
+            return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->begin() };
         else
-            return GroupIterator{ m_Engine, SparseSetType::ConstIterator{} };
+            return GroupIterator{ m_Engine, ComponentPool::ConstIterator{} };
     }
 
     GroupIterator GroupBase::end() const
     {
         if ( !m_pOwnedPools.empty() )
-            return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->m_Pool.begin() + m_EndIndex };
+            return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->begin() + m_EndIndex };
         else
-            return GroupIterator{ m_Engine, SparseSetType::ConstIterator{} };
+            return GroupIterator{ m_Engine, ComponentPool::ConstIterator{} };
     }
 }

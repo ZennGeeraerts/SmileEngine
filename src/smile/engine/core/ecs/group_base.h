@@ -8,36 +8,39 @@
 
 namespace smile::ecs
 {
-    class ComponentInterface;
+    class ComponentPool;
 
     class GroupBase
     {
       public:
-        GroupBase( ECSEngine &engine );
+        GroupBase( ECSEngine &engine,
+            const std::vector< ComponentPool * > &pOwned,
+            const std::vector< ComponentPool * > &pGet );
+
         virtual ~GroupBase() = default;
 
-        virtual bool HasEntity( IndexType entityIndex ) const = 0;
+        virtual bool ContainsEntity( EntityHandleType entityHandle ) const = 0;
 
         void AddEntity( EntityHandleType entityHandle );
         void RemoveEntity( EntityHandleType entityHandle );
 
         template < typename Component >
-        bool HasComponent() const
+        bool ContainsComponentPool() const
         {
-            auto pComponentInterface = m_Engine.GetComponentInterface< Component >();
-            return HasComponent( pComponentInterface );
+            auto pPool = m_Engine.GetComponentPool< Component >();
+            return ContainsComponentPool( pPool );
         }
 
-        bool HasComponent( ComponentInterface *pComponent ) const;
+        bool ContainsComponentPool( ComponentPool *pPool ) const;
 
         GroupIterator begin() const;
         GroupIterator end() const;
 
-        const std::vector< ComponentInterface * > &GetOwnedComponents() const
+        const std::vector< ComponentPool * > &GetOwnedPools() const
         {
             return m_pOwnedPools;
         }
-        const std::vector< ComponentInterface * > &GetGetComponents() const
+        const std::vector< ComponentPool * > &GetGetPools() const
         {
             return m_pGetPools;
         }
@@ -45,8 +48,8 @@ namespace smile::ecs
       protected:
         ECSEngine &m_Engine;
 
-        std::vector< ComponentInterface * > m_pOwnedPools{};
-        std::vector< ComponentInterface * > m_pGetPools{};
+        std::vector< ComponentPool * > m_pOwnedPools{};
+        std::vector< ComponentPool * > m_pGetPools{};
 
         IndexType m_EndIndex{ 0 };
     };

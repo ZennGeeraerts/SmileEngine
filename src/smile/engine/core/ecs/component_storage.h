@@ -31,8 +31,8 @@ namespace smile::ecs
     class ComponentStorage
     {
       protected:
-        using ConstructorType = void ( * )( void * );
-        using DestructorType = void ( * )( void * );
+        using ConstructorType = std::function< void( void * ) >;
+        using DestructorType = std::function< void( void * ) >;
 
       protected:
         ComponentStorage() = default;

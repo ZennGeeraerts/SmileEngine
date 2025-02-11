@@ -5,15 +5,15 @@
 #pragma once
 
 #include "entity_handle_manager.h"
-#include "component_interface.h"
-#include "component_storage_handler.h"
+#include "component_pool.h"
 #include "component_list.h"
 #include "base_system.h"
 #include "group_base.h"
 
-#include "engine/common/foundation/type_id.h"
+#include "foundation/type_id.h"
 
 #include <algorithm>
+#include <array>
 
 namespace smile::ecs
 {
@@ -29,19 +29,15 @@ namespace smile::ecs
           public:
             GatherComponents( ECSEngine &engine )
             {
-                FillComponentInterfaces< 0, Components... >( engine );
+                FillComponentPools< 0, Components... >( engine );
             }
 
             bool Run( EntityHandleType entityHandle )
             {
-                for ( Uint32 i{}; i < s_Size; ++i )
-                {
-                    if ( !m_pComponentInterfaces[i] ||
-                         !m_pComponentInterfaces[i]->m_Pool.Contains( entityHandle.GetIndex() ) )
-                        return false;
-                }
-
-                return true;
+                return std::all_of( std::begin( m_pComponentPools ),
+                    std::end( m_pComponentPools ),
+                    [entityHandle]( const ComponentPool *pCPool )
+                    { return pCPool && pCPool->Contains( entityHandle ); } );
             }
 
             template < typename Component >
@@ -52,27 +48,27 @@ namespace smile::ecs
 
           private:
             template < Uint32 Index, typename Component, typename... Components >
-            void FillComponentInterfaces( ECSEngine &engine )
+            void FillComponentPools( ECSEngine &engine )
             {
-                m_pComponentInterfaces[Index] = engine.GetComponentInterface< Component >();
-                FillComponentInterfaces< Index + 1, Components... >( engine );
+                m_pComponentPools[Index] = engine.GetComponentPool< Component >();
+                FillComponentPools< Index + 1, Components... >( engine );
             }
 
             template < Uint32 Index >
-            void FillComponentInterfaces( ECSEngine & )
+            void FillComponentPools( ECSEngine & )
             {
             }
 
           private:
             static constexpr Uint32 s_Size = sizeof...( Components );
-            ComponentInterface *m_pComponentInterfaces[s_Size];
+            std::array< ComponentPool *, s_Size > m_pComponentPools;
         };
 
         template < typename... Components >
         class ViewIterator final
         {
           public:
-            ViewIterator( ECSEngine &engine, SparseSetType::ConstIterator it, SparseSetType::ConstIterator endIt )
+            ViewIterator( ECSEngine &engine, ComponentPool::ConstIterator it, ComponentPool::ConstIterator endIt )
                 : m_Engine{ engine }, m_Iterator{ it }, m_EndIterator{ endIt }
             {
             }
@@ -97,7 +93,7 @@ namespace smile::ecs
             ViewIterator &operator++()
             {
                 const EntityHandleManager &handleManager = m_Engine.GetEntityHandleManager();
-                SparseSetType::ConstIterator oldIt;
+                ComponentPool::ConstIterator oldIt;
                 do
                 {
                     oldIt = m_Iterator;
@@ -116,8 +112,8 @@ namespace smile::ecs
 
           private:
             ECSEngine &m_Engine;
-            SparseSetType::ConstIterator m_Iterator;
-            SparseSetType::ConstIterator m_EndIterator;
+            ComponentPool::ConstIterator m_Iterator;
+            ComponentPool::ConstIterator m_EndIterator;
         };
 
         template < typename... Components >
@@ -129,29 +125,27 @@ namespace smile::ecs
           public:
             View( ECSEngine &engine ) : m_Engine{ engine }
             {
-                const std::vector< ComponentInterface * > pComponents{
-                    engine.GetComponentInterface< Components >()... };
+                std::vector< ComponentPool * > pCPools{ engine.GetComponentPool< Components >()... };
 
-                std::vector< SparseSetType * > pPools{};
-                for ( auto pComponent : pComponents )
-                {
-                    if ( pComponent )
-                        pPools.push_back( &pComponent->m_Pool );
-                }
+                // Remove non existent component interfaces
+                pCPools.erase( std::remove_if( std::begin( pCPools ),
+                                   std::end( pCPools ),
+                                   []( const ComponentPool *pCPool ) { return !pCPool; } ),
+                    std::end( pCPools ) );
 
-                auto it = std::min_element( std::begin( pPools ),
-                    std::end( pPools ),
-                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                auto it = std::min_element( std::begin( pCPools ),
+                    std::end( pCPools ),
+                    []( const ComponentPool *pLhs, const ComponentPool *pRhs )
                     { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
-                m_pMinPool = ( it != pPools.end() ) ? *it : nullptr;
+                m_pSmallestPool = ( it != pCPools.end() ) ? *it : nullptr;
             }
 
             const ViewIteratorType begin() const
             {
-                if ( m_pMinPool )
+                if ( m_pSmallestPool )
                 {
-                    return ViewIteratorType{ m_Engine, m_pMinPool->begin(), m_pMinPool->end() };
+                    return ViewIteratorType{ m_Engine, m_pSmallestPool->begin(), m_pSmallestPool->end() };
                 }
                 else
                 {
@@ -161,9 +155,9 @@ namespace smile::ecs
 
             const ViewIteratorType end() const
             {
-                if ( m_pMinPool )
+                if ( m_pSmallestPool )
                 {
-                    return ViewIteratorType{ m_Engine, m_pMinPool->end(), m_pMinPool->end() };
+                    return ViewIteratorType{ m_Engine, m_pSmallestPool->end(), m_pSmallestPool->end() };
                 }
                 else
                 {
@@ -174,7 +168,7 @@ namespace smile::ecs
           private:
             static constexpr Uint32 s_Size = sizeof...( Components );
             ECSEngine &m_Engine;
-            SparseSetType *m_pMinPool;
+            ComponentPool *m_pSmallestPool;
         };
 
         template < typename... Components >
@@ -182,51 +176,33 @@ namespace smile::ecs
         {
           public:
             Group( ECSEngine &engine,
-                const std::vector< ComponentInterface * > &pOwned,
-                const std::vector< ComponentInterface * > &pGet )
-                : GroupBase{ engine }
+                const std::vector< ComponentPool * > &pOwned,
+                const std::vector< ComponentPool * > &pGet )
+                : GroupBase{ engine, pOwned, pGet }
             {
-                std::vector< SparseSetType * > pPools{};
+                std::vector< ComponentPool * > pCPools{};
+                pCPools.reserve( pOwned.size() + pGet.size() );
+                pCPools.insert( pCPools.end(), pOwned.begin(), pOwned.end() );
+                pCPools.insert( pCPools.end(), pGet.begin(), pGet.end() );
 
-                for ( auto pComponent : pOwned )
-                {
-                    if ( pComponent )
-                    {
-                        pPools.push_back( &pComponent->m_Pool );
-                        m_pOwnedPools.push_back( pComponent );
-                    }
-                }
-
-                for ( auto pComponent : pGet )
-                {
-                    if ( pComponent )
-                    {
-                        pPools.push_back( &pComponent->m_Pool );
-                        m_pGetPools.push_back( pComponent );
-                    }
-                }
-
-                if ( pPools.empty() )
+                if ( pCPools.empty() )
                     return;
 
-                SparseSetType *pMinPool = *std::min_element( std::begin( pPools ),
-                    std::end( pPools ),
-                    []( SparseSetType *pLhs, SparseSetType *pRhs )
+                const ComponentPool *pSmallestCPool = *std::min_element( std::begin( pCPools ),
+                    std::end( pCPools ),
+                    []( const ComponentPool *pLhs, const ComponentPool *pRhs )
                     { return pLhs->GetItemCount() < pRhs->GetItemCount(); } );
 
                 GatherComponents< Components... > gatherComponents{ m_Engine };
-                for ( Uint32 i{}; i < pMinPool->GetItemCount(); ++i )
+                for ( IndexType i{}; i < pSmallestCPool->GetItemCount(); ++i )
                 {
-                    auto entityIndex = pMinPool->GetElement( i );
-                    auto entityHandle = m_Engine.GetEntityHandleManager().GetEntityHandle( entityIndex );
+                    auto entityHandle = pSmallestCPool->GetEntityHandle( i );
 
                     if ( gatherComponents.Run( entityHandle ) )
                     {
-                        for ( auto pPool : m_pOwnedPools )
+                        for ( auto pCPool : m_pOwnedPools )
                         {
-                            IndexType index = pPool->m_Pool.GetIndex( entityIndex );
-                            pPool->m_Pool.Swap( pPool->m_Pool.GetElement( i ), entityIndex );
-                            pPool->m_pComponentStorage->Swap( i, index );
+                            pCPool->Swap( i, pCPool->GetIndex( entityHandle ) );
                         }
 
                         ++m_EndIndex;
@@ -234,10 +210,9 @@ namespace smile::ecs
                 }
             }
 
-            bool HasEntity( IndexType entityIndex ) const override
+            bool ContainsEntity( EntityHandleType entityHandle ) const override
             {
                 GatherComponents< Components... > gatherComponents{ m_Engine };
-                auto entityHandle = m_Engine.GetEntityHandleManager().GetEntityHandle( entityIndex );
                 return gatherComponents.Run( entityHandle );
             }
         };
@@ -268,20 +243,20 @@ namespace smile::ecs
         template < typename ComponentType >
         void RegisterComponent()
         {
-            ComponentInterface *pComponentInterface = new ComponentInterface{};
-            pComponentInterface->m_pComponentStorage = new ComponentStorageHandler< ComponentType >( *this );
+            ComponentPool *pCPool = new ComponentPool{ *this };
+            pCPool->Initialize< ComponentType >();
 
-            m_pComponents.push_back( pComponentInterface );
+            m_pComponentPools.push_back( pCPool );
 
             auto typeID = foundation::TypeIDOf< ComponentType >();
-            m_ComponentMap[typeID] = pComponentInterface;
+            m_ComponentPoolMap[typeID] = pCPool;
         }
 
         template < typename ComponentType >
         void RegisterComponentIfNeeded()
         {
             auto typeID = foundation::TypeIDOf< ComponentType >();
-            if ( m_ComponentMap.find( typeID ) == m_ComponentMap.end() )
+            if ( m_ComponentPoolMap.find( typeID ) == m_ComponentPoolMap.end() )
                 RegisterComponent< ComponentType >();
         }
 
@@ -290,19 +265,13 @@ namespace smile::ecs
         {
             RegisterComponentIfNeeded< ComponentType >();
 
-            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            auto *pComponentStorage = GetComponentStorage< ComponentType >();
-
-            const IndexType index = pComponentInterface->m_Pool.Insert( entityHandle.GetIndex() );
-
-            SM_ASSERT( index == pComponentStorage->GetSize(), "ECSEngine::AddComponent > Failed to add component" );
-
-            ComponentType &component = pComponentStorage->Append< ComponentType >(
-                entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
+            ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            ComponentType &component =
+                pCPool->Add< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
 
             for ( auto &pGroup : m_pGroups )
             {
-                if ( pGroup->HasComponent( pComponentInterface ) )
+                if ( pGroup->ContainsComponentPool( pCPool ) )
                     pGroup->AddEntity( entityHandle );
             }
 
@@ -312,8 +281,8 @@ namespace smile::ecs
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &AddOrReplaceComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
         {
-            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            if ( pComponentInterface && pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) )
+            ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            if ( pCPool && pCPool->Contains( entityHandle ) )
                 RemoveComponent< ComponentType >( entityHandle );
 
             return AddComponent< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
@@ -322,16 +291,16 @@ namespace smile::ecs
         template < typename ComponentType >
         void RemoveComponent( EntityHandleType entityHandle )
         {
-            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            RemoveComponent( pComponentInterface, entityHandle );
+            ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            RemoveComponent( pCPool, entityHandle );
         }
 
         template < typename ComponentType >
         ComponentType &GetComponent( EntityHandleType entityHandle )
         {
-            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
-            SM_ASSERT( it != m_ComponentMap.end(), "ECSEngine::GetComponent > Component is missing" );
+            SM_ASSERT( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
             return it->second->Get< ComponentType >( entityHandle );
         }
@@ -339,9 +308,9 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentType &GetComponent( EntityHandleType entityHandle ) const
         {
-            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
-            SM_ASSERT( it != m_ComponentMap.end(), "ECSEngine::GetComponent > Component is missing" );
+            SM_ASSERT( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
             return it->second->Get< ComponentType >( entityHandle );
         }
@@ -361,9 +330,9 @@ namespace smile::ecs
         template < typename ComponentType >
         ComponentType *TryGetComponent( EntityHandleType entityHandle )
         {
-            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
-            if ( it == m_ComponentMap.end() )
+            if ( it == m_ComponentPoolMap.end() )
                 return nullptr;
 
             return it->second->TryGet< ComponentType >( entityHandle );
@@ -372,9 +341,9 @@ namespace smile::ecs
         template < typename ComponentType >
         const ComponentType *TryGetComponent( EntityHandleType entityHandle ) const
         {
-            auto it = m_ComponentMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
-            if ( it == m_ComponentMap.end() )
+            if ( it == m_ComponentPoolMap.end() )
                 return nullptr;
 
             return it->second->TryGet< ComponentType >( entityHandle );
@@ -383,30 +352,30 @@ namespace smile::ecs
         template < typename ComponentType >
         bool HasComponent( EntityHandleType entityHandle ) const
         {
-            const ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            return pComponentInterface ? pComponentInterface->m_Pool.Contains( entityHandle.GetIndex() ) : false;
+            const ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            return pCPool ? pCPool->Contains( entityHandle ) : false;
         }
 
         template < typename ComponentType >
         void Reset()
         {
-            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+            ComponentPool *pCPool = GetComponentPool< ComponentType >();
 
             auto view = GetView< ComponentType >();
             for ( auto entity : view )
             {
-                RemoveComponent( pComponentInterface, entity );
+                RemoveComponent( pCPool, entity );
             }
 
-            m_pComponents.erase( std::remove( m_pComponents.begin(), m_pComponents.end(), pComponentInterface ) );
-            m_ComponentMap.erase( foundation::TypeIDOf< ComponentType >() );
+            m_pComponentPools.erase( std::remove( m_pComponentPools.begin(), m_pComponentPools.end(), pCPool ) );
+            m_ComponentPoolMap.erase( foundation::TypeIDOf< ComponentType >() );
         }
 
         template < typename ComponentType >
         bool IsComponentOwned() const
         {
-            const ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
-            return IsComponentOwned( pComponentInterface );
+            const ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            return IsComponentOwned( pCPool );
         }
 
         template < typename... C >
@@ -421,15 +390,15 @@ namespace smile::ecs
             ( RegisterComponentIfNeeded< Owned >(), ... );
             ( RegisterComponentIfNeeded< Get >(), ... );
 
-            std::vector< ComponentInterface * > pOwnedComponents{ GetComponentInterface< Owned >()... };
-            std::vector< ComponentInterface * > pGetComponents{ GetComponentInterface< Get >()... };
+            std::vector< ComponentPool * > pOwnedComponents{ GetComponentPool< Owned >()... };
+            std::vector< ComponentPool * > pGetComponents{ GetComponentPool< Get >()... };
 
             auto it = std::find_if( m_pGroups.begin(),
                 m_pGroups.end(),
                 [pOwnedComponents, pGetComponents]( GroupBase *pGroup )
                 {
-                    const auto &pGroupOwned = pGroup->GetOwnedComponents();
-                    const auto &pGroupGet = pGroup->GetGetComponents();
+                    const auto &pGroupOwned = pGroup->GetOwnedPools();
+                    const auto &pGroupGet = pGroup->GetGetPools();
 
                     return pOwnedComponents.size() == pGroupOwned.size() && pGetComponents.size() == pGroupGet.size() &&
                            std::equal( pOwnedComponents.begin(), pOwnedComponents.end(), pGroupOwned.begin() ) &&
@@ -441,9 +410,8 @@ namespace smile::ecs
 
             SM_ASSERT( std::none_of( pOwnedComponents.cbegin(),
                            pOwnedComponents.cend(),
-                           [&]( ComponentInterface *pComponentInterface )
-                           { return pComponentInterface && IsComponentOwned( pComponentInterface ); } ),
-                "ECSEngine::GetGroup > Component(s) are already owned by a group" );
+                           [&]( const ComponentPool *pCPool ) { return pCPool && IsComponentOwned( pCPool ); } ),
+                "ECSEngine::GetGroup > Component pool(s) are already owned by a group" );
 
             GroupBase *pNewGroup = new Group< Owned..., Get... >{ *this, pOwnedComponents, pGetComponents };
             m_pGroups.push_back( pNewGroup );
@@ -476,10 +444,9 @@ namespace smile::ecs
         template < typename ComponentType, typename Compare >
         void SortComponent( Compare compare )
         {
-            ComponentInterface *pComponentInterface = GetComponentInterface< ComponentType >();
+            ComponentPool *pCPool = GetComponentPool< ComponentType >();
 
-            SM_ASSERT(
-                !IsComponentOwned( pComponentInterface ), "ECSEngine::SortComponent > Cannot sort owned component" );
+            SM_ASSERT( !IsComponentOwned( pCPool ), "ECSEngine::SortComponent > Cannot sort owned component" );
 
             auto comp = [this, compare = std::move( compare )]( const IndexType lhs, const IndexType rhs )
             {
@@ -488,88 +455,47 @@ namespace smile::ecs
                 return compare( lhsEntity, rhsEntity );
             };
 
-            auto pool = pComponentInterface->m_Pool;
-            auto &poolRef = pComponentInterface->m_Pool;
-
-            std::sort( pool.m_Dense.begin(), pool.m_Dense.end(), std::move( comp ) );
-
-            for ( std::size_t pos{}; pos < pool.GetItemCount(); ++pos )
-            {
-                auto curr = pos;
-                auto next = poolRef.m_Sparse[pool.m_Dense[curr]];
-
-                while ( curr != next )
-                {
-                    std::swap( poolRef.m_Dense[poolRef.m_Sparse[pool.m_Dense[curr]]],
-                        poolRef.m_Dense[poolRef.m_Sparse[pool.m_Dense[next]]] );
-
-                    pComponentInterface->m_pComponentStorage->Swap(
-                        poolRef.m_Sparse[pool.m_Dense[curr]], poolRef.m_Sparse[pool.m_Dense[next]] );
-
-                    poolRef.m_Sparse[pool.m_Dense[curr]] = curr;
-                    curr = next;
-                    next = poolRef.m_Sparse[pool.m_Dense[curr]];
-                }
-            }
+            pCPool->Sort( comp );
         }
 
         template < typename ComponentType >
         auto &OnConstruction()
         {
-            auto *pComponentStorage = GetComponentStorage< ComponentType >();
-            return pComponentStorage->OnConstruction();
+            auto *pCPool = GetComponentPool< ComponentType >();
+            return pCPool->OnConstruction();
         }
 
         template < typename ComponentType >
         auto &OnDestruction()
         {
-            auto *pComponentStorage = GetComponentStorage< ComponentType >();
-            return pComponentStorage->OnDestruction();
+            auto *pCPool = GetComponentPool< ComponentType >();
+            return pCPool->OnDestruction();
         }
 
       private:
         template < typename ComponentType >
-        ComponentInterface *GetComponentInterface()
+        ComponentPool *GetComponentPool()
         {
             auto typeID = foundation::TypeIDOf< ComponentType >();
-            return m_ComponentMap.find( typeID ) != m_ComponentMap.end() ? m_ComponentMap[typeID] : nullptr;
+            return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap[typeID] : nullptr;
         }
 
         template < typename ComponentType >
-        const ComponentInterface *GetComponentInterface() const
+        const ComponentPool *GetComponentPool() const
         {
             auto typeID = foundation::TypeIDOf< ComponentType >();
-            return m_ComponentMap.find( typeID ) != m_ComponentMap.end() ? m_ComponentMap.at( typeID ) : nullptr;
+            return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap.at( typeID )
+                                                                                 : nullptr;
         }
 
-        template < typename ComponentType >
-        ComponentStorageHandler< ComponentType > *GetComponentStorage()
-        {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
-            auto pComponentInterface = m_ComponentMap[typeID];
-
-            return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
-        }
-
-        template < typename ComponentType >
-        const ComponentStorageHandler< ComponentType > *GetComponentStorage() const
-        {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
-            auto pComponentInterface = m_ComponentMap[typeID];
-
-            return ComponentStorageCast< ComponentType >( pComponentInterface->m_pComponentStorage );
-        }
-
-        void RemoveComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle );
-        bool HasComponent( ComponentInterface *pComponentInterface, EntityHandleType entityHandle ) const;
-        bool IsComponentOwned( const ComponentInterface *pComponentInterface ) const;
-
-        void CallDestructors( ComponentInterface *pComponentInterface, void *pData );
+        void RemoveComponent( ComponentPool *pCPool, EntityHandleType entityHandle );
+        bool HasComponent( const ComponentPool *pCPool, EntityHandleType entityHandle ) const;
+        bool IsComponentOwned( const ComponentPool *pCPool ) const;
 
       private:
         EntityHandleManager m_HandleManager{};
-        std::vector< ComponentInterface * > m_pComponents{};
-        std::unordered_map< foundation::TypeID, ComponentInterface * > m_ComponentMap{};
+        std::vector< ComponentPool * > m_pComponentPools{};
+        std::unordered_map< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
         std::vector< GroupBase * > m_pGroups{};
         std::vector< Ref< BaseSystem > > m_pSystems{};
         std::vector< EntityHandleType > m_DeadHandles{};
