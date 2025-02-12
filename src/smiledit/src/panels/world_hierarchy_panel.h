@@ -4,25 +4,25 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/foundation/compiled.h"
-#include "engine/common/logging/logging.h"
-#include "engine/core/scene/scene.h"
-#include "engine/core/scene/entity.h"
+#include "foundation/compiled.h"
+#include "logging/logging.h"
+#include "world/world.h"
+#include "world/entity.h"
 
 namespace smile::graphic
 {
     class Material;
 }
 
-namespace smile::scene
+namespace smile::world
 {
-    class SceneHierarchyPanel final
+    class WorldHierarchyPanel final
     {
       public:
-        SceneHierarchyPanel() = default;
-        SceneHierarchyPanel( Ref< Scene > pScene );
+        WorldHierarchyPanel() = default;
+        WorldHierarchyPanel( Ref< World > pWorld );
 
-        void SetContext( Ref< Scene > pScene );
+        void SetContext( Ref< World > pWorld );
 
         void OnImGuiRender();
 
@@ -48,7 +48,7 @@ namespace smile::scene
         static void DrawMaterial( const Ref< graphic::Material > &material );
 
       private:
-        Ref< Scene > m_pContext;
+        Ref< World > m_pContext;
         Entity m_SelectedEntity;
     };
 }

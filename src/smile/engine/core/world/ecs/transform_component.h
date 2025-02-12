@@ -5,7 +5,7 @@
 #pragma once
 #include <DirectXMath.h>
 
-namespace smile::scene::ecs
+namespace smile::world::ecs
 {
     struct TransformComponent final
     {

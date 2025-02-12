@@ -4,24 +4,24 @@
 /*=============================================================================*/
 #pragma once
 
-#include "scene.h"
+#include "world.h"
 
-namespace smile::scene
+namespace smile::world
 {
-    class SceneSerializer final
+    class WorldSerializer final
     {
       public:
-        SceneSerializer( Ref< Scene > pScene );
+        WorldSerializer( Ref< World > pWorld );
 
         void Serialize( const std::string &filePath );
-        // Serializes the scene to a binary format
+        // Serializes the world to a binary format
         void SerializeRuntime( const std::string &filePath );
 
         bool Deserialize( const std::string &filePath );
-        // Deserializes the scene from a binary format
+        // Deserializes the world from a binary format
         bool DeserializeRuntime( const std::string &filePath );
 
       private:
-        Ref< Scene > m_pScene = nullptr;
+        Ref< World > m_pWorld = nullptr;
     };
 }

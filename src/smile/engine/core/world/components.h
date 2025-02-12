@@ -20,7 +20,7 @@
 #include "engine/physics/ecs/capsule_collider_component.h"
 #include "engine/physics/ecs/character_controller_component.h"
 
-namespace smile::scene
+namespace smile::world
 {
     template < typename... Component >
     struct ComponentGroup

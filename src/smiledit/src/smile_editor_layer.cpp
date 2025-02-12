@@ -5,8 +5,8 @@
 
 #include "smile_editor_layer.h"
 
-#include "engine/core/scene/scene_serializer.h"
-#include "engine/core/window/file_dialog.h"
+#include "world/world_serializer.h"
+#include "window/file_dialog.h"
 #include "engine/graphic/renderer/render_engine.h"
 
 #include <imgui/imgui.h>
@@ -67,33 +67,33 @@ namespace smile
             graphic::RenderEngine::ResizeFramebuffer(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
-            m_pActiveScene->OnViewportResize(
+            m_pActiveWorld->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
         graphic::RenderCommand::Clear();
 
-        switch ( m_SceneState )
+        switch ( m_WorldState )
         {
-            case SceneState::Edit:
+            case WorldState::Edit:
             {
                 if ( m_IsViewportFocused )
                     m_EditorCamera.OnUpdate( deltaTime );
 
-                m_pActiveScene->OnUpdateEditor( deltaTime, m_EditorCamera );
+                m_pActiveWorld->OnUpdateEditor( deltaTime, m_EditorCamera );
                 break;
             }
-            case SceneState::Simulate:
+            case WorldState::Simulate:
             {
                 if ( m_IsViewportFocused )
                     m_EditorCamera.OnUpdate( deltaTime );
 
-                m_pActiveScene->OnUpdateSimulation( deltaTime, m_EditorCamera );
+                m_pActiveWorld->OnUpdateSimulation( deltaTime, m_EditorCamera );
                 break;
             }
-            case SceneState::Play:
+            case WorldState::Play:
             {
-                m_pActiveScene->OnUpdateRuntime( deltaTime );
+                m_pActiveWorld->OnUpdateRuntime( deltaTime );
                 break;
             }
         }
@@ -169,14 +169,14 @@ namespace smile
 
                 ImGui::Separator();
 
-                if ( ImGui::MenuItem( "New Scene", "Ctrl+N" ) )
-                    NewScene();
+                if ( ImGui::MenuItem( "New World", "Ctrl+N" ) )
+                    NewWorld();
 
-                if ( ImGui::MenuItem( "Save Scene", "Ctrl+S" ) )
-                    SaveScene();
+                if ( ImGui::MenuItem( "Save World", "Ctrl+S" ) )
+                    SaveWorld();
 
-                if ( ImGui::MenuItem( "Save Scene As...", "Ctrl+Shift+S" ) )
-                    SaveSceneAs();
+                if ( ImGui::MenuItem( "Save World As...", "Ctrl+Shift+S" ) )
+                    SaveWorldAs();
 
                 ImGui::Separator();
 
@@ -188,7 +188,7 @@ namespace smile
             ImGui::EndMenuBar();
         }
 
-        m_SceneHierarchyPanel.OnImGuiRender();
+        m_WorldHierarchyPanel.OnImGuiRender();
         m_pContentBrowserPanel->OnImGuiRender();
 
         ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2{} );
@@ -207,15 +207,15 @@ namespace smile
             if ( pPayload )
             {
                 const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                OpenScene( path );
+                OpenWorld( path );
             }
 
             ImGui::EndDragDropTarget();
         }
 
         // Gizmos
-        scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-        if ( selectedEntity && ( m_GizmoType != GizmoType::None ) && ( m_SceneState == SceneState::Edit ) )
+        world::Entity selectedEntity = m_WorldHierarchyPanel.GetSelectedEntity();
+        if ( selectedEntity && ( m_GizmoType != GizmoType::None ) && ( m_WorldState == WorldState::Edit ) )
         {
             ImGuizmo::SetOrthographic( false );
             ImGuizmo::SetDrawlist();
@@ -224,7 +224,7 @@ namespace smile
             ImGuizmo::SetRect( ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight );
 
             //// Runtime camera
-            // auto cameraEntity = m_pActiveScene->GetPrimaryCameraEntity();
+            // auto cameraEntity = m_pActiveWorld->GetPrimaryCameraEntity();
             // if (cameraEntity)
             // {
             // const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
@@ -241,7 +241,7 @@ namespace smile
             const DirectX::XMFLOAT4X4 &cameraViewMatrix = m_EditorCamera.GetViewMatrix();
 
             // Entity
-            auto &entityTransformComponent = selectedEntity.GetComponent< scene::ecs::TransformComponent >();
+            auto &entityTransformComponent = selectedEntity.GetComponent< world::ecs::TransformComponent >();
             auto entityTransform = entityTransformComponent.GetWorldTransform();
             const auto entityTranslation = entityTransformComponent.WorldTranslation;
             const auto entityRotation = entityTransformComponent.WorldRotation;
@@ -325,7 +325,7 @@ namespace smile
         const float iconSize{ ImGui::GetWindowHeight() - 4.f };
         {
             Ref< graphic::Texture > pStateIcon =
-                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate ) ? m_pIconPlay
+                ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) ? m_pIconPlay
                                                                                              : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
@@ -334,16 +334,16 @@ namespace smile
                      ImVec2{ 1, 1 },
                      0 ) )
             {
-                if ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate )
-                    OnScenePlay();
-                else if ( m_SceneState == SceneState::Play )
-                    OnSceneStop();
+                if ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate )
+                    OnWorldPlay();
+                else if ( m_WorldState == WorldState::Play )
+                    OnWorldStop();
             }
         }
         ImGui::SameLine();
         {
             Ref< graphic::Texture > pStateIcon =
-                ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play ) ? m_pIconSimulate
+                ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play ) ? m_pIconSimulate
                                                                                          : m_pIconStop;
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
                      ImVec2{ iconSize, iconSize },
@@ -351,10 +351,10 @@ namespace smile
                      ImVec2{ 1, 1 },
                      0 ) )
             {
-                if ( m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play )
-                    OnSceneSimulate();
-                else if ( m_SceneState == SceneState::Simulate )
-                    OnSceneStop();
+                if ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play )
+                    OnWorldSimulate();
+                else if ( m_WorldState == WorldState::Simulate )
+                    OnWorldStop();
             }
         }
 
@@ -388,9 +388,9 @@ namespace smile
                 if ( isControlPressed )
                 {
                     if ( isShiftPressed )
-                        SaveSceneAs();
+                        SaveWorldAs();
                     else
-                        SaveScene();
+                        SaveWorld();
                 }
                 break;
             case 'O':
@@ -399,10 +399,10 @@ namespace smile
                 break;
             case 'N':
                 if ( isControlPressed )
-                    NewScene();
+                    NewWorld();
                 break;
 
-            // Scene commands
+            // World commands
             case 'D':
                 if ( isControlPressed )
                     DuplicateEntity();
@@ -447,9 +447,9 @@ namespace smile
         {
             // std::filesystem::current_path( path.parent_path() );
 
-            auto startScenePath = project::ProjectManager::GetAssetFileSystemPath(
-                project::ProjectManager::GetActive()->GetConfig().StartScene );
-            OpenScene( startScenePath );
+            auto startWorldPath = project::ProjectManager::GetAssetFileSystemPath(
+                project::ProjectManager::GetActive()->GetConfig().StartWorld );
+            OpenWorld( startWorldPath );
             m_pContentBrowserPanel = CreateScope< ContentBrowserPanel >();
         }
     }
@@ -459,139 +459,139 @@ namespace smile
         // project::Project::SaveActive();
     }
 
-    void SmileEditorLayer::SaveScene()
+    void SmileEditorLayer::SaveWorld()
     {
-        if ( !m_EditorScenePath.empty() )
+        if ( !m_EditorWorldPath.empty() )
         {
-            SerializeScene( m_pActiveScene, m_EditorScenePath );
+            SerializeWorld( m_pActiveWorld, m_EditorWorldPath );
         }
         else
-            SaveSceneAs();
+            SaveWorldAs();
     }
 
-    void SmileEditorLayer::SaveSceneAs()
+    void SmileEditorLayer::SaveWorldAs()
     {
-        std::string filePath = window::FileDialog::SaveFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = window::FileDialog::SaveFile( "Smile World (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
         {
-            SerializeScene( m_pActiveScene, filePath );
-            m_EditorScenePath = filePath;
+            SerializeWorld( m_pActiveWorld, filePath );
+            m_EditorWorldPath = filePath;
         }
         else
-            SM_LOG_ERROR( "SmileEditorLayer::SaveSceneAs > Failed to save scene. The file path was empty" );
+            SM_LOG_ERROR( "SmileEditorLayer::SaveWorldAs > Failed to save world. The file path was empty" );
     }
 
-    void SmileEditorLayer::SerializeScene( const Ref< scene::Scene > &pScene, const std::filesystem::path &filePath )
+    void SmileEditorLayer::SerializeWorld( const Ref< world::World > &pWorld, const std::filesystem::path &filePath )
     {
-        scene::SceneSerializer sceneSerializer{ pScene };
-        sceneSerializer.Serialize( filePath.string() );
+        world::WorldSerializer worldSerializer{ pWorld };
+        worldSerializer.Serialize( filePath.string() );
     }
 
-    void SmileEditorLayer::OpenScene()
+    void SmileEditorLayer::OpenWorld()
     {
-        std::string filePath = window::FileDialog::OpenFile( "Smile Scene (*.smile)\0*.smile\0" );
+        std::string filePath = window::FileDialog::OpenFile( "Smile World (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
-            OpenScene( filePath );
+            OpenWorld( filePath );
     }
 
-    void SmileEditorLayer::OpenScene( const std::filesystem::path &filePath )
+    void SmileEditorLayer::OpenWorld( const std::filesystem::path &filePath )
     {
-        if ( m_SceneState != SceneState::Edit )
-            OnSceneStop();
+        if ( m_WorldState != WorldState::Edit )
+            OnWorldStop();
 
         if ( filePath.empty() )
         {
-            SM_LOG_WARNING( "SmileEditorLayer::OpenScene > Failed to load scene: the path was empty" );
+            SM_LOG_WARNING( "SmileEditorLayer::OpenWorld > Failed to load world: the path was empty" );
             return;
         }
 
         if ( filePath.extension().string() != ".smile" )
         {
-            SM_LOG_WARNING( "SmileEditorLayer::OpenScene > Failed to load scene: wrong file extention" );
+            SM_LOG_WARNING( "SmileEditorLayer::OpenWorld > Failed to load world: wrong file extention" );
             return;
         }
 
-        Ref< scene::Scene > pNewScene = CreateRef< scene::Scene >();
-        scene::SceneSerializer sceneSerializer{ pNewScene };
-        if ( sceneSerializer.Deserialize( filePath.string() ) )
+        Ref< world::World > pNewWorld = CreateRef< world::World >();
+        world::WorldSerializer worldSerializer{ pNewWorld };
+        if ( worldSerializer.Deserialize( filePath.string() ) )
         {
-            m_pEditorScene = pNewScene;
+            m_pEditorWorld = pNewWorld;
 
-            m_pEditorScene->OnViewportResize(
+            m_pEditorWorld->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
-            m_pEditorScene->OnOpen();
-            m_SceneHierarchyPanel.SetContext( m_pEditorScene );
+            m_pEditorWorld->OnOpen();
+            m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
 
-            m_pActiveScene = m_pEditorScene;
-            m_EditorScenePath = filePath;
+            m_pActiveWorld = m_pEditorWorld;
+            m_EditorWorldPath = filePath;
         }
     }
 
-    void SmileEditorLayer::NewScene()
+    void SmileEditorLayer::NewWorld()
     {
-        if ( m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate )
-            OnSceneStop();
+        if ( m_WorldState == WorldState::Play || m_WorldState == WorldState::Simulate )
+            OnWorldStop();
 
-        m_pActiveScene->OnClose();
-        m_pActiveScene = CreateRef< scene::Scene >();
-        m_pEditorScene = m_pActiveScene;
-        m_pActiveScene->OnViewportResize(
+        m_pActiveWorld->OnClose();
+        m_pActiveWorld = CreateRef< world::World >();
+        m_pEditorWorld = m_pActiveWorld;
+        m_pActiveWorld->OnViewportResize(
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
-        m_pActiveScene->OnOpen();
-        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
+        m_pActiveWorld->OnOpen();
+        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
 
-        m_EditorScenePath = std::filesystem::path{};
+        m_EditorWorldPath = std::filesystem::path{};
     }
 
-    void SmileEditorLayer::OnScenePlay()
+    void SmileEditorLayer::OnWorldPlay()
     {
-        if ( m_SceneState == SceneState::Simulate )
-            OnSceneStop();
+        if ( m_WorldState == WorldState::Simulate )
+            OnWorldStop();
 
-        m_SceneState = SceneState::Play;
-        m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
-        m_pEditorScene->OnClose();
-        m_pActiveScene->OnOpen();
-        m_pActiveScene->OnRuntimeStart();
-        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
+        m_WorldState = WorldState::Play;
+        m_pActiveWorld = world::World::Copy( m_pEditorWorld );
+        m_pEditorWorld->OnClose();
+        m_pActiveWorld->OnOpen();
+        m_pActiveWorld->OnRuntimeStart();
+        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
     }
 
-    void SmileEditorLayer::OnSceneSimulate()
+    void SmileEditorLayer::OnWorldSimulate()
     {
-        if ( m_SceneState == SceneState::Play )
-            OnSceneStop();
+        if ( m_WorldState == WorldState::Play )
+            OnWorldStop();
 
-        m_SceneState = SceneState::Simulate;
-        m_pActiveScene = scene::Scene::Copy( m_pEditorScene );
-        m_pEditorScene->OnClose();
-        m_pActiveScene->OnOpen();
-        m_pActiveScene->OnSimulationStart();
-        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
+        m_WorldState = WorldState::Simulate;
+        m_pActiveWorld = world::World::Copy( m_pEditorWorld );
+        m_pEditorWorld->OnClose();
+        m_pActiveWorld->OnOpen();
+        m_pActiveWorld->OnSimulationStart();
+        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
     }
 
-    void SmileEditorLayer::OnSceneStop()
+    void SmileEditorLayer::OnWorldStop()
     {
-        if ( m_SceneState == SceneState::Play )
-            m_pActiveScene->OnRuntimeStop();
-        else if ( m_SceneState == SceneState::Simulate )
-            m_pActiveScene->OnSimulationStop();
+        if ( m_WorldState == WorldState::Play )
+            m_pActiveWorld->OnRuntimeStop();
+        else if ( m_WorldState == WorldState::Simulate )
+            m_pActiveWorld->OnSimulationStop();
 
-        m_SceneState = SceneState::Edit;
-        m_pActiveScene->OnClose();
-        m_pActiveScene = m_pEditorScene;
-        m_pActiveScene->OnOpen();
-        m_SceneHierarchyPanel.SetContext( m_pActiveScene );
+        m_WorldState = WorldState::Edit;
+        m_pActiveWorld->OnClose();
+        m_pActiveWorld = m_pEditorWorld;
+        m_pActiveWorld->OnOpen();
+        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
     }
 
     void SmileEditorLayer::DuplicateEntity()
     {
-        if ( m_SceneState != SceneState::Edit )
+        if ( m_WorldState != WorldState::Edit )
             return;
 
-        scene::Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        world::Entity selectedEntity = m_WorldHierarchyPanel.GetSelectedEntity();
         if ( selectedEntity )
-            m_pEditorScene->DuplicateEntity( selectedEntity );
+            m_pEditorWorld->DuplicateEntity( selectedEntity );
     }
 }

@@ -5,9 +5,9 @@
 #pragma once
 #include "engine/core/ecs/system.h"
 
-namespace smile::scene
+namespace smile::world
 {
-    class Scene;
+    class World;
 }
 
 namespace smile::ecs
@@ -15,7 +15,7 @@ namespace smile::ecs
     class ECSEngine;
 }
 
-namespace smile::scene::ecs
+namespace smile::world::ecs
 {
     class TransformSystem final : public smile::ecs::System< TransformSystem >
     {

@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/core/scene/scene.h"
-#include "engine/core/scene/entity.h"
+#include "world/world.h"
+#include "world/entity.h"
 
 #include "script_class.h"
 #include "script_instance.h"
@@ -31,14 +31,14 @@ namespace smile::scripting
         static void LoadAssembly( const std::filesystem::path &filePath );
         static void LoadAppAssembly( const std::filesystem::path &filePath );
 
-        static void OnRuntimeStart( scene::Scene *pScene );
+        static void OnRuntimeStart( world::World *pWorld );
         static void OnRuntimeStop();
 
         static bool EntityClassExists( const std::string &fullClassName );
-        static void OnCreateEntity( scene::Entity entity );
-        static void OnUpdateEntity( scene::Entity entity, primitive::Timestep deltaTime );
+        static void OnCreateEntity( world::Entity entity );
+        static void OnUpdateEntity( world::Entity entity, primitive::Timestep deltaTime );
 
-        static scene::Scene *GetSceneContext();
+        static world::World *GetWorldContext();
         static Ref< ScriptInstance > GetEntityScriptInstance( primitive::UUID entityID );
 
         static std::unordered_map< std::string, Ref< ScriptClass > > GetEntityClasses();

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "smile.h"
-#include "panels/scene_hierarchy_panel.h"
+#include "panels/world_hierarchy_panel.h"
 #include "panels/content_browser_panel.h"
 
 #include "engine/graphic/camera/editor_camera.h"
@@ -57,16 +57,16 @@ namespace smile
         void OpenProject( const std::filesystem::path &path );
         void SaveProject();
 
-        void SaveScene();
-        void SaveSceneAs();
-        void SerializeScene( const Ref< scene::Scene > &pScene, const std::filesystem::path &filePath );
-        void OpenScene();
-        void OpenScene( const std::filesystem::path &filePath );
-        void NewScene();
+        void SaveWorld();
+        void SaveWorldAs();
+        void SerializeWorld( const Ref< world::World > &pWorld, const std::filesystem::path &filePath );
+        void OpenWorld();
+        void OpenWorld( const std::filesystem::path &filePath );
+        void NewWorld();
 
-        void OnScenePlay();
-        void OnSceneSimulate();
-        void OnSceneStop();
+        void OnWorldPlay();
+        void OnWorldSimulate();
+        void OnWorldStop();
 
         void DuplicateEntity();
 
@@ -74,10 +74,10 @@ namespace smile
         void DrawToolbar();
 
       private:
-        Ref< scene::Scene > m_pActiveScene;
-        Ref< scene::Scene > m_pEditorScene;
+        Ref< world::World > m_pActiveWorld;
+        Ref< world::World > m_pEditorWorld;
         graphic::EditorCamera m_EditorCamera;
-        std::filesystem::path m_EditorScenePath;
+        std::filesystem::path m_EditorWorldPath;
 
         DirectX::XMFLOAT2 m_ViewportSize = { 0.f, 0.f };
         bool m_IsViewportFocused = false;
@@ -85,16 +85,16 @@ namespace smile
 
         GizmoType m_GizmoType = GizmoType::None;
 
-        enum class SceneState
+        enum class WorldState
         {
             Edit = 0,
             Simulate = 1,
             Play = 2
         };
-        SceneState m_SceneState = SceneState::Edit;
+        WorldState m_WorldState = WorldState::Edit;
 
         // Panels
-        scene::SceneHierarchyPanel m_SceneHierarchyPanel;
+        world::WorldHierarchyPanel m_WorldHierarchyPanel;
         Scope< ContentBrowserPanel > m_pContentBrowserPanel;
 
         // Editor resources

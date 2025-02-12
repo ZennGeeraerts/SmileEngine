@@ -7,7 +7,7 @@
 
 #include "engine/graphic/renderer/forward_renderer.h"
 #include "engine/graphic/animation/ecs/animator_component.h"
-#include "engine/core/scene/ecs/transform_component.h"
+#include "world/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {
@@ -17,22 +17,22 @@ namespace smile::graphic::ecs
 
         {
             auto group =
-                m_ECSEngine.GetGroup< MeshRendererComponent >( smile::ecs::g_Get< scene::ecs::TransformComponent > );
+                m_ECSEngine.GetGroup< MeshRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[meshRenderer, transform] =
-                    m_ECSEngine.GetComponents< MeshRendererComponent, scene::ecs::TransformComponent >( entity );
+                    m_ECSEngine.GetComponents< MeshRendererComponent, world::ecs::TransformComponent >( entity );
                 graphic::ForwardRenderer::Submit( meshRenderer, transform.GetWorldTransform() );
             }
         }
         {
             // TODO: Remove dependency on animator
             auto group = m_ECSEngine.GetGroup< SkinnedMeshRendererComponent, AnimatorComponent >(
-                smile::ecs::g_Get< scene::ecs::TransformComponent > );
+                smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[skinnedMeshRenderer, transform] =
-                    m_ECSEngine.GetComponents< SkinnedMeshRendererComponent, scene::ecs::TransformComponent >( entity );
+                    m_ECSEngine.GetComponents< SkinnedMeshRendererComponent, world::ecs::TransformComponent >( entity );
 
                 graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetWorldTransform() );
             }
@@ -49,22 +49,22 @@ namespace smile::graphic::ecs
 
         {
             auto group =
-                m_ECSEngine.GetGroup< MeshRendererComponent >( smile::ecs::g_Get< scene::ecs::TransformComponent > );
+                m_ECSEngine.GetGroup< MeshRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[meshRenderer, transform] =
-                    m_ECSEngine.GetComponents< MeshRendererComponent, scene::ecs::TransformComponent >( entity );
+                    m_ECSEngine.GetComponents< MeshRendererComponent, world::ecs::TransformComponent >( entity );
                 graphic::ForwardRenderer::Submit( meshRenderer, transform.GetWorldTransform() );
             }
         }
         {
             // TODO: Remove dependency on animator
             auto group = m_ECSEngine.GetGroup< SkinnedMeshRendererComponent, AnimatorComponent >(
-                smile::ecs::g_Get< scene::ecs::TransformComponent > );
+                smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[skinnedMeshRenderer, transform] =
-                    m_ECSEngine.GetComponents< SkinnedMeshRendererComponent, scene::ecs::TransformComponent >( entity );
+                    m_ECSEngine.GetComponents< SkinnedMeshRendererComponent, world::ecs::TransformComponent >( entity );
 
                 graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetWorldTransform() );
             }

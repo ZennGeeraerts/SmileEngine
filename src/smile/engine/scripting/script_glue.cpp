@@ -7,10 +7,10 @@
 
 #include "script_engine.h"
 
-#include "engine/core/scene/components.h"
+#include "world/components.h"
 
-#include "engine/core/input/key_codes.h"
-#include "engine/core/input/input.h"
+#include "input/key_codes.h"
+#include "input/input.h"
 
 #include "engine/physics/physics_engine.h"
 
@@ -20,15 +20,15 @@
 
 namespace smile::scripting
 {
-    static std::unordered_map< MonoType *, std::function< bool( scene::Entity ) > > s_EntityHasComponentFuncs{};
+    static std::unordered_map< MonoType *, std::function< bool( world::Entity ) > > s_EntityHasComponentFuncs{};
 
 #define SM_ADD_INTERNAL_CALL( name ) mono_add_internal_call( "Smile.InternalCalls::" #name, name )
 
     static bool Entity_HasComponent( primitive::UUID entityID, MonoReflectionType *pComponentType )
     {
-        scene::Scene *pScene = ScriptEngine::GetSceneContext();
-        SM_ASSERT( pScene, "" );
-        scene::Entity entity = pScene->GetEntityByUUID( entityID );
+        world::World *pWorld = ScriptEngine::GetWorldContext();
+        SM_ASSERT( pWorld, "" );
+        world::Entity entity = pWorld->GetEntityByUUID( entityID );
         SM_ASSERT( entity, "" );
 
         MonoType *pManagedType = mono_reflection_type_get_type( pComponentType );
@@ -40,33 +40,33 @@ namespace smile::scripting
 
     static void TransformComponent_GetTranslation( primitive::UUID entityID, DirectX::XMFLOAT3 *pOutTranslation )
     {
-        scene::Scene *pScene = ScriptEngine::GetSceneContext();
-        scene::Entity entity = pScene->GetEntityByUUID( entityID );
-        *pOutTranslation = entity.GetComponent< scene::ecs::TransformComponent >().Translation;
+        world::World *pWorld = ScriptEngine::GetWorldContext();
+        world::Entity entity = pWorld->GetEntityByUUID( entityID );
+        *pOutTranslation = entity.GetComponent< world::ecs::TransformComponent >().Translation;
     }
 
     static void TransformComponent_SetTranslation( primitive::UUID entityID, DirectX::XMFLOAT3 *pTranslation )
     {
-        scene::Scene *pScene = ScriptEngine::GetSceneContext();
-        scene::Entity entity = pScene->GetEntityByUUID( entityID );
-        auto &transformComponent = entity.GetComponent< scene::ecs::TransformComponent >();
+        world::World *pWorld = ScriptEngine::GetWorldContext();
+        world::Entity entity = pWorld->GetEntityByUUID( entityID );
+        auto &transformComponent = entity.GetComponent< world::ecs::TransformComponent >();
 
         transformComponent.Translation = *pTranslation;
         transformComponent.TransformChanged |=
-            static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::Translation );
+            static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation );
     }
 
     static void RigidbodyComponent_AddForce( primitive::UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )
     {
-        scene::Scene *pScene = ScriptEngine::GetSceneContext();
-        pScene->AddForce( entityID, *pForce, autoAwake );
+        world::World *pWorld = ScriptEngine::GetWorldContext();
+        pWorld->AddForce( entityID, *pForce, autoAwake );
     }
 
     static void
     CharacterControllerComponent_Move( primitive::UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
     {
-        scene::Scene *pScene = ScriptEngine::GetSceneContext();
-        pScene->MoveCharacterController( entityID, *pDisplacement, minDist );
+        world::World *pWorld = ScriptEngine::GetWorldContext();
+        pWorld->MoveCharacterController( entityID, *pDisplacement, minDist );
     }
 
     static bool Input_IsKeyPressed( input::KeyCode keyCode )
@@ -93,21 +93,21 @@ namespace smile::scripting
                     return;
                 }
 
-                s_EntityHasComponentFuncs[pManagedType] = []( scene::Entity entity )
+                s_EntityHasComponentFuncs[pManagedType] = []( world::Entity entity )
                 { return entity.HasComponent< ComponentType >(); };
             }(),
             ... );
     }
 
     template < typename... ComponentType >
-    static void RegisterComponentType( scene::ComponentGroup< ComponentType... > )
+    static void RegisterComponentType( world::ComponentGroup< ComponentType... > )
     {
         RegisterComponentType< ComponentType... >();
     }
 
     void ScriptGlue::RegisterComponentTypes()
     {
-        RegisterComponentType( scene::AllComponents{} );
+        RegisterComponentType( world::AllComponents{} );
     }
 
     void ScriptGlue::RegisterFunctions()

@@ -3,12 +3,12 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "scene_serializer.h"
+#include "world_serializer.h"
 
-#include "engine/common/logging/logger.h"
+#include "logging/logger.h"
 #include "entity.h"
 #include "components.h"
-#include "engine/core/project/project_manager.h"
+#include "project/project_manager.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -89,7 +89,7 @@ namespace YAML
     };
 }
 
-namespace smile::scene
+namespace smile::world
 {
     YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT2 &v )
     {
@@ -112,21 +112,21 @@ namespace smile::scene
         return output;
     }
 
-    SceneSerializer::SceneSerializer( Ref< Scene > pScene ) : m_pScene{ pScene }
+    WorldSerializer::WorldSerializer( Ref< World > pWorld ) : m_pWorld{ pWorld }
     {
     }
 
-    void SceneSerializer::Serialize( const std::string &filePath )
+    void WorldSerializer::Serialize( const std::string &filePath )
     {
         YAML::Emitter output{};
         output << YAML::BeginMap;
-        output << YAML::Key << "Scene" << YAML::Value << "Untitled";
+        output << YAML::Key << "World" << YAML::Value << "Untitled";
         output << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-        m_pScene->m_ECSEngine.Each(
+        m_pWorld->m_ECSEngine.Each(
             [&]( auto entityID )
             {
-                Entity entity{ entityID, m_pScene.get() };
+                Entity entity{ entityID, m_pWorld.get() };
                 if ( !entity )
                     return;
                 SerializeEntity( output, entity );
@@ -215,7 +215,7 @@ namespace smile::scene
     static void SerializeEntity( YAML::Emitter &output, Entity entity )
     {
         SM_ASSERT( entity.HasComponent< ecs::IDComponent >(),
-            "SceneSerializer::SerializeScene > Entity does not have an IDComponent" );
+            "WorldSerializer::SerializeWorld > Entity does not have an IDComponent" );
 
         output << YAML::BeginMap;
         output << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
@@ -499,12 +499,12 @@ namespace smile::scene
         output << YAML::EndMap;
     }
 
-    void SceneSerializer::SerializeRuntime( const std::string &filePath )
+    void WorldSerializer::SerializeRuntime( const std::string &filePath )
     {
-        SM_ASSERT( false, "SceneSerializer::SerializeRuntime > Not implemented" );
+        SM_ASSERT( false, "WorldSerializer::SerializeRuntime > Not implemented" );
     }
 
-    bool SceneSerializer::Deserialize( const std::string &filePath )
+    bool WorldSerializer::Deserialize( const std::string &filePath )
     {
         YAML::Node data;
         try
@@ -517,11 +517,11 @@ namespace smile::scene
             return false;
         }
 
-        if ( !data["Scene"] )
+        if ( !data["World"] )
             return false;
 
-        std::string sceneName = data["Scene"].as< std::string >();
-        SM_LOG_TRACE( "Deserializing scene '{}'", sceneName );
+        std::string worldName = data["World"].as< std::string >();
+        SM_LOG_TRACE( "Deserializing world '{}'", worldName );
 
         auto entities = data["Entities"];
         if ( entities )
@@ -537,7 +537,7 @@ namespace smile::scene
 
                 SM_LOG_TRACE( "Deserialized entity with ID: {0}, name: {1}", uuid, name );
 
-                Entity deserializedEntity = m_pScene->CreateEntity( uuid, name );
+                Entity deserializedEntity = m_pWorld->CreateEntity( uuid, name );
 
                 auto transformComponent = entity["TransformComponent"];
                 if ( transformComponent )
@@ -853,9 +853,9 @@ namespace smile::scene
         return true;
     }
 
-    bool SceneSerializer::DeserializeRuntime( const std::string &filePath )
+    bool WorldSerializer::DeserializeRuntime( const std::string &filePath )
     {
-        SM_ASSERT( false, "SceneSerializer::DeserializeRuntime > Not implemented" );
+        SM_ASSERT( false, "WorldSerializer::DeserializeRuntime > Not implemented" );
         return false;
     }
 }

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "scene/entity.h"
+#include "world/entity.h"
 
 extern "C"
 {
@@ -19,7 +19,7 @@ namespace smile::scripting
     class ScriptInstance final
     {
       public:
-        ScriptInstance( Ref< ScriptClass > pScriptClass, scene::Entity entity );
+        ScriptInstance( Ref< ScriptClass > pScriptClass, world::Entity entity );
 
         void InvokeOnCreate();
         void InvokeOnUpdate( float deltaTime );

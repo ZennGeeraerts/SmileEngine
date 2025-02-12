@@ -12,7 +12,7 @@
 
 namespace smile::scripting
 {
-    ScriptInstance::ScriptInstance( Ref< ScriptClass > pScriptClass, scene::Entity entity )
+    ScriptInstance::ScriptInstance( Ref< ScriptClass > pScriptClass, world::Entity entity )
         : m_pScriptClass{ pScriptClass }
     {
         m_pInstance = pScriptClass->Instantiate();

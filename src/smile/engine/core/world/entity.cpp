@@ -3,9 +3,9 @@
 
 #include "engine/core/ecs/relationship.h"
 
-namespace smile::scene
+namespace smile::world
 {
-    Entity::Entity( smile::ecs::EntityHandleType handle, Scene *pScene ) : m_EntityHandle{ handle }, m_pScene{ pScene }
+    Entity::Entity( smile::ecs::EntityHandleType handle, World *pWorld ) : m_EntityHandle{ handle }, m_pWorld{ pWorld }
     {
     }
 
@@ -36,16 +36,16 @@ namespace smile::scene
         }
 
         smile::ecs::EntityHandleType end = pRelationShip->First;
-        smile::ecs::EntityHandleType next = m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
+        smile::ecs::EntityHandleType next = m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
         while ( next )
         {
             end = next;
-            next = m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
+            next = m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
         }
 
         if ( pRelationShip->ChildrenCount != 0 )
         {
-            auto &endRel = m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end );
+            auto &endRel = m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end );
             endRel.Next = child;
             pChildRel->Prev = end;
         }
@@ -70,10 +70,10 @@ namespace smile::scene
             relationship.First = childRel.Next;
 
         if ( childRel.Next )
-            m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Next ).Prev = childRel.Prev;
+            m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Next ).Prev = childRel.Prev;
 
         if ( childRel.Prev )
-            m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Prev ).Next = childRel.Next;
+            m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Prev ).Next = childRel.Next;
 
         childRel.Next = smile::ecs::EntityHandleType::NullHandle();
         childRel.Prev = smile::ecs::EntityHandleType::NullHandle();
@@ -101,10 +101,10 @@ namespace smile::scene
         for ( Uint32 i{}; i < relationship.ChildrenCount; ++i )
         {
             if ( i == index )
-                return Entity{ currentChildHandle, m_pScene };
+                return Entity{ currentChildHandle, m_pWorld };
 
             currentChildHandle =
-                m_pScene->m_ECSEngine.GetComponent< smile::ecs::Relationship >( currentChildHandle ).Next;
+                m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( currentChildHandle ).Next;
         }
 
         SM_ASSERT( false, "Entity::GetChildAtIndex > Failed to get child at index: %d", index );
@@ -117,6 +117,6 @@ namespace smile::scene
         if ( !pRelationShip || !pRelationShip->Parent )
             return Entity{};
 
-        return Entity{ pRelationShip->Parent, m_pScene };
+        return Entity{ pRelationShip->Parent, m_pWorld };
     }
 }

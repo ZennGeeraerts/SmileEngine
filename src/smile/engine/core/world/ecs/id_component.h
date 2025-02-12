@@ -5,7 +5,7 @@
 #pragma once
 #include "engine/common/primitive/uuid.h"
 
-namespace smile::scene::ecs
+namespace smile::world::ecs
 {
     struct IDComponent
     {

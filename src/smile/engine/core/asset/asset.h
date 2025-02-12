@@ -14,7 +14,7 @@ namespace smile::asset
 	enum class AssetType : Uint16
 	{
 		None = 0,
-		Scene,
+		World,
 		Model
     };
 
