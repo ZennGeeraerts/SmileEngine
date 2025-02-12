@@ -11,15 +11,15 @@
 #include "engine/core/ecs/ecs_engine.h"
 #include "ecs/state/state_manager.h"
 
-namespace smile::scene
+namespace smile::world
 {
     class Entity;
 
-    class Scene final
+    class World final
     {
       public:
-        Scene();
-        ~Scene();
+        World();
+        ~World();
 
         Entity CreateEntity();
         Entity CreateEntity( const std::string &name );
@@ -41,7 +41,7 @@ namespace smile::scene
 
         Entity GetPrimaryCameraEntity();
 
-        static Ref< Scene > Copy( const Ref< Scene > &pScene );
+        static Ref< World > Copy( const Ref< World > &pWorld );
 
         void DuplicateEntity( Entity entity );
 
@@ -64,7 +64,7 @@ namespace smile::scene
         smile::ecs::state::StateManager m_StateManager;
 
         friend class Entity;
-        friend class SceneSerializer;
-        friend class SceneHierarchyPanel;
+        friend class WorldSerializer;
+        friend class WorldHierarchyPanel;
     };
 }

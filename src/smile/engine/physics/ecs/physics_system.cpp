@@ -5,10 +5,10 @@
 #include "smpch.h"
 #include "physics_system.h"
 
-#include "engine/core/ecs/ecs_engine.h"
-#include "engine/core/scene/ecs/id_component.h"
-#include "engine/core/scene/ecs/transform_component.h"
-#include "engine/core/math/math.h"
+#include "ecs/ecs_engine.h"
+#include "world/ecs/id_component.h"
+#include "world/ecs/transform_component.h"
+#include "math/math.h"
 
 #include "rigidbody_component.h"
 #include "character_controller_component.h"
@@ -28,13 +28,13 @@ namespace smile::physics::ecs
         // Create rigidbodies
         {
             auto group = ecsEngine.GetGroup< RigidbodyComponent >(
-                smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
+                smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
 
             auto onRigidbodyAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandleType entity )
             {
                 const auto &[rigidbodyComponent, idComponent, transformComponent] =
                     ecsEngine
-                        .GetComponents< RigidbodyComponent, scene::ecs::IDComponent, scene::ecs::TransformComponent >(
+                        .GetComponents< RigidbodyComponent, world::ecs::IDComponent, world::ecs::TransformComponent >(
                             entity );
 
                 Ref< Rigidbody > pRigidbody =
@@ -110,14 +110,14 @@ namespace smile::physics::ecs
         // Create character controllers
         {
             auto group = ecsEngine.GetGroup< CharacterControllerComponent >(
-                smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
+                smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
 
             auto onCharacterControllerAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandleType entity )
             {
                 const auto &[characterControllerComponent, idComponent, transformComponent] =
                     ecsEngine.GetComponents< CharacterControllerComponent,
-                        scene::ecs::IDComponent,
-                        scene::ecs::TransformComponent >( entity );
+                        world::ecs::IDComponent,
+                        world::ecs::TransformComponent >( entity );
 
                 Ref< CharacterController > pCharacterController =
                     m_pPhysicsWorld->CreateCharacterController( characterControllerComponent.Radius,
@@ -161,54 +161,54 @@ namespace smile::physics::ecs
         {
             {
                 auto group = m_pECSEngine->GetGroup< RigidbodyComponent >(
-                    smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
+                    smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[rigidbodyComponent, idComponent, transformComponent] =
                         m_pECSEngine->GetComponents< RigidbodyComponent,
-                            scene::ecs::IDComponent,
-                            scene::ecs::TransformComponent >( entity );
+                            world::ecs::IDComponent,
+                            world::ecs::TransformComponent >( entity );
 
                     transformComponent.Translation = m_RigidbodyMap[idComponent.ID]->GetPosition();
                     transformComponent.Rotation =
                         math::QuaternionToEuler( m_RigidbodyMap[idComponent.ID]->GetRotation() );
 
                     if ( transformComponent.TransformChanged &
-                         static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::Translation ) )
+                         static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation ) )
                     {
                         m_RigidbodyMap[idComponent.ID]->Translate( transformComponent.WorldTranslation );
                     }
 
                     if ( transformComponent.TransformChanged &
-                         static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::Rotation ) )
+                         static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Rotation ) )
                     {
                         m_RigidbodyMap[idComponent.ID]->Rotate( transformComponent.WorldRotation );
                     }
 
                     transformComponent.TransformChanged =
-                        static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::None );
+                        static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::None );
                 }
             }
             {
                 auto group = m_pECSEngine->GetGroup< CharacterControllerComponent >(
-                    smile::ecs::g_Get< scene::ecs::IDComponent, scene::ecs::TransformComponent > );
+                    smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
                 for ( auto entity : group )
                 {
                     const auto &[characterControllerComponent, idComponent, transformComponent] =
                         m_pECSEngine->GetComponents< CharacterControllerComponent,
-                            scene::ecs::IDComponent,
-                            scene::ecs::TransformComponent >( entity );
+                            world::ecs::IDComponent,
+                            world::ecs::TransformComponent >( entity );
 
                     transformComponent.Translation = m_CharacterControllerMap[idComponent.ID]->GetPosition();
 
                     if ( transformComponent.TransformChanged &
-                         static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::Translation ) )
+                         static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation ) )
                     {
                         m_CharacterControllerMap[idComponent.ID]->Translate( transformComponent.WorldTranslation );
                     }
 
                     transformComponent.TransformChanged =
-                        static_cast< Uint32 >( scene::ecs::TransformComponent::TransformChanged::None );
+                        static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::None );
                 }
             }
         }

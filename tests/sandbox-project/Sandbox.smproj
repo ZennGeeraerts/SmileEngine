@@ -1,5 +1,5 @@
 Project:
   Name: "Sandbox"
-  StartScene: "scenes/PhysicsTest2.smile"
+  StartWorld: "worlds/PhysicsTest2.smile"
   AssetDirectory: "assets"
   ScriptModulePath: "scripts/bin/Debug/sandbox.dll"

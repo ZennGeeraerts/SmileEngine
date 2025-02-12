@@ -14,7 +14,7 @@ namespace smile::project
     struct ProjectConfig final
     {
         std::string Name = "Untitled";
-        std::filesystem::path StartScene;
+        std::filesystem::path StartWorld;
         std::filesystem::path AssetDirectory;
         std::filesystem::path ScriptModulePath;
     };

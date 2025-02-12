@@ -6,13 +6,13 @@
 #include "transform_system.h"
 
 #include "transform_component.h"
-#include "engine/core/ecs/ecs_engine.h"
-#include "engine/core/ecs/relationship.h"
-#include "engine/core/math/math_utilities.h"
-#include "engine/core/scene/scene.h"
+#include "ecs/ecs_engine.h"
+#include "ecs/relationship.h"
+#include "math/math_utilities.h"
+#include "world/world.h"
 #include "engine/physics/physics_engine.h"
 
-namespace smile::scene::ecs
+namespace smile::world::ecs
 {
     void TransformSystem::OnAdd( smile::ecs::ECSEngine &ecsEngine )
     {

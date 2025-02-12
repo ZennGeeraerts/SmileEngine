@@ -8,7 +8,7 @@
 #include "engine/core/ecs/ecs_engine.h"
 #include "engine/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
 #include "engine/graphic/animation/ecs/animator_component.h"
-#include "engine/core/scene/ecs/transform_component.h"
+#include "world/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {
@@ -17,12 +17,12 @@ namespace smile::graphic::ecs
     void AnimationSystem::OnUpdate( primitive::Timestep deltaTime )
     {
         auto group = m_pECSEngine->GetGroup< SkinnedMeshRendererComponent, AnimatorComponent >(
-            smile::ecs::g_Get< scene::ecs::TransformComponent > );
+            smile::ecs::g_Get< world::ecs::TransformComponent > );
         for ( auto entity : group )
         {
             const auto &[mesh, animator, transform] =
                 m_pECSEngine
-                    ->GetComponents< SkinnedMeshRendererComponent, AnimatorComponent, scene::ecs::TransformComponent >(
+                    ->GetComponents< SkinnedMeshRendererComponent, AnimatorComponent, world::ecs::TransformComponent >(
                         entity );
 
             animator.Transforms.resize( s_MaxBoneCount );

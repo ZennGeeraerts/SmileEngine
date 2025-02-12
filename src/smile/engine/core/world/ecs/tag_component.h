@@ -5,7 +5,7 @@
 #pragma once
 #include <string>
 
-namespace smile::scene::ecs
+namespace smile::world::ecs
 {
     struct TagComponent
     {

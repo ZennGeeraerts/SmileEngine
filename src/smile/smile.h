@@ -6,28 +6,28 @@
 
 // Header file to include in Smile Engine applications
 
-#include "engine/common/foundation/compiled.h"
-#include "engine/common/logging/logging.h"
-#include "engine/core/application/application.h"
-#include "engine/core/application/layer.h"
+#include "foundation/compiled.h"
+#include "logging/logging.h"
+#include "application/application.h"
+#include "application/layer.h"
 
-#include "engine/common/primitive/timestep.h"
+#include "primitive/timestep.h"
 
-#include "engine/common/primitive/utils.h"
-#include "engine/core/math/math.h"
+#include "primitive/utils.h"
+#include "math/math.h"
 
-#include "engine/core/input/input.h"
-#include "engine/core/input/key_codes.h"
-#include "engine/core/input/mouse_codes.h"
-#include "engine/core/input/gamepad_codes.h"
+#include "input/input.h"
+#include "input/key_codes.h"
+#include "input/mouse_codes.h"
+#include "input/gamepad_codes.h"
 
 #include "engine/graphic/imgui/imgui_layer.h"
 
-#include "engine/core/scene/scene.h"
-#include "engine/core/scene/entity.h"
-#include "engine/core/scene/components.h"
+#include "world/world.h"
+#include "world/entity.h"
+#include "world/components.h"
 
-#include "engine/core/project/project_manager.h"
+#include "project/project_manager.h"
 
 /* ---Graphic--- */
 //#include "engine/graphic/render_engine.h"

@@ -3,33 +3,33 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 
-#include "scene_hierarchy_panel.h"
+#include "world_hierarchy_panel.h"
 
-#include "engine/core/scene/components.h"
+#include "world/components.h"
 #include "engine/scripting/script_engine.h"
 #include "engine/graphic/mesh/mesh.h"
 #include "engine/graphic/mesh/mesh_factory.h"
-#include "engine/core/ecs/relationship.h"
+#include "ecs/relationship.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace smile::scene
+namespace smile::world
 {
-    SceneHierarchyPanel::SceneHierarchyPanel( Ref< Scene > pScene )
+    WorldHierarchyPanel::WorldHierarchyPanel( Ref< World > pWorld )
     {
-        SetContext( pScene );
+        SetContext( pWorld );
     }
 
-    void SceneHierarchyPanel::SetContext( Ref< Scene > pScene )
+    void WorldHierarchyPanel::SetContext( Ref< World > pWorld )
     {
-        m_pContext = pScene;
+        m_pContext = pWorld;
         m_SelectedEntity = {};
     }
 
-    void SceneHierarchyPanel::OnImGuiRender()
+    void WorldHierarchyPanel::OnImGuiRender()
     {
-        ImGui::Begin( "Scene Hierarchy" );
+        ImGui::Begin( "World Hierarchy" );
 
         if ( m_pContext )
         {
@@ -83,7 +83,7 @@ namespace smile::scene
         ImGui::End();
     }
 
-    void SceneHierarchyPanel::DrawEntityNode( Entity entity, std::vector< Entity > &entitiesToAddChild )
+    void WorldHierarchyPanel::DrawEntityNode( Entity entity, std::vector< Entity > &entitiesToAddChild )
     {
         ImGui::PushID( ( const void * )( Uint64 )entity );
 
@@ -169,7 +169,7 @@ namespace smile::scene
         ImGui::PopID();
     }
 
-    bool SceneHierarchyPanel::DrawVector3Control( const std::string &label,
+    bool WorldHierarchyPanel::DrawVector3Control( const std::string &label,
         DirectX::XMFLOAT3 &value,
         float resetValue,
         float columnWidth )
@@ -262,7 +262,7 @@ namespace smile::scene
         return isValueChanged;
     }
 
-    void SceneHierarchyPanel::DrawComponents( Entity entity )
+    void WorldHierarchyPanel::DrawComponents( Entity entity )
     {
         if ( entity.HasComponent< ecs::TagComponent >() )
         {
@@ -812,7 +812,7 @@ namespace smile::scene
     }
 
     template < typename ComponentType, typename UIFunction >
-    void SceneHierarchyPanel::DrawComponent( const std::string &label,
+    void WorldHierarchyPanel::DrawComponent( const std::string &label,
         Entity entity,
         UIFunction uiFunction,
         bool isRemoveable )
@@ -859,7 +859,7 @@ namespace smile::scene
             entity.RemoveComponent< ComponentType >();
     }
 
-    void SceneHierarchyPanel::DrawMaterial( const Ref< graphic::Material > &pMaterial )
+    void WorldHierarchyPanel::DrawMaterial( const Ref< graphic::Material > &pMaterial )
     {
         const Ref< graphic::Shader > &pShader = pMaterial->GetShader();
         ImGui::Text( "Material" );

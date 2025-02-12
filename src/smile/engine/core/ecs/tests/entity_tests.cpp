@@ -1,4 +1,4 @@
-#include "engine/core/scene/entity.h"
+#include "world/entity.h"
 #include "engine/core/ecs/relationship.h"
 #include <catch/catch.hpp>
 
@@ -8,12 +8,12 @@ namespace smile
     {
         SECTION( "AddChild" )
         {
-            Ref< scene::Scene > pScene = CreateRef< scene::Scene >();
+            Ref< world::World > pWorld = CreateRef< world::World >();
 
-            scene::Entity parent = pScene->CreateEntity();
-            scene::Entity child1 = pScene->CreateEntity();
-            scene::Entity child2 = pScene->CreateEntity();
-            scene::Entity child3 = pScene->CreateEntity();
+            world::Entity parent = pWorld->CreateEntity();
+            world::Entity child1 = pWorld->CreateEntity();
+            world::Entity child2 = pWorld->CreateEntity();
+            world::Entity child3 = pWorld->CreateEntity();
 
             parent.AddChild( child1 );
 
@@ -67,12 +67,12 @@ namespace smile
 
         SECTION( "RemoveChild" )
         {
-            Ref< scene::Scene > pScene = CreateRef< scene::Scene >();
+            Ref< world::World > pWorld = CreateRef< world::World >();
 
-            scene::Entity parent = pScene->CreateEntity();
-            scene::Entity child1 = pScene->CreateEntity();
-            scene::Entity child2 = pScene->CreateEntity();
-            scene::Entity child3 = pScene->CreateEntity();
+            world::Entity parent = pWorld->CreateEntity();
+            world::Entity child1 = pWorld->CreateEntity();
+            world::Entity child2 = pWorld->CreateEntity();
+            world::Entity child3 = pWorld->CreateEntity();
 
             parent.AddChild( child1 );
             parent.AddChild( child2 );

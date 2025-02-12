@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/common/foundation/singleton.h"
+#include "foundation/singleton.h"
 
 #include "render_collector.h"
 
@@ -11,7 +11,7 @@
 #include "engine/graphic/camera/editor_camera.h"
 
 #include "engine/graphic/renderer_api/resource/rasterizer_state.h"
-#include "engine/core/scene/components.h"
+#include "world/components.h"
 
 namespace smile::graphic
 {

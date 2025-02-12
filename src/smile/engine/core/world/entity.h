@@ -4,21 +4,21 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/primitive/uuid.h"
-#include "scene.h"
+#include "primitive/uuid.h"
+#include "world.h"
 #include "ecs/id_component.h"
 #include "ecs/tag_component.h"
 #include "ecs/transform_component.h"
 
 #include "engine/core/ecs/ecs_engine.h"
 
-namespace smile::scene
+namespace smile::world
 {
     class Entity final
     {
       public:
         Entity() = default;
-        Entity( smile::ecs::EntityHandleType handle, Scene *pScene );
+        Entity( smile::ecs::EntityHandleType handle, World *pWorld );
         Entity( const Entity & ) = default;
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -27,9 +27,9 @@ namespace smile::scene
             SM_ASSERT( !HasComponent< ComponentType >(), "Entity::AddComponent > Entity already has component" );
 
             // forward the constructor arguments
-            ComponentType &component = m_pScene->m_ECSEngine.AddComponent< ComponentType >(
+            ComponentType &component = m_pWorld->m_ECSEngine.AddComponent< ComponentType >(
                 m_EntityHandle, std::forward< ConstructorArgs >( constructor_args )... );
-            m_pScene->OnComponentAdded< ComponentType >( *this, component );
+            m_pWorld->OnComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
@@ -37,16 +37,16 @@ namespace smile::scene
         ComponentType &AddOrReplaceComponent( ConstructorArgs &&...constructorArgs )
         {
             // forward the constructor arguments
-            ComponentType &component = m_pScene->m_ECSEngine.AddOrReplaceComponent< ComponentType >(
+            ComponentType &component = m_pWorld->m_ECSEngine.AddOrReplaceComponent< ComponentType >(
                 m_EntityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
-            m_pScene->OnComponentAdded< ComponentType >( *this, component );
+            m_pWorld->OnComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
         template < typename ComponentType >
         void RemoveComponent()
         {
-            m_pScene->m_ECSEngine.RemoveComponent< ComponentType >( m_EntityHandle );
+            m_pWorld->m_ECSEngine.RemoveComponent< ComponentType >( m_EntityHandle );
         }
 
         template < typename ComponentType >
@@ -54,13 +54,13 @@ namespace smile::scene
         {
             SM_ASSERT( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
 
-            return m_pScene->m_ECSEngine.GetComponent< ComponentType >( m_EntityHandle );
+            return m_pWorld->m_ECSEngine.GetComponent< ComponentType >( m_EntityHandle );
         }
 
         template < typename ComponentType >
         ComponentType *TryGetComponent() const
         {
-            return m_pScene->m_ECSEngine.TryGetComponent< ComponentType >( m_EntityHandle );
+            return m_pWorld->m_ECSEngine.TryGetComponent< ComponentType >( m_EntityHandle );
         }
 
         primitive::UUID GetUUID() const
@@ -79,7 +79,7 @@ namespace smile::scene
         template < typename ComponentType >
         bool HasComponent() const
         {
-            return m_pScene->m_ECSEngine.HasComponent< ComponentType >( m_EntityHandle );
+            return m_pWorld->m_ECSEngine.HasComponent< ComponentType >( m_EntityHandle );
         }
 
         void AddChild( Entity child );
@@ -110,7 +110,7 @@ namespace smile::scene
 
         bool operator==( Entity other ) const
         {
-            return ( m_EntityHandle == other.m_EntityHandle ) && ( m_pScene == other.m_pScene );
+            return ( m_EntityHandle == other.m_EntityHandle ) && ( m_pWorld == other.m_pWorld );
         }
         bool operator!=( Entity other ) const
         {
@@ -119,6 +119,6 @@ namespace smile::scene
 
       private:
         smile::ecs::EntityHandleType m_EntityHandle = smile::ecs::EntityHandleType::NullHandle();
-        Scene *m_pScene = nullptr;
+        World *m_pWorld = nullptr;
     };
 }

@@ -6,7 +6,7 @@
 #include "render_pass_2d.h"
 
 #include "engine/graphic/renderer/renderer_2d.h"
-#include "engine/core/scene/ecs/transform_component.h"
+#include "world/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {
@@ -16,11 +16,11 @@ namespace smile::graphic::ecs
 
         {
             auto group =
-                m_ECSEngine.GetGroup< SpriteRendererComponent >( smile::ecs::g_Get< scene::ecs::TransformComponent > );
+                m_ECSEngine.GetGroup< SpriteRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[spriteRenderer, transform] =
-                    m_ECSEngine.GetComponents< SpriteRendererComponent, scene::ecs::TransformComponent >( entity );
+                    m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity );
                 Renderer2D::DrawQuad( transform.GetWorldTransform(), spriteRenderer );
             }
         }
@@ -36,11 +36,11 @@ namespace smile::graphic::ecs
 
         {
             auto group =
-                m_ECSEngine.GetGroup< SpriteRendererComponent >( smile::ecs::g_Get< scene::ecs::TransformComponent > );
+                m_ECSEngine.GetGroup< SpriteRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[spriteRenderer, transform] =
-                    m_ECSEngine.GetComponents< SpriteRendererComponent, scene::ecs::TransformComponent >( entity );
+                    m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity );
                 Renderer2D::DrawQuad( transform.GetWorldTransform(), spriteRenderer );
             }
         }

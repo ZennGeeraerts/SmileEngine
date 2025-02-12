@@ -187,7 +187,7 @@ namespace smile::scripting
         std::unordered_map< primitive::UUID, Ref< ScriptInstance > > EntityInstances;
 
         // Runtime
-        scene::Scene *pSceneContext = nullptr;
+        world::World *pWorldContext = nullptr;
     };
 
     static ScriptEngineData *s_pData = nullptr;
@@ -356,9 +356,9 @@ namespace smile::scripting
         return pInstance;
     }
 
-    scene::Scene *ScriptEngine::GetSceneContext()
+    world::World *ScriptEngine::GetWorldContext()
     {
-        return s_pData->pSceneContext;
+        return s_pData->pWorldContext;
     }
 
     Ref< ScriptInstance > ScriptEngine::GetEntityScriptInstance( primitive::UUID entityID )
@@ -375,14 +375,14 @@ namespace smile::scripting
         return s_pData->EntityClasses;
     }
 
-    void ScriptEngine::OnRuntimeStart( scene::Scene *pScene )
+    void ScriptEngine::OnRuntimeStart( world::World *pWorld )
     {
-        s_pData->pSceneContext = pScene;
+        s_pData->pWorldContext = pWorld;
     }
 
     void ScriptEngine::OnRuntimeStop()
     {
-        s_pData->pSceneContext = nullptr;
+        s_pData->pWorldContext = nullptr;
         s_pData->EntityInstances.clear();
     }
 
@@ -391,7 +391,7 @@ namespace smile::scripting
         return s_pData->EntityClasses.find( fullClassName ) != s_pData->EntityClasses.end();
     }
 
-    void ScriptEngine::OnCreateEntity( scene::Entity entity )
+    void ScriptEngine::OnCreateEntity( world::Entity entity )
     {
         const auto &scriptComponent = entity.GetComponent< ecs::ScriptComponent >();
         if ( EntityClassExists( scriptComponent.ClassName ) )
@@ -403,7 +403,7 @@ namespace smile::scripting
         }
     }
 
-    void ScriptEngine::OnUpdateEntity( scene::Entity entity, primitive::Timestep deltaTime )
+    void ScriptEngine::OnUpdateEntity( world::Entity entity, primitive::Timestep deltaTime )
     {
         primitive::UUID entityUUID = entity.GetUUID();
         SM_ASSERT( s_pData->EntityInstances.find( entityUUID ) != s_pData->EntityInstances.end(),

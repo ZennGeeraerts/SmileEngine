@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "scene.h"
+#include "world.h"
 
 #include "components.h"
 #include "engine/graphic/renderer/render_engine.h"
@@ -27,9 +27,9 @@
 #include "engine/graphic/animation/ecs/animation_system.h"
 #include "engine/graphic/camera/ecs/camera_system.h"
 
-namespace smile::scene
+namespace smile::world
 {
-    Scene::Scene()
+    World::World()
     {
         smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
@@ -55,22 +55,22 @@ namespace smile::scene
         m_StateManager.Initialize( &m_ECSEngine, "editor" );
     }
 
-    Scene::~Scene()
+    World::~World()
     {
         m_ECSEngine.Clear();
     }
 
-    Entity Scene::CreateEntity()
+    Entity World::CreateEntity()
     {
         return CreateEntity( "Entity" );
     }
 
-    Entity Scene::CreateEntity( const std::string &name )
+    Entity World::CreateEntity( const std::string &name )
     {
         return CreateEntity( primitive::UUID{}, name );
     }
 
-    Entity Scene::CreateEntity( primitive::UUID uuid, const std::string &name )
+    Entity World::CreateEntity( primitive::UUID uuid, const std::string &name )
     {
         Entity entity{ m_ECSEngine.CreateEntity(), this };
         entity.AddComponent< ecs::IDComponent >( uuid );
@@ -82,7 +82,7 @@ namespace smile::scene
         return entity;
     }
 
-    void Scene::DestroyEntity( Entity entity )
+    void World::DestroyEntity( Entity entity )
     {
         auto pRelationship = entity.TryGetComponent< smile::ecs::Relationship >();
         if ( pRelationship )
@@ -107,7 +107,7 @@ namespace smile::scene
         m_ECSEngine.DestroyEntity( entity );
     }
 
-    void Scene::OnOpen()
+    void World::OnOpen()
     {
         m_StateManager.ChangeState( "editor" );
 
@@ -117,12 +117,12 @@ namespace smile::scene
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::RenderPass2D{ m_ECSEngine } );
     }
 
-    void Scene::OnClose()
+    void World::OnClose()
     {
         graphic::RenderEngine::ClearRenderPasses();
     }
 
-    void Scene::OnRuntimeStart()
+    void World::OnRuntimeStart()
     {
         m_StateManager.ChangeState( "runtime" );
 
@@ -140,23 +140,23 @@ namespace smile::scene
         }
     }
 
-    void Scene::OnRuntimeStop()
+    void World::OnRuntimeStop()
     {
         m_StateManager.ChangeState( "editor" );
         scripting::ScriptEngine::OnRuntimeStop();
     }
 
-    void Scene::OnSimulationStart()
+    void World::OnSimulationStart()
     {
         m_StateManager.ChangeState( "simulate" );
     }
 
-    void Scene::OnSimulationStop()
+    void World::OnSimulationStop()
     {
         m_StateManager.ChangeState( "editor" );
     }
 
-    void Scene::OnUpdateRuntime( primitive::Timestep deltaTime )
+    void World::OnUpdateRuntime( primitive::Timestep deltaTime )
     {
         auto view = m_ECSEngine.GetView< scripting::ecs::ScriptComponent >();
         for ( auto e : view )
@@ -174,10 +174,10 @@ namespace smile::scene
         graphic::RenderEngine::OnRender();
     }
 
-    void Scene::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
+    void World::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        
+
         auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
             m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
         pPhysicsSystem->OnDebugRender();
@@ -185,13 +185,13 @@ namespace smile::scene
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
-    void Scene::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
+    void World::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
         graphic::RenderEngine::OnRender( editorCamera );
     }
 
-    void Scene::OnViewportResize( Uint32 width, Uint32 height )
+    void World::OnViewportResize( Uint32 width, Uint32 height )
     {
         m_ViewportWidth = width;
         m_ViewportHeight = height;
@@ -207,7 +207,7 @@ namespace smile::scene
         }
     }
 
-    Entity Scene::GetPrimaryCameraEntity()
+    Entity World::GetPrimaryCameraEntity()
     {
         auto view = m_ECSEngine.GetView< graphic::ecs::CameraComponent >();
         for ( auto entity : view )
@@ -232,7 +232,7 @@ namespace smile::scene
                 {
                     primitive::UUID uuid = src.GetComponent< ecs::IDComponent >( entity ).ID;
                     SM_ASSERT( entityHandleMap.find( uuid ) != entityHandleMap.end(),
-                        "Scene::CopyComponent > uuid not found in enttMap" );
+                        "world::CopyComponent > uuid not found in enttMap" );
                     smile::ecs::EntityHandleType dstHandleID = entityHandleMap.at( uuid );
 
                     auto &component = src.GetComponent< ComponentType >( entity );
@@ -269,34 +269,34 @@ namespace smile::scene
         CopyComponentIfExists< ComponentType... >( dst, src );
     }
 
-    Ref< Scene > Scene::Copy( const Ref< Scene > &scene )
+    Ref< World > World::Copy( const Ref< World > &pWorld )
     {
-        Ref< Scene > pNewScene = CreateRef< Scene >();
+        Ref< World > pNewWorld = CreateRef< World >();
 
-        pNewScene->m_ViewportWidth = scene->m_ViewportWidth;
-        pNewScene->m_ViewportHeight = scene->m_ViewportHeight;
+        pNewWorld->m_ViewportWidth = pWorld->m_ViewportWidth;
+        pNewWorld->m_ViewportHeight = pWorld->m_ViewportHeight;
 
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > entityMap{};
 
-        auto &srcSceneEngine = scene->m_ECSEngine;
-        auto &dstSceneEngine = pNewScene->m_ECSEngine;
-        auto idView = srcSceneEngine.GetView< ecs::IDComponent >();
+        auto &srcWorldEngine = pWorld->m_ECSEngine;
+        auto &dstWorldEngine = pNewWorld->m_ECSEngine;
+        auto idView = srcWorldEngine.GetView< ecs::IDComponent >();
         for ( auto entity : idView )
         {
-            auto uuid = srcSceneEngine.GetComponent< ecs::IDComponent >( entity ).ID;
-            const auto &name = srcSceneEngine.GetComponent< ecs::TagComponent >( entity ).Tag;
-            Entity newEntity = pNewScene->CreateEntity( uuid, name );
+            auto uuid = srcWorldEngine.GetComponent< ecs::IDComponent >( entity ).ID;
+            const auto &name = srcWorldEngine.GetComponent< ecs::TagComponent >( entity ).Tag;
+            Entity newEntity = pNewWorld->CreateEntity( uuid, name );
             entityMap[uuid] = static_cast< smile::ecs::EntityHandleType >( newEntity );
         }
 
         // Copy components except IDComponent and TagComponent
-        CopyComponent< smile::ecs::Relationship >( dstSceneEngine, srcSceneEngine, entityMap );
-        CopyComponent( AllComponents{}, dstSceneEngine, srcSceneEngine, entityMap );
+        CopyComponent< smile::ecs::Relationship >( dstWorldEngine, srcWorldEngine, entityMap );
+        CopyComponent( AllComponents{}, dstWorldEngine, srcWorldEngine, entityMap );
 
-        return pNewScene;
+        return pNewWorld;
     }
 
-    void Scene::DuplicateEntity( Entity entity )
+    void World::DuplicateEntity( Entity entity )
     {
         Entity newEntity = CreateEntity( entity.GetName() );
 
@@ -315,13 +315,13 @@ namespace smile::scene
         CopyComponentIfExists< physics::ecs::CharacterControllerComponent >( newEntity, entity );
     }
 
-    Entity Scene::GetEntityByUUID( primitive::UUID uuid )
+    Entity World::GetEntityByUUID( primitive::UUID uuid )
     {
-        SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "Scene::GetEntityByUUID > Invalid UUID" )
+        SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "world::GetEntityByUUID > Invalid UUID" )
         return Entity{ m_EntityMap.at( uuid ), this };
     }
 
-    void Scene::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
+    void World::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
     {
         Entity entity = GetEntityByUUID( entityID );
 
@@ -333,7 +333,7 @@ namespace smile::scene
     }
 
     void
-    Scene::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
+    World::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
     {
         Entity entity = GetEntityByUUID( entityID );
 
@@ -346,94 +346,94 @@ namespace smile::scene
     }
 
     template < typename ComponentType >
-    void Scene::OnComponentAdded( Entity entity, ComponentType &component )
+    void World::OnComponentAdded( Entity entity, ComponentType &component )
     {
         static_assert( sizeof( ComponentType ) == 0 );
     }
 
     template <>
-    void Scene::OnComponentAdded< smile::ecs::Relationship >( Entity entity, smile::ecs::Relationship &component )
+    void World::OnComponentAdded< smile::ecs::Relationship >( Entity entity, smile::ecs::Relationship &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< ecs::IDComponent >( Entity entity, ecs::IDComponent &component )
+    void World::OnComponentAdded< ecs::IDComponent >( Entity entity, ecs::IDComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< ecs::TagComponent >( Entity entity, ecs::TagComponent &component )
+    void World::OnComponentAdded< ecs::TagComponent >( Entity entity, ecs::TagComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< ecs::TransformComponent >( Entity entity, ecs::TransformComponent &component )
+    void World::OnComponentAdded< ecs::TransformComponent >( Entity entity, ecs::TransformComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< graphic::ecs::CameraComponent >( Entity entity,
+    void World::OnComponentAdded< graphic::ecs::CameraComponent >( Entity entity,
         graphic::ecs::CameraComponent &component )
     {
         component.Camera.SetViewportSize( m_ViewportWidth, m_ViewportHeight );
     }
 
     template <>
-    void Scene::OnComponentAdded< scripting::ecs::ScriptComponent >( Entity entity,
+    void World::OnComponentAdded< scripting::ecs::ScriptComponent >( Entity entity,
         scripting::ecs::ScriptComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< graphic::ecs::MeshRendererComponent >( Entity entity,
+    void World::OnComponentAdded< graphic::ecs::MeshRendererComponent >( Entity entity,
         graphic::ecs::MeshRendererComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< graphic::ecs::SkinnedMeshRendererComponent >( Entity entity,
+    void World::OnComponentAdded< graphic::ecs::SkinnedMeshRendererComponent >( Entity entity,
         graphic::ecs::SkinnedMeshRendererComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< graphic::ecs::AnimatorComponent >( Entity entity,
+    void World::OnComponentAdded< graphic::ecs::AnimatorComponent >( Entity entity,
         graphic::ecs::AnimatorComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< physics::ecs::RigidbodyComponent >( Entity entity,
+    void World::OnComponentAdded< physics::ecs::RigidbodyComponent >( Entity entity,
         physics::ecs::RigidbodyComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< physics::ecs::BoxColliderComponent >( Entity entity,
+    void World::OnComponentAdded< physics::ecs::BoxColliderComponent >( Entity entity,
         physics::ecs::BoxColliderComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< physics::ecs::SphereColliderComponent >( Entity entity,
+    void World::OnComponentAdded< physics::ecs::SphereColliderComponent >( Entity entity,
         physics::ecs::SphereColliderComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< physics::ecs::CapsuleColliderComponent >( Entity entity,
+    void World::OnComponentAdded< physics::ecs::CapsuleColliderComponent >( Entity entity,
         physics::ecs::CapsuleColliderComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< physics::ecs::CharacterControllerComponent >( Entity entity,
+    void World::OnComponentAdded< physics::ecs::CharacterControllerComponent >( Entity entity,
         physics::ecs::CharacterControllerComponent &component )
     {
     }
 
     template <>
-    void Scene::OnComponentAdded< graphic::ecs::SpriteRendererComponent >( Entity entity,
+    void World::OnComponentAdded< graphic::ecs::SpriteRendererComponent >( Entity entity,
         graphic::ecs::SpriteRendererComponent &component )
     {
     }
