@@ -29,24 +29,4 @@ namespace smile::graphic::ecs
 
         Renderer2D::EndScene();
     }
-
-    void RenderPass2D::OnRender( const EditorCamera &editorCamera )
-    {
-        Renderer2D::BeginScene( editorCamera );
-
-        {
-            auto group =
-                m_ECSEngine.GetGroup< SpriteRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[spriteRenderer, transform] =
-                    m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity );
-                Renderer2D::DrawQuad( transform.GetWorldTransform(), spriteRenderer );
-            }
-        }
-
-        Renderer2D::OnRender();
-
-        Renderer2D::EndScene();
-    }
 }

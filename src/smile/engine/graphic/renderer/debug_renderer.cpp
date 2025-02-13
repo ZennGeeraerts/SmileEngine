@@ -89,12 +89,6 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_ViewProjectionMatrix, viewProjectionMatrixMat );
     }
 
-    void DebugRenderer::BeginScene( const EditorCamera &editorCamera )
-    {
-        m_ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
-        CreateFixedLineList();
-    }
-
     void DebugRenderer::OnRender()
     {
         const Uint32 vertexCount = m_LineList.size();

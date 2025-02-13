@@ -33,16 +33,6 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, cameraTransformMat );
     }
 
-    void ForwardRenderer::BeginScene( const EditorCamera &editorCamera )
-    {
-        s_RenderCollector.ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
-
-        DirectX::XMFLOAT4X4 viewMatrix = editorCamera.GetViewMatrix();
-        auto viewMatrixMat = DirectX::XMLoadFloat4x4( &viewMatrix );
-        DirectX::XMStoreFloat4x4(
-            &s_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
-    }
-
     void ForwardRenderer::Submit( const Ref< VertexBuffer > &pVertexBuffer,
         const Ref< IndexBuffer > &pIndexBuffer,
         const Ref< Shader > &pShader,

@@ -9,7 +9,6 @@
 #include "engine/graphic/renderer_api/shader/shader.h"
 
 #include "engine/graphic/camera/camera.h"
-#include "engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic
 {
@@ -20,7 +19,6 @@ namespace smile::graphic
         void ShutDown();
 
         void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
-        void BeginScene( const EditorCamera &editorCamera );
         void OnRender();
         void EndScene();
 

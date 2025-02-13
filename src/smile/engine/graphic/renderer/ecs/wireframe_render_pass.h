@@ -16,6 +16,5 @@ namespace smile::graphic::ecs
         }
 
         void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) override;
-        void OnRender( const EditorCamera &editorCamera ) override;
     };
 }

@@ -57,17 +57,6 @@ namespace smile::graphic
         s_pSkyboxShader->UploadMat4( "ViewProjection", viewProjectionMatrix );
     }
 
-    void SkyboxRenderer::BeginScene( const EditorCamera &editorCamera )
-    {
-        const DirectX::XMFLOAT3 &cameraPos = editorCamera.GetPosition();
-
-        DirectX::XMFLOAT4X4 worldMatrix;
-        DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixTranslation( cameraPos.x, cameraPos.y, cameraPos.z ) );
-
-        s_pSkyboxShader->UploadMat4( "World", worldMatrix );
-        s_pSkyboxShader->UploadMat4( "ViewProjection", editorCamera.GetViewProjectionMatrix() );
-    }
-
     void SkyboxRenderer::OnRender()
     {
         auto pContext = RenderCommand::GetGraphicsContext();

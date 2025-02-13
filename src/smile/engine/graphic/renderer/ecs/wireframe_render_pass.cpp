@@ -43,39 +43,4 @@ namespace smile::graphic::ecs
 
         wireframeRenderer.EndScene();
     }
-
-    void WireframeRenderPass::OnRender( const EditorCamera &editorCamera )
-    {
-        WireframeRenderer &wireframeRenderer = WireframeRenderer::GetInstance();
-
-        wireframeRenderer.BeginScene( editorCamera );
-
-        {
-            auto group = m_ECSEngine.GetGroup< physics::ecs::BoxColliderComponent >(
-                smile::ecs::g_Get< world::ecs::TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[boxCollider, transform] =
-                    m_ECSEngine.GetComponents< physics::ecs::BoxColliderComponent, world::ecs::TransformComponent >(
-                        entity );
-                wireframeRenderer.Submit( boxCollider, transform.GetWorldTransform() );
-            }
-        }
-
-        {
-            auto group = m_ECSEngine.GetGroup< physics::ecs::SphereColliderComponent >(
-                smile::ecs::g_Get< world::ecs::TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[sphereCollider, transform] =
-                    m_ECSEngine.GetComponents< physics::ecs::SphereColliderComponent, world::ecs::TransformComponent >(
-                        entity );
-                wireframeRenderer.Submit( sphereCollider, transform.GetWorldTransform() );
-            }
-        }
-
-        wireframeRenderer.OnRender();
-
-        wireframeRenderer.EndScene();
-    }
 }
