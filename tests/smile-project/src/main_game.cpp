@@ -5,7 +5,7 @@
 
 #include "input/input.h"
 
-#include "scene/ecs/transform_component.h"
+#include "world/ecs/transform_component.h"
 
 #include "engine/graphic/renderer/render_command.h"
 #include "engine/graphic/mesh/material.h"
@@ -159,9 +159,9 @@ void ExampleLayer::OnAttach()
 
     Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", bufferLayout);*/
 
-    m_pActiveScene.reset( new smile::scene::Scene{} );
+    m_pActiveWorld.reset( new smile::world::World{} );
 
-    m_CameraEntity = m_pActiveScene->CreateEntity( "Camera" );
+    m_CameraEntity = m_pActiveWorld->CreateEntity( "Camera" );
     auto &camera = m_CameraEntity.AddComponent< smile::graphic::ecs::CameraComponent >();
     camera.IsPrimary = true;
 
@@ -180,22 +180,22 @@ void ExampleLayer::OnAttach()
     smile::Ref< smile::graphic::Texture > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
-    m_ModelEntity = m_pActiveScene->CreateEntity( "Model" );
+    m_ModelEntity = m_pActiveWorld->CreateEntity( "Model" );
     const smile::Uint32 meshIndex = 0;
     auto &meshRendererComponent = m_ModelEntity.AddComponent< smile::graphic::ecs::MeshRendererComponent >(
         "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
-    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Translation =
+    m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Translation =
         DirectX::XMFLOAT3{ 0, -0.1f, 1 };
-    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
-    m_ModelEntity.GetComponent< smile::scene::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
+    m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
+    m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
-    m_pActiveScene->OnViewportResize( 1280, 720 );
-    m_pActiveScene->OnRuntimeStart();
+    m_pActiveWorld->OnViewportResize( 1280, 720 );
+    m_pActiveWorld->OnRuntimeStart();
 }
 
 void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
 {
-    auto &transform = m_CameraEntity.GetComponent< smile::scene::ecs::TransformComponent >();
+    auto &transform = m_CameraEntity.GetComponent< smile::world::ecs::TransformComponent >();
 
     if ( smile::input::Input::IsKeyPressed( smile::input::key::Left ) )
         transform.Rotation.y -= DirectX::XMConvertToRadians( m_CameraRotationSpeed * deltaTime );
@@ -245,7 +245,7 @@ void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
     }
 
     smile::graphic::RenderCommand::Clear();
-    m_pActiveScene->OnUpdateRuntime( deltaTime );
+    m_pActiveWorld->OnUpdateRuntime( deltaTime );
 }
 
 void ExampleLayer::OnEvent( smile::window::Event &event )
@@ -266,7 +266,7 @@ bool ExampleLayer::OnWindowResize( smile::window::WindowResizeEvent &e )
     if ( width == 0 || height == 0 )
         return false;
 
-    m_pActiveScene->OnViewportResize( width, height );
+    m_pActiveWorld->OnViewportResize( width, height );
     return false;
 }
 
@@ -275,7 +275,7 @@ bool ExampleLayer::OnWindowResize( smile::window::WindowResizeEvent &e )
 /*-----------------------------------------------------------------------------------------------------------*/
 
 MainGame::MainGame( const smile::application::ApplicationDescriptor &descriptor )
-    : smile::application::Application{ descriptor }
+    : smile::graphic::GraphicApplication{ descriptor }
 {
     PushLayer( new ExampleLayer{} );
 }

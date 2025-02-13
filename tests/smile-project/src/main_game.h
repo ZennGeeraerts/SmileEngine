@@ -1,7 +1,7 @@
 #pragma once
-#include "application/application.h"
-#include "scene/scene.h"
-#include "scene/entity.h"
+#include "engine/graphic/application/graphic_application.h"
+#include "world/world.h"
+#include "world/entity.h"
 
 class ExampleLayer final : public smile::application::Layer
 {
@@ -17,18 +17,18 @@ class ExampleLayer final : public smile::application::Layer
     bool OnWindowResize( smile::window::WindowResizeEvent &e );
 
   private:
-    smile::Ref< smile::scene::Scene > m_pActiveScene;
+    smile::Ref< smile::world::World > m_pActiveWorld;
 
-    smile::scene::Entity m_CameraEntity;
+    smile::world::Entity m_CameraEntity;
     float m_CameraMoveSpeed = 5.f;
     float m_CameraRotationSpeed = 180.f;
 
-    smile::scene::Entity m_ModelEntity;
+    smile::world::Entity m_ModelEntity;
 
     float m_PrintTimer = 0.f;
 };
 
-class MainGame final : public smile::application::Application
+class MainGame final : public smile::graphic::GraphicApplication
 {
   public:
     MainGame( const smile::application::ApplicationDescriptor &descriptor );
