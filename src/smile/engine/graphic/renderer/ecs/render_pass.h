@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/core/ecs/ecs_engine.h"
-#include "engine/graphic/camera/editor_camera.h"
+#include "ecs/ecs_engine.h"
+#include "engine/graphic/camera/camera.h"
 
 namespace smile::graphic::ecs
 {
@@ -23,7 +23,6 @@ namespace smile::graphic::ecs
         RenderPass &operator=( RenderPass && ) = delete;
 
         virtual void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) = 0;
-        virtual void OnRender( const EditorCamera &editorCamera ) = 0;
 
       protected:
         smile::ecs::ECSEngine &m_ECSEngine;

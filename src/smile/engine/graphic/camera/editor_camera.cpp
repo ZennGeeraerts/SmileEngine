@@ -199,4 +199,15 @@ namespace smile::graphic
         DirectX::XMStoreFloat3( &rotation, rotationVec );
         return rotation;
     }
+
+    DirectX::XMFLOAT4X4 EditorCamera::GetTransform() const
+    {
+        DirectX::XMMATRIX transformMat = DirectX::XMMatrixScaling( 1.0f, 1.0f, 1.0f ) *
+                                         DirectX::XMMatrixRotationRollPitchYaw( m_Pitch, m_Yaw, 0.0f ) *
+                                         DirectX::XMMatrixTranslation( m_Position.x, m_Position.y, m_Position.z );
+
+        DirectX::XMFLOAT4X4 transform{};
+        DirectX::XMStoreFloat4x4( &transform, transformMat );
+        return transform;
+    }
 }

@@ -18,14 +18,4 @@ namespace smile::graphic::ecs
 
         debugRenderer.EndScene();
     }
-
-    void DebugRenderPass::OnRender( const EditorCamera &editorCamera )
-    {
-        auto &debugRenderer = DebugRenderer::GetInstance();
-        debugRenderer.BeginScene( editorCamera );
-
-        debugRenderer.OnRender();
-
-        debugRenderer.EndScene();
-    }
 }

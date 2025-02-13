@@ -101,9 +101,9 @@ namespace smile::graphic
         pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
-        s_RenderPassList.OnRender( editorCamera );
+        s_RenderPassList.OnRender( editorCamera, editorCamera.GetTransform() );
 
-        SkyboxRenderer::BeginScene( editorCamera );
+        SkyboxRenderer::BeginScene( editorCamera, editorCamera.GetTransform() );
         SkyboxRenderer::OnRender();
         SkyboxRenderer::EndScene();
 

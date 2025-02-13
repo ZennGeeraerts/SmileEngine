@@ -22,12 +22,6 @@ namespace smile::graphic::ecs
                 pRenderPass->OnRender( camera, cameraTransform );
         }
 
-        void OnRender( const EditorCamera &editorCamera )
-        {
-            for ( auto pRenderPass : m_pRenderPasses )
-                pRenderPass->OnRender( editorCamera );
-        }
-
         void AddRenderPass( RenderPass *pRenderPass )
         {
             m_pRenderPasses.push_back( pRenderPass );

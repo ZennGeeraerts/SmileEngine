@@ -5,7 +5,6 @@
 #pragma once
 #include "engine/common/foundation/singleton.h"
 #include "engine/graphic/sprite/ecs/sprite_renderer_component.h"
-#include "engine/graphic/camera/editor_camera.h"
 
 namespace smile::graphic
 {
@@ -16,7 +15,6 @@ namespace smile::graphic
         static void ShutDown();
 
         static void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
-        static void BeginScene( const EditorCamera &editorCamera );
         static void EndScene();
         static void OnRender();
 

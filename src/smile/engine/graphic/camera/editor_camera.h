@@ -58,6 +58,8 @@ namespace smile::graphic
             return m_Yaw;
         }
 
+        DirectX::XMFLOAT4X4 GetTransform() const;
+
       private:
         void UpdateView();
         void UpdateProjection();

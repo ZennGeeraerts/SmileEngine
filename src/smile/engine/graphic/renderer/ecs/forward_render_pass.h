@@ -20,6 +20,5 @@ namespace smile::graphic::ecs
         ForwardRenderPass &operator=( ForwardRenderPass && ) = delete;
 
         void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) override;
-        void OnRender( const EditorCamera &editorCamera ) override;
     };
 }

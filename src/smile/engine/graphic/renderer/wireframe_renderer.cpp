@@ -40,16 +40,6 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, cameraTransformMat );
     }
 
-    void WireframeRenderer::BeginScene( const EditorCamera &editorCamera )
-    {
-        m_RenderCollector.ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
-
-        DirectX::XMFLOAT4X4 viewMatrix = editorCamera.GetViewMatrix();
-        auto viewMatrixMat = DirectX::XMLoadFloat4x4( &viewMatrix );
-        DirectX::XMStoreFloat4x4(
-            &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );
-    }
-
     void WireframeRenderer::EndScene()
     {
         ClearDrawList();

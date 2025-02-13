@@ -42,36 +42,4 @@ namespace smile::graphic::ecs
 
         graphic::ForwardRenderer::EndScene();
     }
-
-    void ForwardRenderPass::OnRender( const EditorCamera &editorCamera )
-    {
-        graphic::ForwardRenderer::BeginScene( editorCamera );
-
-        {
-            auto group =
-                m_ECSEngine.GetGroup< MeshRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[meshRenderer, transform] =
-                    m_ECSEngine.GetComponents< MeshRendererComponent, world::ecs::TransformComponent >( entity );
-                graphic::ForwardRenderer::Submit( meshRenderer, transform.GetWorldTransform() );
-            }
-        }
-        {
-            // TODO: Remove dependency on animator
-            auto group = m_ECSEngine.GetGroup< SkinnedMeshRendererComponent, AnimatorComponent >(
-                smile::ecs::g_Get< world::ecs::TransformComponent > );
-            for ( auto entity : group )
-            {
-                const auto &[skinnedMeshRenderer, transform] =
-                    m_ECSEngine.GetComponents< SkinnedMeshRendererComponent, world::ecs::TransformComponent >( entity );
-
-                graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetWorldTransform() );
-            }
-        }
-
-        graphic::ForwardRenderer::OnRender();
-
-        graphic::ForwardRenderer::EndScene();
-    }
 }

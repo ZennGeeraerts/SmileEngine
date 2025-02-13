@@ -86,16 +86,6 @@ namespace smile::graphic
         pContext->UnbindShader();
     }
 
-    void Renderer2D::BeginScene( const EditorCamera &editorCamera )
-    {
-        s_pStorage->ViewProjectionMatrix = editorCamera.GetViewProjectionMatrix();
-
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
-        pContext->BindShader( s_pStorage->pShader );
-        s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
-        pContext->UnbindShader();
-    }
-
     void Renderer2D::EndScene()
     {
     }
