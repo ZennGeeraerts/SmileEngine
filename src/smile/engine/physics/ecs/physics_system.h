@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/core/ecs/timed_system.h"
-#include "engine/core/ecs/ecs_types.h"
-#include "engine/common/primitive/uuid.h"
+#include "ecs/timed_system.h"
+#include "ecs/ecs_types.h"
+#include "primitive/uuid.h"
 
 #include "engine/physics/rigidbody.h"
 #include "engine/physics/character_controller.h"
@@ -29,8 +29,6 @@ namespace smile::physics::ecs
         void OnAdd( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnRemove( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnUpdate( primitive::Timestep deltaTime );
-
-        void OnDebugRender();
 
         Ref< Rigidbody > GetRigidbody( primitive::UUID entityID ) const
         {

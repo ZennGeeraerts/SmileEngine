@@ -36,6 +36,7 @@ namespace smile::physics
 
         void *GetPhysics() const;
         void *GetDefaultCpuDispatcher() const;
+        const std::vector< Ref< PhysicsWorld > > &GetWorlds() const;
 
       private:
         bool Advance( primitive::Timestep deltaTime );

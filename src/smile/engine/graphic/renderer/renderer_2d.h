@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/common/foundation/singleton.h"
 #include "engine/graphic/sprite/ecs/sprite_renderer_component.h"
+#include "engine/graphic/camera/camera.h"
 
 namespace smile::graphic
 {
