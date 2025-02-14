@@ -16,6 +16,7 @@
 #include "engine/graphic/renderer/ecs/wireframe_render_pass.h"
 #include "engine/graphic/renderer/ecs/debug_render_pass.h"
 #include "engine/graphic/renderer/ecs/render_pass_2d.h"
+#include "engine/graphic/renderer/ecs/physics_render_pass.h"
 
 #include "engine/graphic/camera/ecs/camera_system.h"
 
@@ -115,6 +116,7 @@ namespace smile::world
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::WireframeRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::DebugRenderPass{ m_ECSEngine } );
         graphic::RenderEngine::AddRenderPass( new graphic::ecs::RenderPass2D{ m_ECSEngine } );
+        graphic::RenderEngine::AddRenderPass( new graphic::ecs::PhysicsRenderPass{ m_ECSEngine } );
     }
 
     void World::OnClose()
@@ -166,22 +168,12 @@ namespace smile::world
         }
 
         m_ECSEngine.OnUpdate();
-
-        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
-            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
-        pPhysicsSystem->OnDebugRender();
-
         graphic::RenderEngine::OnRender();
     }
 
     void World::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-
-        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
-            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
-        pPhysicsSystem->OnDebugRender();
-
         graphic::RenderEngine::OnRender( editorCamera );
     }
 

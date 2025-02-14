@@ -165,4 +165,9 @@ namespace smile::physics
     {
         return m_pImplementation->pDefaultCpuDispatcher;
     }
+
+    const std::vector< Ref< PhysicsWorld > > &PhysicsEngine::GetWorlds() const
+    {
+        return m_pImplementation->pWorlds;
+    }
 }

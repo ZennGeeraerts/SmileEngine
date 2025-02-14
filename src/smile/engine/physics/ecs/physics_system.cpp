@@ -15,8 +15,6 @@
 
 #include "engine/physics/physics_engine.h"
 
-#include "engine/graphic/renderer/debug_renderer.h"
-
 namespace smile::physics::ecs
 {
     void PhysicsSystem::OnAdd( smile::ecs::ECSEngine &ecsEngine )
@@ -212,13 +210,5 @@ namespace smile::physics::ecs
                 }
             }
         }
-    }
-
-    void PhysicsSystem::OnDebugRender()
-    {
-        if ( !m_pPhysicsWorld )
-            return;
-
-        m_pPhysicsWorld->OnDebugRender();
     }
 }
