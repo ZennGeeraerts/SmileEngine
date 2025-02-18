@@ -15,6 +15,10 @@ namespace smile::memory
         {
         }
 
+        Object( const Object & ) : m_RefCount{ 0 }
+        {
+        }
+
         virtual ~Object();
 
         inline void IncreaseRefCount()
