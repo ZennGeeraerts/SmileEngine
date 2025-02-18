@@ -155,18 +155,28 @@ namespace smile::memory
             return m_pInstance;
         }
 
+        template < typename OtherType >
+        inline typename std::conditional< std::is_const< Type >::value, const OtherType, OtherType >::type &
+        GetObject() const
+        {
+            SM_ASSERT( m_pInstance, "Instance is nullptr" );
+
+            return static_cast< typename std::conditional< std::is_const< Type >::value, const Type, Type >::type & >(
+                *m_pInstance );
+        }
+
         inline void Reset( Type *pObject )
         {
             auto pTemp = pObject;
 
             if ( pObject )
             {
-                reinterpret_cast< Object * >( pObject )->IncreaseRefCount();
+                pObject->IncreaseRefCount();
             }
 
             if ( m_pInstance )
             {
-                reinterpret_cast< Object * >( m_pInstance )->DecreaseRefCount();
+                m_pInstance->DecreaseRefCount();
             }
 
             m_pInstance = pTemp;

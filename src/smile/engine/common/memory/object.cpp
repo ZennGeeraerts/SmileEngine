@@ -11,6 +11,7 @@ namespace smile::memory
     {
         SM_ASSERT( m_RefCount == 0, "RefCount is not 0" );
 
+        // Volatile ensures the compiler will write the value
         volatile auto &dest = m_RefCount;
         dest = DestructedObjectRefCount();
     }

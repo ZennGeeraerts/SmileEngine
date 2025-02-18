@@ -21,13 +21,15 @@ namespace smile::memory
 
         virtual ~Object();
 
-        inline void IncreaseRefCount()
+        // This needs to be const to work in Reset function of Object
+        inline void IncreaseRefCount() const
         {
             SM_ASSERT( m_RefCount != DestructedObjectRefCount(), "Object is destructed" );
             ++m_RefCount;
         }
 
-        inline void DecreaseRefCount()
+        // This needs to be const to work in Reset function of Object
+        inline void DecreaseRefCount() const
         {
             Uint32 decreasedRefCount = --m_RefCount;
 
@@ -45,6 +47,6 @@ namespace smile::memory
         static constexpr Uint32 DestructedObjectRefCount();
 
       private:
-        std::atomic< Uint32 > m_RefCount;
+        mutable std::atomic< Uint32 > m_RefCount;
     };
 }
