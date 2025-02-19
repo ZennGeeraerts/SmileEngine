@@ -184,5 +184,11 @@ namespace smile::memory
 
       private:
         Type *m_pInstance;
-    };
+    };  
+
+    template < typename Object, typename... Args >
+    Ref< Object > CreateRef( Args &&...args )
+    {
+        return Ref< Object >{ new Object( std::forward< Args >( args )... ) };
+    }
 }
