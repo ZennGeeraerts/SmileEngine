@@ -35,7 +35,7 @@ namespace smile::memory
 
             if ( decreasedRefCount == 0 )
             {
-                this->~Object();
+                delete this;
             }
         }
 
