@@ -43,7 +43,7 @@ namespace smile::memory
 
         inline ~Ref()
         {
-            Reset( nullptr );
+            Reset();
         }
 
         inline Ref &operator=( const Ref &other )
@@ -61,7 +61,7 @@ namespace smile::memory
 
         inline Ref &operator=( Ref &&other )
         {
-            Reset( nullptr );
+            Reset();
 
             m_pInstance = other.m_pInstance;
             other.m_pInstance = nullptr;
@@ -165,7 +165,7 @@ namespace smile::memory
                 *m_pInstance );
         }
 
-        inline void Reset( Type *pObject )
+        inline void Reset( Type *pObject = nullptr )
         {
             auto pTemp = pObject;
 
