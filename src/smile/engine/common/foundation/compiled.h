@@ -48,6 +48,15 @@ namespace smile
         return std::make_unique< Type >( std::forward< Args >( args )... );
     }
 
+    template < typename Type >
+    using Ref = std::shared_ptr< Type >;
+
+    template < typename Type, typename... Args >
+    constexpr Ref< Type > CreateRef( Args... args )
+    {
+        return std::make_shared< Type >( std::forward< Args >( args )... );
+    }
+
     using Uint64 = uint64_t;
     using Uint32 = uint32_t;
     using Uint16 = uint16_t;
