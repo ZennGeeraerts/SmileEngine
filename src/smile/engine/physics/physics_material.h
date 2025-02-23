@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/foundation/pimpl.h"
+#include "foundation/pimpl.h"
 
 namespace smile::physics
 {
