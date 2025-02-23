@@ -28,7 +28,7 @@ namespace smile::memory
         template < typename OtherType >
         inline Ref( const Ref< OtherType > &other ) : m_pInstance{ nullptr }
         {
-            Reset( other.GetPointer() );
+            Reset( static_cast< Type * >( other.GetPointer() ) );
         }
 
         inline Ref( Ref &&other ) : m_pInstance{ other.m_pInstance }
@@ -184,7 +184,7 @@ namespace smile::memory
 
       private:
         Type *m_pInstance;
-    };  
+    };
 
     template < typename Object, typename... Args >
     constexpr Ref< Object > CreateRef( Args &&...args )
