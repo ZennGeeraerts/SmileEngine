@@ -32,7 +32,7 @@ namespace smile::ecs::state
         m_pECSEngine = nullptr;
     }
 
-    void StateManager::AddState( const std::string &name, Ref< State > pState )
+    void StateManager::AddState( const std::string &name, memory::Ref< State > pState )
     {
         m_StateMap.insert( std::make_pair( name, pState ) );
     }
@@ -114,12 +114,12 @@ namespace smile::ecs::state
         return *m_StateMap.at( name );
     }
 
-    Ref< BaseSystem > StateManager::GetSystem( const std::string &name ) const
+    memory::Ref< BaseSystem > StateManager::GetSystem( const std::string &name ) const
     {
         return m_SystemMap.at( name );
     }
 
-    Ref< BaseSystem > StateManager::GetOrCreateSystem( const std::string &systemName )
+    memory::Ref< BaseSystem > StateManager::GetOrCreateSystem( const std::string &systemName )
     {
         auto systemIt = m_SystemMap.find( systemName );
 

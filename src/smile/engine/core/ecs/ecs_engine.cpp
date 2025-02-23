@@ -74,13 +74,13 @@ namespace smile::ecs
             } );
     }
 
-    void ECSEngine::AddSystem( Ref< BaseSystem > pSystem )
+    void ECSEngine::AddSystem( memory::Ref< BaseSystem > pSystem )
     {
         m_pSystems.emplace_back( pSystem );
         pSystem->OnAdd( *this );
     }
 
-    void ECSEngine::RemoveSystem( Ref< BaseSystem > pSystem )
+    void ECSEngine::RemoveSystem( memory::Ref< BaseSystem > pSystem )
     {
         m_pSystems.erase( std::remove( m_pSystems.begin(), m_pSystems.end(), pSystem ) );
         pSystem->OnRemove( *this );

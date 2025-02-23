@@ -3,13 +3,16 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
+#include "memory/object.h"
+
 #include <string>
 #include <string_view>
 #include <vector>
 
 namespace smile::ecs::state
 {
-    class State final
+    class State final : public memory::Object
     {
       public:
         State() = default;

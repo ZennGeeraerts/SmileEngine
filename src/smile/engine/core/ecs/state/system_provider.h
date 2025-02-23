@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "memory/ref.h"
+
 namespace smile::ecs::state
 {
     class SystemProvider
@@ -12,6 +14,6 @@ namespace smile::ecs::state
         SystemProvider() = default;
         virtual ~SystemProvider() = default;
 
-        virtual Ref< smile::ecs::BaseSystem > Create() = 0;
+        virtual memory::Ref< smile::ecs::BaseSystem > Create() = 0;
     };
 }
