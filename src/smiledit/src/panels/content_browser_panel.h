@@ -5,6 +5,7 @@
 #pragma once
 
 #include "engine/graphic/renderer_api/resource/texture.h"
+#include "memory/ref.h"
 
 #include <filesystem>
 
@@ -20,7 +21,7 @@ namespace smile
       private:
         std::filesystem::path m_BaseDirectory;
         std::filesystem::path m_CurrentDirectory;
-        Ref< graphic::Texture > m_pDirectoryIcon = nullptr;
-        Ref< graphic::Texture > m_pFileIcon = nullptr;
+        memory::Ref< graphic::Texture > m_pDirectoryIcon = nullptr;
+        memory::Ref< graphic::Texture > m_pFileIcon = nullptr;
     };
 }

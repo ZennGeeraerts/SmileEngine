@@ -74,7 +74,7 @@ namespace smile::graphic
         static ecs::RenderPassList s_RenderPassList;
         static window::Window *s_pWindow;
 
-        static Ref< Framebuffer > s_pFinalSceneFramebuffer;
+        static memory::Ref< Framebuffer > s_pFinalSceneFramebuffer;
 
         static RendererSettings s_Settings;
         static ShaderLibrary s_ShaderLibrary;

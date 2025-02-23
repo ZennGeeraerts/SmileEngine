@@ -39,12 +39,12 @@ namespace smile::graphic
             s_pRendererAPI->GetGraphicsContext()->Clear( s_ClearColor );
         }
 
-        inline static void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader )
+        inline static void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader )
         {
             s_pRendererAPI->GetGraphicsContext()->DrawIndexed( indexCount, pShader );
         }
 
-        inline static void Draw( Uint32 vertexCount, const Ref< Shader > &pShader )
+        inline static void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
         {
             s_pRendererAPI->GetGraphicsContext()->Draw( vertexCount, pShader );
         }
@@ -54,12 +54,12 @@ namespace smile::graphic
             s_pRendererAPI->GetSwapChain()->Present();
         }
 
-        inline static GraphicsDevice* GetGraphicsDevice()
+        inline static GraphicsDevice *GetGraphicsDevice()
         {
             return s_pRendererAPI->GetGraphicsDevice();
         }
 
-        inline static GraphicsContext* GetGraphicsContext()
+        inline static GraphicsContext *GetGraphicsContext()
         {
             return s_pRendererAPI->GetGraphicsContext();
         }

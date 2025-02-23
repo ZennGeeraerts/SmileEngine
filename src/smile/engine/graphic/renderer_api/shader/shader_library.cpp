@@ -9,25 +9,25 @@
 
 namespace smile::graphic
 {
-    void ShaderLibrary::Add( const std::string &name, const Ref< Shader > &pShader )
+    void ShaderLibrary::Add( const std::string &name, const memory::Ref< Shader > &pShader )
     {
         SM_ASSERT( !Exists( name ), "ShaderLibrary::Add > Shader: %s already exists!", name );
         m_Shaders[name] = pShader;
     }
 
-    void ShaderLibrary::Add( const Ref< Shader > &pShader )
+    void ShaderLibrary::Add( const memory::Ref< Shader > &pShader )
     {
         Add( pShader->Name, pShader );
     }
 
-    Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
+    memory::Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
     {
         auto pShader = RenderCommand::GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
         Add( pShader );
         return pShader;
     }
 
-    Ref< Shader >
+    memory::Ref< Shader >
     ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
     {
         auto pShader = RenderCommand::GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
@@ -35,7 +35,7 @@ namespace smile::graphic
         return pShader;
     }
 
-    Ref< Shader > ShaderLibrary::Get( const std::string &name )
+    memory::Ref< Shader > ShaderLibrary::Get( const std::string &name )
     {
         SM_ASSERT( Exists( name ), "ShaderLibrary::Add > Shader: %s not found!", name );
         return m_Shaders[name];

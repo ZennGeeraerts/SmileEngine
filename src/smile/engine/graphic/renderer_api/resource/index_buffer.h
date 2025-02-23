@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "engine/graphic/renderer_api/shader/buffer.h"
+#include "memory/object.h"
 
 namespace smile::graphic
 {
@@ -14,7 +15,7 @@ namespace smile::graphic
         BufferUsage Usage = BufferUsage::Default;
     };
 
-    struct IndexBuffer
+    struct IndexBuffer : public memory::Object
     {
         IndexBuffer() = default;
         virtual ~IndexBuffer() = default;

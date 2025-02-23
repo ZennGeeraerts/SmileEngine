@@ -6,12 +6,13 @@
 
 #include "engine/graphic/renderer_api/resource/vertex_buffer.h"
 #include "engine/graphic/renderer_api/resource/index_buffer.h"
+#include "memory/ref.h"
 
 namespace smile::graphic
 {
     struct Mesh final
     {
-        Ref< VertexBuffer > pVertexBuffer = nullptr;
-        Ref< IndexBuffer > pIndexBuffer = nullptr;
+        memory::Ref< VertexBuffer > pVertexBuffer = nullptr;
+        memory::Ref< IndexBuffer > pIndexBuffer = nullptr;
     };
 }

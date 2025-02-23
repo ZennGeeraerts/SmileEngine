@@ -90,9 +90,9 @@ namespace smile::graphic::utils
         }
     }
 
-    std::vector< ShaderVariable > ReflectShaderVariables( const Ref< Shader > &pShader )
+    std::vector< ShaderVariable > ReflectShaderVariables( const memory::Ref< Shader > &pShader )
     {
-        DirectX11Shader *pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
+        auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
         std::vector< ShaderVariable > shaderVariables{};
 
         ID3DX11Effect *pEffect = pDirectX11Shader->pEffect;

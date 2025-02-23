@@ -22,6 +22,6 @@ namespace smile::graphic
 
       private:
         static Ref< Mesh > s_pCubeMesh;
-        static Ref< Shader > s_pSkyboxShader;
+        static memory::Ref< Shader > s_pSkyboxShader;
     };
 }

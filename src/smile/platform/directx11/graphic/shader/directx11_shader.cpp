@@ -68,7 +68,7 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Shader::UploadTexture( const std::string &sementicName, const Ref< Texture > &pTexture )
+    void DirectX11Shader::UploadTexture( const std::string &sementicName, const memory::Ref< Texture > &pTexture )
     {
         auto pTextureVariable = GetEffectVariable( sementicName )->AsShaderResource();
         if ( pTextureVariable->IsValid() )

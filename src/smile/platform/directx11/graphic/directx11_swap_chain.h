@@ -1,6 +1,12 @@
+/*=============================================================================*/
+// Copyright 2022-2025 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
 #pragma once
 #include "engine/graphic/renderer_api/swap_chain.h"
 #include "resource/directx11_frame_buffer.h"
+
+#include "memory/ref.h"
 
 namespace smile::graphic
 {
@@ -35,7 +41,7 @@ namespace smile::graphic
       protected:
         IDXGISwapChain *m_pSwapChain = nullptr;
 
-        Ref< DirectX11Framebuffer > m_pSwapChainTarget = nullptr;
+        memory::Ref< DirectX11Framebuffer > m_pSwapChainTarget = nullptr;
 
         ID3D11RenderTargetView *m_pCurrentRenderTarget = nullptr;
         ID3D11Resource *m_pRenderTargetBuffer = nullptr;

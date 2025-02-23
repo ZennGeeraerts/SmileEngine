@@ -84,7 +84,7 @@ namespace smile::graphic
         }
 
         static bool
-        LoadEffect( ID3D11Device *pDevice, const Ref< DirectX11Shader > &pShader, const std::string &assetFile )
+        LoadEffect( ID3D11Device *pDevice, const memory::Ref< DirectX11Shader > &pShader, const std::string &assetFile )
         {
             HRESULT result{ S_OK };
             ID3D10Blob *pErrorBlob{ nullptr };
@@ -128,8 +128,9 @@ namespace smile::graphic
             return true;
         }
 
-        static void
-        BuildInputLayout( ID3D11Device *pDevice, const Ref< DirectX11Shader > &pShader, const BufferLayout &layout )
+        static void BuildInputLayout( ID3D11Device *pDevice,
+            const memory::Ref< DirectX11Shader > &pShader,
+            const BufferLayout &layout )
         {
             std::vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
             for ( const auto &element : layout )
@@ -158,7 +159,7 @@ namespace smile::graphic
                     fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
         }
 
-        static void BuildInputLayout( ID3D11Device *pDevice, const Ref< DirectX11Shader > &pShader )
+        static void BuildInputLayout( ID3D11Device *pDevice, const memory::Ref< DirectX11Shader > &pShader )
         {
             D3DX11_PASS_SHADER_DESC passShaderDesc{};
             pShader->pTechnique->GetPassByIndex( 0 )->GetVertexShaderDesc( &passShaderDesc );
@@ -321,7 +322,7 @@ namespace smile::graphic
             return true;
         }
 
-        static bool LoadTexture2D( ID3D11Device *pDevice, const Ref< DirectX11Texture2D > &pTexture )
+        static bool LoadTexture2D( ID3D11Device *pDevice, const memory::Ref< DirectX11Texture2D > &pTexture )
         {
             DirectX::TexMetadata info{};
 
@@ -329,7 +330,7 @@ namespace smile::graphic
                 pDevice, pTexture->FilePath, &pTexture->pTexture, &pTexture->pShaderResourceView, info );
         }
 
-        static bool LoadTextureCube( ID3D11Device *pDevice, const Ref< DirectX11TextureCube > &pTexture )
+        static bool LoadTextureCube( ID3D11Device *pDevice, const memory::Ref< DirectX11TextureCube > &pTexture )
         {
             DirectX::TexMetadata info{};
             info.miscFlags = DirectX::TEX_MISC_TEXTURECUBE;
@@ -425,9 +426,9 @@ namespace smile::graphic
         SAFE_RELEASE( m_pInternal );
     }
 
-    Ref< VertexBuffer > DirectX11Device::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
+    memory::Ref< VertexBuffer > DirectX11Device::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
     {
-        Ref< DirectX11VertexBuffer > pVertexBuffer = CreateRef< DirectX11VertexBuffer >();
+        memory::Ref< DirectX11VertexBuffer > pVertexBuffer = memory::CreateRef< DirectX11VertexBuffer >();
         pVertexBuffer->Stride = vertexBufferDesc.Stride;
 
         D3D11_BUFFER_DESC bufferDesc = {};
@@ -460,9 +461,9 @@ namespace smile::graphic
         return pVertexBuffer;
     }
 
-    Ref< IndexBuffer > DirectX11Device::CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
+    memory::Ref< IndexBuffer > DirectX11Device::CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
     {
-        Ref< DirectX11IndexBuffer > pIndexBuffer = CreateRef< DirectX11IndexBuffer >();
+        memory::Ref< DirectX11IndexBuffer > pIndexBuffer = memory::CreateRef< DirectX11IndexBuffer >();
         pIndexBuffer->Count = indexBufferDesc.Count;
 
         D3D11_BUFFER_DESC bufferDesc = {};
@@ -486,11 +487,11 @@ namespace smile::graphic
         return pIndexBuffer;
     }
 
-    Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
+    memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
         const BufferLayout &layout,
         const std::string &techniqueName )
     {
-        Ref< DirectX11Shader > pShader = CreateRef< DirectX11Shader >();
+        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >();
         pShader->SetName( assetFile );
         pShader->BufferLayout = layout;
 
@@ -513,9 +514,10 @@ namespace smile::graphic
         return pShader;
     }
 
-    Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile, const std::string &techniqueName )
+    memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
+        const std::string &techniqueName )
     {
-        Ref< DirectX11Shader > pShader = CreateRef< DirectX11Shader >();
+        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >();
         pShader->SetName( assetFile );
 
         if ( !shaderhelpers::LoadEffect( m_pInternal, pShader, assetFile ) )
@@ -537,9 +539,9 @@ namespace smile::graphic
         return pShader;
     }
 
-    Ref< Texture > DirectX11Device::CreateTexture2D( const std::string &filePath )
+    memory::Ref< Texture > DirectX11Device::CreateTexture2D( const std::string &filePath )
     {
-        Ref< DirectX11Texture2D > pTexture = CreateRef< DirectX11Texture2D >();
+        memory::Ref< DirectX11Texture2D > pTexture = memory::CreateRef< DirectX11Texture2D >();
         pTexture->FilePath = filePath;
 
         if ( !texturehelpers::LoadTexture2D( m_pInternal, pTexture ) )
@@ -559,9 +561,9 @@ namespace smile::graphic
         return pTexture;
     }
 
-    Ref< Texture > DirectX11Device::CreateTextureCube( const std::string &filePath )
+    memory::Ref< Texture > DirectX11Device::CreateTextureCube( const std::string &filePath )
     {
-        Ref< DirectX11TextureCube > pTexture = CreateRef< DirectX11TextureCube >();
+        memory::Ref< DirectX11TextureCube > pTexture = memory::CreateRef< DirectX11TextureCube >();
         pTexture->FilePath = filePath;
 
         if ( !texturehelpers::LoadTextureCube( m_pInternal, pTexture ) )
@@ -581,9 +583,9 @@ namespace smile::graphic
         return pTexture;
     }
 
-    Ref< Framebuffer > DirectX11Device::CreateFramebuffer( const FramebufferDescriptor &descriptor )
+    memory::Ref< Framebuffer > DirectX11Device::CreateFramebuffer( const FramebufferDescriptor &descriptor )
     {
-        Ref< DirectX11Framebuffer > pFramebuffer = CreateRef< DirectX11Framebuffer >();
+        memory::Ref< DirectX11Framebuffer > pFramebuffer = memory::CreateRef< DirectX11Framebuffer >();
         pFramebuffer->Descriptor = descriptor;
 
         for ( const auto &framebufferTextureData : descriptor.Attachments.Attachments )
@@ -599,9 +601,9 @@ namespace smile::graphic
         return pFramebuffer;
     }
 
-    Ref< RasterizerState > DirectX11Device::CreateRasterizerState( const RasterizerStateDescriptor &descriptor )
+    memory::Ref< RasterizerState > DirectX11Device::CreateRasterizerState( const RasterizerStateDescriptor &descriptor )
     {
-        Ref< DirectX11RasterizerState > pRasterizerState = CreateRef< DirectX11RasterizerState >();
+        memory::Ref< DirectX11RasterizerState > pRasterizerState = memory::CreateRef< DirectX11RasterizerState >();
 
         D3D11_RASTERIZER_DESC rasterizerDesc = {};
         rasterizerDesc.CullMode = rasterizerstatehelpers::CullModeToDirectXType( descriptor.CullMode );
@@ -618,9 +620,9 @@ namespace smile::graphic
         return pRasterizerState;
     }
 
-    void DirectX11Device::InvalidateFramebuffer( const Ref< Framebuffer > &pFramebuffer )
+    void DirectX11Device::InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer )
     {
-        Ref< DirectX11Framebuffer > pD11Framebuffer = std::static_pointer_cast< DirectX11Framebuffer >( pFramebuffer );
+        memory::Ref< DirectX11Framebuffer > pD11Framebuffer = memory::Ref< DirectX11Framebuffer >{ pFramebuffer };
 
         for ( Uint32 i{}; i < pD11Framebuffer->pRenderTargetViews.size(); ++i )
             SAFE_RELEASE( pD11Framebuffer->pRenderTargetViews[i] );
@@ -824,7 +826,8 @@ namespace smile::graphic
         viewPort.TopLeftY = 0.0f;
     }
 
-    void DirectX11Device::ResizeFramebuffer( const Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height )
+    void
+    DirectX11Device::ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height )
     {
         if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
              ( height > pFramebuffer->MaxFramebufferSize ) )

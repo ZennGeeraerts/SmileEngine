@@ -324,7 +324,7 @@ namespace smile
 
         const float iconSize{ ImGui::GetWindowHeight() - 4.f };
         {
-            Ref< graphic::Texture > pStateIcon =
+            memory::Ref< graphic::Texture > pStateIcon =
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) ? m_pIconPlay
                                                                                              : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
@@ -342,7 +342,7 @@ namespace smile
         }
         ImGui::SameLine();
         {
-            Ref< graphic::Texture > pStateIcon =
+            memory::Ref< graphic::Texture > pStateIcon =
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play ) ? m_pIconSimulate
                                                                                          : m_pIconStop;
             if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),

@@ -49,7 +49,7 @@ namespace smile
             std::string fileName = path.filename().string();
 
             ImGui::PushID( fileName.c_str() );
-            Ref< graphic::Texture > pIcon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
+            memory::Ref< graphic::Texture > pIcon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
             ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
             ImGui::ImageButton( pIcon->GetData(), { thumbnailSize, thumbnailSize } );
 

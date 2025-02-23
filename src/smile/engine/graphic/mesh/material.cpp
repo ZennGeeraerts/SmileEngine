@@ -9,7 +9,7 @@
 
 namespace smile::graphic
 {
-    Material::Material( const Ref< Shader > &shader ) : m_pShader{ shader }
+    Material::Material( const memory::Ref< Shader > &shader ) : m_pShader{ shader }
     {
         SetShader( shader );
     }
@@ -24,7 +24,7 @@ namespace smile::graphic
         m_Texture2DValues.clear();
     }
 
-    void Material::SetShader( const Ref< Shader > &pShader )
+    void Material::SetShader( const memory::Ref< Shader > &pShader )
     {
         m_pShader = pShader;
 
@@ -115,7 +115,7 @@ namespace smile::graphic
         m_pShader->UploadFloat3( semantic, value );
     }
 
-    void Material::SetTexture2D( const std::string &semantic, const Ref< Texture > &value )
+    void Material::SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &value )
     {
         if ( m_Texture2DValues.find( semantic ) == m_Texture2DValues.end() )
         {
@@ -130,8 +130,7 @@ namespace smile::graphic
     float Material::GetFloatValue( const std::string &semantic ) const
     {
         auto it = m_FloatValues.find( semantic );
-        SM_ASSERT(
-            it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
+        SM_ASSERT( it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }
@@ -155,8 +154,7 @@ namespace smile::graphic
     const DirectX::XMFLOAT2 &Material::GetFloat2Value( const std::string &semantic ) const
     {
         auto it = m_Float2Values.find( semantic );
-        SM_ASSERT(
-            it != m_Float2Values.end(), "Material::GetFloat2Value > Couldn't find semantic: %s", semantic );
+        SM_ASSERT( it != m_Float2Values.end(), "Material::GetFloat2Value > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }
@@ -164,8 +162,7 @@ namespace smile::graphic
     const DirectX::XMFLOAT3 &Material::GetFloat3Value( const std::string &semantic ) const
     {
         auto it = m_Float3Values.find( semantic );
-        SM_ASSERT(
-            it != m_Float3Values.end(), "Material::GetFloat3Value > Couldn't find semantic: %s", semantic );
+        SM_ASSERT( it != m_Float3Values.end(), "Material::GetFloat3Value > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }

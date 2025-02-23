@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "memory/object.h"
+
 #include <DirectXMath.h>
 
 namespace smile::graphic
@@ -52,7 +54,7 @@ namespace smile::graphic
         bool IsSwapChainTarget = false;
     };
 
-    struct Framebuffer
+    struct Framebuffer : public memory::Object
     {
         Framebuffer() = default;
         virtual ~Framebuffer() = default;

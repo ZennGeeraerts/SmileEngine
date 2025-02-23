@@ -3,7 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/common/foundation/compiled.h"
+#include "foundation/compiled.h"
+#include "memory/object.h"
 
 namespace smile::graphic
 {
@@ -33,7 +34,7 @@ namespace smile::graphic
         TextureViewAccess Access = TextureViewAccess::None;
     };
 
-    class TextureView
+    class TextureView : public memory::Object
     {
       public:
         TextureView( const TextureViewDescriptor &desc ) : m_Descriptor{ desc }

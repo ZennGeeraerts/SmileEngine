@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "engine/graphic/renderer_api/shader/buffer.h"
+#include "memory/object.h"
 
 namespace smile::graphic
 {
@@ -16,7 +17,7 @@ namespace smile::graphic
         BufferCPUAccess CPUAccess = BufferCPUAccess::None;
     };
 
-    struct VertexBuffer
+    struct VertexBuffer : public memory::Object
     {
         VertexBuffer() = default;
         virtual ~VertexBuffer() = default;

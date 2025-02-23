@@ -58,8 +58,7 @@ namespace smile::graphic
         framebufferDesc.Samples = 1;
         framebufferDesc.Attachments = { { FramebufferTextureFormat::Depth24Stencil8, false } };
 
-        m_pSwapChainTarget =
-            std::static_pointer_cast< DirectX11Framebuffer >( pDevice->CreateFramebuffer( framebufferDesc ) );
+        m_pSwapChainTarget = memory::Ref< DirectX11Framebuffer >{ pDevice->CreateFramebuffer( framebufferDesc ) };
 
         // Create the RenderTargetView
         result = m_pSwapChain->GetBuffer(

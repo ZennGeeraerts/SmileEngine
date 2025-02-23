@@ -5,6 +5,7 @@
 #pragma once
 
 #include "engine/graphic/renderer_api/resource/texture.h"
+#include "memory/ref.h"
 
 #include <DirectXMath.h>
 
@@ -19,6 +20,6 @@ namespace smile::graphic::ecs
         }
 
         DirectX::XMFLOAT4 Color = { 1.f, 1.f, 1.f, 1.f };
-        Ref< Texture > pTexture = nullptr;
+        memory::Ref< Texture > pTexture = nullptr;
     };
 }

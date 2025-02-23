@@ -177,7 +177,7 @@ void ExampleLayer::OnAttach()
     auto pDevice = smile::graphic::RenderCommand::GetGraphicsDevice();
     auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
     auto pMaterial = smile::CreateRef< smile::graphic::Material >( pShader );
-    smile::Ref< smile::graphic::Texture > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
+    smile::memory::Ref< smile::graphic::Texture > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
     m_ModelEntity = m_pActiveWorld->CreateEntity( "Model" );

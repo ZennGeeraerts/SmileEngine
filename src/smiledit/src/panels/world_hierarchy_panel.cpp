@@ -692,8 +692,7 @@ namespace smile::world
                         if ( ImGui::Selectable( collisionDetectionStrs[i], isSelected ) )
                         {
                             currentCollisionDetectionStr = collisionDetectionStrs[i];
-                            rigidbodyComponent.CollisionDetection =
-                                static_cast< physics::CollisionDetectionType >( i );
+                            rigidbodyComponent.CollisionDetection = static_cast< physics::CollisionDetectionType >( i );
                         }
 
                         if ( isSelected )
@@ -798,8 +797,6 @@ namespace smile::world
                     const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                     if ( pPayload )
                     {
-                        spriteRendererComponent.pTexture.reset();
-
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path texturePath = std::filesystem::path{ path };
                         spriteRendererComponent.pTexture =
@@ -861,7 +858,7 @@ namespace smile::world
 
     void WorldHierarchyPanel::DrawMaterial( const Ref< graphic::Material > &pMaterial )
     {
-        const Ref< graphic::Shader > &pShader = pMaterial->GetShader();
+        const memory::Ref< graphic::Shader > &pShader = pMaterial->GetShader();
         ImGui::Text( "Material" );
 
         ImGui::Button( pShader->Name.c_str(), { 100.f, 0.0f } );

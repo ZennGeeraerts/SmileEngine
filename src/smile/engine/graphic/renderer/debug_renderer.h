@@ -40,8 +40,8 @@ namespace smile::graphic
         };
 
         std::vector< VertexPosCol > m_LineList{};
-        Ref< VertexBuffer > m_pVertexBuffer;
-        Ref< Shader > m_pShader;
+        memory::Ref< VertexBuffer > m_pVertexBuffer;
+        memory::Ref< Shader > m_pShader;
 
         DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
 

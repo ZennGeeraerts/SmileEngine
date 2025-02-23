@@ -29,9 +29,9 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Context::Draw( Uint32 vertexCount, const Ref< Shader > &pShader )
+    void DirectX11Context::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
     {
-        auto pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
+        auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
         SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::Draw > Shader is not a DirectX11Shader" );
 
         auto pTechnique = pDirectX11Shader->pTechnique;
@@ -44,9 +44,9 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Context::DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader )
+    void DirectX11Context::DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader )
     {
-        auto pDirectX11Shader = static_cast< DirectX11Shader * >( pShader.get() );
+        auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
         SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::DrawIndexed > Shader is not a DirectX11Shader" );
 
         auto pTechnique = pDirectX11Shader->pTechnique;
@@ -59,7 +59,7 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Context::Clear( const DirectX::XMFLOAT4& clearColor )
+    void DirectX11Context::Clear( const DirectX::XMFLOAT4 &clearColor )
     {
         auto pRenderTargetView = m_pSwapChain->GetRenderTargetView();
         m_pInternal->OMSetRenderTargets( 1, &pRenderTargetView, m_pSwapChain->GetDepthStencilView() );
@@ -70,7 +70,7 @@ namespace smile::graphic
             m_pSwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11Context::BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const
+    void DirectX11Context::BindVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer ) const
     {
         Uint32 offset{ 0 };
         ID3D11Buffer *pInternalBuffer = static_cast< ID3D11Buffer * >( pVertexBuffer->GetInternal() );
@@ -82,7 +82,7 @@ namespace smile::graphic
         m_pInternal->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
     }
 
-    void DirectX11Context::BindIndexBuffer( const Ref< IndexBuffer > &pIndexBuffer ) const
+    void DirectX11Context::BindIndexBuffer( const memory::Ref< IndexBuffer > &pIndexBuffer ) const
     {
         ID3D11Buffer *pInternalBuffer = static_cast< ID3D11Buffer * >( pIndexBuffer->GetInternal() );
         m_pInternal->IASetIndexBuffer( pInternalBuffer, DXGI_FORMAT_R32_UINT, 0 );
@@ -93,7 +93,7 @@ namespace smile::graphic
         m_pInternal->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
     }
 
-    void DirectX11Context::BindShader( const Ref< Shader > &pShader ) const
+    void DirectX11Context::BindShader( const memory::Ref< Shader > &pShader ) const
     {
         ID3D11InputLayout *pInputLayout = static_cast< ID3D11InputLayout * >( pShader->GetData() );
         m_pInternal->IASetInputLayout( pInputLayout );
@@ -104,7 +104,7 @@ namespace smile::graphic
         m_pInternal->IASetInputLayout( nullptr );
     }
 
-    void DirectX11Context::BindFramebuffer( const Ref< Framebuffer > &pFramebuffer ) const
+    void DirectX11Context::BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const
     {
         auto pRenderTargetViews =
             static_cast< ID3D11RenderTargetView *const * >( pFramebuffer->GetRenderTargetViews() );
@@ -123,7 +123,7 @@ namespace smile::graphic
         m_pInternal->RSSetViewports( 1, &m_pSwapChain->GetViewport() );
     }
 
-    void DirectX11Context::ClearFramebuffer( const Ref< Framebuffer > &pFramebuffer )
+    void DirectX11Context::ClearFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer )
     {
         const float *pClearColor = reinterpret_cast< const float * >( &pFramebuffer->ClearColor );
         auto pRenderTargetViews =
@@ -139,7 +139,7 @@ namespace smile::graphic
             m_pInternal->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11Context::BindRasterizerState( const Ref< RasterizerState > &pRasterizerState ) const
+    void DirectX11Context::BindRasterizerState( const memory::Ref< RasterizerState > &pRasterizerState ) const
     {
         ID3D11RasterizerState *pD11RasterizerState =
             static_cast< ID3D11RasterizerState * >( pRasterizerState->GetInternal() );
@@ -177,7 +177,7 @@ namespace smile::graphic
         m_pInternal->IASetPrimitiveTopology( D3D_PRIMITIVE_TOPOLOGY_UNDEFINED );
     }
 
-    void DirectX11Context::FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer,
+    void DirectX11Context::FillVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer,
         void *pData,
         Uint32 vertexCount ) const
     {
