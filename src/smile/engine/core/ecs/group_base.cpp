@@ -18,11 +18,11 @@ namespace smile::ecs
 
     void GroupBase::AddEntity( EntityHandleType entityHandle )
     {
-        if ( ContainsEntity( entityHandle ) )
+        if ( ContainsEntity( entityHandle ) && m_EndIndex != 0 )
         {
-            for ( auto pComponent : m_pOwnedPools )
+            for ( auto pCPool : m_pOwnedPools )
             {
-                pComponent->Swap( pComponent->GetIndex( entityHandle ), m_EndIndex - 1 );
+                pCPool->Swap( pCPool->GetIndex( entityHandle ), m_EndIndex - 1 );
             }
 
             ++m_EndIndex;
@@ -33,9 +33,9 @@ namespace smile::ecs
     {
         if ( ContainsEntity( entityHandle ) )
         {
-            for ( auto pComponent : m_pOwnedPools )
+            for ( auto pCPool : m_pOwnedPools )
             {
-                pComponent->Swap( pComponent->GetIndex( entityHandle ), m_EndIndex - 1 );
+                pCPool->Swap( pCPool->GetIndex( entityHandle ), m_EndIndex - 1 );
             }
 
             --m_EndIndex;

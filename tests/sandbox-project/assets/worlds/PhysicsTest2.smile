@@ -266,10 +266,38 @@ Entities:
       Tag: Character
     TransformComponent:
       Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1.00000011e-06, 1, 1]
+      Rotation: [0, 1.57079637, 0]
+      Scale: [0.5, 0.5, 0.5]
     ScriptComponent:
       ClassName: Sandbox.Player
+    SkinnedMeshRendererComponent:
+      Model: meshes\model.dae
+      MeshIndex: 0
+      Material:
+        FloatValues:
+          METALNESS: 1
+          ROUGHNESS: 0.5
+        IntValues:
+          {}
+        BoolValues:
+          USEALBEDOMAP: false
+          USENORMALMAP: false
+          USEAOMAP: false
+          USEMETALNESSMAP: false
+          USEROUGHNESSMAP: false
+        Float2Values:
+          {}
+        Float3Values:
+          ALBEDO: [1, 0, 0]
+        Texture2DValues:
+          ALBEDOMAP: ""
+          NORMALMAP: ""
+          METALNESSMAP: ""
+          ROUGHNESSMAP: ""
+          AOMap: ""
+    AnimatorComponent:
+      Model: meshes\model.dae
+      ClipIndex: 0
     CharacterControllerComponent:
       Radius: 2
       Height: 5
