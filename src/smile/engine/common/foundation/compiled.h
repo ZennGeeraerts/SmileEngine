@@ -22,15 +22,6 @@
 #    error SmileEngine only supports Windows
 #endif
 
-#ifdef SM_C_DEBUG
-#    ifdef SM_PLATFORM_WINDOWS
-#        define SM_DEBUGBREAK() __debugbreak()
-#    else
-#        error "Platform doesn't support debugbreak"
-#    endif
-#    define SM_ENABLE_ASSERTS
-#endif
-
 #define BIT( x ) ( 1 << x )
 #define SM_BIND_EVENT_FN( fn ) std::bind( &fn, this, std::placeholders::_1 )
 #define SAFE_DELETE( p )                                                                                               \
@@ -57,15 +48,6 @@ namespace smile
         return std::make_unique< Type >( std::forward< Args >( args )... );
     }
 
-    template < typename Type >
-    using Ref = std::shared_ptr< Type >;
-
-    template < typename Type, typename... Args >
-    constexpr Ref< Type > CreateRef( Args... args )
-    {
-        return std::make_shared< Type >( std::forward< Args >( args )... );
-    }
-
     using Uint64 = uint64_t;
     using Uint32 = uint32_t;
     using Uint16 = uint16_t;
@@ -79,5 +61,4 @@ namespace smile
     using Byte = unsigned char;
 }
 
-#include "logging/logging.h"
-#include "assert.h"
+#include "foundation/assert.h"

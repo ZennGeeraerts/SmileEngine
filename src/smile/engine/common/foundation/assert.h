@@ -1,19 +1,32 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
 #include "compiled.h"
-#include "logging/logging.h"
+
+namespace smile::foundation
+{
+    void
+    HandleAssert( const char *condition, const char *message, const char *file, const int line, const char *function );
+}
+
+#ifdef SM_C_DEBUG
+#    ifdef SM_PLATFORM_WINDOWS
+#        define SM_DEBUGBREAK() __debugbreak()
+#    else
+#        error "Platform doesn't support debugbreak"
+#    endif
+#    define SM_ENABLE_ASSERTS
+#endif
 
 #ifdef SM_ENABLE_ASSERTS
-#    define SM_ASSERT( x, ... )                                                                                        \
+#    define SM_ASSERT( condition, message )                                                                            \
         {                                                                                                              \
-            if ( !( x ) )                                                                                              \
+            if ( !( condition ) )                                                                                      \
             {                                                                                                          \
-                SM_LOG_ERROR( "Assertion Failed: {}", __VA_ARGS__ );                                                   \
-                SM_DEBUGBREAK();                                                                                       \
+                smile::foundation::HandleAssert( #condition, message, __FILE__, __LINE__, __FUNCTION__ );              \
             }                                                                                                          \
         }
 #else
