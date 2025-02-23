@@ -187,7 +187,7 @@ namespace smile::memory
     };  
 
     template < typename Object, typename... Args >
-    Ref< Object > CreateRef( Args &&...args )
+    constexpr Ref< Object > CreateRef( Args &&...args )
     {
         return Ref< Object >{ new Object( std::forward< Args >( args )... ) };
     }
