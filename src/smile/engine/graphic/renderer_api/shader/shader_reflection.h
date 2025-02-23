@@ -16,6 +16,6 @@ namespace smile::graphic
 
     namespace utils
     {
-        std::vector< ShaderVariable > ReflectShaderVariables( const Ref< Shader > &pShader );
+        std::vector< ShaderVariable > ReflectShaderVariables( const memory::Ref< Shader > &pShader );
     }
 }

@@ -22,15 +22,6 @@
 #    error SmileEngine only supports Windows
 #endif
 
-#ifdef SM_C_DEBUG
-#    ifdef SM_PLATFORM_WINDOWS
-#        define SM_DEBUGBREAK() __debugbreak()
-#    else
-#        error "Platform doesn't support debugbreak"
-#    endif
-#    define SM_ENABLE_ASSERTS
-#endif
-
 #define BIT( x ) ( 1 << x )
 #define SM_BIND_EVENT_FN( fn ) std::bind( &fn, this, std::placeholders::_1 )
 #define SAFE_DELETE( p )                                                                                               \
@@ -79,5 +70,4 @@ namespace smile
     using Byte = unsigned char;
 }
 
-#include "logging/logging.h"
-#include "assert.h"
+#include "foundation/assert.h"

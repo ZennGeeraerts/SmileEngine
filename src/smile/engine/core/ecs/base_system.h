@@ -4,11 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
+#include "memory/object.h"
+
 namespace smile::ecs
 {
     class ECSEngine;
 
-    class BaseSystem
+    class BaseSystem : public memory::Object
     {
       public:
         BaseSystem() = default;

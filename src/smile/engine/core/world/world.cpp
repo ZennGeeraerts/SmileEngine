@@ -37,16 +37,16 @@ namespace smile::world
         smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::CameraSystem >();
 
-        auto pEditorState = CreateRef< smile::ecs::state::State >();
+        auto pEditorState = memory::CreateRef< smile::ecs::state::State >();
         pEditorState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         m_StateManager.AddState( "editor", pEditorState );
 
-        auto pSimulateState = CreateRef< smile::ecs::state::State >();
+        auto pSimulateState = memory::CreateRef< smile::ecs::state::State >();
         pSimulateState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
         m_StateManager.AddState( "simulate", pSimulateState );
 
-        auto pRuntimeState = CreateRef< smile::ecs::state::State >();
+        auto pRuntimeState = memory::CreateRef< smile::ecs::state::State >();
         pRuntimeState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
@@ -317,8 +317,8 @@ namespace smile::world
     {
         Entity entity = GetEntityByUUID( entityID );
 
-        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
-            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
+        memory::Ref< physics::ecs::PhysicsSystem > pPhysicsSystem{
+            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) };
 
         Ref< physics::Rigidbody > pRigidbody = pPhysicsSystem->GetRigidbody( entityID );
         pRigidbody->AddForce( force, autoAwake );
@@ -329,8 +329,8 @@ namespace smile::world
     {
         Entity entity = GetEntityByUUID( entityID );
 
-        auto pPhysicsSystem = std::dynamic_pointer_cast< physics::ecs::PhysicsSystem >(
-            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) );
+        memory::Ref< physics::ecs::PhysicsSystem > pPhysicsSystem{
+            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) };
 
         Ref< physics::CharacterController > pCharacterController = pPhysicsSystem->GetCharacterController( entityID );
         auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();

@@ -68,8 +68,6 @@ namespace smile::graphic
 
     void DebugRenderer::CreateVertexBuffer()
     {
-        m_pVertexBuffer.reset();
-
         VertexBufferDescriptor descriptor{};
         descriptor.Usage = BufferUsage::Dynamic;
         descriptor.Stride = sizeof( VertexPosCol );

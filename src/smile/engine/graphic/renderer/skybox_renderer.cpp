@@ -12,13 +12,13 @@
 namespace smile::graphic
 {
     Ref< Mesh > SkyboxRenderer::s_pCubeMesh = nullptr;
-    Ref< Shader > SkyboxRenderer::s_pSkyboxShader = nullptr;
+    memory::Ref< Shader > SkyboxRenderer::s_pSkyboxShader = nullptr;
 
     void SkyboxRenderer::Initialize()
     {
         auto pDevice = RenderCommand::GetGraphicsDevice();
 
-        Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "resources/textures/SkyBox.dds" );
+        memory::Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "resources/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
         s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture );

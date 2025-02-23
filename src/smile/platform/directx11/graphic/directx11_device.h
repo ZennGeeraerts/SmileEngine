@@ -22,19 +22,20 @@ namespace smile::graphic
             return m_pInternal;
         }
 
-        Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) override;
-        Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) override;
-        Ref< Shader > CreateShader( const std::string &assetFile,
+        memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) override;
+        memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) override;
+        memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) override;
-        Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" ) override;
-        Ref< Texture > CreateTexture2D( const std::string &filePath ) override;
-        Ref< Texture > CreateTextureCube( const std::string &filePath ) override;
-        Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) override;
-        Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) override;
+        memory::Ref< Shader > CreateShader( const std::string &assetFile,
+            const std::string &techniqueName = "" ) override;
+        memory::Ref< Texture > CreateTexture2D( const std::string &filePath ) override;
+        memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) override;
+        memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) override;
+        memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) override;
 
-        void InvalidateFramebuffer( const Ref< Framebuffer > &pFramebuffer ) override;
-        void ResizeFramebuffer( const Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) override;
+        void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
+        void ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) override;
 
       private:
         ID3D11Device *m_pInternal = nullptr;

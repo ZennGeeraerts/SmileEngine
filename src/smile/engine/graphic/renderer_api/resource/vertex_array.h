@@ -9,7 +9,7 @@
 
 namespace smile::graphic
 {
-    class VertexArray
+    class VertexArray : public memory::Object
     {
       public:
         virtual ~VertexArray() = default;

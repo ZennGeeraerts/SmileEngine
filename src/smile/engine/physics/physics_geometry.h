@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/core/geometric/box.h"
-#include "engine/core/geometric/sphere.h"
-#include "engine/core/geometric/capsule.h"
+#include "geometric/box.h"
+#include "geometric/sphere.h"
+#include "geometric/capsule.h"
 
 namespace smile::physics
 {

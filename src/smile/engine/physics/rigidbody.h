@@ -7,10 +7,6 @@
 #include "foundation/pimpl.h"
 #include "physics_shape.h"
 
-#include "ecs/box_collider_component.h"
-#include "ecs/sphere_collider_component.h"
-#include "ecs/capsule_collider_component.h"
-
 #include <DirectXMath.h>
 
 namespace smile::physics

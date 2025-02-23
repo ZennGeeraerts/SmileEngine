@@ -33,9 +33,9 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, cameraTransformMat );
     }
 
-    void ForwardRenderer::Submit( const Ref< VertexBuffer > &pVertexBuffer,
-        const Ref< IndexBuffer > &pIndexBuffer,
-        const Ref< Shader > &pShader,
+    void ForwardRenderer::Submit( const memory::Ref< VertexBuffer > &pVertexBuffer,
+        const memory::Ref< IndexBuffer > &pIndexBuffer,
+        const memory::Ref< Shader > &pShader,
         const DirectX::XMFLOAT4X4 &worldTransform )
     {
         s_RenderCollector.DrawList.emplace_back( DrawCommand{ pVertexBuffer, pIndexBuffer, pShader, worldTransform } );

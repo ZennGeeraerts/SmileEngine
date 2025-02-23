@@ -8,6 +8,8 @@
 #include "engine/graphic/renderer_api/resource/index_buffer.h"
 #include "engine/graphic/renderer_api/shader/shader.h"
 
+#include "memory/ref.h"
+
 #include <vector>
 #include <DirectXMath.h>
 
@@ -15,9 +17,9 @@ namespace smile::graphic
 {
     struct DrawCommand final
     {
-        Ref< VertexBuffer > pVertexBuffer;
-        Ref< IndexBuffer > pIndexBuffer;
-        Ref< Shader > pShader;
+        memory::Ref< VertexBuffer > pVertexBuffer;
+        memory::Ref< IndexBuffer > pIndexBuffer;
+        memory::Ref< Shader > pShader;
         DirectX::XMFLOAT4X4 WorldTransform;
     };
 

@@ -51,13 +51,13 @@ namespace smile
 
             ecs::ECSEngine engine;
 
-            auto pTestSystem = CreateRef< TestSystem >();
+            auto pTestSystem = memory::CreateRef< TestSystem >();
             engine.AddSystem( pTestSystem );
 
-            auto pDefaultState = CreateRef< ecs::state::State >();
-            auto pFooState = CreateRef< ecs::state::State >();
-            auto pBarState = CreateRef< ecs::state::State >();
-            auto pFullState = CreateRef< ecs::state::State >();
+            auto pDefaultState = memory::CreateRef< ecs::state::State >();
+            auto pFooState = memory::CreateRef< ecs::state::State >();
+            auto pBarState = memory::CreateRef< ecs::state::State >();
+            auto pFullState = memory::CreateRef< ecs::state::State >();
 
             pFooState->AddSystem( std::string{ TestFooSystem::GetStaticName() } );
             pBarState->AddSystem( std::string{ TestBarSystem::GetStaticName() } );

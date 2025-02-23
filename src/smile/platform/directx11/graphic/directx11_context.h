@@ -26,26 +26,27 @@ namespace smile::graphic
             return m_pInternal;
         }
 
-        void Draw( Uint32 vertexCount, const Ref< Shader > &pShader ) override;
-        void DrawIndexed( Uint32 indexCount, const Ref< Shader > &pShader ) override;
+        void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
+        void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
         void Clear( const DirectX::XMFLOAT4 &clearColor ) override;
 
-        void BindVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer ) const override;
+        void BindVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer ) const override;
         void UnbindVertexBuffer() const override;
-        void BindIndexBuffer( const Ref< IndexBuffer > &pIndexBuffer ) const override;
+        void BindIndexBuffer( const memory::Ref< IndexBuffer > &pIndexBuffer ) const override;
         void UnbindIndexBuffer() const override;
-        void BindShader( const Ref< Shader > &pShader ) const override;
+        void BindShader( const memory::Ref< Shader > &pShader ) const override;
         void UnbindShader() const override;
-        void BindFramebuffer( const Ref< Framebuffer > &pFramebuffer ) const override;
+        void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const override;
         void UnbindFramebuffer() const override;
-        void ClearFramebuffer( const Ref< Framebuffer > &pFramebuffer ) override;
-        void BindRasterizerState( const Ref< RasterizerState > &pRasterizerState ) const override;
+        void ClearFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
+        void BindRasterizerState( const memory::Ref< RasterizerState > &pRasterizerState ) const override;
         void UnbindRasterizerState() const override;
         void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
         void UnbindPrimitiveTopology() const override;
 
-        void
-        FillVertexBuffer( const Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const override;
+        void FillVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer,
+            void *pData,
+            Uint32 vertexCount ) const override;
 
       private:
         ID3D11DeviceContext *m_pInternal = nullptr;

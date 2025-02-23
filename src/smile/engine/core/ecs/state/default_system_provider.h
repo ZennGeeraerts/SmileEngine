@@ -16,9 +16,9 @@ namespace smile::ecs::state
         }
         ~DefaultSystemProvider() = default;
 
-        Ref< BaseSystem > Create() override
+        memory::Ref< BaseSystem > Create() override
         {
-            return Ref< BaseSystem >{ std::apply( Construct, m_Args ) };
+            return memory::Ref< BaseSystem >{ std::apply( Construct, m_Args ) };
         }
 
         static ItemType *Construct( Args &...args )

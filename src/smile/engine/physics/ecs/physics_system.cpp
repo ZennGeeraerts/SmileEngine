@@ -12,6 +12,9 @@
 
 #include "rigidbody_component.h"
 #include "character_controller_component.h"
+#include "box_collider_component.h"
+#include "sphere_collider_component.h"
+#include "capsule_collider_component.h"
 
 #include "engine/physics/physics_engine.h"
 

@@ -7,6 +7,7 @@
 #include "engine/graphic/renderer_api/shader/shader.h"
 #include "engine/graphic/renderer_api/shader/shader_reflection.h"
 #include "engine/graphic/renderer_api/resource/texture.h"
+#include "memory/ref.h"
 
 #include <DirectXMath.h>
 
@@ -15,16 +16,16 @@ namespace smile::graphic
     class Material final
     {
       public:
-        Material( const Ref< Shader > &pShader );
+        Material( const memory::Ref< Shader > &pShader );
         ~Material();
 
-        void SetShader( const Ref< Shader > &pShader );
+        void SetShader( const memory::Ref< Shader > &pShader );
 
         const BufferLayout &GetBufferLayout() const
         {
             return m_pShader->BufferLayout;
         }
-        const Ref< Shader > &GetShader() const
+        const memory::Ref< Shader > &GetShader() const
         {
             return m_pShader;
         }
@@ -34,7 +35,7 @@ namespace smile::graphic
         void SetBoolValue( const std::string &semantic, bool value );
         void SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
         void SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
-        void SetTexture2D( const std::string &semantic, const Ref< Texture > &value );
+        void SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &value );
 
         float GetFloatValue( const std::string &semantic ) const;
         int GetIntValue( const std::string &semantic ) const;
@@ -62,7 +63,7 @@ namespace smile::graphic
         {
             return m_Float3Values;
         }
-        const std::unordered_map< std::string, Ref< Texture > > &GetTexture2DValues() const
+        const std::unordered_map< std::string, memory::Ref< Texture > > &GetTexture2DValues() const
         {
             return m_Texture2DValues;
         }
@@ -73,8 +74,8 @@ namespace smile::graphic
         std::unordered_map< std::string, bool > m_BoolValues{};
         std::unordered_map< std::string, DirectX::XMFLOAT2 > m_Float2Values{};
         std::unordered_map< std::string, DirectX::XMFLOAT3 > m_Float3Values{};
-        std::unordered_map< std::string, Ref< Texture > > m_Texture2DValues{};
+        std::unordered_map< std::string, memory::Ref< Texture > > m_Texture2DValues{};
 
-        Ref< Shader > m_pShader = nullptr;
+        memory::Ref< Shader > m_pShader = nullptr;
     };
 }

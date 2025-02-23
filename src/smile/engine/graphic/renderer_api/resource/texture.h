@@ -4,12 +4,14 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/foundation/compiled.h"
+#include "foundation/compiled.h"
+#include "memory/object.h"
+
 #include <string>
 
 namespace smile::graphic
 {
-    struct Texture
+    struct Texture : public memory::Object
     {
         Texture() = default;
         virtual ~Texture() = default;

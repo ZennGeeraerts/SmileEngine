@@ -12,9 +12,9 @@ namespace smile::graphic
 {
     struct Renderer2DStorage final
     {
-        Ref< VertexBuffer > pQuadVertexBuffer;
-        Ref< IndexBuffer > pQuadIndexBuffer;
-        Ref< Shader > pShader;
+        memory::Ref< VertexBuffer > pQuadVertexBuffer;
+        memory::Ref< IndexBuffer > pQuadIndexBuffer;
+        memory::Ref< Shader > pShader;
 
         DirectX::XMFLOAT4X4 ViewProjectionMatrix;
     };
@@ -137,7 +137,7 @@ namespace smile::graphic
     }
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-        const Ref< Texture > &pTexture,
+        const memory::Ref< Texture > &pTexture,
         const DirectX::XMFLOAT4 &color )
     {
         GraphicsContext *pContext = RenderCommand::GetGraphicsContext();

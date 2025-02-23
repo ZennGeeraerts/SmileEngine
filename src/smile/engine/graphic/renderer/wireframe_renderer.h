@@ -34,6 +34,6 @@ namespace smile::graphic
 
       private:
         RenderCollector m_RenderCollector{};
-        Ref< RasterizerState > s_pWireframeRasterizerState;
+        memory::Ref< RasterizerState > s_pWireframeRasterizerState;
     };
 }

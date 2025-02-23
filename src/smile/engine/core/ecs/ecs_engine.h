@@ -12,6 +12,8 @@
 
 #include "foundation/type_id.h"
 
+#include "memory/ref.h"
+
 #include <algorithm>
 #include <array>
 
@@ -419,10 +421,10 @@ namespace smile::ecs
             return *( static_cast< Group< Owned..., Get... > * >( pNewGroup ) );
         }
 
-        void AddSystem( Ref< BaseSystem > pSystem );
-        void RemoveSystem( Ref< BaseSystem > pSystem );
+        void AddSystem( memory::Ref< BaseSystem > pSystem );
+        void RemoveSystem( memory::Ref< BaseSystem > pSystem );
 
-        const std::vector< Ref< BaseSystem > > &GetSystems() const
+        const std::vector< memory::Ref< BaseSystem > > &GetSystems() const
         {
             return m_pSystems;
         }
@@ -497,7 +499,7 @@ namespace smile::ecs
         std::vector< ComponentPool * > m_pComponentPools{};
         std::unordered_map< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
         std::vector< GroupBase * > m_pGroups{};
-        std::vector< Ref< BaseSystem > > m_pSystems{};
+        std::vector< memory::Ref< BaseSystem > > m_pSystems{};
         std::vector< EntityHandleType > m_DeadHandles{};
     };
 }

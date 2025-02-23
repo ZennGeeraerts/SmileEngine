@@ -20,7 +20,7 @@ namespace smile::graphic
     ecs::RenderPassList RenderEngine::s_RenderPassList{};
     window::Window *RenderEngine::s_pWindow = nullptr;
 
-    Ref< Framebuffer > RenderEngine::s_pFinalSceneFramebuffer{};
+    memory::Ref< Framebuffer > RenderEngine::s_pFinalSceneFramebuffer{};
 
     RendererSettings RenderEngine::s_Settings{};
     ShaderLibrary RenderEngine::s_ShaderLibrary{};

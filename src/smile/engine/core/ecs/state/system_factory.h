@@ -5,6 +5,7 @@
 #pragma once
 #include "ecs/base_system.h"
 #include "default_system_provider.h"
+#include "memory/ref.h"
 
 namespace smile::ecs
 {
@@ -18,7 +19,7 @@ namespace smile::ecs
             SystemFactory() = default;
             ~SystemFactory() = default;
 
-            static Ref< BaseSystem > Create( const std::string &systemName );
+            static memory::Ref< BaseSystem > Create( const std::string &systemName );
             static void RegisterSystem( const std::string &systemName, SystemProvider *pSystemProvider );
 
             template < typename SystemType, typename... Args >

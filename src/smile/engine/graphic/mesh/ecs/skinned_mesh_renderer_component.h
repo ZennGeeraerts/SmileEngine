@@ -17,7 +17,7 @@ namespace smile::graphic::ecs
             // TODO: Get shader from shader library in render engine
             graphic::GraphicsDevice *pDevice = graphic::RenderCommand::GetGraphicsDevice();
             auto pShader = pDevice->CreateShader( "resources/shaders/PBR_Skinned.fx" );
-            pMaterial = CreateRef< graphic::Material >( pShader );
+            pMaterial = smile::CreateRef< graphic::Material >( pShader );
         }
 
         SkinnedMeshRendererComponent( const SkinnedMeshRendererComponent & ) = default;

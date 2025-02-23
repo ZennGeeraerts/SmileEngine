@@ -9,7 +9,7 @@ namespace smile::ecs::state
 {
     std::unordered_map< std::string, SystemProvider * > SystemFactory::s_SystemProviderMap{};
 
-    Ref< BaseSystem > SystemFactory::Create( const std::string &systemName )
+    memory::Ref< BaseSystem > SystemFactory::Create( const std::string &systemName )
     {
         return s_SystemProviderMap.at( systemName )->Create();
     }
