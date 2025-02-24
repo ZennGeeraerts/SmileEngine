@@ -6,7 +6,6 @@
 #include "debug_renderer.h"
 
 #include "engine/graphic/renderer/render_engine.h"
-#include "engine/graphic/renderer/render_system.h"
 
 #include <DirectXColors.h>
 
@@ -74,7 +73,7 @@ namespace smile::graphic
         descriptor.Count = m_BufferSize;
         descriptor.CPUAccess = BufferCPUAccess::Write;
 
-        m_pVertexBuffer = RenderSystem::GetGraphicsDevice()->CreateVertexBuffer( descriptor );
+        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateVertexBuffer( descriptor );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -100,7 +99,7 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
+        GraphicsContext *pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
 
         pContext->FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
 
@@ -115,7 +114,7 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
         m_pShader->UploadMat4( "World", worldMatrix );
 
-        RenderSystem::Draw( vertexCount, m_pShader );
+        RenderEngine::GetRenderSystem().Draw( vertexCount, m_pShader );
 
         pContext->UnbindPrimitiveTopology();
     }

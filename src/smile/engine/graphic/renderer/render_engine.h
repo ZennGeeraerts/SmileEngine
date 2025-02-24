@@ -6,6 +6,8 @@
 
 #include "ecs/render_pass_list.h"
 
+#include "render_system.h"
+
 #include "engine/graphic/renderer_api/renderer_api.h"
 #include "engine/graphic/renderer_api/shader/shader_library.h"
 #include "engine/graphic/renderer_api/resource/frame_buffer.h"
@@ -52,7 +54,7 @@ namespace smile::graphic
             Camera *pMainCamera = nullptr;
             DirectX::XMFLOAT4X4 CameraTransform{};
         };
-        static void SetCameraData(const CameraData& cameraData)
+        static void SetCameraData( const CameraData &cameraData )
         {
             s_CameraData = cameraData;
         }
@@ -70,6 +72,11 @@ namespace smile::graphic
             return s_pFinalSceneFramebuffer->GetColor( 0 );
         }
 
+        static RenderSystem &GetRenderSystem()
+        {
+            return s_RenderSystem;
+        }
+
       private:
         static ecs::RenderPassList s_RenderPassList;
         static window::Window *s_pWindow;
@@ -80,5 +87,7 @@ namespace smile::graphic
         static ShaderLibrary s_ShaderLibrary;
 
         static CameraData s_CameraData;
+
+        static RenderSystem s_RenderSystem;
     };
 }

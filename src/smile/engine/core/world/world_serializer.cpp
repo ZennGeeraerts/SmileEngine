@@ -644,7 +644,8 @@ namespace smile::world
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             mrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderSystem::GetGraphicsDevice()->CreateTexture2D( path.string() ) );
+                                graphic::RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateTexture2D(
+                                    path.string() ) );
                         }
                     }
                 }
@@ -718,7 +719,8 @@ namespace smile::world
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             smrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderSystem::GetGraphicsDevice()->CreateTexture2D( path.string() ) );
+                                graphic::RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateTexture2D(
+                                    path.string() ) );
                         }
                     }
                 }
@@ -844,7 +846,8 @@ namespace smile::world
                     if ( !texturePath.empty() )
                     {
                         auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                        src.pTexture = graphic::RenderSystem::GetGraphicsDevice()->CreateTexture2D( path.string() );
+                        src.pTexture = graphic::RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateTexture2D(
+                            path.string() );
                     }
                 }
             }

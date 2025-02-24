@@ -5,7 +5,6 @@
 #include "smpch.h"
 #include "renderer_2d.h"
 
-#include "engine/graphic/renderer/render_system.h"
 #include "engine/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
@@ -52,7 +51,8 @@ namespace smile::graphic
         vertexBufferDesc.Count = quadVerticesCount;
         vertexBufferDesc.Stride = sizeof( float ) * 5;
 
-        s_pStorage->pQuadVertexBuffer = RenderSystem::GetGraphicsDevice()->CreateVertexBuffer( vertexBufferDesc );
+        s_pStorage->pQuadVertexBuffer =
+            RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateVertexBuffer( vertexBufferDesc );
 
         const Uint32 quadIndicesCount = 6;
         Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
@@ -61,7 +61,8 @@ namespace smile::graphic
         indexBufferDesc.pIndices = quadIndices;
         indexBufferDesc.Count = quadIndicesCount;
 
-        s_pStorage->pQuadIndexBuffer = RenderSystem::GetGraphicsDevice()->CreateIndexBuffer( indexBufferDesc );
+        s_pStorage->pQuadIndexBuffer =
+            RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateIndexBuffer( indexBufferDesc );
 
         s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosColTex" );
     }
@@ -80,7 +81,7 @@ namespace smile::graphic
 
         DirectX::XMStoreFloat4x4( &s_pStorage->ViewProjectionMatrix, viewProjectionMatrixMat );
 
-        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
+        GraphicsContext *pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
         pContext->BindShader( s_pStorage->pShader );
         s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
         pContext->UnbindShader();
@@ -119,7 +120,7 @@ namespace smile::graphic
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color )
     {
-        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
+        GraphicsContext *pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
@@ -131,7 +132,8 @@ namespace smile::graphic
         s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
         s_pStorage->pShader->UploadBool( "UseTexture", false );
 
-        RenderSystem::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
+        RenderEngine::GetRenderSystem().GetGraphicsContext()->DrawIndexed(
+            s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
 
         pContext->UnbindPrimitiveTopology();
     }
@@ -140,7 +142,7 @@ namespace smile::graphic
         const memory::Ref< Texture > &pTexture,
         const DirectX::XMFLOAT4 &color )
     {
-        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
+        GraphicsContext *pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
@@ -153,7 +155,7 @@ namespace smile::graphic
         s_pStorage->pShader->UploadBool( "UseTexture", true );
         s_pStorage->pShader->UploadTexture( "Diffuse", pTexture );
 
-        RenderSystem::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
+        pContext->DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
 
         pContext->UnbindPrimitiveTopology();
     }

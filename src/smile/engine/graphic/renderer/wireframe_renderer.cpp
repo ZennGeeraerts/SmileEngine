@@ -5,7 +5,6 @@
 #include "smpch.h"
 #include "wireframe_renderer.h"
 
-#include "engine/graphic/renderer/render_system.h"
 #include "engine/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
@@ -15,7 +14,7 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
-        GraphicsDevice *pDevice = RenderSystem::GetGraphicsDevice();
+        GraphicsDevice *pDevice = RenderEngine::GetRenderSystem().GetGraphicsDevice();
         RasterizerStateDescriptor rasterizerStateDesc{};
         rasterizerStateDesc.CullMode = CullMode::None;
         rasterizerStateDesc.FillMode = FillMode::WireFrame;
@@ -47,7 +46,7 @@ namespace smile::graphic
 
     void WireframeRenderer::OnRender()
     {
-        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
+        GraphicsContext *pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
         pContext->BindRasterizerState( s_pWireframeRasterizerState );
@@ -67,7 +66,7 @@ namespace smile::graphic
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ 1, 1, 1 } );
 
-            RenderSystem::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
+            pContext->DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }
 
         pContext->UnbindRasterizerState();

@@ -27,11 +27,13 @@ namespace smile::graphic
 
     RenderEngine::CameraData RenderEngine::s_CameraData{};
 
+    RenderSystem RenderEngine::s_RenderSystem{};
+
     void RenderEngine::Initialize( window::Window *pWindow )
     {
         s_pWindow = pWindow;
 
-        RenderSystem::Initalize( pWindow );
+        s_RenderSystem.Initialize( pWindow );
 
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
         s_ShaderLibrary.Load( "resources/shaders/PosColNorm.fx", bufferLayout );
@@ -49,7 +51,7 @@ namespace smile::graphic
             frameBufferDesc.Height = s_Settings.Height;
             frameBufferDesc.IsSwapChainTarget = false;
 
-            s_pFinalSceneFramebuffer = RenderSystem::GetGraphicsDevice()->CreateFramebuffer( frameBufferDesc );
+            s_pFinalSceneFramebuffer = s_RenderSystem.GetGraphicsDevice()->CreateFramebuffer( frameBufferDesc );
             s_pFinalSceneFramebuffer->ClearColor = { DirectX::Colors::DodgerBlue.f[0],
                 DirectX::Colors::DodgerBlue.f[1],
                 DirectX::Colors::DodgerBlue.f[2],
@@ -72,13 +74,11 @@ namespace smile::graphic
         DebugRenderer::GetInstance().ShutDown();
         Renderer2D::ShutDown();
         SkyboxRenderer::ShutDown();
-
-        RenderSystem::ShutDown();
     }
 
     void RenderEngine::OnRender()
     {
-        auto pContext = RenderSystem::GetGraphicsContext();
+        auto pContext = s_RenderSystem.GetGraphicsContext();
         pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
@@ -96,7 +96,7 @@ namespace smile::graphic
 
     void RenderEngine::OnRender( const EditorCamera &editorCamera )
     {
-        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
+        GraphicsContext *pContext = s_RenderSystem.GetGraphicsContext();
         pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
         pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
 
@@ -111,7 +111,7 @@ namespace smile::graphic
 
     void RenderEngine::OnWindowResize( Uint32 width, Uint32 height )
     {
-        RenderSystem::ResizeWindow( 0, 0, width, height );
+        s_RenderSystem.ResizeWindow( 0, 0, width, height );
     }
 
     void RenderEngine::ResizeFramebuffer( Uint32 width, Uint32 height )
@@ -119,7 +119,7 @@ namespace smile::graphic
         s_Settings.Width = width;
         s_Settings.Height = height;
 
-        auto pDevice = RenderSystem::GetGraphicsDevice();
+        auto pDevice = s_RenderSystem.GetGraphicsDevice();
         pDevice->ResizeFramebuffer( s_pFinalSceneFramebuffer, width, height );
     }
 }

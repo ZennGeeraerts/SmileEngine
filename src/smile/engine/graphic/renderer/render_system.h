@@ -1,68 +1,49 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
 #include "foundation/compiled.h"
-#include "engine/graphic/renderer_api/renderer_api.h"
+#include "foundation/pimpl.h"
+#include "memory/ref.h"
+
+// TODO: Remove dependency
+#include "engine/graphic/renderer_api/graphics_device.h"
+#include "engine/graphic/renderer_api/graphics_context.h"
+
+#include <DirectXMath.h>
+
+namespace smile::window
+{
+    class Window;
+}
 
 namespace smile::graphic
 {
+    class Shader;
+
     class RenderSystem final
     {
       public:
-        inline static void Initalize( window::Window *pWindow )
-        {
-            s_pRendererAPI->Initialize( pWindow );
-        }
+        RenderSystem();
 
-        inline static void ShutDown()
-        {
-        }
+        void Initialize( window::Window *pWindow );
 
-        inline static void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
-        {
-            s_pRendererAPI->GetSwapChain()->Resize( x, y, width, height );
-        }
+        void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
 
-        inline static void SetClearColor( const DirectX::XMFLOAT4 &color )
-        {
-            s_ClearColor = color;
-        }
+        void SetClearColor( const DirectX::XMFLOAT4 &color );
+        void Clear();
 
-        inline static void Clear()
-        {
-            s_pRendererAPI->GetGraphicsContext()->Clear( s_ClearColor );
-        }
+        void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader );
+        void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader );
+        void Present();
 
-        inline static void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader )
-        {
-            s_pRendererAPI->GetGraphicsContext()->DrawIndexed( indexCount, pShader );
-        }
-
-        inline static void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
-        {
-            s_pRendererAPI->GetGraphicsContext()->Draw( vertexCount, pShader );
-        }
-
-        inline static void Present()
-        {
-            s_pRendererAPI->GetSwapChain()->Present();
-        }
-
-        inline static GraphicsDevice *GetGraphicsDevice()
-        {
-            return s_pRendererAPI->GetGraphicsDevice();
-        }
-
-        inline static GraphicsContext *GetGraphicsContext()
-        {
-            return s_pRendererAPI->GetGraphicsContext();
-        }
+        GraphicsDevice *GetGraphicsDevice() const;
+        GraphicsContext *GetGraphicsContext() const;
 
       private:
-        static Scope< RendererAPI > s_pRendererAPI;
-        static DirectX::XMFLOAT4 s_ClearColor;
+        struct Opaque;
+        foundation::PImpl< Opaque > m_pImpl;
     };
 }

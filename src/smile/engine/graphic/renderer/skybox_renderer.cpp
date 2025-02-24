@@ -6,7 +6,6 @@
 #include "skybox_renderer.h"
 
 #include "render_engine.h"
-#include "render_system.h"
 #include "engine/graphic/mesh/mesh_factory.h"
 
 namespace smile::graphic
@@ -16,7 +15,7 @@ namespace smile::graphic
 
     void SkyboxRenderer::Initialize()
     {
-        auto pDevice = RenderSystem::GetGraphicsDevice();
+        auto pDevice = RenderEngine::GetRenderSystem().GetGraphicsDevice();
 
         memory::Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "resources/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
@@ -59,7 +58,7 @@ namespace smile::graphic
 
     void SkyboxRenderer::OnRender()
     {
-        auto pContext = RenderSystem::GetGraphicsContext();
+        auto pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
@@ -68,7 +67,7 @@ namespace smile::graphic
         pContext->BindVertexBuffer( s_pCubeMesh->pVertexBuffer );
         pContext->BindIndexBuffer( s_pCubeMesh->pIndexBuffer );
 
-        RenderSystem::DrawIndexed( s_pCubeMesh->pIndexBuffer->Count, s_pSkyboxShader );
+        pContext->DrawIndexed( s_pCubeMesh->pIndexBuffer->Count, s_pSkyboxShader );
     }
 
     void SkyboxRenderer::EndScene()

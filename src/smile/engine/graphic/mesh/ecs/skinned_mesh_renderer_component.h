@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer/render_system.h"
+#include "engine/graphic/renderer/render_engine.h"
 #include "engine/graphic/mesh/model_loader.h"
 #include "engine/graphic/mesh/mesh_factory.h"
 #include "engine/graphic/mesh/material.h"
@@ -15,7 +15,7 @@ namespace smile::graphic::ecs
         SkinnedMeshRendererComponent()
         {
             // TODO: Get shader from shader library in render engine
-            graphic::GraphicsDevice *pDevice = graphic::RenderSystem::GetGraphicsDevice();
+            graphic::GraphicsDevice *pDevice = graphic::RenderEngine::GetRenderSystem().GetGraphicsDevice();
             auto pShader = pDevice->CreateShader( "resources/shaders/PBR_Skinned.fx" );
             pMaterial = smile::CreateRef< graphic::Material >( pShader );
         }
