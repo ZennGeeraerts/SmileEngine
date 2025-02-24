@@ -5,7 +5,7 @@
 
 #include "content_browser_panel.h"
 
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_system.h"
 #include "engine/core/project/project_manager.h"
 
 #include <imgui/imgui.h>
@@ -16,7 +16,7 @@ namespace smile
         : m_BaseDirectory{ project::ProjectManager::GetActive()->GetAssetDirectory() },
           m_CurrentDirectory{ m_BaseDirectory }
     {
-        graphic::GraphicsDevice *pDevice = graphic::RenderCommand::GetGraphicsDevice();
+        graphic::GraphicsDevice *pDevice = graphic::RenderSystem::GetGraphicsDevice();
         m_pDirectoryIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/directory_icon.png" );
         m_pFileIcon = pDevice->CreateTexture2D( "resources/icons/content_browser/file_icon.png" );
     }

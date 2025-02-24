@@ -6,7 +6,7 @@
 #include "graphic_application.h"
 
 #include "engine/graphic/renderer/render_engine.h"
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_system.h"
 
 #include "application/timer.h"
 
@@ -49,7 +49,7 @@ namespace smile::graphic
             m_pImGuiLayer->End();
 
             m_pWindowManager->PollEvents();
-            RenderCommand::Present();
+            RenderSystem::Present();
         }
     }
 

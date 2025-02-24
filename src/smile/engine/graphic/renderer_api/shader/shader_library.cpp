@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "shader_library.h"
 
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_system.h"
 
 namespace smile::graphic
 {
@@ -22,7 +22,7 @@ namespace smile::graphic
 
     memory::Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto pShader = RenderCommand::GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
+        auto pShader = RenderSystem::GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
         Add( pShader );
         return pShader;
     }
@@ -30,7 +30,7 @@ namespace smile::graphic
     memory::Ref< Shader >
     ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto pShader = RenderCommand::GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
+        auto pShader = RenderSystem::GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
         Add( name, pShader );
         return pShader;
     }

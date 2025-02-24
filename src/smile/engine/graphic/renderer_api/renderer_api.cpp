@@ -13,8 +13,6 @@
 
 namespace smile::graphic
 {
-    RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX11;
-
     Scope< RendererAPI > RendererAPI::Create( RendererAPI::API api )
     {
         switch ( api )

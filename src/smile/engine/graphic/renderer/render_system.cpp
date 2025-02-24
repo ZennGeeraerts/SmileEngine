@@ -3,10 +3,10 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "render_command.h"
+#include "render_system.h"
 
 namespace smile::graphic
 {
-    Scope< RendererAPI > RenderCommand::s_pRendererAPI = RendererAPI::Create( RendererAPI::API::DirectX11 );
-    DirectX::XMFLOAT4 RenderCommand::s_ClearColor{};
+    Scope< RendererAPI > RenderSystem::s_pRendererAPI = RendererAPI::Create( RendererAPI::API::DirectX11 );
+    DirectX::XMFLOAT4 RenderSystem::s_ClearColor{};
 }

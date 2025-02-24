@@ -24,7 +24,7 @@ namespace smile
 
     void SmileEditorLayer::OnAttach()
     {
-        graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
+        graphic::RenderSystem::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
             DirectX::Colors::DodgerBlue.f[3] } );
@@ -32,7 +32,7 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        auto pDevice = graphic::RenderCommand::GetGraphicsDevice();
+        auto pDevice = graphic::RenderSystem::GetGraphicsDevice();
         m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
         m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
         m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
@@ -71,7 +71,7 @@ namespace smile
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
-        graphic::RenderCommand::Clear();
+        graphic::RenderSystem::Clear();
 
         switch ( m_WorldState )
         {

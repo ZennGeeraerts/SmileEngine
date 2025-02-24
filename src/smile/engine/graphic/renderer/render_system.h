@@ -9,7 +9,7 @@
 
 namespace smile::graphic
 {
-    class RenderCommand final
+    class RenderSystem final
     {
       public:
         inline static void Initalize( window::Window *pWindow )

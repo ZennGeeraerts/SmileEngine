@@ -13,6 +13,8 @@
 
 namespace smile::graphic
 {
+    RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX11;
+
     DirectX11RendererAPI::~DirectX11RendererAPI()
     {
         delete m_pDevice;

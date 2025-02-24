@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "forward_renderer.h"
 
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_system.h"
 
 namespace smile::graphic
 {
@@ -67,7 +67,7 @@ namespace smile::graphic
 
     void ForwardRenderer::OnRender()
     {
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
+        GraphicsContext *pContext = RenderSystem::GetGraphicsContext();
 
         pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
@@ -81,7 +81,7 @@ namespace smile::graphic
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadMat4( "ViewInverse", s_RenderCollector.ViewInverseMatrix );
 
-            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
+            RenderSystem::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
         }
 
         pContext->UnbindPrimitiveTopology();
