@@ -31,8 +31,8 @@ add_custom_command(
     TARGET sandbox
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_LIST_DIR}/../scenes"
-        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/scenes"
+        "${CMAKE_CURRENT_LIST_DIR}/../worlds"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/worlds"
     )
 
 add_custom_command(
