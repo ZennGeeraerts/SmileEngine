@@ -45,10 +45,12 @@ namespace smile::graphic
             return m_pContext;
         }
 
-        inline SwapChain* GetSwapChain() const
+        inline SwapChain *GetSwapChain() const
         {
             return m_pSwapChain;
         }
+
+        static Scope< RendererAPI > Create( API api );
 
       protected:
         GraphicsDevice *m_pDevice;

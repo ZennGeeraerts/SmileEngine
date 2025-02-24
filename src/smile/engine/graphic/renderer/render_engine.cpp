@@ -31,7 +31,6 @@ namespace smile::graphic
     {
         s_pWindow = pWindow;
 
-        RenderCommand::Create( RendererAPI::API::DirectX11 );
         RenderCommand::Initalize( pWindow );
 
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };

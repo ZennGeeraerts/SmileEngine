@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/common/foundation/compiled.h"
+#include "foundation/compiled.h"
 #include "engine/graphic/renderer_api/renderer_api.h"
 
 namespace smile::graphic
@@ -12,8 +12,6 @@ namespace smile::graphic
     class RenderCommand final
     {
       public:
-        static void Create( RendererAPI::API api );
-
         inline static void Initalize( window::Window *pWindow )
         {
             s_pRendererAPI->Initialize( pWindow );
@@ -21,7 +19,6 @@ namespace smile::graphic
 
         inline static void ShutDown()
         {
-            SAFE_DELETE( s_pRendererAPI );
         }
 
         inline static void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
@@ -65,7 +62,7 @@ namespace smile::graphic
         }
 
       private:
-        static RendererAPI *s_pRendererAPI;
+        static Scope< RendererAPI > s_pRendererAPI;
         static DirectX::XMFLOAT4 s_ClearColor;
     };
 }
