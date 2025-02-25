@@ -5,11 +5,9 @@
 #pragma once
 
 #include "render_system.h"
-#include "ecs/render_pass_list.h"
-
 #include "engine/graphic/renderer_api/shader/shader_library.h"
-#include "engine/graphic/renderer_api/resource/frame_buffer.h"
 #include "engine/graphic/camera/editor_camera.h"
+#include "engine/graphic/scene/scene_manager.h"
 
 #include "window/window.h"
 
@@ -26,18 +24,6 @@ namespace smile::graphic
       public:
         static void Initialize( window::Window *pWindow );
         static void ShutDown();
-
-        static void OnRender();
-        static void OnRender( const EditorCamera &editorCamera );
-
-        static void AddRenderPass( ecs::RenderPass *pRenderPass )
-        {
-            s_RenderPassList.AddRenderPass( pRenderPass );
-        }
-        static void ClearRenderPasses()
-        {
-            s_RenderPassList.ClearRenderPasses();
-        }
 
         static void OnWindowResize( Uint32 width, Uint32 height );
         static void ResizeFramebuffer( Uint32 width, Uint32 height );
@@ -57,6 +43,11 @@ namespace smile::graphic
             s_CameraData = cameraData;
         }
 
+        static const CameraData &GetCameraData()
+        {
+            return s_CameraData;
+        }
+
         static const RendererSettings &GetSettings()
         {
             return s_Settings;
@@ -65,9 +56,10 @@ namespace smile::graphic
         {
             return s_ShaderLibrary;
         }
-        static void *GetFinalColor()
+
+        static Ref< Scene > GetScene()
         {
-            return s_pFinalSceneFramebuffer->GetColor( 0 );
+            return s_pScene;
         }
 
         static RenderSystem &GetRenderSystem()
@@ -77,10 +69,8 @@ namespace smile::graphic
 
       private:
         static RenderSystem s_RenderSystem;
-        static ecs::RenderPassList s_RenderPassList;
+        static Ref< Scene > s_pScene;
         static window::Window *s_pWindow;
-
-        static memory::Ref< Framebuffer > s_pFinalSceneFramebuffer;
 
         static RendererSettings s_Settings;
         static ShaderLibrary s_ShaderLibrary;

@@ -1,8 +1,9 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
 #include "render_pass.h"
 
 namespace smile::graphic::ecs
@@ -13,29 +14,22 @@ namespace smile::graphic::ecs
         RenderPassList() = default;
         ~RenderPassList()
         {
-            ClearRenderPasses();
+            Clear();
         }
 
         void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
         {
-            for ( auto pRenderPass : m_pRenderPasses )
+            for ( auto &pRenderPass : m_pRenderPasses )
                 pRenderPass->OnRender( camera, cameraTransform );
         }
 
-        void AddRenderPass( RenderPass *pRenderPass )
+        void Add( Ref< RenderPass > pRenderPass )
         {
-            m_pRenderPasses.push_back( pRenderPass );
+            m_pRenderPasses.push_back( std::move( pRenderPass ) );
         }
-        void RemoveRenderPass( RenderPass *pRenderPass )
-        {
-            m_pRenderPasses.erase( std::remove( m_pRenderPasses.begin(), m_pRenderPasses.end(), pRenderPass ) );
-            SAFE_DELETE( pRenderPass );
-        }
-        void ClearRenderPasses()
-        {
-            for ( auto pRenderPass : m_pRenderPasses )
-                SAFE_DELETE( pRenderPass );
 
+        void Clear()
+        {
             m_pRenderPasses.clear();
         }
 
@@ -49,6 +43,6 @@ namespace smile::graphic::ecs
         }
 
       private:
-        std::vector< RenderPass * > m_pRenderPasses{};
+        std::vector< Ref< RenderPass > > m_pRenderPasses{};
     };
 }
