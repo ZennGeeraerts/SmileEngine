@@ -174,7 +174,8 @@ namespace smile::imgui
     {
         window::EventDispatcher dispatcher{ event };
         dispatcher.Dispatch< window::MouseButtonPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonPressed ) );
-        dispatcher.Dispatch< window::MouseButtonReleasedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonReleased ) );
+        dispatcher.Dispatch< window::MouseButtonReleasedEvent >(
+            SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonReleased ) );
         dispatcher.Dispatch< window::MouseMovedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseMoved ) );
         dispatcher.Dispatch< window::MouseScrolledEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseScrolled ) );
         dispatcher.Dispatch< window::KeyPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnKeyPressed ) );

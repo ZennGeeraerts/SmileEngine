@@ -25,8 +25,12 @@ namespace smile::graphic
 
     class RenderSystem final
     {
+      private:
+        struct Opaque;
+
       public:
         RenderSystem();
+        ~RenderSystem();
 
         void Initialize( window::Window *pWindow );
 
@@ -43,7 +47,6 @@ namespace smile::graphic
         GraphicsContext *GetGraphicsContext() const;
 
       private:
-        struct Opaque;
         foundation::PImpl< Opaque > m_pImpl;
     };
 }

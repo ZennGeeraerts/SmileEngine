@@ -5,8 +5,6 @@
 #include "smpch.h"
 #include "render_engine.h"
 
-#include "render_system.h"
-
 #include "forward_renderer.h"
 #include "wireframe_renderer.h"
 #include "debug_renderer.h"
@@ -17,6 +15,8 @@
 
 namespace smile::graphic
 {
+    RenderSystem RenderEngine::s_RenderSystem{};
+
     ecs::RenderPassList RenderEngine::s_RenderPassList{};
     window::Window *RenderEngine::s_pWindow = nullptr;
 
@@ -27,12 +27,9 @@ namespace smile::graphic
 
     RenderEngine::CameraData RenderEngine::s_CameraData{};
 
-    RenderSystem RenderEngine::s_RenderSystem{};
-
     void RenderEngine::Initialize( window::Window *pWindow )
     {
         s_pWindow = pWindow;
-
         s_RenderSystem.Initialize( pWindow );
 
         BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };

@@ -4,9 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "ecs/render_pass_list.h"
-
 #include "render_system.h"
+#include "ecs/render_pass_list.h"
 
 #include "engine/graphic/renderer_api/renderer_api.h"
 #include "engine/graphic/renderer_api/shader/shader_library.h"
@@ -78,6 +77,7 @@ namespace smile::graphic
         }
 
       private:
+        static RenderSystem s_RenderSystem;
         static ecs::RenderPassList s_RenderPassList;
         static window::Window *s_pWindow;
 
@@ -87,7 +87,5 @@ namespace smile::graphic
         static ShaderLibrary s_ShaderLibrary;
 
         static CameraData s_CameraData;
-
-        static RenderSystem s_RenderSystem;
     };
 }
