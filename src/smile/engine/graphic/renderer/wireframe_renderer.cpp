@@ -47,31 +47,31 @@ namespace smile::graphic
 
     void WireframeRenderer::OnRender()
     {
-        GraphicsContext *pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
-        pContext->BindRasterizerState( s_pWireframeRasterizerState );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindRasterizerState( s_pWireframeRasterizerState );
 
         if ( !m_RenderCollector.DrawList.empty() )
         {
             DrawCommand &drawCommand = m_RenderCollector.DrawList[0];
-            pContext->BindShader( drawCommand.pShader );
+            renderSystem.BindShader( drawCommand.pShader );
             drawCommand.pShader->UploadMat4( "ViewProjection", m_RenderCollector.ViewProjectionMatrix );
         }
 
         for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
         {
-            pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
-            pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
+            renderSystem.BindVertexBuffer( drawCommand.pVertexBuffer );
+            renderSystem.BindIndexBuffer( drawCommand.pIndexBuffer );
 
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ 1, 1, 1 } );
 
-            pContext->DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
+            renderSystem.DrawIndexed( drawCommand.pIndexBuffer->Count );
         }
 
-        pContext->UnbindRasterizerState();
-        pContext->UnbindPrimitiveTopology();
+        renderSystem.UnbindRasterizerState();
+        renderSystem.UnbindPrimitiveTopology();
     }
 
     void WireframeRenderer::Submit( const physics::ecs::BoxColliderComponent &boxColliderComponent,

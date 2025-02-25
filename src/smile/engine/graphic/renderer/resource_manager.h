@@ -8,15 +8,11 @@
 #include "memory/ref.h"
 
 #include "engine/graphic/renderer_api/graphics_device.h"
-#include "engine/graphic/renderer_api/resource/vertex_buffer.h"
-#include "engine/graphic/renderer_api/resource/index_buffer.h"
 
 #include <vector>
 
 namespace smile::graphic
 {
-    class Framebuffer;
-
     class ResourceManager final
     {
       public:

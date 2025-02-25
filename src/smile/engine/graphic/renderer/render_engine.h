@@ -7,7 +7,6 @@
 #include "render_system.h"
 #include "ecs/render_pass_list.h"
 
-#include "engine/graphic/renderer_api/renderer_api.h"
 #include "engine/graphic/renderer_api/shader/shader_library.h"
 #include "engine/graphic/renderer_api/resource/frame_buffer.h"
 #include "engine/graphic/camera/editor_camera.h"

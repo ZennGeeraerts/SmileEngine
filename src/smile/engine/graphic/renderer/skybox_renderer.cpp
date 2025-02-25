@@ -59,16 +59,16 @@ namespace smile::graphic
 
     void SkyboxRenderer::OnRender()
     {
-        auto pContext = RenderEngine::GetRenderSystem().GetGraphicsContext();
+        auto &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
-        pContext->BindShader( s_pSkyboxShader );
+        renderSystem.BindShader( s_pSkyboxShader );
 
-        pContext->BindVertexBuffer( s_pCubeMesh->pVertexBuffer );
-        pContext->BindIndexBuffer( s_pCubeMesh->pIndexBuffer );
+        renderSystem.BindVertexBuffer( s_pCubeMesh->pVertexBuffer );
+        renderSystem.BindIndexBuffer( s_pCubeMesh->pIndexBuffer );
 
-        pContext->DrawIndexed( s_pCubeMesh->pIndexBuffer->Count, s_pSkyboxShader );
+        renderSystem.DrawIndexed( s_pCubeMesh->pIndexBuffer->Count );
     }
 
     void SkyboxRenderer::EndScene()

@@ -77,9 +77,8 @@ namespace smile::graphic
 
     void RenderEngine::OnRender()
     {
-        auto pContext = s_RenderSystem.GetGraphicsContext();
-        pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
-        pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
+        s_RenderSystem.ClearFramebuffer( s_pFinalSceneFramebuffer );
+        s_RenderSystem.BindFramebuffer( s_pFinalSceneFramebuffer );
 
         if ( s_CameraData.pMainCamera )
         {
@@ -90,14 +89,13 @@ namespace smile::graphic
             SkyboxRenderer::EndScene();
         }
 
-        pContext->UnbindFramebuffer();
+        s_RenderSystem.UnbindFramebuffer();
     }
 
     void RenderEngine::OnRender( const EditorCamera &editorCamera )
     {
-        GraphicsContext *pContext = s_RenderSystem.GetGraphicsContext();
-        pContext->ClearFramebuffer( s_pFinalSceneFramebuffer );
-        pContext->BindFramebuffer( s_pFinalSceneFramebuffer );
+        s_RenderSystem.ClearFramebuffer( s_pFinalSceneFramebuffer );
+        s_RenderSystem.BindFramebuffer( s_pFinalSceneFramebuffer );
 
         s_RenderPassList.OnRender( editorCamera, editorCamera.GetTransform() );
 
@@ -105,7 +103,7 @@ namespace smile::graphic
         SkyboxRenderer::OnRender();
         SkyboxRenderer::EndScene();
 
-        pContext->UnbindFramebuffer();
+        s_RenderSystem.UnbindFramebuffer();
     }
 
     void RenderEngine::OnWindowResize( Uint32 width, Uint32 height )

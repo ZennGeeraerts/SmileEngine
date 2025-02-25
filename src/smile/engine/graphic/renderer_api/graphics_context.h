@@ -5,6 +5,7 @@
 #pragma once
 
 #include "graphics_device.h"
+#include "primitive_topology.h"
 #include "memory/ref.h"
 
 namespace smile::window
@@ -14,13 +15,6 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    enum class PrimitiveTopology
-    {
-        None = 0,
-        TriangleList,
-        LineList
-    };
-
     class GraphicsContext
     {
       public:

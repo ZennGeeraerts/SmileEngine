@@ -7,7 +7,6 @@
 
 #include "resource_manager.h"
 #include "engine/graphic/renderer_api/renderer_api.h"
-#include "engine/graphic/renderer_api/shader/shader.h"
 
 namespace smile::graphic
 {
@@ -15,7 +14,10 @@ namespace smile::graphic
     {
         Scope< RendererAPI > pRendererAPI = nullptr;
         ResourceManager ResManager{};
+
         DirectX::XMFLOAT4 ClearColor{};
+
+        memory::Ref< Shader > pBoundShader = nullptr;
     };
 
     RenderSystem::RenderSystem()
@@ -46,24 +48,92 @@ namespace smile::graphic
         m_pImpl->pRendererAPI->GetGraphicsContext()->Clear( m_pImpl->ClearColor );
     }
 
-    void RenderSystem::DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader )
+    void RenderSystem::BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const
     {
-        m_pImpl->pRendererAPI->GetGraphicsContext()->DrawIndexed( indexCount, pShader );
+        m_pImpl->pRendererAPI->GetGraphicsContext()->BindVertexBuffer( pVertexBuffer );
     }
 
-    void RenderSystem::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
+    void RenderSystem::UnbindVertexBuffer() const
     {
-        m_pImpl->pRendererAPI->GetGraphicsContext()->Draw( vertexCount, pShader );
+        m_pImpl->pRendererAPI->GetGraphicsContext()->UnbindVertexBuffer();
+    }
+
+    void
+    RenderSystem::FillVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer, void *pData, Uint32 vertexCount ) const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->FillVertexBuffer( pVertexBuffer, pData, vertexCount );
+    }
+
+    void RenderSystem::BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->BindIndexBuffer( pIndexBuffer );
+    }
+
+    void RenderSystem::UnbindIndexBuffer() const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->UnbindIndexBuffer();
+    }
+
+    void RenderSystem::BindShader( memory::Ref< Shader > pShader )
+    {
+        m_pImpl->pBoundShader = pShader;
+        m_pImpl->pRendererAPI->GetGraphicsContext()->BindShader( pShader );
+    }
+
+    void RenderSystem::UnbindShader()
+    {
+        m_pImpl->pBoundShader = nullptr;
+        m_pImpl->pRendererAPI->GetGraphicsContext()->UnbindShader();
+    }
+
+    void RenderSystem::BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->BindFramebuffer( pFramebuffer );
+    }
+
+    void RenderSystem::UnbindFramebuffer() const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->UnbindFramebuffer();
+    }
+
+    void RenderSystem::ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->ClearFramebuffer( pFramebuffer );
+    }
+
+    void RenderSystem::BindRasterizerState( memory::Ref< RasterizerState > pRasterizerState ) const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->BindRasterizerState( pRasterizerState );
+    }
+
+    void RenderSystem::UnbindRasterizerState() const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->UnbindRasterizerState();
+    }
+
+    void RenderSystem::BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->BindPrimitiveTopology( primitiveTopology );
+    }
+
+    void RenderSystem::UnbindPrimitiveTopology() const
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->UnbindPrimitiveTopology();
+    }
+
+    void RenderSystem::DrawIndexed( Uint32 indexCount )
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->DrawIndexed( indexCount, m_pImpl->pBoundShader );
+    }
+
+    void RenderSystem::Draw( Uint32 vertexCount )
+    {
+        m_pImpl->pRendererAPI->GetGraphicsContext()->Draw( vertexCount, m_pImpl->pBoundShader );
     }
 
     void RenderSystem::Present()
     {
         m_pImpl->pRendererAPI->GetSwapChain()->Present();
-    }
-
-    GraphicsContext* RenderSystem::GetGraphicsContext() const
-    {
-        return m_pImpl->pRendererAPI->GetGraphicsContext();
     }
 
     ResourceManager &RenderSystem::GetResourceManager()

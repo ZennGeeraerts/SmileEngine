@@ -8,6 +8,7 @@
 #include "engine/core/application/application.h"
 #include "engine/core/window/window.h"
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer_api/renderer_api.h"
 
 #include "platform/directx11/graphic/directx11_device.h"
 #include "platform/directx11/graphic/directx11_context.h"
