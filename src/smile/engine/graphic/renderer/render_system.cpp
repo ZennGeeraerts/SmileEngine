@@ -61,13 +61,18 @@ namespace smile::graphic
         m_pImpl->pRendererAPI->GetSwapChain()->Present();
     }
 
-    GraphicsDevice *RenderSystem::GetGraphicsDevice() const
-    {
-        return m_pImpl->pRendererAPI->GetGraphicsDevice();
-    }
-
-    GraphicsContext *RenderSystem::GetGraphicsContext() const
+    GraphicsContext* RenderSystem::GetGraphicsContext() const
     {
         return m_pImpl->pRendererAPI->GetGraphicsContext();
+    }
+
+    ResourceManager &RenderSystem::GetResourceManager()
+    {
+        return m_pImpl->ResManager;
+    }
+
+    RendererAPI *RenderSystem::GetRendererAPI() const
+    {
+        return m_pImpl->pRendererAPI.get();
     }
 }

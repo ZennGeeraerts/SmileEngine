@@ -6,6 +6,7 @@
 #include "debug_renderer.h"
 
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 #include <DirectXColors.h>
 
@@ -73,7 +74,7 @@ namespace smile::graphic
         descriptor.Count = m_BufferSize;
         descriptor.CPUAccess = BufferCPUAccess::Write;
 
-        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateVertexBuffer( descriptor );
+        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer( descriptor );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )

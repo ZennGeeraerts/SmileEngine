@@ -13,7 +13,9 @@
 
 namespace smile::graphic
 {
-    RendererAPI::API RendererAPI::s_API = RendererAPI::API::DirectX11;
+    DirectX11RendererAPI::DirectX11RendererAPI() : RendererAPI{ API::DirectX11 }
+    {
+    }
 
     DirectX11RendererAPI::~DirectX11RendererAPI()
     {

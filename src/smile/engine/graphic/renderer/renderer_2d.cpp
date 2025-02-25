@@ -6,6 +6,7 @@
 #include "renderer_2d.h"
 
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 namespace smile::graphic
 {
@@ -52,7 +53,7 @@ namespace smile::graphic
         vertexBufferDesc.Stride = sizeof( float ) * 5;
 
         s_pStorage->pQuadVertexBuffer =
-            RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateVertexBuffer( vertexBufferDesc );
+            RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer( vertexBufferDesc );
 
         const Uint32 quadIndicesCount = 6;
         Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
@@ -62,7 +63,7 @@ namespace smile::graphic
         indexBufferDesc.Count = quadIndicesCount;
 
         s_pStorage->pQuadIndexBuffer =
-            RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateIndexBuffer( indexBufferDesc );
+            RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( indexBufferDesc );
 
         s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosColTex" );
     }

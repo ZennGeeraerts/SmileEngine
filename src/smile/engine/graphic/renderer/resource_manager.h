@@ -35,6 +35,8 @@ namespace smile::graphic
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
         memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor );
 
+        void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
+
       private:
         GraphicsDevice *m_pDevice;
         std::vector< memory::Ref< VertexBuffer > > m_pVertexBuffers;

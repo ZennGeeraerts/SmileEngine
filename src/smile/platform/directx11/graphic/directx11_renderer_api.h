@@ -12,7 +12,7 @@ namespace smile::graphic
     class DirectX11RendererAPI final : public RendererAPI
     {
       public:
-        DirectX11RendererAPI() = default;
+        DirectX11RendererAPI();
         ~DirectX11RendererAPI();
         DirectX11RendererAPI( const DirectX11RendererAPI & ) = delete;
         DirectX11RendererAPI( DirectX11RendererAPI && ) = delete;

@@ -26,13 +26,16 @@ namespace smile::graphic
         };
 
       public:
+        RendererAPI( API api ) : m_API{ api }
+        {
+        }
         virtual ~RendererAPI() = default;
 
         virtual void Initialize( window::Window *pWindow ) = 0;
 
-        inline static API GetAPI()
+        inline API GetAPI()
         {
-            return s_API;
+            return m_API;
         }
 
         inline GraphicsDevice *GetGraphicsDevice() const
@@ -57,7 +60,6 @@ namespace smile::graphic
         GraphicsContext *m_pContext;
         SwapChain *m_pSwapChain;
 
-      private:
-        static API s_API;
+        API m_API;
     };
 }

@@ -36,7 +36,5 @@ namespace smile::graphic
         virtual memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) = 0;
 
         virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
-        virtual void
-        ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) = 0;
     };
 }

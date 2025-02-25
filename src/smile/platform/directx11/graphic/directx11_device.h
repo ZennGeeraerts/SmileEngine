@@ -35,7 +35,6 @@ namespace smile::graphic
         memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) override;
 
         void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
-        void ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) override;
 
       private:
         ID3D11Device *m_pInternal = nullptr;

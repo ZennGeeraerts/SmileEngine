@@ -11,6 +11,8 @@
 #include "renderer_2d.h"
 #include "skybox_renderer.h"
 
+#include "resource_manager.h"
+
 #include <DirectXColors.h>
 
 namespace smile::graphic
@@ -48,7 +50,7 @@ namespace smile::graphic
             frameBufferDesc.Height = s_Settings.Height;
             frameBufferDesc.IsSwapChainTarget = false;
 
-            s_pFinalSceneFramebuffer = s_RenderSystem.GetGraphicsDevice()->CreateFramebuffer( frameBufferDesc );
+            s_pFinalSceneFramebuffer = s_RenderSystem.GetResourceManager().CreateFramebuffer( frameBufferDesc );
             s_pFinalSceneFramebuffer->ClearColor = { DirectX::Colors::DodgerBlue.f[0],
                 DirectX::Colors::DodgerBlue.f[1],
                 DirectX::Colors::DodgerBlue.f[2],
@@ -116,7 +118,7 @@ namespace smile::graphic
         s_Settings.Width = width;
         s_Settings.Height = height;
 
-        auto pDevice = s_RenderSystem.GetGraphicsDevice();
-        pDevice->ResizeFramebuffer( s_pFinalSceneFramebuffer, width, height );
+        auto &resourceManager = s_RenderSystem.GetResourceManager();
+        resourceManager.ResizeFramebuffer( s_pFinalSceneFramebuffer, width, height );
     }
 }

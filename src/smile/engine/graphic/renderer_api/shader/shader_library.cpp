@@ -6,6 +6,7 @@
 #include "shader_library.h"
 
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 namespace smile::graphic
 {
@@ -22,7 +23,7 @@ namespace smile::graphic
 
     memory::Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto pShader = RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
+        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, bufferLayout );
         Add( pShader );
         return pShader;
     }
@@ -30,7 +31,7 @@ namespace smile::graphic
     memory::Ref< Shader >
     ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
     {
-        auto pShader = RenderEngine::GetRenderSystem().GetGraphicsDevice()->CreateShader( filePath, bufferLayout );
+        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, bufferLayout );
         Add( name, pShader );
         return pShader;
     }

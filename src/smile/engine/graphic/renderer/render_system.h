@@ -9,7 +9,6 @@
 #include "memory/ref.h"
 
 // TODO: Remove dependency
-#include "engine/graphic/renderer_api/graphics_device.h"
 #include "engine/graphic/renderer_api/graphics_context.h"
 
 #include <DirectXMath.h>
@@ -21,6 +20,8 @@ namespace smile::window
 
 namespace smile::graphic
 {
+    class RendererAPI;
+    class ResourceManager;
     class Shader;
 
     class RenderSystem final
@@ -43,8 +44,10 @@ namespace smile::graphic
         void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader );
         void Present();
 
-        GraphicsDevice *GetGraphicsDevice() const;
         GraphicsContext *GetGraphicsContext() const;
+        ResourceManager &GetResourceManager();
+
+        RendererAPI *GetRendererAPI() const;
 
       private:
         foundation::PImpl< Opaque > m_pImpl;

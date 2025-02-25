@@ -825,20 +825,4 @@ namespace smile::graphic
         viewPort.TopLeftX = 0.0f;
         viewPort.TopLeftY = 0.0f;
     }
-
-    void
-    DirectX11Device::ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height )
-    {
-        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
-             ( height > pFramebuffer->MaxFramebufferSize ) )
-        {
-            SM_LOG_WARNING( "DirectX11Device::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
-            return;
-        }
-
-        pFramebuffer->Descriptor.Width = width;
-        pFramebuffer->Descriptor.Height = height;
-
-        InvalidateFramebuffer( pFramebuffer );
-    }
 }

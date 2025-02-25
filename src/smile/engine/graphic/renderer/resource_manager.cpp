@@ -70,4 +70,19 @@ namespace smile::graphic
         m_pRasterizerStates.push_back( pRasterizerState );
         return pRasterizerState;
     }
+
+    void ResourceManager::ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height )
+    {
+        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
+             ( height > pFramebuffer->MaxFramebufferSize ) )
+        {
+            SM_LOG_WARNING( "ResourceManager::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
+            return;
+        }
+
+        pFramebuffer->Descriptor.Width = width;
+        pFramebuffer->Descriptor.Height = height;
+
+        m_pDevice->InvalidateFramebuffer( pFramebuffer );
+    }
 }

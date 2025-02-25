@@ -32,10 +32,10 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        auto pDevice = graphic::RenderEngine::GetRenderSystem().GetGraphicsDevice();
-        m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
-        m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
-        m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
+        auto &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
+        m_pIconPlay = resourceManager.CreateTexture2D( "resources/icons/play_button.png" );
+        m_pIconSimulate = resourceManager.CreateTexture2D( "resources/icons/simulate_button.png" );
+        m_pIconStop = resourceManager.CreateTexture2D( "resources/icons/stop_button.png" );
 
         auto commandLineArgs = application::Application::GetInstance().GetDescriptor().CommandLineArgs;
         if ( commandLineArgs.Count > 1 )

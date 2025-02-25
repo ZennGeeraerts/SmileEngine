@@ -6,6 +6,7 @@
 #include "wireframe_renderer.h"
 
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 namespace smile::graphic
 {
@@ -14,13 +15,13 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
-        GraphicsDevice *pDevice = RenderEngine::GetRenderSystem().GetGraphicsDevice();
+        ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
         RasterizerStateDescriptor rasterizerStateDesc{};
         rasterizerStateDesc.CullMode = CullMode::None;
         rasterizerStateDesc.FillMode = FillMode::WireFrame;
         rasterizerStateDesc.EnableDepthClip = true;
 
-        s_pWireframeRasterizerState = pDevice->CreateRasterizerState( rasterizerStateDesc );
+        s_pWireframeRasterizerState = resourceManager.CreateRasterizerState( rasterizerStateDesc );
     }
 
     void WireframeRenderer::ShutDown()

@@ -80,11 +80,11 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::GraphicsDevice *pGraphicsDevice = graphic::RenderEngine::GetRenderSystem().GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = graphic::RenderEngine::GetRenderSystem().GetGraphicsContext();
+        graphic::RendererAPI *pRendererAPI = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
+        graphic::GraphicsDevice *pGraphicsDevice = pRendererAPI->GetGraphicsDevice();
+        graphic::GraphicsContext *pGraphicsContext = pRendererAPI->GetGraphicsContext();
 
-        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
-        switch ( api )
+        switch ( pRendererAPI->GetAPI() )
         {
             case graphic::RendererAPI::API::DirectX11:
             {
@@ -114,7 +114,7 @@ namespace smile::imgui
 
     void ImGuiLayer::Begin()
     {
-        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
+        graphic::RendererAPI::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
         switch ( api )
         {
             case graphic::RendererAPI::API::DirectX11:
@@ -142,7 +142,7 @@ namespace smile::imgui
 
         ImGui::Render();
 
-        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
+        graphic::RendererAPI::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
         switch ( api )
         {
             case graphic::RendererAPI::API::DirectX11:
