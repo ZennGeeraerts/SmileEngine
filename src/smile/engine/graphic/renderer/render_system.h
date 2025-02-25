@@ -5,9 +5,9 @@
 #pragma once
 
 #include "foundation/compiled.h"
-#include "foundation/pimpl.h"
 #include "memory/ref.h"
 
+#include "resource_manager.h"
 #include "engine/graphic/renderer_api/primitive_topology.h"
 
 #include <DirectXMath.h>
@@ -20,18 +20,9 @@ namespace smile::window
 namespace smile::graphic
 {
     class RendererAPI;
-    class ResourceManager;
-    class VertexBuffer;
-    class IndexBuffer;
-    class Shader;
-    class Framebuffer;
-    class RasterizerState;
 
     class RenderSystem final
     {
-      private:
-        struct Opaque;
-
       public:
         RenderSystem();
         ~RenderSystem();
@@ -40,7 +31,11 @@ namespace smile::graphic
 
         void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
 
-        void SetClearColor( const DirectX::XMFLOAT4 &color );
+        void SetClearColor( const DirectX::XMFLOAT4 &color )
+        {
+            m_ClearColor = color;
+        }
+
         void Clear();
 
         void BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const;
@@ -67,11 +62,19 @@ namespace smile::graphic
         void Draw( Uint32 vertexCount );
         void Present();
 
-        ResourceManager &GetResourceManager();
+        ResourceManager &GetResourceManager()
+        {
+            return m_ResourceManager;
+        }
 
         RendererAPI *GetRendererAPI() const; // TODO: Remove
 
       private:
-        foundation::PImpl< Opaque > m_pImpl;
+        Scope< RendererAPI > m_pRendererAPI = nullptr;
+        ResourceManager m_ResourceManager{};
+
+        DirectX::XMFLOAT4 m_ClearColor{};
+
+        memory::Ref< Shader > m_pBoundShader = nullptr;
     };
 }
