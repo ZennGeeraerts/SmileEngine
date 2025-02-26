@@ -23,7 +23,7 @@ namespace smile::graphic::ecs
                 pRenderPass->OnRender( camera, cameraTransform );
         }
 
-        void Add( Ref< RenderPass > pRenderPass )
+        void Add( memory::Ref< RenderPass > pRenderPass )
         {
             m_pRenderPasses.push_back( std::move( pRenderPass ) );
         }
@@ -43,6 +43,6 @@ namespace smile::graphic::ecs
         }
 
       private:
-        std::vector< Ref< RenderPass > > m_pRenderPasses{};
+        std::vector< memory::Ref< RenderPass > > m_pRenderPasses{};
     };
 }

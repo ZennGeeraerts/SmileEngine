@@ -20,7 +20,7 @@ namespace smile::graphic
     RenderSystem RenderEngine::s_RenderSystem{};
     window::Window *RenderEngine::s_pWindow = nullptr;
 
-    Ref< Scene > RenderEngine::s_pScene;
+    memory::Ref< Scene > RenderEngine::s_pScene = nullptr;
 
     RendererSettings RenderEngine::s_Settings{};
     ShaderLibrary RenderEngine::s_ShaderLibrary{};
@@ -39,7 +39,7 @@ namespace smile::graphic
             { { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } } );
         s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
-        s_pScene = SceneManager::CreateScene( pWindow );
+        s_pScene = memory::CreateRef< Scene >( pWindow );
 
         ForwardRenderer::Initialize();
         WireframeRenderer::GetInstance().Initialize();
@@ -56,7 +56,7 @@ namespace smile::graphic
         Renderer2D::ShutDown();
         SkyboxRenderer::ShutDown();
     }
-	
+
     void RenderEngine::OnWindowResize( Uint32 width, Uint32 height )
     {
         s_RenderSystem.ResizeWindow( 0, 0, width, height );
@@ -68,6 +68,6 @@ namespace smile::graphic
         s_Settings.Height = height;
 
         auto &resourceManager = s_RenderSystem.GetResourceManager();
-        resourceManager.ResizeFramebuffer( s_pFinalSceneFramebuffer, width, height );
+        resourceManager.ResizeFramebuffer( s_pScene->GetFramebuffer(), width, height );
     }
 }

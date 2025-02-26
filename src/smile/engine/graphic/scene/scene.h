@@ -4,24 +4,35 @@
 /*=============================================================================*/
 #pragma once
 
+#include "memory/ref.h"
 #include "ecs/render_pass_list.h"
 #include "engine/graphic/renderer_api/resource/frame_buffer.h"
 
+namespace smile::window
+{
+    class Window;
+}
+
 namespace smile::graphic
 {
-    class Scene final
+    class Scene final : public memory::Object
     {
       public:
-        Scene() = default;
+        Scene( window::Window *pWindow );
 
-        void AddRenderPass( Ref< ecs::RenderPass > pRenderPass )
+        void AddRenderPass( memory::Ref< ecs::RenderPass > pRenderPass )
         {
-            m_RenderPassList.Add( pRenderPass );
+            m_RenderPassList.Add( std::move( pRenderPass ) );
+        }
+
+        void ClearRenderPasses()
+        {
+            m_RenderPassList.Clear();
         }
 
         void OnRender();
 
-        Ref< Framebuffer > GetFramebuffer() const
+        memory::Ref< Framebuffer > GetFramebuffer() const
         {
             return m_pFramebuffer;
         }
@@ -33,8 +44,6 @@ namespace smile::graphic
 
       private:
         ecs::RenderPassList m_RenderPassList;
-        Ref< Framebuffer > m_pFramebuffer;
-
-        friend class SceneManager;
+        memory::Ref< Framebuffer > m_pFramebuffer;
     };
 }

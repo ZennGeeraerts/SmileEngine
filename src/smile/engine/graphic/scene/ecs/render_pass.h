@@ -4,12 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
+#include "memory/object.h"
 #include "ecs/ecs_engine.h"
 #include "engine/graphic/camera/camera.h"
 
 namespace smile::graphic::ecs
 {
-    class RenderPass
+    class RenderPass : public memory::Object
     {
       public:
         RenderPass( smile::ecs::ECSEngine &ecsEngine ) : m_ECSEngine{ ecsEngine }

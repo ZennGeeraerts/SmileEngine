@@ -5,17 +5,39 @@
 #include "smpch.h"
 #include "scene.h"
 
-#include "engine/graphic/renderer/render_command.h"
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 #include "engine/graphic/renderer/skybox_renderer.h"
+
+#include "window/window.h"
+
+#include <DirectXColors.h>
 
 namespace smile::graphic
 {
+    Scene::Scene( window::Window *pWindow )
+    {
+        FramebufferDescriptor frameBufferDesc{};
+        frameBufferDesc.Attachments = { { FramebufferTextureFormat::RGBA8, true },
+            FramebufferTextureFormat::Depth,
+            { FramebufferTextureFormat::RGBA8, true } };
+        frameBufferDesc.Width = pWindow->GetWidth();
+        frameBufferDesc.Height = pWindow->GetHeight();
+        frameBufferDesc.IsSwapChainTarget = false;
+
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        m_pFramebuffer = resourceManager.CreateFramebuffer( frameBufferDesc );
+        m_pFramebuffer->ClearColor = { DirectX::Colors::DodgerBlue.f[0],
+            DirectX::Colors::DodgerBlue.f[1],
+            DirectX::Colors::DodgerBlue.f[2],
+            DirectX::Colors::DodgerBlue.f[3] };
+    }
+
     void Scene::OnRender()
     {
-        auto pContext = RenderCommand::GetGraphicsContext();
-        pContext->ClearFramebuffer( m_pFramebuffer );
-        pContext->BindFramebuffer( m_pFramebuffer );
+        auto &renderSystem = RenderEngine::GetRenderSystem();
+        renderSystem.ClearFramebuffer( m_pFramebuffer );
+        renderSystem.BindFramebuffer( m_pFramebuffer );
 
         const RenderEngine::CameraData &cameraData = RenderEngine::GetCameraData();
 
@@ -28,6 +50,6 @@ namespace smile::graphic
             SkyboxRenderer::EndScene();
         }
 
-        pContext->UnbindFramebuffer();
+        renderSystem.UnbindFramebuffer();
     }
 }

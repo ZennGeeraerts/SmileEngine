@@ -7,7 +7,7 @@
 #include "render_system.h"
 #include "engine/graphic/renderer_api/shader/shader_library.h"
 #include "engine/graphic/camera/editor_camera.h"
-#include "engine/graphic/scene/scene_manager.h"
+#include "engine/graphic/scene/scene.h"
 
 #include "window/window.h"
 
@@ -57,7 +57,7 @@ namespace smile::graphic
             return s_ShaderLibrary;
         }
 
-        static Ref< Scene > GetScene()
+        static memory::Ref< Scene > GetScene()
         {
             return s_pScene;
         }
@@ -69,7 +69,7 @@ namespace smile::graphic
 
       private:
         static RenderSystem s_RenderSystem;
-        static Ref< Scene > s_pScene;
+        static memory::Ref< Scene > s_pScene;
         static window::Window *s_pWindow;
 
         static RendererSettings s_Settings;
