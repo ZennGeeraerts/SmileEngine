@@ -42,7 +42,7 @@ namespace smile::ecs::state
         return m_StateMap.find( name ) != m_StateMap.end();
     }
 
-    void StateManager::ChangeState( const std::string &name )
+    void StateManager::ChangeState( const std::string &name, const std::vector< std::string > &systemsAtBack )
     {
         SM_ASSERT( HasState( name ), "StateManager::ChangeState > State manager does not have state" );
 
@@ -50,7 +50,7 @@ namespace smile::ecs::state
 
         std::vector< std::string > currentSystems = m_pCurrentState->GetSystemNames();
         std::vector< std::string > targetSystems = pTargetState->GetSystemNames();
-        std::vector< std::string > toBeRemovedSystems{};
+        std::vector< std::string > toBeRemovedSystems{ systemsAtBack };
         std::vector< std::string > toBeAddedSystems{};
 
         std::sort( currentSystems.begin(), currentSystems.end() );
@@ -67,6 +67,8 @@ namespace smile::ecs::state
             currentSystems.begin(),
             currentSystems.end(),
             std::inserter( toBeAddedSystems, toBeAddedSystems.end() ) );
+
+        toBeAddedSystems.insert( toBeAddedSystems.end(), systemsAtBack.begin(), systemsAtBack.end() );
 
         const auto &pSystems = m_pECSEngine->GetSystems();
 
