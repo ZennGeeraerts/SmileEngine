@@ -21,8 +21,7 @@ namespace smile::graphic
         enum class API
         {
             None = 0,
-            DirectX11 = 1,
-            SmileRaster = 2
+            DirectX11 = 1
         };
 
       public:

@@ -98,8 +98,6 @@ namespace smile::imgui
                 ImGui_ImplDX11_Init( pDevice, pDeviceContext );
                 break;
             }
-            case graphic::RendererAPI::API::SmileRaster:
-                break;
 
             default:
                 break;
@@ -122,9 +120,6 @@ namespace smile::imgui
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
-
-            case graphic::RendererAPI::API::SmileRaster:
-                return;
 
             default:
                 return;
@@ -149,9 +144,6 @@ namespace smile::imgui
             case graphic::RendererAPI::API::DirectX11:
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
-
-            case graphic::RendererAPI::API::SmileRaster:
-                return;
 
             default:
                 return;
