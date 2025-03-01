@@ -199,7 +199,8 @@ namespace smile
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image( graphic::RenderEngine::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
+        ImGui::Image(
+            graphic::RenderEngine::GetScene()->GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {

@@ -27,7 +27,7 @@ namespace smile::ecs
 
             void AddState( const std::string &name, memory::Ref< State > pState );
             bool HasState( const std::string &name ) const;
-            void ChangeState( const std::string &name );
+            void ChangeState( const std::string &name, const std::vector< std::string > &systemsAtBack = {} );
 
             std::vector< std::string > GetStates() const;
             State &GetState( const std::string &name ) const;

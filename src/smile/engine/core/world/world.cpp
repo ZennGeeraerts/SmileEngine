@@ -12,11 +12,11 @@
 
 #include "entity.h"
 
-#include "engine/graphic/renderer/ecs/forward_render_pass.h"
-#include "engine/graphic/renderer/ecs/wireframe_render_pass.h"
-#include "engine/graphic/renderer/ecs/debug_render_pass.h"
-#include "engine/graphic/renderer/ecs/render_pass_2d.h"
-#include "engine/graphic/renderer/ecs/physics_render_pass.h"
+#include "engine/graphic/scene/ecs/forward_render_pass.h"
+#include "engine/graphic/scene/ecs/wireframe_render_pass.h"
+#include "engine/graphic/scene/ecs/debug_render_pass.h"
+#include "engine/graphic/scene/ecs/render_pass_2d.h"
+#include "engine/graphic/scene/ecs/physics_render_pass.h"
 
 #include "engine/graphic/camera/ecs/camera_system.h"
 
@@ -27,6 +27,7 @@
 #include "engine/physics/ecs/physics_system.h"
 #include "engine/graphic/animation/ecs/animation_system.h"
 #include "engine/graphic/camera/ecs/camera_system.h"
+#include "engine/graphic/ecs/graphic_system.h"
 
 namespace smile::world
 {
@@ -36,14 +37,19 @@ namespace smile::world
         smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::CameraSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::GraphicSystem >();
 
         auto pEditorState = memory::CreateRef< smile::ecs::state::State >();
         pEditorState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
+        pEditorState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
+        pEditorState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "editor", pEditorState );
 
         auto pSimulateState = memory::CreateRef< smile::ecs::state::State >();
         pSimulateState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        pSimulateState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
+        pSimulateState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "simulate", pSimulateState );
 
         auto pRuntimeState = memory::CreateRef< smile::ecs::state::State >();
@@ -51,6 +57,7 @@ namespace smile::world
         pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "runtime", pRuntimeState );
 
         m_StateManager.Initialize( &m_ECSEngine, "editor" );
@@ -110,23 +117,28 @@ namespace smile::world
 
     void World::OnOpen()
     {
-        m_StateManager.ChangeState( "editor" );
+        m_StateManager.ChangeState( "editor", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
 
-        graphic::RenderEngine::AddRenderPass( new graphic::ecs::ForwardRenderPass{ m_ECSEngine } );
-        graphic::RenderEngine::AddRenderPass( new graphic::ecs::WireframeRenderPass{ m_ECSEngine } );
-        graphic::RenderEngine::AddRenderPass( new graphic::ecs::DebugRenderPass{ m_ECSEngine } );
-        graphic::RenderEngine::AddRenderPass( new graphic::ecs::RenderPass2D{ m_ECSEngine } );
-        graphic::RenderEngine::AddRenderPass( new graphic::ecs::PhysicsRenderPass{ m_ECSEngine } );
+        graphic::RenderEngine::GetScene()->AddRenderPass(
+            memory::CreateRef< graphic::ecs::ForwardRenderPass >( m_ECSEngine ) );
+        graphic::RenderEngine::GetScene()->AddRenderPass(
+            memory::CreateRef< graphic::ecs::WireframeRenderPass >( m_ECSEngine ) );
+        graphic::RenderEngine::GetScene()->AddRenderPass(
+            memory::CreateRef< graphic::ecs::DebugRenderPass >( m_ECSEngine ) );
+        graphic::RenderEngine::GetScene()->AddRenderPass(
+            memory::CreateRef< graphic::ecs::RenderPass2D >( m_ECSEngine ) );
+        graphic::RenderEngine::GetScene()->AddRenderPass(
+            memory::CreateRef< graphic::ecs::PhysicsRenderPass >( m_ECSEngine ) );
     }
 
     void World::OnClose()
     {
-        graphic::RenderEngine::ClearRenderPasses();
+        graphic::RenderEngine::GetScene()->ClearRenderPasses();
     }
 
     void World::OnRuntimeStart()
     {
-        m_StateManager.ChangeState( "runtime" );
+        m_StateManager.ChangeState( "runtime", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
 
         // Scripting
         {
@@ -144,18 +156,18 @@ namespace smile::world
 
     void World::OnRuntimeStop()
     {
-        m_StateManager.ChangeState( "editor" );
+        m_StateManager.ChangeState( "editor", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
         scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void World::OnSimulationStart()
     {
-        m_StateManager.ChangeState( "simulate" );
+        m_StateManager.ChangeState( "simulate", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
     }
 
     void World::OnSimulationStop()
     {
-        m_StateManager.ChangeState( "editor" );
+        m_StateManager.ChangeState( "editor", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
     }
 
     void World::OnUpdateRuntime( primitive::Timestep deltaTime )
@@ -168,19 +180,16 @@ namespace smile::world
         }
 
         m_ECSEngine.OnUpdate();
-        graphic::RenderEngine::OnRender();
     }
 
     void World::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void World::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
         m_ECSEngine.OnUpdate();
-        graphic::RenderEngine::OnRender( editorCamera );
     }
 
     void World::OnViewportResize( Uint32 width, Uint32 height )

@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "engine/graphic/renderer/ecs/physics_render_pass.h"
+#include "engine/graphic/scene/ecs/physics_render_pass.h"
 
 #include "engine/graphic/renderer/debug_renderer.h"
 #include "engine/physics/physics_engine.h"
