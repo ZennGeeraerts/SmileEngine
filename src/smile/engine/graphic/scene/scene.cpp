@@ -15,7 +15,7 @@
 
 namespace smile::graphic
 {
-    Scene::Scene( window::Window *pWindow )
+    Scene::Scene( const window::Window *pWindow )
     {
         FramebufferDescriptor frameBufferDesc{};
         frameBufferDesc.Attachments = { { FramebufferTextureFormat::RGBA8, true },

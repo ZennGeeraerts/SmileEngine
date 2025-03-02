@@ -18,7 +18,7 @@ namespace smile::graphic
     class Scene final : public memory::Object
     {
       public:
-        Scene( window::Window *pWindow );
+        Scene( const window::Window *pWindow );
 
         void AddRenderPass( memory::Ref< ecs::RenderPass > pRenderPass )
         {

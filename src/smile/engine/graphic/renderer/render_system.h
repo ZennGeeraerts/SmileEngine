@@ -27,7 +27,7 @@ namespace smile::graphic
         RenderSystem();
         ~RenderSystem();
 
-        void Initialize( window::Window *pWindow );
+        void Initialize( const window::Window *pWindow );
 
         void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
 

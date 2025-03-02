@@ -22,7 +22,7 @@ namespace smile::graphic
     class RenderEngine final
     {
       public:
-        static void Initialize( window::Window *pWindow );
+        static void Initialize( const window::Window *pWindow );
         static void ShutDown();
 
         static void OnWindowResize( Uint32 width, Uint32 height );
@@ -70,7 +70,7 @@ namespace smile::graphic
       private:
         static RenderSystem s_RenderSystem;
         static memory::Ref< Scene > s_pScene;
-        static window::Window *s_pWindow;
+        static const window::Window *s_pWindow;
 
         static RendererSettings s_Settings;
         static ShaderLibrary s_ShaderLibrary;

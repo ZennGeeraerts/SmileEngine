@@ -18,7 +18,7 @@
 namespace smile::graphic
 {
     RenderSystem RenderEngine::s_RenderSystem{};
-    window::Window *RenderEngine::s_pWindow = nullptr;
+    const window::Window *RenderEngine::s_pWindow = nullptr;
 
     memory::Ref< Scene > RenderEngine::s_pScene = nullptr;
 
@@ -27,7 +27,7 @@ namespace smile::graphic
 
     RenderEngine::CameraData RenderEngine::s_CameraData{};
 
-    void RenderEngine::Initialize( window::Window *pWindow )
+    void RenderEngine::Initialize( const window::Window *pWindow )
     {
         s_pWindow = pWindow;
         s_RenderSystem.Initialize( pWindow );

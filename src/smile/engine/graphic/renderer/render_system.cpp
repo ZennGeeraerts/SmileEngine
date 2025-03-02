@@ -16,7 +16,7 @@ namespace smile::graphic
 
     RenderSystem::~RenderSystem() = default;
 
-    void RenderSystem::Initialize( window::Window *pWindow )
+    void RenderSystem::Initialize( const window::Window *pWindow )
     {
         m_ResourceManager.Initialize( m_pRendererAPI->GetGraphicsDevice() );
 
