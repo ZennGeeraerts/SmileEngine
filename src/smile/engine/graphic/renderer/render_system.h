@@ -48,9 +48,8 @@ namespace smile::graphic
         void BindShader( memory::Ref< Shader > pShader );
         void UnbindShader();
 
-        void BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) const;
-        void UnbindFramebuffer() const;
-        void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer );
+        void BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer );
+        void BindBackBuffer();
 
         void BindRasterizerState( memory::Ref< RasterizerState > pRasterizerState ) const;
         void UnbindRasterizerState() const;
@@ -75,6 +74,8 @@ namespace smile::graphic
 
         DirectX::XMFLOAT4 m_ClearColor{};
 
+        memory::Ref< SwapChain > m_pSwapChain = nullptr;
         memory::Ref< Shader > m_pBoundShader = nullptr;
+        memory::Ref< Framebuffer > m_pBoundFramebuffer = nullptr;
     };
 }

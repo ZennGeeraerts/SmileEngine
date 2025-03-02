@@ -18,18 +18,26 @@ namespace smile::graphic
 
     void RenderSystem::Initialize( window::Window *pWindow )
     {
-        m_pRendererAPI->Initialize( pWindow );
-       m_ResourceManager.Initialize( m_pRendererAPI->GetGraphicsDevice() );
+        m_ResourceManager.Initialize( m_pRendererAPI->GetGraphicsDevice() );
+
+        m_pSwapChain = m_pRendererAPI->GetGraphicsDevice()->CreateSwapChain( pWindow );
     }
 
     void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
     {
-        m_pRendererAPI->GetSwapChain()->Resize( x, y, width, height );
+        m_pRendererAPI->GetGraphicsDevice()->ResizeBackBuffer( m_pSwapChain, x, y, width, height );
     }
 
     void RenderSystem::Clear()
     {
-        m_pRendererAPI->GetGraphicsContext()->Clear( m_ClearColor );
+        if ( m_pBoundFramebuffer )
+        {
+            m_pRendererAPI->GetGraphicsContext()->ClearFramebuffer( m_pBoundFramebuffer );
+        }
+        else
+        {
+            m_pRendererAPI->GetGraphicsContext()->ClearBackBuffer( m_pSwapChain, m_ClearColor );
+        }
     }
 
     void RenderSystem::BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const
@@ -60,29 +68,26 @@ namespace smile::graphic
 
     void RenderSystem::BindShader( memory::Ref< Shader > pShader )
     {
-        m_pBoundShader = pShader;
         m_pRendererAPI->GetGraphicsContext()->BindShader( pShader );
+        m_pBoundShader = pShader;
     }
 
     void RenderSystem::UnbindShader()
     {
-        m_pBoundShader = nullptr;
         m_pRendererAPI->GetGraphicsContext()->UnbindShader();
+        m_pBoundShader = nullptr;
     }
 
-    void RenderSystem::BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) const
+    void RenderSystem::BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
     {
         m_pRendererAPI->GetGraphicsContext()->BindFramebuffer( pFramebuffer );
+        m_pBoundFramebuffer = pFramebuffer;
     }
 
-    void RenderSystem::UnbindFramebuffer() const
+    void RenderSystem::BindBackBuffer()
     {
-        m_pRendererAPI->GetGraphicsContext()->UnbindFramebuffer();
-    }
-
-    void RenderSystem::ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
-    {
-        m_pRendererAPI->GetGraphicsContext()->ClearFramebuffer( pFramebuffer );
+        m_pRendererAPI->GetGraphicsContext()->BindBackBuffer( m_pSwapChain );
+        m_pBoundFramebuffer = nullptr;
     }
 
     void RenderSystem::BindRasterizerState( memory::Ref< RasterizerState > pRasterizerState ) const
@@ -117,7 +122,7 @@ namespace smile::graphic
 
     void RenderSystem::Present()
     {
-        m_pRendererAPI->GetSwapChain()->Present();
+        m_pSwapChain->Present();
     }
 
     RendererAPI *RenderSystem::GetRendererAPI() const

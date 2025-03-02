@@ -5,7 +5,6 @@
 #pragma once
 
 #include "engine/graphic/renderer_api/renderer_api.h"
-#include <d3d11.h>
 
 namespace smile::graphic
 {
@@ -16,10 +15,5 @@ namespace smile::graphic
         ~DirectX11RendererAPI();
         DirectX11RendererAPI( const DirectX11RendererAPI & ) = delete;
         DirectX11RendererAPI( DirectX11RendererAPI && ) = delete;
-
-        void Initialize( window::Window *pWindow ) override;
-
-      private:
-        IDXGIFactory *m_pDXGIFactory = nullptr;
     };
 }

@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "resource/swap_chain.h"
 #include "resource/vertex_buffer.h"
 #include "resource/index_buffer.h"
 #include "resource/texture.h"
@@ -22,6 +23,10 @@ namespace smile::graphic
         virtual ~GraphicsDevice() = default;
 
         virtual void *GetInternal() const = 0;
+
+        virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
+        virtual void
+        ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain, Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
         virtual memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) = 0;
         virtual memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) = 0;

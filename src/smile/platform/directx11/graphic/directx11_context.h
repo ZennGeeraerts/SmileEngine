@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #pragma once
 #include "engine/graphic/renderer_api/graphics_context.h"
-#include "directx11_swap_chain.h"
 
 #include <d3d11.h>
 
@@ -26,19 +25,24 @@ namespace smile::graphic
             return m_pInternal;
         }
 
+        void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
+        void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
+
         void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
         void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
-        void Clear( const DirectX::XMFLOAT4 &clearColor ) override;
 
         void BindVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer ) const override;
         void UnbindVertexBuffer() const override;
+
         void BindIndexBuffer( const memory::Ref< IndexBuffer > &pIndexBuffer ) const override;
         void UnbindIndexBuffer() const override;
+
         void BindShader( const memory::Ref< Shader > &pShader ) const override;
         void UnbindShader() const override;
+
         void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const override;
-        void UnbindFramebuffer() const override;
-        void ClearFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
+        void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) override;
+
         void BindRasterizerState( const memory::Ref< RasterizerState > &pRasterizerState ) const override;
         void UnbindRasterizerState() const override;
         void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
@@ -50,7 +54,6 @@ namespace smile::graphic
 
       private:
         ID3D11DeviceContext *m_pInternal = nullptr;
-        DirectX11SwapChain *m_pSwapChain = nullptr;
 
         friend class DirectX11Device;
         friend class DirectX11RendererAPI;

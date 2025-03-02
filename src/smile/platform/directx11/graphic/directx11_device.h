@@ -7,20 +7,32 @@
 
 #include <d3d11.h>
 
+namespace smile::window
+{
+    class Window;
+}
+
 namespace smile::graphic
 {
-    class GraphicsContext;
+    class DirectX11Context;
 
     class DirectX11Device final : public GraphicsDevice
     {
       public:
-        DirectX11Device( GraphicsContext *pContext );
+        DirectX11Device( DirectX11Context *pContext );
         ~DirectX11Device();
 
         void *GetInternal() const override
         {
             return m_pInternal;
         }
+
+        memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
+        void ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain,
+            Uint32 x,
+            Uint32 y,
+            Uint32 width,
+            Uint32 height ) override;
 
         memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) override;
         memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) override;
@@ -38,5 +50,7 @@ namespace smile::graphic
 
       private:
         ID3D11Device *m_pInternal = nullptr;
+        ID3D11DeviceContext *m_pContext = nullptr;
+        IDXGIFactory *m_pDXGIFactory = nullptr;
     };
 }

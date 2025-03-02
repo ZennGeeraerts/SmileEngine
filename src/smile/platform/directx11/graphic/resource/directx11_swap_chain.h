@@ -3,27 +3,20 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer_api/swap_chain.h"
-#include "resource/directx11_frame_buffer.h"
+#include "engine/graphic/renderer_api/resource/swap_chain.h"
+#include "directx11_frame_buffer.h"
 
 #include "memory/ref.h"
 
 namespace smile::graphic
 {
-    class GraphicsDevice;
-    class GraphicsContext;
-
     class DirectX11SwapChain final : public SwapChain
     {
       public:
-        DirectX11SwapChain( GraphicsDevice *pDevice,
-            GraphicsContext *pContext,
-            window::Window *pWindow,
-            IDXGIFactory *pDXGIFactory );
+        DirectX11SwapChain( const window::Window *pWindow );
         ~DirectX11SwapChain();
 
         void Present() override;
-        void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
 
         inline ID3D11RenderTargetView *GetRenderTargetView() const
         {
@@ -48,7 +41,6 @@ namespace smile::graphic
 
         D3D11_VIEWPORT m_Viewport{};
 
-        GraphicsDevice *m_pDevice;
-        GraphicsContext *m_pContext;
+        friend class DirectX11Device;
     };
 }

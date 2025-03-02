@@ -36,8 +36,8 @@ namespace smile::graphic
     void Scene::OnRender()
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();
-        renderSystem.ClearFramebuffer( m_pFramebuffer );
         renderSystem.BindFramebuffer( m_pFramebuffer );
+        renderSystem.Clear();
 
         const RenderEngine::CameraData &cameraData = RenderEngine::GetCameraData();
 
@@ -50,6 +50,6 @@ namespace smile::graphic
             SkyboxRenderer::EndScene();
         }
 
-        renderSystem.UnbindFramebuffer();
+        renderSystem.BindBackBuffer();
     }
 }
