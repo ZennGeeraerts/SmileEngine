@@ -7,7 +7,7 @@
 #include "foundation/compiled.h"
 #include "memory/ref.h"
 #include "buffer.h"
-#include "engine/graphic/renderer_api/resource/texture.h"
+#include "engine/graphic/renderer_backend/resource/texture.h"
 
 #include <DirectXMath.h>
 

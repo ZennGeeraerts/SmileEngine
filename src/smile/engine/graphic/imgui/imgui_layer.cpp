@@ -8,10 +8,10 @@
 #include "engine/core/application/application.h"
 #include "engine/core/window/window.h"
 #include "engine/graphic/renderer/render_engine.h"
-#include "engine/graphic/renderer_api/renderer_api.h"
+#include "engine/graphic/renderer_backend/renderer_Backend.h"
 
-#include "platform/directx11/graphic/directx11_device.h"
-#include "platform/directx11/graphic/directx11_context.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_device.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_context.h"
 
 #include "engine/common/logging/logger.h"
 #include "engine/core/input/key_codes.h"
@@ -81,13 +81,13 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::RendererAPI *pRendererAPI = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
+        graphic::RendererBackend *pRendererAPI = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
         graphic::GraphicsDevice *pGraphicsDevice = pRendererAPI->GetGraphicsDevice();
         graphic::GraphicsContext *pGraphicsContext = pRendererAPI->GetGraphicsContext();
 
         switch ( pRendererAPI->GetAPI() )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererBackend::API::DirectX11:
             {
                 ImGui_ImplWin32_Init( window.GetNativeWindow() );
 
@@ -113,10 +113,10 @@ namespace smile::imgui
 
     void ImGuiLayer::Begin()
     {
-        graphic::RendererAPI::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
+        graphic::RendererBackend::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
         switch ( api )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererBackend::API::DirectX11:
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
@@ -138,10 +138,10 @@ namespace smile::imgui
 
         ImGui::Render();
 
-        graphic::RendererAPI::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
+        graphic::RendererBackend::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
         switch ( api )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererBackend::API::DirectX11:
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
 

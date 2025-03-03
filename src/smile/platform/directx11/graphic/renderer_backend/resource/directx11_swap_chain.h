@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer_api/resource/swap_chain.h"
+#include "engine/graphic/renderer_backend/resource/swap_chain.h"
 #include "directx11_frame_buffer.h"
 
 #include "memory/ref.h"

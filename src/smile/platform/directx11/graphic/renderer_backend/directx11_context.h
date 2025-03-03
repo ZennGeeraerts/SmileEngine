@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer_api/graphics_context.h"
+#include "engine/graphic/renderer_backend/graphics_context.h"
 
 #include <d3d11.h>
 
@@ -56,6 +56,6 @@ namespace smile::graphic
         ID3D11DeviceContext *m_pInternal = nullptr;
 
         friend class DirectX11Device;
-        friend class DirectX11RendererAPI;
+        friend class DirectX11RendererBackend;
     };
 }

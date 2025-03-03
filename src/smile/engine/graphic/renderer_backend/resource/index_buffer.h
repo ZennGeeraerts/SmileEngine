@@ -3,26 +3,24 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer_api/shader/buffer.h"
+#include "engine/graphic/renderer_backend/shader/buffer.h"
 #include "memory/object.h"
 
 namespace smile::graphic
 {
-    struct VertexBufferDescriptor final
+    struct IndexBufferDescriptor final
     {
-        void *pVertices = nullptr;
+        Uint32 *pIndices = nullptr;
         Uint32 Count = 0;
-        Uint32 Stride = 0;
         BufferUsage Usage = BufferUsage::Default;
-        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
     };
 
-    struct VertexBuffer : public memory::Object
+    struct IndexBuffer : public memory::Object
     {
-        VertexBuffer() = default;
-        virtual ~VertexBuffer() = default;
+        IndexBuffer() = default;
+        virtual ~IndexBuffer() = default;
         virtual void *GetInternal() const = 0;
 
-        Uint32 Stride = 0;
+        Uint32 Count;
     };
 }

@@ -5,13 +5,13 @@
 #include "smpch.h"
 #include "render_system.h"
 
-#include "engine/graphic/renderer_api/renderer_api.h"
+#include "engine/graphic/renderer_backend/renderer_backend.h"
 
 namespace smile::graphic
 {
     RenderSystem::RenderSystem()
     {
-        m_pRendererAPI = RendererAPI::Create( RendererAPI::API::DirectX11 );
+        m_pRendererAPI = RendererBackend::Create( RendererBackend::API::DirectX11 );
     }
 
     RenderSystem::~RenderSystem() = default;
@@ -125,7 +125,7 @@ namespace smile::graphic
         m_pSwapChain->Present();
     }
 
-    RendererAPI *RenderSystem::GetRendererAPI() const
+    RendererBackend *RenderSystem::GetRendererAPI() const
     {
         return m_pRendererAPI.get();
     }

@@ -9,7 +9,7 @@
 
 namespace smile::graphic
 {
-    class RendererAPI
+    class RendererBackend
     {
       public:
         enum class API
@@ -19,10 +19,10 @@ namespace smile::graphic
         };
 
       public:
-        RendererAPI( API api ) : m_API{ api }
+        RendererBackend( API api ) : m_API{ api }
         {
         }
-        virtual ~RendererAPI() = default;
+        virtual ~RendererBackend() = default;
 
         inline API GetAPI()
         {
@@ -39,7 +39,7 @@ namespace smile::graphic
             return m_pContext;
         }
 
-        static Scope< RendererAPI > Create( API api );
+        static Scope< RendererBackend > Create( API api );
 
       protected:
         GraphicsDevice *m_pDevice;

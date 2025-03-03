@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "renderer_api.h"
+#include "renderer_backend.h"
 
-#include "platform/directx11/graphic/directx11_renderer_api.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_renderer_backend.h"
 
 #if WITH_SMILERASTER
 #    include "platform/smileraster/graphic/smileraster_renderer_api.h"
@@ -13,17 +13,17 @@
 
 namespace smile::graphic
 {
-    Scope< RendererAPI > RendererAPI::Create( RendererAPI::API api )
+    Scope< RendererBackend > RendererBackend::Create( RendererBackend::API api )
     {
         switch ( api )
         {
-            case RendererAPI::API::None:
-                SM_ASSERT( false, "RenderCommand::Create > return nullptr, no renderer api selected" );
+            case RendererBackend::API::None:
+                SM_ASSERT( false, "RendererBackend::Create > return nullptr, no renderer api selected" );
                 break;
 
 #ifdef SM_PLATFORM_WINDOWS
-            case RendererAPI::API::DirectX11:
-                return CreateScope< DirectX11RendererAPI >();
+            case RendererBackend::API::DirectX11:
+                return CreateScope< DirectX11RendererBackend >();
 
 #    ifdef WITH_SMILERASTER
             case RendererAPI::API::SmileRaster:

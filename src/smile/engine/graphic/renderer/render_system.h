@@ -8,7 +8,7 @@
 #include "memory/ref.h"
 
 #include "resource_manager.h"
-#include "engine/graphic/renderer_api/primitive_topology.h"
+#include "engine/graphic/renderer_backend/primitive_topology.h"
 
 #include <DirectXMath.h>
 
@@ -19,7 +19,7 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class RendererAPI;
+    class RendererBackend;
 
     class RenderSystem final
     {
@@ -66,10 +66,10 @@ namespace smile::graphic
             return m_ResourceManager;
         }
 
-        RendererAPI *GetRendererAPI() const; // TODO: Remove
+        RendererBackend *GetRendererAPI() const; // TODO: Remove
 
       private:
-        Scope< RendererAPI > m_pRendererAPI = nullptr;
+        Scope< RendererBackend > m_pRendererAPI = nullptr;
         ResourceManager m_ResourceManager{};
 
         DirectX::XMFLOAT4 m_ClearColor{};
