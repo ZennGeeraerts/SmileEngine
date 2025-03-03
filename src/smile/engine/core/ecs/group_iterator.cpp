@@ -14,19 +14,19 @@ namespace smile::ecs
     {
     }
 
-    EntityHandleType GroupIterator::operator*() const
+    EntityHandle GroupIterator::operator*() const
     {
-        return m_Engine.GetEntityHandleManager().GetEntityHandle( *m_Iterator );
+        return m_Engine.GetEntityHandleManager().GetHandle( *m_Iterator );
     }
 
     bool GroupIterator::operator==( const GroupIterator &other ) const
     {
-        return m_Iterator == other.m_Iterator || ( *m_Iterator ) == m_Engine.GetEntityHandleManager().GetEntityCount();
+        return m_Iterator == other.m_Iterator || ( *m_Iterator ) == m_Engine.GetEntityHandleManager().GetHandleCount();
     }
 
     bool GroupIterator::operator!=( const GroupIterator &other ) const
     {
-        return m_Iterator != other.m_Iterator && ( *m_Iterator ) != m_Engine.GetEntityHandleManager().GetEntityCount();
+        return m_Iterator != other.m_Iterator && ( *m_Iterator ) != m_Engine.GetEntityHandleManager().GetHandleCount();
     }
 
     GroupIterator &GroupIterator::operator++()

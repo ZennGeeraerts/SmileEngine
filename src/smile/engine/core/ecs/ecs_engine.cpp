@@ -21,7 +21,7 @@ namespace smile::ecs
             delete pGroup;
     }
 
-    void ECSEngine::DestroyEntity( EntityHandleType entityHandle )
+    void ECSEngine::DestroyEntity( EntityHandle entityHandle )
     {
         for ( auto pCPool : m_pComponentPools )
         {
@@ -29,7 +29,7 @@ namespace smile::ecs
                 RemoveComponent( pCPool, entityHandle );
         }
 
-        m_HandleManager.DestroyEntity( entityHandle );
+        m_HandleManager.DestroyHandle( entityHandle );
     }
 
     void ECSEngine::OnUpdate()
@@ -47,7 +47,7 @@ namespace smile::ecs
         m_DeadHandles.clear();
     }
 
-    void ECSEngine::RemoveComponent( ComponentPool *pCPool, EntityHandleType entityHandle )
+    void ECSEngine::RemoveComponent( ComponentPool *pCPool, EntityHandle entityHandle )
     {
         for ( auto &pGroup : m_pGroups )
         {
@@ -58,7 +58,7 @@ namespace smile::ecs
         pCPool->Remove( entityHandle );
     }
 
-    bool ECSEngine::HasComponent( const ComponentPool *pCPool, EntityHandleType entityHandle ) const
+    bool ECSEngine::HasComponent( const ComponentPool *pCPool, EntityHandle entityHandle ) const
     {
         return pCPool ? pCPool->Contains( entityHandle ) : false;
     }

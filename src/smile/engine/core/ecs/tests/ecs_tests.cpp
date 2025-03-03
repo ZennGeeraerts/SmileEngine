@@ -1,4 +1,4 @@
-#include "engine/core/ecs/ecs_engine.h"
+#include "ecs/ecs_engine.h"
 #include <catch/catch.hpp>
 
 struct TestComponent final
@@ -33,24 +33,24 @@ namespace smile
             ecs::ECSEngine engine{};
             // engine.RegisterSystem< TestSystem >();
 
-            ecs::EntityHandleType handle1 = engine.CreateEntity();
-            ecs::EntityHandleType handle2 = engine.CreateEntity();
-            ecs::EntityHandleType handle3 = engine.CreateEntity();
+            ecs::EntityHandle handle1 = engine.CreateEntity();
+            ecs::EntityHandle handle2 = engine.CreateEntity();
+            ecs::EntityHandle handle3 = engine.CreateEntity();
 
             engine.DestroyEntity( handle2 );
             engine.DestroyEntity( handle3 );
 
-            ecs::EntityHandleType invalidHandle = ecs::EntityHandleType::NullHandle();
+            ecs::EntityHandle invalidHandle = ecs::EntityHandle::NullHandle();
 
             REQUIRE( engine.IsEntityActive( handle1 ) );
             REQUIRE( !engine.IsEntityActive( handle2 ) );
             REQUIRE( !engine.IsEntityActive( handle3 ) );
             REQUIRE( !engine.IsEntityActive( invalidHandle ) );
 
-            ecs::EntityHandleType handle4 = engine.CreateEntity();
-            ecs::EntityHandleType handle5 = engine.CreateEntity();
-            ecs::EntityHandleType handle6 = engine.CreateEntity();
-            ecs::EntityHandleType handle7 = engine.CreateEntity();
+            ecs::EntityHandle handle4 = engine.CreateEntity();
+            ecs::EntityHandle handle5 = engine.CreateEntity();
+            ecs::EntityHandle handle6 = engine.CreateEntity();
+            ecs::EntityHandle handle7 = engine.CreateEntity();
 
             REQUIRE( engine.IsEntityActive( handle4 ) );
             REQUIRE( engine.IsEntityActive( handle5 ) );
@@ -126,9 +126,9 @@ namespace smile
         {
             ecs::ECSEngine engine{};
 
-            ecs::EntityHandleType handle1 = engine.CreateEntity();
-            ecs::EntityHandleType handle2 = engine.CreateEntity();
-            ecs::EntityHandleType handle3 = engine.CreateEntity();
+            ecs::EntityHandle handle1 = engine.CreateEntity();
+            ecs::EntityHandle handle2 = engine.CreateEntity();
+            ecs::EntityHandle handle3 = engine.CreateEntity();
 
             engine.AddComponent< AnotherComponent >( handle1, "test" );
             engine.AddComponent< TestComponent >( handle1, 10, 2 );
@@ -139,7 +139,7 @@ namespace smile
             engine.AddComponent< AnotherComponent >( handle3, "name" );
             engine.AddComponent< TestComponent >( handle3, 5, -3 );
 
-            for ( ecs::EntityHandleType entityHandle : engine.GetView< AnotherComponent, TestComponent >() )
+            for ( ecs::EntityHandle entityHandle : engine.GetView< AnotherComponent, TestComponent >() )
             {
                 const auto &[another, test] = engine.GetComponents< AnotherComponent, TestComponent >( entityHandle );
             }
@@ -149,9 +149,9 @@ namespace smile
         {
             ecs::ECSEngine engine{};
 
-            ecs::EntityHandleType handle1 = engine.CreateEntity();
-            ecs::EntityHandleType handle2 = engine.CreateEntity();
-            ecs::EntityHandleType handle3 = engine.CreateEntity();
+            ecs::EntityHandle handle1 = engine.CreateEntity();
+            ecs::EntityHandle handle2 = engine.CreateEntity();
+            ecs::EntityHandle handle3 = engine.CreateEntity();
 
             engine.AddComponent< AnotherComponent >( handle1, "test" );
             engine.AddComponent< TestComponent >( handle1, 10, 2 );
@@ -162,25 +162,25 @@ namespace smile
             engine.AddComponent< AnotherComponent >( handle3, "name" );
             engine.AddComponent< TestComponent >( handle3, 5, -3 );
 
-            std::vector< ecs::EntityHandleType > handles{};
+            std::vector< ecs::EntityHandle > handles{};
             auto group = engine.GetGroup< AnotherComponent >( ecs::g_Get< TestComponent > );
 
             int i{};
-            for ( ecs::EntityHandleType entityHandle : group )
+            for ( ecs::EntityHandle entityHandle : group )
             {
                 const auto &[test, another] = engine.GetComponents< TestComponent, AnotherComponent >( entityHandle );
                 ++i;
             }
 
             engine.AddComponent< TestComponent >( handle2, 7, 3 );
-            for ( ecs::EntityHandleType entityHandle : group )
+            for ( ecs::EntityHandle entityHandle : group )
             {
                 const auto &[test, another] = engine.GetComponents< TestComponent, AnotherComponent >( entityHandle );
                 ++i;
             }
 
             engine.RemoveComponent< TestComponent >( handle3 );
-            for ( ecs::EntityHandleType entityHandle : group )
+            for ( ecs::EntityHandle entityHandle : group )
             {
                 const auto &[test, another] = engine.GetComponents< TestComponent, AnotherComponent >( entityHandle );
                 ++i;
@@ -191,8 +191,8 @@ namespace smile
         {
             ecs::ECSEngine engine{};
 
-            ecs::EntityHandleType handle1 = engine.CreateEntity();
-            ecs::EntityHandleType handle2 = engine.CreateEntity();
+            ecs::EntityHandle handle1 = engine.CreateEntity();
+            ecs::EntityHandle handle2 = engine.CreateEntity();
 
             Uint32 val = handle1.Hash();
             Uint32 val2 = handle2.Hash();
@@ -204,7 +204,7 @@ namespace smile
         {
             ecs::ECSEngine engine{};
 
-            ecs::EntityHandleType handle = engine.CreateEntity();
+            ecs::EntityHandle handle = engine.CreateEntity();
 
             engine.AddComponent< AnotherComponent >( handle, "test" );
             engine.AddComponent< TestComponent >( handle, 10, 2 );
@@ -235,17 +235,17 @@ namespace smile
         {
             ecs::ECSEngine engine{};
 
-            ecs::EntityHandleType entity1 = engine.CreateEntity();
-            ecs::EntityHandleType entity2 = engine.CreateEntity();
-            ecs::EntityHandleType entity3 = engine.CreateEntity();
-            ecs::EntityHandleType entity4 = engine.CreateEntity();
+            ecs::EntityHandle entity1 = engine.CreateEntity();
+            ecs::EntityHandle entity2 = engine.CreateEntity();
+            ecs::EntityHandle entity3 = engine.CreateEntity();
+            ecs::EntityHandle entity4 = engine.CreateEntity();
 
             engine.AddComponent< AnotherComponent >( entity1, "test" );
             engine.AddComponent< AnotherComponent >( entity2, "data" );
             engine.AddComponent< AnotherComponent >( entity3, "string" );
             engine.AddComponent< AnotherComponent >( entity4, "another" );
 
-            std::vector< ecs::EntityHandleType > entities{};
+            std::vector< ecs::EntityHandle > entities{};
             {
                 auto view = engine.GetView< AnotherComponent >();
                 for ( auto e : view )
@@ -265,7 +265,7 @@ namespace smile
             REQUIRE( engine.GetComponent< AnotherComponent >( entities[3] ).name == "another" );
 
             engine.SortComponent< AnotherComponent >(
-                [&engine]( const ecs::EntityHandleType lhs, const ecs::EntityHandleType rhs )
+                [&engine]( const ecs::EntityHandle lhs, const ecs::EntityHandle rhs )
                 {
                     const auto &lhsComp = engine.GetComponent< AnotherComponent >( lhs );
                     const auto &rhsComp = engine.GetComponent< AnotherComponent >( rhs );
@@ -299,7 +299,7 @@ namespace smile
 
             engine.RegisterComponent< TestComponent >();
             engine.OnConstruction< TestComponent >().emplace_back(
-                []( ecs::ECSEngine &ecsEngine, ecs::EntityHandleType entityHandle )
+                []( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
                 {
                     TestComponent &component = ecsEngine.GetComponent< TestComponent >( entityHandle );
                     REQUIRE( component.x == 10 );
@@ -316,7 +316,7 @@ namespace smile
 
             engine.RegisterComponent< TestComponent >();
             engine.OnDestruction< TestComponent >().emplace_back(
-                []( ecs::ECSEngine &ecsEngine, ecs::EntityHandleType entityHandle )
+                []( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
                 {
                     TestComponent &component = ecsEngine.GetComponent< TestComponent >( entityHandle );
                     REQUIRE( component.x == 10 );

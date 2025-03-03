@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "entity_handle_manager.h"
+#include "entity_handle.h"
 #include "component_pool.h"
 #include "component_list.h"
 #include "base_system.h"
@@ -34,7 +34,7 @@ namespace smile::ecs
                 FillComponentPools< 0, Components... >( engine );
             }
 
-            bool Run( EntityHandleType entityHandle )
+            bool Run( EntityHandle entityHandle )
             {
                 return std::all_of( std::begin( m_pComponentPools ),
                     std::end( m_pComponentPools ),
@@ -75,21 +75,21 @@ namespace smile::ecs
             {
             }
 
-            EntityHandleType operator*() const
+            EntityHandle operator*() const
             {
-                return m_Engine.GetEntityHandleManager().GetEntityHandle( *m_Iterator );
+                return m_Engine.GetEntityHandleManager().GetHandle( *m_Iterator );
             }
 
             bool operator==( const ViewIterator &other ) const
             {
                 return m_Iterator == other.m_Iterator ||
-                       ( *m_Iterator ) == m_Engine.GetEntityHandleManager().GetEntityCount();
+                       ( *m_Iterator ) == m_Engine.GetEntityHandleManager().GetHandleCount();
             }
 
             bool operator!=( const ViewIterator &other ) const
             {
                 return m_Iterator != other.m_Iterator &&
-                       ( *m_Iterator ) != m_Engine.GetEntityHandleManager().GetEntityCount();
+                       ( *m_Iterator ) != m_Engine.GetEntityHandleManager().GetHandleCount();
             }
 
             ViewIterator &operator++()
@@ -101,13 +101,13 @@ namespace smile::ecs
                     oldIt = m_Iterator;
 
                     GatherComponents< Components... > gatherComponents{ m_Engine };
-                    if ( gatherComponents.Run( handleManager.GetEntityHandle( *m_Iterator ) ) )
+                    if ( gatherComponents.Run( handleManager.GetHandle( *m_Iterator ) ) )
                     {
                         ++m_Iterator;
                         break;
                     }
                 } while ( ( m_Iterator != m_EndIterator ) && ( m_Iterator != oldIt ) &&
-                          ( handleManager.GetEntityHandle( *m_Iterator ).IsValid() ) );
+                          ( handleManager.GetHandle( *m_Iterator ).IsValid() ) );
 
                 return *this;
             }
@@ -151,7 +151,7 @@ namespace smile::ecs
                 }
                 else
                 {
-                    return ViewIteratorType{ m_Engine, SparseSetType::ConstIterator{}, SparseSetType::ConstIterator{} };
+                    return ViewIteratorType{ m_Engine, ComponentPool::ConstIterator{}, ComponentPool::ConstIterator{} };
                 }
             }
 
@@ -163,7 +163,7 @@ namespace smile::ecs
                 }
                 else
                 {
-                    return ViewIteratorType{ m_Engine, SparseSetType::ConstIterator{}, SparseSetType::ConstIterator{} };
+                    return ViewIteratorType{ m_Engine, ComponentPool::ConstIterator{}, ComponentPool::ConstIterator{} };
                 }
             }
 
@@ -212,7 +212,7 @@ namespace smile::ecs
                 }
             }
 
-            bool ContainsEntity( EntityHandleType entityHandle ) const override
+            bool ContainsEntity( EntityHandle entityHandle ) const override
             {
                 GatherComponents< Components... > gatherComponents{ m_Engine };
                 return gatherComponents.Run( entityHandle );
@@ -225,19 +225,19 @@ namespace smile::ecs
 
         void OnUpdate();
 
-        EntityHandleType CreateEntity()
+        EntityHandle CreateEntity()
         {
-            return m_HandleManager.CreateEntity();
+            return m_HandleManager.CreateHandle();
         }
 
-        void DestroyEntity( EntityHandleType entityHandle );
+        void DestroyEntity( EntityHandle entityHandle );
 
-        bool IsEntityActive( EntityHandleType entityHandle ) const
+        bool IsEntityActive( EntityHandle entityHandle ) const
         {
-            return m_HandleManager.IsEntityActive( entityHandle );
+            return m_HandleManager.IsHandleActive( entityHandle );
         }
 
-        void MarkEntityForDelete( EntityHandleType entityHandle )
+        void MarkEntityForDelete( EntityHandle entityHandle )
         {
             m_DeadHandles.push_back( entityHandle );
         }
@@ -263,7 +263,7 @@ namespace smile::ecs
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &AddComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
+        ComponentType &AddComponent( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
             RegisterComponentIfNeeded< ComponentType >();
 
@@ -281,7 +281,7 @@ namespace smile::ecs
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &AddOrReplaceComponent( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
+        ComponentType &AddOrReplaceComponent( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
             ComponentPool *pCPool = GetComponentPool< ComponentType >();
             if ( pCPool && pCPool->Contains( entityHandle ) )
@@ -291,14 +291,14 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        void RemoveComponent( EntityHandleType entityHandle )
+        void RemoveComponent( EntityHandle entityHandle )
         {
             ComponentPool *pCPool = GetComponentPool< ComponentType >();
             RemoveComponent( pCPool, entityHandle );
         }
 
         template < typename ComponentType >
-        ComponentType &GetComponent( EntityHandleType entityHandle )
+        ComponentType &GetComponent( EntityHandle entityHandle )
         {
             auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
@@ -308,7 +308,7 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        const ComponentType &GetComponent( EntityHandleType entityHandle ) const
+        const ComponentType &GetComponent( EntityHandle entityHandle ) const
         {
             auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
@@ -318,19 +318,19 @@ namespace smile::ecs
         }
 
         template < typename... Components >
-        std::tuple< Components &... > GetComponents( EntityHandleType entityHandle )
+        std::tuple< Components &... > GetComponents( EntityHandle entityHandle )
         {
             return std::tie( GetComponent< Components >( entityHandle )... );
         }
 
         template < typename... Components >
-        std::tuple< const Components &... > GetComponents( EntityHandleType entityHandle ) const
+        std::tuple< const Components &... > GetComponents( EntityHandle entityHandle ) const
         {
             return std::tie( GetComponent< Components >( entityHandle )... );
         }
 
         template < typename ComponentType >
-        ComponentType *TryGetComponent( EntityHandleType entityHandle )
+        ComponentType *TryGetComponent( EntityHandle entityHandle )
         {
             auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
@@ -341,7 +341,7 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        const ComponentType *TryGetComponent( EntityHandleType entityHandle ) const
+        const ComponentType *TryGetComponent( EntityHandle entityHandle ) const
         {
             auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
 
@@ -352,7 +352,7 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        bool HasComponent( EntityHandleType entityHandle ) const
+        bool HasComponent( EntityHandle entityHandle ) const
         {
             const ComponentPool *pCPool = GetComponentPool< ComponentType >();
             return pCPool ? pCPool->Contains( entityHandle ) : false;
@@ -452,8 +452,8 @@ namespace smile::ecs
 
             auto comp = [this, compare = std::move( compare )]( const IndexType lhs, const IndexType rhs )
             {
-                const EntityHandleType lhsEntity = m_HandleManager.GetEntityHandle( lhs );
-                const EntityHandleType rhsEntity = m_HandleManager.GetEntityHandle( rhs );
+                const EntityHandle lhsEntity = m_HandleManager.GetHandle( lhs );
+                const EntityHandle rhsEntity = m_HandleManager.GetHandle( rhs );
                 return compare( lhsEntity, rhsEntity );
             };
 
@@ -490,8 +490,8 @@ namespace smile::ecs
                                                                                  : nullptr;
         }
 
-        void RemoveComponent( ComponentPool *pCPool, EntityHandleType entityHandle );
-        bool HasComponent( const ComponentPool *pCPool, EntityHandleType entityHandle ) const;
+        void RemoveComponent( ComponentPool *pCPool, EntityHandle entityHandle );
+        bool HasComponent( const ComponentPool *pCPool, EntityHandle entityHandle ) const;
         bool IsComponentOwned( const ComponentPool *pCPool ) const;
 
       private:
@@ -500,6 +500,6 @@ namespace smile::ecs
         std::unordered_map< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
         std::vector< GroupBase * > m_pGroups{};
         std::vector< memory::Ref< BaseSystem > > m_pSystems{};
-        std::vector< EntityHandleType > m_DeadHandles{};
+        std::vector< EntityHandle > m_DeadHandles{};
     };
 }

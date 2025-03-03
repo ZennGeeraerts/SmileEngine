@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #pragma once
 #include "ecs/timed_system.h"
-#include "ecs/ecs_types.h"
 #include "primitive/uuid.h"
 
 #include "engine/physics/rigidbody.h"

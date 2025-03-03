@@ -16,11 +16,12 @@ namespace smile::ecs
     class ComponentPool final
     {
       public:
+        using SparseSetType = typename primitive::SparseSet< IndexType >;
         using Iterator = SparseSetType::Iterator;
         using ConstIterator = SparseSetType::ConstIterator;
 
       private:
-        using ListenerType = std::function< void( ECSEngine &, EntityHandleType ) >;
+        using ListenerType = std::function< void( ECSEngine &, EntityHandle ) >;
         using ListenerContainer = std::vector< ListenerType >;
 
       public:
@@ -36,7 +37,7 @@ namespace smile::ecs
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &Add( EntityHandleType entityHandle, ConstructorArgs &&...constructorArgs )
+        ComponentType &Add( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
             const IndexType index = m_SparseSet.Insert( entityHandle.GetIndex() );
 
@@ -47,67 +48,67 @@ namespace smile::ecs
 
             for ( const auto &listenerFunc : m_ContructionListeners )
             {
-                auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetEntityHandle( index );
+                auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetHandle( index );
                 listenerFunc( m_ECSEngine, entityHandle );
             }
 
             return component;
         }
 
-        void Remove( EntityHandleType entityHandle );
+        void Remove( EntityHandle entityHandle );
 
         template < typename ComponentType >
-        ComponentType &Get( EntityHandleType entityHandle )
+        ComponentType &Get( EntityHandle entityHandle )
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
-            SM_ASSERT( index != EntityHandleType::NullHandle().GetIndex(), "ComponentPool::Get > Invalid index" );
+            SM_ASSERT( index != EntityHandle::NullHandle().GetIndex(), "ComponentPool::Get > Invalid index" );
 
             return m_pComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
-        const ComponentType &Get( EntityHandleType entityHandle ) const
+        const ComponentType &Get( EntityHandle entityHandle ) const
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
-        ComponentType *TryGet( EntityHandleType entityHandle )
+        ComponentType *TryGet( EntityHandle entityHandle )
         {
             if ( !m_SparseSet.Contains( entityHandle.GetIndex() ) )
                 return nullptr;
 
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
-            if ( index == EntityHandleType::NullHandle().GetIndex() )
+            if ( index == EntityHandle::NullHandle().GetIndex() )
                 return nullptr;
 
             return &m_pComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
-        const ComponentType *TryGet( EntityHandleType entityHandle ) const
+        const ComponentType *TryGet( EntityHandle entityHandle ) const
         {
             if ( !m_SparseSet.Contains( entityHandle.GetIndex() ) )
                 return nullptr;
 
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
-            if ( index == EntityHandleType::NullHandle().GetIndex() )
+            if ( index == EntityHandle::NullHandle().GetIndex() )
                 return nullptr;
 
             return &m_pComponentStorage->Get< ComponentType >( index );
         }
 
-        void *GetRaw( EntityHandleType entityHandle )
+        void *GetRaw( EntityHandle entityHandle )
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->GetRaw( index );
         }
 
-        const void *GetRaw( EntityHandleType entityHandle ) const
+        const void *GetRaw( EntityHandle entityHandle ) const
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             return m_pComponentStorage->GetRaw( index );
@@ -119,7 +120,7 @@ namespace smile::ecs
             m_SparseSet.Clear();
         }
 
-        bool Contains( EntityHandleType entityHandle ) const
+        bool Contains( EntityHandle entityHandle ) const
         {
             return m_SparseSet.Contains( entityHandle.GetIndex() );
         }
@@ -135,12 +136,12 @@ namespace smile::ecs
             return m_SparseSet.GetItemCount();
         }
 
-        IndexType GetIndex( EntityHandleType entityHandle ) const
+        IndexType GetIndex( EntityHandle entityHandle ) const
         {
             return m_SparseSet.GetIndex( entityHandle.GetIndex() );
         }
 
-        EntityHandleType GetEntityHandle( IndexType index ) const;
+        EntityHandle GetEntityHandle( IndexType index ) const;
         void Sort( std::function< bool( const IndexType, const IndexType ) > compare );
 
         ListenerContainer &OnConstruction()

@@ -18,7 +18,7 @@ namespace smile::world
     {
       public:
         Entity() = default;
-        Entity( smile::ecs::EntityHandleType handle, World *pWorld );
+        Entity( smile::ecs::EntityHandle handle, World *pWorld );
         Entity( const Entity & ) = default;
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -93,9 +93,9 @@ namespace smile::world
         // Check to see if entity is valid
         operator bool() const
         {
-            return m_EntityHandle != smile::ecs::EntityHandleType::NullHandle();
+            return m_EntityHandle != smile::ecs::EntityHandle::NullHandle();
         }
-        operator smile::ecs::EntityHandleType() const
+        operator smile::ecs::EntityHandle() const
         {
             return m_EntityHandle;
         }
@@ -118,7 +118,7 @@ namespace smile::world
         }
 
       private:
-        smile::ecs::EntityHandleType m_EntityHandle = smile::ecs::EntityHandleType::NullHandle();
+        smile::ecs::EntityHandle m_EntityHandle = smile::ecs::EntityHandle::NullHandle();
         World *m_pWorld = nullptr;
     };
 }
