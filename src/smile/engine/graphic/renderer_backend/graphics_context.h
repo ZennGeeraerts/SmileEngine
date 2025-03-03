@@ -4,9 +4,17 @@
 /*=============================================================================*/
 #pragma once
 
-#include "graphics_device.h"
 #include "primitive_topology.h"
 #include "memory/ref.h"
+
+#include "resource/swap_chain.h"
+#include "resource/vertex_buffer.h"
+#include "resource/index_buffer.h"
+#include "resource/frame_buffer.h"
+#include "resource/rasterizer_state.h"
+#include "shader/shader.h"
+
+#include <DirectXMath.h>
 
 namespace smile::window
 {

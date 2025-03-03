@@ -19,13 +19,15 @@ namespace smile::graphic
     class DirectX11Device final : public GraphicsDevice
     {
       public:
-        DirectX11Device( DirectX11Context *pContext );
+        DirectX11Device();
         ~DirectX11Device();
 
         void *GetInternal() const override
         {
             return m_pInternal;
         }
+
+        GraphicsContext *CreateGraphicsContext() override;
 
         memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
         void ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain,
@@ -52,5 +54,7 @@ namespace smile::graphic
         ID3D11Device *m_pInternal = nullptr;
         ID3D11DeviceContext *m_pContext = nullptr;
         IDXGIFactory *m_pDXGIFactory = nullptr;
+
+        std::vector< DirectX11Context *> m_pGraphicsContexts;
     };
 }

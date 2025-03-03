@@ -81,13 +81,13 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::RendererBackend *pRendererAPI = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
-        graphic::GraphicsDevice *pGraphicsDevice = pRendererAPI->GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = pRendererAPI->GetGraphicsContext();
+        graphic::RendererBackend *pRendererBackend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
+        graphic::GraphicsDevice *pGraphicsDevice = pRendererBackend->GetGraphicsDevice();
+        graphic::GraphicsContext *pGraphicsContext = pRendererBackend->GetGraphicsContext();
 
-        switch ( pRendererAPI->GetAPI() )
+        switch ( pRendererBackend->GetType() )
         {
-            case graphic::RendererBackend::API::DirectX11:
+            case graphic::RendererBackendType::DirectX11:
             {
                 ImGui_ImplWin32_Init( window.GetNativeWindow() );
 
@@ -113,10 +113,10 @@ namespace smile::imgui
 
     void ImGuiLayer::Begin()
     {
-        graphic::RendererBackend::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
-        switch ( api )
+        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetType();
+        switch ( backend )
         {
-            case graphic::RendererBackend::API::DirectX11:
+            case graphic::RendererBackendType::DirectX11:
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
@@ -138,10 +138,10 @@ namespace smile::imgui
 
         ImGui::Render();
 
-        graphic::RendererBackend::API api = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetAPI();
-        switch ( api )
+        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetType();
+        switch ( backend )
         {
-            case graphic::RendererBackend::API::DirectX11:
+            case graphic::RendererBackendType::DirectX11:
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
 

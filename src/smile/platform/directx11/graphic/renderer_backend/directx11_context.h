@@ -12,8 +12,8 @@ namespace smile::graphic
     class DirectX11Context final : public GraphicsContext
     {
       public:
-        DirectX11Context() = default;
-        virtual ~DirectX11Context();
+        DirectX11Context( ID3D11DeviceContext *pContext );
+        ~DirectX11Context() = default;
 
         DirectX11Context( const DirectX11Context & ) = delete;
         DirectX11Context( DirectX11Context && ) = delete;

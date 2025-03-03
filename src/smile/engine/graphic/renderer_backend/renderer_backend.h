@@ -5,29 +5,14 @@
 #pragma once
 
 #include "graphics_device.h"
-#include "graphics_context.h"
 
 namespace smile::graphic
 {
-    class RendererBackend
+    class RendererBackend final
     {
       public:
-        enum class API
-        {
-            None = 0,
-            DirectX11 = 1
-        };
-
-      public:
-        RendererBackend( API api ) : m_API{ api }
-        {
-        }
-        virtual ~RendererBackend() = default;
-
-        inline API GetAPI()
-        {
-            return m_API;
-        }
+        RendererBackend( RendererBackendType backendType );
+        ~RendererBackend();
 
         inline GraphicsDevice *GetGraphicsDevice() const
         {
@@ -39,12 +24,15 @@ namespace smile::graphic
             return m_pContext;
         }
 
-        static Scope< RendererBackend > Create( API api );
+        inline RendererBackendType GetType() const
+        {
+            return m_BackendType;
+        }
 
-      protected:
-        GraphicsDevice *m_pDevice;
-        GraphicsContext *m_pContext;
+      private:
+        GraphicsDevice *m_pDevice = nullptr;
+        GraphicsContext *m_pContext = nullptr;
 
-        API m_API;
+        RendererBackendType m_BackendType;
     };
 }

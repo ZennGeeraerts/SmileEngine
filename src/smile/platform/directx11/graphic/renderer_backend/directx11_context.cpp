@@ -19,14 +19,8 @@
 
 namespace smile::graphic
 {
-    DirectX11Context::~DirectX11Context()
+    DirectX11Context::DirectX11Context( ID3D11DeviceContext *pContext ) : m_pInternal{ pContext }
     {
-        if ( m_pInternal )
-        {
-            m_pInternal->ClearState();
-            m_pInternal->Flush();
-            SAFE_RELEASE( m_pInternal );
-        }
     }
 
     void DirectX11Context::BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const

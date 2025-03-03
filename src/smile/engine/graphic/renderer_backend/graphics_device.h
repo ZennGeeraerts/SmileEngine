@@ -12,10 +12,18 @@
 #include "resource/rasterizer_state.h"
 #include "shader/shader.h"
 
+#include "graphics_context.h"
+
 #include "memory/ref.h"
 
 namespace smile::graphic
 {
+    enum class RendererBackendType
+    {
+        None = 0,
+        DirectX11 = 1
+    };
+
     class GraphicsDevice
     {
       public:
@@ -23,6 +31,8 @@ namespace smile::graphic
         virtual ~GraphicsDevice() = default;
 
         virtual void *GetInternal() const = 0;
+
+        virtual GraphicsContext *CreateGraphicsContext() = 0;
 
         virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
         virtual void
@@ -41,5 +51,7 @@ namespace smile::graphic
         virtual memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) = 0;
 
         virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
+
+        static GraphicsDevice *Create( RendererBackendType backendType );
     };
 }

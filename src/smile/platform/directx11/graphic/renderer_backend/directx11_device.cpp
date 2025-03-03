@@ -396,10 +396,8 @@ namespace smile::graphic
         }
     }
 
-    DirectX11Device::DirectX11Device( DirectX11Context *pContext )
+    DirectX11Device::DirectX11Device()
     {
-        SM_ASSERT( pContext, "DirectX11Context was nullptr" );
-
         // Create DXGI Factory to create SwapChain based on hardware
         HRESULT result = CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_pDXGIFactory ) );
         if ( FAILED( result ) )
@@ -427,8 +425,6 @@ namespace smile::graphic
             &featureLevel,
             &m_pContext );
 
-        pContext->m_pInternal = m_pContext;
-
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
@@ -439,7 +435,24 @@ namespace smile::graphic
 
     DirectX11Device::~DirectX11Device()
     {
+        for ( auto pGraphicsContext : m_pGraphicsContexts )
+            delete pGraphicsContext;
+        
+        if ( m_pContext )
+        {
+            m_pContext->ClearState();
+            m_pContext->Flush();
+            SAFE_RELEASE( m_pContext );
+        }
+
         SAFE_RELEASE( m_pInternal );
+    }
+
+    GraphicsContext *DirectX11Device::CreateGraphicsContext()
+    {
+        auto pGraphicsContext = new DirectX11Context{ m_pContext };
+        m_pGraphicsContexts.push_back( pGraphicsContext );
+        return pGraphicsContext;
     }
 
     memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )

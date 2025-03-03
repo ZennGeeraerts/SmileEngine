@@ -69,7 +69,7 @@ namespace smile::graphic
         RendererBackend *GetRendererAPI() const; // TODO: Remove
 
       private:
-        Scope< RendererBackend > m_pRendererAPI = nullptr;
+        Scope< RendererBackend > m_pRendererBackend = nullptr;
         ResourceManager m_ResourceManager{};
 
         DirectX::XMFLOAT4 m_ClearColor{};
