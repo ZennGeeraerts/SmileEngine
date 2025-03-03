@@ -59,7 +59,7 @@ namespace smile::world
         Uint32 m_ViewportWidth = 0;
         Uint32 m_ViewportHeight = 0;
 
-        std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > m_EntityMap{};
+        std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap{};
 
         smile::ecs::state::StateManager m_StateManager;
 

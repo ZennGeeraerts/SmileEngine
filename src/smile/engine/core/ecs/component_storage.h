@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "ecs_types.h"
+#include "entity_handle.h"
 
 #include <vector>
 
@@ -102,7 +102,7 @@ namespace smile::ecs
         IndexType GetIndex( IndexType index ) const
         {
             return m_pIndices ? m_pIndices[index]
-                              : reinterpret_cast< EntityHandleType * >( m_pData + m_ComponentSize * index )->GetIndex();
+                              : reinterpret_cast< EntityHandle * >( m_pData + m_ComponentSize * index )->GetIndex();
         }
 
         Uint32 GetSize() const

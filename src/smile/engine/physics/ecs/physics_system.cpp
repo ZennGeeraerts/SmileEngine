@@ -31,7 +31,7 @@ namespace smile::physics::ecs
             auto group = ecsEngine.GetGroup< RigidbodyComponent >(
                 smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
 
-            auto onRigidbodyAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandleType entity )
+            auto onRigidbodyAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandle entity )
             {
                 const auto &[rigidbodyComponent, idComponent, transformComponent] =
                     ecsEngine
@@ -113,7 +113,8 @@ namespace smile::physics::ecs
             auto group = ecsEngine.GetGroup< CharacterControllerComponent >(
                 smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
 
-            auto onCharacterControllerAddedFunc = [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandleType entity )
+            auto onCharacterControllerAddedFunc =
+                [&]( smile::ecs::ECSEngine &ecsEngine, smile::ecs::EntityHandle entity )
             {
                 const auto &[characterControllerComponent, idComponent, transformComponent] =
                     ecsEngine.GetComponents< CharacterControllerComponent,

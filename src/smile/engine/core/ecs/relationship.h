@@ -1,18 +1,19 @@
 /*=============================================================================*/
-// Copyright 2022-2024 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "ecs_types.h"
+
+#include "entity_handle.h"
 
 namespace smile::ecs
 {
-	struct Relationship final
-	{
+    struct Relationship final
+    {
         Uint32 ChildrenCount{};
-        EntityHandleType First = ecs::EntityHandleType::NullHandle();
-        EntityHandleType Prev = ecs::EntityHandleType::NullHandle();
-        EntityHandleType Next = ecs::EntityHandleType::NullHandle();
-        EntityHandleType Parent = ecs::EntityHandleType::NullHandle();
-	};
+        EntityHandle First = EntityHandle::NullHandle();
+        EntityHandle Prev = EntityHandle::NullHandle();
+        EntityHandle Next = EntityHandle::NullHandle();
+        EntityHandle Parent = EntityHandle::NullHandle();
+    };
 }

@@ -19,10 +19,10 @@ namespace smile::ecs
 
         virtual ~GroupBase() = default;
 
-        virtual bool ContainsEntity( EntityHandleType entityHandle ) const = 0;
+        virtual bool ContainsEntity( EntityHandle entityHandle ) const = 0;
 
-        void AddEntity( EntityHandleType entityHandle );
-        void RemoveEntity( EntityHandleType entityHandle );
+        void AddEntity( EntityHandle entityHandle );
+        void RemoveEntity( EntityHandle entityHandle );
 
         template < typename Component >
         bool ContainsComponentPool() const
