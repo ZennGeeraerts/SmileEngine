@@ -81,16 +81,16 @@ namespace smile::primitive
 
         void DestroyHandle( HandleType handle )
         {
-            auto &currentHandle = m_Handles[handle.m_Index];
+            auto &managedHandle = m_Handles[handle.m_Index];
 
-            SM_ASSERT( currentHandle.m_Generation == handle.m_Generation,
+            SM_ASSERT( managedHandle.m_Generation == handle.m_Generation,
                 "HandleManager::DestroyHandle > Handle generation mismatch" );
 
-            ++currentHandle.m_Generation;
+            ++managedHandle.m_Generation;
 
-            IndexType newHandleIndex = currentHandle.m_Index;
+            IndexType newHandleIndex = managedHandle.m_Index;
             std::swap( m_NextFreeIndex, newHandleIndex );
-            currentHandle.m_Index = newHandleIndex;
+            managedHandle.m_Index = newHandleIndex;
 
             ++m_AvailableHandles;
         }
