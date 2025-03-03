@@ -16,7 +16,7 @@ namespace smile::ecs
     {
     }
 
-    void GroupBase::AddEntity( EntityHandleType entityHandle )
+    void GroupBase::AddEntity( EntityHandle entityHandle )
     {
         if ( ContainsEntity( entityHandle ) && m_EndIndex != 0 )
         {
@@ -29,7 +29,7 @@ namespace smile::ecs
         }
     }
 
-    void GroupBase::RemoveEntity( EntityHandleType entityHandle )
+    void GroupBase::RemoveEntity( EntityHandle entityHandle )
     {
         if ( ContainsEntity( entityHandle ) )
         {

@@ -16,7 +16,7 @@ namespace smile::ecs
         GroupIterator( ECSEngine &engine, ComponentPool::ConstIterator it );
         ~GroupIterator() = default;
 
-        EntityHandleType operator*() const;
+        EntityHandle operator*() const;
 
         bool operator==( const GroupIterator &other ) const;
         bool operator!=( const GroupIterator &other ) const;

@@ -214,7 +214,7 @@ namespace smile::world
     template < typename... ComponentType >
     static void CopyComponent( smile::ecs::ECSEngine &dst,
         smile::ecs::ECSEngine &src,
-        const std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > &entityHandleMap )
+        const std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > &entityHandleMap )
     {
         (
             [&]()
@@ -225,7 +225,7 @@ namespace smile::world
                     primitive::UUID uuid = src.GetComponent< ecs::IDComponent >( entity ).ID;
                     SM_ASSERT( entityHandleMap.find( uuid ) != entityHandleMap.end(),
                         "world::CopyComponent > uuid not found in enttMap" );
-                    smile::ecs::EntityHandleType dstHandleID = entityHandleMap.at( uuid );
+                    smile::ecs::EntityHandle dstHandleID = entityHandleMap.at( uuid );
 
                     auto &component = src.GetComponent< ComponentType >( entity );
                     dst.AddOrReplaceComponent< ComponentType >( dstHandleID, component );
@@ -238,7 +238,7 @@ namespace smile::world
     static void CopyComponent( ComponentGroup< ComponentType... >,
         smile::ecs::ECSEngine &dst,
         smile::ecs::ECSEngine &src,
-        const std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > &entityHandleMap )
+        const std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > &entityHandleMap )
     {
         CopyComponent< ComponentType... >( dst, src, entityHandleMap );
     }
@@ -268,7 +268,7 @@ namespace smile::world
         pNewWorld->m_ViewportWidth = pWorld->m_ViewportWidth;
         pNewWorld->m_ViewportHeight = pWorld->m_ViewportHeight;
 
-        std::unordered_map< primitive::UUID, smile::ecs::EntityHandleType > entityMap{};
+        std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > entityMap{};
 
         auto &srcWorldEngine = pWorld->m_ECSEngine;
         auto &dstWorldEngine = pNewWorld->m_ECSEngine;
@@ -278,7 +278,7 @@ namespace smile::world
             auto uuid = srcWorldEngine.GetComponent< ecs::IDComponent >( entity ).ID;
             const auto &name = srcWorldEngine.GetComponent< ecs::TagComponent >( entity ).Tag;
             Entity newEntity = pNewWorld->CreateEntity( uuid, name );
-            entityMap[uuid] = static_cast< smile::ecs::EntityHandleType >( newEntity );
+            entityMap[uuid] = static_cast< smile::ecs::EntityHandle >( newEntity );
         }
 
         // Copy components except IDComponent and TagComponent

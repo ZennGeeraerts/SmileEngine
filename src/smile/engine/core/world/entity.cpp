@@ -5,7 +5,7 @@
 
 namespace smile::world
 {
-    Entity::Entity( smile::ecs::EntityHandleType handle, World *pWorld ) : m_EntityHandle{ handle }, m_pWorld{ pWorld }
+    Entity::Entity( smile::ecs::EntityHandle handle, World *pWorld ) : m_EntityHandle{ handle }, m_pWorld{ pWorld }
     {
     }
 
@@ -35,8 +35,8 @@ namespace smile::world
             pRelationShip->First = child;
         }
 
-        smile::ecs::EntityHandleType end = pRelationShip->First;
-        smile::ecs::EntityHandleType next = m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
+        smile::ecs::EntityHandle end = pRelationShip->First;
+        smile::ecs::EntityHandle next = m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( end ).Next;
         while ( next )
         {
             end = next;
@@ -75,9 +75,9 @@ namespace smile::world
         if ( childRel.Prev )
             m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( childRel.Prev ).Next = childRel.Next;
 
-        childRel.Next = smile::ecs::EntityHandleType::NullHandle();
-        childRel.Prev = smile::ecs::EntityHandleType::NullHandle();
-        childRel.Parent = smile::ecs::EntityHandleType::NullHandle();
+        childRel.Next = smile::ecs::EntityHandle::NullHandle();
+        childRel.Prev = smile::ecs::EntityHandle::NullHandle();
+        childRel.Parent = smile::ecs::EntityHandle::NullHandle();
 
         --relationship.ChildrenCount;
     }

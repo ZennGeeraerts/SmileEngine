@@ -18,7 +18,7 @@ namespace smile::ecs
         SAFE_DELETE( m_pComponentStorage );
     }
 
-    void ComponentPool::Remove(EntityHandleType entityHandle)
+    void ComponentPool::Remove( EntityHandle entityHandle )
     {
         void *pComponentData = GetRaw( entityHandle );
 
@@ -29,7 +29,7 @@ namespace smile::ecs
 
         for ( const auto &listenerFunc : m_DestructionListeners )
         {
-            auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetEntityHandle( deadEntityIndex );
+            auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetHandle( deadEntityIndex );
             listenerFunc( m_ECSEngine, entityHandle );
         }
 
@@ -37,10 +37,10 @@ namespace smile::ecs
         m_SparseSet.Erase( entityHandle.GetIndex() );
     }
 
-    EntityHandleType ComponentPool::GetEntityHandle( IndexType index ) const
+    EntityHandle ComponentPool::GetEntityHandle( IndexType index ) const
     {
         auto entityIndex = m_SparseSet.GetElement( index );
-        return m_ECSEngine.GetEntityHandleManager().GetEntityHandle( entityIndex );
+        return m_ECSEngine.GetEntityHandleManager().GetHandle( entityIndex );
     }
 
     void ComponentPool::Sort( std::function< bool( const IndexType, const IndexType ) > compare )

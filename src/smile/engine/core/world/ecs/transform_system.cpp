@@ -27,8 +27,7 @@ namespace smile::world::ecs
         // For now sort relationship component so that parents and children are grouped
 
         m_pECSEngine->SortComponent< smile::ecs::Relationship >(
-            [pECSEngine = m_pECSEngine](
-                const smile::ecs::EntityHandleType lhs, const smile::ecs::EntityHandleType rhs )
+            [pECSEngine = m_pECSEngine]( const smile::ecs::EntityHandle lhs, const smile::ecs::EntityHandle rhs )
             {
                 const auto &lhsComp = pECSEngine->GetComponent< smile::ecs::Relationship >( lhs );
                 const auto &rhsComp = pECSEngine->GetComponent< smile::ecs::Relationship >( rhs );
