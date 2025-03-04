@@ -14,14 +14,20 @@ namespace smile::graphic
 
     memory::Ref< VertexBuffer > ResourceManager::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
     {
-        auto pVertexBuffer = m_pDevice->CreateVertexBuffer( vertexBufferDesc );
+        VertexBufferHandle handle = m_VertexBufferHandleManager.CreateHandle();
+        m_pDevice->CreateVertexBuffer( handle, vertexBufferDesc );
+
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, vertexBufferDesc.Stride );
         m_pVertexBuffers.push_back( pVertexBuffer );
         return pVertexBuffer;
     }
 
     memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
     {
-        auto pIndexBuffer = m_pDevice->CreateIndexBuffer( indexBufferDesc );
+        IndexBufferHandle handle = m_IndexBufferHandleManager.CreateHandle();
+        m_pDevice->CreateIndexBuffer( handle, indexBufferDesc );
+
+        auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, indexBufferDesc.Count );
         m_pIndexBuffers.push_back( pIndexBuffer );
         return pIndexBuffer;
     }

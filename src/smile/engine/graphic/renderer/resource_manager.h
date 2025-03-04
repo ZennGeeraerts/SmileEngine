@@ -7,6 +7,9 @@
 #include "foundation/compiled.h"
 #include "memory/ref.h"
 
+#include "engine/graphic/renderer_backend/resource/vertex_buffer.h"
+#include "engine/graphic/renderer_backend/resource/index_buffer.h"
+
 #include "engine/graphic/renderer_backend/graphics_device.h"
 
 #include <vector>
@@ -42,5 +45,8 @@ namespace smile::graphic
         std::vector< memory::Ref< Texture > > m_pTexturesCube;
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
         std::vector< memory::Ref< RasterizerState > > m_pRasterizerStates;
+
+        VertexBufferHandleManager m_VertexBufferHandleManager;
+        IndexBufferHandleManager m_IndexBufferHandleManager;
     };
 }

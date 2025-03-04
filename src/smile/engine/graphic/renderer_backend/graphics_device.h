@@ -5,14 +5,14 @@
 #pragma once
 
 #include "resource/swap_chain.h"
-#include "resource/vertex_buffer.h"
-#include "resource/index_buffer.h"
 #include "resource/texture.h"
 #include "resource/frame_buffer.h"
 #include "resource/rasterizer_state.h"
 #include "shader/shader.h"
 
 #include "graphics_context.h"
+
+#include "render_handle.h"
 
 #include "memory/ref.h"
 
@@ -22,6 +22,22 @@ namespace smile::graphic
     {
         None = 0,
         DirectX11 = 1
+    };
+
+    struct VertexBufferDescriptor final
+    {
+        void *pVertices = nullptr;
+        Uint32 Count = 0;
+        Uint32 Stride = 0;
+        BufferUsage Usage = BufferUsage::Default;
+        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
+    };
+
+    struct IndexBufferDescriptor final
+    {
+        Uint32 *pIndices = nullptr;
+        Uint32 Count = 0;
+        BufferUsage Usage = BufferUsage::Default;
     };
 
     class GraphicsDevice
@@ -38,8 +54,13 @@ namespace smile::graphic
         virtual void
         ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain, Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
-        virtual memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) = 0;
-        virtual memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) = 0;
+        virtual void CreateVertexBuffer( VertexBufferHandle handle,
+            const VertexBufferDescriptor &vertexBufferDesc ) = 0;
+        virtual void DestroyVertexBuffer( VertexBufferHandle handle ) = 0;
+
+        virtual void CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc ) = 0;
+        virtual void DestroyIndexBuffer( IndexBufferHandle handle ) = 0;
+
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) = 0;
@@ -53,5 +74,9 @@ namespace smile::graphic
         virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
 
         static GraphicsDevice *Create( RendererBackendType backendType );
+
+      protected:
+        static constexpr Uint16 s_MaxVertexBufferSize = ( 4 << 10 );
+        static constexpr Uint16 s_MaxIndexBufferSize = ( 4 << 10 );
     };
 }

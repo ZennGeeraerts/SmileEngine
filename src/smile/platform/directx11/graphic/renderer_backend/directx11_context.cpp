@@ -19,7 +19,8 @@
 
 namespace smile::graphic
 {
-    DirectX11Context::DirectX11Context( ID3D11DeviceContext *pContext ) : m_pInternal{ pContext }
+    DirectX11Context::DirectX11Context( DirectX11Device *pDevice, ID3D11DeviceContext *pInternal )
+        : m_pDevice{ pDevice }, m_pInternal{ pInternal }
     {
     }
 
@@ -92,11 +93,11 @@ namespace smile::graphic
             m_pInternal->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11Context::BindVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer ) const
+    void DirectX11Context::BindVertexBuffer( VertexBufferHandle vbHandle ) const
     {
+        const auto &vertexBuffer = m_pDevice->m_VertexBuffers[vbHandle.GetIndex()];
         Uint32 offset{ 0 };
-        ID3D11Buffer *pInternalBuffer = static_cast< ID3D11Buffer * >( pVertexBuffer->GetInternal() );
-        m_pInternal->IASetVertexBuffers( 0, 1, &pInternalBuffer, &pVertexBuffer->Stride, &offset );
+        m_pInternal->IASetVertexBuffers( 0, 1, &vertexBuffer.pInternal, &vertexBuffer.Stride, &offset );
     }
 
     void DirectX11Context::UnbindVertexBuffer() const
@@ -104,10 +105,10 @@ namespace smile::graphic
         m_pInternal->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
     }
 
-    void DirectX11Context::BindIndexBuffer( const memory::Ref< IndexBuffer > &pIndexBuffer ) const
+    void DirectX11Context::BindIndexBuffer( IndexBufferHandle ibHandle ) const
     {
-        ID3D11Buffer *pInternalBuffer = static_cast< ID3D11Buffer * >( pIndexBuffer->GetInternal() );
-        m_pInternal->IASetIndexBuffer( pInternalBuffer, DXGI_FORMAT_R32_UINT, 0 );
+        const auto &indexBuffer = m_pDevice->m_IndexBuffers[ibHandle.GetIndex()];
+        m_pInternal->IASetIndexBuffer( indexBuffer.pInternal, DXGI_FORMAT_R32_UINT, 0 );
     }
 
     void DirectX11Context::UnbindIndexBuffer() const
@@ -176,20 +177,18 @@ namespace smile::graphic
         m_pInternal->IASetPrimitiveTopology( D3D_PRIMITIVE_TOPOLOGY_UNDEFINED );
     }
 
-    void DirectX11Context::FillVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer,
-        void *pData,
-        Uint32 vertexCount ) const
+    void DirectX11Context::FillVertexBuffer( VertexBufferHandle vbHandle, void *pData, Uint32 vertexCount ) const
     {
-        auto pDirectX11VertexBuffer = static_cast< ID3D11Buffer * >( pVertexBuffer->GetInternal() );
+        const auto &vertexBuffer = m_pDevice->m_VertexBuffers[vbHandle.GetIndex()];
 
         D3D11_MAPPED_SUBRESOURCE mappedResource{};
-        m_pInternal->Map( pDirectX11VertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
+        m_pInternal->Map( vertexBuffer.pInternal, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
 
         if ( vertexCount > 0 )
         {
-            memcpy( mappedResource.pData, pData, pVertexBuffer->Stride * vertexCount );
+            memcpy( mappedResource.pData, pData, vertexBuffer.Stride * vertexCount );
         }
 
-        m_pInternal->Unmap( pDirectX11VertexBuffer, 0 );
+        m_pInternal->Unmap( vertexBuffer.pInternal, 0 );
     }
 }

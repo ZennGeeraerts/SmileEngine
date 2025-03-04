@@ -9,10 +9,12 @@
 
 namespace smile::graphic
 {
+    class DirectX11Device;
+
     class DirectX11Context final : public GraphicsContext
     {
       public:
-        DirectX11Context( ID3D11DeviceContext *pContext );
+        DirectX11Context( DirectX11Device *pDevice, ID3D11DeviceContext *pInternal );
         ~DirectX11Context() = default;
 
         DirectX11Context( const DirectX11Context & ) = delete;
@@ -31,10 +33,10 @@ namespace smile::graphic
         void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
         void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
 
-        void BindVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer ) const override;
+        void BindVertexBuffer( VertexBufferHandle vbHandle ) const override;
         void UnbindVertexBuffer() const override;
 
-        void BindIndexBuffer( const memory::Ref< IndexBuffer > &pIndexBuffer ) const override;
+        void BindIndexBuffer( IndexBufferHandle ibHandle ) const override;
         void UnbindIndexBuffer() const override;
 
         void BindShader( const memory::Ref< Shader > &pShader ) const override;
@@ -48,14 +50,10 @@ namespace smile::graphic
         void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
         void UnbindPrimitiveTopology() const override;
 
-        void FillVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer,
-            void *pData,
-            Uint32 vertexCount ) const override;
+        void FillVertexBuffer( VertexBufferHandle vbHandle, void *pData, Uint32 vertexCount ) const override;
 
       private:
+        DirectX11Device *m_pDevice = nullptr;
         ID3D11DeviceContext *m_pInternal = nullptr;
-
-        friend class DirectX11Device;
-        friend class DirectX11RendererBackend;
     };
 }

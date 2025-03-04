@@ -3,26 +3,20 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer_backend/shader/buffer.h"
+
 #include "memory/object.h"
+#include "engine/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    struct VertexBufferDescriptor final
+    struct VertexBuffer final : public memory::Object
     {
-        void *pVertices = nullptr;
-        Uint32 Count = 0;
-        Uint32 Stride = 0;
-        BufferUsage Usage = BufferUsage::Default;
-        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
-    };
+        VertexBuffer( VertexBufferHandle handle, Uint32 stride ) : Handle{ handle }, Stride{ stride }
+        {
+        }
+        ~VertexBuffer() = default;
 
-    struct VertexBuffer : public memory::Object
-    {
-        VertexBuffer() = default;
-        virtual ~VertexBuffer() = default;
-        virtual void *GetInternal() const = 0;
-
+        VertexBufferHandle Handle;
         Uint32 Stride = 0;
     };
 }

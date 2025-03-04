@@ -3,24 +3,20 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer_backend/shader/buffer.h"
+
 #include "memory/object.h"
+#include "engine/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    struct IndexBufferDescriptor final
-    {
-        Uint32 *pIndices = nullptr;
-        Uint32 Count = 0;
-        BufferUsage Usage = BufferUsage::Default;
-    };
-
     struct IndexBuffer : public memory::Object
     {
-        IndexBuffer() = default;
-        virtual ~IndexBuffer() = default;
-        virtual void *GetInternal() const = 0;
+        IndexBuffer( IndexBufferHandle handle, Uint32 count ) : Handle{ handle }, Count{ count }
+        {
+        }
+        ~IndexBuffer() = default;
 
+        IndexBufferHandle Handle;
         Uint32 Count;
     };
 }

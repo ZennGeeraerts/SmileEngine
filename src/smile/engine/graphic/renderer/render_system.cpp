@@ -42,7 +42,7 @@ namespace smile::graphic
 
     void RenderSystem::BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const
     {
-        m_pRendererBackend->GetGraphicsContext()->BindVertexBuffer( pVertexBuffer );
+        m_pRendererBackend->GetGraphicsContext()->BindVertexBuffer( pVertexBuffer->Handle );
     }
 
     void RenderSystem::UnbindVertexBuffer() const
@@ -53,12 +53,12 @@ namespace smile::graphic
     void
     RenderSystem::FillVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer, void *pData, Uint32 vertexCount ) const
     {
-        m_pRendererBackend->GetGraphicsContext()->FillVertexBuffer( pVertexBuffer, pData, vertexCount );
+        m_pRendererBackend->GetGraphicsContext()->FillVertexBuffer( pVertexBuffer->Handle, pData, vertexCount );
     }
 
     void RenderSystem::BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const
     {
-        m_pRendererBackend->GetGraphicsContext()->BindIndexBuffer( pIndexBuffer );
+        m_pRendererBackend->GetGraphicsContext()->BindIndexBuffer( pIndexBuffer->Handle );
     }
 
     void RenderSystem::UnbindIndexBuffer() const

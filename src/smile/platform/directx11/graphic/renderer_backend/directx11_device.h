@@ -4,8 +4,11 @@
 /*=============================================================================*/
 #pragma once
 #include "engine/graphic/renderer_backend/graphics_device.h"
+#include "resource/directx11_buffer.h"
 
 #include <d3d11.h>
+
+#include <array>
 
 namespace smile::window
 {
@@ -36,8 +39,12 @@ namespace smile::graphic
             Uint32 width,
             Uint32 height ) override;
 
-        memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) override;
-        memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) override;
+        void CreateVertexBuffer( VertexBufferHandle handle, const VertexBufferDescriptor &vertexBufferDesc ) override;
+        void DestroyVertexBuffer( VertexBufferHandle handle ) override;
+
+        void CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc ) override;
+        void DestroyIndexBuffer( IndexBufferHandle handle ) override;
+
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) override;
@@ -55,6 +62,11 @@ namespace smile::graphic
         ID3D11DeviceContext *m_pContext = nullptr;
         IDXGIFactory *m_pDXGIFactory = nullptr;
 
-        std::vector< DirectX11Context *> m_pGraphicsContexts;
+        std::vector< DirectX11Context * > m_pGraphicsContexts;
+
+        std::array< DirectX11VertexBuffer, s_MaxVertexBufferSize > m_VertexBuffers;
+        std::array< DirectX11IndexBuffer, s_MaxIndexBufferSize > m_IndexBuffers;
+
+        friend class DirectX11Context;
     };
 }

@@ -8,11 +8,11 @@
 #include "memory/ref.h"
 
 #include "resource/swap_chain.h"
-#include "resource/vertex_buffer.h"
-#include "resource/index_buffer.h"
 #include "resource/frame_buffer.h"
 #include "resource/rasterizer_state.h"
 #include "shader/shader.h"
+
+#include "render_handle.h"
 
 #include <DirectXMath.h>
 
@@ -37,10 +37,10 @@ namespace smile::graphic
         virtual void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) = 0;
         virtual void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) = 0;
 
-        virtual void BindVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer ) const = 0;
+        virtual void BindVertexBuffer( VertexBufferHandle vbHandle ) const = 0;
         virtual void UnbindVertexBuffer() const = 0;
 
-        virtual void BindIndexBuffer( const memory::Ref< IndexBuffer > &pIndexBuffer ) const = 0;
+        virtual void BindIndexBuffer( IndexBufferHandle ibHandle ) const = 0;
         virtual void UnbindIndexBuffer() const = 0;
 
         virtual void BindShader( const memory::Ref< Shader > &pShader ) const = 0;
@@ -54,7 +54,6 @@ namespace smile::graphic
         virtual void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const = 0;
         virtual void UnbindPrimitiveTopology() const = 0;
 
-        virtual void
-        FillVertexBuffer( const memory::Ref< VertexBuffer > &pVertexBuffer, void *pData, Uint32 vertexCount ) const = 0;
+        virtual void FillVertexBuffer( VertexBufferHandle vbHandle, void *pData, Uint32 vertexCount ) const = 0;
     };
 }

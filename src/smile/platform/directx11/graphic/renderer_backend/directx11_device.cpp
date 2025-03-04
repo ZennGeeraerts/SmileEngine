@@ -12,13 +12,11 @@
 #include "window/window.h"
 
 #include "resource/directx11_swap_chain.h"
-#include "resource/directx11_vertex_buffer.h"
-#include "resource/directx11_index_buffer.h"
+#include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
 #include "resource/directx11_rasterizer_state.h"
 
-#include "shader/directx11_buffer.h"
 #include "shader/directx11_shader.h"
 
 #include <d3dcompiler.h>
@@ -437,7 +435,7 @@ namespace smile::graphic
     {
         for ( auto pGraphicsContext : m_pGraphicsContexts )
             delete pGraphicsContext;
-        
+
         if ( m_pContext )
         {
             m_pContext->ClearState();
@@ -450,7 +448,7 @@ namespace smile::graphic
 
     GraphicsContext *DirectX11Device::CreateGraphicsContext()
     {
-        auto pGraphicsContext = new DirectX11Context{ m_pContext };
+        auto pGraphicsContext = new DirectX11Context{ this, m_pContext };
         m_pGraphicsContexts.push_back( pGraphicsContext );
         return pGraphicsContext;
     }
@@ -619,65 +617,25 @@ namespace smile::graphic
         m_pContext->RSSetViewports( 1, &pDX11SwapChain->m_Viewport );
     }
 
-    memory::Ref< VertexBuffer > DirectX11Device::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
+    void DirectX11Device::CreateVertexBuffer( VertexBufferHandle handle,
+        const VertexBufferDescriptor &vertexBufferDesc )
     {
-        memory::Ref< DirectX11VertexBuffer > pVertexBuffer = memory::CreateRef< DirectX11VertexBuffer >();
-        pVertexBuffer->Stride = vertexBufferDesc.Stride;
-
-        D3D11_BUFFER_DESC bufferDesc = {};
-        bufferDesc.Usage = BufferUsageToDirectXType( vertexBufferDesc.Usage );
-        bufferDesc.ByteWidth = vertexBufferDesc.Stride * vertexBufferDesc.Count;
-        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( vertexBufferDesc.CPUAccess );
-        bufferDesc.MiscFlags = 0;
-
-        HRESULT result;
-        if ( vertexBufferDesc.pVertices )
-        {
-            D3D11_SUBRESOURCE_DATA initData = { 0 };
-            initData.pSysMem = vertexBufferDesc.pVertices;
-
-            result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pVertexBuffer->pInternal );
-        }
-        else
-        {
-            result = m_pInternal->CreateBuffer( &bufferDesc, nullptr, &pVertexBuffer->pInternal );
-        }
-
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::CreateVertexBuffer > Failed to create vertex buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return nullptr;
-        }
-
-        return pVertexBuffer;
+        m_VertexBuffers[handle.GetIndex()].Create( m_pInternal, vertexBufferDesc );
     }
 
-    memory::Ref< IndexBuffer > DirectX11Device::CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
+    void DirectX11Device::DestroyVertexBuffer( VertexBufferHandle handle )
     {
-        memory::Ref< DirectX11IndexBuffer > pIndexBuffer = memory::CreateRef< DirectX11IndexBuffer >();
-        pIndexBuffer->Count = indexBufferDesc.Count;
+        m_VertexBuffers[handle.GetIndex()].Destroy();
+    }
 
-        D3D11_BUFFER_DESC bufferDesc = {};
-        bufferDesc.Usage = BufferUsageToDirectXType( indexBufferDesc.Usage );
-        bufferDesc.ByteWidth = sizeof( Uint32 ) * indexBufferDesc.Count;
-        bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bufferDesc.CPUAccessFlags = 0;
-        bufferDesc.MiscFlags = 0;
+    void DirectX11Device::CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc )
+    {
+        m_IndexBuffers[handle.GetIndex()].Create( m_pInternal, indexBufferDesc );
+    }
 
-        D3D11_SUBRESOURCE_DATA initData = { 0 };
-        initData.pSysMem = indexBufferDesc.pIndices;
-
-        HRESULT result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pIndexBuffer->pInternal );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11IndexBuffer > Failed to create index buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return nullptr;
-        }
-
-        return pIndexBuffer;
+    void DirectX11Device::DestroyIndexBuffer( IndexBufferHandle handle )
+    {
+        m_IndexBuffers[handle.GetIndex()].Destroy();
     }
 
     memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
