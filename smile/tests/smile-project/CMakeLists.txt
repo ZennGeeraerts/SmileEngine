@@ -47,7 +47,7 @@ add_custom_command(
     TARGET smile-project
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${SMILE_PATH}/../../resources
+        ${SMILE_PATH}/../resources
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/resources
     )
 
