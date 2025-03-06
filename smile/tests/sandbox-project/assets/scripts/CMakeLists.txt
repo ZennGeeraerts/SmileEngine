@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION "3.25.0")
 
 get_filename_component(SMILE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../smile/src" ABSOLUTE)
+get_filename_component(SMILEDIT_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../../smiledit" ABSOLUTE)
 get_filename_component(SCRIPT_CORE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../../../../smile-script-core" ABSOLUTE)
 message("PATH: " ${SMILE_PATH})
 
@@ -10,9 +11,9 @@ add_library("smile-script-core" SHARED ${ENGINE_SOURCE_FILES})
 
 set_target_properties("smile-script-core"
     PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${SMILE_PATH}/../resources/scripts"
-    LIBRARY_OUTPUT_DIRECTORY "${SMILE_PATH}/../resources/scripts"
-    RUNTIME_OUTPUT_DIRECTORY "${SMILE_PATH}/../resources/scripts"
+    ARCHIVE_OUTPUT_DIRECTORY "${SMILE_PATH}/../../resources/scripts"
+    LIBRARY_OUTPUT_DIRECTORY "${SMILE_PATH}/../../resources/scripts"
+    RUNTIME_OUTPUT_DIRECTORY "${SMILE_PATH}/../../resources/scripts"
 )
 
 file(GLOB_RECURSE APP_SOURCE_FILES Source/*.cs)
@@ -26,6 +27,14 @@ set_target_properties("sandbox"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/bin"
 )
+
+add_custom_command(
+    TARGET sandbox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/../worlds"
+        "${SMILEDIT_PATH}/out/build/x64-$<CONFIG>/$<CONFIG>/sandbox-project/assets/worlds"
+    )
 
 add_custom_command(
     TARGET sandbox

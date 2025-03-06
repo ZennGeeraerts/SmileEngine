@@ -2,7 +2,7 @@
 bin/
 .vs/
 
-/resources/scripts
+/smile/resources/scripts
 
 /conan/Debug
 /conan/Release

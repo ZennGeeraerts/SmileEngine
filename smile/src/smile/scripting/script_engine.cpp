@@ -287,17 +287,20 @@ namespace smile::scripting
             const char *nameSpace =
                 mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE] );
             const char *className = mono_metadata_string_heap( s_pData->pAppAssemblyImage, cols[MONO_TYPEDEF_NAME] );
-            std::string fullName;
-            if ( strlen( nameSpace ) != 0 )
+            std::string fullName = [&]()
             {
-                fullName = nameSpace;
-                fullName.append( "." );
-                fullName.append( className );
-            }
-            else
-            {
-                fullName = className;
-            }
+                if ( strlen( nameSpace ) != 0 )
+                {
+                    std::string fullName = nameSpace;
+                    fullName.append( "." );
+                    fullName.append( className );
+                    return fullName;
+                }
+                else
+                {
+                    return std::string{ className };
+                }
+            }();
 
             MonoClass *pMonoClass = mono_class_from_name( s_pData->pAppAssemblyImage, nameSpace, className );
 
