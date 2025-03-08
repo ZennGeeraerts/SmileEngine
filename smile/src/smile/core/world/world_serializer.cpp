@@ -9,7 +9,7 @@
 #include "entity.h"
 #include "components.h"
 #include "project/project_manager.h"
-#include "engine/graphic/renderer/resource_manager.h"
+#include "smile/graphic/renderer/resource_manager.h"
 
 #include <yaml-cpp/yaml.h>
 
