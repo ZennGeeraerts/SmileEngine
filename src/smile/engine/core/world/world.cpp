@@ -41,14 +41,12 @@ namespace smile::world
 
         auto pEditorState = memory::CreateRef< smile::ecs::state::State >();
         pEditorState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
-        pEditorState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
         pEditorState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "editor", pEditorState );
 
         auto pSimulateState = memory::CreateRef< smile::ecs::state::State >();
         pSimulateState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pSimulateState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
         pSimulateState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "simulate", pSimulateState );
 
@@ -189,6 +187,7 @@ namespace smile::world
 
     void World::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
+        graphic::RenderEngine::SetCameraData( { &editorCamera, editorCamera.GetTransform() } );
         m_ECSEngine.OnUpdate();
     }
 
