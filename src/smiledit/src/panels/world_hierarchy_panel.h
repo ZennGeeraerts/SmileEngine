@@ -5,6 +5,7 @@
 #pragma once
 
 #include "foundation/compiled.h"
+#include "memory/ref.h"
 #include "logging/logging.h"
 #include "world/world.h"
 #include "world/entity.h"

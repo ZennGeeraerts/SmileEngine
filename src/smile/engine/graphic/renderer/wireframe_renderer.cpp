@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "wireframe_renderer.h"
 
-#include "engine/graphic/renderer/render_command.h"
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 namespace smile::graphic
 {
@@ -15,13 +15,13 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
-        GraphicsDevice *pDevice = RenderCommand::GetGraphicsDevice();
+        ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
         RasterizerStateDescriptor rasterizerStateDesc{};
         rasterizerStateDesc.CullMode = CullMode::None;
         rasterizerStateDesc.FillMode = FillMode::WireFrame;
         rasterizerStateDesc.EnableDepthClip = true;
 
-        s_pWireframeRasterizerState = pDevice->CreateRasterizerState( rasterizerStateDesc );
+        s_pWireframeRasterizerState = resourceManager.CreateRasterizerState( rasterizerStateDesc );
     }
 
     void WireframeRenderer::ShutDown()
@@ -47,31 +47,31 @@ namespace smile::graphic
 
     void WireframeRenderer::OnRender()
     {
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
-        pContext->BindRasterizerState( s_pWireframeRasterizerState );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindRasterizerState( s_pWireframeRasterizerState );
 
         if ( !m_RenderCollector.DrawList.empty() )
         {
             DrawCommand &drawCommand = m_RenderCollector.DrawList[0];
-            pContext->BindShader( drawCommand.pShader );
+            renderSystem.BindShader( drawCommand.pShader );
             drawCommand.pShader->UploadMat4( "ViewProjection", m_RenderCollector.ViewProjectionMatrix );
         }
 
         for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
         {
-            pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
-            pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
+            renderSystem.BindVertexBuffer( drawCommand.pVertexBuffer );
+            renderSystem.BindIndexBuffer( drawCommand.pIndexBuffer );
 
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ 1, 1, 1 } );
 
-            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
+            renderSystem.DrawIndexed( drawCommand.pIndexBuffer->Count );
         }
 
-        pContext->UnbindRasterizerState();
-        pContext->UnbindPrimitiveTopology();
+        renderSystem.UnbindRasterizerState();
+        renderSystem.UnbindPrimitiveTopology();
     }
 
     void WireframeRenderer::Submit( const physics::ecs::BoxColliderComponent &boxColliderComponent,

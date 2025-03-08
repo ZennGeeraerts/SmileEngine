@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "engine/graphic/renderer_api/shader/shader.h"
-#include "engine/graphic/renderer_api/shader/shader_reflection.h"
-#include "engine/graphic/renderer_api/resource/texture.h"
+#include "engine/graphic/renderer_backend/shader/shader.h"
+#include "engine/graphic/renderer_backend/shader/shader_reflection.h"
+#include "engine/graphic/renderer_backend/resource/texture.h"
 #include "memory/ref.h"
 
 #include <DirectXMath.h>

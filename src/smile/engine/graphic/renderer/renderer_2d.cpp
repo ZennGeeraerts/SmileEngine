@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "renderer_2d.h"
 
-#include "engine/graphic/renderer/render_command.h"
 #include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 namespace smile::graphic
 {
@@ -52,7 +52,8 @@ namespace smile::graphic
         vertexBufferDesc.Count = quadVerticesCount;
         vertexBufferDesc.Stride = sizeof( float ) * 5;
 
-        s_pStorage->pQuadVertexBuffer = RenderCommand::GetGraphicsDevice()->CreateVertexBuffer( vertexBufferDesc );
+        s_pStorage->pQuadVertexBuffer =
+            RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer( vertexBufferDesc );
 
         const Uint32 quadIndicesCount = 6;
         Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
@@ -61,7 +62,8 @@ namespace smile::graphic
         indexBufferDesc.pIndices = quadIndices;
         indexBufferDesc.Count = quadIndicesCount;
 
-        s_pStorage->pQuadIndexBuffer = RenderCommand::GetGraphicsDevice()->CreateIndexBuffer( indexBufferDesc );
+        s_pStorage->pQuadIndexBuffer =
+            RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( indexBufferDesc );
 
         s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosColTex" );
     }
@@ -80,10 +82,10 @@ namespace smile::graphic
 
         DirectX::XMStoreFloat4x4( &s_pStorage->ViewProjectionMatrix, viewProjectionMatrixMat );
 
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
-        pContext->BindShader( s_pStorage->pShader );
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
+        renderSystem.BindShader( s_pStorage->pShader );
         s_pStorage->pShader->UploadMat4( "ViewProjection", s_pStorage->ViewProjectionMatrix );
-        pContext->UnbindShader();
+        renderSystem.UnbindShader();
     }
 
     void Renderer2D::EndScene()
@@ -119,42 +121,42 @@ namespace smile::graphic
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color )
     {
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
-        pContext->BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
-        pContext->BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
-        pContext->BindShader( s_pStorage->pShader );
+        renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
+        renderSystem.BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
+        renderSystem.BindShader( s_pStorage->pShader );
 
         s_pStorage->pShader->UploadMat4( "World", worldTransform );
         s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
         s_pStorage->pShader->UploadBool( "UseTexture", false );
 
-        RenderCommand::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
+        renderSystem.DrawIndexed( s_pStorage->pQuadIndexBuffer->Count );
 
-        pContext->UnbindPrimitiveTopology();
+        renderSystem.UnbindPrimitiveTopology();
     }
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
         const memory::Ref< Texture > &pTexture,
         const DirectX::XMFLOAT4 &color )
     {
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
-        pContext->BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
-        pContext->BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
-        pContext->BindShader( s_pStorage->pShader );
+        renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
+        renderSystem.BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
+        renderSystem.BindShader( s_pStorage->pShader );
 
         s_pStorage->pShader->UploadMat4( "World", worldTransform );
         s_pStorage->pShader->UploadFloat3( "Color", DirectX::XMFLOAT3{ color.x, color.y, color.z } );
         s_pStorage->pShader->UploadBool( "UseTexture", true );
         s_pStorage->pShader->UploadTexture( "Diffuse", pTexture );
 
-        RenderCommand::DrawIndexed( s_pStorage->pQuadIndexBuffer->Count, s_pStorage->pShader );
+        renderSystem.DrawIndexed( s_pStorage->pQuadIndexBuffer->Count );
 
-        pContext->UnbindPrimitiveTopology();
+        renderSystem.UnbindPrimitiveTopology();
     }
 }

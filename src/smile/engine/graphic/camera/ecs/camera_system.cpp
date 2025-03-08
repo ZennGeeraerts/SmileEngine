@@ -21,7 +21,7 @@ namespace smile::graphic::ecs
     void CameraSystem::OnUpdate()
     {
         Camera *pMainCamera = nullptr;
-        DirectX::XMFLOAT4X4 cameraTransform{};
+        DirectX::XMFLOAT4X4 cameraTransform = [&]()
         {
             auto view = m_pECSEngine->GetView< world::ecs::TransformComponent, graphic::ecs::CameraComponent >();
             for ( auto entity : view )
@@ -32,11 +32,12 @@ namespace smile::graphic::ecs
                 if ( camera.IsPrimary )
                 {
                     pMainCamera = &camera.Camera;
-                    cameraTransform = transform.GetWorldTransform();
-                    break;
+                    return transform.GetWorldTransform();
                 }
             }
-        }
+
+            return DirectX::XMFLOAT4X4{};
+        }();
 
         RenderEngine::SetCameraData( { pMainCamera, cameraTransform } );
     }

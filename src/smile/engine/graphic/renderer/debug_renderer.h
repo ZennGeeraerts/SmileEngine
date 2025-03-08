@@ -5,8 +5,8 @@
 #pragma once
 #include "engine/common/foundation/singleton.h"
 
-#include "engine/graphic/renderer_api/resource/vertex_buffer.h"
-#include "engine/graphic/renderer_api/shader/shader.h"
+#include "engine/graphic/renderer_backend/resource/vertex_buffer.h"
+#include "engine/graphic/renderer_backend/shader/shader.h"
 
 #include "engine/graphic/camera/camera.h"
 

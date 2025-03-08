@@ -7,10 +7,11 @@
 
 #include "engine/core/application/application.h"
 #include "engine/core/window/window.h"
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer_backend/renderer_Backend.h"
 
-#include "platform/directx11/graphic/directx11_device.h"
-#include "platform/directx11/graphic/directx11_context.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_device.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_context.h"
 
 #include "engine/common/logging/logger.h"
 #include "engine/core/input/key_codes.h"
@@ -80,13 +81,13 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::GraphicsDevice *pGraphicsDevice = graphic::RenderCommand::GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = graphic::RenderCommand::GetGraphicsContext();
+        graphic::RendererBackend *pRendererBackend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
+        graphic::GraphicsDevice *pGraphicsDevice = pRendererBackend->GetGraphicsDevice();
+        graphic::GraphicsContext *pGraphicsContext = pRendererBackend->GetGraphicsContext();
 
-        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
-        switch ( api )
+        switch ( pRendererBackend->GetType() )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererBackendType::DirectX11:
             {
                 ImGui_ImplWin32_Init( window.GetNativeWindow() );
 
@@ -97,8 +98,6 @@ namespace smile::imgui
                 ImGui_ImplDX11_Init( pDevice, pDeviceContext );
                 break;
             }
-            case graphic::RendererAPI::API::SmileRaster:
-                break;
 
             default:
                 break;
@@ -114,16 +113,13 @@ namespace smile::imgui
 
     void ImGuiLayer::Begin()
     {
-        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
-        switch ( api )
+        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetType();
+        switch ( backend )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererBackendType::DirectX11:
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 break;
-
-            case graphic::RendererAPI::API::SmileRaster:
-                return;
 
             default:
                 return;
@@ -142,15 +138,12 @@ namespace smile::imgui
 
         ImGui::Render();
 
-        graphic::RendererAPI::API api = graphic::RendererAPI::GetAPI();
-        switch ( api )
+        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetType();
+        switch ( backend )
         {
-            case graphic::RendererAPI::API::DirectX11:
+            case graphic::RendererBackendType::DirectX11:
                 ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
                 break;
-
-            case graphic::RendererAPI::API::SmileRaster:
-                return;
 
             default:
                 return;
@@ -174,7 +167,8 @@ namespace smile::imgui
     {
         window::EventDispatcher dispatcher{ event };
         dispatcher.Dispatch< window::MouseButtonPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonPressed ) );
-        dispatcher.Dispatch< window::MouseButtonReleasedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonReleased ) );
+        dispatcher.Dispatch< window::MouseButtonReleasedEvent >(
+            SM_BIND_EVENT_FN( ImGuiLayer::OnMouseButtonReleased ) );
         dispatcher.Dispatch< window::MouseMovedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseMoved ) );
         dispatcher.Dispatch< window::MouseScrolledEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnMouseScrolled ) );
         dispatcher.Dispatch< window::KeyPressedEvent >( SM_BIND_EVENT_FN( ImGuiLayer::OnKeyPressed ) );

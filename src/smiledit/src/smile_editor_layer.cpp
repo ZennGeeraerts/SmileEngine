@@ -24,7 +24,7 @@ namespace smile
 
     void SmileEditorLayer::OnAttach()
     {
-        graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
+        graphic::RenderEngine::GetRenderSystem().SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
             DirectX::Colors::DodgerBlue.f[3] } );
@@ -32,10 +32,10 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        auto pDevice = graphic::RenderCommand::GetGraphicsDevice();
-        m_pIconPlay = pDevice->CreateTexture2D( "resources/icons/play_button.png" );
-        m_pIconSimulate = pDevice->CreateTexture2D( "resources/icons/simulate_button.png" );
-        m_pIconStop = pDevice->CreateTexture2D( "resources/icons/stop_button.png" );
+        auto &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
+        m_pIconPlay = resourceManager.CreateTexture2D( "resources/icons/play_button.png" );
+        m_pIconSimulate = resourceManager.CreateTexture2D( "resources/icons/simulate_button.png" );
+        m_pIconStop = resourceManager.CreateTexture2D( "resources/icons/stop_button.png" );
 
         auto commandLineArgs = application::Application::GetInstance().GetDescriptor().CommandLineArgs;
         if ( commandLineArgs.Count > 1 )
@@ -71,7 +71,7 @@ namespace smile
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
-        graphic::RenderCommand::Clear();
+        graphic::RenderEngine::GetRenderSystem().Clear();
 
         switch ( m_WorldState )
         {
@@ -199,7 +199,8 @@ namespace smile
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image( graphic::RenderEngine::GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
+        ImGui::Image(
+            graphic::RenderEngine::GetScene()->GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {

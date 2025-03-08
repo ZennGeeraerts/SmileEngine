@@ -5,8 +5,9 @@
 #include "smpch.h"
 #include "mesh_factory.h"
 
-#include "engine/graphic/renderer/render_command.h"
-#include "engine/core/math/math.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
+#include "math/math.h"
 
 namespace smile::graphic
 {
@@ -16,31 +17,19 @@ namespace smile::graphic
     const DirectX::XMFLOAT2 MeshFactory::s_DefaultFloat2 = DirectX::XMFLOAT2{ 0, 0 };
     const DirectX::XMFLOAT4 MeshFactory::s_DefaultIndices4 = DirectX::XMFLOAT4{ -1, -1, -1, -1 };
 
-    static std::vector< DirectX::XMFLOAT3 > s_PlanePositions
-    {
-        { -1.0f, 0.0f, -1.0f },
+    static std::vector< DirectX::XMFLOAT3 > s_PlanePositions{ { -1.0f, 0.0f, -1.0f },
         { 1.0f, 0.0f, -1.0f },
         { 1.0f, 0.0f, 1.0f },
-        { -1.0f, 0.0f, -1.0f } 
-    };
+        { -1.0f, 0.0f, -1.0f } };
 
-    static std::vector< DirectX::XMFLOAT3 > s_PlaneNormals
-    {
+    static std::vector< DirectX::XMFLOAT3 > s_PlaneNormals{ { 0.0f, 1.0f, 0.0f },
         { 0.0f, 1.0f, 0.0f },
         { 0.0f, 1.0f, 0.0f },
-        { 0.0f, 1.0f, 0.0f },
-        { 0.0f, 1.0f, 0.0f }
-    };
+        { 0.0f, 1.0f, 0.0f } };
 
-    static std::vector< Uint32 > s_PlaneIndices
-    {
-        0, 1, 2,
-        2, 3, 0
-    };
+    static std::vector< Uint32 > s_PlaneIndices{ 0, 1, 2, 2, 3, 0 };
 
-    static std::vector< DirectX::XMFLOAT3 > s_CubePositions
-    { 
-        // front
+    static std::vector< DirectX::XMFLOAT3 > s_CubePositions{ // front
         { -0.5f, 0.5f, -0.5f },
         { 0.5f, 0.5f, -0.5f },
         { -0.5f, -0.5f, -0.5f },
@@ -74,11 +63,9 @@ namespace smile::graphic
         { -0.5f, 0.5f, -0.5f },
         { -0.5f, 0.5f, 0.5f },
         { -0.5f, -0.5f, -0.5f },
-        { -0.5f, -0.5f, 0.5f }
-    };
+        { -0.5f, -0.5f, 0.5f } };
 
-    static const std::vector< Uint32 > s_CubeIndices
-    {
+    static const std::vector< Uint32 > s_CubeIndices{
         // front
         0 + 0,
         1 + 0,
@@ -123,9 +110,7 @@ namespace smile::graphic
         3 + 20,
     };
 
-    static std::vector< DirectX::XMFLOAT3 > s_CubeNormals
-    { 
-        // front
+    static std::vector< DirectX::XMFLOAT3 > s_CubeNormals{ // front
         { 0.0f, 0.0f, 1.0f },
         { 0.0f, 0.0f, 1.0f },
         { 0.0f, 0.0f, 1.0f },
@@ -159,8 +144,7 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f },
-        { -1.0f, 0.0f, 0.0f } 
-    };
+        { -1.0f, 0.0f, 0.0f } };
 
     Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const BufferLayout &layout )
     {
@@ -220,9 +204,9 @@ namespace smile::graphic
 
         Ref< Mesh > pMesh = CreateRef< Mesh >();
 
-        GraphicsDevice *pDevice = RenderCommand::GetGraphicsDevice();
-        pMesh->pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
-        pMesh->pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
+        ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        pMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc );
+        pMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc );
 
         return pMesh;
     }
@@ -302,9 +286,9 @@ namespace smile::graphic
 
         Ref< SkinnedMesh > pSkinnedMesh = CreateRef< SkinnedMesh >();
 
-        GraphicsDevice *pDevice = RenderCommand::GetGraphicsDevice();
-        pSkinnedMesh->pVertexBuffer = pDevice->CreateVertexBuffer( vertexBufferDesc );
-        pSkinnedMesh->pIndexBuffer = pDevice->CreateIndexBuffer( indexBufferDesc );
+        ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        pSkinnedMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc );
+        pSkinnedMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc );
         pSkinnedMesh->SkeletonMap = pSkinnedMeshFilter->m_SkeletonMap;
         pSkinnedMesh->BoneCount = pSkinnedMeshFilter->m_BoneCount;
 

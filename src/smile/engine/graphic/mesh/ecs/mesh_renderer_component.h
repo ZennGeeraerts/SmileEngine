@@ -3,7 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/render_engine.h"
+#include "engine/graphic/renderer/resource_manager.h"
 #include "engine/graphic/mesh/model_loader.h"
 #include "engine/graphic/mesh/mesh_factory.h"
 #include "engine/graphic/mesh/material.h"
@@ -15,8 +16,8 @@ namespace smile::graphic::ecs
         MeshRendererComponent()
         {
             // TODO: Get shader from shader library in render engine
-            graphic::GraphicsDevice *pDevice = graphic::RenderCommand::GetGraphicsDevice();
-            auto pShader = pDevice->CreateShader( "resources/shaders/PBR.fx" );
+            graphic::ResourceManager &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
+            auto pShader = resourceManager.CreateShader( "resources/shaders/PBR.fx" );
             pMaterial = smile::CreateRef< graphic::Material >( pShader );
         }
 

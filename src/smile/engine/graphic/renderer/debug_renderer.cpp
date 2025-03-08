@@ -6,7 +6,7 @@
 #include "debug_renderer.h"
 
 #include "engine/graphic/renderer/render_engine.h"
-#include "engine/graphic/renderer/render_command.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 #include <DirectXColors.h>
 
@@ -74,7 +74,7 @@ namespace smile::graphic
         descriptor.Count = m_BufferSize;
         descriptor.CPUAccess = BufferCPUAccess::Write;
 
-        m_pVertexBuffer = RenderCommand::GetGraphicsDevice()->CreateVertexBuffer( descriptor );
+        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer( descriptor );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -100,14 +100,14 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
+        renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::LineList );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::LineList );
 
-        pContext->BindVertexBuffer( m_pVertexBuffer );
-        pContext->BindShader( m_pShader );
+        renderSystem.BindVertexBuffer( m_pVertexBuffer );
+        renderSystem.BindShader( m_pShader );
 
         m_pShader->UploadMat4( "ViewProjection", m_ViewProjectionMatrix );
 
@@ -115,9 +115,9 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
         m_pShader->UploadMat4( "World", worldMatrix );
 
-        RenderCommand::Draw( vertexCount, m_pShader );
+        renderSystem.Draw( vertexCount );
 
-        pContext->UnbindPrimitiveTopology();
+        renderSystem.UnbindPrimitiveTopology();
     }
 
     void DebugRenderer::EndScene()
