@@ -4,7 +4,11 @@
 /*=============================================================================*/
 
 #include "smpch.h"
+<<<<<<<< HEAD:smile/src/platform/directx11/graphic/shader/directx11_shader_reflection.cpp
 #include "smile/graphic/renderer_api/shader/shader_reflection.h"
+========
+#include "engine/graphic/renderer_backend/shader/shader_reflection.h"
+>>>>>>>> main:src/smile/platform/directx11/graphic/renderer_backend/shader/directx11_shader_reflection.cpp
 #include "directx11_shader.h"
 
 #include <d3dx11effect.h>

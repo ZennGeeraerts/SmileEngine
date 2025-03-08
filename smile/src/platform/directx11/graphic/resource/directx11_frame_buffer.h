@@ -3,7 +3,11 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+<<<<<<<< HEAD:smile/src/platform/directx11/graphic/resource/directx11_frame_buffer.h
 #include "smile/graphic/renderer_api/resource/frame_buffer.h"
+========
+#include "engine/graphic/renderer_backend/resource/frame_buffer.h"
+>>>>>>>> main:src/smile/platform/directx11/graphic/renderer_backend/resource/directx11_frame_buffer.h
 
 #include <d3d11.h>
 

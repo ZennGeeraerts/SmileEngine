@@ -6,7 +6,7 @@
 #include "skybox_renderer.h"
 
 #include "render_engine.h"
-#include "render_command.h"
+#include "resource_manager.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 
 namespace smile::graphic
@@ -16,9 +16,9 @@ namespace smile::graphic
 
     void SkyboxRenderer::Initialize()
     {
-        auto pDevice = RenderCommand::GetGraphicsDevice();
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
 
-        memory::Ref< Texture > pCubeTexture = pDevice->CreateTextureCube( "resources/textures/SkyBox.dds" );
+        memory::Ref< Texture > pCubeTexture = resourceManager.CreateTextureCube( "resources/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
         s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture );
@@ -59,16 +59,16 @@ namespace smile::graphic
 
     void SkyboxRenderer::OnRender()
     {
-        auto pContext = RenderCommand::GetGraphicsContext();
+        auto &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
-        pContext->BindShader( s_pSkyboxShader );
+        renderSystem.BindShader( s_pSkyboxShader );
 
-        pContext->BindVertexBuffer( s_pCubeMesh->pVertexBuffer );
-        pContext->BindIndexBuffer( s_pCubeMesh->pIndexBuffer );
+        renderSystem.BindVertexBuffer( s_pCubeMesh->pVertexBuffer );
+        renderSystem.BindIndexBuffer( s_pCubeMesh->pIndexBuffer );
 
-        RenderCommand::DrawIndexed( s_pCubeMesh->pIndexBuffer->Count, s_pSkyboxShader );
+        renderSystem.DrawIndexed( s_pCubeMesh->pIndexBuffer->Count );
     }
 
     void SkyboxRenderer::EndScene()

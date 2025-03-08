@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "forward_renderer.h"
 
-#include "smile/graphic/renderer/render_command.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
@@ -67,24 +67,24 @@ namespace smile::graphic
 
     void ForwardRenderer::OnRender()
     {
-        GraphicsContext *pContext = RenderCommand::GetGraphicsContext();
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        pContext->BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
         for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )
         {
-            pContext->BindVertexBuffer( drawCommand.pVertexBuffer );
-            pContext->BindIndexBuffer( drawCommand.pIndexBuffer );
-            pContext->BindShader( drawCommand.pShader );
+            renderSystem.BindVertexBuffer( drawCommand.pVertexBuffer );
+            renderSystem.BindIndexBuffer( drawCommand.pIndexBuffer );
+            renderSystem.BindShader( drawCommand.pShader );
 
             drawCommand.pShader->UploadMat4( "ViewProjection", s_RenderCollector.ViewProjectionMatrix );
             drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
             drawCommand.pShader->UploadMat4( "ViewInverse", s_RenderCollector.ViewInverseMatrix );
 
-            RenderCommand::DrawIndexed( drawCommand.pIndexBuffer->Count, drawCommand.pShader );
+            RenderEngine::GetRenderSystem().DrawIndexed( drawCommand.pIndexBuffer->Count );
         }
 
-        pContext->UnbindPrimitiveTopology();
+        renderSystem.UnbindPrimitiveTopology();
     }
 
     void ForwardRenderer::EndScene()

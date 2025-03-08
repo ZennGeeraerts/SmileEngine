@@ -4,7 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
+<<<<<<<< HEAD:smile/src/platform/directx11/graphic/resource/directx11_texture.h
 #include "smile/graphic/renderer_api/resource/texture.h"
+========
+#include "engine/graphic/renderer_backend/resource/texture.h"
+>>>>>>>> main:src/smile/platform/directx11/graphic/renderer_backend/resource/directx11_texture.h
 
 #include <DirectXTex.h>
 

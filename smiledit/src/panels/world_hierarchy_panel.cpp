@@ -9,6 +9,7 @@
 #include "smile/scripting/script_engine.h"
 #include "smile/graphic/mesh/mesh.h"
 #include "smile/graphic/mesh/mesh_factory.h"
+#include "smile/graphic/renderer/resource_manager.h"
 #include "ecs/relationship.h"
 
 #include <imgui/imgui.h>
@@ -800,7 +801,8 @@ namespace smile::world
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path texturePath = std::filesystem::path{ path };
                         spriteRendererComponent.pTexture =
-                            graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( texturePath.string() );
+                            graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                                texturePath.string() );
                     }
 
                     ImGui::EndDragDropTarget();
@@ -870,7 +872,7 @@ namespace smile::world
                 const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                 std::filesystem::path shaderPath = std::filesystem::path{ path };
                 pMaterial->SetShader(
-                    graphic::RenderCommand::GetGraphicsDevice()->CreateShader( shaderPath.string() ) );
+                    graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( shaderPath.string() ) );
             }
 
             ImGui::EndDragDropTarget();
@@ -928,7 +930,8 @@ namespace smile::world
                     const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                     std::filesystem::path texturePath = std::filesystem::path{ path };
                     pMaterial->SetTexture2D( pair.first,
-                        graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( texturePath.string() ) );
+                        graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                            texturePath.string() ) );
                 }
 
                 ImGui::EndDragDropTarget();

@@ -9,6 +9,7 @@
 #include "entity.h"
 #include "components.h"
 #include "project/project_manager.h"
+#include "engine/graphic/renderer/resource_manager.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -644,7 +645,8 @@ namespace smile::world
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             mrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( path.string() ) );
+                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                                    path.string() ) );
                         }
                     }
                 }
@@ -718,7 +720,8 @@ namespace smile::world
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             smrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( path.string() ) );
+                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                                    path.string() ) );
                         }
                     }
                 }
@@ -844,7 +847,8 @@ namespace smile::world
                     if ( !texturePath.empty() )
                     {
                         auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                        src.pTexture = graphic::RenderCommand::GetGraphicsDevice()->CreateTexture2D( path.string() );
+                        src.pTexture = graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                            path.string() );
                     }
                 }
             }

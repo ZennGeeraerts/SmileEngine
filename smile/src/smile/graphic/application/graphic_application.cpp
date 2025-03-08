@@ -6,7 +6,6 @@
 #include "graphic_application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/render_command.h"
 
 #include "application/timer.h"
 
@@ -49,7 +48,7 @@ namespace smile::graphic
             m_pImGuiLayer->End();
 
             m_pWindowManager->PollEvents();
-            RenderCommand::Present();
+            RenderEngine::GetRenderSystem().Present();
         }
     }
 
@@ -57,7 +56,7 @@ namespace smile::graphic
     {
         Application::OnWindowResize( e );
 
-         if ( !m_IsMinimized )
+        if ( !m_IsMinimized )
             RenderEngine::OnWindowResize( e.GetWidth(), e.GetHeight() );
 
         return false;

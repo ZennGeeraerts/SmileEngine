@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_api/resource/texture.h"
+#include "smile/graphic/renderer_backend/resource/texture.h"
 #include "memory/ref.h"
 
 #include <DirectXMath.h>

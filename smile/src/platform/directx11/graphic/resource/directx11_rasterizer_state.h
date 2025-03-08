@@ -5,7 +5,11 @@
 
 #pragma once
 
+<<<<<<<< HEAD:smile/src/platform/directx11/graphic/resource/directx11_rasterizer_state.h
 #include "smile/graphic/renderer_api/resource/rasterizer_state.h"
+========
+#include "engine/graphic/renderer_backend/resource/rasterizer_state.h"
+>>>>>>>> main:src/smile/platform/directx11/graphic/renderer_backend/resource/directx11_rasterizer_state.h
 
 #include <d3d11.h>
 

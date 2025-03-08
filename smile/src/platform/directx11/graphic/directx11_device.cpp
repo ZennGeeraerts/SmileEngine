@@ -9,13 +9,14 @@
 
 #include "directx11_diagnostics.h"
 
-#include "resource/directx11_vertex_buffer.h"
-#include "resource/directx11_index_buffer.h"
+#include "window/window.h"
+
+#include "resource/directx11_swap_chain.h"
+#include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
 #include "resource/directx11_rasterizer_state.h"
 
-#include "shader/directx11_buffer.h"
 #include "shader/directx11_shader.h"
 
 #include <d3dcompiler.h>
@@ -393,17 +394,25 @@ namespace smile::graphic
         }
     }
 
-    DirectX11Device::DirectX11Device( GraphicsContext *pContext )
+    DirectX11Device::DirectX11Device()
     {
+        // Create DXGI Factory to create SwapChain based on hardware
+        HRESULT result = CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_pDXGIFactory ) );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR(
+                "DirectX11Device > Failed to create DXGIFactory: {}", fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return;
+        }
+
         // Create Device and Device context, using hardware acceleration
         D3D_FEATURE_LEVEL featureLevel{ D3D_FEATURE_LEVEL_11_0 };
         Uint32 createDeviceFlags{ 0 };
 #ifdef SM_C_DEBUG
         createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-        DirectX11Context *pDirectX11Context = static_cast< DirectX11Context * >( pContext );
 
-        HRESULT result = D3D11CreateDevice( 0,
+        result = D3D11CreateDevice( 0,
             D3D_DRIVER_TYPE_HARDWARE,
             0,
             createDeviceFlags,
@@ -412,79 +421,221 @@ namespace smile::graphic
             D3D11_SDK_VERSION,
             &m_pInternal,
             &featureLevel,
-            &pDirectX11Context->m_pInternal );
+            &m_pContext );
+
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11Device::Initialize > Failed to create D3D11Device: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            SM_LOG_ERROR(
+                "DirectX11Device > Failed to create D3D11Device: {}", fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
     }
 
     DirectX11Device::~DirectX11Device()
     {
+        for ( auto pGraphicsContext : m_pGraphicsContexts )
+            delete pGraphicsContext;
+
+        if ( m_pContext )
+        {
+            m_pContext->ClearState();
+            m_pContext->Flush();
+            SAFE_RELEASE( m_pContext );
+        }
+
         SAFE_RELEASE( m_pInternal );
     }
 
-    memory::Ref< VertexBuffer > DirectX11Device::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
+    GraphicsContext *DirectX11Device::CreateGraphicsContext()
     {
-        memory::Ref< DirectX11VertexBuffer > pVertexBuffer = memory::CreateRef< DirectX11VertexBuffer >();
-        pVertexBuffer->Stride = vertexBufferDesc.Stride;
-
-        D3D11_BUFFER_DESC bufferDesc = {};
-        bufferDesc.Usage = BufferUsageToDirectXType( vertexBufferDesc.Usage );
-        bufferDesc.ByteWidth = vertexBufferDesc.Stride * vertexBufferDesc.Count;
-        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( vertexBufferDesc.CPUAccess );
-        bufferDesc.MiscFlags = 0;
-
-        HRESULT result;
-        if ( vertexBufferDesc.pVertices )
-        {
-            D3D11_SUBRESOURCE_DATA initData = { 0 };
-            initData.pSysMem = vertexBufferDesc.pVertices;
-
-            result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pVertexBuffer->pInternal );
-        }
-        else
-        {
-            result = m_pInternal->CreateBuffer( &bufferDesc, nullptr, &pVertexBuffer->pInternal );
-        }
-
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::CreateVertexBuffer > Failed to create vertex buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return nullptr;
-        }
-
-        return pVertexBuffer;
+        auto pGraphicsContext = new DirectX11Context{ this, m_pContext };
+        m_pGraphicsContexts.push_back( pGraphicsContext );
+        return pGraphicsContext;
     }
 
-    memory::Ref< IndexBuffer > DirectX11Device::CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
+    memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
     {
-        memory::Ref< DirectX11IndexBuffer > pIndexBuffer = memory::CreateRef< DirectX11IndexBuffer >();
-        pIndexBuffer->Count = indexBufferDesc.Count;
+        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >( pWindow );
 
-        D3D11_BUFFER_DESC bufferDesc = {};
-        bufferDesc.Usage = BufferUsageToDirectXType( indexBufferDesc.Usage );
-        bufferDesc.ByteWidth = sizeof( Uint32 ) * indexBufferDesc.Count;
-        bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bufferDesc.CPUAccessFlags = 0;
-        bufferDesc.MiscFlags = 0;
+        const Uint32 width = pWindow->GetWidth();
+        const Uint32 height = pWindow->GetHeight();
 
-        D3D11_SUBRESOURCE_DATA initData = { 0 };
-        initData.pSysMem = indexBufferDesc.pIndices;
+        // Create SwapChain Descriptor
+        DXGI_SWAP_CHAIN_DESC swapChainDesc{};
+        swapChainDesc.BufferDesc.Width = width;
+        swapChainDesc.BufferDesc.Height = height;
+        swapChainDesc.BufferDesc.RefreshRate.Numerator = 1;
+        swapChainDesc.BufferDesc.RefreshRate.Denominator = 60;
+        swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+        swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+        swapChainDesc.SampleDesc.Count = 1;
+        swapChainDesc.SampleDesc.Quality = 0;
+        swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        swapChainDesc.BufferCount = 1;
+        swapChainDesc.Windowed = true;
+        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+        swapChainDesc.Flags = 0;
 
-        HRESULT result = m_pInternal->CreateBuffer( &bufferDesc, &initData, &pIndexBuffer->pInternal );
+        swapChainDesc.OutputWindow = static_cast< HWND >( pWindow->GetNativeWindow() );
+
+        // Create SwapChain and hook it into the handle of the SDL window
+        HRESULT result = m_pDXGIFactory->CreateSwapChain( m_pInternal, &swapChainDesc, &pSwapChain->m_pSwapChain );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11IndexBuffer > Failed to create index buffer: {}",
+            SM_LOG_ERROR( "DirectX11Device::CreateSwapChain > Failed to create swap chain: {}",
                 fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return nullptr;
         }
 
-        return pIndexBuffer;
+        /*------------------------------------- Render Target Code -------------------------------------*/
+        // Create the Depth/Stencil Buffer and View
+        FramebufferDescriptor framebufferDesc{};
+        framebufferDesc.Width = width;
+        framebufferDesc.Height = height;
+        framebufferDesc.IsSwapChainTarget = true;
+        framebufferDesc.Samples = 1;
+        framebufferDesc.Attachments = { { FramebufferTextureFormat::Depth24Stencil8, false } };
+
+        pSwapChain->m_pSwapChainTarget = memory::Ref< DirectX11Framebuffer >{ CreateFramebuffer( framebufferDesc ) };
+
+        // Create the RenderTargetView
+        result = pSwapChain->m_pSwapChain->GetBuffer(
+            0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &pSwapChain->m_pRenderTargetBuffer ) );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::CreateSwapChain > Failed to get buffer from swap chain: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return nullptr;
+        }
+
+        result = m_pInternal->CreateRenderTargetView(
+            pSwapChain->m_pRenderTargetBuffer, 0, &pSwapChain->m_pCurrentRenderTarget );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::CreateSwapChain > Failed to create render target view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return nullptr;
+        }
+
+        m_pContext->OMSetRenderTargets(
+            1, &pSwapChain->m_pCurrentRenderTarget, pSwapChain->m_pSwapChainTarget->pDepthStencilView );
+        /*------------------------------------- Render Target Code End -------------------------------------*/
+
+        // Set the Viewport
+        pSwapChain->m_Viewport = {};
+        pSwapChain->m_Viewport.Width = static_cast< FLOAT >( width );
+        pSwapChain->m_Viewport.Height = static_cast< FLOAT >( height );
+        pSwapChain->m_Viewport.TopLeftX = 0.0f;
+        pSwapChain->m_Viewport.TopLeftY = 0.0f;
+        pSwapChain->m_Viewport.MinDepth = 0.0f;
+        pSwapChain->m_Viewport.MaxDepth = 1.0;
+
+        m_pContext->RSSetViewports( 1, &pSwapChain->m_Viewport );
+
+        return pSwapChain;
+    }
+
+    void DirectX11Device::ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain,
+        Uint32 x,
+        Uint32 y,
+        Uint32 width,
+        Uint32 height )
+    {
+        memory::Ref< DirectX11SwapChain > pDX11SwapChain = memory::Ref< DirectX11SwapChain >{ pSwapChain };
+
+        m_pContext->OMSetRenderTargets( 0, 0, 0 );
+
+        D3D11_TEXTURE2D_DESC depthStencilDesc{};
+        pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment->GetDesc( &depthStencilDesc );
+        depthStencilDesc.Width = width;
+        depthStencilDesc.Height = height;
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+        pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView->GetDesc( &depthStencilViewDesc );
+
+        SAFE_RELEASE( pDX11SwapChain->m_pCurrentRenderTarget );
+        SAFE_RELEASE( pDX11SwapChain->m_pRenderTargetBuffer );
+        SAFE_RELEASE( pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView );
+        SAFE_RELEASE( pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment );
+
+        HRESULT result = pDX11SwapChain->m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to resize buffers: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return;
+        }
+
+        // Depth stencil
+        result = m_pInternal->CreateTexture2D(
+            &depthStencilDesc, 0, &pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create depth stencil buffer: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return;
+        }
+
+        result = m_pInternal->CreateDepthStencilView( pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment,
+            &depthStencilViewDesc,
+            &pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create depth stencil view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return;
+        }
+
+        // Render target
+        result = pDX11SwapChain->m_pSwapChain->GetBuffer(
+            0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &pDX11SwapChain->m_pRenderTargetBuffer ) );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to get buffer from swap chain: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return;
+        }
+
+        result = m_pInternal->CreateRenderTargetView(
+            pDX11SwapChain->m_pRenderTargetBuffer, 0, &pDX11SwapChain->m_pCurrentRenderTarget );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create render target view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return;
+        }
+
+        m_pContext->OMSetRenderTargets(
+            1, &pDX11SwapChain->m_pCurrentRenderTarget, pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView );
+
+        pDX11SwapChain->m_Viewport.Width = static_cast< FLOAT >( width );
+        pDX11SwapChain->m_Viewport.Height = static_cast< FLOAT >( height );
+        pDX11SwapChain->m_Viewport.TopLeftX = static_cast< FLOAT >( x );
+        pDX11SwapChain->m_Viewport.TopLeftY = static_cast< FLOAT >( y );
+
+        m_pContext->RSSetViewports( 1, &pDX11SwapChain->m_Viewport );
+    }
+
+    void DirectX11Device::CreateVertexBuffer( VertexBufferHandle handle,
+        const VertexBufferDescriptor &vertexBufferDesc )
+    {
+        m_VertexBuffers[handle.GetIndex()].Create( m_pInternal, vertexBufferDesc );
+    }
+
+    void DirectX11Device::DestroyVertexBuffer( VertexBufferHandle handle )
+    {
+        m_VertexBuffers[handle.GetIndex()].Destroy();
+    }
+
+    void DirectX11Device::CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc )
+    {
+        m_IndexBuffers[handle.GetIndex()].Create( m_pInternal, indexBufferDesc );
+    }
+
+    void DirectX11Device::DestroyIndexBuffer( IndexBufferHandle handle )
+    {
+        m_IndexBuffers[handle.GetIndex()].Destroy();
     }
 
     memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
@@ -824,21 +975,5 @@ namespace smile::graphic
         viewPort.MaxDepth = 1.0f;
         viewPort.TopLeftX = 0.0f;
         viewPort.TopLeftY = 0.0f;
-    }
-
-    void
-    DirectX11Device::ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height )
-    {
-        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
-             ( height > pFramebuffer->MaxFramebufferSize ) )
-        {
-            SM_LOG_WARNING( "DirectX11Device::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
-            return;
-        }
-
-        pFramebuffer->Descriptor.Width = width;
-        pFramebuffer->Descriptor.Height = height;
-
-        InvalidateFramebuffer( pFramebuffer );
     }
 }

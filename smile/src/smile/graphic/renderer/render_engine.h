@@ -4,12 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
-#include "ecs/render_pass_list.h"
-
-#include "smile/graphic/renderer_api/renderer_api.h"
-#include "smile/graphic/renderer_api/shader/shader_library.h"
-#include "smile/graphic/renderer_api/resource/frame_buffer.h"
+#include "render_system.h"
+#include "smile/graphic/renderer_backend/shader/shader_library.h"
 #include "smile/graphic/camera/editor_camera.h"
+#include "smile/graphic/scene/scene.h"
 
 #include "window/window.h"
 
@@ -24,20 +22,8 @@ namespace smile::graphic
     class RenderEngine final
     {
       public:
-        static void Initialize( window::Window *pWindow );
+        static void Initialize( const window::Window *pWindow );
         static void ShutDown();
-
-        static void OnRender();
-        static void OnRender( const EditorCamera &editorCamera );
-
-        static void AddRenderPass( ecs::RenderPass *pRenderPass )
-        {
-            s_RenderPassList.AddRenderPass( pRenderPass );
-        }
-        static void ClearRenderPasses()
-        {
-            s_RenderPassList.ClearRenderPasses();
-        }
 
         static void OnWindowResize( Uint32 width, Uint32 height );
         static void ResizeFramebuffer( Uint32 width, Uint32 height );
@@ -52,9 +38,14 @@ namespace smile::graphic
             Camera *pMainCamera = nullptr;
             DirectX::XMFLOAT4X4 CameraTransform{};
         };
-        static void SetCameraData(const CameraData& cameraData)
+        static void SetCameraData( const CameraData &cameraData )
         {
             s_CameraData = cameraData;
+        }
+
+        static const CameraData &GetCameraData()
+        {
+            return s_CameraData;
         }
 
         static const RendererSettings &GetSettings()
@@ -65,16 +56,21 @@ namespace smile::graphic
         {
             return s_ShaderLibrary;
         }
-        static void *GetFinalColor()
+
+        static memory::Ref< Scene > GetScene()
         {
-            return s_pFinalSceneFramebuffer->GetColor( 0 );
+            return s_pScene;
+        }
+
+        static RenderSystem &GetRenderSystem()
+        {
+            return s_RenderSystem;
         }
 
       private:
-        static ecs::RenderPassList s_RenderPassList;
-        static window::Window *s_pWindow;
-
-        static memory::Ref< Framebuffer > s_pFinalSceneFramebuffer;
+        static RenderSystem s_RenderSystem;
+        static memory::Ref< Scene > s_pScene;
+        static const window::Window *s_pWindow;
 
         static RendererSettings s_Settings;
         static ShaderLibrary s_ShaderLibrary;

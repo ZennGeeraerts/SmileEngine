@@ -3,7 +3,11 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+<<<<<<<< HEAD:smile/src/platform/directx11/graphic/shader/directx11_shader.h
 #include "smile/graphic/renderer_api/shader/shader.h"
+========
+#include "engine/graphic/renderer_backend/shader/shader.h"
+>>>>>>>> main:src/smile/platform/directx11/graphic/renderer_backend/shader/directx11_shader.h
 
 #include <d3dx11effect.h>
 

@@ -3,18 +3,30 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+<<<<<<<< HEAD:smile/src/platform/directx11/graphic/directx11_device.h
 #include "smile/graphic/renderer_api/graphics_device.h"
+========
+#include "engine/graphic/renderer_backend/graphics_device.h"
+#include "resource/directx11_buffer.h"
+>>>>>>>> main:src/smile/platform/directx11/graphic/renderer_backend/directx11_device.h
 
 #include <d3d11.h>
 
+#include <array>
+
+namespace smile::window
+{
+    class Window;
+}
+
 namespace smile::graphic
 {
-    class GraphicsContext;
+    class DirectX11Context;
 
     class DirectX11Device final : public GraphicsDevice
     {
       public:
-        DirectX11Device( GraphicsContext *pContext );
+        DirectX11Device();
         ~DirectX11Device();
 
         void *GetInternal() const override
@@ -22,8 +34,21 @@ namespace smile::graphic
             return m_pInternal;
         }
 
-        memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc ) override;
-        memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc ) override;
+        GraphicsContext *CreateGraphicsContext() override;
+
+        memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
+        void ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain,
+            Uint32 x,
+            Uint32 y,
+            Uint32 width,
+            Uint32 height ) override;
+
+        void CreateVertexBuffer( VertexBufferHandle handle, const VertexBufferDescriptor &vertexBufferDesc ) override;
+        void DestroyVertexBuffer( VertexBufferHandle handle ) override;
+
+        void CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc ) override;
+        void DestroyIndexBuffer( IndexBufferHandle handle ) override;
+
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) override;
@@ -35,9 +60,17 @@ namespace smile::graphic
         memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) override;
 
         void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
-        void ResizeFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer, Uint32 width, Uint32 height ) override;
 
       private:
         ID3D11Device *m_pInternal = nullptr;
+        ID3D11DeviceContext *m_pContext = nullptr;
+        IDXGIFactory *m_pDXGIFactory = nullptr;
+
+        std::vector< DirectX11Context * > m_pGraphicsContexts;
+
+        std::array< DirectX11VertexBuffer, s_MaxVertexBufferSize > m_VertexBuffers;
+        std::array< DirectX11IndexBuffer, s_MaxIndexBufferSize > m_IndexBuffers;
+
+        friend class DirectX11Context;
     };
 }
