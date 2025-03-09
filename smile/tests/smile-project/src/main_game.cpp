@@ -7,10 +7,10 @@
 
 #include "world/ecs/transform_component.h"
 
-#include "smile/graphic/renderer/render_command.h"
+#include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/mesh/material.h"
 #include "smile/graphic/camera/ecs/camera_component.h"
-#include "smile/graphic/renderer_api/resource/texture.h"
+#include "smile/graphic/renderer_backend/resource/texture.h"
 #include "smile/graphic/mesh/ecs/mesh_renderer_component.h"
 
 #include <imgui/imgui.h>
