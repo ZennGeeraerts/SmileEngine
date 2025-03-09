@@ -64,7 +64,11 @@ namespace smile::graphic
     {
         BufferElement() = default;
         BufferElement( ShaderDataType type, const std::string &name, bool isNormalized = false )
-            : Name{ name }, DataType{ type }, Size{ ShaderDataTypeSize( type ) }, Offset{ 0 }, IsNormalized{ isNormalized }
+            : Name{ name },
+              DataType{ type },
+              Size{ ShaderDataTypeSize( type ) },
+              Offset{ 0 },
+              IsNormalized{ isNormalized }
         {
         }
 

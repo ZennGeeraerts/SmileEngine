@@ -47,23 +47,22 @@ namespace smile::graphic
             1,
             1 /*4*/ };
 
-        VertexBufferDescriptor vertexBufferDesc{};
-        vertexBufferDesc.pVertices = quadVertices;
-        vertexBufferDesc.Count = quadVerticesCount;
-        vertexBufferDesc.Stride = sizeof( float ) * 5;
+        GPUBufferDescriptor vertexBufferDesc{};
+        vertexBufferDesc.pData = quadVertices;
+        vertexBufferDesc.Size = quadVerticesCount * sizeof( float );
 
-        s_pStorage->pQuadVertexBuffer =
-            RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer( vertexBufferDesc );
+        s_pStorage->pQuadVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
+            vertexBufferDesc, sizeof( float ) * 5 );
 
         const Uint32 quadIndicesCount = 6;
         Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
 
-        IndexBufferDescriptor indexBufferDesc{};
-        indexBufferDesc.pIndices = quadIndices;
-        indexBufferDesc.Count = quadIndicesCount;
+        GPUBufferDescriptor indexBufferDesc{};
+        indexBufferDesc.pData = quadIndices;
+        indexBufferDesc.Size = quadIndicesCount * sizeof( Uint32 );
 
         s_pStorage->pQuadIndexBuffer =
-            RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( indexBufferDesc );
+            RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( indexBufferDesc, quadIndicesCount );
 
         s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosColTex" );
     }

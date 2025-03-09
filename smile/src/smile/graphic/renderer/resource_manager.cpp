@@ -12,22 +12,23 @@ namespace smile::graphic
         m_pDevice = pDevice;
     }
 
-    memory::Ref< VertexBuffer > ResourceManager::CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc )
+    memory::Ref< VertexBuffer > ResourceManager::CreateVertexBuffer( const GPUBufferDescriptor &bufferDesc,
+        Uint32 stride )
     {
         VertexBufferHandle handle = m_VertexBufferHandleManager.CreateHandle();
-        m_pDevice->CreateVertexBuffer( handle, vertexBufferDesc );
+        m_pDevice->CreateVertexBuffer( handle, bufferDesc, stride );
 
-        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, vertexBufferDesc.Stride );
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, stride );
         m_pVertexBuffers.push_back( pVertexBuffer );
         return pVertexBuffer;
     }
 
-    memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc )
+    memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( const GPUBufferDescriptor &bufferDesc, Uint32 count )
     {
         IndexBufferHandle handle = m_IndexBufferHandleManager.CreateHandle();
-        m_pDevice->CreateIndexBuffer( handle, indexBufferDesc );
+        m_pDevice->CreateIndexBuffer( handle, bufferDesc );
 
-        auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, indexBufferDesc.Count );
+        auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, count );
         m_pIndexBuffers.push_back( pIndexBuffer );
         return pIndexBuffer;
     }

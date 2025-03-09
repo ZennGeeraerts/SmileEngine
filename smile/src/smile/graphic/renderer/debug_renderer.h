@@ -45,6 +45,6 @@ namespace smile::graphic
 
         DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
 
-        Uint32 m_BufferSize{ 100 };
+        Uint32 m_VertexCount{ 100 };
     };
 }

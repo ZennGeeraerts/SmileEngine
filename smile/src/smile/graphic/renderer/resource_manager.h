@@ -24,8 +24,8 @@ namespace smile::graphic
 
         void Initialize( GraphicsDevice *pDevice );
 
-        memory::Ref< VertexBuffer > CreateVertexBuffer( const VertexBufferDescriptor &vertexBufferDesc );
-        memory::Ref< IndexBuffer > CreateIndexBuffer( const IndexBufferDescriptor &indexBufferDesc );
+        memory::Ref< VertexBuffer > CreateVertexBuffer( const GPUBufferDescriptor &vertexBufferDesc, Uint32 stride );
+        memory::Ref< IndexBuffer > CreateIndexBuffer( const GPUBufferDescriptor &indexBufferDesc, Uint32 count );
         memory::Ref< Shader >
         CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
         memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );

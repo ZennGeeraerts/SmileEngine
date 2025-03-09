@@ -47,27 +47,20 @@ namespace smile::graphic
         Destroy();
     }
 
-    void DirectX11Buffer::Destroy()
+    void DirectX11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, Uint16 bindFlags )
     {
-        SAFE_RELEASE( pInternal );
-    }
-
-    void DirectX11VertexBuffer::Create( ID3D11Device *pDevice, const VertexBufferDescriptor &desc )
-    {
-        Stride = desc.Stride;
-
         D3D11_BUFFER_DESC bufferDesc = {};
         bufferDesc.Usage = BufferUsageToDirectXType( desc.Usage );
-        bufferDesc.ByteWidth = desc.Stride * desc.Count;
-        bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bufferDesc.ByteWidth = desc.Size;
+        bufferDesc.BindFlags = bindFlags;
         bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( desc.CPUAccess );
         bufferDesc.MiscFlags = 0;
 
         HRESULT result;
-        if ( desc.pVertices )
+        if ( desc.pData )
         {
             D3D11_SUBRESOURCE_DATA initData = { 0 };
-            initData.pSysMem = desc.pVertices;
+            initData.pSysMem = desc.pData;
 
             result = pDevice->CreateBuffer( &bufferDesc, &initData, &pInternal );
         }
@@ -78,28 +71,13 @@ namespace smile::graphic
 
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "DirectX11VertexBuffer::Create > Failed to create vertex buffer: {}",
+            SM_LOG_ERROR( "DirectX11Buffer::Create > Failed to create vertex buffer: {}",
                 fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
         }
     }
 
-    void DirectX11IndexBuffer::Create( ID3D11Device *pDevice, const IndexBufferDescriptor &desc )
+    void DirectX11Buffer::Destroy()
     {
-        D3D11_BUFFER_DESC bufferDesc = {};
-        bufferDesc.Usage = BufferUsageToDirectXType( desc.Usage );
-        bufferDesc.ByteWidth = sizeof( Uint32 ) * desc.Count;
-        bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        bufferDesc.CPUAccessFlags = 0;
-        bufferDesc.MiscFlags = 0;
-
-        D3D11_SUBRESOURCE_DATA initData = { 0 };
-        initData.pSysMem = desc.pIndices;
-
-        HRESULT result = pDevice->CreateBuffer( &bufferDesc, &initData, &pInternal );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11IndexBuffer > Failed to create index buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-        }
+        SAFE_RELEASE( pInternal );
     }
 }

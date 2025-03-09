@@ -148,19 +148,20 @@ namespace smile::graphic
 
     Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const BufferLayout &layout )
     {
+        const Uint32 vertexStride = layout.GetStride();
+
         pMeshFilter->m_pDataLocation =
-            malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pMeshFilter->m_VertexCount ) );
+            malloc( static_cast< size_t >( vertexStride ) * static_cast< size_t >( pMeshFilter->m_VertexCount ) );
         if ( !pMeshFilter->m_pDataLocation )
         {
             SM_LOG_ERROR( "MeshFactory::CreateMesh > Failed to allocate memory for the vertex buffer" );
             return nullptr;
         }
 
-        VertexBufferDescriptor vertexBufferDesc{};
-        vertexBufferDesc.pVertices = pMeshFilter->m_pDataLocation;
-        vertexBufferDesc.Count = pMeshFilter->m_VertexCount;
+        GPUBufferDescriptor vertexBufferDesc{};
+        vertexBufferDesc.pData = pMeshFilter->m_pDataLocation;
+        vertexBufferDesc.Size = pMeshFilter->m_VertexCount * vertexStride;
         vertexBufferDesc.Usage = BufferUsage::Immutable;
-        vertexBufferDesc.Stride = layout.GetStride();
 
         for ( Uint32 i{}; i < pMeshFilter->m_VertexCount; ++i )
         {
@@ -197,16 +198,18 @@ namespace smile::graphic
             }
         }
 
-        IndexBufferDescriptor indexBufferDesc{};
-        indexBufferDesc.pIndices = pMeshFilter->m_Indices.data();
-        indexBufferDesc.Count = static_cast< Uint32 >( pMeshFilter->m_Indices.size() );
+        const Uint32 indexCount = static_cast< Uint32 >( pMeshFilter->m_Indices.size() );
+
+        GPUBufferDescriptor indexBufferDesc{};
+        indexBufferDesc.pData = pMeshFilter->m_Indices.data();
+        indexBufferDesc.Size = indexCount * sizeof( Uint32 );
         indexBufferDesc.Usage = BufferUsage::Immutable;
 
         Ref< Mesh > pMesh = CreateRef< Mesh >();
 
         ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        pMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc );
-        pMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc );
+        pMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc, vertexStride );
+        pMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc, indexCount );
 
         return pMesh;
     }
@@ -214,19 +217,20 @@ namespace smile::graphic
     Ref< SkinnedMesh > MeshFactory::CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
         const BufferLayout &layout )
     {
+        const Uint32 vertexStride = layout.GetStride();
+
         pSkinnedMeshFilter->m_pDataLocation = malloc(
-            static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pSkinnedMeshFilter->m_VertexCount ) );
+            static_cast< size_t >( vertexStride ) * static_cast< size_t >( pSkinnedMeshFilter->m_VertexCount ) );
         if ( !pSkinnedMeshFilter->m_pDataLocation )
         {
             SM_LOG_ERROR( "SkinnedMeshFilter::Create > Failed to allocate memory for the vertex buffer" );
             return nullptr;
         }
 
-        VertexBufferDescriptor vertexBufferDesc{};
-        vertexBufferDesc.pVertices = pSkinnedMeshFilter->m_pDataLocation;
-        vertexBufferDesc.Count = pSkinnedMeshFilter->m_VertexCount;
+        GPUBufferDescriptor vertexBufferDesc{};
+        vertexBufferDesc.pData = pSkinnedMeshFilter->m_pDataLocation;
+        vertexBufferDesc.Size = pSkinnedMeshFilter->m_VertexCount * vertexStride;
         vertexBufferDesc.Usage = BufferUsage::Immutable;
-        vertexBufferDesc.Stride = layout.GetStride();
 
         for ( Uint32 i{}; i < pSkinnedMeshFilter->m_VertexCount; ++i )
         {
@@ -279,16 +283,18 @@ namespace smile::graphic
             }
         }
 
-        IndexBufferDescriptor indexBufferDesc{};
-        indexBufferDesc.pIndices = pSkinnedMeshFilter->m_Indices.data();
-        indexBufferDesc.Count = static_cast< Uint32 >( pSkinnedMeshFilter->m_Indices.size() );
+        const Uint32 indexCount = static_cast< Uint32 >( pSkinnedMeshFilter->m_Indices.size() );
+
+        GPUBufferDescriptor indexBufferDesc{};
+        indexBufferDesc.pData = pSkinnedMeshFilter->m_Indices.data();
+        indexBufferDesc.Size = indexCount * sizeof( Uint32 );
         indexBufferDesc.Usage = BufferUsage::Immutable;
 
         Ref< SkinnedMesh > pSkinnedMesh = CreateRef< SkinnedMesh >();
 
         ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        pSkinnedMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc );
-        pSkinnedMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc );
+        pSkinnedMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc, vertexStride );
+        pSkinnedMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc, indexCount );
         pSkinnedMesh->SkeletonMap = pSkinnedMeshFilter->m_SkeletonMap;
         pSkinnedMesh->BoneCount = pSkinnedMeshFilter->m_BoneCount;
 
