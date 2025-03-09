@@ -24,20 +24,12 @@ namespace smile::graphic
         DirectX11 = 1
     };
 
-    struct VertexBufferDescriptor final
+    struct GPUBufferDescriptor final
     {
-        void *pVertices = nullptr;
-        Uint32 Count = 0;
-        Uint32 Stride = 0;
+        void *pData = nullptr;
+        Uint32 Size;
         BufferUsage Usage = BufferUsage::Default;
         BufferCPUAccess CPUAccess = BufferCPUAccess::None;
-    };
-
-    struct IndexBufferDescriptor final
-    {
-        Uint32 *pIndices = nullptr;
-        Uint32 Count = 0;
-        BufferUsage Usage = BufferUsage::Default;
     };
 
     class GraphicsDevice
@@ -54,11 +46,11 @@ namespace smile::graphic
         virtual void
         ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain, Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
-        virtual void CreateVertexBuffer( VertexBufferHandle handle,
-            const VertexBufferDescriptor &vertexBufferDesc ) = 0;
+        virtual void
+        CreateVertexBuffer( VertexBufferHandle handle, const GPUBufferDescriptor &bufferDesc, Uint32 stride ) = 0;
         virtual void DestroyVertexBuffer( VertexBufferHandle handle ) = 0;
 
-        virtual void CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc ) = 0;
+        virtual void CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
         virtual void DestroyIndexBuffer( IndexBufferHandle handle ) = 0;
 
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,

@@ -618,9 +618,11 @@ namespace smile::graphic
     }
 
     void DirectX11Device::CreateVertexBuffer( VertexBufferHandle handle,
-        const VertexBufferDescriptor &vertexBufferDesc )
+        const GPUBufferDescriptor &bufferDesc, Uint32 stride )
     {
-        m_VertexBuffers[handle.GetIndex()].Create( m_pInternal, vertexBufferDesc );
+        auto &vertexBuffer = m_VertexBuffers[handle.GetIndex()];
+        vertexBuffer.Create( m_pInternal, bufferDesc, D3D11_BIND_VERTEX_BUFFER );
+        vertexBuffer.Stride = stride;
     }
 
     void DirectX11Device::DestroyVertexBuffer( VertexBufferHandle handle )
@@ -628,9 +630,9 @@ namespace smile::graphic
         m_VertexBuffers[handle.GetIndex()].Destroy();
     }
 
-    void DirectX11Device::CreateIndexBuffer( IndexBufferHandle handle, const IndexBufferDescriptor &indexBufferDesc )
+    void DirectX11Device::CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
     {
-        m_IndexBuffers[handle.GetIndex()].Create( m_pInternal, indexBufferDesc );
+        m_IndexBuffers[handle.GetIndex()].Create( m_pInternal, bufferDesc, D3D11_BIND_INDEX_BUFFER );
     }
 
     void DirectX11Device::DestroyIndexBuffer( IndexBufferHandle handle )

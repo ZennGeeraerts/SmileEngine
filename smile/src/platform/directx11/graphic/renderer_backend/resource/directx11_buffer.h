@@ -15,6 +15,7 @@ namespace smile::graphic
         DirectX11Buffer() = default;
         virtual ~DirectX11Buffer();
 
+        void Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, Uint16 bindFlags );
         void Destroy();
 
         ID3D11Buffer *pInternal = nullptr;
@@ -25,16 +26,6 @@ namespace smile::graphic
         DirectX11VertexBuffer() = default;
         ~DirectX11VertexBuffer() = default;
 
-        void Create( ID3D11Device *pDevice, const VertexBufferDescriptor &desc );
-
         Uint32 Stride = 0;
-    };
-
-    struct DirectX11IndexBuffer final : public DirectX11Buffer
-    {
-        DirectX11IndexBuffer() = default;
-        ~DirectX11IndexBuffer() = default;
-
-        void Create( ID3D11Device *pDevice, const IndexBufferDescriptor &desc );
     };
 }
