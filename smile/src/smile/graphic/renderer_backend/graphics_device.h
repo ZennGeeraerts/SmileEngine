@@ -53,6 +53,9 @@ namespace smile::graphic
         virtual void CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
         virtual void DestroyIndexBuffer( IndexBufferHandle handle ) = 0;
 
+        virtual void CreateUniformBuffer( UniformBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
+        virtual void DestroyUniformBuffer( UniformBufferHandle handle ) = 0;
+
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) = 0;
@@ -70,5 +73,6 @@ namespace smile::graphic
       protected:
         static constexpr Uint16 s_MaxVertexBufferSize = ( 4 << 10 );
         static constexpr Uint16 s_MaxIndexBufferSize = ( 4 << 10 );
+        static constexpr Uint16 s_MaxUniformBufferSize = ( 4 << 10 );
     };
 }

@@ -33,6 +33,17 @@ namespace smile::graphic
         return pIndexBuffer;
     }
 
+    memory::Ref< UniformBuffer > ResourceManager::CreateUniformBuffer( const GPUBufferDescriptor &bufferDesc,
+        const std::string &name )
+    {
+        UniformBufferHandle handle = m_UniformBufferHandleManager.CreateHandle();
+        m_pDevice->CreateUniformBuffer( handle, bufferDesc );
+
+        auto pUniformBuffer = memory::CreateRef< UniformBuffer >( handle, name, bufferDesc.Size );
+        m_pUniformBuffers.push_back( pUniformBuffer );
+        return pUniformBuffer;
+    }
+
     memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
         const BufferLayout &layout,
         const std::string &techniqueName )

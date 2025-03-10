@@ -43,6 +43,11 @@ namespace smile::graphic
         virtual void BindIndexBuffer( IndexBufferHandle ibHandle ) const = 0;
         virtual void UnbindIndexBuffer() const = 0;
 
+        virtual void BindVertexShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const = 0;
+        virtual void UnbindVertexShaderUniformBuffer( Uint16 slot ) const = 0;
+        virtual void BindPixelShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const = 0;
+        virtual void UnbindPixelShaderUniformBuffer( Uint16 slot ) const = 0;
+
         virtual void BindShader( const memory::Ref< Shader > &pShader ) const = 0;
         virtual void UnbindShader() const = 0;
 

@@ -40,6 +40,11 @@ namespace smile::graphic
         void BindIndexBuffer( IndexBufferHandle ibHandle ) const override;
         void UnbindIndexBuffer() const override;
 
+        void BindVertexShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const;
+        void UnbindVertexShaderUniformBuffer( Uint16 slot ) const;
+        void BindPixelShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const;
+        void UnbindPixelShaderUniformBuffer( Uint16 slot ) const;
+
         void BindShader( const memory::Ref< Shader > &pShader ) const override;
         void UnbindShader() const override;
 

@@ -640,6 +640,16 @@ namespace smile::graphic
         m_IndexBuffers[handle.GetIndex()].Destroy();
     }
 
+    void DirectX11Device::CreateUniformBuffer( UniformBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
+    {
+        m_UniformBuffers[handle.GetIndex()].Create( m_pInternal, bufferDesc, D3D11_BIND_CONSTANT_BUFFER );
+    }
+
+    void DirectX11Device::DestroyUniformBuffer( UniformBufferHandle handle )
+    {
+        m_UniformBuffers[handle.GetIndex()].Destroy();
+    }
+
     memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
         const BufferLayout &layout,
         const std::string &techniqueName )

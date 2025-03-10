@@ -66,6 +66,15 @@ namespace smile::graphic
         m_pRendererBackend->GetGraphicsContext()->UnbindIndexBuffer();
     }
 
+    void RenderSystem::BindUniformBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const
+    {
+    }
+
+    void RenderSystem::UnbindUniformBuffer() const
+    {
+        
+    }
+
     void RenderSystem::BindShader( memory::Ref< Shader > pShader )
     {
         m_pRendererBackend->GetGraphicsContext()->BindShader( pShader );

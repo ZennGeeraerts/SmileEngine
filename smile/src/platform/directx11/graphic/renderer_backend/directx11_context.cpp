@@ -116,6 +116,28 @@ namespace smile::graphic
         m_pInternal->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
     }
 
+    void DirectX11Context::BindVertexShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const
+    {
+        const auto &uniformBuffer = m_pDevice->m_UniformBuffers[ubHandle.GetIndex()];
+        m_pInternal->VSSetConstantBuffers( slot, 1, &uniformBuffer.pInternal );
+    }
+
+    void DirectX11Context::UnbindVertexShaderUniformBuffer( Uint16 slot ) const
+    {
+        m_pInternal->VSSetConstantBuffers( slot, 1, nullptr );
+    }
+
+    void DirectX11Context::BindPixelShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const
+    {
+        const auto &uniformBuffer = m_pDevice->m_UniformBuffers[ubHandle.GetIndex()];
+        m_pInternal->PSSetConstantBuffers( slot, 1, &uniformBuffer.pInternal );
+    }
+
+    void DirectX11Context::UnbindPixelShaderUniformBuffer( Uint16 slot ) const
+    {
+        m_pInternal->PSGetConstantBuffers( slot, 1, nullptr );
+    }
+
     void DirectX11Context::BindShader( const memory::Ref< Shader > &pShader ) const
     {
         ID3D11InputLayout *pInputLayout = static_cast< ID3D11InputLayout * >( pShader->GetData() );

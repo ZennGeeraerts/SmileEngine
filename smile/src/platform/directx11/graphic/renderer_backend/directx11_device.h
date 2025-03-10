@@ -46,6 +46,9 @@ namespace smile::graphic
         void CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
         void DestroyIndexBuffer( IndexBufferHandle handle ) override;
 
+        void CreateUniformBuffer( UniformBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
+        void DestroyUniformBuffer( UniformBufferHandle handle ) override;
+
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
             const std::string &techniqueName = "" ) override;
@@ -67,6 +70,7 @@ namespace smile::graphic
 
         std::array< DirectX11VertexBuffer, s_MaxVertexBufferSize > m_VertexBuffers;
         std::array< DirectX11Buffer, s_MaxIndexBufferSize > m_IndexBuffers;
+        std::array< DirectX11Buffer, s_MaxUniformBufferSize > m_UniformBuffers;
 
         friend class DirectX11Context;
     };
