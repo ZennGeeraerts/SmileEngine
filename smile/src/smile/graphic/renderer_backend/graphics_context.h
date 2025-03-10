@@ -37,11 +37,16 @@ namespace smile::graphic
         virtual void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) = 0;
         virtual void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) = 0;
 
-        virtual void BindVertexBuffer( VertexBufferHandle vbHandle ) const = 0;
+        virtual void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const = 0;
         virtual void UnbindVertexBuffer() const = 0;
 
-        virtual void BindIndexBuffer( IndexBufferHandle ibHandle ) const = 0;
+        virtual void BindIndexBuffer( GPUBufferHandle handle ) const = 0;
         virtual void UnbindIndexBuffer() const = 0;
+
+        virtual void BindVertexShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const = 0;
+        virtual void UnbindVertexShaderUniformBuffer( Uint16 slot ) const = 0;
+        virtual void BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const = 0;
+        virtual void UnbindPixelShaderUniformBuffer( Uint16 slot ) const = 0;
 
         virtual void BindShader( const memory::Ref< Shader > &pShader ) const = 0;
         virtual void UnbindShader() const = 0;
@@ -54,6 +59,6 @@ namespace smile::graphic
         virtual void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const = 0;
         virtual void UnbindPrimitiveTopology() const = 0;
 
-        virtual void FillVertexBuffer( VertexBufferHandle vbHandle, void *pData, Uint32 vertexCount ) const = 0;
+        virtual void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const = 0;
     };
 }

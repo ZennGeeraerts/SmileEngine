@@ -45,6 +45,9 @@ namespace smile::graphic
         void BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const;
         void UnbindIndexBuffer() const;
 
+        void BindUniformBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const;
+        void UnbindUniformBuffer() const;
+
         void BindShader( memory::Ref< Shader > pShader );
         void UnbindShader();
 

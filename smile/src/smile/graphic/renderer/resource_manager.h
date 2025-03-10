@@ -9,6 +9,7 @@
 
 #include "resource/vertex_buffer.h"
 #include "resource/index_buffer.h"
+#include "resource/uniform_buffer.h"
 
 #include "smile/graphic/renderer_backend/graphics_device.h"
 
@@ -24,8 +25,11 @@ namespace smile::graphic
 
         void Initialize( GraphicsDevice *pDevice );
 
-        memory::Ref< VertexBuffer > CreateVertexBuffer( const GPUBufferDescriptor &vertexBufferDesc, Uint32 stride );
-        memory::Ref< IndexBuffer > CreateIndexBuffer( const GPUBufferDescriptor &indexBufferDesc, Uint32 count );
+        memory::Ref< VertexBuffer > CreateVertexBuffer( const GPUBufferDescriptor &bufferDesc, Uint32 stride );
+        memory::Ref< IndexBuffer > CreateIndexBuffer( const GPUBufferDescriptor &bufferDesc, Uint32 count );
+        memory::Ref< UniformBuffer > CreateUniformBuffer( const GPUBufferDescriptor &bufferDesc,
+            const std::string &name );
+
         memory::Ref< Shader >
         CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
         memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
@@ -40,13 +44,13 @@ namespace smile::graphic
         GraphicsDevice *m_pDevice;
         std::vector< memory::Ref< VertexBuffer > > m_pVertexBuffers;
         std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
+        std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
         std::vector< memory::Ref< Shader > > m_pShaders;
         std::vector< memory::Ref< Texture > > m_pTextures2D;
         std::vector< memory::Ref< Texture > > m_pTexturesCube;
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
         std::vector< memory::Ref< RasterizerState > > m_pRasterizerStates;
 
-        VertexBufferHandleManager m_VertexBufferHandleManager;
-        IndexBufferHandleManager m_IndexBufferHandleManager;
+        GPUBufferHandleManager m_GPUBufferHandleManager;
     };
 }

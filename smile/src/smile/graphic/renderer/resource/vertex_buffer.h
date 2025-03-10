@@ -11,12 +11,12 @@ namespace smile::graphic
 {
     struct VertexBuffer final : public memory::Object
     {
-        VertexBuffer( VertexBufferHandle handle, Uint32 stride ) : Handle{ handle }, Stride{ stride }
+        VertexBuffer( GPUBufferHandle handle, Uint32 stride ) : Handle{ handle }, Stride{ stride }
         {
         }
         ~VertexBuffer() = default;
 
-        VertexBufferHandle Handle;
+        GPUBufferHandle Handle;
         Uint32 Stride = 0;
     };
 }

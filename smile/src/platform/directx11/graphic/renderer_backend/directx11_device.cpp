@@ -617,27 +617,14 @@ namespace smile::graphic
         m_pContext->RSSetViewports( 1, &pDX11SwapChain->m_Viewport );
     }
 
-    void DirectX11Device::CreateVertexBuffer( VertexBufferHandle handle,
-        const GPUBufferDescriptor &bufferDesc, Uint32 stride )
+    void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
     {
-        auto &vertexBuffer = m_VertexBuffers[handle.GetIndex()];
-        vertexBuffer.Create( m_pInternal, bufferDesc, D3D11_BIND_VERTEX_BUFFER );
-        vertexBuffer.Stride = stride;
+        m_GPUBuffers[handle.GetIndex()].Create( m_pInternal, bufferDesc );
     }
 
-    void DirectX11Device::DestroyVertexBuffer( VertexBufferHandle handle )
+    void DirectX11Device::DestroyGPUBuffer( GPUBufferHandle handle )
     {
-        m_VertexBuffers[handle.GetIndex()].Destroy();
-    }
-
-    void DirectX11Device::CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
-    {
-        m_IndexBuffers[handle.GetIndex()].Create( m_pInternal, bufferDesc, D3D11_BIND_INDEX_BUFFER );
-    }
-
-    void DirectX11Device::DestroyIndexBuffer( IndexBufferHandle handle )
-    {
-        m_IndexBuffers[handle.GetIndex()].Destroy();
+        m_GPUBuffers[handle.GetIndex()].Destroy();
     }
 
     memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,

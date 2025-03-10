@@ -42,17 +42,34 @@ namespace smile::graphic
         }
     }
 
+    static D3D11_BIND_FLAG BindFlagsToDirectXType( BufferBindFlags bindFlags )
+    {
+        Uint32 srcFlags = static_cast< Uint32 >( bindFlags );
+        Uint32 targetFlags = 0;
+
+        if ( srcFlags & static_cast< Uint32 >( BufferBindFlags::VertexBuffer ) )
+            targetFlags |= D3D11_BIND_VERTEX_BUFFER;
+
+        if ( srcFlags & static_cast< Uint32 >( BufferBindFlags::IndexBuffer ) )
+            targetFlags |= D3D11_BIND_INDEX_BUFFER;
+
+        if ( srcFlags & static_cast< Uint32 >( BufferBindFlags::UniformBuffer ) )
+            targetFlags |= D3D11_BIND_CONSTANT_BUFFER;
+
+        return static_cast< D3D11_BIND_FLAG >( targetFlags );
+    }
+
     DirectX11Buffer::~DirectX11Buffer()
     {
         Destroy();
     }
 
-    void DirectX11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, Uint16 bindFlags )
+    void DirectX11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc )
     {
         D3D11_BUFFER_DESC bufferDesc = {};
         bufferDesc.Usage = BufferUsageToDirectXType( desc.Usage );
         bufferDesc.ByteWidth = desc.Size;
-        bufferDesc.BindFlags = bindFlags;
+        bufferDesc.BindFlags = BindFlagsToDirectXType( desc.BindFlags );
         bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( desc.CPUAccess );
         bufferDesc.MiscFlags = 0;
 
