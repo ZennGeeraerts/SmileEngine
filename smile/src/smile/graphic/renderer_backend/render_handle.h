@@ -8,12 +8,6 @@
 
 namespace smile::graphic
 {
-    using VertexBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
-    using VertexBufferHandle = VertexBufferHandleManager::HandleType;
-
-    using IndexBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
-    using IndexBufferHandle = IndexBufferHandleManager::HandleType;
-
-    using UniformBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
-    using UniformBufferHandle = UniformBufferHandleManager::HandleType;
+    using GPUBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using GPUBufferHandle = GPUBufferHandleManager::HandleType;
 }

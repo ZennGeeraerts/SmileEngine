@@ -162,6 +162,7 @@ namespace smile::graphic
         vertexBufferDesc.pData = pMeshFilter->m_pDataLocation;
         vertexBufferDesc.Size = pMeshFilter->m_VertexCount * vertexStride;
         vertexBufferDesc.Usage = BufferUsage::Immutable;
+        vertexBufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
 
         for ( Uint32 i{}; i < pMeshFilter->m_VertexCount; ++i )
         {
@@ -204,6 +205,7 @@ namespace smile::graphic
         indexBufferDesc.pData = pMeshFilter->m_Indices.data();
         indexBufferDesc.Size = indexCount * sizeof( Uint32 );
         indexBufferDesc.Usage = BufferUsage::Immutable;
+        indexBufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
 
         Ref< Mesh > pMesh = CreateRef< Mesh >();
 
@@ -231,6 +233,7 @@ namespace smile::graphic
         vertexBufferDesc.pData = pSkinnedMeshFilter->m_pDataLocation;
         vertexBufferDesc.Size = pSkinnedMeshFilter->m_VertexCount * vertexStride;
         vertexBufferDesc.Usage = BufferUsage::Immutable;
+        vertexBufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
 
         for ( Uint32 i{}; i < pSkinnedMeshFilter->m_VertexCount; ++i )
         {
@@ -289,6 +292,7 @@ namespace smile::graphic
         indexBufferDesc.pData = pSkinnedMeshFilter->m_Indices.data();
         indexBufferDesc.Size = indexCount * sizeof( Uint32 );
         indexBufferDesc.Usage = BufferUsage::Immutable;
+        indexBufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
 
         Ref< SkinnedMesh > pSkinnedMesh = CreateRef< SkinnedMesh >();
 

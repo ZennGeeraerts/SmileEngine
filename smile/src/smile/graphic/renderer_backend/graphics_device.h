@@ -30,6 +30,7 @@ namespace smile::graphic
         Uint32 Size;
         BufferUsage Usage = BufferUsage::Default;
         BufferCPUAccess CPUAccess = BufferCPUAccess::None;
+        BufferBindFlags BindFlags = BufferBindFlags::None;
     };
 
     class GraphicsDevice
@@ -46,15 +47,8 @@ namespace smile::graphic
         virtual void
         ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain, Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
-        virtual void
-        CreateVertexBuffer( VertexBufferHandle handle, const GPUBufferDescriptor &bufferDesc, Uint32 stride ) = 0;
-        virtual void DestroyVertexBuffer( VertexBufferHandle handle ) = 0;
-
-        virtual void CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
-        virtual void DestroyIndexBuffer( IndexBufferHandle handle ) = 0;
-
-        virtual void CreateUniformBuffer( UniformBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
-        virtual void DestroyUniformBuffer( UniformBufferHandle handle ) = 0;
+        virtual void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
+        virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
@@ -71,8 +65,6 @@ namespace smile::graphic
         static GraphicsDevice *Create( RendererBackendType backendType );
 
       protected:
-        static constexpr Uint16 s_MaxVertexBufferSize = ( 4 << 10 );
-        static constexpr Uint16 s_MaxIndexBufferSize = ( 4 << 10 );
-        static constexpr Uint16 s_MaxUniformBufferSize = ( 4 << 10 );
+        static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
     };
 }

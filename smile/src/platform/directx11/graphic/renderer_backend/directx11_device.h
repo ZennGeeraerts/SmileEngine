@@ -39,15 +39,8 @@ namespace smile::graphic
             Uint32 width,
             Uint32 height ) override;
 
-        void
-        CreateVertexBuffer( VertexBufferHandle handle, const GPUBufferDescriptor &bufferDesc, Uint32 stride ) override;
-        void DestroyVertexBuffer( VertexBufferHandle handle ) override;
-
-        void CreateIndexBuffer( IndexBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
-        void DestroyIndexBuffer( IndexBufferHandle handle ) override;
-
-        void CreateUniformBuffer( UniformBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
-        void DestroyUniformBuffer( UniformBufferHandle handle ) override;
+        void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
+        void DestroyGPUBuffer( GPUBufferHandle handle ) override;
 
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const BufferLayout &layout,
@@ -68,9 +61,7 @@ namespace smile::graphic
 
         std::vector< DirectX11Context * > m_pGraphicsContexts;
 
-        std::array< DirectX11VertexBuffer, s_MaxVertexBufferSize > m_VertexBuffers;
-        std::array< DirectX11Buffer, s_MaxIndexBufferSize > m_IndexBuffers;
-        std::array< DirectX11Buffer, s_MaxUniformBufferSize > m_UniformBuffers;
+        std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
 
         friend class DirectX11Context;
     };

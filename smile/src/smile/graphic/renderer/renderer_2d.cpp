@@ -50,6 +50,7 @@ namespace smile::graphic
         GPUBufferDescriptor vertexBufferDesc{};
         vertexBufferDesc.pData = quadVertices;
         vertexBufferDesc.Size = quadVerticesCount * sizeof( float );
+        vertexBufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
 
         s_pStorage->pQuadVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
             vertexBufferDesc, sizeof( float ) * 5 );
@@ -60,6 +61,7 @@ namespace smile::graphic
         GPUBufferDescriptor indexBufferDesc{};
         indexBufferDesc.pData = quadIndices;
         indexBufferDesc.Size = quadIndicesCount * sizeof( Uint32 );
+        indexBufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
 
         s_pStorage->pQuadIndexBuffer =
             RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( indexBufferDesc, quadIndicesCount );

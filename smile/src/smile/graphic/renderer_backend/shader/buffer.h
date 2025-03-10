@@ -186,4 +186,12 @@ namespace smile::graphic
         Read,
         Write
     };
+
+    enum class BufferBindFlags : Uint8
+    {
+        None = BIT( 0 ),
+        VertexBuffer = BIT( 1 ),
+        IndexBuffer = BIT( 2 ),
+        UniformBuffer = BIT( 3 )
+    };
 }

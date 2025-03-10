@@ -13,13 +13,13 @@ namespace smile::graphic
 {
     struct UniformBuffer final : public memory::Object
     {
-        UniformBuffer( UniformBufferHandle handle, const std::string &name, Uint32 size )
+        UniformBuffer( GPUBufferHandle handle, const std::string &name, Uint32 size )
             : Handle{ handle }, Name{ name }, Size{ size }
         {
         }
         ~UniformBuffer() = default;
 
-        UniformBufferHandle Handle;
+        GPUBufferHandle Handle;
         std::string Name;
         Uint32 Size;
     };

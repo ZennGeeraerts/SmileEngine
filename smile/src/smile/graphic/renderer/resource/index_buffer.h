@@ -11,12 +11,12 @@ namespace smile::graphic
 {
     struct IndexBuffer : public memory::Object
     {
-        IndexBuffer( IndexBufferHandle handle, Uint32 count ) : Handle{ handle }, Count{ count }
+        IndexBuffer( GPUBufferHandle handle, Uint32 count ) : Handle{ handle }, Count{ count }
         {
         }
         ~IndexBuffer() = default;
 
-        IndexBufferHandle Handle;
+        GPUBufferHandle Handle;
         Uint32 Count;
     };
 }

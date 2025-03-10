@@ -93,11 +93,11 @@ namespace smile::graphic
             m_pInternal->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11Context::BindVertexBuffer( VertexBufferHandle vbHandle ) const
+    void DirectX11Context::BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const
     {
-        const auto &vertexBuffer = m_pDevice->m_VertexBuffers[vbHandle.GetIndex()];
+        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
         Uint32 offset{ 0 };
-        m_pInternal->IASetVertexBuffers( 0, 1, &vertexBuffer.pInternal, &vertexBuffer.Stride, &offset );
+        m_pInternal->IASetVertexBuffers( 0, 1, &gpuBuffer.pInternal, &stride, &offset );
     }
 
     void DirectX11Context::UnbindVertexBuffer() const
@@ -105,10 +105,10 @@ namespace smile::graphic
         m_pInternal->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
     }
 
-    void DirectX11Context::BindIndexBuffer( IndexBufferHandle ibHandle ) const
+    void DirectX11Context::BindIndexBuffer( GPUBufferHandle handle ) const
     {
-        const auto &indexBuffer = m_pDevice->m_IndexBuffers[ibHandle.GetIndex()];
-        m_pInternal->IASetIndexBuffer( indexBuffer.pInternal, DXGI_FORMAT_R32_UINT, 0 );
+        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
+        m_pInternal->IASetIndexBuffer( gpuBuffer.pInternal, DXGI_FORMAT_R32_UINT, 0 );
     }
 
     void DirectX11Context::UnbindIndexBuffer() const
@@ -116,10 +116,10 @@ namespace smile::graphic
         m_pInternal->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
     }
 
-    void DirectX11Context::BindVertexShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const
+    void DirectX11Context::BindVertexShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const
     {
-        const auto &uniformBuffer = m_pDevice->m_UniformBuffers[ubHandle.GetIndex()];
-        m_pInternal->VSSetConstantBuffers( slot, 1, &uniformBuffer.pInternal );
+        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
+        m_pInternal->VSSetConstantBuffers( slot, 1, &gpuBuffer.pInternal );
     }
 
     void DirectX11Context::UnbindVertexShaderUniformBuffer( Uint16 slot ) const
@@ -127,10 +127,10 @@ namespace smile::graphic
         m_pInternal->VSSetConstantBuffers( slot, 1, nullptr );
     }
 
-    void DirectX11Context::BindPixelShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const
+    void DirectX11Context::BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const
     {
-        const auto &uniformBuffer = m_pDevice->m_UniformBuffers[ubHandle.GetIndex()];
-        m_pInternal->PSSetConstantBuffers( slot, 1, &uniformBuffer.pInternal );
+        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
+        m_pInternal->PSSetConstantBuffers( slot, 1, &gpuBuffer.pInternal );
     }
 
     void DirectX11Context::UnbindPixelShaderUniformBuffer( Uint16 slot ) const
@@ -199,18 +199,13 @@ namespace smile::graphic
         m_pInternal->IASetPrimitiveTopology( D3D_PRIMITIVE_TOPOLOGY_UNDEFINED );
     }
 
-    void DirectX11Context::FillVertexBuffer( VertexBufferHandle vbHandle, void *pData, Uint32 vertexCount ) const
+    void DirectX11Context::FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const
     {
-        const auto &vertexBuffer = m_pDevice->m_VertexBuffers[vbHandle.GetIndex()];
+        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
 
         D3D11_MAPPED_SUBRESOURCE mappedResource{};
-        m_pInternal->Map( vertexBuffer.pInternal, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
-
-        if ( vertexCount > 0 )
-        {
-            memcpy( mappedResource.pData, pData, vertexBuffer.Stride * vertexCount );
-        }
-
-        m_pInternal->Unmap( vertexBuffer.pInternal, 0 );
+        m_pInternal->Map( gpuBuffer.pInternal, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
+        memcpy( mappedResource.pData, pData, size );
+        m_pInternal->Unmap( gpuBuffer.pInternal, 0 );
     }
 }

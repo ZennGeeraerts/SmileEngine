@@ -34,15 +34,15 @@ namespace smile::graphic
         void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
         void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
 
-        void BindVertexBuffer( VertexBufferHandle vbHandle ) const override;
+        void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const override;
         void UnbindVertexBuffer() const override;
 
-        void BindIndexBuffer( IndexBufferHandle ibHandle ) const override;
+        void BindIndexBuffer( GPUBufferHandle handle ) const override;
         void UnbindIndexBuffer() const override;
 
-        void BindVertexShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const;
+        void BindVertexShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const;
         void UnbindVertexShaderUniformBuffer( Uint16 slot ) const;
-        void BindPixelShaderUniformBuffer( UniformBufferHandle ubHandle, Uint16 slot ) const;
+        void BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const;
         void UnbindPixelShaderUniformBuffer( Uint16 slot ) const;
 
         void BindShader( const memory::Ref< Shader > &pShader ) const override;
@@ -56,7 +56,7 @@ namespace smile::graphic
         void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
         void UnbindPrimitiveTopology() const override;
 
-        void FillVertexBuffer( VertexBufferHandle vbHandle, void *pData, Uint32 vertexCount ) const override;
+        void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
 
       private:
         DirectX11Device *m_pDevice = nullptr;

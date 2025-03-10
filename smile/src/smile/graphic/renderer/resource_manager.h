@@ -51,8 +51,6 @@ namespace smile::graphic
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
         std::vector< memory::Ref< RasterizerState > > m_pRasterizerStates;
 
-        VertexBufferHandleManager m_VertexBufferHandleManager;
-        IndexBufferHandleManager m_IndexBufferHandleManager;
-        UniformBufferHandleManager m_UniformBufferHandleManager;
+        GPUBufferHandleManager m_GPUBufferHandleManager;
     };
 }

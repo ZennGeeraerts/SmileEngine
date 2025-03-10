@@ -15,8 +15,8 @@ namespace smile::graphic
     memory::Ref< VertexBuffer > ResourceManager::CreateVertexBuffer( const GPUBufferDescriptor &bufferDesc,
         Uint32 stride )
     {
-        VertexBufferHandle handle = m_VertexBufferHandleManager.CreateHandle();
-        m_pDevice->CreateVertexBuffer( handle, bufferDesc, stride );
+        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
         auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, stride );
         m_pVertexBuffers.push_back( pVertexBuffer );
@@ -25,8 +25,8 @@ namespace smile::graphic
 
     memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( const GPUBufferDescriptor &bufferDesc, Uint32 count )
     {
-        IndexBufferHandle handle = m_IndexBufferHandleManager.CreateHandle();
-        m_pDevice->CreateIndexBuffer( handle, bufferDesc );
+        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
         auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, count );
         m_pIndexBuffers.push_back( pIndexBuffer );
@@ -36,8 +36,8 @@ namespace smile::graphic
     memory::Ref< UniformBuffer > ResourceManager::CreateUniformBuffer( const GPUBufferDescriptor &bufferDesc,
         const std::string &name )
     {
-        UniformBufferHandle handle = m_UniformBufferHandleManager.CreateHandle();
-        m_pDevice->CreateUniformBuffer( handle, bufferDesc );
+        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
         auto pUniformBuffer = memory::CreateRef< UniformBuffer >( handle, name, bufferDesc.Size );
         m_pUniformBuffers.push_back( pUniformBuffer );

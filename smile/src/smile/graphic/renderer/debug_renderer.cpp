@@ -72,6 +72,7 @@ namespace smile::graphic
         descriptor.Usage = BufferUsage::Dynamic;
         descriptor.Size = m_VertexCount * sizeof( VertexPosCol );
         descriptor.CPUAccess = BufferCPUAccess::Write;
+        descriptor.BindFlags = BufferBindFlags::VertexBuffer;
 
         m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
             descriptor, sizeof( VertexPosCol ) );
