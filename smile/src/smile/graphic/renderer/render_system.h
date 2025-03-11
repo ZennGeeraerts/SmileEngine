@@ -9,6 +9,7 @@
 
 #include "resource/resource_manager.h"
 #include "smile/graphic/renderer_backend/primitive_topology.h"
+#include "smile/graphic/renderer_backend/resource/swap_chain.h"
 
 #include <DirectXMath.h>
 

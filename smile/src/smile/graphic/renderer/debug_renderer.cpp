@@ -68,14 +68,8 @@ namespace smile::graphic
 
     void DebugRenderer::CreateVertexBuffer()
     {
-        GPUBufferDescriptor descriptor{};
-        descriptor.Usage = BufferUsage::Dynamic;
-        descriptor.Size = m_VertexCount * sizeof( VertexPosCol );
-        descriptor.CPUAccess = BufferCPUAccess::Write;
-        descriptor.BindFlags = BufferBindFlags::VertexBuffer;
-
         m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
-            descriptor, sizeof( VertexPosCol ) );
+            nullptr, m_VertexCount, m_VertexLayout, true );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )

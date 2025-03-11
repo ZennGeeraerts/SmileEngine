@@ -16,6 +16,8 @@ namespace smile::graphic
         memory::Ref< IndexBuffer > pQuadIndexBuffer;
         memory::Ref< Shader > pShader;
 
+        const VertexLayout Layout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } };
+
         DirectX::XMFLOAT4X4 ViewProjectionMatrix;
     };
 
@@ -47,24 +49,14 @@ namespace smile::graphic
             1,
             1 /*4*/ };
 
-        GPUBufferDescriptor vertexBufferDesc{};
-        vertexBufferDesc.pData = quadVertices;
-        vertexBufferDesc.Size = quadVerticesCount * sizeof( float );
-        vertexBufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
-
         s_pStorage->pQuadVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
-            vertexBufferDesc, sizeof( float ) * 5 );
+            quadVertices, quadVerticesCount, s_pStorage->Layout );
 
         const Uint32 quadIndicesCount = 6;
         Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
 
-        GPUBufferDescriptor indexBufferDesc{};
-        indexBufferDesc.pData = quadIndices;
-        indexBufferDesc.Size = quadIndicesCount * sizeof( Uint32 );
-        indexBufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
-
         s_pStorage->pQuadIndexBuffer =
-            RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( indexBufferDesc, quadIndicesCount );
+            RenderEngine::GetRenderSystem().GetResourceManager().CreateIndexBuffer( quadIndices, quadIndicesCount );
 
         s_pStorage->pShader = RenderEngine::GetShaderLibrary().Get( "PosColTex" );
     }

@@ -46,5 +46,7 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
 
         Uint32 m_VertexCount{ 100 };
+        const VertexLayout m_VertexLayout{ { ShaderDataType::Float3, "POSITION" },
+            { ShaderDataType::Float4, "COLOR" } };
     };
 }
