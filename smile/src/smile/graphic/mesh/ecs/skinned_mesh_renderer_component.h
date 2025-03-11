@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource_manager.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/mesh/model_loader.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 #include "smile/graphic/mesh/material.h"

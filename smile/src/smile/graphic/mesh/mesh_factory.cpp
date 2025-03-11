@@ -6,7 +6,7 @@
 #include "mesh_factory.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource_manager.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/core/math/math.h"
 
 namespace smile::graphic

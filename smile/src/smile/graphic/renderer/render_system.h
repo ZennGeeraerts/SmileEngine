@@ -7,7 +7,7 @@
 #include "foundation/compiled.h"
 #include "memory/ref.h"
 
-#include "resource_manager.h"
+#include "resource/resource_manager.h"
 #include "smile/graphic/renderer_backend/primitive_topology.h"
 
 #include <DirectXMath.h>

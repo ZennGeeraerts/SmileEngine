@@ -6,7 +6,7 @@
 #include "skybox_renderer.h"
 
 #include "render_engine.h"
-#include "resource_manager.h"
+#include "resource/resource_manager.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 
 namespace smile::graphic

@@ -11,7 +11,7 @@
 #include "renderer_2d.h"
 #include "skybox_renderer.h"
 
-#include "resource_manager.h"
+#include "resource/resource_manager.h"
 
 #include <DirectXColors.h>
 

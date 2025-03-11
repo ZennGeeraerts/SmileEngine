@@ -7,9 +7,9 @@
 #include "foundation/compiled.h"
 #include "memory/ref.h"
 
-#include "resource/vertex_buffer.h"
-#include "resource/index_buffer.h"
-#include "resource/uniform_buffer.h"
+#include "vertex_buffer.h"
+#include "index_buffer.h"
+#include "uniform_buffer.h"
 
 #include "smile/graphic/renderer_backend/graphics_device.h"
 

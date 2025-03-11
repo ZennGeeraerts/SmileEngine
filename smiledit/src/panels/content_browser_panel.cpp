@@ -6,7 +6,7 @@
 #include "content_browser_panel.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource_manager.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/core/project/project_manager.h"
 
 #include <imgui/imgui.h>

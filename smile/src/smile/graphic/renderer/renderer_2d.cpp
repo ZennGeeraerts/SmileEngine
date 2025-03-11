@@ -6,7 +6,7 @@
 #include "renderer_2d.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource_manager.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 
 namespace smile::graphic
 {
