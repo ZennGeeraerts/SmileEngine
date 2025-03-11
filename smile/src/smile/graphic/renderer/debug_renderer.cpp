@@ -68,8 +68,8 @@ namespace smile::graphic
 
     void DebugRenderer::CreateVertexBuffer()
     {
-        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
-            nullptr, m_VertexCount, m_VertexLayout, true );
+        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer(
+            m_VertexCount, m_VertexLayout );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )

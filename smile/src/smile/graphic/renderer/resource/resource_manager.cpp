@@ -14,16 +14,32 @@ namespace smile::graphic
         m_pDevice = pDevice;
     }
 
-    memory::Ref< VertexBuffer > ResourceManager::CreateVertexBuffer( void *pVertices,
-        Uint32 vertexCount,
-        const VertexLayout &layout,
-        bool isDynamic )
+    memory::Ref< VertexBuffer >
+    ResourceManager::CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const VertexLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
         bufferDesc.pData = pVertices;
         bufferDesc.Size = vertexCount * layout.GetStride();
-        bufferDesc.Usage = !isDynamic ? BufferUsage::Immutable : BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = !isDynamic ? BufferCPUAccess::None : BufferCPUAccess::Write;
+        bufferDesc.Usage = BufferUsage::Immutable;
+        bufferDesc.CPUAccess = BufferCPUAccess::None;
+        bufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+
+        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
+        m_pVertexBuffers.push_back( pVertexBuffer );
+        return pVertexBuffer;
+    }
+
+    memory::Ref< VertexBuffer > ResourceManager::CreateDynamicVertexBuffer( Uint32 vertexCount,
+        const VertexLayout &layout )
+    {
+        GPUBufferDescriptor bufferDesc{};
+        bufferDesc.pData = nullptr;
+        bufferDesc.Size = vertexCount * layout.GetStride();
+        bufferDesc.Usage = BufferUsage::Dynamic;
+        bufferDesc.CPUAccess = BufferCPUAccess::Write;
         bufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
 
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();

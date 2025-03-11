@@ -30,7 +30,8 @@ namespace smile::graphic
         void Initialize( GraphicsDevice *pDevice );
 
         memory::Ref< VertexBuffer >
-        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const VertexLayout &layout, bool isDynamic = false );
+        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const VertexLayout &layout );
+        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const VertexLayout &layout );
 
         memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
 
