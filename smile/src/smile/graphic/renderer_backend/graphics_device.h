@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "resource/buffer.h"
 #include "resource/swap_chain.h"
 #include "resource/texture.h"
 #include "resource/frame_buffer.h"
@@ -51,7 +52,7 @@ namespace smile::graphic
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const BufferLayout &layout,
+            const VertexLayout &layout,
             const std::string &techniqueName = "" ) = 0;
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const std::string &techniqueName = "" ) = 0;

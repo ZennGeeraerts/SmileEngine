@@ -45,7 +45,7 @@ namespace smile::graphic
     }
 
     memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
-        const BufferLayout &layout,
+        const VertexLayout &layout,
         const std::string &techniqueName )
     {
         auto pShader = m_pDevice->CreateShader( assetFile, layout, techniqueName );

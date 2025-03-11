@@ -99,7 +99,7 @@ void ExampleLayer::OnAttach()
         -0.5f,
         0.5f };
 
-    smile::graphic::BufferLayout bufferLayout{ { smile::graphic::ShaderDataType::Float3, "Position" },
+    smile::graphic::BufferLayout vertexLayout{ { smile::graphic::ShaderDataType::Float3, "Position" },
         { smile::graphic::ShaderDataType::Float3, "Normal" },
         { smile::graphic::ShaderDataType::Float3, "TexCoord" } };
 
@@ -144,7 +144,7 @@ void ExampleLayer::OnAttach()
     vertexBufferData.pVertices = vertices;
     vertexBufferData.Count = 8;
     vertexBufferData.Usage = Smile::BufferUsage::eImmutable;
-    vertexBufferData.BufferLayout = bufferLayout;
+    vertexBufferData.BufferLayout = vertexLayout;
 
     Smile::Ref<Smile::VertexBuffer> pVertexBuffer{};
     pVertexBuffer.reset(Smile::VertexBuffer::Create(vertexBufferData));
@@ -157,7 +157,7 @@ void ExampleLayer::OnAttach()
     Smile::Ref<Smile::IndexBuffer> pIndexBuffer{};
     pIndexBuffer.reset(Smile::IndexBuffer::Create(indexBufferData));
 
-    Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", bufferLayout);*/
+    Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", vertexLayout);*/
 
     m_pActiveWorld.reset( new smile::world::World{} );
 

@@ -6,7 +6,7 @@
 
 #include "foundation/compiled.h"
 #include "memory/ref.h"
-#include "buffer.h"
+#include "smile/graphic/renderer_backend/resource/buffer.h"
 #include "smile/graphic/renderer_backend/resource/texture.h"
 
 #include <DirectXMath.h>
@@ -33,6 +33,6 @@ namespace smile::graphic
         void SetName( const std::string &assetFile );
 
         std::string Name;
-        BufferLayout BufferLayout{};
+        VertexLayout BufferLayout{};
     };
 }

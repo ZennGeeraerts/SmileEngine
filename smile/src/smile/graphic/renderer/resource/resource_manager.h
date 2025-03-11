@@ -31,7 +31,7 @@ namespace smile::graphic
             const std::string &name );
 
         memory::Ref< Shader >
-        CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
+        CreateShader( const std::string &assetFile, const VertexLayout &layout, const std::string &techniqueName = "" );
         memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
         memory::Ref< Texture > CreateTexture2D( const std::string &filePath );
         memory::Ref< Texture > CreateTextureCube( const std::string &filePath );

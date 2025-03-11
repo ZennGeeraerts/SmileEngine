@@ -15,8 +15,8 @@ namespace smile::graphic
     void DebugRenderer::Initialize()
     {
         auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-        BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
-        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", bufferLayout );
+        VertexLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
+        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
 
         CreateVertexBuffer();
     }
