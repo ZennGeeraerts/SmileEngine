@@ -13,8 +13,8 @@ namespace smile::physics::ecs
     {
         BoxColliderComponent()
         {
-            graphic::BufferLayout bufferLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
-            pWireframeMesh = graphic::MeshFactory::CreateCube( bufferLayout );
+            graphic::VertexLayout vertexLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
+            pWireframeMesh = graphic::MeshFactory::CreateCube( vertexLayout );
         }
 
         BoxColliderComponent( const BoxColliderComponent & ) = default;

@@ -55,15 +55,15 @@ namespace smile::graphic
             case ShaderDataType::Bool:
                 return 1;
             default:
-                SM_ASSERT( false, "Buffer.h > ShaderDataTypeSize > Unknown ShaderDataType" );
+                SM_ASSERT( false, "ShaderDataTypeSize > Unknown ShaderDataType" );
                 return 0;
         }
     }
 
-    struct BufferElement final
+    struct VertexParameter final
     {
-        BufferElement() = default;
-        BufferElement( ShaderDataType type, const std::string &name, bool isNormalized = false )
+        VertexParameter() = default;
+        VertexParameter( ShaderDataType type, const std::string &name, bool isNormalized = false )
             : Name{ name },
               DataType{ type },
               Size{ ShaderDataTypeSize( type ) },
@@ -111,18 +111,18 @@ namespace smile::graphic
         bool IsNormalized;
     };
 
-    class BufferLayout final
+    class VertexLayout final
     {
       public:
-        BufferLayout()
+        VertexLayout()
         {
         }
-        BufferLayout( const std::initializer_list< BufferElement > &elements ) : m_Elements{ elements }
+        VertexLayout( const std::initializer_list< VertexParameter > &elements ) : m_Elements{ elements }
         {
             CalculateOffsetAndStride();
         }
 
-        inline const std::vector< BufferElement > &GetElements() const
+        inline const std::vector< VertexParameter > &GetElements() const
         {
             return m_Elements;
         }
@@ -131,24 +131,24 @@ namespace smile::graphic
             return m_Stride;
         }
 
-        std::vector< BufferElement >::iterator begin()
+        std::vector< VertexParameter >::iterator begin()
         {
             return m_Elements.begin();
         }
-        std::vector< BufferElement >::iterator end()
+        std::vector< VertexParameter >::iterator end()
         {
             return m_Elements.end();
         }
-        std::vector< BufferElement >::const_iterator begin() const
+        std::vector< VertexParameter >::const_iterator begin() const
         {
             return m_Elements.cbegin();
         }
-        std::vector< BufferElement >::const_iterator end() const
+        std::vector< VertexParameter >::const_iterator end() const
         {
             return m_Elements.cend();
         }
 
-        void AddElement( const BufferElement &element )
+        void AddElement( const VertexParameter &element )
         {
             m_Elements.push_back( element );
             CalculateOffsetAndStride();
@@ -168,7 +168,7 @@ namespace smile::graphic
         }
 
       private:
-        std::vector< BufferElement > m_Elements;
+        std::vector< VertexParameter > m_Elements;
         Uint32 m_Stride = 0;
     };
 

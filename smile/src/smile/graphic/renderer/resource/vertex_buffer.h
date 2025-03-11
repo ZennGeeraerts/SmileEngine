@@ -6,17 +6,18 @@
 
 #include "memory/object.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
+#include "smile/graphic/renderer_backend/resource/buffer.h"
 
 namespace smile::graphic
 {
     struct VertexBuffer final : public memory::Object
     {
-        VertexBuffer( GPUBufferHandle handle, Uint32 stride ) : Handle{ handle }, Stride{ stride }
+        VertexBuffer( GPUBufferHandle handle, const VertexLayout &layout ) : Handle{ handle }, Layout{ layout }
         {
         }
         ~VertexBuffer() = default;
 
         GPUBufferHandle Handle;
-        Uint32 Stride = 0;
+        VertexLayout Layout;
     };
 }

@@ -146,27 +146,21 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f } };
 
-    Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const BufferLayout &layout )
+    Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const VertexLayout &layout )
     {
-        const Uint32 vertexStride = layout.GetStride();
-
         pMeshFilter->m_pDataLocation =
-            malloc( static_cast< size_t >( vertexStride ) * static_cast< size_t >( pMeshFilter->m_VertexCount ) );
+            malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pMeshFilter->m_VertexCount ) );
         if ( !pMeshFilter->m_pDataLocation )
         {
             SM_LOG_ERROR( "MeshFactory::CreateMesh > Failed to allocate memory for the vertex buffer" );
             return nullptr;
         }
 
-        GPUBufferDescriptor vertexBufferDesc{};
-        vertexBufferDesc.pData = pMeshFilter->m_pDataLocation;
-        vertexBufferDesc.Size = pMeshFilter->m_VertexCount * vertexStride;
-        vertexBufferDesc.Usage = BufferUsage::Immutable;
-        vertexBufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+        void *pData = pMeshFilter->m_pDataLocation;
 
         for ( Uint32 i{}; i < pMeshFilter->m_VertexCount; ++i )
         {
-            for ( const BufferElement &element : layout )
+            for ( const VertexParameter &element : layout )
             {
                 if ( element.Name == "POSITION" )
                     memcpy( pMeshFilter->m_pDataLocation,
@@ -199,45 +193,32 @@ namespace smile::graphic
             }
         }
 
-        const Uint32 indexCount = static_cast< Uint32 >( pMeshFilter->m_Indices.size() );
-
-        GPUBufferDescriptor indexBufferDesc{};
-        indexBufferDesc.pData = pMeshFilter->m_Indices.data();
-        indexBufferDesc.Size = indexCount * sizeof( Uint32 );
-        indexBufferDesc.Usage = BufferUsage::Immutable;
-        indexBufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
-
         Ref< Mesh > pMesh = CreateRef< Mesh >();
 
         ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        pMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc, vertexStride );
-        pMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc, indexCount );
+        pMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( pData, pMeshFilter->m_VertexCount, layout );
+        pMesh->pIndexBuffer = resourceManager.CreateIndexBuffer(
+            pMeshFilter->m_Indices.data(), static_cast< Uint32 >( pMeshFilter->m_Indices.size() ) );
 
         return pMesh;
     }
 
     Ref< SkinnedMesh > MeshFactory::CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
-        const BufferLayout &layout )
+        const VertexLayout &layout )
     {
-        const Uint32 vertexStride = layout.GetStride();
-
         pSkinnedMeshFilter->m_pDataLocation = malloc(
-            static_cast< size_t >( vertexStride ) * static_cast< size_t >( pSkinnedMeshFilter->m_VertexCount ) );
+            static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pSkinnedMeshFilter->m_VertexCount ) );
         if ( !pSkinnedMeshFilter->m_pDataLocation )
         {
             SM_LOG_ERROR( "SkinnedMeshFilter::Create > Failed to allocate memory for the vertex buffer" );
             return nullptr;
         }
 
-        GPUBufferDescriptor vertexBufferDesc{};
-        vertexBufferDesc.pData = pSkinnedMeshFilter->m_pDataLocation;
-        vertexBufferDesc.Size = pSkinnedMeshFilter->m_VertexCount * vertexStride;
-        vertexBufferDesc.Usage = BufferUsage::Immutable;
-        vertexBufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+        void *pData = pSkinnedMeshFilter->m_pDataLocation;
 
         for ( Uint32 i{}; i < pSkinnedMeshFilter->m_VertexCount; ++i )
         {
-            for ( const BufferElement &element : layout )
+            for ( const VertexParameter &element : layout )
             {
                 if ( element.Name == "POSITION" )
                     memcpy( pSkinnedMeshFilter->m_pDataLocation,
@@ -286,30 +267,26 @@ namespace smile::graphic
             }
         }
 
-        const Uint32 indexCount = static_cast< Uint32 >( pSkinnedMeshFilter->m_Indices.size() );
-
-        GPUBufferDescriptor indexBufferDesc{};
-        indexBufferDesc.pData = pSkinnedMeshFilter->m_Indices.data();
-        indexBufferDesc.Size = indexCount * sizeof( Uint32 );
-        indexBufferDesc.Usage = BufferUsage::Immutable;
-        indexBufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
-
         Ref< SkinnedMesh > pSkinnedMesh = CreateRef< SkinnedMesh >();
 
         ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        pSkinnedMesh->pVertexBuffer = resourceManager.CreateVertexBuffer( vertexBufferDesc, vertexStride );
-        pSkinnedMesh->pIndexBuffer = resourceManager.CreateIndexBuffer( indexBufferDesc, indexCount );
+        pSkinnedMesh->pVertexBuffer =
+            resourceManager.CreateVertexBuffer( pData, pSkinnedMeshFilter->m_VertexCount, layout );
+
+        pSkinnedMesh->pIndexBuffer = resourceManager.CreateIndexBuffer(
+            pSkinnedMeshFilter->m_Indices.data(), static_cast< Uint32 >( pSkinnedMeshFilter->m_Indices.size() ) );
+
         pSkinnedMesh->SkeletonMap = pSkinnedMeshFilter->m_SkeletonMap;
         pSkinnedMesh->BoneCount = pSkinnedMeshFilter->m_BoneCount;
 
         return pSkinnedMesh;
     }
 
-    Ref< Mesh > MeshFactory::CreatePlane( const BufferLayout &bufferLayout )
+    Ref< Mesh > MeshFactory::CreatePlane( const VertexLayout &vertexLayout )
     {
         Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
 
-        for ( const auto &element : bufferLayout )
+        for ( const auto &element : vertexLayout )
         {
             if ( element.Name == "POSITION" )
             {
@@ -326,14 +303,14 @@ namespace smile::graphic
         pMeshFilter->m_VertexCount = static_cast< Uint32 >( s_PlanePositions.size() );
         pMeshFilter->m_Indices = s_PlaneIndices;
 
-        return CreateMesh( pMeshFilter, bufferLayout );
+        return CreateMesh( pMeshFilter, vertexLayout );
     }
 
-    Ref< Mesh > MeshFactory::CreateCube( const BufferLayout &bufferLayout )
+    Ref< Mesh > MeshFactory::CreateCube( const VertexLayout &vertexLayout )
     {
         Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
 
-        for ( const auto &element : bufferLayout )
+        for ( const auto &element : vertexLayout )
         {
             if ( element.Name == "POSITION" )
             {
@@ -355,10 +332,10 @@ namespace smile::graphic
         pMeshFilter->m_VertexCount = static_cast< Uint32 >( s_CubePositions.size() );
         pMeshFilter->m_Indices = s_CubeIndices;
 
-        return CreateMesh( pMeshFilter, bufferLayout );
+        return CreateMesh( pMeshFilter, vertexLayout );
     }
 
-    Ref< Mesh > MeshFactory::CreateSphere( const BufferLayout &bufferLayout, const float radius, const Uint32 steps )
+    Ref< Mesh > MeshFactory::CreateSphere( const VertexLayout &vertexLayout, const float radius, const Uint32 steps )
     {
         std::vector< DirectX::XMFLOAT3 > positions{};
         std::vector< DirectX::XMFLOAT3 > normals{};
@@ -450,7 +427,7 @@ namespace smile::graphic
 
         Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
 
-        for ( const auto &element : bufferLayout )
+        for ( const auto &element : vertexLayout )
         {
             if ( element.Name == "POSITION" )
             {
@@ -467,6 +444,6 @@ namespace smile::graphic
         pMeshFilter->m_VertexCount = vertCount;
         pMeshFilter->m_Indices = indices;
 
-        return CreateMesh( pMeshFilter, bufferLayout );
+        return CreateMesh( pMeshFilter, vertexLayout );
     }
 }

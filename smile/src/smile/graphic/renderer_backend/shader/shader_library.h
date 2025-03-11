@@ -14,9 +14,9 @@ namespace smile::graphic
       public:
         void Add( const std::string &name, const memory::Ref< Shader > &pShader );
         void Add( const memory::Ref< Shader > &pShader );
-        memory::Ref< Shader > Load( const std::string &filePath, const BufferLayout &bufferLayout );
+        memory::Ref< Shader > Load( const std::string &filePath, const VertexLayout &vertexLayout );
         memory::Ref< Shader >
-        Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout );
+        Load( const std::string &name, const std::string &filePath, const VertexLayout &vertexLayout );
 
         memory::Ref< Shader > Get( const std::string &name );
         bool Exists( const std::string &name ) const;

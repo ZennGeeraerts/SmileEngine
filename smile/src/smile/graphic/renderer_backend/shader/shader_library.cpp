@@ -21,17 +21,17 @@ namespace smile::graphic
         Add( pShader->Name, pShader );
     }
 
-    memory::Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &bufferLayout )
+    memory::Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const VertexLayout &vertexLayout )
     {
-        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, bufferLayout );
+        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, vertexLayout );
         Add( pShader );
         return pShader;
     }
 
     memory::Ref< Shader >
-    ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &bufferLayout )
+    ShaderLibrary::Load( const std::string &name, const std::string &filePath, const VertexLayout &vertexLayout )
     {
-        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, bufferLayout );
+        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, vertexLayout );
         Add( name, pShader );
         return pShader;
     }

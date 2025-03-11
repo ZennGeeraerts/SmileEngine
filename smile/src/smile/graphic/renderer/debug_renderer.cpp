@@ -15,8 +15,8 @@ namespace smile::graphic
     void DebugRenderer::Initialize()
     {
         auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-        BufferLayout bufferLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
-        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", bufferLayout );
+        VertexLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
+        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
 
         CreateVertexBuffer();
     }
@@ -68,14 +68,8 @@ namespace smile::graphic
 
     void DebugRenderer::CreateVertexBuffer()
     {
-        GPUBufferDescriptor descriptor{};
-        descriptor.Usage = BufferUsage::Dynamic;
-        descriptor.Size = m_VertexCount * sizeof( VertexPosCol );
-        descriptor.CPUAccess = BufferCPUAccess::Write;
-        descriptor.BindFlags = BufferBindFlags::VertexBuffer;
-
-        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateVertexBuffer(
-            descriptor, sizeof( VertexPosCol ) );
+        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer(
+            m_VertexCount, m_VertexLayout );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )

@@ -10,13 +10,17 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "uniform_buffer.h"
-
-#include "smile/graphic/renderer_backend/graphics_device.h"
+#include "smile/graphic/renderer_backend/resource/buffer.h"
+#include "smile/graphic/renderer_backend/resource/frame_buffer.h"
+#include "smile/graphic/renderer_backend/resource/rasterizer_state.h"
+#include "smile/graphic/renderer_backend/shader/shader.h"
 
 #include <vector>
 
 namespace smile::graphic
 {
+    class GraphicsDevice;
+
     class ResourceManager final
     {
       public:
@@ -25,13 +29,16 @@ namespace smile::graphic
 
         void Initialize( GraphicsDevice *pDevice );
 
-        memory::Ref< VertexBuffer > CreateVertexBuffer( const GPUBufferDescriptor &bufferDesc, Uint32 stride );
-        memory::Ref< IndexBuffer > CreateIndexBuffer( const GPUBufferDescriptor &bufferDesc, Uint32 count );
-        memory::Ref< UniformBuffer > CreateUniformBuffer( const GPUBufferDescriptor &bufferDesc,
-            const std::string &name );
+        memory::Ref< VertexBuffer >
+        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const VertexLayout &layout );
+        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const VertexLayout &layout );
+
+        memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
+
+        memory::Ref< UniformBuffer > CreateUniformBuffer( const std::string &name, void *pData, Uint32 size );
 
         memory::Ref< Shader >
-        CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
+        CreateShader( const std::string &assetFile, const VertexLayout &layout, const std::string &techniqueName = "" );
         memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
         memory::Ref< Texture > CreateTexture2D( const std::string &filePath );
         memory::Ref< Texture > CreateTextureCube( const std::string &filePath );
@@ -41,7 +48,7 @@ namespace smile::graphic
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
 
       private:
-        GraphicsDevice *m_pDevice;
+        GraphicsDevice *m_pDevice = nullptr;
         std::vector< memory::Ref< VertexBuffer > > m_pVertexBuffers;
         std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
         std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;

@@ -43,7 +43,7 @@ namespace smile::graphic
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;
 
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const BufferLayout &layout,
+            const VertexLayout &layout,
             const std::string &techniqueName = "" ) override;
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const std::string &techniqueName = "" ) override;
