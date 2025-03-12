@@ -107,7 +107,7 @@ namespace smile::world
                 m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( currentChildHandle ).Next;
         }
 
-        SM_ASSERT( false, "Entity::GetChildAtIndex > Failed to get child at index: %d", index );
+        SM_ASSERT( false, "Entity::GetChildAtIndex > Failed to get child at index: {}", index ); // TODO: Add parameters to assert message
         return Entity{};
     }
 

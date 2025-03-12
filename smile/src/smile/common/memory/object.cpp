@@ -15,9 +15,4 @@ namespace smile::memory
         volatile auto &dest = m_RefCount;
         dest = DestructedObjectRefCount();
     }
-
-    constexpr Uint32 Object::DestructedObjectRefCount()
-    {
-        return std::numeric_limits< Uint32 >{}.max();
-    }
 }
