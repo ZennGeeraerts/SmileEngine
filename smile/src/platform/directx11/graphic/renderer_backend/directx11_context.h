@@ -51,7 +51,7 @@ namespace smile::graphic
         void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const override;
         void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) override;
 
-        void BindRasterizerState( const memory::Ref< RasterizerState > &pRasterizerState ) const override;
+        void BindRasterizerState( RasterizerStateHandle handle ) const override;
         void UnbindRasterizerState() const override;
         void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
         void UnbindPrimitiveTopology() const override;

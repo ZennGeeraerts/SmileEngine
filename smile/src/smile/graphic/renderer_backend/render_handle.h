@@ -10,4 +10,7 @@ namespace smile::graphic
 {
     using GPUBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using GPUBufferHandle = GPUBufferHandleManager::HandleType;
+
+    using RasterizerStateHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using RasterizerStateHandle = RasterizerStateHandleManager::HandleType;
 }

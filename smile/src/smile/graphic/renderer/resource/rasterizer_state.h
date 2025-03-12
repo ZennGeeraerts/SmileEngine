@@ -1,0 +1,21 @@
+/*=============================================================================*/
+// Copyright 2022-2025 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+#pragma once
+
+#include "memory/object.h"
+#include "smile/graphic/renderer_backend/render_handle.h"
+
+namespace smile::graphic
+{
+    struct RasterizerState : public memory::Object
+    {
+        RasterizerState( RasterizerStateHandle handle ) : Handle{ handle }
+        {
+        }
+        virtual ~RasterizerState() = default;
+
+        RasterizerStateHandle Handle;
+    };
+}

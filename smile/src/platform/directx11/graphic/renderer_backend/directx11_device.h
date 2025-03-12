@@ -5,6 +5,7 @@
 #pragma once
 #include "smile/graphic/renderer_backend/graphics_device.h"
 #include "resource/directx11_buffer.h"
+#include "resource/directx11_rasterizer_state.h"
 
 #include <d3d11.h>
 
@@ -50,7 +51,10 @@ namespace smile::graphic
         memory::Ref< Texture > CreateTexture2D( const std::string &filePath ) override;
         memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) override;
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) override;
-        memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) override;
+
+        void CreateRasterizerState( RasterizerStateHandle handle,
+            const RasterizerStateDescriptor &descriptor ) override;
+        void DestroyRasterizerState( RasterizerStateHandle handle ) override;
 
         void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
 
@@ -62,6 +66,7 @@ namespace smile::graphic
         std::vector< DirectX11Context * > m_pGraphicsContexts;
 
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
+        std::array< DirectX11RasterizerState, s_MaxRasterizerStates > m_RasterizerStates;
 
         friend class DirectX11Context;
     };

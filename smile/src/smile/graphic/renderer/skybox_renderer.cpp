@@ -61,6 +61,7 @@ namespace smile::graphic
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();
 
+        renderSystem.BindDefaultRasterizerState();
         renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
         renderSystem.BindShader( s_pSkyboxShader );

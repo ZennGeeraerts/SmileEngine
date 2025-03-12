@@ -10,7 +10,7 @@
 
 namespace smile::graphic
 {
-    struct DirectX11Buffer
+    struct DirectX11Buffer final
     {
         DirectX11Buffer() = default;
         virtual ~DirectX11Buffer();

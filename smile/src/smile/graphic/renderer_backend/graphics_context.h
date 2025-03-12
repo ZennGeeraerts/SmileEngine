@@ -9,7 +9,6 @@
 
 #include "resource/swap_chain.h"
 #include "resource/frame_buffer.h"
-#include "resource/rasterizer_state.h"
 #include "shader/shader.h"
 
 #include "render_handle.h"
@@ -54,7 +53,7 @@ namespace smile::graphic
         virtual void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const = 0;
         virtual void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) = 0;
 
-        virtual void BindRasterizerState( const memory::Ref< RasterizerState > &pRasterizerState ) const = 0;
+        virtual void BindRasterizerState( RasterizerStateHandle handle ) const = 0;
         virtual void UnbindRasterizerState() const = 0;
         virtual void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const = 0;
         virtual void UnbindPrimitiveTopology() const = 0;

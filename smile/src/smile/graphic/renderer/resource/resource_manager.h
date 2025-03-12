@@ -10,6 +10,7 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "uniform_buffer.h"
+#include "rasterizer_state.h"
 #include "smile/graphic/renderer_backend/resource/buffer.h"
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
 #include "smile/graphic/renderer_backend/resource/rasterizer_state.h"
@@ -59,5 +60,6 @@ namespace smile::graphic
         std::vector< memory::Ref< RasterizerState > > m_pRasterizerStates;
 
         GPUBufferHandleManager m_GPUBufferHandleManager;
+        RasterizerStateHandleManager m_RasterizerStateHandleManager;
     };
 }

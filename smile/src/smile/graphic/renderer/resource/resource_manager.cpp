@@ -125,7 +125,10 @@ namespace smile::graphic
 
     memory::Ref< RasterizerState > ResourceManager::CreateRasterizerState( const RasterizerStateDescriptor &descriptor )
     {
-        auto pRasterizerState = m_pDevice->CreateRasterizerState( descriptor );
+        RasterizerStateHandle handle = m_RasterizerStateHandleManager.CreateHandle();
+        m_pDevice->CreateRasterizerState( handle, descriptor );
+        
+        auto pRasterizerState = memory::CreateRef< RasterizerState >( handle );
         m_pRasterizerStates.push_back( pRasterizerState );
         return pRasterizerState;
     }
