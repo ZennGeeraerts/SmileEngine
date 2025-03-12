@@ -63,6 +63,8 @@ namespace smile::graphic
 
     void EditorCamera::UpdateProjection()
     {
+        SM_ASSERT( m_ViewportHeight != 0.0f, "Height cannot be 0" );
+
         m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
         DirectX::XMMATRIX projectionMatrixMat = DirectX::XMMatrixPerspectiveFovLH(
             DirectX::XMConvertToRadians( m_FOV ), m_AspectRatio, m_NearPlane, m_FarPlane );

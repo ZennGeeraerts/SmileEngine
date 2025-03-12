@@ -14,6 +14,8 @@ namespace smile::graphic
 
     void SceneCamera::SetViewportSize( Uint32 width, Uint32 height )
     {
+        SM_ASSERT( height != 0, "Height is 0" );
+
         m_AspectRatio = width / static_cast< float >( height );
 
         RecalculateProjectionMatrix();

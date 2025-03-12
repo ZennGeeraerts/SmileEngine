@@ -194,6 +194,9 @@ namespace smile::world
 
     void World::OnViewportResize( Uint32 width, Uint32 height )
     {
+        if ( width == m_ViewportWidth && height == m_ViewportHeight )
+            return;
+
         m_ViewportWidth = width;
         m_ViewportHeight = height;
 
@@ -376,7 +379,8 @@ namespace smile::world
     void World::OnComponentAdded< graphic::ecs::CameraComponent >( Entity entity,
         graphic::ecs::CameraComponent &component )
     {
-        component.Camera.SetViewportSize( m_ViewportWidth, m_ViewportHeight );
+        if ( m_ViewportWidth > 0 && m_ViewportHeight > 0 )
+            component.Camera.SetViewportSize( m_ViewportWidth, m_ViewportHeight );
     }
 
     template <>

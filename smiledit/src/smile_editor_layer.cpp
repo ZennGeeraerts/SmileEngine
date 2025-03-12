@@ -522,7 +522,6 @@ namespace smile
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_pEditorWorld->OnOpen();
             m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
-            m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
 
             m_pActiveWorld = m_pEditorWorld;
             m_EditorWorldPath = filePath;
@@ -539,7 +538,6 @@ namespace smile
         m_pEditorWorld = m_pActiveWorld;
         m_pActiveWorld->OnViewportResize(
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
-        m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
         m_pActiveWorld->OnOpen();
         m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
 
