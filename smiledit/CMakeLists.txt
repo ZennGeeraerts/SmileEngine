@@ -7,6 +7,9 @@ get_filename_component(SMILE_PATH "../smile/src" ABSOLUTE)
 get_filename_component(CMAKE_PATH "../cmake" ABSOLUTE)
 
 include(${CMAKE_PATH}/prevent_in_source_builds.cmake)
+include(${CMAKE_PATH}/compiler_flags.cmake)
+
+set_compiler_flags()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
