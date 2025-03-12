@@ -21,6 +21,12 @@ namespace smile::graphic
         m_ResourceManager.Initialize( m_pRendererBackend->GetGraphicsDevice() );
 
         m_pSwapChain = m_pRendererBackend->GetGraphicsDevice()->CreateSwapChain( pWindow );
+
+        RasterizerStateDescriptor rasterizerStateDesc{};
+        rasterizerStateDesc.CullMode = CullMode::Front;
+        rasterizerStateDesc.FillMode = FillMode::Solid;
+        rasterizerStateDesc.EnableDepthClip = true;
+        m_pDefaultRasterizerState = m_ResourceManager.CreateRasterizerState( rasterizerStateDesc );
     }
 
     void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
@@ -102,7 +108,12 @@ namespace smile::graphic
 
     void RenderSystem::BindRasterizerState( memory::Ref< RasterizerState > pRasterizerState ) const
     {
-        m_pRendererBackend->GetGraphicsContext()->BindRasterizerState( pRasterizerState );
+        m_pRendererBackend->GetGraphicsContext()->BindRasterizerState( pRasterizerState->Handle );
+    }
+
+    void RenderSystem::BindDefaultRasterizerState() const
+    {
+        m_pRendererBackend->GetGraphicsContext()->BindRasterizerState( m_pDefaultRasterizerState->Handle );
     }
 
     void RenderSystem::UnbindRasterizerState() const

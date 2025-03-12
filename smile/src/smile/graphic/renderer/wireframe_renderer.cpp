@@ -70,7 +70,7 @@ namespace smile::graphic
             renderSystem.DrawIndexed( drawCommand.pIndexBuffer->Count );
         }
 
-        renderSystem.UnbindRasterizerState();
+        renderSystem.BindDefaultRasterizerState();
         renderSystem.UnbindPrimitiveTopology();
     }
 

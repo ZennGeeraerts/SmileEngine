@@ -161,11 +161,10 @@ namespace smile::graphic
         m_pInternal->RSSetViewports( 1, pViewport );
     }
 
-    void DirectX11Context::BindRasterizerState( const memory::Ref< RasterizerState > &pRasterizerState ) const
+    void DirectX11Context::BindRasterizerState( RasterizerStateHandle handle ) const
     {
-        ID3D11RasterizerState *pD11RasterizerState =
-            static_cast< ID3D11RasterizerState * >( pRasterizerState->GetInternal() );
-        m_pInternal->RSSetState( pD11RasterizerState );
+        const auto &rasterizerState = m_pDevice->m_RasterizerStates[handle.GetIndex()];
+        m_pInternal->RSSetState( rasterizerState.pInternal );
     }
 
     void DirectX11Context::UnbindRasterizerState() const

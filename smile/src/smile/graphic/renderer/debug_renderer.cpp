@@ -99,6 +99,7 @@ namespace smile::graphic
 
         renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
 
+        renderSystem.BindDefaultRasterizerState();
         renderSystem.BindPrimitiveTopology( PrimitiveTopology::LineList );
 
         renderSystem.BindVertexBuffer( m_pVertexBuffer );

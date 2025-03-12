@@ -363,37 +363,6 @@ namespace smile::graphic
         }
     }
 
-    namespace rasterizerstatehelpers
-    {
-        static D3D11_CULL_MODE CullModeToDirectXType( CullMode cullMode )
-        {
-            switch ( cullMode )
-            {
-                case CullMode::None:
-                    return D3D11_CULL_NONE;
-                case CullMode::Front:
-                    return D3D11_CULL_FRONT;
-                case CullMode::Back:
-                    return D3D11_CULL_BACK;
-                default:
-                    return D3D11_CULL_NONE;
-            }
-        }
-
-        static D3D11_FILL_MODE FillModeToDirectXType( FillMode fillMode )
-        {
-            switch ( fillMode )
-            {
-                case FillMode::Solid:
-                    return D3D11_FILL_SOLID;
-                case FillMode::WireFrame:
-                    return D3D11_FILL_WIREFRAME;
-                default:
-                    return D3D11_FILL_SOLID;
-            }
-        }
-    }
-
     DirectX11Device::DirectX11Device()
     {
         // Create DXGI Factory to create SwapChain based on hardware
@@ -741,23 +710,15 @@ namespace smile::graphic
         return pFramebuffer;
     }
 
-    memory::Ref< RasterizerState > DirectX11Device::CreateRasterizerState( const RasterizerStateDescriptor &descriptor )
+    void DirectX11Device::CreateRasterizerState( RasterizerStateHandle handle,
+        const RasterizerStateDescriptor &descriptor )
     {
-        memory::Ref< DirectX11RasterizerState > pRasterizerState = memory::CreateRef< DirectX11RasterizerState >();
+        m_RasterizerStates[handle.GetIndex()].Create( m_pInternal, descriptor );
+    }
 
-        D3D11_RASTERIZER_DESC rasterizerDesc = {};
-        rasterizerDesc.CullMode = rasterizerstatehelpers::CullModeToDirectXType( descriptor.CullMode );
-        rasterizerDesc.FillMode = rasterizerstatehelpers::FillModeToDirectXType( descriptor.FillMode );
-        rasterizerDesc.DepthClipEnable = descriptor.EnableDepthClip;
-
-        HRESULT result = m_pInternal->CreateRasterizerState( &rasterizerDesc, &pRasterizerState->pInternal );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::CreateRasterizerState > Failed to create rasterizer state: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-        }
-
-        return pRasterizerState;
+    void DirectX11Device::DestroyRasterizerState( RasterizerStateHandle handle )
+    {
+        m_RasterizerStates[handle.GetIndex()].Destroy();
     }
 
     void DirectX11Device::InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer )

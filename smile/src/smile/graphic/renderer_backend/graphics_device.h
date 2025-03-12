@@ -59,7 +59,9 @@ namespace smile::graphic
         virtual memory::Ref< Texture > CreateTexture2D( const std::string &filePath ) = 0;
         virtual memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) = 0;
         virtual memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;
-        virtual memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor ) = 0;
+
+        virtual void CreateRasterizerState( RasterizerStateHandle handle, const RasterizerStateDescriptor &descriptor ) = 0;
+        virtual void DestroyRasterizerState( RasterizerStateHandle handle ) = 0;
 
         virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
 
@@ -67,5 +69,6 @@ namespace smile::graphic
 
       protected:
         static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
+        static constexpr Uint16 s_MaxRasterizerStates = ( 4 << 10 );
     };
 }

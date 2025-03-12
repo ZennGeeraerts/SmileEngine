@@ -4,8 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "memory/object.h"
-
 namespace smile::graphic
 {
     enum class CullMode
@@ -26,13 +24,5 @@ namespace smile::graphic
         CullMode CullMode = CullMode::None;
         FillMode FillMode = FillMode::Solid;
         bool EnableDepthClip = true;
-    };
-
-    struct RasterizerState : public memory::Object
-    {
-        RasterizerState() = default;
-        virtual ~RasterizerState() = default;
-
-        virtual void *GetInternal() const = 0;
     };
 }

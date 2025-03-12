@@ -69,6 +69,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
+        renderSystem.BindDefaultRasterizerState();
         renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
         for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )

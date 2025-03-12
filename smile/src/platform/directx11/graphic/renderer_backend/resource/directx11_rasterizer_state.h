@@ -10,7 +10,7 @@
 
 namespace smile::graphic
 {
-    struct DirectX11RasterizerState final : public RasterizerState
+    struct DirectX11RasterizerState final
     {
         DirectX11RasterizerState() = default;
         virtual ~DirectX11RasterizerState();
@@ -20,10 +20,8 @@ namespace smile::graphic
         DirectX11RasterizerState &operator=( const DirectX11RasterizerState & ) = delete;
         DirectX11RasterizerState &operator=( DirectX11RasterizerState && ) = delete;
 
-        void *GetInternal() const override
-        {
-            return pInternal;
-        }
+        void Create( ID3D11Device *pDevice, const RasterizerStateDescriptor &descriptor );
+        void Destroy();
 
         ID3D11RasterizerState *pInternal = nullptr;
     };

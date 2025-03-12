@@ -116,6 +116,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
+        renderSystem.BindDefaultRasterizerState();
         renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
         renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
@@ -137,6 +138,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
+        renderSystem.BindDefaultRasterizerState();
         renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
 
         renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
