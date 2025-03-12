@@ -182,6 +182,7 @@ namespace smile::world
 
     void World::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
+        graphic::RenderEngine::SetCameraData( { &editorCamera, editorCamera.GetTransform() } );
         m_ECSEngine.OnUpdate();
     }
 
