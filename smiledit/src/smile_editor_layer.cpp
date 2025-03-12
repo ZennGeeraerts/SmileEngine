@@ -5,8 +5,8 @@
 
 #include "smile_editor_layer.h"
 
-#include "world/world_serializer.h"
-#include "window/file_dialog.h"
+#include "smile/core/world/world_serializer.h"
+#include "smile/core/window/file_dialog.h"
 #include "smile/graphic/renderer/render_engine.h"
 
 #include <imgui/imgui.h>

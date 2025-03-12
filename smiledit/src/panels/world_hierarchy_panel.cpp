@@ -5,12 +5,12 @@
 
 #include "world_hierarchy_panel.h"
 
-#include "world/components.h"
+#include "smile/core/world/components.h"
 #include "smile/scripting/script_engine.h"
 #include "smile/graphic/mesh/mesh.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
-#include "ecs/relationship.h"
+#include "smile/core/ecs/relationship.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>

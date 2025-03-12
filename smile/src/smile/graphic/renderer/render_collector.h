@@ -8,7 +8,7 @@
 #include "smile/graphic/renderer/resource/index_buffer.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
 
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 #include <vector>
 #include <DirectXMath.h>

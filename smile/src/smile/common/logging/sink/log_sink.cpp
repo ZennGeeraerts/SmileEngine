@@ -5,8 +5,8 @@
 #include "smpch.h"
 #include "log_sink.h"
 
-#include "logging/console_mutex.h"
-#include "logging/format/pattern_formatter.h"
+#include "smile/common/logging/console_mutex.h"
+#include "smile/common/logging/format/pattern_formatter.h"
 
 namespace smile::logging
 {

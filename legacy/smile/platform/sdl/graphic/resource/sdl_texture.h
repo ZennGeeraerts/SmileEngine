@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "smile/graphic/resource/texture.h"
-#include "platform/smileraster/graphic/smileraster_context.h"
+#include "smile/common/platform/smileraster/graphic/smileraster_context.h"
 
 #include <SDL_image.h>
 

@@ -7,7 +7,7 @@
 
 #include "smile/graphic/renderer/forward_renderer.h"
 #include "smile/graphic/animation/ecs/animator_component.h"
-#include "world/ecs/transform_component.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {

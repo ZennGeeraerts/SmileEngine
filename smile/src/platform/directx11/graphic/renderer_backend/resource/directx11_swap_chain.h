@@ -6,7 +6,7 @@
 #include "smile/graphic/renderer_backend/resource/swap_chain.h"
 #include "directx11_frame_buffer.h"
 
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 namespace smile::graphic
 {

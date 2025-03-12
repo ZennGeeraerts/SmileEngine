@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "platform/print.h"
+#include "smile/common/platform/print.h"
 
 #include <Windows.h>
 #include <io.h>

@@ -7,10 +7,10 @@
 
 #include "script_engine.h"
 
-#include "world/components.h"
+#include "smile/core/world/components.h"
 
-#include "input/key_codes.h"
-#include "input/input.h"
+#include "smile/core/input/key_codes.h"
+#include "smile/core/input/input.h"
 
 #include "smile/physics/physics_engine.h"
 

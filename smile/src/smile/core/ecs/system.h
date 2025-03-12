@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "base_system.h"
-#include "foundation/type_name.h"
+#include "smile/common/foundation/type_name.h"
 
 namespace smile::ecs
 {

@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "world/world.h"
-#include "world/entity.h"
+#include "smile/core/world/world.h"
+#include "smile/core/world/entity.h"
 
 #include "script_class.h"
 #include "script_instance.h"

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "world/entity.h"
+#include "smile/core/world/entity.h"
 
 extern "C"
 {

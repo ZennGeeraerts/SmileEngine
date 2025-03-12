@@ -1,11 +1,11 @@
 #include "main_game.h"
 
-#include "application/entry_point.h"
-#include "application/timer.h"
+#include "smile/core/application/entry_point.h"
+#include "smile/core/application/timer.h"
 
 #include "input/input.h"
 
-#include "world/ecs/transform_component.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/mesh/material.h"

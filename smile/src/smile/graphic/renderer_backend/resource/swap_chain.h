@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "memory/object.h"
+#include "smile/common/memory/object.h"
 
 namespace smile::window
 {

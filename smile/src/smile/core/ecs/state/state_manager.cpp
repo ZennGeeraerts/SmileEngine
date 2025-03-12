@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "state_manager.h"
 
-#include "ecs/ecs_engine.h"
+#include "smile/core/ecs/ecs_engine.h"
 #include "system_factory.h"
 
 namespace smile::ecs::state

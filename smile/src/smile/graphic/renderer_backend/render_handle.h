@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "primitive/handle_manager.h"
+#include "smile/common/primitive/handle_manager.h"
 
 namespace smile::graphic
 {

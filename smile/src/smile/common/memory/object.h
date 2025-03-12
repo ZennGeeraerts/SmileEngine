@@ -44,7 +44,10 @@ namespace smile::memory
             return m_RefCount;
         }
 
-        static constexpr Uint32 DestructedObjectRefCount();
+        static constexpr Uint32 DestructedObjectRefCount()
+        {
+            return std::numeric_limits< Uint32 >{}.max();
+        }
 
       private:
         mutable std::atomic< Uint32 > m_RefCount;

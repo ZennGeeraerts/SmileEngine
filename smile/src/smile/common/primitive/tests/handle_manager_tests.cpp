@@ -2,7 +2,7 @@
 // Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "primitive/handle_manager.h"
+#include "smile/common/primitive/handle_manager.h"
 
 #include <catch/catch.hpp>
 

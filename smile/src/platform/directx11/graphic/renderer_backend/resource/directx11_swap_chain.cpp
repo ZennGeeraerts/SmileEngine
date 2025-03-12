@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "directx11_swap_chain.h"
 
-#include "window/window.h"
+#include "smile/core/window/window.h"
 
 namespace smile::graphic
 {

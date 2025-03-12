@@ -5,7 +5,6 @@ if(WIN32)
 endif()
 
 set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_LIST_DIR}
     ${THIRDPARTY_PATH}/yaml-cpp/include
 )
 

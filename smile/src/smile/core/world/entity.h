@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "primitive/uuid.h"
+#include "smile/common/primitive/uuid.h"
 #include "world.h"
 #include "ecs/id_component.h"
 #include "ecs/tag_component.h"

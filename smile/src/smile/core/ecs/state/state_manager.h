@@ -5,8 +5,8 @@
 #pragma once
 
 #include "state.h"
-#include "ecs/system.h"
-#include "memory/ref.h"
+#include "smile/core/ecs/system.h"
+#include "smile/common/memory/ref.h"
 
 #include <unordered_map>
 

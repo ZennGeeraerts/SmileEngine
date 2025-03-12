@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/graphic/renderer_backend/resource/texture.h"
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 #include <DirectXMath.h>
 

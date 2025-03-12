@@ -2,9 +2,9 @@
 // Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "ecs/state/state_manager.h"
-#include "ecs/state/system_factory.h"
-#include "ecs/ecs_engine.h"
+#include "smile/core/ecs/state/state_manager.h"
+#include "smile/core/ecs/state/system_factory.h"
+#include "smile/core/ecs/ecs_engine.h"
 #include <catch/catch.hpp>
 
 namespace smile

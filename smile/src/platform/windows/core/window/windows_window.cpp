@@ -7,10 +7,10 @@
 
 #include "smile/common/logging/logging.h"
 
-#include "window/events/application_event.h"
-#include "window/events/mouse_event.h"
-#include "window/events/key_event.h"
-#include "input/input.h"
+#include "smile/core/window/events/application_event.h"
+#include "smile/core/window/events/mouse_event.h"
+#include "smile/core/window/events/key_event.h"
+#include "smile/core/input/input.h"
 
 #include "windows_window_manager.h"
 

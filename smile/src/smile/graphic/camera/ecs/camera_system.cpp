@@ -7,7 +7,7 @@
 
 #include "smile/graphic/camera/camera.h"
 #include "smile/graphic/renderer/render_engine.h"
-#include "world/components.h"
+#include "smile/core/world/components.h"
 
 namespace smile::graphic::ecs
 {

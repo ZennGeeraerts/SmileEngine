@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "application/application.h"
+#include "smile/core/application/application.h"
 
 #ifdef SM_PLATFORM_WINDOWS
 

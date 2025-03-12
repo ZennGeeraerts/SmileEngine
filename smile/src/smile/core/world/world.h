@@ -9,7 +9,7 @@
 #include "smile/graphic/camera/editor_camera.h"
 
 #include "smile/core/ecs/ecs_engine.h"
-#include "ecs/state/state_manager.h"
+#include "smile/core/ecs/state/state_manager.h"
 
 namespace smile::world
 {

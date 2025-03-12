@@ -8,7 +8,7 @@
 #include "rigidbody.h"
 #include "character_controller.h"
 
-#include "world/ecs/transform_component.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 #include <DirectXMath.h>
 

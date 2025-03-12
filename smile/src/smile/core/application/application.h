@@ -4,12 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "foundation/compiled.h"
+#include "smile/common/foundation/compiled.h"
 
 #include "layer_stack.h"
-#include "window/window_manager.h"
-#include "window/events/event.h"
-#include "window/events/application_event.h"
+#include "smile/core/window/window_manager.h"
+#include "smile/core/window/events/event.h"
+#include "smile/core/window/events/application_event.h"
 
 namespace smile::application
 {

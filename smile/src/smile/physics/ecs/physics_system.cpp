@@ -5,10 +5,10 @@
 #include "smpch.h"
 #include "physics_system.h"
 
-#include "ecs/ecs_engine.h"
-#include "world/ecs/id_component.h"
-#include "world/ecs/transform_component.h"
-#include "math/math.h"
+#include "smile/core/ecs/ecs_engine.h"
+#include "smile/core/world/ecs/id_component.h"
+#include "smile/core/world/ecs/transform_component.h"
+#include "smile/core/math/math.h"
 
 #include "rigidbody_component.h"
 #include "character_controller_component.h"

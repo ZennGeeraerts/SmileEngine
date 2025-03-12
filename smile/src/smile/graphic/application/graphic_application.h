@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "application/application.h"
+#include "smile/core/application/application.h"
 #include "smile/graphic/imgui/imgui_layer.h"
 
 namespace smile::graphic

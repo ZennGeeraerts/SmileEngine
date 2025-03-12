@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "memory/object.h"
-#include "ecs/ecs_engine.h"
+#include "smile/common/memory/object.h"
+#include "smile/core/ecs/ecs_engine.h"
 #include "smile/graphic/camera/camera.h"
 
 namespace smile::graphic::ecs

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "primitive/collection/sparse_set.h"
+#include "smile/common/primitive/collection/sparse_set.h"
 #include "component_storage_handler.h"
 
 #include <functional>

@@ -9,7 +9,7 @@
 #include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/skybox_renderer.h"
 
-#include "window/window.h"
+#include "smile/core/window/window.h"
 
 #include <DirectXColors.h>
 

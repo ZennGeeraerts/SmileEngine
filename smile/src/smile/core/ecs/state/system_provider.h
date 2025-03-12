@@ -4,7 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
+#include "smile/core/ecs/base_system.h"
 
 namespace smile::ecs::state
 {

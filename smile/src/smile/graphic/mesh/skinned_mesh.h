@@ -7,7 +7,7 @@
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer/resource/index_buffer.h"
 #include "bone_info.h"
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 namespace smile::graphic
 {
