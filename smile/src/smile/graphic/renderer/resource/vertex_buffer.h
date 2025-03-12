@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "memory/object.h"
+#include "smile/common/memory/object.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 #include "smile/graphic/renderer_backend/resource/buffer.h"
 

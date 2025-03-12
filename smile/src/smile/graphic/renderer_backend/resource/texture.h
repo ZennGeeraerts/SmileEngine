@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "foundation/compiled.h"
-#include "memory/object.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/memory/object.h"
 
 #include <string>
 

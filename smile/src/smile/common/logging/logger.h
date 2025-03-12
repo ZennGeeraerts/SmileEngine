@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "foundation/compiled.h"
-#include "sink/log_sink.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/logging/sink/log_sink.h"
 #include "memory_buffer.h"
 
 namespace smile::logging

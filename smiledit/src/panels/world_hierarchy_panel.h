@@ -4,11 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
-#include "foundation/compiled.h"
-#include "memory/ref.h"
-#include "logging/logging.h"
-#include "world/world.h"
-#include "world/entity.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/memory/ref.h"
+#include "smile/common/logging/logging.h"
+#include "smile/core/world/world.h"
+#include "smile/core/world/entity.h"
 
 namespace smile::graphic
 {

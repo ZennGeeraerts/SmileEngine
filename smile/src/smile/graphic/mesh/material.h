@@ -7,7 +7,7 @@
 #include "smile/graphic/renderer_backend/shader/shader.h"
 #include "smile/graphic/renderer_backend/shader/shader_reflection.h"
 #include "smile/graphic/renderer_backend/resource/texture.h"
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 #include <DirectXMath.h>
 

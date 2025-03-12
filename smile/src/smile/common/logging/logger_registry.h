@@ -5,7 +5,7 @@
 #pragma once
 
 #include "logger.h"
-#include "foundation/singleton.h"
+#include "smile/common/foundation/singleton.h"
 
 #include <unordered_map>
 

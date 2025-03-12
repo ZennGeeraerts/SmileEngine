@@ -3,14 +3,14 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "foundation/singleton.h"
+#include "smile/common/foundation/singleton.h"
 
 #include "render_collector.h"
 
 #include "smile/graphic/camera/camera.h"
 #include "smile/graphic/renderer_backend/resource/rasterizer_state.h"
 
-#include "world/components.h"
+#include "smile/core/world/components.h"
 
 namespace smile::graphic
 {

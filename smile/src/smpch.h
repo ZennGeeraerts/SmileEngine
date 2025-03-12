@@ -17,6 +17,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "foundation/compiled.h"
-#include "primitive/timestep.h"
-#include "logging/logging.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/timestep.h"
+#include "smile/common/logging/logging.h"

@@ -5,10 +5,10 @@
 #include "smpch.h"
 #include "world_serializer.h"
 
-#include "logging/logger.h"
+#include "smile/common/logging/logger.h"
 #include "entity.h"
 #include "components.h"
-#include "project/project_manager.h"
+#include "smile/core/project/project_manager.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
 
 #include <yaml-cpp/yaml.h>

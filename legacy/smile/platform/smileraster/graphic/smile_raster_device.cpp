@@ -7,7 +7,7 @@
 
 #include "resource/smile_raster_vertex_buffer.h"
 #include "resource/smile_raster_index_buffer.h"
-#include "platform/sdl/graphic/resource/sdl_texture.h"
+#include "smile/common/platform/sdl/graphic/resource/sdl_texture.h"
 
 #include "shader/smileraster_shader.h"
 

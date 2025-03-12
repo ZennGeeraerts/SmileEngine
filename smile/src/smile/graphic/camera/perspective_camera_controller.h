@@ -9,7 +9,7 @@
 #include "smile/core/window/events/application_event.h"
 #include "smile/core/window/events/mouse_event.h"
 
-#include "world/components.h"
+#include "smile/core/world/components.h"
 
 namespace smile::graphic
 {

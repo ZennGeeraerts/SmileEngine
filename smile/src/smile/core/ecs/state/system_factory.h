@@ -3,9 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "ecs/base_system.h"
+
 #include "default_system_provider.h"
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 namespace smile::ecs
 {

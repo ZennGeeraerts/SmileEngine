@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "geometric/capsule.h"
+#include "smile/core/geometric/capsule.h"
 #include "smile/physics/physics_material.h"
 
 namespace smile::physics::ecs

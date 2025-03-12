@@ -6,7 +6,7 @@
 #include "render_pass_2d.h"
 
 #include "smile/graphic/renderer/renderer_2d.h"
-#include "world/ecs/transform_component.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {

@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "ecs/timed_system.h"
-#include "primitive/uuid.h"
+#include "smile/core/ecs/timed_system.h"
+#include "smile/common/primitive/uuid.h"
 
 #include "smile/physics/rigidbody.h"
 #include "smile/physics/character_controller.h"

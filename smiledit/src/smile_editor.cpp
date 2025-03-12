@@ -4,8 +4,8 @@
 /*=============================================================================*/
 
 #include "smile.h"
-#include "application/entry_point.h"
-#include "interactive/interactive_application.h"
+#include "smile/core/application/entry_point.h"
+#include "smile/blueprint/interactive/interactive_application.h"
 
 #include "smile_editor_layer.h"
 

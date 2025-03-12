@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "contact_listener.h"
 
-#include "world/entity.h"
+#include "smile/core/world/entity.h"
 
 #include <PxRigidActor.h>
 

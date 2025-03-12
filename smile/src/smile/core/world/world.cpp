@@ -21,7 +21,7 @@
 #include "smile/graphic/camera/ecs/camera_system.h"
 
 #include "smile/core/ecs/relationship.h"
-#include "ecs/state/system_factory.h"
+#include "smile/core/ecs/state/system_factory.h"
 
 #include "ecs/transform_system.h"
 #include "smile/physics/ecs/physics_system.h"

@@ -9,7 +9,7 @@
 
 #include "directx11_diagnostics.h"
 
-#include "window/window.h"
+#include "smile/core/window/window.h"
 
 #include "resource/directx11_swap_chain.h"
 #include "resource/directx11_buffer.h"

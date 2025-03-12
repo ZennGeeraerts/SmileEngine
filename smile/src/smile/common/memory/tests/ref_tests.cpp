@@ -2,7 +2,7 @@
 // Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 #include <catch/catch.hpp>
 

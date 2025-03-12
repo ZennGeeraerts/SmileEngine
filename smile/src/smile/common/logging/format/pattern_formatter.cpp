@@ -6,7 +6,7 @@
 #include "pattern_formatter.h"
 
 #include "full_formatter.h"
-#include "platform/print.h"
+#include "smile/common/platform/print.h"
 
 namespace smile::logging
 {

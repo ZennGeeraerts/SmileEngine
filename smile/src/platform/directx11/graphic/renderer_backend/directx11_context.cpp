@@ -13,9 +13,9 @@
 #include "resource/directx11_frame_buffer.h"
 #include "shader/directx11_shader.h"
 
-#include "window/window.h"
-#include "foundation/compiled.h"
-#include "logging/logging.h"
+#include "smile/core/window/window.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/logging/logging.h"
 
 namespace smile::graphic
 {

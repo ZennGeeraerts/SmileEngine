@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "logging/memory_buffer.h"
-#include "logging/log_message.h"
+#include "smile/common/logging/memory_buffer.h"
+#include "smile/common/logging/log_message.h"
 
 namespace smile::logging
 {

@@ -2,8 +2,8 @@
 // Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "foundation/compiled.h"
-#include "foundation/constant_text.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/foundation/constant_text.h"
 
 namespace smile::foundation
 {

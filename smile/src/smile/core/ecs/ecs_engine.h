@@ -10,9 +10,9 @@
 #include "base_system.h"
 #include "group_base.h"
 
-#include "foundation/type_id.h"
+#include "smile/common/foundation/type_id.h"
 
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 #include <algorithm>
 #include <array>

@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "foundation/compiled.h"
-#include "memory/ref.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/memory/ref.h"
 
 #include "resource/resource_manager.h"
 #include "smile/graphic/renderer_backend/primitive_topology.h"

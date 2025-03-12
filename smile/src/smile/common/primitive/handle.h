@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "foundation/compiled.h"
-#include "foundation/hash_code.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/foundation/hash_code.h"
 
 namespace smile::primitive
 {

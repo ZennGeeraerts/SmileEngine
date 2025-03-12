@@ -5,7 +5,7 @@
 #pragma once
 
 #include "primitive_topology.h"
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 #include "resource/swap_chain.h"
 #include "resource/frame_buffer.h"

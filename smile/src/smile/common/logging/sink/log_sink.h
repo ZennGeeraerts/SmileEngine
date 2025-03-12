@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "logging/base_logger.h"
-#include "logging/log_message.h"
+#include "smile/common/logging/base_logger.h"
+#include "smile/common/logging/log_message.h"
 
 #include <mutex>
 

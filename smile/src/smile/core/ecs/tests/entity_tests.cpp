@@ -1,4 +1,4 @@
-#include "world/entity.h"
+#include "smile/core/world/entity.h"
 #include "smile/core/ecs/relationship.h"
 #include <catch/catch.hpp>
 

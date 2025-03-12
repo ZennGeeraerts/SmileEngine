@@ -6,10 +6,10 @@
 #include "transform_system.h"
 
 #include "transform_component.h"
-#include "ecs/ecs_engine.h"
-#include "ecs/relationship.h"
-#include "math/math_utilities.h"
-#include "world/world.h"
+#include "smile/core/ecs/ecs_engine.h"
+#include "smile/core/ecs/relationship.h"
+#include "smile/core/math/math_utilities.h"
+#include "smile/core/world/world.h"
 #include "smile/physics/physics_engine.h"
 
 namespace smile::world::ecs

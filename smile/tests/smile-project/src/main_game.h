@@ -1,7 +1,7 @@
 #pragma once
 #include "smile/graphic/application/graphic_application.h"
-#include "world/world.h"
-#include "world/entity.h"
+#include "smile/core/world/world.h"
+#include "smile/core/world/entity.h"
 
 class ExampleLayer final : public smile::application::Layer
 {

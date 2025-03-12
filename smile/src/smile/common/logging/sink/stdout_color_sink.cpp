@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "stdout_color_sink.h"
 
-#include "platform/print.h"
+#include "smile/common/platform/print.h"
 
 #define SM_FOREGROUND_BLUE 0x0001      // Text color contains blue
 #define SM_FOREGROUND_GREEN 0x0002     // Text color contains green

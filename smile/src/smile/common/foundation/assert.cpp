@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "assert.h"
 
-#include "logging/logging.h"
+#include "smile/common/logging/logging.h"
 
 namespace smile::foundation
 {

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "shader.h"
-#include "memory/ref.h"
+#include "smile/common/memory/ref.h"
 
 namespace smile::graphic
 {
