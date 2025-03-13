@@ -38,7 +38,8 @@ namespace smile::logging
         MemoryBuffer buffer;
         m_pFormatter->Format( message, buffer );
 
-        platform::SetConsoleColor( m_ColorMap[message.Level] );
+        auto originalColor = platform::SetConsoleColor( m_ColorMap[message.Level] );
         platform::Print( buffer.data(), buffer.size() );
+        platform::SetConsoleColor( originalColor );
     }
 }

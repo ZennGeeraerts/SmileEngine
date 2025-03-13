@@ -25,13 +25,15 @@ namespace smile::platform
         return "\r\n";
     }
 
-    void SetConsoleColor( Uint16 attributes )
+    // Set the console color and return the original color
+    Uint16 SetConsoleColor( Uint16 attributes )
     {
         CONSOLE_SCREEN_BUFFER_INFO originalBufferInfo;
-        ::GetConsoleScreenBufferInfo( s_pHandle, &originalBufferInfo );
+        if ( !::GetConsoleScreenBufferInfo( s_pHandle, &originalBufferInfo ) )
+            return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // return white when getting screen buffer fails
 
         auto newAttributes = static_cast< WORD >( attributes ) | ( originalBufferInfo.wAttributes & 0xfff0 );
-        auto ignored = ::SetConsoleTextAttribute( s_pHandle, static_cast< WORD >( newAttributes ) );
-        ( void )( ignored );
+        [[maybe_unused]] bool ignored = ::SetConsoleTextAttribute( s_pHandle, static_cast< WORD >( newAttributes ) );
+        return static_cast< Uint16 >( originalBufferInfo.wAttributes );
     }
 }

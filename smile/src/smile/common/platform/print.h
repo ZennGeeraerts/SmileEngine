@@ -8,5 +8,5 @@ namespace smile::platform
 {
     void Print( const char *text, Uint32 length );
     const char *EOL();
-    void SetConsoleColor( Uint16 attributes );
+    Uint16 SetConsoleColor( Uint16 attributes );
 }
