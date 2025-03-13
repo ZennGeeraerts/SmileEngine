@@ -8,7 +8,7 @@
 #include "smile/common/memory/ref.h"
 
 #include "resource/resource_manager.h"
-#include "smile/graphic/renderer_backend/primitive_topology.h"
+#include "smile/graphic/renderer_backend/render_state.h"
 #include "smile/graphic/renderer_backend/resource/swap_chain.h"
 
 #include <DirectXMath.h>
@@ -55,12 +55,7 @@ namespace smile::graphic
         void BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer );
         void BindBackBuffer();
 
-        void BindRasterizerState( memory::Ref< RasterizerState > pRasterizerState ) const;
-        void BindDefaultRasterizerState() const;
-        void UnbindRasterizerState() const;
-
-        void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const;
-        void UnbindPrimitiveTopology() const;
+        void SetState( const RenderState &state ) const;
 
         void DrawIndexed( Uint32 indexCount );
         void Draw( Uint32 vertexCount );
@@ -82,6 +77,5 @@ namespace smile::graphic
         memory::Ref< SwapChain > m_pSwapChain = nullptr;
         memory::Ref< Shader > m_pBoundShader = nullptr;
         memory::Ref< Framebuffer > m_pBoundFramebuffer = nullptr;
-        memory::Ref< RasterizerState > m_pDefaultRasterizerState = nullptr;
     };
 }

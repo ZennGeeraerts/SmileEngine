@@ -19,6 +19,21 @@
 
 namespace smile::graphic
 {
+    static D3D11_PRIMITIVE_TOPOLOGY ConvertToDirectX11PrimitiveTopology( PrimitiveTopology primitiveTopology )
+    {
+        switch ( primitiveTopology )
+        {
+            case smile::graphic::PrimitiveTopology::None:
+                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+            case smile::graphic::PrimitiveTopology::TriangleList:
+                return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            case smile::graphic::PrimitiveTopology::LineList:
+                return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+            default:
+                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+        }
+    }
+
     DirectX11Context::DirectX11Context( DirectX11Device *pDevice, ID3D11DeviceContext *pInternal )
         : m_pDevice{ pDevice }, m_pInternal{ pInternal }
     {
@@ -45,6 +60,15 @@ namespace smile::graphic
         m_pInternal->ClearRenderTargetView( pRenderTargetView, pClearColor );
         m_pInternal->ClearDepthStencilView(
             pDX11SwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
+    }
+
+    void DirectX11Context::SetState( const RenderState &state ) const
+    {
+        D3D11_PRIMITIVE_TOPOLOGY directX11PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( state.Topology );
+        m_pInternal->IASetPrimitiveTopology( directX11PrimitiveTopology );
+
+        const auto &rasterizerState = m_pDevice->GetOrCreateRasterizerState( state );
+        m_pInternal->RSSetState( rasterizerState.pInternal );
     }
 
     void DirectX11Context::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
@@ -159,43 +183,6 @@ namespace smile::graphic
         m_pInternal->OMSetRenderTargets(
             pFramebuffer->GetRenderTargetViewCount(), &pRenderTargetViews[0], pDepthStencilView );
         m_pInternal->RSSetViewports( 1, pViewport );
-    }
-
-    void DirectX11Context::BindRasterizerState( RasterizerStateHandle handle ) const
-    {
-        const auto &rasterizerState = m_pDevice->m_RasterizerStates[handle.GetIndex()];
-        m_pInternal->RSSetState( rasterizerState.pInternal );
-    }
-
-    void DirectX11Context::UnbindRasterizerState() const
-    {
-        m_pInternal->RSSetState( nullptr );
-    }
-
-    static D3D11_PRIMITIVE_TOPOLOGY ConvertToDirectX11PrimitiveTopology( PrimitiveTopology primitiveTopology )
-    {
-        switch ( primitiveTopology )
-        {
-            case smile::graphic::PrimitiveTopology::None:
-                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-            case smile::graphic::PrimitiveTopology::TriangleList:
-                return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-            case smile::graphic::PrimitiveTopology::LineList:
-                return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-            default:
-                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-        }
-    }
-
-    void DirectX11Context::BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const
-    {
-        D3D11_PRIMITIVE_TOPOLOGY directX11PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( primitiveTopology );
-        m_pInternal->IASetPrimitiveTopology( directX11PrimitiveTopology );
-    }
-
-    void DirectX11Context::UnbindPrimitiveTopology() const
-    {
-        m_pInternal->IASetPrimitiveTopology( D3D_PRIMITIVE_TOPOLOGY_UNDEFINED );
     }
 
     void DirectX11Context::FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const

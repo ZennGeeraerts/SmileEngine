@@ -69,8 +69,8 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        RenderState state{};
+        renderSystem.SetState( state );
 
         for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )
         {
@@ -84,8 +84,6 @@ namespace smile::graphic
 
             RenderEngine::GetRenderSystem().DrawIndexed( drawCommand.pIndexBuffer->Count );
         }
-
-        renderSystem.UnbindPrimitiveTopology();
     }
 
     void ForwardRenderer::EndScene()

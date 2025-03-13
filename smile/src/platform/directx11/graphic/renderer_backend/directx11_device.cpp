@@ -710,17 +710,6 @@ namespace smile::graphic
         return pFramebuffer;
     }
 
-    void DirectX11Device::CreateRasterizerState( RasterizerStateHandle handle,
-        const RasterizerStateDescriptor &descriptor )
-    {
-        m_RasterizerStates[handle.GetIndex()].Create( m_pInternal, descriptor );
-    }
-
-    void DirectX11Device::DestroyRasterizerState( RasterizerStateHandle handle )
-    {
-        m_RasterizerStates[handle.GetIndex()].Destroy();
-    }
-
     void DirectX11Device::InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer )
     {
         memory::Ref< DirectX11Framebuffer > pD11Framebuffer = memory::Ref< DirectX11Framebuffer >{ pFramebuffer };
@@ -925,5 +914,16 @@ namespace smile::graphic
         viewPort.MaxDepth = 1.0f;
         viewPort.TopLeftX = 0.0f;
         viewPort.TopLeftY = 0.0f;
+    }
+
+    const DirectX11RasterizerState &DirectX11Device::GetOrCreateRasterizerState( const RenderState &renderState )
+    {
+        auto it = m_RasterizerStateCache.find( renderState );
+        if ( it != m_RasterizerStateCache.end() )
+            return it->second;
+
+        m_RasterizerStateCache.insert( std::make_pair( renderState, DirectX11RasterizerState{} ) );
+        m_RasterizerStateCache[renderState].Create( m_pInternal, renderState );
+        return m_RasterizerStateCache[renderState];
     }
 }

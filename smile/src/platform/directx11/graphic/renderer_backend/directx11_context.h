@@ -31,6 +31,7 @@ namespace smile::graphic
         void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
         void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
 
+        void SetState( const RenderState &state ) const override;
         void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
         void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
 
@@ -50,11 +51,6 @@ namespace smile::graphic
 
         void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const override;
         void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) override;
-
-        void BindRasterizerState( RasterizerStateHandle handle ) const override;
-        void UnbindRasterizerState() const override;
-        void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const override;
-        void UnbindPrimitiveTopology() const override;
 
         void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
 

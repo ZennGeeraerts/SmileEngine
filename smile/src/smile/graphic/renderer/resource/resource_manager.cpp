@@ -123,16 +123,6 @@ namespace smile::graphic
         return pFramebuffer;
     }
 
-    memory::Ref< RasterizerState > ResourceManager::CreateRasterizerState( const RasterizerStateDescriptor &descriptor )
-    {
-        RasterizerStateHandle handle = m_RasterizerStateHandleManager.CreateHandle();
-        m_pDevice->CreateRasterizerState( handle, descriptor );
-        
-        auto pRasterizerState = memory::CreateRef< RasterizerState >( handle );
-        m_pRasterizerStates.push_back( pRasterizerState );
-        return pRasterizerState;
-    }
-
     void ResourceManager::ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height )
     {
         if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||

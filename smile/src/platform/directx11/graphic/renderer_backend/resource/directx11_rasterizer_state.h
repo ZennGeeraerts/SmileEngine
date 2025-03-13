@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/resource/rasterizer_state.h"
+#include "smile/graphic/renderer_backend/render_state.h"
 
 #include <d3d11.h>
 
@@ -20,7 +20,7 @@ namespace smile::graphic
         DirectX11RasterizerState &operator=( const DirectX11RasterizerState & ) = delete;
         DirectX11RasterizerState &operator=( DirectX11RasterizerState && ) = delete;
 
-        void Create( ID3D11Device *pDevice, const RasterizerStateDescriptor &descriptor );
+        void Create( ID3D11Device *pDevice, const RenderState &renderState );
         void Destroy();
 
         ID3D11RasterizerState *pInternal = nullptr;

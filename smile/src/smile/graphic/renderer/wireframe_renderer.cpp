@@ -6,7 +6,6 @@
 #include "wireframe_renderer.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
 
 namespace smile::graphic
 {
@@ -14,14 +13,6 @@ namespace smile::graphic
     {
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
-
-        ResourceManager &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        RasterizerStateDescriptor rasterizerStateDesc{};
-        rasterizerStateDesc.CullMode = CullMode::None;
-        rasterizerStateDesc.FillMode = FillMode::WireFrame;
-        rasterizerStateDesc.EnableDepthClip = true;
-
-        s_pWireframeRasterizerState = resourceManager.CreateRasterizerState( rasterizerStateDesc );
     }
 
     void WireframeRenderer::ShutDown()
@@ -49,8 +40,11 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
-        renderSystem.BindRasterizerState( s_pWireframeRasterizerState );
+        RenderState state{};
+        state.CullMode = CullMode::None;
+        state.FillMode = FillMode::WireFrame;
+        state.EnableDepthClip = true;
+        renderSystem.SetState( state );
 
         if ( !m_RenderCollector.DrawList.empty() )
         {
@@ -69,9 +63,6 @@ namespace smile::graphic
 
             renderSystem.DrawIndexed( drawCommand.pIndexBuffer->Count );
         }
-
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.UnbindPrimitiveTopology();
     }
 
     void WireframeRenderer::Submit( const physics::ecs::BoxColliderComponent &boxColliderComponent,
