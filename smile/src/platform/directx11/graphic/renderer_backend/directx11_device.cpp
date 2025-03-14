@@ -916,14 +916,14 @@ namespace smile::graphic
         viewPort.TopLeftY = 0.0f;
     }
 
-    const DirectX11RasterizerState &DirectX11Device::GetOrCreateRasterizerState( const RenderState &renderState )
+    DirectX11RasterizerState *DirectX11Device::GetOrCreateRasterizerState( const RenderState &renderState )
     {
         auto it = m_RasterizerStateCache.find( renderState );
         if ( it != m_RasterizerStateCache.end() )
-            return it->second;
+            return it->second.get();
 
-        m_RasterizerStateCache.insert( std::make_pair( renderState, DirectX11RasterizerState{} ) );
-        m_RasterizerStateCache[renderState].Create( m_pInternal, renderState );
-        return m_RasterizerStateCache[renderState];
+        m_RasterizerStateCache.insert( std::make_pair( renderState, CreateScope< DirectX11RasterizerState >() ) );
+        m_RasterizerStateCache[renderState]->Create( m_pInternal, renderState );
+        return m_RasterizerStateCache[renderState].get();
     }
 }

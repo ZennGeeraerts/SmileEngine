@@ -67,8 +67,8 @@ namespace smile::graphic
         D3D11_PRIMITIVE_TOPOLOGY directX11PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( state.Topology );
         m_pInternal->IASetPrimitiveTopology( directX11PrimitiveTopology );
 
-        const auto &rasterizerState = m_pDevice->GetOrCreateRasterizerState( state );
-        m_pInternal->RSSetState( rasterizerState.pInternal );
+        auto pRasterizerState = m_pDevice->GetOrCreateRasterizerState( state );
+        m_pInternal->RSSetState( pRasterizerState->pInternal );
     }
 
     void DirectX11Context::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )

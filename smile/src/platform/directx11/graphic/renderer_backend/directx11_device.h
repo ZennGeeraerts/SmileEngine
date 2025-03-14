@@ -79,7 +79,7 @@ namespace smile::graphic
 
         void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
 
-        const DirectX11RasterizerState &GetOrCreateRasterizerState( const RenderState &renderState );
+        DirectX11RasterizerState *GetOrCreateRasterizerState( const RenderState &renderState );
 
       private:
         ID3D11Device *m_pInternal = nullptr;
@@ -91,7 +91,7 @@ namespace smile::graphic
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
 
         std::unordered_map< RenderState,
-            DirectX11RasterizerState,
+            Scope< DirectX11RasterizerState >,
             detail::RasterizerStateHasher,
             detail::RasterizerStateComparer >
             m_RasterizerStateCache;

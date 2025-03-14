@@ -70,6 +70,7 @@ namespace smile::graphic
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
         RenderState state{};
+        state.CullMode = CullMode::Front;
         renderSystem.SetState( state );
 
         for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )
