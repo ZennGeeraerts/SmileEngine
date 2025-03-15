@@ -28,6 +28,8 @@ namespace smile::graphic
         s_pSkyboxShader->UploadMat4( "World", worldMatrix );
 
         s_pCubeMesh = MeshFactory::CreateCube( { { ShaderDataType::Float3, "POSITION" } } );
+
+        s_State.CullMode = CullMode::None;
     }
 
     void SkyboxRenderer::ShutDown()

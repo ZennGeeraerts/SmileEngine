@@ -18,6 +18,9 @@ namespace smile::graphic
         VertexLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
         m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
 
+        m_State.Topology = PrimitiveTopology::LineList;
+        m_State.CullMode = CullMode::None;
+
         CreateVertexBuffer();
     }
 
@@ -99,8 +102,7 @@ namespace smile::graphic
 
         renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
 
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::LineList );
+        renderSystem.SetState( m_State );
 
         renderSystem.BindVertexBuffer( m_pVertexBuffer );
         renderSystem.BindShader( m_pShader );

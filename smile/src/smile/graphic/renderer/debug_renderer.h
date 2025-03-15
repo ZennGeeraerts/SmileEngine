@@ -7,6 +7,7 @@
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
+#include "smile/graphic/renderer_backend/render_state.h"
 
 #include "smile/graphic/camera/camera.h"
 
@@ -48,5 +49,7 @@ namespace smile::graphic
         Uint32 m_VertexCount{ 100 };
         const VertexLayout m_VertexLayout{ { ShaderDataType::Float3, "POSITION" },
             { ShaderDataType::Float4, "COLOR" } };
+
+        RenderState m_State{};
     };
 }

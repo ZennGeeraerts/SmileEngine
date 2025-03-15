@@ -7,11 +7,6 @@ DepthStencilState EnableDepth
     DepthWriteMask = ALL;
 };
 
-RasterizerState NoCulling
-{
-    CullMode = NONE;
-};
-
 struct VS_INPUT
 {
     float3 Pos : POSITION;
@@ -45,7 +40,6 @@ technique11 DefaultTechnique
 {
     pass P0
     {
-        SetRasterizerState( NoCulling );
         SetDepthStencilState( EnableDepth, 0 );
 
         SetVertexShader( CompileShader( vs_5_0, VS() ) );
