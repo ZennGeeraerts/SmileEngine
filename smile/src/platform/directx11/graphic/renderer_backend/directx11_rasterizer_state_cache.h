@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/hash_code.h"
-#include "smile/graphic/renderer_backend/render_state.h"
+#include "directx11_state_cache.h"
 #include "resource/directx11_rasterizer_state.h"
 
 #include <unordered_map>
@@ -36,20 +36,7 @@ namespace smile::graphic
         };
     }
 
-    class DirectX11RasterizerStateCache final
-    {
-      public:
-        const DirectX11RasterizerState *Add( const RenderState &state, Scope< DirectX11RasterizerState > pRasterizerState );
-        const DirectX11RasterizerState *Find( const RenderState &state ) const;
-        void Invalidate( const RenderState &state );
-        void Invalidate();
-
-      private:
-        using HashMap = std::unordered_map< RenderState,
-            Scope< DirectX11RasterizerState >,
-            detail::RasterizerStateHasher,
-            detail::RasterizerStateComparer >;
-
-        HashMap m_HashMap;
-    };
+    using DirectX11RasterizerStateCache = typename DirectX11StateCache< DirectX11RasterizerState,
+        detail::RasterizerStateHasher,
+        detail::RasterizerStateComparer >;
 }
