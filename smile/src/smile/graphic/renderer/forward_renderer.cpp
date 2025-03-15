@@ -10,11 +10,14 @@
 namespace smile::graphic
 {
     RenderCollector ForwardRenderer::s_RenderCollector{};
+    RenderState ForwardRenderer::s_State;
 
     void ForwardRenderer::Initialize()
     {
         DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+
+        s_State.CullMode = CullMode::Front;
     }
 
     void ForwardRenderer::ShutDown()
@@ -69,9 +72,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        RenderState state{};
-        state.CullMode = CullMode::Front;
-        renderSystem.SetState( state );
+        renderSystem.SetState( s_State );
 
         for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )
         {

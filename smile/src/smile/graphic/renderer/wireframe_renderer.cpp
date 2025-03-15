@@ -13,6 +13,10 @@ namespace smile::graphic
     {
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+
+        m_State.CullMode = CullMode::None;
+        m_State.FillMode = FillMode::WireFrame;
+        m_State.EnableDepthClip = true;
     }
 
     void WireframeRenderer::ShutDown()
@@ -40,11 +44,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        RenderState state{};
-        state.CullMode = CullMode::None;
-        state.FillMode = FillMode::WireFrame;
-        state.EnableDepthClip = true;
-        renderSystem.SetState( state );
+        renderSystem.SetState( m_State );
 
         if ( !m_RenderCollector.DrawList.empty() )
         {

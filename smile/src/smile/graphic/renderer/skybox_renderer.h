@@ -7,6 +7,7 @@
 #include "smile/graphic/camera/camera.h"
 #include "smile/graphic/mesh/mesh.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
+#include "smile/graphic/renderer_backend/render_state.h"
 
 namespace smile::graphic
 {
@@ -23,5 +24,6 @@ namespace smile::graphic
       private:
         static Ref< Mesh > s_pCubeMesh;
         static memory::Ref< Shader > s_pSkyboxShader;
+        static RenderState s_State;
     };
 }

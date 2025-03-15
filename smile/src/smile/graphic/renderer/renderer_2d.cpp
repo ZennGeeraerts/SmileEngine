@@ -19,6 +19,7 @@ namespace smile::graphic
         const VertexLayout Layout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } };
 
         DirectX::XMFLOAT4X4 ViewProjectionMatrix;
+        RenderState State{};
     };
 
     static Renderer2DStorage *s_pStorage;
@@ -116,8 +117,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        RenderState state{};
-        renderSystem.SetState( state );
+        renderSystem.SetState( s_pStorage->State );
 
         renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
         renderSystem.BindIndexBuffer( s_pStorage->pQuadIndexBuffer );

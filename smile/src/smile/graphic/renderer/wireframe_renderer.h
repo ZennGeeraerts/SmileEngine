@@ -33,5 +33,6 @@ namespace smile::graphic
 
       private:
         RenderCollector m_RenderCollector{};
+        RenderState m_State;
     };
 }
