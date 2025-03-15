@@ -19,6 +19,7 @@ namespace smile::graphic
         const VertexLayout Layout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } };
 
         DirectX::XMFLOAT4X4 ViewProjectionMatrix;
+        RenderState State{};
     };
 
     static Renderer2DStorage *s_pStorage;
@@ -116,8 +117,7 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.SetState( s_pStorage->State );
 
         renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
         renderSystem.BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
@@ -128,8 +128,6 @@ namespace smile::graphic
         s_pStorage->pShader->UploadBool( "UseTexture", false );
 
         renderSystem.DrawIndexed( s_pStorage->pQuadIndexBuffer->Count );
-
-        renderSystem.UnbindPrimitiveTopology();
     }
 
     void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
@@ -138,8 +136,8 @@ namespace smile::graphic
     {
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        RenderState state{};
+        renderSystem.SetState( state );
 
         renderSystem.BindVertexBuffer( s_pStorage->pQuadVertexBuffer );
         renderSystem.BindIndexBuffer( s_pStorage->pQuadIndexBuffer );
@@ -151,7 +149,5 @@ namespace smile::graphic
         s_pStorage->pShader->UploadTexture( "Diffuse", pTexture );
 
         renderSystem.DrawIndexed( s_pStorage->pQuadIndexBuffer->Count );
-
-        renderSystem.UnbindPrimitiveTopology();
     }
 }

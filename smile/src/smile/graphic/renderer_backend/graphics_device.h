@@ -8,7 +8,6 @@
 #include "resource/swap_chain.h"
 #include "resource/texture.h"
 #include "resource/frame_buffer.h"
-#include "resource/rasterizer_state.h"
 #include "shader/shader.h"
 
 #include "graphics_context.h"
@@ -59,9 +58,6 @@ namespace smile::graphic
         virtual memory::Ref< Texture > CreateTexture2D( const std::string &filePath ) = 0;
         virtual memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) = 0;
         virtual memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;
-
-        virtual void CreateRasterizerState( RasterizerStateHandle handle, const RasterizerStateDescriptor &descriptor ) = 0;
-        virtual void DestroyRasterizerState( RasterizerStateHandle handle ) = 0;
 
         virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
 

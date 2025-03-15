@@ -4,8 +4,9 @@
 /*=============================================================================*/
 #pragma once
 #include "smile/graphic/renderer_backend/graphics_device.h"
+#include "smile/graphic/renderer_backend/render_state.h"
 #include "resource/directx11_buffer.h"
-#include "resource/directx11_rasterizer_state.h"
+#include "directx11_rasterizer_state_cache.h"
 
 #include <d3d11.h>
 
@@ -52,11 +53,9 @@ namespace smile::graphic
         memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) override;
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) override;
 
-        void CreateRasterizerState( RasterizerStateHandle handle,
-            const RasterizerStateDescriptor &descriptor ) override;
-        void DestroyRasterizerState( RasterizerStateHandle handle ) override;
-
         void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
+
+        const DirectX11RasterizerState *GetOrCreateRasterizerState( const RenderState &renderState );
 
       private:
         ID3D11Device *m_pInternal = nullptr;
@@ -66,7 +65,8 @@ namespace smile::graphic
         std::vector< DirectX11Context * > m_pGraphicsContexts;
 
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
-        std::array< DirectX11RasterizerState, s_MaxRasterizerStates > m_RasterizerStates;
+        
+        DirectX11RasterizerStateCache m_RasterizerStateCache;
 
         friend class DirectX11Context;
     };

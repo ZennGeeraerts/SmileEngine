@@ -114,8 +114,6 @@ namespace smile::graphic
         m_pShader->UploadMat4( "World", worldMatrix );
 
         renderSystem.Draw( vertexCount );
-
-        renderSystem.UnbindPrimitiveTopology();
     }
 
     void DebugRenderer::EndScene()

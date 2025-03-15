@@ -13,6 +13,7 @@ namespace smile::graphic
 {
     Ref< Mesh > SkyboxRenderer::s_pCubeMesh = nullptr;
     memory::Ref< Shader > SkyboxRenderer::s_pSkyboxShader = nullptr;
+    RenderState SkyboxRenderer::s_State{};
 
     void SkyboxRenderer::Initialize()
     {
@@ -63,8 +64,7 @@ namespace smile::graphic
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();
 
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::TriangleList );
+        renderSystem.SetState( s_State );
 
         renderSystem.BindShader( s_pSkyboxShader );
 

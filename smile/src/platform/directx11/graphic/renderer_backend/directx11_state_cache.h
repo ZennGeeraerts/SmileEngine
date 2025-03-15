@@ -1,0 +1,52 @@
+/*=============================================================================*/
+// Copyright 2022-2025 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+#pragma once
+
+#include "smile/graphic/renderer_backend/render_state.h"
+
+#include <unordered_map>
+
+namespace smile::graphic
+{
+    template < typename StateType, typename Hasher, typename Comparer >
+    class DirectX11StateCache final
+    {
+      public:
+        const StateType *Add( const RenderState &state, Scope< StateType > pDirectX11State )
+        {
+            Invalidate( state );
+            auto pair = m_HashMap.emplace( state, std::move( pDirectX11State ) );
+            return pair.first->second.get();
+        }
+
+        const StateType *Find( const RenderState &state ) const
+        {
+            typename HashMap::const_iterator it = m_HashMap.find( state );
+
+            if ( it != m_HashMap.end() )
+                return it->second.get();
+
+            return nullptr;
+        }
+
+        void Invalidate( const RenderState &state )
+        {
+            typename HashMap::const_iterator it = m_HashMap.find( state );
+
+            if ( it != m_HashMap.end() )
+                m_HashMap.erase( state );
+        }
+
+        void Invalidate()
+        {
+            m_HashMap.clear();
+        }
+
+      private:
+        using HashMap = std::unordered_map< RenderState, Scope< StateType >, Hasher, Comparer >;
+
+        HashMap m_HashMap;
+    };
+}

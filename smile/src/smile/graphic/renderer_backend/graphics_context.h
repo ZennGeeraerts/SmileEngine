@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "primitive_topology.h"
+#include "render_state.h"
 #include "smile/common/memory/ref.h"
 
 #include "resource/swap_chain.h"
@@ -33,6 +33,7 @@ namespace smile::graphic
         virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
             const DirectX::XMFLOAT4 &clearColor ) const = 0;
 
+        virtual void SetState( const RenderState &state ) const = 0;
         virtual void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) = 0;
         virtual void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) = 0;
 
@@ -52,11 +53,6 @@ namespace smile::graphic
 
         virtual void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const = 0;
         virtual void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) = 0;
-
-        virtual void BindRasterizerState( RasterizerStateHandle handle ) const = 0;
-        virtual void UnbindRasterizerState() const = 0;
-        virtual void BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const = 0;
-        virtual void UnbindPrimitiveTopology() const = 0;
 
         virtual void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const = 0;
     };

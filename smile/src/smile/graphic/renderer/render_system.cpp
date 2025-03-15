@@ -21,12 +21,6 @@ namespace smile::graphic
         m_ResourceManager.Initialize( m_pRendererBackend->GetGraphicsDevice() );
 
         m_pSwapChain = m_pRendererBackend->GetGraphicsDevice()->CreateSwapChain( pWindow );
-
-        RasterizerStateDescriptor rasterizerStateDesc{};
-        rasterizerStateDesc.CullMode = CullMode::Front;
-        rasterizerStateDesc.FillMode = FillMode::Solid;
-        rasterizerStateDesc.EnableDepthClip = true;
-        m_pDefaultRasterizerState = m_ResourceManager.CreateRasterizerState( rasterizerStateDesc );
     }
 
     void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
@@ -106,29 +100,9 @@ namespace smile::graphic
         m_pBoundFramebuffer = nullptr;
     }
 
-    void RenderSystem::BindRasterizerState( memory::Ref< RasterizerState > pRasterizerState ) const
+    void RenderSystem::SetState( const RenderState &state ) const
     {
-        m_pRendererBackend->GetGraphicsContext()->BindRasterizerState( pRasterizerState->Handle );
-    }
-
-    void RenderSystem::BindDefaultRasterizerState() const
-    {
-        m_pRendererBackend->GetGraphicsContext()->BindRasterizerState( m_pDefaultRasterizerState->Handle );
-    }
-
-    void RenderSystem::UnbindRasterizerState() const
-    {
-        m_pRendererBackend->GetGraphicsContext()->UnbindRasterizerState();
-    }
-
-    void RenderSystem::BindPrimitiveTopology( PrimitiveTopology primitiveTopology ) const
-    {
-        m_pRendererBackend->GetGraphicsContext()->BindPrimitiveTopology( primitiveTopology );
-    }
-
-    void RenderSystem::UnbindPrimitiveTopology() const
-    {
-        m_pRendererBackend->GetGraphicsContext()->UnbindPrimitiveTopology();
+        m_pRendererBackend->GetGraphicsContext()->SetState( state );
     }
 
     void RenderSystem::DrawIndexed( Uint32 indexCount )
