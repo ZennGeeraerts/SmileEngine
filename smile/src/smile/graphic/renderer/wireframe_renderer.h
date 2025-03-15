@@ -8,7 +8,6 @@
 #include "render_collector.h"
 
 #include "smile/graphic/camera/camera.h"
-#include "smile/graphic/renderer_backend/resource/rasterizer_state.h"
 
 #include "smile/core/world/components.h"
 
@@ -34,6 +33,6 @@ namespace smile::graphic
 
       private:
         RenderCollector m_RenderCollector{};
-        memory::Ref< RasterizerState > s_pWireframeRasterizerState;
+        RenderState m_State;
     };
 }

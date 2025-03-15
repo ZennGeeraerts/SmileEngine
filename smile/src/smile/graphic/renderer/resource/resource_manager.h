@@ -10,10 +10,8 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "uniform_buffer.h"
-#include "rasterizer_state.h"
 #include "smile/graphic/renderer_backend/resource/buffer.h"
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
-#include "smile/graphic/renderer_backend/resource/rasterizer_state.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
 
 #include <vector>
@@ -44,7 +42,6 @@ namespace smile::graphic
         memory::Ref< Texture > CreateTexture2D( const std::string &filePath );
         memory::Ref< Texture > CreateTextureCube( const std::string &filePath );
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
-        memory::Ref< RasterizerState > CreateRasterizerState( const RasterizerStateDescriptor &descriptor );
 
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
 
@@ -57,9 +54,7 @@ namespace smile::graphic
         std::vector< memory::Ref< Texture > > m_pTextures2D;
         std::vector< memory::Ref< Texture > > m_pTexturesCube;
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
-        std::vector< memory::Ref< RasterizerState > > m_pRasterizerStates;
 
         GPUBufferHandleManager m_GPUBufferHandleManager;
-        RasterizerStateHandleManager m_RasterizerStateHandleManager;
     };
 }

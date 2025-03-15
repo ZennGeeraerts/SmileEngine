@@ -1,11 +1,18 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
 namespace smile::graphic
 {
+    enum class PrimitiveTopology
+    {
+        None = 0,
+        TriangleList,
+        LineList
+    };
+
     enum class CullMode
     {
         None,
@@ -19,9 +26,10 @@ namespace smile::graphic
         Solid
     };
 
-    struct RasterizerStateDescriptor final
+    struct RenderState final
     {
-        CullMode CullMode = CullMode::None;
+        PrimitiveTopology Topology = PrimitiveTopology::TriangleList;
+        CullMode CullMode = CullMode::Back;
         FillMode FillMode = FillMode::Solid;
         bool EnableDepthClip = true;
     };

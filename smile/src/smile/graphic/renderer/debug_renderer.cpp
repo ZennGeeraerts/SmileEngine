@@ -99,8 +99,9 @@ namespace smile::graphic
 
         renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
 
-        renderSystem.BindDefaultRasterizerState();
-        renderSystem.BindPrimitiveTopology( PrimitiveTopology::LineList );
+        RenderState state{};
+        state.Topology = PrimitiveTopology::LineList;
+        renderSystem.SetState( state );
 
         renderSystem.BindVertexBuffer( m_pVertexBuffer );
         renderSystem.BindShader( m_pShader );
@@ -112,8 +113,6 @@ namespace smile::graphic
         m_pShader->UploadMat4( "World", worldMatrix );
 
         renderSystem.Draw( vertexCount );
-
-        renderSystem.UnbindPrimitiveTopology();
     }
 
     void DebugRenderer::EndScene()
