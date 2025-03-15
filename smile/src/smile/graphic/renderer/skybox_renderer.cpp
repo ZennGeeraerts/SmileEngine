@@ -31,6 +31,7 @@ namespace smile::graphic
         s_pCubeMesh = MeshFactory::CreateCube( { { ShaderDataType::Float3, "POSITION" } } );
 
         s_State.CullMode = CullMode::None;
+        s_State.DepthComparissonFunc = DepthComparissonFunc::LessEqual;
     }
 
     void SkyboxRenderer::ShutDown()

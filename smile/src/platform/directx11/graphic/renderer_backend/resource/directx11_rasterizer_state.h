@@ -13,7 +13,7 @@ namespace smile::graphic
     struct DirectX11RasterizerState final
     {
         DirectX11RasterizerState() = default;
-        virtual ~DirectX11RasterizerState();
+        ~DirectX11RasterizerState();
 
         DirectX11RasterizerState( const DirectX11RasterizerState & ) = delete;
         DirectX11RasterizerState( DirectX11RasterizerState && ) = delete;

@@ -1,12 +1,6 @@
 float4x4 gViewProjection : VIEWPROJECTION;
 float4x4 gWorld : WORLD;
 
-DepthStencilState EnableDepth
-{
-    DepthEnable = TRUE;
-    DepthWriteMask = ALL;
-};
-
 struct VS_INPUT
 {
     float3 Pos : POSITION;
@@ -40,8 +34,6 @@ technique11 DefaultTechnique
 {
     pass P0
     {
-        SetDepthStencilState( EnableDepth, 0 );
-
         SetVertexShader( CompileShader( vs_5_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_5_0, PS() ) );

@@ -8,8 +8,6 @@
 #include "directx11_state_cache.h"
 #include "resource/directx11_rasterizer_state.h"
 
-#include <unordered_map>
-
 namespace smile::graphic
 {
     namespace detail

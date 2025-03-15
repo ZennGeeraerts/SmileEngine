@@ -39,11 +39,6 @@ float4 PS(VS_OUT input) : SV_Target
     return gCubeMap.Sample(gSamLinear, input.texC);
 }
 
-DepthStencilState gLessEqualDSS
-{
-    DepthFunc = LESS_EQUAL;
-};
-
 technique11 Render
 {
     pass P0
@@ -51,7 +46,5 @@ technique11 Render
         SetVertexShader(CompileShader(vs_4_0, VS()));
         SetGeometryShader(NULL);
         SetPixelShader(CompileShader(ps_4_0, PS()));
-
-        SetDepthStencilState(gLessEqualDSS, 0);
     }
 }

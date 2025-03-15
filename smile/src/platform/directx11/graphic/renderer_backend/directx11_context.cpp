@@ -67,8 +67,11 @@ namespace smile::graphic
         D3D11_PRIMITIVE_TOPOLOGY directX11PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( state.Topology );
         m_pInternal->IASetPrimitiveTopology( directX11PrimitiveTopology );
 
-        auto pRasterizerState = m_pDevice->GetOrCreateRasterizerState( state );
+        const auto pRasterizerState = m_pDevice->GetOrCreateRasterizerState( state );
         m_pInternal->RSSetState( pRasterizerState->pInternal );
+
+        const auto pDepthStencilState = m_pDevice->GetOrCreateDepthStencilState( state );
+        m_pInternal->OMSetDepthStencilState( pDepthStencilState->pInternal, 1 );
     }
 
     void DirectX11Context::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )

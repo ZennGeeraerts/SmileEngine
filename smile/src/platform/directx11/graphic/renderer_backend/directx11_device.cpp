@@ -926,4 +926,15 @@ namespace smile::graphic
         pNewRasterizerState->Create( m_pInternal, renderState );
         return m_RasterizerStateCache.Add( renderState, std::move( pNewRasterizerState ) );
     }
+
+    const DirectX11DepthStencilState *DirectX11Device::GetOrCreateDepthStencilState( const RenderState &renderState )
+    {
+        const DirectX11DepthStencilState *pDepthStencilState = m_DepthStencilStateCache.Find( renderState );
+        if ( pDepthStencilState )
+            return pDepthStencilState;
+        
+        auto pNewDepthStencilState = CreateScope< DirectX11DepthStencilState >();
+        pNewDepthStencilState->Create( m_pInternal, renderState );
+        return m_DepthStencilStateCache.Add( renderState, std::move( pNewDepthStencilState ) );
+    }
 }
