@@ -37,6 +37,7 @@ namespace smile::application
         auto it = std::find( m_pLayers.begin(), m_pLayers.end(), pLayer );
         if ( it != m_pLayers.end() )
         {
+            pLayer->OnDetach();
             m_pLayers.erase( it );
             --m_LayerInsertIndex;
         }
@@ -46,6 +47,9 @@ namespace smile::application
     {
         auto it = std::find( m_pLayers.begin(), m_pLayers.end(), pOverlay );
         if ( it != m_pLayers.end() )
+        {
+            pOverlay->OnDetach();
             m_pLayers.erase( it );
+        }
     }
 }
