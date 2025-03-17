@@ -59,7 +59,6 @@ namespace smile
 
         void SaveWorld();
         void SaveWorldAs();
-        void SerializeWorld( const Ref< world::World > &pWorld, const std::filesystem::path &filePath );
         void OpenWorld();
         void OpenWorld( const std::filesystem::path &filePath );
         void NewWorld();

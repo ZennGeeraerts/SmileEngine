@@ -5,7 +5,7 @@
 
 #include "smile_editor_layer.h"
 
-#include "smile/core/world/world_serializer.h"
+#include "smile/core/world/world_manager.h"
 #include "smile/core/window/file_dialog.h"
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/physics/physics_engine.h"
@@ -466,10 +466,12 @@ namespace smile
     {
         if ( !m_EditorWorldPath.empty() )
         {
-            SerializeWorld( m_pActiveWorld, m_EditorWorldPath );
+            world::WorldManager::SaveActive( m_EditorWorldPath );
         }
         else
+        {
             SaveWorldAs();
+        }
     }
 
     void SmileEditorLayer::SaveWorldAs()
@@ -477,17 +479,13 @@ namespace smile
         std::string filePath = window::FileDialog::SaveFile( "Smile World (*.smile)\0*.smile\0" );
         if ( !filePath.empty() )
         {
-            SerializeWorld( m_pActiveWorld, filePath );
+            world::WorldManager::SaveActive( filePath );
             m_EditorWorldPath = filePath;
         }
         else
+        {
             SM_LOG_ERROR( "SmileEditorLayer::SaveWorldAs > Failed to save world. The file path was empty" );
-    }
-
-    void SmileEditorLayer::SerializeWorld( const Ref< world::World > &pWorld, const std::filesystem::path &filePath )
-    {
-        world::WorldSerializer worldSerializer{ pWorld };
-        worldSerializer.Serialize( filePath.string() );
+        }
     }
 
     void SmileEditorLayer::OpenWorld()
@@ -502,27 +500,12 @@ namespace smile
         if ( m_WorldState != WorldState::Edit )
             OnWorldStop();
 
-        if ( filePath.empty() )
+        m_pEditorWorld = world::WorldManager::Load( filePath );
+        if ( m_pEditorWorld )
         {
-            SM_LOG_WARNING( "SmileEditorLayer::OpenWorld > Failed to load world: the path was empty" );
-            return;
-        }
-
-        if ( filePath.extension().string() != ".smile" )
-        {
-            SM_LOG_WARNING( "SmileEditorLayer::OpenWorld > Failed to load world: wrong file extention" );
-            return;
-        }
-
-        Ref< world::World > pNewWorld = CreateRef< world::World >();
-        world::WorldSerializer worldSerializer{ pNewWorld };
-        if ( worldSerializer.Deserialize( filePath.string() ) )
-        {
-            m_pEditorWorld = pNewWorld;
-
             m_pEditorWorld->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
-            m_pEditorWorld->OnOpen();
+            
             m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
 
             m_pActiveWorld = m_pEditorWorld;
@@ -535,12 +518,11 @@ namespace smile
         if ( m_WorldState == WorldState::Play || m_WorldState == WorldState::Simulate )
             OnWorldStop();
 
-        m_pActiveWorld->OnClose();
-        m_pActiveWorld = CreateRef< world::World >();
+        m_pActiveWorld = world::WorldManager::New();
         m_pEditorWorld = m_pActiveWorld;
         m_pActiveWorld->OnViewportResize(
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
-        m_pActiveWorld->OnOpen();
+
         m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
 
         m_EditorWorldPath = std::filesystem::path{};
@@ -552,9 +534,10 @@ namespace smile
             OnWorldStop();
 
         m_WorldState = WorldState::Play;
+
         m_pActiveWorld = world::World::Copy( m_pEditorWorld );
-        m_pEditorWorld->OnClose();
-        m_pActiveWorld->OnOpen();
+        world::WorldManager::Open( m_pActiveWorld );
+
         m_pActiveWorld->OnRuntimeStart();
         m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
     }
@@ -565,9 +548,10 @@ namespace smile
             OnWorldStop();
 
         m_WorldState = WorldState::Simulate;
+
         m_pActiveWorld = world::World::Copy( m_pEditorWorld );
-        m_pEditorWorld->OnClose();
-        m_pActiveWorld->OnOpen();
+        world::WorldManager::Open( m_pActiveWorld );
+
         m_pActiveWorld->OnSimulationStart();
         m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
     }
@@ -580,9 +564,7 @@ namespace smile
             m_pActiveWorld->OnSimulationStop();
 
         m_WorldState = WorldState::Edit;
-        m_pActiveWorld->OnClose();
-        m_pActiveWorld = m_pEditorWorld;
-        m_pActiveWorld->OnOpen();
+        world::WorldManager::Open( m_pEditorWorld );
         m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
     }
 
