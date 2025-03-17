@@ -73,7 +73,6 @@ namespace smile
         void DrawToolbar();
 
       private:
-        Ref< world::World > m_pActiveWorld;
         Ref< world::World > m_pEditorWorld;
         graphic::EditorCamera m_EditorCamera;
         std::filesystem::path m_EditorWorldPath;

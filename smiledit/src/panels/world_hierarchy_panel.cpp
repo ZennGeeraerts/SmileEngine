@@ -6,40 +6,31 @@
 #include "world_hierarchy_panel.h"
 
 #include "smile/core/world/components.h"
+#include "smile/core/world/world_manager.h"
+#include "smile/core/ecs/relationship.h"
 #include "smile/scripting/script_engine.h"
 #include "smile/graphic/mesh/mesh.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
-#include "smile/core/ecs/relationship.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
 namespace smile::world
 {
-    WorldHierarchyPanel::WorldHierarchyPanel( Ref< World > pWorld )
-    {
-        SetContext( pWorld );
-    }
-
-    void WorldHierarchyPanel::SetContext( Ref< World > pWorld )
-    {
-        m_pContext = pWorld;
-        m_SelectedEntity = {};
-    }
-
     void WorldHierarchyPanel::OnImGuiRender()
     {
         ImGui::Begin( "World Hierarchy" );
 
-        if ( m_pContext )
+        Ref< world::World > pContext = world::WorldManager::GetActive();
+        if ( pContext )
         {
             std::vector< Entity > entitiesToAddChild{};
 
-            m_pContext->m_ECSEngine.Each(
+            pContext->m_ECSEngine.Each(
                 [&]( auto entityID )
                 {
-                    Entity entity{ entityID, m_pContext.get() };
+                    Entity entity{ entityID, pContext.get() };
 
                     // Draw root nodes
                     // The root nodes will recursively draw its children
@@ -52,7 +43,7 @@ namespace smile::world
 
             for ( Entity parent : entitiesToAddChild )
             {
-                Entity child = m_pContext->CreateEntity();
+                Entity child = pContext->CreateEntity();
                 parent.AddChild( child );
             }
 
@@ -64,7 +55,7 @@ namespace smile::world
             if ( ImGui::BeginPopupContextWindow( 0, 1, false ) )
             {
                 if ( ImGui::MenuItem( "Create Empty Entity" ) )
-                    m_pContext->CreateEntity();
+                    pContext->CreateEntity();
 
                 ImGui::EndPopup();
             }
@@ -147,7 +138,7 @@ namespace smile::world
         {
             if ( pRelationship && pRelationship->First )
             {
-                Entity child{ pRelationship->First, m_pContext.get() };
+                Entity child{ pRelationship->First, world::WorldManager::GetActive().get() };
                 DrawEntityNode( child, entitiesToAddChild );
             }
 
@@ -156,13 +147,13 @@ namespace smile::world
 
         if ( pRelationship && pRelationship->Next )
         {
-            Entity child{ pRelationship->Next, m_pContext.get() };
+            Entity child{ pRelationship->Next, world::WorldManager::GetActive().get() };
             DrawEntityNode( child, entitiesToAddChild );
         }
 
         if ( isEntityDeleted )
         {
-            m_pContext->DestroyEntity( entity );
+            world::WorldManager::GetActive()->DestroyEntity( entity );
             if ( m_SelectedEntity == entity )
                 m_SelectedEntity = {};
         }

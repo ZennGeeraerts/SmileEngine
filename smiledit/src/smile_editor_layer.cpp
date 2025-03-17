@@ -69,7 +69,7 @@ namespace smile
             graphic::RenderEngine::ResizeFramebuffer(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
-            m_pActiveWorld->OnViewportResize(
+            world::WorldManager::GetActive()->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
@@ -82,7 +82,7 @@ namespace smile
                 if ( m_IsViewportFocused )
                     m_EditorCamera.OnUpdate( deltaTime );
 
-                m_pActiveWorld->OnUpdateEditor( deltaTime, m_EditorCamera );
+                world::WorldManager::GetActive()->OnUpdateEditor( deltaTime, m_EditorCamera );
                 break;
             }
             case WorldState::Simulate:
@@ -90,12 +90,12 @@ namespace smile
                 if ( m_IsViewportFocused )
                     m_EditorCamera.OnUpdate( deltaTime );
 
-                m_pActiveWorld->OnUpdateSimulation( deltaTime, m_EditorCamera );
+                world::WorldManager::GetActive()->OnUpdateSimulation( deltaTime, m_EditorCamera );
                 break;
             }
             case WorldState::Play:
             {
-                m_pActiveWorld->OnUpdateRuntime( deltaTime );
+                world::WorldManager::GetActive()->OnUpdateRuntime( deltaTime );
                 break;
             }
         }
@@ -505,11 +505,9 @@ namespace smile
         {
             m_pEditorWorld->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
-            
-            m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
-
-            m_pActiveWorld = m_pEditorWorld;
             m_EditorWorldPath = filePath;
+
+            m_WorldHierarchyPanel.DeselectEntity();
         }
     }
 
@@ -518,14 +516,12 @@ namespace smile
         if ( m_WorldState == WorldState::Play || m_WorldState == WorldState::Simulate )
             OnWorldStop();
 
-        m_pActiveWorld = world::WorldManager::New();
-        m_pEditorWorld = m_pActiveWorld;
-        m_pActiveWorld->OnViewportResize(
+        m_pEditorWorld = world::WorldManager::New();
+        m_pEditorWorld->OnViewportResize(
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
-
-        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
-
         m_EditorWorldPath = std::filesystem::path{};
+
+        m_WorldHierarchyPanel.DeselectEntity();
     }
 
     void SmileEditorLayer::OnWorldPlay()
@@ -534,12 +530,10 @@ namespace smile
             OnWorldStop();
 
         m_WorldState = WorldState::Play;
+        world::WorldManager::Open( world::World::Copy( m_pEditorWorld ) );
+        world::WorldManager::GetActive()->OnRuntimeStart();
 
-        m_pActiveWorld = world::World::Copy( m_pEditorWorld );
-        world::WorldManager::Open( m_pActiveWorld );
-
-        m_pActiveWorld->OnRuntimeStart();
-        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
+        m_WorldHierarchyPanel.DeselectEntity();
     }
 
     void SmileEditorLayer::OnWorldSimulate()
@@ -548,24 +542,23 @@ namespace smile
             OnWorldStop();
 
         m_WorldState = WorldState::Simulate;
+        world::WorldManager::Open( world::World::Copy( m_pEditorWorld ) );
+        world::WorldManager::GetActive()->OnSimulationStart();
 
-        m_pActiveWorld = world::World::Copy( m_pEditorWorld );
-        world::WorldManager::Open( m_pActiveWorld );
-
-        m_pActiveWorld->OnSimulationStart();
-        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
+        m_WorldHierarchyPanel.DeselectEntity();
     }
 
     void SmileEditorLayer::OnWorldStop()
     {
         if ( m_WorldState == WorldState::Play )
-            m_pActiveWorld->OnRuntimeStop();
+            world::WorldManager::GetActive()->OnRuntimeStop();
         else if ( m_WorldState == WorldState::Simulate )
-            m_pActiveWorld->OnSimulationStop();
+            world::WorldManager::GetActive()->OnSimulationStop();
 
         m_WorldState = WorldState::Edit;
         world::WorldManager::Open( m_pEditorWorld );
-        m_WorldHierarchyPanel.SetContext( m_pActiveWorld );
+
+        m_WorldHierarchyPanel.DeselectEntity();
     }
 
     void SmileEditorLayer::DuplicateEntity()
