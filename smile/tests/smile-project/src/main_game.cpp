@@ -3,7 +3,7 @@
 #include "smile/core/application/entry_point.h"
 #include "smile/core/application/timer.h"
 
-#include "input/input.h"
+#include "smile/core/input/input.h"
 
 #include "smile/core/world/ecs/transform_component.h"
 
@@ -39,7 +39,7 @@ ExampleLayer::ExampleLayer() : Layer( "Example" )
 
 void ExampleLayer::OnAttach()
 {
-    smile::graphic::RenderCommand::SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
+    smile::graphic::RenderEngine::GetRenderSystem().SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
         DirectX::Colors::DodgerBlue.f[1],
         DirectX::Colors::DodgerBlue.f[2],
         DirectX::Colors::DodgerBlue.f[3] } );
@@ -99,7 +99,7 @@ void ExampleLayer::OnAttach()
         -0.5f,
         0.5f };
 
-    smile::graphic::BufferLayout vertexLayout{ { smile::graphic::ShaderDataType::Float3, "Position" },
+    smile::graphic::VertexLayout vertexLayout{ { smile::graphic::ShaderDataType::Float3, "Position" },
         { smile::graphic::ShaderDataType::Float3, "Normal" },
         { smile::graphic::ShaderDataType::Float3, "TexCoord" } };
 
@@ -174,10 +174,11 @@ void ExampleLayer::OnAttach()
     cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
     cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
 
-    auto pDevice = smile::graphic::RenderCommand::GetGraphicsDevice();
-    auto pShader = pDevice->CreateShader( "assets/shaders/PBR.fx" );
+    auto &resourceManager = smile::graphic::RenderEngine::GetRenderSystem().GetResourceManager();
+    auto pShader = resourceManager.CreateShader( "assets/shaders/PBR.fx" );
     auto pMaterial = smile::CreateRef< smile::graphic::Material >( pShader );
-    smile::memory::Ref< smile::graphic::Texture > pAlbedo = pDevice->CreateTexture2D( "assets/textures/uv_grid.png" );
+    smile::memory::Ref< smile::graphic::Texture > pAlbedo =
+        resourceManager.CreateTexture2D( "assets/textures/uv_grid.png" );
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
     m_ModelEntity = m_pActiveWorld->CreateEntity( "Model" );
@@ -244,7 +245,7 @@ void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
         SM_LOG_INFO( "FPS: {}", smile::application::Timer::GetInstance().GetFPS() );
     }
 
-    smile::graphic::RenderCommand::Clear();
+    smile::graphic::RenderEngine::GetRenderSystem().Clear();
     m_pActiveWorld->OnUpdateRuntime( deltaTime );
 }
 
