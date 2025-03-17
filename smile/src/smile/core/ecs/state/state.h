@@ -15,10 +15,14 @@ namespace smile::ecs::state
     class State final : public memory::Object
     {
       public:
+        using Iterator = std::vector< std::string >::iterator;
+
+      public:
         State() = default;
         ~State() = default;
 
-        void AddSystem( const std::string &systemName );
+        void AddSystem( std::string systemName );
+        void AddOverlaySystem( std::string systemName );
         bool HasSystem( std::string_view systemName );
 
         const std::vector< std::string > &GetSystemNames() const
@@ -26,7 +30,13 @@ namespace smile::ecs::state
             return m_SystemNames;
         }
 
+        Uint32 GetInsertIndex() const
+        {
+            return m_InsertIndex;
+        }
+
       private:
         std::vector< std::string > m_SystemNames;
+        Uint32 m_InsertIndex = 0;
     };
 }

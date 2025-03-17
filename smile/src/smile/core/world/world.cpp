@@ -41,13 +41,13 @@ namespace smile::world
 
         auto pEditorState = memory::CreateRef< smile::ecs::state::State >();
         pEditorState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
-        pEditorState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pEditorState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "editor", pEditorState );
 
         auto pSimulateState = memory::CreateRef< smile::ecs::state::State >();
         pSimulateState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pSimulateState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pSimulateState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "simulate", pSimulateState );
 
         auto pRuntimeState = memory::CreateRef< smile::ecs::state::State >();
@@ -55,7 +55,7 @@ namespace smile::world
         pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
         m_StateManager.AddState( "runtime", pRuntimeState );
 
         m_StateManager.Initialize( &m_ECSEngine, "editor" );
@@ -115,7 +115,7 @@ namespace smile::world
 
     void World::OnOpen()
     {
-        m_StateManager.ChangeState( "editor", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
+        m_StateManager.ChangeState( "editor" );
 
         graphic::RenderEngine::GetScene()->AddRenderPass(
             memory::CreateRef< graphic::ecs::ForwardRenderPass >( m_ECSEngine ) );
@@ -136,7 +136,7 @@ namespace smile::world
 
     void World::OnRuntimeStart()
     {
-        m_StateManager.ChangeState( "runtime", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
+        m_StateManager.ChangeState( "runtime" );
 
         // Scripting
         {
@@ -154,18 +154,18 @@ namespace smile::world
 
     void World::OnRuntimeStop()
     {
-        m_StateManager.ChangeState( "editor", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
+        m_StateManager.ChangeState( "editor" );
         scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void World::OnSimulationStart()
     {
-        m_StateManager.ChangeState( "simulate", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
+        m_StateManager.ChangeState( "simulate" );
     }
 
     void World::OnSimulationStop()
     {
-        m_StateManager.ChangeState( "editor", { std::string{ graphic::ecs::GraphicSystem::GetStaticName() } } );
+        m_StateManager.ChangeState( "editor" );
     }
 
     void World::OnUpdateRuntime( primitive::Timestep deltaTime )
