@@ -27,7 +27,7 @@ namespace smile::ecs
 
             void AddState( const std::string &name, memory::Ref< State > pState );
             bool HasState( const std::string &name ) const;
-            void ChangeState( const std::string &name, const std::vector< std::string > &systemsAtBack = {} );
+            void ChangeState( const std::string &name );
 
             std::vector< std::string > GetStates() const;
             State &GetState( const std::string &name ) const;
@@ -35,9 +35,14 @@ namespace smile::ecs
 
           private:
             memory::Ref< BaseSystem > GetOrCreateSystem( const std::string &systemName );
+            void SyncState( const std::string &name,
+                State::Iterator currentSystemsBegin,
+                State::Iterator currentSystemsEnd,
+                State::Iterator targetSystemsBegin,
+                State::Iterator targetSystemsEnd );
 
           private:
-            ECSEngine *m_pECSEngine;
+            ECSEngine *m_pECSEngine = nullptr;
             std::unordered_map< std::string, memory::Ref< State > > m_StateMap;
             std::unordered_map< std::string, memory::Ref< BaseSystem > > m_SystemMap;
 

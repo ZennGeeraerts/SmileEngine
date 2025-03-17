@@ -7,9 +7,15 @@
 
 namespace smile::ecs::state
 {
-    void State::AddSystem( const std::string &systemName )
+    void State::AddSystem( std::string systemName )
     {
-        m_SystemNames.emplace_back( systemName );
+        m_SystemNames.emplace( m_SystemNames.begin() + m_InsertIndex, std::move( systemName ) );
+        ++m_InsertIndex;
+    }
+
+    void State::AddOverlaySystem( std::string systemName )
+    {
+        m_SystemNames.emplace_back( std::move( systemName ) );
     }
 
     bool State::HasSystem( std::string_view systemName )
