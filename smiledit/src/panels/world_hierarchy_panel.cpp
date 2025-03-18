@@ -17,12 +17,12 @@
 
 namespace smile::world
 {
-    WorldHierarchyPanel::WorldHierarchyPanel( const Ref< World > &pWorld )
+    WorldHierarchyPanel::WorldHierarchyPanel( World *pWorld )
     {
         SetContext( pWorld );
     }
 
-    void WorldHierarchyPanel::SetContext( const Ref< World > &pWorld )
+    void WorldHierarchyPanel::SetContext( World *pWorld )
     {
         m_pContext = pWorld;
         m_SelectedEntity = {};
@@ -39,7 +39,7 @@ namespace smile::world
             m_pContext->m_ECSEngine.Each(
                 [&]( auto entityID )
                 {
-                    Entity entity{ entityID, m_pContext.get() };
+                    Entity entity{ entityID, m_pContext };
 
                     // Draw root nodes
                     // The root nodes will recursively draw its children
@@ -147,7 +147,7 @@ namespace smile::world
         {
             if ( pRelationship && pRelationship->First )
             {
-                Entity child{ pRelationship->First, m_pContext.get() };
+                Entity child{ pRelationship->First, m_pContext };
                 DrawEntityNode( child, entitiesToAddChild );
             }
 
@@ -156,7 +156,7 @@ namespace smile::world
 
         if ( pRelationship && pRelationship->Next )
         {
-            Entity child{ pRelationship->Next, m_pContext.get() };
+            Entity child{ pRelationship->Next, m_pContext };
             DrawEntityNode( child, entitiesToAddChild );
         }
 

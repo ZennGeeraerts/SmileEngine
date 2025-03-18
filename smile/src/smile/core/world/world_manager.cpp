@@ -43,6 +43,11 @@ namespace smile::world
         }
     }
 
+    void WorldManager::UnloadActive()
+    {
+        s_pActiveWorld.reset();
+    }
+
     void WorldManager::Open( const Ref< World > &pWorld )
     {
         if ( s_pActiveWorld )

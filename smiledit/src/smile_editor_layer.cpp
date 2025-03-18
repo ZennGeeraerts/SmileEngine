@@ -53,13 +53,15 @@ namespace smile
                 application::Application::GetInstance().ShutDown();
         }
 
-        // TODO: Also shutdown physics engine.
-        // We need to make sure the world is destroyed first since the physics system uses the physics engine.
         physics::PhysicsEngine::CreateInstance();
     }
 
     void SmileEditorLayer::OnDetach()
     {
+        m_pEditorWorld.reset();
+        world::WorldManager::UnloadActive();
+
+        physics::PhysicsEngine::RemoveInstance();
     }
 
     void SmileEditorLayer::OnUpdate( primitive::Timestep deltaTime )
@@ -510,7 +512,7 @@ namespace smile
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorWorldPath = filePath;
 
-            m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
+            m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
         }
     }
 
@@ -524,7 +526,7 @@ namespace smile
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         m_EditorWorldPath = std::filesystem::path{};
 
-        m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
     }
 
     void SmileEditorLayer::OnWorldPlay()
@@ -538,7 +540,7 @@ namespace smile
         world::WorldManager::Open( pActiveWorld );
         pActiveWorld->OnRuntimeStart();
 
-        m_WorldHierarchyPanel.SetContext( pActiveWorld );
+        m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
     }
 
     void SmileEditorLayer::OnWorldSimulate()
@@ -552,7 +554,7 @@ namespace smile
         world::WorldManager::Open( pActiveWorld );
         pActiveWorld->OnSimulationStart();
 
-        m_WorldHierarchyPanel.SetContext( pActiveWorld );
+        m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
     }
 
     void SmileEditorLayer::OnWorldStop()
@@ -565,7 +567,7 @@ namespace smile
         m_WorldState = WorldState::Edit;
         world::WorldManager::Open( m_pEditorWorld );
 
-        m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
     }
 
     void SmileEditorLayer::DuplicateEntity()

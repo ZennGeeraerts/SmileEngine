@@ -20,6 +20,7 @@ namespace smile::world
 
         static Ref< World > New();
         static Ref< World > Load( const std::filesystem::path &path );
+        static void UnloadActive();
         static void Open( const Ref< World > &pWorld );
         static void SaveActive( const std::filesystem::path &path );
 

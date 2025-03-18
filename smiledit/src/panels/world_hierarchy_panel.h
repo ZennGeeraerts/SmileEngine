@@ -21,9 +21,9 @@ namespace smile::world
     {
       public:
         WorldHierarchyPanel() = default;
-        WorldHierarchyPanel( const Ref< World > &pWorld );
+        WorldHierarchyPanel( World *pWorld );
 
-        void SetContext( const Ref< World > &pWorld );
+        void SetContext( World *pWorld );
 
         void OnImGuiRender();
 
@@ -49,7 +49,7 @@ namespace smile::world
         static void DrawMaterial( const Ref< graphic::Material > &material );
 
       private:
-        Ref< World > m_pContext;
+        World *m_pContext;
         Entity m_SelectedEntity;
     };
 }
