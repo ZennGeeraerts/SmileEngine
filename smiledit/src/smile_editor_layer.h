@@ -59,7 +59,6 @@ namespace smile
 
         void SaveWorld();
         void SaveWorldAs();
-        void SerializeWorld( const Ref< world::World > &pWorld, const std::filesystem::path &filePath );
         void OpenWorld();
         void OpenWorld( const std::filesystem::path &filePath );
         void NewWorld();
@@ -74,7 +73,6 @@ namespace smile
         void DrawToolbar();
 
       private:
-        Ref< world::World > m_pActiveWorld;
         Ref< world::World > m_pEditorWorld;
         graphic::EditorCamera m_EditorCamera;
         std::filesystem::path m_EditorWorldPath;

@@ -21,9 +21,9 @@ namespace smile::world
     {
       public:
         WorldHierarchyPanel() = default;
-        WorldHierarchyPanel( Ref< World > pWorld );
+        WorldHierarchyPanel( const Ref< World > &pWorld );
 
-        void SetContext( Ref< World > pWorld );
+        void SetContext( const Ref< World > &pWorld );
 
         void OnImGuiRender();
 

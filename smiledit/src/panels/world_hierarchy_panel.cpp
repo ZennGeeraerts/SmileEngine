@@ -6,23 +6,23 @@
 #include "world_hierarchy_panel.h"
 
 #include "smile/core/world/components.h"
+#include "smile/core/ecs/relationship.h"
 #include "smile/scripting/script_engine.h"
 #include "smile/graphic/mesh/mesh.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
-#include "smile/core/ecs/relationship.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
 namespace smile::world
 {
-    WorldHierarchyPanel::WorldHierarchyPanel( Ref< World > pWorld )
+    WorldHierarchyPanel::WorldHierarchyPanel( const Ref< World > &pWorld )
     {
         SetContext( pWorld );
     }
 
-    void WorldHierarchyPanel::SetContext( Ref< World > pWorld )
+    void WorldHierarchyPanel::SetContext( const Ref< World > &pWorld )
     {
         m_pContext = pWorld;
         m_SelectedEntity = {};
