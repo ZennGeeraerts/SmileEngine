@@ -7,7 +7,7 @@
 namespace smile::foundation
 {
     template < typename ObjectType >
-    class Singleton
+    class MeyersSingleton
     {
       public:
         static ObjectType &GetInstance()
@@ -17,10 +17,10 @@ namespace smile::foundation
         }
 
       protected:
-        Singleton() = default;
-        Singleton( const Singleton & ) = delete;
-        ~Singleton() = default;
-        Singleton &operator=( const Singleton & ) = delete;
-        Singleton &operator=( Singleton && ) = delete;
+        MeyersSingleton() = default;
+        MeyersSingleton( const MeyersSingleton & ) = delete;
+        ~MeyersSingleton() = default;
+        MeyersSingleton &operator=( const MeyersSingleton & ) = delete;
+        MeyersSingleton &operator=( MeyersSingleton && ) = delete;
     };
 }

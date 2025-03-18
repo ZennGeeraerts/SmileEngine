@@ -5,14 +5,14 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
-#include "smile/common/foundation/singleton.h"
+#include "smile/common/foundation/meyers_singleton.h"
 #include "smile/common/primitive/timestep.h"
 
 #include <chrono>
 
 namespace smile::application
 {
-    class Timer final : public foundation::Singleton< Timer >
+    class Timer final : public foundation::MeyersSingleton< Timer >
     {
       public:
         Timer();

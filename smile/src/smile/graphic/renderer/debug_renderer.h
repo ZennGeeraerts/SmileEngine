@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/common/foundation/singleton.h"
+#include "smile/common/foundation/meyers_singleton.h"
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
@@ -13,7 +13,7 @@
 
 namespace smile::graphic
 {
-    class DebugRenderer final : public foundation::Singleton< DebugRenderer >
+    class DebugRenderer final : public foundation::MeyersSingleton< DebugRenderer >
     {
       public:
         void Initialize();

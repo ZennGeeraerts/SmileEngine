@@ -5,13 +5,13 @@
 #pragma once
 
 #include "logger.h"
-#include "smile/common/foundation/singleton.h"
+#include "smile/common/foundation/meyers_singleton.h"
 
 #include <unordered_map>
 
 namespace smile::logging
 {
-    class LoggerRegistry final : public foundation::Singleton< LoggerRegistry >
+    class LoggerRegistry final : public foundation::MeyersSingleton< LoggerRegistry >
     {
       public:
         LoggerRegistry();
