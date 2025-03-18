@@ -14,7 +14,10 @@ namespace smile::application
     LayerStack::~LayerStack()
     {
         for ( Layer *pLayer : m_pLayers )
+        {
+            pLayer->OnDetach();
             delete pLayer;
+        }
     }
 
     // Insert at layerInsertIndex

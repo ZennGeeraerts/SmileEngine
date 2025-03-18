@@ -232,6 +232,7 @@ namespace smile::scripting
     {
         ShutDownMono();
         delete s_pData;
+        s_pData = nullptr;
     }
 
     void ScriptEngine::InitializeMono()
@@ -385,6 +386,9 @@ namespace smile::scripting
 
     void ScriptEngine::OnRuntimeStop()
     {
+        if ( !s_pData )
+            return;
+
         s_pData->pWorldContext = nullptr;
         s_pData->EntityInstances.clear();
     }

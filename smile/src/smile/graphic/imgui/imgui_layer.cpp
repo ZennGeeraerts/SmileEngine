@@ -29,7 +29,6 @@ namespace smile::imgui
 
     ImGuiLayer::~ImGuiLayer()
     {
-        ShutDown();
     }
 
     void ImGuiLayer::ShutDown()

@@ -8,7 +8,7 @@
 #include "components.h"
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/physics/physics_engine.h"
-#include "smile/scripting/script_engine.h"
+#include "smile/scripting/ecs/script_system.h"
 
 #include "entity.h"
 
@@ -33,6 +33,7 @@ namespace smile::world
 {
     World::World()
     {
+        smile::ecs::state::SystemFactory::RegisterSystem< scripting::ecs::ScriptSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
         smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
@@ -51,6 +52,7 @@ namespace smile::world
         m_StateManager.AddState( "simulate", pSimulateState );
 
         auto pRuntimeState = memory::CreateRef< smile::ecs::state::State >();
+        pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
@@ -137,25 +139,11 @@ namespace smile::world
     void World::OnRuntimeStart()
     {
         m_StateManager.ChangeState( "runtime" );
-
-        // Scripting
-        {
-            scripting::ScriptEngine::OnRuntimeStart( this );
-
-            // Instantiate all script entities
-            auto view = m_ECSEngine.GetView< scripting::ecs::ScriptComponent >();
-            for ( auto e : view )
-            {
-                Entity entity = { e, this };
-                scripting::ScriptEngine::OnCreateEntity( entity );
-            }
-        }
     }
 
     void World::OnRuntimeStop()
     {
         m_StateManager.ChangeState( "editor" );
-        scripting::ScriptEngine::OnRuntimeStop();
     }
 
     void World::OnSimulationStart()
@@ -170,13 +158,6 @@ namespace smile::world
 
     void World::OnUpdateRuntime( primitive::Timestep deltaTime )
     {
-        auto view = m_ECSEngine.GetView< scripting::ecs::ScriptComponent >();
-        for ( auto e : view )
-        {
-            Entity entity = { e, this };
-            scripting::ScriptEngine::OnUpdateEntity( entity, deltaTime );
-        }
-
         m_ECSEngine.OnUpdate();
     }
 
