@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/common/foundation/singleton.h"
+#include "smile/common/foundation/meyers_singleton.h"
 
 #include "render_collector.h"
 
@@ -13,7 +13,7 @@
 
 namespace smile::graphic
 {
-    class WireframeRenderer final : public foundation::Singleton< WireframeRenderer >
+    class WireframeRenderer final : public foundation::MeyersSingleton< WireframeRenderer >
     {
       public:
         void Initialize();

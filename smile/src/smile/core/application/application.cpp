@@ -40,6 +40,16 @@ namespace smile::application
         m_LayerStack.PushOverlay( pOverlay );
     }
 
+    void Application::PopLayer( Layer *pLayer )
+    {
+        m_LayerStack.PopLayer( pLayer );
+    }
+
+    void Application::PopOverLay( Layer *pLayer )
+    {
+        m_LayerStack.PopOverlay( pLayer );
+    }
+
     void Application::OnEvent( window::Event &e )
     {
         window::EventDispatcher dispatcher{ e };

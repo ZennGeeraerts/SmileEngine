@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/singleton.h"
+#include "smile/common/memory/object.h"
 #include "physics_world.h"
 
 namespace smile::physics
@@ -17,7 +18,7 @@ namespace smile::physics
         Uint32 SubstepCount = 0;
     };
 
-    class PhysicsEngine final : public foundation::Singleton< PhysicsEngine >
+    class PhysicsEngine final : public foundation::Singleton< PhysicsEngine >, public memory::Object
     {
       private:
         struct Opaque;

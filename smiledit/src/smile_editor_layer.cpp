@@ -8,6 +8,7 @@
 #include "smile/core/world/world_serializer.h"
 #include "smile/core/window/file_dialog.h"
 #include "smile/graphic/renderer/render_engine.h"
+#include "smile/physics/physics_engine.h"
 
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
@@ -20,6 +21,7 @@ namespace smile
 
     SmileEditorLayer::SmileEditorLayer() : application::Layer( "SmileEditorLayer" )
     {
+        physics::PhysicsEngine::CreateInstance();
     }
 
     void SmileEditorLayer::OnAttach()
