@@ -509,7 +509,7 @@ namespace smile
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorWorldPath = filePath;
 
-            m_WorldHierarchyPanel.DeselectEntity();
+            m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
         }
     }
 
@@ -523,7 +523,7 @@ namespace smile
             static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         m_EditorWorldPath = std::filesystem::path{};
 
-        m_WorldHierarchyPanel.DeselectEntity();
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
     }
 
     void SmileEditorLayer::OnWorldPlay()
@@ -532,10 +532,12 @@ namespace smile
             OnWorldStop();
 
         m_WorldState = WorldState::Play;
-        world::WorldManager::Open( world::World::Copy( m_pEditorWorld ) );
-        world::WorldManager::GetActive()->OnRuntimeStart();
 
-        m_WorldHierarchyPanel.DeselectEntity();
+        auto pActiveWorld = world::World::Copy( m_pEditorWorld );
+        world::WorldManager::Open( pActiveWorld );
+        pActiveWorld->OnRuntimeStart();
+
+        m_WorldHierarchyPanel.SetContext( pActiveWorld );
     }
 
     void SmileEditorLayer::OnWorldSimulate()
@@ -544,10 +546,12 @@ namespace smile
             OnWorldStop();
 
         m_WorldState = WorldState::Simulate;
-        world::WorldManager::Open( world::World::Copy( m_pEditorWorld ) );
-        world::WorldManager::GetActive()->OnSimulationStart();
 
-        m_WorldHierarchyPanel.DeselectEntity();
+        auto pActiveWorld = world::World::Copy( m_pEditorWorld );
+        world::WorldManager::Open( pActiveWorld );
+        pActiveWorld->OnSimulationStart();
+
+        m_WorldHierarchyPanel.SetContext( pActiveWorld );
     }
 
     void SmileEditorLayer::OnWorldStop()
@@ -560,7 +564,7 @@ namespace smile
         m_WorldState = WorldState::Edit;
         world::WorldManager::Open( m_pEditorWorld );
 
-        m_WorldHierarchyPanel.DeselectEntity();
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld );
     }
 
     void SmileEditorLayer::DuplicateEntity()
