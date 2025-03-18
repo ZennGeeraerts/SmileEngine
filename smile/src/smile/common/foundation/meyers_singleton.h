@@ -19,6 +19,7 @@ namespace smile::foundation
       protected:
         MeyersSingleton() = default;
         MeyersSingleton( const MeyersSingleton & ) = delete;
+        MeyersSingleton( MeyersSingleton && ) = delete;
         ~MeyersSingleton() = default;
         MeyersSingleton &operator=( const MeyersSingleton & ) = delete;
         MeyersSingleton &operator=( MeyersSingleton && ) = delete;

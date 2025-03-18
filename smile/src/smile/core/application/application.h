@@ -45,6 +45,8 @@ namespace smile::application
 
         void PushLayer( Layer *pLayer );
         void PushOverlay( Layer *pOverlay );
+        void PopLayer( Layer *pLayer );
+        void PopOverLay( Layer *pLayer );
 
         inline static Application &GetInstance()
         {
