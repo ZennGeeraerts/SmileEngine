@@ -21,6 +21,8 @@ namespace smile
 
     SmileEditorLayer::SmileEditorLayer() : application::Layer( "SmileEditorLayer" )
     {
+        // TODO: Also shutdown physics engine.
+        // We need to make sure the world is destroyed first since the physics system uses the physics engine.
         physics::PhysicsEngine::CreateInstance();
     }
 

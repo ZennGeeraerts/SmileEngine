@@ -65,6 +65,9 @@ namespace smile::physics
 
     PhysicsEngine::~PhysicsEngine()
     {
+        m_pImplementation->pWorlds.clear();
+        m_pImplementation->pMaterials.clear();
+
         if ( m_pImplementation->pCookingFactory )
         {
             m_pImplementation->pCookingFactory->release();
@@ -79,6 +82,11 @@ namespace smile::physics
         {
             m_pImplementation->pDefaultCpuDispatcher->release();
             m_pImplementation->pDefaultCpuDispatcher = nullptr;
+        }
+        if ( m_pImplementation->pPvd )
+        {
+            m_pImplementation->pPvd->release();
+            m_pImplementation->pPvd = nullptr;
         }
         if ( m_pImplementation->pFoundation )
         {
