@@ -508,10 +508,7 @@ namespace smile
         m_pEditorWorld = world::WorldManager::Load( filePath );
         if ( m_pEditorWorld )
         {
-            /*m_pEditorWorld->OnViewportResize(
-                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );*/
             m_EditorWorldPath = filePath;
-
             m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
         }
     }
@@ -522,8 +519,6 @@ namespace smile
             OnWorldStop();
 
         m_pEditorWorld = world::WorldManager::New();
-        /*m_pEditorWorld->OnViewportResize(
-            static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );*/
         m_EditorWorldPath = std::filesystem::path{};
 
         m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
