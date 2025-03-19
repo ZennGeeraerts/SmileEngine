@@ -26,32 +26,12 @@ namespace smile::graphic
         static void ShutDown();
 
         static void OnWindowResize( Uint32 width, Uint32 height );
-        static void ResizeFramebuffer( Uint32 width, Uint32 height );
 
         static void SetSettings( const RendererSettings &settings )
         {
             s_Settings = settings;
         }
 
-        struct CameraData final
-        {
-            Camera *pMainCamera = nullptr;
-            DirectX::XMFLOAT4X4 CameraTransform{};
-        };
-        static void SetCameraData( const CameraData &cameraData )
-        {
-            s_CameraData = cameraData;
-        }
-
-        static const CameraData &GetCameraData()
-        {
-            return s_CameraData;
-        }
-
-        static const RendererSettings &GetSettings()
-        {
-            return s_Settings;
-        }
         static ShaderLibrary &GetShaderLibrary()
         {
             return s_ShaderLibrary;
@@ -74,7 +54,5 @@ namespace smile::graphic
 
         static RendererSettings s_Settings;
         static ShaderLibrary s_ShaderLibrary;
-
-        static CameraData s_CameraData;
     };
 }

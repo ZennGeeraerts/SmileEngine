@@ -59,22 +59,22 @@ namespace smile
     void SmileEditorLayer::OnDetach()
     {
         m_pEditorWorld.reset();
-        world::WorldManager::UnloadActive();
+        world::WorldManager::UnloadActive(); // TRICKY: Ref count needs to be 0 after this call, consider not making
+                                             // this a ref
 
         physics::PhysicsEngine::RemoveInstance();
     }
 
     void SmileEditorLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        const auto &renderSettings = graphic::RenderEngine::GetSettings();
-        if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( renderSettings.Width ) ) ||
-                 !math::AreEqual( m_ViewportSize.y, static_cast< float >( renderSettings.Height ) ) ) &&
+        memory::Ref< graphic::Scene > pScene = graphic::RenderEngine::GetScene();
+
+        if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( pScene->GetViewportWidth() ) ) ||
+                 !math::AreEqual( m_ViewportSize.y, static_cast< float >( pScene->GetViewportHeight() ) ) ) &&
              ( m_ViewportSize.x > 0 ) && ( m_ViewportSize.y > 0 ) )
         {
-            graphic::RenderEngine::ResizeFramebuffer(
-                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
             m_EditorCamera.SetViewportSize( m_ViewportSize.x, m_ViewportSize.y );
-            world::WorldManager::GetActive()->OnViewportResize(
+            pScene->OnViewportResize(
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
@@ -508,8 +508,8 @@ namespace smile
         m_pEditorWorld = world::WorldManager::Load( filePath );
         if ( m_pEditorWorld )
         {
-            m_pEditorWorld->OnViewportResize(
-                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
+            /*m_pEditorWorld->OnViewportResize(
+                static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );*/
             m_EditorWorldPath = filePath;
 
             m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
@@ -522,8 +522,8 @@ namespace smile
             OnWorldStop();
 
         m_pEditorWorld = world::WorldManager::New();
-        m_pEditorWorld->OnViewportResize(
-            static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
+        /*m_pEditorWorld->OnViewportResize(
+            static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );*/
         m_EditorWorldPath = std::filesystem::path{};
 
         m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );

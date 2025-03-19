@@ -29,7 +29,6 @@ namespace smile::world
             // forward the constructor arguments
             ComponentType &component = m_pWorld->m_ECSEngine.AddComponent< ComponentType >(
                 m_EntityHandle, std::forward< ConstructorArgs >( constructor_args )... );
-            m_pWorld->OnComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
@@ -39,7 +38,6 @@ namespace smile::world
             // forward the constructor arguments
             ComponentType &component = m_pWorld->m_ECSEngine.AddOrReplaceComponent< ComponentType >(
                 m_EntityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
-            m_pWorld->OnComponentAdded< ComponentType >( *this, component );
             return component;
         }
 
