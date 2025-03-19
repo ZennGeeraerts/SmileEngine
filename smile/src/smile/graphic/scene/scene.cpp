@@ -11,7 +11,6 @@
 #include "smile/graphic/camera/ecs/camera_component.h"
 
 #include "smile/core/window/window.h"
-// #include "smile/core/world/ecs/transform_component.h"
 
 #include <DirectXColors.h>
 
