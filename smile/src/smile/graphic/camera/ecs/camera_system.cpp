@@ -32,6 +32,12 @@ namespace smile::graphic::ecs
         };
 
         ecsEngine.OnConstruction< CameraComponent >().emplace_back( onCameraAddedFunc );
+
+        auto view = m_pECSEngine->GetView< graphic::ecs::CameraComponent >();
+        for ( auto entity : view )
+        {
+            onCameraAddedFunc( ecsEngine, entity );
+        }
     }
 
     void CameraSystem::OnRemove( smile::ecs::ECSEngine &ecsEngine )
