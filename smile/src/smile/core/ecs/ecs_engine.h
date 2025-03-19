@@ -243,21 +243,18 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        void RegisterComponent()
+        void RegisterComponent( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
             ComponentPool *pCPool = new ComponentPool{ *this };
             pCPool->Initialize< ComponentType >();
 
             m_pComponentPools.push_back( pCPool );
-
-            auto typeID = foundation::TypeIDOf< ComponentType >();
             m_ComponentPoolMap[typeID] = pCPool;
         }
 
         template < typename ComponentType >
-        void RegisterComponentIfNeeded()
+        void RegisterComponentIfNeeded( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
             if ( m_ComponentPoolMap.find( typeID ) == m_ComponentPoolMap.end() )
                 RegisterComponent< ComponentType >();
         }
@@ -291,16 +288,18 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        void RemoveComponent( EntityHandle entityHandle )
+        void RemoveComponent( EntityHandle entityHandle,
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
             RemoveComponent( pCPool, entityHandle );
         }
 
         template < typename ComponentType >
-        ComponentType &GetComponent( EntityHandle entityHandle )
+        ComponentType &GetComponent( EntityHandle entityHandle,
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( typeID );
 
             SM_ASSERT( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
@@ -308,9 +307,10 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        const ComponentType &GetComponent( EntityHandle entityHandle ) const
+        const ComponentType &GetComponent( EntityHandle entityHandle,
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( typeID );
 
             SM_ASSERT( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
@@ -330,9 +330,10 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        ComponentType *TryGetComponent( EntityHandle entityHandle )
+        ComponentType *TryGetComponent( EntityHandle entityHandle,
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( typeID );
 
             if ( it == m_ComponentPoolMap.end() )
                 return nullptr;
@@ -341,9 +342,10 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        const ComponentType *TryGetComponent( EntityHandle entityHandle ) const
+        const ComponentType *TryGetComponent( EntityHandle entityHandle,
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            auto it = m_ComponentPoolMap.find( foundation::TypeIDOf< ComponentType >() );
+            auto it = m_ComponentPoolMap.find( typeID );
 
             if ( it == m_ComponentPoolMap.end() )
                 return nullptr;
@@ -352,16 +354,17 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        bool HasComponent( EntityHandle entityHandle ) const
+        bool HasComponent( EntityHandle entityHandle,
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            const ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            const ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
             return pCPool ? pCPool->Contains( entityHandle ) : false;
         }
 
         template < typename ComponentType >
-        void Reset()
+        void Reset( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
 
             auto view = GetView< ComponentType >();
             for ( auto entity : view )
@@ -370,13 +373,13 @@ namespace smile::ecs
             }
 
             m_pComponentPools.erase( std::remove( m_pComponentPools.begin(), m_pComponentPools.end(), pCPool ) );
-            m_ComponentPoolMap.erase( foundation::TypeIDOf< ComponentType >() );
+            m_ComponentPoolMap.erase( typeID );
         }
 
         template < typename ComponentType >
-        bool IsComponentOwned() const
+        bool IsComponentOwned( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            const ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            const ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
             return IsComponentOwned( pCPool );
         }
 
@@ -444,9 +447,9 @@ namespace smile::ecs
         }
 
         template < typename ComponentType, typename Compare >
-        void SortComponent( Compare compare )
+        void SortComponent( Compare compare, const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            ComponentPool *pCPool = GetComponentPool< ComponentType >();
+            ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
 
             SM_ASSERT( !IsComponentOwned( pCPool ), "ECSEngine::SortComponent > Cannot sort owned component" );
 
@@ -461,31 +464,30 @@ namespace smile::ecs
         }
 
         template < typename ComponentType >
-        auto &OnConstruction()
+        auto &OnConstruction( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto *pCPool = GetComponentPool< ComponentType >();
+            auto *pCPool = GetComponentPool< ComponentType >( typeID );
             return pCPool->OnConstruction();
         }
 
         template < typename ComponentType >
-        auto &OnDestruction()
+        auto &OnDestruction( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto *pCPool = GetComponentPool< ComponentType >();
+            auto *pCPool = GetComponentPool< ComponentType >( typeID );
             return pCPool->OnDestruction();
         }
 
       private:
         template < typename ComponentType >
-        ComponentPool *GetComponentPool()
+        ComponentPool *GetComponentPool( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
             return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap[typeID] : nullptr;
         }
 
         template < typename ComponentType >
-        const ComponentPool *GetComponentPool() const
+        const ComponentPool *GetComponentPool(
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            auto typeID = foundation::TypeIDOf< ComponentType >();
             return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap.at( typeID )
                                                                                  : nullptr;
         }

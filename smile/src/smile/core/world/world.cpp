@@ -5,7 +5,6 @@
 #include "smpch.h"
 #include "world.h"
 
-#include "components.h"
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/physics/physics_engine.h"
 #include "smile/scripting/ecs/script_system.h"
@@ -25,12 +24,15 @@
 
 #include "ecs/transform_system.h"
 #include "smile/physics/ecs/physics_system.h"
+#include "smile/physics/ecs/character_controller_component.h"
 #include "smile/graphic/animation/ecs/animation_system.h"
 #include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
 
 namespace smile::world
 {
+    std::unordered_map< foundation::TypeID, World::CopyComponentFunctions > World::s_CopyComponentFuncs{};
+
     World::World()
     {
         smile::ecs::state::SystemFactory::RegisterSystem< scripting::ecs::ScriptSystem >();
@@ -173,68 +175,6 @@ namespace smile::world
         m_ECSEngine.OnUpdate();
     }
 
-    Entity World::GetPrimaryCameraEntity()
-    {
-        auto view = m_ECSEngine.GetView< graphic::ecs::CameraComponent >();
-        for ( auto entity : view )
-        {
-            auto &cameraComponent = m_ECSEngine.GetComponent< graphic::ecs::CameraComponent >( entity );
-            if ( cameraComponent.IsPrimary )
-                return Entity{ entity, this };
-        }
-        return Entity{};
-    }
-
-    template < typename... ComponentType >
-    static void CopyComponent( smile::ecs::ECSEngine &dst,
-        smile::ecs::ECSEngine &src,
-        const std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > &entityHandleMap )
-    {
-        (
-            [&]()
-            {
-                auto view = src.GetView< ComponentType >();
-                for ( auto entity : view )
-                {
-                    primitive::UUID uuid = src.GetComponent< ecs::IDComponent >( entity ).ID;
-                    SM_ASSERT( entityHandleMap.find( uuid ) != entityHandleMap.end(),
-                        "world::CopyComponent > uuid not found in enttMap" );
-                    smile::ecs::EntityHandle dstHandleID = entityHandleMap.at( uuid );
-
-                    auto &component = src.GetComponent< ComponentType >( entity );
-                    dst.AddOrReplaceComponent< ComponentType >( dstHandleID, component );
-                }
-            }(),
-            ... );
-    }
-
-    template < typename... ComponentType >
-    static void CopyComponent( ComponentGroup< ComponentType... >,
-        smile::ecs::ECSEngine &dst,
-        smile::ecs::ECSEngine &src,
-        const std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > &entityHandleMap )
-    {
-        CopyComponent< ComponentType... >( dst, src, entityHandleMap );
-    }
-
-    template < typename... ComponentType >
-    static void CopyComponentIfExists( Entity dst, Entity src )
-    {
-        (
-            [&]()
-            {
-                if ( src.HasComponent< ComponentType >() )
-                    dst.AddOrReplaceComponent< ComponentType >( src.GetComponent< ComponentType >() );
-            }(),
-            ... );
-    }
-
-    template < typename... ComponentType >
-    static void CopyComponentIfExists( ComponentGroup< ComponentType... >, Entity dst, Entity src )
-    {
-        CopyComponentIfExists< ComponentType... >( dst, src );
-    }
-
     Ref< World > World::Copy( const Ref< World > &pWorld )
     {
         Ref< World > pNewWorld = CreateRef< World >();
@@ -252,9 +192,10 @@ namespace smile::world
             entityMap[uuid] = static_cast< smile::ecs::EntityHandle >( newEntity );
         }
 
-        // Copy components except IDComponent and TagComponent
-        CopyComponent< smile::ecs::Relationship >( dstWorldEngine, srcWorldEngine, entityMap );
-        CopyComponent( AllComponents{}, dstWorldEngine, srcWorldEngine, entityMap );
+        for ( const auto &pair : s_CopyComponentFuncs )
+        {
+            pair.second.ECSEngineCopy( srcWorldEngine, dstWorldEngine );
+        }
 
         return pNewWorld;
     }
@@ -263,19 +204,10 @@ namespace smile::world
     {
         Entity newEntity = CreateEntity( entity.GetName() );
 
-        CopyComponentIfExists< smile::ecs::Relationship >( newEntity, entity );
-        CopyComponentIfExists< ecs::TransformComponent >( newEntity, entity );
-        CopyComponentIfExists< graphic::ecs::MeshRendererComponent >( newEntity, entity );
-        CopyComponentIfExists< graphic::ecs::SkinnedMeshRendererComponent >( newEntity, entity );
-        CopyComponentIfExists< graphic::ecs::SpriteRendererComponent >( newEntity, entity );
-        CopyComponentIfExists< graphic::ecs::AnimatorComponent >( newEntity, entity );
-        CopyComponentIfExists< graphic::ecs::CameraComponent >( newEntity, entity );
-        CopyComponentIfExists< scripting::ecs::ScriptComponent >( newEntity, entity );
-        CopyComponentIfExists< physics::ecs::RigidbodyComponent >( newEntity, entity );
-        CopyComponentIfExists< physics::ecs::BoxColliderComponent >( newEntity, entity );
-        CopyComponentIfExists< physics::ecs::SphereColliderComponent >( newEntity, entity );
-        CopyComponentIfExists< physics::ecs::CapsuleColliderComponent >( newEntity, entity );
-        CopyComponentIfExists< physics::ecs::CharacterControllerComponent >( newEntity, entity );
+        for ( const auto &pair : s_CopyComponentFuncs )
+        {
+            pair.second.EntityCopy( entity, newEntity );
+        }
     }
 
     Entity World::GetEntityByUUID( primitive::UUID uuid )
