@@ -8,6 +8,7 @@
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/skybox_renderer.h"
+#include "smile/graphic/camera/ecs/camera_component.h"
 
 #include "smile/core/window/window.h"
 
@@ -39,17 +40,40 @@ namespace smile::graphic
         renderSystem.BindFramebuffer( m_pFramebuffer );
         renderSystem.Clear();
 
-        const RenderEngine::CameraData &cameraData = RenderEngine::GetCameraData();
-
-        if ( cameraData.pMainCamera )
+        if ( m_PrimaryCameraEntity )
         {
-            m_RenderPassList.OnRender( *cameraData.pMainCamera, cameraData.CameraTransform );
+            const Camera &camera = m_PrimaryCameraEntity.GetComponent< ecs::CameraComponent >().Camera;
+            auto transform = m_PrimaryCameraEntity.GetComponent< world::ecs::TransformComponent >().GetTransform();
 
-            SkyboxRenderer::BeginScene( *cameraData.pMainCamera, cameraData.CameraTransform );
+            m_RenderPassList.OnRender( camera, transform );
+
+            // TODO: Add scene graph
+            SkyboxRenderer::BeginScene( camera, transform );
+            SkyboxRenderer::OnRender();
+            SkyboxRenderer::EndScene();
+        }
+        else if ( m_FallbackCameraData.pCamera )
+        {
+            m_RenderPassList.OnRender( *m_FallbackCameraData.pCamera, m_FallbackCameraData.CameraTransform );
+
+            // TODO: Add scene graph
+            SkyboxRenderer::BeginScene( *m_FallbackCameraData.pCamera, m_FallbackCameraData.CameraTransform );
             SkyboxRenderer::OnRender();
             SkyboxRenderer::EndScene();
         }
 
         renderSystem.BindBackBuffer();
+    }
+
+    void Scene::OnViewportResize( Uint32 width, Uint32 height )
+    {
+        if ( width == m_ViewportWidth && height == m_ViewportHeight )
+            return;
+
+        m_ViewportWidth = width;
+        m_ViewportHeight = height;
+
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        resourceManager.ResizeFramebuffer( m_pFramebuffer, width, height );
     }
 }

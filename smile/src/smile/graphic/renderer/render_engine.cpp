@@ -25,8 +25,6 @@ namespace smile::graphic
     RendererSettings RenderEngine::s_Settings{};
     ShaderLibrary RenderEngine::s_ShaderLibrary{};
 
-    RenderEngine::CameraData RenderEngine::s_CameraData{};
-
     void RenderEngine::Initialize( const window::Window *pWindow )
     {
         s_pWindow = pWindow;
@@ -60,14 +58,5 @@ namespace smile::graphic
     void RenderEngine::OnWindowResize( Uint32 width, Uint32 height )
     {
         s_RenderSystem.ResizeWindow( 0, 0, width, height );
-    }
-
-    void RenderEngine::ResizeFramebuffer( Uint32 width, Uint32 height )
-    {
-        s_Settings.Width = width;
-        s_Settings.Height = height;
-
-        auto &resourceManager = s_RenderSystem.GetResourceManager();
-        resourceManager.ResizeFramebuffer( s_pScene->GetFramebuffer(), width, height );
     }
 }

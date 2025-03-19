@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/memory/ref.h"
+#include "smile/core/world/entity.h"
 #include "ecs/render_pass_list.h"
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
 
@@ -17,6 +18,13 @@ namespace smile::graphic
 {
     class Scene final : public memory::Object
     {
+      public:
+        struct CameraData final
+        {
+            Camera *pCamera = nullptr;
+            DirectX::XMFLOAT4X4 CameraTransform{};
+        };
+
       public:
         Scene( const window::Window *pWindow );
 
@@ -32,18 +40,40 @@ namespace smile::graphic
 
         void OnRender();
 
-        memory::Ref< Framebuffer > GetFramebuffer() const
-        {
-            return m_pFramebuffer;
-        }
-
         void *GetFinalColor() const
         {
             return m_pFramebuffer->GetColor( 0 );
         }
 
+        void OnViewportResize( Uint32 width, Uint32 height );
+
+        Uint32 GetViewportWidth() const
+        {
+            return m_ViewportWidth;
+        }
+        Uint32 GetViewportHeight() const
+        {
+            return m_ViewportHeight;
+        }
+
+        void SetPrimaryCameraEntity( world::Entity entity )
+        {
+            m_PrimaryCameraEntity = entity;
+        }
+
+        void SetFallbackCameraData( const CameraData &cameraData )
+        {
+            m_FallbackCameraData = cameraData;
+        }
+
       private:
         ecs::RenderPassList m_RenderPassList;
         memory::Ref< Framebuffer > m_pFramebuffer;
+
+        Uint32 m_ViewportWidth = 0;
+        Uint32 m_ViewportHeight = 0;
+
+        world::Entity m_PrimaryCameraEntity;
+        CameraData m_FallbackCameraData;
     };
 }

@@ -163,33 +163,14 @@ namespace smile::world
 
     void World::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
-        graphic::RenderEngine::SetCameraData( { &editorCamera, editorCamera.GetTransform() } );
+        graphic::RenderEngine::GetScene()->SetFallbackCameraData( { &editorCamera, editorCamera.GetTransform() } );
         m_ECSEngine.OnUpdate();
     }
 
     void World::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
     {
-        graphic::RenderEngine::SetCameraData( { &editorCamera, editorCamera.GetTransform() } );
+        graphic::RenderEngine::GetScene()->SetFallbackCameraData( { &editorCamera, editorCamera.GetTransform() } );
         m_ECSEngine.OnUpdate();
-    }
-
-    void World::OnViewportResize( Uint32 width, Uint32 height )
-    {
-        if ( width == m_ViewportWidth && height == m_ViewportHeight )
-            return;
-
-        m_ViewportWidth = width;
-        m_ViewportHeight = height;
-
-        auto view = m_ECSEngine.GetView< graphic::ecs::CameraComponent >();
-        for ( auto entity : view )
-        {
-            auto &cameraComponent = m_ECSEngine.GetComponent< graphic::ecs::CameraComponent >( entity );
-            if ( !cameraComponent.HasFixedAspectRatio )
-            {
-                cameraComponent.Camera.SetViewportSize( width, height );
-            }
-        }
     }
 
     Entity World::GetPrimaryCameraEntity()
@@ -258,9 +239,6 @@ namespace smile::world
     {
         Ref< World > pNewWorld = CreateRef< World >();
 
-        pNewWorld->m_ViewportWidth = pWorld->m_ViewportWidth;
-        pNewWorld->m_ViewportHeight = pWorld->m_ViewportHeight;
-
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > entityMap{};
 
         auto &srcWorldEngine = pWorld->m_ECSEngine;
@@ -328,99 +306,5 @@ namespace smile::world
         Ref< physics::CharacterController > pCharacterController = pPhysicsSystem->GetCharacterController( entityID );
         auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();
         characterControllerComponent.CollisionFlags = pCharacterController->Move( displacement, minDist );
-    }
-
-    template < typename ComponentType >
-    void World::OnComponentAdded( Entity entity, ComponentType &component )
-    {
-        static_assert( sizeof( ComponentType ) == 0 );
-    }
-
-    template <>
-    void World::OnComponentAdded< smile::ecs::Relationship >( Entity entity, smile::ecs::Relationship &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< ecs::IDComponent >( Entity entity, ecs::IDComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< ecs::TagComponent >( Entity entity, ecs::TagComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< ecs::TransformComponent >( Entity entity, ecs::TransformComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< graphic::ecs::CameraComponent >( Entity entity,
-        graphic::ecs::CameraComponent &component )
-    {
-        if ( m_ViewportWidth > 0 && m_ViewportHeight > 0 )
-            component.Camera.SetViewportSize( m_ViewportWidth, m_ViewportHeight );
-    }
-
-    template <>
-    void World::OnComponentAdded< scripting::ecs::ScriptComponent >( Entity entity,
-        scripting::ecs::ScriptComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< graphic::ecs::MeshRendererComponent >( Entity entity,
-        graphic::ecs::MeshRendererComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< graphic::ecs::SkinnedMeshRendererComponent >( Entity entity,
-        graphic::ecs::SkinnedMeshRendererComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< graphic::ecs::AnimatorComponent >( Entity entity,
-        graphic::ecs::AnimatorComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< physics::ecs::RigidbodyComponent >( Entity entity,
-        physics::ecs::RigidbodyComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< physics::ecs::BoxColliderComponent >( Entity entity,
-        physics::ecs::BoxColliderComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< physics::ecs::SphereColliderComponent >( Entity entity,
-        physics::ecs::SphereColliderComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< physics::ecs::CapsuleColliderComponent >( Entity entity,
-        physics::ecs::CapsuleColliderComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< physics::ecs::CharacterControllerComponent >( Entity entity,
-        physics::ecs::CharacterControllerComponent &component )
-    {
-    }
-
-    template <>
-    void World::OnComponentAdded< graphic::ecs::SpriteRendererComponent >( Entity entity,
-        graphic::ecs::SpriteRendererComponent &component )
-    {
     }
 }
