@@ -16,6 +16,7 @@
 #include "sphere_collider_component.h"
 #include "capsule_collider_component.h"
 #include "force_component.h"
+#include "move_component.h"
 
 #include "smile/physics/physics_engine.h"
 
@@ -207,6 +208,13 @@ namespace smile::physics::ecs
                     m_pECSEngine->GetComponents< CharacterControllerComponent,
                         world::ecs::IDComponent,
                         world::ecs::TransformComponent >( entity );
+
+                if ( auto pMoveComponent = m_pECSEngine->TryGetComponent< MoveComponent >( entity ) )
+                {
+                    m_CharacterControllerMap[idComponent.ID]->Move(
+                        pMoveComponent->Displacement, pMoveComponent->MinDist );
+                    m_pECSEngine->RemoveComponent< MoveComponent >( entity );
+                }
 
                 transformComponent.Translation = m_CharacterControllerMap[idComponent.ID]->GetPosition();
 

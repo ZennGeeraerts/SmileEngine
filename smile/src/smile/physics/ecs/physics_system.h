@@ -9,9 +9,6 @@
 #include "smile/physics/rigidbody.h"
 #include "smile/physics/character_controller.h"
 
-#include "smile/graphic/camera/camera.h"
-#include "smile/graphic/camera/editor_camera.h"
-
 namespace smile::ecs
 {
     class ECSEngine;

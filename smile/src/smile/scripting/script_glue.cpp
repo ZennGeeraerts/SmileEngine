@@ -13,6 +13,7 @@
 #include "smile/core/input/input.h"
 
 #include "smile/physics/ecs/force_component.h"
+#include "smile/physics/ecs/move_component.h"
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
@@ -68,7 +69,9 @@ namespace smile::scripting
     CharacterControllerComponent_Move( primitive::UUID entityID, DirectX::XMFLOAT3 *pDisplacement, float minDist )
     {
         world::World *pWorld = ScriptEngine::GetWorldContext();
-        pWorld->MoveCharacterController( entityID, *pDisplacement, minDist );
+        world::Entity entity = pWorld->GetEntityByUUID( entityID );
+
+        entity.AddOrReplaceComponent< physics::ecs::MoveComponent >( *pDisplacement, minDist );
     }
 
     static bool Input_IsKeyPressed( input::KeyCode keyCode )

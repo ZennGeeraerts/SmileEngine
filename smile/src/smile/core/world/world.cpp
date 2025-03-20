@@ -24,7 +24,6 @@
 
 #include "ecs/transform_system.h"
 #include "smile/physics/ecs/physics_system.h"
-#include "smile/physics/ecs/character_controller_component.h"
 #include "smile/graphic/animation/ecs/animation_system.h"
 #include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
@@ -214,18 +213,5 @@ namespace smile::world
     {
         SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "world::GetEntityByUUID > Invalid UUID" )
         return Entity{ m_EntityMap.at( uuid ), this };
-    }
-
-    void
-    World::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
-    {
-        Entity entity = GetEntityByUUID( entityID );
-
-        memory::Ref< physics::ecs::PhysicsSystem > pPhysicsSystem{
-            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) };
-
-        Ref< physics::CharacterController > pCharacterController = pPhysicsSystem->GetCharacterController( entityID );
-        auto &characterControllerComponent = entity.GetComponent< physics::ecs::CharacterControllerComponent >();
-        characterControllerComponent.CollisionFlags = pCharacterController->Move( displacement, minDist );
     }
 }
