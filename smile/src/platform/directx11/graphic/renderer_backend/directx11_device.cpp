@@ -112,7 +112,7 @@ namespace smile::graphic
                         ss << errors[i];
                     }
 
-                    OutputDebugStringW( ss.str().c_str() );
+                    OutputDebugString( ss.str().c_str() );
                     pErrorBlob->Release();
                     pErrorBlob = nullptr;
                 }
