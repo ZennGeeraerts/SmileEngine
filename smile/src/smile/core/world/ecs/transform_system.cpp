@@ -10,7 +10,6 @@
 #include "smile/core/ecs/relationship.h"
 #include "smile/core/math/math_utilities.h"
 #include "smile/core/world/world.h"
-#include "smile/physics/physics_engine.h"
 
 namespace smile::world::ecs
 {

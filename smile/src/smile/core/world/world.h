@@ -49,7 +49,6 @@ namespace smile::world
 
         Entity GetEntityByUUID( primitive::UUID uuid );
 
-        void AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake );
         void MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist );
 
         template < typename ComponentType >

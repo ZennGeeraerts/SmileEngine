@@ -15,6 +15,7 @@
 #include "box_collider_component.h"
 #include "sphere_collider_component.h"
 #include "capsule_collider_component.h"
+#include "force_component.h"
 
 #include "smile/physics/physics_engine.h"
 
@@ -159,59 +160,64 @@ namespace smile::physics::ecs
 
     void PhysicsSystem::OnUpdate( primitive::Timestep deltaTime )
     {
-        if ( PhysicsEngine::GetInstance().OnSimulate( deltaTime ) )
+        if ( !PhysicsEngine::GetInstance().OnSimulate( deltaTime ) )
+            return;
+
         {
+            auto group = m_pECSEngine->GetGroup< RigidbodyComponent >(
+                smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
+            for ( auto entity : group )
             {
-                auto group = m_pECSEngine->GetGroup< RigidbodyComponent >(
-                    smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
-                for ( auto entity : group )
+                const auto &[rigidbodyComponent, idComponent, transformComponent] =
+                    m_pECSEngine
+                        ->GetComponents< RigidbodyComponent, world::ecs::IDComponent, world::ecs::TransformComponent >(
+                            entity );
+
+                if ( auto pForceComponent = m_pECSEngine->TryGetComponent< ForceComponent >( entity ) )
                 {
-                    const auto &[rigidbodyComponent, idComponent, transformComponent] =
-                        m_pECSEngine->GetComponents< RigidbodyComponent,
-                            world::ecs::IDComponent,
-                            world::ecs::TransformComponent >( entity );
-
-                    transformComponent.Translation = m_RigidbodyMap[idComponent.ID]->GetPosition();
-                    transformComponent.Rotation =
-                        math::QuaternionToEuler( m_RigidbodyMap[idComponent.ID]->GetRotation() );
-
-                    if ( transformComponent.TransformChanged &
-                         static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation ) )
-                    {
-                        m_RigidbodyMap[idComponent.ID]->Translate( transformComponent.WorldTranslation );
-                    }
-
-                    if ( transformComponent.TransformChanged &
-                         static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Rotation ) )
-                    {
-                        m_RigidbodyMap[idComponent.ID]->Rotate( transformComponent.WorldRotation );
-                    }
-
-                    transformComponent.TransformChanged =
-                        static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::None );
+                    m_RigidbodyMap[idComponent.ID]->AddForce( pForceComponent->Force, pForceComponent->AutoAwake );
+                    m_pECSEngine->RemoveComponent< ForceComponent >( entity );
                 }
+
+                transformComponent.Translation = m_RigidbodyMap[idComponent.ID]->GetPosition();
+                transformComponent.Rotation = math::QuaternionToEuler( m_RigidbodyMap[idComponent.ID]->GetRotation() );
+
+                if ( transformComponent.TransformChanged &
+                     static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation ) )
+                {
+                    m_RigidbodyMap[idComponent.ID]->Translate( transformComponent.WorldTranslation );
+                }
+
+                if ( transformComponent.TransformChanged &
+                     static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Rotation ) )
+                {
+                    m_RigidbodyMap[idComponent.ID]->Rotate( transformComponent.WorldRotation );
+                }
+
+                transformComponent.TransformChanged =
+                    static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::None );
             }
+        }
+        {
+            auto group = m_pECSEngine->GetGroup< CharacterControllerComponent >(
+                smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
+            for ( auto entity : group )
             {
-                auto group = m_pECSEngine->GetGroup< CharacterControllerComponent >(
-                    smile::ecs::g_Get< world::ecs::IDComponent, world::ecs::TransformComponent > );
-                for ( auto entity : group )
+                const auto &[characterControllerComponent, idComponent, transformComponent] =
+                    m_pECSEngine->GetComponents< CharacterControllerComponent,
+                        world::ecs::IDComponent,
+                        world::ecs::TransformComponent >( entity );
+
+                transformComponent.Translation = m_CharacterControllerMap[idComponent.ID]->GetPosition();
+
+                if ( transformComponent.TransformChanged &
+                     static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation ) )
                 {
-                    const auto &[characterControllerComponent, idComponent, transformComponent] =
-                        m_pECSEngine->GetComponents< CharacterControllerComponent,
-                            world::ecs::IDComponent,
-                            world::ecs::TransformComponent >( entity );
-
-                    transformComponent.Translation = m_CharacterControllerMap[idComponent.ID]->GetPosition();
-
-                    if ( transformComponent.TransformChanged &
-                         static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::Translation ) )
-                    {
-                        m_CharacterControllerMap[idComponent.ID]->Translate( transformComponent.WorldTranslation );
-                    }
-
-                    transformComponent.TransformChanged =
-                        static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::None );
+                    m_CharacterControllerMap[idComponent.ID]->Translate( transformComponent.WorldTranslation );
                 }
+
+                transformComponent.TransformChanged =
+                    static_cast< Uint32 >( world::ecs::TransformComponent::TransformChanged::None );
             }
         }
     }

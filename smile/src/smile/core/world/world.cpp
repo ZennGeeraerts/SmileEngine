@@ -216,17 +216,6 @@ namespace smile::world
         return Entity{ m_EntityMap.at( uuid ), this };
     }
 
-    void World::AddForce( primitive::UUID entityID, const DirectX::XMFLOAT3 &force, bool autoAwake )
-    {
-        Entity entity = GetEntityByUUID( entityID );
-
-        memory::Ref< physics::ecs::PhysicsSystem > pPhysicsSystem{
-            m_StateManager.GetSystem( "smile::physics::ecs::PhysicsSystem" ) };
-
-        Ref< physics::Rigidbody > pRigidbody = pPhysicsSystem->GetRigidbody( entityID );
-        pRigidbody->AddForce( force, autoAwake );
-    }
-
     void
     World::MoveCharacterController( primitive::UUID entityID, const DirectX::XMFLOAT3 &displacement, float minDist )
     {

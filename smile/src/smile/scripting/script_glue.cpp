@@ -12,7 +12,7 @@
 #include "smile/core/input/key_codes.h"
 #include "smile/core/input/input.h"
 
-#include "smile/physics/physics_engine.h"
+#include "smile/physics/ecs/force_component.h"
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
@@ -59,7 +59,9 @@ namespace smile::scripting
     static void RigidbodyComponent_AddForce( primitive::UUID entityID, DirectX::XMFLOAT3 *pForce, bool autoAwake )
     {
         world::World *pWorld = ScriptEngine::GetWorldContext();
-        pWorld->AddForce( entityID, *pForce, autoAwake );
+        world::Entity entity = pWorld->GetEntityByUUID( entityID );
+
+        entity.AddOrReplaceComponent< physics::ecs::ForceComponent >( *pForce, autoAwake );
     }
 
     static void
