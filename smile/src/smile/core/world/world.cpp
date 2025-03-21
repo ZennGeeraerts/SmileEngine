@@ -193,7 +193,7 @@ namespace smile::world
 
         for ( const auto &pair : s_CopyComponentFuncs )
         {
-            pair.second.ECSEngineCopy( srcWorldEngine, dstWorldEngine );
+            pair.second.ECSEngineCopy( srcWorldEngine, dstWorldEngine, entityMap );
         }
 
         return pNewWorld;

@@ -71,7 +71,10 @@ namespace smile::world
         struct CopyComponentFunctions final
         {
             std::function< void( Entity, Entity ) > EntityCopy;
-            std::function< void( smile::ecs::ECSEngine &, smile::ecs::ECSEngine & ) > ECSEngineCopy;
+            std::function< void( smile::ecs::ECSEngine &,
+                smile::ecs::ECSEngine &,
+                const std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > & ) >
+                ECSEngineCopy;
         };
 
         // Register how components should be copied from one entity or ecs engine to another
@@ -90,14 +93,16 @@ namespace smile::world
             };
 
             s_CopyComponentFuncs[typeID].ECSEngineCopy =
-                [&]( smile::ecs::ECSEngine &src, smile::ecs::ECSEngine &dst )
+                []( smile::ecs::ECSEngine &src,
+                    smile::ecs::ECSEngine &dst,
+                    const std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > &entityMap )
             {
                 auto view = src.GetView< ComponentType >();
                 for ( auto entity : view )
                 {
                     primitive::UUID uuid = src.GetComponent< ecs::IDComponent >( entity ).ID;
-                    SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "UUID not found in entity map" );
-                    smile::ecs::EntityHandle dstHandleID = m_EntityMap.at( uuid );
+                    SM_ASSERT( entityMap.find( uuid ) != entityMap.end(), "UUID not found in entity map" );
+                    smile::ecs::EntityHandle dstHandleID = entityMap.at( uuid );
 
                     auto &component = src.GetComponent< ComponentType >( entity );
                     dst.AddOrReplaceComponent< ComponentType >( dstHandleID, component );
