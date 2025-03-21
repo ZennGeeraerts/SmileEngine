@@ -6,9 +6,19 @@
 #include "smile_editor_layer.h"
 
 #include "smile/core/world/world_manager.h"
+#include "smile/core/world/ecs/transform_system.h"
 #include "smile/core/window/file_dialog.h"
+#include "smile/core/ecs/state/system_factory.h"
+
 #include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/animation/ecs/animation_system.h"
+#include "smile/graphic/camera/ecs/camera_system.h"
+#include "smile/graphic/ecs/graphic_system.h"
+
 #include "smile/physics/physics_engine.h"
+#include "smile/physics/ecs/physics_system.h"
+
+#include "smile/scripting/ecs/script_system.h"
 
 #include <imgui/imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
@@ -25,6 +35,13 @@ namespace smile
 
     void SmileEditorLayer::OnAttach()
     {
+        smile::ecs::state::SystemFactory::RegisterSystem< scripting::ecs::ScriptSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< world::ecs::TransformSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::CameraSystem >();
+        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::GraphicSystem >();
+
         graphic::RenderEngine::GetRenderSystem().SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
@@ -54,6 +71,25 @@ namespace smile
         }
 
         physics::PhysicsEngine::CreateInstance();
+
+        auto pEditorState = m_pEditorWorld->CreateState( "editor" );
+        pEditorState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
+        pEditorState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        auto pSimulateState = m_pEditorWorld->CreateState( "simulate" );
+        pSimulateState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
+        pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        pSimulateState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        auto pRuntimeState = m_pEditorWorld->CreateState( "runtime" );
+        pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
+        pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        m_pEditorWorld->ChangeState( "editor" );
     }
 
     void SmileEditorLayer::OnDetach()
@@ -80,30 +116,13 @@ namespace smile
 
         graphic::RenderEngine::GetRenderSystem().Clear();
 
-        switch ( m_WorldState )
+        if ( ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) && m_IsViewportFocused )
         {
-            case WorldState::Edit:
-            {
-                if ( m_IsViewportFocused )
-                    m_EditorCamera.OnUpdate( deltaTime );
-
-                world::WorldManager::GetActive()->OnUpdateEditor( deltaTime, m_EditorCamera );
-                break;
-            }
-            case WorldState::Simulate:
-            {
-                if ( m_IsViewportFocused )
-                    m_EditorCamera.OnUpdate( deltaTime );
-
-                world::WorldManager::GetActive()->OnUpdateSimulation( deltaTime, m_EditorCamera );
-                break;
-            }
-            case WorldState::Play:
-            {
-                world::WorldManager::GetActive()->OnUpdateRuntime( deltaTime );
-                break;
-            }
+            m_EditorCamera.OnUpdate( deltaTime );
+            pScene->SetFallbackCameraData( { &m_EditorCamera, m_EditorCamera.GetTransform() } );
         }
+
+        world::WorldManager::GetActive()->OnUpdate( deltaTime );
     }
 
     void SmileEditorLayer::OnImGuiRender()
@@ -533,7 +552,7 @@ namespace smile
 
         auto pActiveWorld = world::World::Copy( m_pEditorWorld );
         world::WorldManager::Open( pActiveWorld );
-        pActiveWorld->OnRuntimeStart();
+        pActiveWorld->ChangeState( "runtime" );
 
         m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
     }
@@ -547,17 +566,15 @@ namespace smile
 
         auto pActiveWorld = world::World::Copy( m_pEditorWorld );
         world::WorldManager::Open( pActiveWorld );
-        pActiveWorld->OnSimulationStart();
+        pActiveWorld->ChangeState( "simulate" );
 
         m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
     }
 
     void SmileEditorLayer::OnWorldStop()
     {
-        if ( m_WorldState == WorldState::Play )
-            world::WorldManager::GetActive()->OnRuntimeStop();
-        else if ( m_WorldState == WorldState::Simulate )
-            world::WorldManager::GetActive()->OnSimulationStop();
+        if ( m_WorldState == WorldState::Play || m_WorldState == WorldState::Simulate )
+            world::WorldManager::GetActive()->ChangeState( "editor" );
 
         m_WorldState = WorldState::Edit;
         world::WorldManager::Open( m_pEditorWorld );

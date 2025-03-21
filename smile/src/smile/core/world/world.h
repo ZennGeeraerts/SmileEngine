@@ -6,7 +6,6 @@
 
 #include "smile/common/primitive/uuid.h"
 #include "smile/common/primitive/timestep.h"
-#include "smile/graphic/camera/editor_camera.h"
 
 #include "smile/core/ecs/ecs_engine.h"
 #include "smile/core/ecs/state/state_manager.h"
@@ -24,6 +23,9 @@ namespace smile::world
         World();
         ~World();
 
+        memory::Ref< smile::ecs::state::State > CreateState( const std::string &name );
+        void ChangeState( const std::string &name );
+
         Entity CreateEntity();
         Entity CreateEntity( const std::string &name );
         Entity CreateEntity( primitive::UUID uuid, const std::string &name );
@@ -32,16 +34,7 @@ namespace smile::world
         void OnOpen();
         void OnClose();
 
-        void OnRuntimeStart();
-        void OnRuntimeStop();
-        void OnSimulationStart();
-        void OnSimulationStop();
-
-        void OnUpdateRuntime( primitive::Timestep deltaTime );
-        void OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera );
-        void OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera );
-
-        Entity GetPrimaryCameraEntity();
+        void OnUpdate( primitive::Timestep deltaTime );
 
         static Ref< World > Copy( const Ref< World > &pWorld );
 
