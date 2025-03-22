@@ -5,28 +5,18 @@
 #include "smpch.h"
 #include "world.h"
 
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/physics/physics_engine.h"
-#include "smile/scripting/ecs/script_system.h"
-
 #include "entity.h"
 
+#include "smile/core/world/ecs/transform_system.h"
+
+#include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
 #include "smile/graphic/scene/ecs/wireframe_render_pass.h"
 #include "smile/graphic/scene/ecs/debug_render_pass.h"
 #include "smile/graphic/scene/ecs/render_pass_2d.h"
 #include "smile/graphic/scene/ecs/physics_render_pass.h"
 
-#include "smile/graphic/camera/ecs/camera_system.h"
-
 #include "smile/core/ecs/relationship.h"
-#include "smile/core/ecs/state/system_factory.h"
-
-#include "ecs/transform_system.h"
-#include "smile/physics/ecs/physics_system.h"
-#include "smile/graphic/animation/ecs/animation_system.h"
-#include "smile/graphic/camera/ecs/camera_system.h"
-#include "smile/graphic/ecs/graphic_system.h"
 
 namespace smile::world
 {
@@ -34,39 +24,28 @@ namespace smile::world
 
     World::World()
     {
-        smile::ecs::state::SystemFactory::RegisterSystem< scripting::ecs::ScriptSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::CameraSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::GraphicSystem >();
+        auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
+        pDefaultState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
+        m_StateManager.AddState( "default", pDefaultState );
 
-        auto pEditorState = memory::CreateRef< smile::ecs::state::State >();
-        pEditorState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
-        pEditorState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
-        m_StateManager.AddState( "editor", pEditorState );
-
-        auto pSimulateState = memory::CreateRef< smile::ecs::state::State >();
-        pSimulateState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
-        pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pSimulateState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
-        m_StateManager.AddState( "simulate", pSimulateState );
-
-        auto pRuntimeState = memory::CreateRef< smile::ecs::state::State >();
-        pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
-        pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
-        m_StateManager.AddState( "runtime", pRuntimeState );
-
-        m_StateManager.Initialize( &m_ECSEngine, "editor" );
+        m_StateManager.Initialize( &m_ECSEngine, "default" );
     }
 
     World::~World()
     {
         m_ECSEngine.Clear();
+    }
+
+    memory::Ref< smile::ecs::state::State > World::CreateState( const std::string &name )
+    {
+        auto pState = memory::CreateRef< smile::ecs::state::State >();
+        m_StateManager.AddState( name, pState );
+        return pState;
+    }
+
+    void World::ChangeState( const std::string &name )
+    {
+        m_StateManager.ChangeState( name );
     }
 
     Entity World::CreateEntity()
@@ -118,8 +97,6 @@ namespace smile::world
 
     void World::OnOpen()
     {
-        m_StateManager.ChangeState( "editor" );
-
         graphic::RenderEngine::GetScene()->AddRenderPass(
             memory::CreateRef< graphic::ecs::ForwardRenderPass >( m_ECSEngine ) );
         graphic::RenderEngine::GetScene()->AddRenderPass(
@@ -137,40 +114,8 @@ namespace smile::world
         graphic::RenderEngine::GetScene()->ClearRenderPasses();
     }
 
-    void World::OnRuntimeStart()
+    void World::OnUpdate( primitive::Timestep deltaTime )
     {
-        m_StateManager.ChangeState( "runtime" );
-    }
-
-    void World::OnRuntimeStop()
-    {
-        m_StateManager.ChangeState( "editor" );
-    }
-
-    void World::OnSimulationStart()
-    {
-        m_StateManager.ChangeState( "simulate" );
-    }
-
-    void World::OnSimulationStop()
-    {
-        m_StateManager.ChangeState( "editor" );
-    }
-
-    void World::OnUpdateRuntime( primitive::Timestep deltaTime )
-    {
-        m_ECSEngine.OnUpdate();
-    }
-
-    void World::OnUpdateSimulation( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
-    {
-        graphic::RenderEngine::GetScene()->SetFallbackCameraData( { &editorCamera, editorCamera.GetTransform() } );
-        m_ECSEngine.OnUpdate();
-    }
-
-    void World::OnUpdateEditor( primitive::Timestep deltaTime, graphic::EditorCamera &editorCamera )
-    {
-        graphic::RenderEngine::GetScene()->SetFallbackCameraData( { &editorCamera, editorCamera.GetTransform() } );
         m_ECSEngine.OnUpdate();
     }
 
@@ -195,6 +140,9 @@ namespace smile::world
         {
             pair.second.ECSEngineCopy( srcWorldEngine, dstWorldEngine, entityMap );
         }
+
+        pNewWorld->m_StateManager =
+            smile::ecs::state::StateManager::Copy( pWorld->m_StateManager, &pNewWorld->m_ECSEngine );
 
         return pNewWorld;
     }

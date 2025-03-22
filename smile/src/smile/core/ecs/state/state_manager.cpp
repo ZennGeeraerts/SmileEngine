@@ -154,4 +154,22 @@ namespace smile::ecs::state
             m_pECSEngine->AddSystem( GetOrCreateSystem( toBeAdded ) );
         }
     }
+
+    StateManager StateManager::Copy( const StateManager &stateManager, ECSEngine *pECSEngine )
+    {
+        StateManager result;
+        result.m_StateMap = stateManager.m_StateMap;
+        result.m_pCurrentState = stateManager.m_pCurrentState;
+        result.m_pECSEngine = pECSEngine;
+
+        const std::vector< std::string > &systemNames = result.m_pCurrentState->GetSystemNames();
+
+        for ( const auto &systemName : systemNames )
+        {
+            auto pSystem = result.GetOrCreateSystem( systemName );
+            result.m_pECSEngine->AddSystem( pSystem );
+        }
+
+        return result;
+    }
 }

@@ -33,6 +33,8 @@ namespace smile::ecs
             State &GetState( const std::string &name ) const;
             memory::Ref< BaseSystem > GetSystem( const std::string &name ) const;
 
+            static StateManager Copy( const StateManager &stateManager, ECSEngine *pECSEngine );
+
           private:
             memory::Ref< BaseSystem > GetOrCreateSystem( const std::string &systemName );
             void SyncState( const std::string &name,
