@@ -71,25 +71,6 @@ namespace smile
         }
 
         physics::PhysicsEngine::CreateInstance();
-
-        auto pEditorState = m_pEditorWorld->CreateState( "editor" );
-        pEditorState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pEditorState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
-
-        auto pSimulateState = m_pEditorWorld->CreateState( "simulate" );
-        pSimulateState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pSimulateState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
-
-        auto pRuntimeState = m_pEditorWorld->CreateState( "runtime" );
-        pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
-        pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
-
-        m_pEditorWorld->ChangeState( "editor" );
     }
 
     void SmileEditorLayer::OnDetach()
@@ -525,11 +506,30 @@ namespace smile
             OnWorldStop();
 
         m_pEditorWorld = world::WorldManager::Load( filePath );
-        if ( m_pEditorWorld )
-        {
-            m_EditorWorldPath = filePath;
-            m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
-        }
+        if ( !m_pEditorWorld )
+            return;
+
+        m_EditorWorldPath = filePath;
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
+
+        auto pEditorState = m_pEditorWorld->CreateState( "editor" );
+        pEditorState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
+        pEditorState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        auto pSimulateState = m_pEditorWorld->CreateState( "simulate" );
+        pSimulateState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
+        pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        pSimulateState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        auto pRuntimeState = m_pEditorWorld->CreateState( "runtime" );
+        pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
+        pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        m_pEditorWorld->ChangeState( "editor" );
     }
 
     void SmileEditorLayer::NewWorld()

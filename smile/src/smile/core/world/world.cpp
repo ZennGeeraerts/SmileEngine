@@ -97,8 +97,6 @@ namespace smile::world
 
     void World::OnOpen()
     {
-        m_StateManager.ChangeState( "editor" );
-
         graphic::RenderEngine::GetScene()->AddRenderPass(
             memory::CreateRef< graphic::ecs::ForwardRenderPass >( m_ECSEngine ) );
         graphic::RenderEngine::GetScene()->AddRenderPass(
@@ -143,22 +141,8 @@ namespace smile::world
             pair.second.ECSEngineCopy( srcWorldEngine, dstWorldEngine );
         }
 
-        for ( const std::string &stateName : pWorld->m_StateManager.GetStates() )
-        {
-            memory::Ref< smile::ecs::state::State > pNewState = pNewWorld->CreateState( stateName );
-
-            const auto &state = pWorld->m_StateManager.GetState( stateName );
-            const auto &systemNames = state.GetSystemNames();
-            const Uint32 insertIndex = state.GetInsertIndex();
-
-            for ( Uint32 i{}; i < systemNames.size(); ++i )
-            {
-                if ( i < insertIndex )
-                    pNewState->AddSystem( systemNames[i] );
-                else
-                    pNewState->AddOverlaySystem( systemNames[i] );
-            }
-        }
+        pNewWorld->m_StateManager =
+            smile::ecs::state::StateManager::Copy( pWorld->m_StateManager, &pNewWorld->m_ECSEngine );
 
         return pNewWorld;
     }
