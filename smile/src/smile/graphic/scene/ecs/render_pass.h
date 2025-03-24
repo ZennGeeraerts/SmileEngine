@@ -13,9 +13,7 @@ namespace smile::graphic::ecs
     class RenderPass : public memory::Object
     {
       public:
-        RenderPass( smile::ecs::ECSEngine &ecsEngine ) : m_ECSEngine{ ecsEngine }
-        {
-        }
+        RenderPass() = default;
         virtual ~RenderPass() = default;
 
         RenderPass( const RenderPass & ) = delete;
@@ -23,9 +21,20 @@ namespace smile::graphic::ecs
         RenderPass &operator=( const RenderPass & ) = delete;
         RenderPass &operator=( RenderPass && ) = delete;
 
+        virtual void OnAdd( smile::ecs::ECSEngine &ecsEngine )
+        {
+            m_pECSEngine = &ecsEngine;
+        };
+
+        virtual void OnRemove( smile::ecs::ECSEngine &ecsEngine )
+        {
+            SM_ASSERT( m_pECSEngine == &ecsEngine, "System does not belong to this ecs engine" );
+            m_pECSEngine = nullptr;
+        };
+
         virtual void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) = 0;
 
       protected:
-        smile::ecs::ECSEngine &m_ECSEngine;
+        smile::ecs::ECSEngine *m_pECSEngine;
     };
 }

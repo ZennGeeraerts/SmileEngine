@@ -10,9 +10,7 @@ namespace smile::graphic::ecs
     class DebugRenderPass final : public RenderPass
     {
       public:
-        DebugRenderPass( smile::ecs::ECSEngine &ecsEngine ) : RenderPass{ ecsEngine }
-        {
-        }
+        DebugRenderPass() = default;
 
         DebugRenderPass( const DebugRenderPass & ) = delete;
         DebugRenderPass( DebugRenderPass && ) = delete;

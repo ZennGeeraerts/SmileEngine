@@ -16,25 +16,26 @@ namespace smile::graphic::ecs
         wireframeRenderer.BeginScene( camera, cameraTransform );
 
         {
-            auto group = m_ECSEngine.GetGroup< physics::ecs::BoxColliderComponent >(
+            auto group = m_pECSEngine->GetGroup< physics::ecs::BoxColliderComponent >(
                 smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[boxCollider, transform] =
-                    m_ECSEngine.GetComponents< physics::ecs::BoxColliderComponent, world::ecs::TransformComponent >(
+                    m_pECSEngine->GetComponents< physics::ecs::BoxColliderComponent, world::ecs::TransformComponent >(
                         entity );
                 wireframeRenderer.Submit( boxCollider, transform.GetWorldTransform() );
             }
         }
 
         {
-            auto group = m_ECSEngine.GetGroup< physics::ecs::SphereColliderComponent >(
+            auto group = m_pECSEngine->GetGroup< physics::ecs::SphereColliderComponent >(
                 smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[sphereCollider, transform] =
-                    m_ECSEngine.GetComponents< physics::ecs::SphereColliderComponent, world::ecs::TransformComponent >(
-                        entity );
+                    m_pECSEngine
+                        ->GetComponents< physics::ecs::SphereColliderComponent, world::ecs::TransformComponent >(
+                            entity );
                 wireframeRenderer.Submit( sphereCollider, transform.GetWorldTransform() );
             }
         }

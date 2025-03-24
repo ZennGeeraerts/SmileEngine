@@ -10,9 +10,7 @@ namespace smile::graphic::ecs
     class ForwardRenderPass final : public RenderPass
     {
       public:
-        ForwardRenderPass( smile::ecs::ECSEngine &ecsEngine ) : RenderPass{ ecsEngine }
-        {
-        }
+        ForwardRenderPass() = default;
 
         ForwardRenderPass( const ForwardRenderPass & ) = delete;
         ForwardRenderPass( ForwardRenderPass && ) = delete;

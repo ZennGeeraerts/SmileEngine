@@ -14,6 +14,11 @@
 #include "smile/graphic/animation/ecs/animation_system.h"
 #include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
+#include "smile/graphic/scene/ecs/forward_render_pass.h"
+#include "smile/graphic/scene/ecs/wireframe_render_pass.h"
+#include "smile/graphic/scene/ecs/debug_render_pass.h"
+#include "smile/graphic/scene/ecs/render_pass_2d.h"
+#include "smile/graphic/scene/ecs/physics_render_pass.h"
 
 #include "smile/physics/physics_engine.h"
 #include "smile/physics/ecs/physics_system.h"
@@ -528,6 +533,13 @@ namespace smile
         pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
         pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+
+        graphic::ecs::RenderPassList &renderPassList = graphic::RenderEngine::GetScene()->GetRenderPassList();
+        renderPassList.Add( memory::CreateRef< graphic::ecs::ForwardRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::WireframeRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::DebugRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::RenderPass2D >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::PhysicsRenderPass >() );
 
         m_pEditorWorld->ChangeState( "editor" );
     }

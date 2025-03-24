@@ -9,6 +9,22 @@
 
 namespace smile::graphic::ecs
 {
+    void GraphicSystem::OnAdd( smile::ecs::ECSEngine &ecsEngine )
+    {
+        System::OnAdd( ecsEngine );
+
+        /*memory::Ref< Scene > pScene = RenderEngine::GetScene();
+        pScene->GetRenderPassList().OnAdd( ecsEngine );*/
+    }
+
+    void GraphicSystem::OnRemove( smile::ecs::ECSEngine &ecsEngine )
+    {
+        System::OnRemove( ecsEngine );
+
+        /*memory::Ref< Scene > pScene = RenderEngine::GetScene();
+        pScene->GetRenderPassList().OnRemove( ecsEngine );*/
+    }
+
     void GraphicSystem::OnUpdate()
     {
         memory::Ref< Scene > pScene = RenderEngine::GetScene();

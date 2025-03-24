@@ -6,17 +6,9 @@
 #include "world.h"
 
 #include "entity.h"
-
 #include "smile/core/world/ecs/transform_system.h"
-
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/scene/ecs/forward_render_pass.h"
-#include "smile/graphic/scene/ecs/wireframe_render_pass.h"
-#include "smile/graphic/scene/ecs/debug_render_pass.h"
-#include "smile/graphic/scene/ecs/render_pass_2d.h"
-#include "smile/graphic/scene/ecs/physics_render_pass.h"
-
 #include "smile/core/ecs/relationship.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::world
 {
@@ -97,21 +89,12 @@ namespace smile::world
 
     void World::OnOpen()
     {
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::ForwardRenderPass >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::WireframeRenderPass >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::DebugRenderPass >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::RenderPass2D >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::PhysicsRenderPass >( m_ECSEngine ) );
+        graphic::RenderEngine::GetScene()->GetRenderPassList().OnAdd( m_ECSEngine );
     }
 
     void World::OnClose()
     {
-        graphic::RenderEngine::GetScene()->ClearRenderPasses();
+        graphic::RenderEngine::GetScene()->GetRenderPassList().OnRemove( m_ECSEngine );
     }
 
     void World::OnUpdate( primitive::Timestep deltaTime )

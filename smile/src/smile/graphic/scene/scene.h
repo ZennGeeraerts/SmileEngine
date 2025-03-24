@@ -28,14 +28,9 @@ namespace smile::graphic
       public:
         Scene( const window::Window *pWindow );
 
-        void AddRenderPass( memory::Ref< ecs::RenderPass > pRenderPass )
+        ecs::RenderPassList &GetRenderPassList()
         {
-            m_RenderPassList.Add( std::move( pRenderPass ) );
-        }
-
-        void ClearRenderPasses()
-        {
-            m_RenderPassList.Clear();
+            return m_RenderPassList;
         }
 
         void OnRender();

@@ -15,12 +15,12 @@ namespace smile::graphic::ecs
         Renderer2D::BeginScene( camera, cameraTransform );
 
         {
-            auto group =
-                m_ECSEngine.GetGroup< SpriteRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
+            auto group = m_pECSEngine->GetGroup< SpriteRendererComponent >(
+                smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[spriteRenderer, transform] =
-                    m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity );
+                    m_pECSEngine->GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity );
                 Renderer2D::DrawQuad( transform.GetWorldTransform(), spriteRenderer );
             }
         }
