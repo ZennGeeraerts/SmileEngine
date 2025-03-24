@@ -89,7 +89,7 @@ namespace smile
 
     void SmileEditorLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        memory::Ref< graphic::Scene > pScene = graphic::RenderEngine::GetScene();
+        memory::Ref< graphic::Scene > pScene = graphic::RenderEngine::GetSceneManager().GetActive();
 
         if ( ( !math::AreEqual( m_ViewportSize.x, static_cast< float >( pScene->GetViewportWidth() ) ) ||
                  !math::AreEqual( m_ViewportSize.y, static_cast< float >( pScene->GetViewportHeight() ) ) ) &&
@@ -211,8 +211,8 @@ namespace smile
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        ImGui::Image(
-            graphic::RenderEngine::GetScene()->GetFinalColor(), ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
+        ImGui::Image( graphic::RenderEngine::GetSceneManager().GetActive()->GetFinalColor(),
+            ImVec2{ m_ViewportSize.x, m_ViewportSize.y } );
 
         if ( ImGui::BeginDragDropTarget() )
         {
@@ -534,7 +534,8 @@ namespace smile
         pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
         pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
 
-        graphic::ecs::RenderPassList &renderPassList = graphic::RenderEngine::GetScene()->GetRenderPassList();
+        graphic::ecs::RenderPassList &renderPassList =
+            graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
         renderPassList.Add( memory::CreateRef< graphic::ecs::ForwardRenderPass >() );
         renderPassList.Add( memory::CreateRef< graphic::ecs::WireframeRenderPass >() );
         renderPassList.Add( memory::CreateRef< graphic::ecs::DebugRenderPass >() );
@@ -553,6 +554,14 @@ namespace smile
         m_EditorWorldPath = std::filesystem::path{};
 
         m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
+
+        graphic::ecs::RenderPassList &renderPassList =
+            graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
+        renderPassList.Add( memory::CreateRef< graphic::ecs::ForwardRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::WireframeRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::DebugRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::RenderPass2D >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::PhysicsRenderPass >() );
     }
 
     void SmileEditorLayer::OnWorldPlay()
@@ -562,8 +571,17 @@ namespace smile
 
         m_WorldState = WorldState::Play;
 
-        auto pActiveWorld = world::World::Copy( m_pEditorWorld );
+        auto pActiveWorld = world::WorldManager::CopyActive();
         world::WorldManager::Open( pActiveWorld );
+
+        graphic::ecs::RenderPassList &renderPassList =
+            graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
+        renderPassList.Add( memory::CreateRef< graphic::ecs::ForwardRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::WireframeRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::DebugRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::RenderPass2D >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::PhysicsRenderPass >() );
+        
         pActiveWorld->ChangeState( "runtime" );
 
         m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
@@ -576,11 +594,19 @@ namespace smile
 
         m_WorldState = WorldState::Simulate;
 
-        auto pActiveWorld = world::World::Copy( m_pEditorWorld );
+        auto pActiveWorld = world::WorldManager::CopyActive();
         world::WorldManager::Open( pActiveWorld );
         pActiveWorld->ChangeState( "simulate" );
 
         m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
+
+        graphic::ecs::RenderPassList &renderPassList =
+            graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
+        renderPassList.Add( memory::CreateRef< graphic::ecs::ForwardRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::WireframeRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::DebugRenderPass >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::RenderPass2D >() );
+        renderPassList.Add( memory::CreateRef< graphic::ecs::PhysicsRenderPass >() );
     }
 
     void SmileEditorLayer::OnWorldStop()

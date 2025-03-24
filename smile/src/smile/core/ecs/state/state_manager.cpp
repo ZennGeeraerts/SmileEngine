@@ -164,11 +164,11 @@ namespace smile::ecs::state
 
         const std::vector< std::string > &systemNames = result.m_pCurrentState->GetSystemNames();
 
-        for ( const auto &systemName : systemNames )
-        {
-            auto pSystem = result.GetOrCreateSystem( systemName );
-            result.m_pECSEngine->AddSystem( pSystem );
-        }
+        //for ( const auto &systemName : systemNames )
+        //{
+        //    auto pSystem = result.GetOrCreateSystem( systemName );
+        //    result.m_pECSEngine->AddSystem( pSystem );
+        //}
 
         return result;
     }

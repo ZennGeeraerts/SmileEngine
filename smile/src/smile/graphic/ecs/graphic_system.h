@@ -5,16 +5,22 @@
 #pragma once
 
 #include "smile/core/ecs/system.h"
+#include "smile/graphic/scene/scene_manager.h"
 
 namespace smile::graphic::ecs
 {
-    class GraphicSystem final : public smile::ecs::System< GraphicSystem >
+    class GraphicSystem final : public smile::ecs::System< GraphicSystem >, public SceneManager::Listener
     {
       public:
-        GraphicSystem() = default;
+        GraphicSystem();
 
         void OnAdd( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnRemove( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnUpdate() override;
+
+        void OnActiveSceneChanged( const memory::Ref< Scene > &pScene );
+
+      private:
+        memory::Ref< Scene > m_pScene = nullptr;
     };
 }

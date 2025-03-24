@@ -14,7 +14,7 @@ namespace smile::world
 {
     std::unordered_map< foundation::TypeID, World::CopyComponentFunctions > World::s_CopyComponentFuncs{};
 
-    World::World()
+    World::World() : m_UUID{}
     {
         auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
         pDefaultState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
@@ -89,12 +89,12 @@ namespace smile::world
 
     void World::OnOpen()
     {
-        graphic::RenderEngine::GetScene()->GetRenderPassList().OnAdd( m_ECSEngine );
+        //graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList().OnAdd( m_ECSEngine );
     }
 
     void World::OnClose()
     {
-        graphic::RenderEngine::GetScene()->GetRenderPassList().OnRemove( m_ECSEngine );
+        //graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList().OnRemove( m_ECSEngine );
     }
 
     void World::OnUpdate( primitive::Timestep deltaTime )

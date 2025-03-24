@@ -36,11 +36,14 @@ namespace smile::world
 
         void OnUpdate( primitive::Timestep deltaTime );
 
-        static Ref< World > Copy( const Ref< World > &pWorld );
-
         void DuplicateEntity( Entity entity );
 
         Entity GetEntityByUUID( primitive::UUID uuid );
+
+        primitive::UUID GetUUID() const
+        {
+            return m_UUID;
+        }
 
         template < typename ComponentType >
         void OnComponentAdded()
@@ -103,7 +106,10 @@ namespace smile::world
             };
         }
 
+        static Ref< World > Copy( const Ref< World > &pWorld );
+
       private:
+        primitive::UUID m_UUID;
         smile::ecs::ECSEngine m_ECSEngine;
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap{};
         smile::ecs::state::StateManager m_StateManager;
@@ -113,5 +119,6 @@ namespace smile::world
         friend class Entity;
         friend class WorldSerializer;
         friend class WorldHierarchyPanel;
+        friend class WorldManager;
     };
 }
