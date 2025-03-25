@@ -1,28 +1,24 @@
+/*=============================================================================*/
+// Copyright 2022-2025 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
 #include "smpch.h"
 #include "scene_manager.h"
 
 namespace smile::graphic
 {
-    void SceneManager::AddListener( Listener *pListener )
-    {
-        m_pListeners.push_back( pListener );
-    }
-
-    void SceneManager::OnNewWorld( const Ref< world::World > &pWorld )
+    void SceneManager::OnNewWorld( smile::ecs::ECSEngine *pECSEngine )
     {
         auto pNewScene = memory::CreateRef< Scene >( m_pWindow );
-        m_WorldToSceneMap.emplace( pWorld->GetUUID(), std::move( pNewScene ) );
+        m_ECSEngineToSceneMap.emplace( pECSEngine, std::move( pNewScene ) );
     }
 
-    void SceneManager::OnActiveWorldChanged( const Ref< world::World > &pWorld )
+    void SceneManager::OnActiveWorldChanged( smile::ecs::ECSEngine *pECSEngine )
     {
-        auto it = m_WorldToSceneMap.find( pWorld->GetUUID() );
+        auto it = m_ECSEngineToSceneMap.find( pECSEngine );
 
-        SM_ASSERT( it != m_WorldToSceneMap.end(), "SceneManager::OnActiveWorldChanged > World not found in map" );
+        SM_ASSERT( it != m_ECSEngineToSceneMap.end(), "SceneManager::OnActiveWorldChanged > World not found in map" );
 
         m_pActiveScene = it->second;
-
-        for ( Listener *pListener : m_pListeners )
-            pListener->OnActiveSceneChanged( m_pActiveScene );
     }
 }

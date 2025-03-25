@@ -14,7 +14,7 @@ namespace smile::world
         auto pNewWorld = CreateRef< World >();
 
         for ( Listener *pListener : s_pListeners )
-            pListener->OnNewWorld( pNewWorld );
+            pListener->OnNewWorld( &pNewWorld->m_ECSEngine );
 
         Open( pNewWorld );
 
@@ -37,7 +37,7 @@ namespace smile::world
 
         Ref< world::World > pNewWorld = CreateRef< world::World >();
         for ( Listener *pListener : s_pListeners )
-            pListener->OnNewWorld( pNewWorld );
+            pListener->OnNewWorld( &pNewWorld->m_ECSEngine );
 
         WorldSerializer worldSerializer{ pNewWorld };
         if ( worldSerializer.Deserialize( path.string() ) )
@@ -65,7 +65,7 @@ namespace smile::world
         s_pActiveWorld->OnOpen();
 
         for ( Listener *pListener : s_pListeners )
-            pListener->OnActiveWorldChanged( s_pActiveWorld );
+            pListener->OnActiveWorldChanged( &pWorld->m_ECSEngine );
     }
 
     void WorldManager::SaveActive( const std::filesystem::path &path )
@@ -79,7 +79,7 @@ namespace smile::world
         auto pNewWorld = World::Copy( s_pActiveWorld );
 
         for ( Listener *pListener : s_pListeners )
-            pListener->OnNewWorld( pNewWorld );
+            pListener->OnNewWorld( &pNewWorld->m_ECSEngine );
 
         return pNewWorld;
     }

@@ -16,10 +16,10 @@ namespace smile::world
         class Listener
         {
           public:
-            virtual void OnNewWorld( const Ref< World > &pWorld )
+            virtual void OnNewWorld( smile::ecs::ECSEngine *pECSEngine )
             {
             }
-            virtual void OnActiveWorldChanged( const Ref< World > &pWorld )
+            virtual void OnActiveWorldChanged( smile::ecs::ECSEngine *pECSEngine )
             {
             }
         };

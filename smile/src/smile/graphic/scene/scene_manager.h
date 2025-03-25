@@ -12,15 +12,6 @@ namespace smile::graphic
     class SceneManager final : public world::WorldManager::Listener
     {
       public:
-        class Listener
-        {
-          public:
-            virtual void OnActiveSceneChanged( const memory::Ref< Scene > &pScene )
-            {
-            }
-        };
-
-      public:
         void Initialize( const window::Window *pWindow )
         {
             m_pWindow = pWindow;
@@ -31,23 +22,20 @@ namespace smile::graphic
             return m_pActiveScene;
         }
 
-        memory::Ref< Scene > GetScene( primitive::UUID worldID ) const
+        memory::Ref< Scene > GetScene( smile::ecs::ECSEngine *pECSEngine ) const
         {
-            SM_ASSERT( m_WorldToSceneMap.find( worldID ) != m_WorldToSceneMap.end(),
-                "SceneManager::GetScene > World id not found in world to scene map" );
+            SM_ASSERT( m_ECSEngineToSceneMap.find( pECSEngine ) != m_ECSEngineToSceneMap.end(),
+                "SceneManager::GetScene > ECS engine not found in world to scene map" );
 
-            return m_WorldToSceneMap[worldID];
+            return m_ECSEngineToSceneMap[pECSEngine];
         }
 
-        void AddListener( Listener *pListener );
-
-        void OnNewWorld( const Ref< world::World > &pWorld ) override;
-        void OnActiveWorldChanged( const Ref< world::World > &pWorld ) override;
+        void OnNewWorld( smile::ecs::ECSEngine *pECSEngine ) override;
+        void OnActiveWorldChanged( smile::ecs::ECSEngine *pECSEngine ) override;
 
       private:
         const window::Window *m_pWindow;
         memory::Ref< Scene > m_pActiveScene;
-        mutable std::unordered_map< primitive::UUID, memory::Ref< Scene > > m_WorldToSceneMap;
-        std::vector< Listener * > m_pListeners{};
+        mutable std::unordered_map< smile::ecs::ECSEngine *, memory::Ref< Scene > > m_ECSEngineToSceneMap;
     };
 }
