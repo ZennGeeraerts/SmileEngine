@@ -14,7 +14,7 @@ namespace smile::graphic
       public:
         void Initialize( const window::Window *pWindow )
         {
-            m_pWindow = pWindow;
+            m_pActiveScene = memory::CreateRef< Scene >( pWindow );
         }
 
         memory::Ref< Scene > GetActive() const
@@ -22,20 +22,10 @@ namespace smile::graphic
             return m_pActiveScene;
         }
 
-        memory::Ref< Scene > GetScene( smile::ecs::ECSEngine *pECSEngine ) const
-        {
-            SM_ASSERT( m_ECSEngineToSceneMap.find( pECSEngine ) != m_ECSEngineToSceneMap.end(),
-                "SceneManager::GetScene > ECS engine not found in world to scene map" );
-
-            return m_ECSEngineToSceneMap[pECSEngine];
-        }
-
-        void OnNewWorld( smile::ecs::ECSEngine *pECSEngine ) override;
-        void OnActiveWorldChanged( smile::ecs::ECSEngine *pECSEngine ) override;
+        void OnWorldOpened( smile::ecs::ECSEngine &ecsEngine ) override;
+        void OnWorldClosed( smile::ecs::ECSEngine &ecsEngine ) override;
 
       private:
-        const window::Window *m_pWindow;
         memory::Ref< Scene > m_pActiveScene;
-        mutable std::unordered_map< smile::ecs::ECSEngine *, memory::Ref< Scene > > m_ECSEngineToSceneMap;
     };
 }

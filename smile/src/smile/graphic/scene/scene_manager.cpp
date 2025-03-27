@@ -7,18 +7,13 @@
 
 namespace smile::graphic
 {
-    void SceneManager::OnNewWorld( smile::ecs::ECSEngine *pECSEngine )
+    void SceneManager::OnWorldOpened( smile::ecs::ECSEngine &ecsEngine )
     {
-        auto pNewScene = memory::CreateRef< Scene >( m_pWindow );
-        m_ECSEngineToSceneMap.emplace( pECSEngine, std::move( pNewScene ) );
+        m_pActiveScene->OnAdd( ecsEngine );
     }
 
-    void SceneManager::OnActiveWorldChanged( smile::ecs::ECSEngine *pECSEngine )
+    void SceneManager::OnWorldClosed( smile::ecs::ECSEngine &ecsEngine )
     {
-        auto it = m_ECSEngineToSceneMap.find( pECSEngine );
-
-        SM_ASSERT( it != m_ECSEngineToSceneMap.end(), "SceneManager::OnActiveWorldChanged > World not found in map" );
-
-        m_pActiveScene = it->second;
+        m_pActiveScene->OnRemove( ecsEngine );
     }
 }

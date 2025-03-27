@@ -13,8 +13,6 @@ namespace smile::graphic::ecs
       public:
         GraphicSystem() = default;
 
-        void OnAdd( smile::ecs::ECSEngine &ecsEngine ) override;
-        void OnRemove( smile::ecs::ECSEngine &ecsEngine ) override;
         void OnUpdate() override;
     };
 }

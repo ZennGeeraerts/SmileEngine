@@ -17,35 +17,12 @@ namespace smile::graphic::ecs
             Clear();
         }
 
-        void OnAdd( smile::ecs::ECSEngine &ecsEngine )
-        {
-            m_pECSEngine = &ecsEngine;
+        void OnAdd( smile::ecs::ECSEngine &ecsEngine );
+        void OnRemove( smile::ecs::ECSEngine &ecsEngine );
 
-            for ( const auto &pRenderPass : m_pRenderPasses )
-                pRenderPass->OnAdd( ecsEngine );
-        }
+        void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
 
-        void OnRemove( smile::ecs::ECSEngine &ecsEngine )
-        {
-            for ( const auto &pRenderPass : m_pRenderPasses )
-                pRenderPass->OnRemove( ecsEngine );
-
-            m_pECSEngine = nullptr;
-        }
-
-        void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
-        {
-            for ( auto &pRenderPass : m_pRenderPasses )
-                pRenderPass->OnRender( camera, cameraTransform );
-        }
-
-        void Add( memory::Ref< RenderPass > pRenderPass )
-        {
-            m_pRenderPasses.push_back( pRenderPass );
-
-            if ( m_pECSEngine )
-                pRenderPass->OnAdd( *m_pECSEngine );
-        }
+        void Add( memory::Ref< RenderPass > pRenderPass );
 
         void Clear()
         {

@@ -16,12 +16,8 @@ namespace smile::world
         class Listener
         {
           public:
-            virtual void OnNewWorld( smile::ecs::ECSEngine *pECSEngine )
-            {
-            }
-            virtual void OnActiveWorldChanged( smile::ecs::ECSEngine *pECSEngine )
-            {
-            }
+            virtual void OnWorldOpened( smile::ecs::ECSEngine &ecsEngine ) = 0;
+            virtual void OnWorldClosed( smile::ecs::ECSEngine &ecsEngine ) = 0;
         };
 
       public:

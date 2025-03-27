@@ -26,7 +26,11 @@ namespace smile::graphic
         };
 
       public:
+        Scene() = default;
         Scene( const window::Window *pWindow );
+
+        void OnAdd( smile::ecs::ECSEngine &ecsEngine );
+        void OnRemove( smile::ecs::ECSEngine &ecsEngine );
 
         ecs::RenderPassList &GetRenderPassList()
         {

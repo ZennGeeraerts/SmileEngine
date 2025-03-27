@@ -31,9 +31,6 @@ namespace smile::world
         Entity CreateEntity( primitive::UUID uuid, const std::string &name );
         void DestroyEntity( Entity entity );
 
-        void OnOpen();
-        void OnClose();
-
         void OnUpdate( primitive::Timestep deltaTime );
 
         void DuplicateEntity( Entity entity );

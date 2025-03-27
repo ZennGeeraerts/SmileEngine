@@ -87,16 +87,6 @@ namespace smile::world
         m_ECSEngine.DestroyEntity( entity );
     }
 
-    void World::OnOpen()
-    {
-        //graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList().OnAdd( m_ECSEngine );
-    }
-
-    void World::OnClose()
-    {
-        //graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList().OnRemove( m_ECSEngine );
-    }
-
     void World::OnUpdate( primitive::Timestep deltaTime )
     {
         m_ECSEngine.OnUpdate();
