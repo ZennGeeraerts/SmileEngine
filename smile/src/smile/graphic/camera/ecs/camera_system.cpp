@@ -23,7 +23,7 @@ namespace smile::graphic::ecs
         {
             auto &cameraComponent = ecsEngine.GetComponent< CameraComponent >( entity );
 
-            memory::Ref< Scene > pScene = RenderEngine::GetScene();
+            memory::Ref< Scene > pScene = RenderEngine::GetSceneManager().GetActive();
             const Uint32 viewportWidth = pScene->GetViewportWidth();
             const Uint32 viewportHeight = pScene->GetViewportHeight();
 
@@ -42,14 +42,14 @@ namespace smile::graphic::ecs
 
     void CameraSystem::OnRemove( smile::ecs::ECSEngine &ecsEngine )
     {
-        RenderEngine::GetScene()->SetPrimaryCameraEntity( world::Entity{} );
+        RenderEngine::GetSceneManager().GetActive()->SetPrimaryCameraEntity( world::Entity{} );
         ecsEngine.OnConstruction< CameraComponent >().clear();
         System::OnRemove( ecsEngine );
     }
 
     void CameraSystem::OnUpdate()
     {
-        memory::Ref< Scene > pScene = RenderEngine::GetScene();
+        memory::Ref< Scene > pScene = RenderEngine::GetSceneManager().GetActive();
         const Uint32 viewportWidth = pScene->GetViewportWidth();
         const Uint32 viewportHeight = pScene->GetViewportHeight();
 

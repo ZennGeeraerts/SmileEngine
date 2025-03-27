@@ -34,6 +34,16 @@ namespace smile::graphic
             DirectX::Colors::DodgerBlue.f[3] };
     }
 
+    void Scene::OnAdd( smile::ecs::ECSEngine &ecsEngine )
+    {
+        m_RenderPassList.OnAdd( ecsEngine );
+    }
+
+    void Scene::OnRemove( smile::ecs::ECSEngine &ecsEngine )
+    {
+        m_RenderPassList.OnRemove( ecsEngine );
+    }
+
     void Scene::OnRender()
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();

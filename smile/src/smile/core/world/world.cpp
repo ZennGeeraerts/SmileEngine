@@ -6,23 +6,15 @@
 #include "world.h"
 
 #include "entity.h"
-
 #include "smile/core/world/ecs/transform_system.h"
-
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/scene/ecs/forward_render_pass.h"
-#include "smile/graphic/scene/ecs/wireframe_render_pass.h"
-#include "smile/graphic/scene/ecs/debug_render_pass.h"
-#include "smile/graphic/scene/ecs/render_pass_2d.h"
-#include "smile/graphic/scene/ecs/physics_render_pass.h"
-
 #include "smile/core/ecs/relationship.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::world
 {
     std::unordered_map< foundation::TypeID, World::CopyComponentFunctions > World::s_CopyComponentFuncs{};
 
-    World::World()
+    World::World() : m_UUID{}
     {
         auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
         pDefaultState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
@@ -93,25 +85,6 @@ namespace smile::world
 
         m_EntityMap.erase( entity.GetUUID() );
         m_ECSEngine.DestroyEntity( entity );
-    }
-
-    void World::OnOpen()
-    {
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::ForwardRenderPass >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::WireframeRenderPass >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::DebugRenderPass >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::RenderPass2D >( m_ECSEngine ) );
-        graphic::RenderEngine::GetScene()->AddRenderPass(
-            memory::CreateRef< graphic::ecs::PhysicsRenderPass >( m_ECSEngine ) );
-    }
-
-    void World::OnClose()
-    {
-        graphic::RenderEngine::GetScene()->ClearRenderPasses();
     }
 
     void World::OnUpdate( primitive::Timestep deltaTime )

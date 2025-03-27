@@ -10,9 +10,7 @@ namespace smile::graphic::ecs
     class RenderPass2D : public RenderPass
     {
       public:
-        RenderPass2D( smile::ecs::ECSEngine &ecsEngine ) : RenderPass{ ecsEngine }
-        {
-        }
+        RenderPass2D() = default;
 
         RenderPass2D( const RenderPass2D & ) = delete;
         RenderPass2D( RenderPass2D && ) = delete;

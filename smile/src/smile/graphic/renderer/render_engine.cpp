@@ -11,23 +11,17 @@
 #include "renderer_2d.h"
 #include "skybox_renderer.h"
 
-#include "resource/resource_manager.h"
-
-#include <DirectXColors.h>
+#include "smile/core/window/window.h"
+#include "smile/core/world/world_manager.h"
 
 namespace smile::graphic
 {
     RenderSystem RenderEngine::s_RenderSystem{};
-    const window::Window *RenderEngine::s_pWindow = nullptr;
-
-    memory::Ref< Scene > RenderEngine::s_pScene = nullptr;
-
-    RendererSettings RenderEngine::s_Settings{};
+    SceneManager RenderEngine::s_SceneManager{};
     ShaderLibrary RenderEngine::s_ShaderLibrary{};
 
     void RenderEngine::Initialize( const window::Window *pWindow )
     {
-        s_pWindow = pWindow;
         s_RenderSystem.Initialize( pWindow );
 
         VertexLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
@@ -37,7 +31,8 @@ namespace smile::graphic
             { { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } } );
         s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { ShaderDataType::Float3, "POSITION" } } );
 
-        s_pScene = memory::CreateRef< Scene >( pWindow );
+        s_SceneManager.Initialize( pWindow );
+        world::WorldManager::AddListener( &s_SceneManager );
 
         ForwardRenderer::Initialize();
         WireframeRenderer::GetInstance().Initialize();

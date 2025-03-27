@@ -51,15 +51,31 @@ namespace smile::world
     void WorldManager::Open( const Ref< World > &pWorld )
     {
         if ( s_pActiveWorld )
-            s_pActiveWorld->OnClose();
+        {
+            for ( Listener *pListener : s_pListeners )
+                pListener->OnWorldClosed( s_pActiveWorld->m_ECSEngine );
+        }
 
         s_pActiveWorld = pWorld;
-        s_pActiveWorld->OnOpen();
+
+        for ( Listener *pListener : s_pListeners )
+            pListener->OnWorldOpened( pWorld->m_ECSEngine );
     }
 
     void WorldManager::SaveActive( const std::filesystem::path &path )
     {
         WorldSerializer worldSerializer{ s_pActiveWorld };
         worldSerializer.Serialize( path.string() );
+    }
+
+    Ref< World > WorldManager::CopyActive()
+    {
+        auto pNewWorld = World::Copy( s_pActiveWorld );
+        return pNewWorld;
+    }
+
+    void WorldManager::AddListener( Listener *pListener )
+    {
+        s_pListeners.push_back( pListener );
     }
 }

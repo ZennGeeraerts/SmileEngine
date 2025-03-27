@@ -11,7 +11,7 @@ namespace smile::graphic::ecs
 {
     void GraphicSystem::OnUpdate()
     {
-        memory::Ref< Scene > pScene = RenderEngine::GetScene();
+        memory::Ref< Scene > pScene = RenderEngine::GetSceneManager().GetActive();
         pScene->OnRender();
     }
 }

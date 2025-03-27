@@ -26,16 +26,15 @@ namespace smile::graphic
         };
 
       public:
+        Scene() = default;
         Scene( const window::Window *pWindow );
 
-        void AddRenderPass( memory::Ref< ecs::RenderPass > pRenderPass )
-        {
-            m_RenderPassList.Add( std::move( pRenderPass ) );
-        }
+        void OnAdd( smile::ecs::ECSEngine &ecsEngine );
+        void OnRemove( smile::ecs::ECSEngine &ecsEngine );
 
-        void ClearRenderPasses()
+        ecs::RenderPassList &GetRenderPassList()
         {
-            m_RenderPassList.Clear();
+            return m_RenderPassList;
         }
 
         void OnRender();

@@ -5,20 +5,16 @@
 #pragma once
 
 #include "render_system.h"
+#include "smile/graphic/scene/scene_manager.h"
 #include "smile/graphic/renderer_backend/shader/shader_library.h"
-#include "smile/graphic/camera/editor_camera.h"
-#include "smile/graphic/scene/scene.h"
 
-#include "smile/core/window/window.h"
+namespace smile::window
+{
+    class Window;
+}
 
 namespace smile::graphic
 {
-    struct RendererSettings final
-    {
-        Uint32 Width = 1280;
-        Uint32 Height = 720;
-    };
-
     class RenderEngine final
     {
       public:
@@ -27,9 +23,14 @@ namespace smile::graphic
 
         static void OnWindowResize( Uint32 width, Uint32 height );
 
-        static void SetSettings( const RendererSettings &settings )
+        static RenderSystem &GetRenderSystem()
         {
-            s_Settings = settings;
+            return s_RenderSystem;
+        }
+
+        static SceneManager &GetSceneManager()
+        {
+            return s_SceneManager;
         }
 
         static ShaderLibrary &GetShaderLibrary()
@@ -37,22 +38,9 @@ namespace smile::graphic
             return s_ShaderLibrary;
         }
 
-        static memory::Ref< Scene > GetScene()
-        {
-            return s_pScene;
-        }
-
-        static RenderSystem &GetRenderSystem()
-        {
-            return s_RenderSystem;
-        }
-
       private:
         static RenderSystem s_RenderSystem;
-        static memory::Ref< Scene > s_pScene;
-        static const window::Window *s_pWindow;
-
-        static RendererSettings s_Settings;
+        static SceneManager s_SceneManager;
         static ShaderLibrary s_ShaderLibrary;
     };
 }

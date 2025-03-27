@@ -11,9 +11,7 @@ namespace smile::graphic::ecs
     class PhysicsRenderPass final : public RenderPass
     {
       public:
-        PhysicsRenderPass( smile::ecs::ECSEngine &ecsEngine ) : RenderPass{ ecsEngine }
-        {
-        }
+        PhysicsRenderPass() = default;
 
         PhysicsRenderPass( const PhysicsRenderPass & ) = delete;
         PhysicsRenderPass( PhysicsRenderPass && ) = delete;

@@ -17,22 +17,23 @@ namespace smile::graphic::ecs
 
         {
             auto group =
-                m_ECSEngine.GetGroup< MeshRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
+                m_pECSEngine->GetGroup< MeshRendererComponent >( smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[meshRenderer, transform] =
-                    m_ECSEngine.GetComponents< MeshRendererComponent, world::ecs::TransformComponent >( entity );
+                    m_pECSEngine->GetComponents< MeshRendererComponent, world::ecs::TransformComponent >( entity );
                 graphic::ForwardRenderer::Submit( meshRenderer, transform.GetWorldTransform() );
             }
         }
         {
             // TODO: Remove dependency on animator
-            auto group = m_ECSEngine.GetGroup< SkinnedMeshRendererComponent, AnimatorComponent >(
+            auto group = m_pECSEngine->GetGroup< SkinnedMeshRendererComponent, AnimatorComponent >(
                 smile::ecs::g_Get< world::ecs::TransformComponent > );
             for ( auto entity : group )
             {
                 const auto &[skinnedMeshRenderer, transform] =
-                    m_ECSEngine.GetComponents< SkinnedMeshRendererComponent, world::ecs::TransformComponent >( entity );
+                    m_pECSEngine->GetComponents< SkinnedMeshRendererComponent, world::ecs::TransformComponent >(
+                        entity );
 
                 graphic::ForwardRenderer::Submit( skinnedMeshRenderer, transform.GetWorldTransform() );
             }

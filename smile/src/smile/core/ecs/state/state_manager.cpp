@@ -158,7 +158,7 @@ namespace smile::ecs::state
     StateManager StateManager::Copy( const StateManager &stateManager, ECSEngine *pECSEngine )
     {
         StateManager result;
-        result.m_StateMap = stateManager.m_StateMap;
+        result.m_StateMap = stateManager.m_StateMap; // TODO: Make a deep copy instead
         result.m_pCurrentState = stateManager.m_pCurrentState;
         result.m_pECSEngine = pECSEngine;
 
