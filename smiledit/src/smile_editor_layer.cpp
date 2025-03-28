@@ -100,8 +100,6 @@ namespace smile
                 static_cast< Uint32 >( m_ViewportSize.x ), static_cast< Uint32 >( m_ViewportSize.y ) );
         }
 
-        graphic::RenderEngine::GetRenderSystem().Clear();
-
         if ( ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) && m_IsViewportFocused )
         {
             m_EditorCamera.OnUpdate( deltaTime );

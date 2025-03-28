@@ -2,16 +2,18 @@
 
 #include "smile/core/application/entry_point.h"
 #include "smile/core/application/timer.h"
-
 #include "smile/core/input/input.h"
-
-#include "smile/core/world/ecs/transform_component.h"
+#include "smile/core/world/ecs/transform_system.h"
+#include "smile/core/ecs/state/system_factory.h"
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/mesh/material.h"
+#include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/camera/ecs/camera_component.h"
 #include "smile/graphic/renderer_backend/resource/texture.h"
 #include "smile/graphic/mesh/ecs/mesh_renderer_component.h"
+#include "smile/graphic/ecs/graphic_system.h"
+#include "smile/graphic/scene/ecs/forward_render_pass.h"
 
 #include <imgui/imgui.h>
 #include <DirectXColors.h>
@@ -39,6 +41,10 @@ ExampleLayer::ExampleLayer() : Layer( "Example" )
 
 void ExampleLayer::OnAttach()
 {
+    smile::ecs::state::SystemFactory::RegisterSystem< smile::world::ecs::TransformSystem >();
+    smile::ecs::state::SystemFactory::RegisterSystem< smile::graphic::ecs::CameraSystem >();
+    smile::ecs::state::SystemFactory::RegisterSystem< smile::graphic::ecs::GraphicSystem >();
+
     smile::graphic::RenderEngine::GetRenderSystem().SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
         DirectX::Colors::DodgerBlue.f[1],
         DirectX::Colors::DodgerBlue.f[2],
@@ -160,6 +166,18 @@ void ExampleLayer::OnAttach()
     Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", vertexLayout);*/
 
     m_pActiveWorld.reset( new smile::world::World{} );
+    smile::world::WorldManager::Open( m_pActiveWorld );
+
+    auto pRuntimeState = m_pActiveWorld->CreateState( "runtime" );
+    pRuntimeState->AddSystem( std::string{ smile::world::ecs::TransformSystem::GetStaticName() } );
+    pRuntimeState->AddSystem( std::string{ smile::graphic::ecs::CameraSystem::GetStaticName() } );
+    pRuntimeState->AddOverlaySystem( std::string{ smile::graphic::ecs::GraphicSystem::GetStaticName() } );
+
+    smile::graphic::ecs::RenderPassList &renderPassList =
+        smile::graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
+    renderPassList.Add( smile::memory::CreateRef< smile::graphic::ecs::ForwardRenderPass >() );
+
+    m_pActiveWorld->ChangeState( "runtime" );
 
     m_CameraEntity = m_pActiveWorld->CreateEntity( "Camera" );
     auto &camera = m_CameraEntity.AddComponent< smile::graphic::ecs::CameraComponent >();
@@ -190,8 +208,13 @@ void ExampleLayer::OnAttach()
     m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
     m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
 
-    m_pActiveWorld->OnViewportResize( 1280, 720 );
-    m_pActiveWorld->OnRuntimeStart();
+    smile::graphic::RenderEngine::GetSceneManager().GetActive()->OnViewportResize( 1280, 720 );
+}
+
+void ExampleLayer::OnDetach()
+{
+    smile::world::WorldManager::UnloadActive(); // TRICKY: Ref count needs to be 0 after this call, consider not making
+                                                // this a ref
 }
 
 void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
@@ -245,8 +268,7 @@ void ExampleLayer::OnUpdate( smile::primitive::Timestep deltaTime )
         SM_LOG_INFO( "FPS: {}", smile::application::Timer::GetInstance().GetFPS() );
     }
 
-    smile::graphic::RenderEngine::GetRenderSystem().Clear();
-    m_pActiveWorld->OnUpdateRuntime( deltaTime );
+    m_pActiveWorld->OnUpdate( deltaTime );
 }
 
 void ExampleLayer::OnEvent( smile::window::Event &event )
@@ -267,7 +289,7 @@ bool ExampleLayer::OnWindowResize( smile::window::WindowResizeEvent &e )
     if ( width == 0 || height == 0 )
         return false;
 
-    m_pActiveWorld->OnViewportResize( width, height );
+    smile::graphic::RenderEngine::GetSceneManager().GetActive()->OnViewportResize( width, height );
     return false;
 }
 

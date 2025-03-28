@@ -25,11 +25,8 @@ add_subdirectory(${SMILE_PATH} engine)
 add_module(common)
 add_module(core)
 add_module(graphic)
-add_module(physics)
-add_module(scripting)
 
 add_platform(directx11)
-add_platform(physx)
 
 set(LIB_DIRS
     smile
