@@ -183,14 +183,13 @@ void ExampleLayer::OnAttach()
     auto &camera = m_CameraEntity.AddComponent< smile::graphic::ecs::CameraComponent >();
     camera.IsPrimary = true;
 
-    /*auto cube = m_pActiveScene->CreateEntity("Cube");
-    auto& meshRendererComp = cube.AddComponent<Smile::MeshRendererComponent>();
-    meshRendererComp.pVertexBuffer = pVertexBuffer;
-    meshRendererComp.pIndexBuffer = pIndexBuffer;
-    meshRendererComp.pShader = pShader;
+    auto cube = m_pActiveWorld->CreateEntity("Cube");
+    auto& meshRendererComp = cube.AddComponent<smile::graphic::ecs::MeshRendererComponent>();
+    meshRendererComp.pMesh = smile::graphic::MeshFactory::CreateCube(
+        smile::graphic::VertexLayout{ { smile::graphic::ShaderDataType::Float3, "POSITION" } } );
 
-    cube.GetComponent<Smile::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
-    cube.GetComponent<Smile::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };*/
+    cube.GetComponent<smile::world::ecs::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
+    cube.GetComponent<smile::world::ecs::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
 
     auto &resourceManager = smile::graphic::RenderEngine::GetRenderSystem().GetResourceManager();
     auto pShader = resourceManager.CreateShader( "assets/shaders/PBR.fx" );
@@ -199,16 +198,18 @@ void ExampleLayer::OnAttach()
         resourceManager.CreateTexture2D( "assets/textures/uv_grid.png" );
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
-    m_ModelEntity = m_pActiveWorld->CreateEntity( "Model" );
+    /*m_ModelEntity = m_pActiveWorld->CreateEntity( "Model" );
     const smile::Uint32 meshIndex = 0;
     auto &meshRendererComponent = m_ModelEntity.AddComponent< smile::graphic::ecs::MeshRendererComponent >(
         "assets/meshes/nanosuit.obj", meshIndex, pMaterial );
     m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Translation =
         DirectX::XMFLOAT3{ 0, -0.1f, 1 };
     m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 0.f, 180, 0.f };
-    m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };
+    m_ModelEntity.GetComponent< smile::world::ecs::TransformComponent >().Scale = DirectX::XMFLOAT3{ 2, 2, 2 };*/
 
-    smile::graphic::RenderEngine::GetSceneManager().GetActive()->OnViewportResize( 1280, 720 );
+    auto pScene = smile::graphic::RenderEngine::GetSceneManager().GetActive();
+    pScene->OnViewportResize( 1280, 720 );
+    pScene->SetRenderToSwapChain( true );
 }
 
 void ExampleLayer::OnDetach()

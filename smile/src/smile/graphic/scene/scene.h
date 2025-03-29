@@ -26,7 +26,6 @@ namespace smile::graphic
         };
 
       public:
-        Scene() = default;
         Scene( const window::Window *pWindow );
 
         void OnAdd( smile::ecs::ECSEngine &ecsEngine );
@@ -65,6 +64,11 @@ namespace smile::graphic
             m_FallbackCameraData = cameraData;
         }
 
+        void SetRenderToSwapChain( bool renderToSwapChain )
+        {
+            m_RenderToSwapChain = renderToSwapChain;
+        }
+
       private:
         ecs::RenderPassList m_RenderPassList;
         memory::Ref< Framebuffer > m_pFramebuffer;
@@ -74,5 +78,7 @@ namespace smile::graphic
 
         world::Entity m_PrimaryCameraEntity;
         CameraData m_FallbackCameraData;
+
+        bool m_RenderToSwapChain = false; // TODO: Blit framebuffer texture to swapchain texture
     };
 }

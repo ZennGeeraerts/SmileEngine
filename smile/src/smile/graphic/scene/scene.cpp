@@ -47,7 +47,10 @@ namespace smile::graphic
     void Scene::OnRender()
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();
-        renderSystem.BindFramebuffer( m_pFramebuffer );
+
+        if ( !m_RenderToSwapChain ) // TODO: Blit framebuffer texture to swapchain texture
+            renderSystem.BindFramebuffer( m_pFramebuffer );
+
         renderSystem.Clear();
 
         if ( m_PrimaryCameraEntity )
@@ -72,7 +75,8 @@ namespace smile::graphic
             SkyboxRenderer::EndScene();
         }
 
-        renderSystem.BindBackBuffer();
+        if ( !m_RenderToSwapChain )
+            renderSystem.BindBackBuffer();
     }
 
     void Scene::OnViewportResize( Uint32 width, Uint32 height )
