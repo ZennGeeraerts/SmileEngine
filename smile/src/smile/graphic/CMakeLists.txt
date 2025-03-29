@@ -8,9 +8,12 @@ set(INCLUDE_DIRS
     ${THIRDPARTY_PATH}/assimp/include
 )
 
+find_package(stb REQUIRED)
+
 set(LIB_LINKS
     imgui
     ${THIRDPARTY_PATH}/assimp/x64/assimp-vc140-mt.lib
+    stb::stb
 )
 
 target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
