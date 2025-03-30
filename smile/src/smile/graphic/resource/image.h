@@ -28,7 +28,7 @@ namespace smile::graphic
     class Image final : public memory::Object
     {
       public:
-        Image() = default;
+        Image();
         Image( const Uint32 width, const Uint32 height, const ImageFormat format, const Byte *pData );
 
         Uint32 GetWidth() const

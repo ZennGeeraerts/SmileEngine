@@ -7,6 +7,10 @@
 
 namespace smile::graphic
 {
+    Image::Image() : m_Width{ 0 }, m_Height{ 0 }, m_Format{ ImageFormat::None }, m_Buffer{}, m_Stride{ 0 }
+    {
+    }
+
     Image::Image( const Uint32 width, const Uint32 height, const ImageFormat format, const Byte *pData )
         : m_Width{ width }, m_Height{ height }, m_Format{ format }
     {
