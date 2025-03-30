@@ -8,7 +8,7 @@
 #include "entity.h"
 #include "smile/core/world/ecs/transform_system.h"
 #include "smile/core/ecs/relationship.h"
-#include "smile/graphic/renderer/render_engine.h"
+#include "smile/core/ecs/state/system_factory.h"
 
 namespace smile::world
 {
@@ -16,6 +16,8 @@ namespace smile::world
 
     World::World() : m_UUID{}
     {
+        smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
+
         auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
         pDefaultState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         m_StateManager.AddState( "default", pDefaultState );
