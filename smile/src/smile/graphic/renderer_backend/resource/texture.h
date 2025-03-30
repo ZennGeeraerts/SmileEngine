@@ -1,27 +1,24 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/object.h"
-
-#include <string>
+#include "smile/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    struct Texture : public memory::Object
+    struct Texture final : public memory::Object
     {
-        Texture() = default;
-        virtual ~Texture() = default;
+        Texture( TextureHandle handle ) : Handle{ handle }
+        {
+        }
+
+        ~Texture() = default;
         Texture( const Texture & ) = delete;
         Texture( Texture && ) = delete;
 
-        virtual void *GetData() const = 0;
-
-        std::string FilePath;
-        Uint32 Width = 0;
-        Uint32 Height = 0;
+        TextureHandle Handle;
     };
 }

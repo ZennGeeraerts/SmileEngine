@@ -9,6 +9,9 @@
 #include "resource/resource_manager.h"
 #include "smile/graphic/mesh/mesh_factory.h"
 
+#include "smile/graphic/resource/image.h"
+#include "smile/graphic/resource/reader/image_reader.h"
+
 namespace smile::graphic
 {
     Ref< Mesh > SkyboxRenderer::s_pCubeMesh = nullptr;
@@ -19,7 +22,7 @@ namespace smile::graphic
     {
         auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
 
-        memory::Ref< Texture > pCubeTexture = resourceManager.CreateTextureCube( "resources/textures/SkyBox.dds" );
+        memory::Ref< Texture > pCubeTexture = resourceManager.CreateTexture( "resources/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
         s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture );

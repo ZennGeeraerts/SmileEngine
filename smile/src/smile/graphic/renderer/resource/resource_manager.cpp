@@ -102,17 +102,13 @@ namespace smile::graphic
         return pShader;
     }
 
-    memory::Ref< Texture > ResourceManager::CreateTexture2D( const std::string &filePath )
+    memory::Ref< Texture > ResourceManager::CreateTexture( const std::filesystem::path &path )
     {
-        auto pTexture = m_pDevice->CreateTexture2D( filePath );
-        m_pTextures2D.push_back( pTexture );
-        return pTexture;
-    }
+        TextureHandle handle = m_TextureHandleManager.CreateHandle();
+        m_pDevice->CreateTexture( handle, path );
 
-    memory::Ref< Texture > ResourceManager::CreateTextureCube( const std::string &filePath )
-    {
-        auto pTexture = m_pDevice->CreateTextureCube( filePath );
-        m_pTexturesCube.push_back( pTexture );
+        auto pTexture = memory::CreateRef< Texture >( handle );
+        m_pIndexBuffers.push_back( pTexture );
         return pTexture;
     }
 

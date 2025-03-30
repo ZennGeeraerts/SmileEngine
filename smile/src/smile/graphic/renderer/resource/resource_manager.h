@@ -15,6 +15,7 @@
 #include "smile/graphic/renderer_backend/shader/shader.h"
 
 #include <vector>
+#include <filesystem>
 
 namespace smile::graphic
 {
@@ -39,8 +40,7 @@ namespace smile::graphic
         memory::Ref< Shader >
         CreateShader( const std::string &assetFile, const VertexLayout &layout, const std::string &techniqueName = "" );
         memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
-        memory::Ref< Texture > CreateTexture2D( const std::string &filePath );
-        memory::Ref< Texture > CreateTextureCube( const std::string &filePath );
+        memory::Ref< Texture > CreateTexture( const std::filesystem::path &path );
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
 
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
@@ -51,10 +51,10 @@ namespace smile::graphic
         std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
         std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
         std::vector< memory::Ref< Shader > > m_pShaders;
-        std::vector< memory::Ref< Texture > > m_pTextures2D;
-        std::vector< memory::Ref< Texture > > m_pTexturesCube;
+        std::vector< memory::Ref< Texture > > m_pTextures;
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
 
         GPUBufferHandleManager m_GPUBufferHandleManager;
+        TextureHandleManager m_TextureHandleManager;
     };
 }
