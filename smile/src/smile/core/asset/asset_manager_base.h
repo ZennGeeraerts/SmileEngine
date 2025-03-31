@@ -5,19 +5,20 @@
 #pragma once
 
 #include "asset.h"
+#include "smile/common/memory/ref.h"
 
 #include <map>
 
 namespace smile::asset
 {
-	using AssetMap = std::map< AssetHandle, Ref< Asset > >;
+    using AssetMap = std::map< AssetHandle, memory::Ref< Asset > >;
 
-	class AssetManagerBase
-	{
+    class AssetManagerBase
+    {
       public:
-        virtual Ref< Asset > GetAsset( AssetHandle handle ) const = 0;
+        virtual memory::Ref< Asset > GetAsset( AssetHandle handle ) = 0;
 
-		virtual bool IsAssetHandleValid( AssetHandle handle ) const = 0;
+        virtual bool IsAssetHandleValid( AssetHandle handle ) const = 0;
         virtual bool IsAssetLoaded( AssetHandle handle ) const = 0;
-	};
+    };
 }

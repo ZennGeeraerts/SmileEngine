@@ -14,12 +14,24 @@ namespace smile::asset
     class EditorAssetManager : public AssetManagerBase
     {
       public:
-        Ref< Asset > GetAsset( AssetHandle handle ) const override;
+        memory::Ref< Asset > GetAsset( AssetHandle handle ) override;
 
         bool IsAssetHandleValid( AssetHandle handle ) const override;
         bool IsAssetLoaded( AssetHandle handle ) const override;
 
+        void ImportAsset( const std::filesystem::path &path );
+
         const AssetMetadata &GetMetadata( AssetHandle handle ) const;
+        const std::filesystem::path &GetFilePath( AssetHandle handle ) const;
+
+        const AssetRegistry &GetAssetRegistry() const
+        {
+            return m_AssetRegistry;
+        }
+
+      private:
+        void SerializeAssetRegistry();
+        bool DeserializeAssetRegistry();
 
       private:
         AssetRegistry m_AssetRegistry;
