@@ -80,7 +80,7 @@ namespace smile
 
     void SmileEditorLayer::OnDetach()
     {
-        m_pEditorWorld.reset();
+        m_pEditorWorld.Reset();
         world::WorldManager::UnloadActive(); // TRICKY: Ref count needs to be 0 after this call, consider not making
                                              // this a ref
 
@@ -513,7 +513,7 @@ namespace smile
             return;
 
         m_EditorWorldPath = filePath;
-        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.GetPointer() );
 
         auto pEditorState = m_pEditorWorld->CreateState( "editor" );
         pEditorState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
@@ -551,7 +551,7 @@ namespace smile
         m_pEditorWorld = world::WorldManager::New();
         m_EditorWorldPath = std::filesystem::path{};
 
-        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.GetPointer() );
     }
 
     void SmileEditorLayer::OnWorldPlay()
@@ -565,7 +565,7 @@ namespace smile
         world::WorldManager::Open( pActiveWorld );
         pActiveWorld->ChangeState( "runtime" );
 
-        m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
+        m_WorldHierarchyPanel.SetContext( pActiveWorld.GetPointer() );
     }
 
     void SmileEditorLayer::OnWorldSimulate()
@@ -579,7 +579,7 @@ namespace smile
         world::WorldManager::Open( pActiveWorld );
         pActiveWorld->ChangeState( "simulate" );
 
-        m_WorldHierarchyPanel.SetContext( pActiveWorld.get() );
+        m_WorldHierarchyPanel.SetContext( pActiveWorld.GetPointer() );
     }
 
     void SmileEditorLayer::OnWorldStop()
@@ -590,7 +590,7 @@ namespace smile
         m_WorldState = WorldState::Edit;
         world::WorldManager::Open( m_pEditorWorld );
 
-        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.get() );
+        m_WorldHierarchyPanel.SetContext( m_pEditorWorld.GetPointer() );
     }
 
     void SmileEditorLayer::DuplicateEntity()

@@ -5,37 +5,22 @@
 #include "smpch.h"
 #include "world_manager.h"
 
-#include "world_serializer.h"
-
 namespace smile::world
 {
-    Ref< World > WorldManager::New()
+    memory::Ref< World > WorldManager::New()
     {
-        auto pNewWorld = CreateRef< World >();
+        auto pNewWorld = memory::CreateRef< World >();
         Open( pNewWorld );
         return pNewWorld;
     }
 
-    Ref< World > WorldManager::Load( const std::filesystem::path &path )
+    memory::Ref< World > WorldManager::Load( const std::filesystem::path &path )
     {
-        if ( path.empty() )
+        memory::Ref< World > pWorld = s_WorldLoader.LoadWorld( path );
+        if ( pWorld )
         {
-            SM_LOG_WARNING( "WorldManager::Load > Failed to load world: the path was empty" );
-            return nullptr;
-        }
-
-        if ( path.extension().string() != ".smile" )
-        {
-            SM_LOG_WARNING( "WorldManager::Load > Failed to load world: wrong file extention" );
-            return nullptr;
-        }
-
-        Ref< world::World > pNewWorld = CreateRef< world::World >();
-        WorldSerializer worldSerializer{ pNewWorld };
-        if ( worldSerializer.Deserialize( path.string() ) )
-        {
-            Open( pNewWorld );
-            return pNewWorld;
+            Open( pWorld );
+            return pWorld;
         }
         else
         {
@@ -45,10 +30,10 @@ namespace smile::world
 
     void WorldManager::UnloadActive()
     {
-        s_pActiveWorld.reset();
+        s_pActiveWorld.Reset();
     }
 
-    void WorldManager::Open( const Ref< World > &pWorld )
+    void WorldManager::Open( memory::Ref< World > pWorld )
     {
         if ( s_pActiveWorld )
         {
@@ -64,11 +49,10 @@ namespace smile::world
 
     void WorldManager::SaveActive( const std::filesystem::path &path )
     {
-        WorldSerializer worldSerializer{ s_pActiveWorld };
-        worldSerializer.Serialize( path.string() );
+        s_WorldLoader.SaveWorld( s_pActiveWorld, path );
     }
 
-    Ref< World > WorldManager::CopyActive()
+    memory::Ref< World > WorldManager::CopyActive()
     {
         auto pNewWorld = World::Copy( s_pActiveWorld );
         return pNewWorld;

@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -7,6 +7,7 @@
 #include "smile/common/primitive/uuid.h"
 #include "smile/common/primitive/timestep.h"
 
+#include "smile/core/asset/asset.h"
 #include "smile/core/ecs/ecs_engine.h"
 #include "smile/core/ecs/state/state_manager.h"
 
@@ -17,7 +18,7 @@ namespace smile::world
 {
     class Entity;
 
-    class World final
+    class World final : public asset::Asset
     {
       public:
         World();
@@ -40,6 +41,11 @@ namespace smile::world
         primitive::UUID GetUUID() const
         {
             return m_UUID;
+        }
+
+        asset::AssetType GetType() const override
+        {
+            return asset::AssetType::World;
         }
 
         template < typename ComponentType >
@@ -103,7 +109,7 @@ namespace smile::world
             };
         }
 
-        static Ref< World > Copy( const Ref< World > &pWorld );
+        static memory::Ref< World > Copy( memory::Ref< World > pWorld );
 
       private:
         primitive::UUID m_UUID;

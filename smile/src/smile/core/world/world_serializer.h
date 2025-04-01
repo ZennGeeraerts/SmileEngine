@@ -5,23 +5,26 @@
 #pragma once
 
 #include "world.h"
+#include "smile/common/memory/ref.h"
+
+#include <filesystem>
 
 namespace smile::world
 {
     class WorldSerializer final
     {
       public:
-        WorldSerializer( Ref< World > pWorld );
+        WorldSerializer( memory::Ref< World > pWorld );
 
-        void Serialize( const std::string &filePath );
+        void Serialize( const std::filesystem::path &filePath );
         // Serializes the world to a binary format
-        void SerializeRuntime( const std::string &filePath );
+        void SerializeRuntime( const std::filesystem::path &filePath );
 
-        bool Deserialize( const std::string &filePath );
+        bool Deserialize( const std::filesystem::path &filePath );
         // Deserializes the world from a binary format
-        bool DeserializeRuntime( const std::string &filePath );
+        bool DeserializeRuntime( const std::filesystem::path &filePath );
 
       private:
-        Ref< World > m_pWorld = nullptr;
+        memory::Ref< World > m_pWorld = nullptr;
     };
 }

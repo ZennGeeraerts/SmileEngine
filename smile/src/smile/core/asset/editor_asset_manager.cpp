@@ -37,7 +37,7 @@ namespace smile::asset
         {
             // Load asset
             const AssetMetadata &metadata = GetMetadata( handle );
-            pAsset = AssetImporter::ImportAsset( handle, metadata );
+            pAsset = AssetImporter::GetInstance().ImportAsset( handle, metadata );
 
             if ( !pAsset )
             {
@@ -66,11 +66,11 @@ namespace smile::asset
 
         AssetMetadata metadata{};
         metadata.FilePath = path;
-        metadata.Type = AssetImporter::GetAssetTypeFromFileExtension( path.extension() );
+        metadata.Type = AssetImporter::GetInstance().GetAssetTypeFromFileExtension( path.extension() );
         SM_ASSERT( metadata.Type != AssetType::None,
             "AssetImporter::ImportAsset > Failed to get asset type from file extension" );
 
-        memory::Ref< Asset > pAsset = AssetImporter::ImportAsset( handle, metadata );
+        memory::Ref< Asset > pAsset = AssetImporter::GetInstance().ImportAsset( handle, metadata );
         if ( pAsset )
         {
             pAsset->m_Handle = handle;

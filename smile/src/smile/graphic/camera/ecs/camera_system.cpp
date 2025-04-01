@@ -62,7 +62,7 @@ namespace smile::graphic::ecs
 
             if ( camera.IsPrimary )
             {
-                world::Entity primaryCameraEntity{ entity, world::WorldManager::GetActive().get() };
+                world::Entity primaryCameraEntity{ entity, world::WorldManager::GetActive().GetPointer() };
                 pScene->SetPrimaryCameraEntity( primaryCameraEntity );
                 primaryCameraEntityDirty = true;
             }

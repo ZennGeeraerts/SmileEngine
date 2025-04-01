@@ -113,11 +113,11 @@ namespace smile::world
         return output;
     }
 
-    WorldSerializer::WorldSerializer( Ref< World > pWorld ) : m_pWorld{ pWorld }
+    WorldSerializer::WorldSerializer( memory::Ref< World > pWorld ) : m_pWorld{ pWorld }
     {
     }
 
-    void WorldSerializer::Serialize( const std::string &filePath )
+    void WorldSerializer::Serialize( const std::filesystem::path &filePath )
     {
         YAML::Emitter output{};
         output << YAML::BeginMap;
@@ -127,7 +127,7 @@ namespace smile::world
         m_pWorld->m_ECSEngine.Each(
             [&]( auto entityID )
             {
-                Entity entity{ entityID, m_pWorld.get() };
+                Entity entity{ entityID, m_pWorld.GetPointer() };
                 if ( !entity )
                     return;
                 SerializeEntity( output, entity );
@@ -500,21 +500,21 @@ namespace smile::world
         output << YAML::EndMap;
     }
 
-    void WorldSerializer::SerializeRuntime( const std::string &filePath )
+    void WorldSerializer::SerializeRuntime( const std::filesystem::path &filePath )
     {
         SM_ASSERT( false, "WorldSerializer::SerializeRuntime > Not implemented" );
     }
 
-    bool WorldSerializer::Deserialize( const std::string &filePath )
+    bool WorldSerializer::Deserialize( const std::filesystem::path &filePath )
     {
         YAML::Node data;
         try
         {
-            data = YAML::LoadFile( filePath );
+            data = YAML::LoadFile( filePath.string() );
         }
         catch ( YAML::ParserException e )
         {
-            SM_LOG_ERROR( "Failed to load .smile file: {0}\n{1}", filePath, e.what() );
+            SM_LOG_ERROR( "Failed to load .smile file: {0}\n{1}", filePath.string(), e.what() );
             return false;
         }
 
@@ -857,7 +857,7 @@ namespace smile::world
         return true;
     }
 
-    bool WorldSerializer::DeserializeRuntime( const std::string &filePath )
+    bool WorldSerializer::DeserializeRuntime( const std::filesystem::path &filePath )
     {
         SM_ASSERT( false, "WorldSerializer::DeserializeRuntime > Not implemented" );
         return false;
