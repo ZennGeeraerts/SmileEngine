@@ -124,7 +124,7 @@ namespace smile::asset
 
     bool EditorAssetManager::DeserializeAssetRegistry()
     {
-        std::filesystem::path path = project::ProjectManager::GetActive()->GetAssetDirectory();
+        std::filesystem::path path = project::ProjectManager::GetActive()->GetAssetRegistryPath();
 
         YAML::Node data;
         try

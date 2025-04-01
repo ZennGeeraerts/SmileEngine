@@ -29,6 +29,7 @@ namespace smile::world
 
         static memory::Ref< World > New();
         static memory::Ref< World > Load( const std::filesystem::path &path );
+        static memory::Ref< World > Load( asset::AssetHandle handle );
         static void UnloadActive();
         static void Open( memory::Ref< World > pWorld );
         static void SaveActive( const std::filesystem::path &path );

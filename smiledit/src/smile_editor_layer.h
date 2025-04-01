@@ -59,8 +59,7 @@ namespace smile
 
         void SaveWorld();
         void SaveWorldAs();
-        void OpenWorld();
-        void OpenWorld( const std::filesystem::path &filePath );
+        void OpenWorld( asset::AssetHandle handle );
         void NewWorld();
 
         void OnWorldPlay();

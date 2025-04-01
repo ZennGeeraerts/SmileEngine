@@ -217,8 +217,8 @@ namespace smile
             const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
             if ( pPayload )
             {
-                const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                OpenWorld( path );
+                asset::AssetHandle handle = *static_cast< asset::AssetHandle * >( pPayload->Data );
+                OpenWorld( handle );
             }
 
             ImGui::EndDragDropTarget();
@@ -456,11 +456,8 @@ namespace smile
     {
         if ( project::ProjectManager::Load( path ) )
         {
-            // std::filesystem::current_path( path.parent_path() );
-
-            auto startWorldPath = project::ProjectManager::GetAssetFileSystemPath(
-                project::ProjectManager::GetActive()->GetConfig().StartWorld );
-            OpenWorld( startWorldPath );
+            asset::AssetHandle startWorld = project::ProjectManager::GetActive()->GetConfig().StartWorld;
+            OpenWorld( startWorld );
             m_pContentBrowserPanel = CreateScope< ContentBrowserPanel >();
         }
     }
@@ -496,23 +493,18 @@ namespace smile
         }
     }
 
-    void SmileEditorLayer::OpenWorld()
+    void SmileEditorLayer::OpenWorld( asset::AssetHandle handle )
     {
-        std::string filePath = window::FileDialog::OpenFile( "Smile World (*.smile)\0*.smile\0" );
-        if ( !filePath.empty() )
-            OpenWorld( filePath );
-    }
+        SM_ASSERT( handle, "Invalid asset handle" );
 
-    void SmileEditorLayer::OpenWorld( const std::filesystem::path &filePath )
-    {
         if ( m_WorldState != WorldState::Edit )
             OnWorldStop();
 
-        m_pEditorWorld = world::WorldManager::Load( filePath );
+        m_pEditorWorld = world::WorldManager::Load( handle );
         if ( !m_pEditorWorld )
             return;
 
-        m_EditorWorldPath = filePath;
+        m_EditorWorldPath = project::ProjectManager::GetActive()->GetEditorAssetManager()->GetFilePath( handle );
         m_WorldHierarchyPanel.SetContext( m_pEditorWorld.GetPointer() );
 
         auto pEditorState = m_pEditorWorld->CreateState( "editor" );

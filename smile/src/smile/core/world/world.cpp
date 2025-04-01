@@ -14,7 +14,7 @@ namespace smile::world
 {
     std::unordered_map< foundation::TypeID, World::CopyComponentFunctions > World::s_CopyComponentFuncs{};
 
-    World::World() : m_UUID{}
+    World::World()
     {
         smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
 

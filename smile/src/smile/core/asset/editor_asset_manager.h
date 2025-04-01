@@ -29,7 +29,6 @@ namespace smile::asset
             return m_AssetRegistry;
         }
 
-      private:
         void SerializeAssetRegistry();
         bool DeserializeAssetRegistry();
 

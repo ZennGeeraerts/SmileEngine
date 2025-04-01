@@ -38,11 +38,6 @@ namespace smile::world
 
         Entity GetEntityByUUID( primitive::UUID uuid );
 
-        primitive::UUID GetUUID() const
-        {
-            return m_UUID;
-        }
-
         asset::AssetType GetType() const override
         {
             return asset::AssetType::World;
@@ -112,7 +107,6 @@ namespace smile::world
         static memory::Ref< World > Copy( memory::Ref< World > pWorld );
 
       private:
-        primitive::UUID m_UUID;
         smile::ecs::ECSEngine m_ECSEngine;
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap{};
         smile::ecs::state::StateManager m_StateManager;

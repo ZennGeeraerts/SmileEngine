@@ -27,6 +27,7 @@ namespace smile::project
 
             auto pEditorAssetManager = std::make_shared< asset::EditorAssetManager >();
             s_pActiveProject->m_AssetManager = pEditorAssetManager;
+            pEditorAssetManager->DeserializeAssetRegistry();
             
             return s_pActiveProject;
         }

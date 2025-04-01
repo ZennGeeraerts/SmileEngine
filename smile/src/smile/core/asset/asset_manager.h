@@ -14,10 +14,10 @@ namespace smile::asset
     {
       public:
         template < typename AssetType >
-        static Ref< AssetType > GetAsset( AssetHandle handle )
+        static memory::Ref< AssetType > GetAsset( AssetHandle handle )
         {
-            Ref< Asset > pAsset = project::ProjectManager::GetActive()->GetAssetManager()->GetAsset( handle );
-            return std::static_pointer_cast< AssetType >( pAsset );
+            memory::Ref< Asset > pAsset = project::ProjectManager::GetActive()->GetAssetManager()->GetAsset( handle );
+            return memory::Ref< AssetType >{ pAsset };
         }
     };
 }

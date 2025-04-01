@@ -5,6 +5,8 @@
 #include "smpch.h"
 #include "world_manager.h"
 
+#include "smile/core/asset/asset_manager.h"
+
 namespace smile::world
 {
     memory::Ref< World > WorldManager::New()
@@ -17,6 +19,20 @@ namespace smile::world
     memory::Ref< World > WorldManager::Load( const std::filesystem::path &path )
     {
         memory::Ref< World > pWorld = s_WorldLoader.LoadWorld( path );
+        if ( pWorld )
+        {
+            Open( pWorld );
+            return pWorld;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
+    memory::Ref< World > WorldManager::Load( asset::AssetHandle handle )
+    {
+        memory::Ref< World > pWorld = asset::AssetManager::GetAsset< world::World >( handle );
         if ( pWorld )
         {
             Open( pWorld );
