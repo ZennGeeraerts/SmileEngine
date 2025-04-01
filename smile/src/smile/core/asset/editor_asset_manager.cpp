@@ -98,7 +98,7 @@ namespace smile::asset
 
     void EditorAssetManager::SerializeAssetRegistry()
     {
-        std::filesystem::path path = project::ProjectManager::GetActive()->GetAssetDirectory();
+        std::filesystem::path path = project::ProjectManager::GetActive()->GetAssetRegistryPath();
 
         YAML::Emitter out;
         {

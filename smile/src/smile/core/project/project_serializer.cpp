@@ -28,6 +28,7 @@ namespace smile::project
                 output << YAML::Key << "Name" << YAML::Value << config.Name;
                 output << YAML::Key << "StartWorld" << YAML::Value << config.StartWorld.string();
                 output << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
+                output << YAML::Key << "AssetRegistryPath" << YAML::Value << config.AssetRegistryPath.string();
                 output << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
                 output << YAML::EndMap;
             }
@@ -63,6 +64,8 @@ namespace smile::project
         config.Name = projectNode["Name"].as< std::string >();
         config.StartWorld = projectNode["StartWorld"].as< std::string >();
         config.AssetDirectory = projectNode["AssetDirectory"].as< std::string >();
+        if ( projectNode["AssetRegistryPath"] )
+            config.AssetRegistryPath = projectNode["AssetRegistryPath"].as< std::string >();
         config.ScriptModulePath = projectNode["ScriptModulePath"].as< std::string >();
 
         return true;

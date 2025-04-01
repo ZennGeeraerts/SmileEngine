@@ -14,7 +14,7 @@ namespace smile::asset
             case AssetType::None:
                 return "AssetType::None";
             case AssetType::World:
-                return "AssetType::Scene";
+                return "AssetType::World";
         }
 
         return "AssetType::<Invalid>";
@@ -24,7 +24,7 @@ namespace smile::asset
     {
         if ( assetType == "AssetType::None" )
             return AssetType::None;
-        else if ( assetType == "AssetType::Scene" )
+        else if ( assetType == "AssetType::World" )
             return AssetType::World;
 
         return AssetType::None;

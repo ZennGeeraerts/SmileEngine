@@ -16,6 +16,7 @@ namespace smile::project
         std::string Name = "Untitled";
         std::filesystem::path StartWorld;
         std::filesystem::path AssetDirectory;
+        std::filesystem::path AssetRegistryPath;
         std::filesystem::path ScriptModulePath;
     };
 
@@ -27,9 +28,14 @@ namespace smile::project
             return m_ProjectDirectory;
         }
 
-        std::filesystem::path GetAssetDirectory()
+        std::filesystem::path GetAssetDirectory() const
         {
             return m_ProjectDirectory / m_Config.AssetDirectory;
+        }
+
+        std::filesystem::path GetAssetRegistryPath() const
+        {
+            return GetAssetDirectory() / m_Config.AssetRegistryPath;
         }
 
         ProjectConfig &GetConfig()
@@ -41,12 +47,13 @@ namespace smile::project
         {
             return m_AssetManager;
         }
-        std::shared_ptr< asset::RuntimeAssetManager > GetRuntimeAssetManager()
+
+        std::shared_ptr< asset::RuntimeAssetManager > GetRuntimeAssetManager() const
         {
             return std::static_pointer_cast< asset::RuntimeAssetManager >( m_AssetManager );
         }
 
-        std::shared_ptr< asset::EditorAssetManager > GetEditorAssetManager()
+        std::shared_ptr< asset::EditorAssetManager > GetEditorAssetManager() const
         {
             return std::static_pointer_cast< asset::EditorAssetManager >( m_AssetManager );
         }

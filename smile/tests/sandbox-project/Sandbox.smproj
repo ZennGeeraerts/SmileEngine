@@ -2,4 +2,5 @@ Project:
   Name: "Sandbox"
   StartWorld: "worlds/PhysicsTest2.smile"
   AssetDirectory: "assets"
+  AssetRegistryPath: "asset-registry.meta"
   ScriptModulePath: "scripts/bin/Debug/sandbox.dll"
