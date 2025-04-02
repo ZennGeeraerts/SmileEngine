@@ -458,7 +458,7 @@ namespace smile
         {
             asset::AssetHandle startWorld = project::ProjectManager::GetActive()->GetConfig().StartWorld;
             OpenWorld( startWorld );
-            m_pContentBrowserPanel = CreateScope< ContentBrowserPanel >();
+            m_pContentBrowserPanel = CreateScope< ContentBrowserPanel >( project::ProjectManager::GetActive() );
         }
     }
 
