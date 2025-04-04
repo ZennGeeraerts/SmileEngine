@@ -80,9 +80,7 @@ namespace smile
 
     void SmileEditorLayer::OnDetach()
     {
-        m_pEditorWorld.reset();
-        world::WorldManager::UnloadActive(); // TRICKY: Ref count needs to be 0 after this call, consider not making
-                                             // this a ref
+        OnWorldStop();
 
         physics::PhysicsEngine::RemoveInstance();
     }
