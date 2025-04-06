@@ -67,8 +67,8 @@ namespace smile::asset
         AssetMetadata metadata{};
         metadata.FilePath = path;
         metadata.Type = AssetImporter::GetInstance().GetAssetTypeFromFileExtension( path.extension() );
-        SM_ASSERT( metadata.Type != AssetType::None,
-            "AssetImporter::ImportAsset > Failed to get asset type from file extension" );
+        SM_ASSERT(
+            metadata.Type.IsValid(), "AssetImporter::ImportAsset > Failed to get asset type from file extension" );
 
         memory::Ref< Asset > pAsset = AssetImporter::GetInstance().ImportAsset( handle, metadata );
         if ( pAsset )
@@ -111,7 +111,7 @@ namespace smile::asset
                 out << YAML::BeginMap;
                 out << YAML::Key << "Handle" << YAML::Value << handle;
                 out << YAML::Key << "FilePath" << YAML::Value << metadata.FilePath.generic_string();
-                out << YAML::Key << "Type" << YAML::Value << AssetTypeToString( metadata.Type );
+                out << YAML::Key << "Type" << YAML::Value << metadata.Type.GetName();
                 out << YAML::EndMap;
             }
             out << YAML::EndSeq;
@@ -151,7 +151,7 @@ namespace smile::asset
 
             AssetMetadata &metadata = m_AssetRegistry[handle];
             metadata.FilePath = node["FilePath"].as< std::string >();
-            metadata.Type = AssetTypeFromString( node["Type"].as< std::string >() );
+            metadata.Type = AssetType{ node["Type"].as< std::string >() };
         }
 
         return true;

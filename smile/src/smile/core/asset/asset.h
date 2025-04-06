@@ -7,19 +7,11 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/uuid.h"
 #include "smile/common/memory/object.h"
+#include "asset_type.h"
 
 namespace smile::asset
 {
     using AssetHandle = primitive::UUID;
-
-    enum class AssetType : Uint16
-    {
-        None = 0,
-        World,
-    };
-
-    std::string_view AssetTypeToString( AssetType assetType );
-    AssetType AssetTypeFromString( std::string_view assetType );
 
     class Asset : public memory::Object
     {

@@ -10,14 +10,14 @@
 
 namespace smile::asset
 {
-	struct AssetMetadata final
+    struct AssetMetadata final
     {
-        AssetType Type = AssetType::None;
+        AssetType Type = AssetType::NullType();
         std::filesystem::path FilePath;
 
         operator bool() const
         {
-            return Type != AssetType::None;
+            return Type.IsValid();
         }
     };
 }

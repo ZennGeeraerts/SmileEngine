@@ -27,8 +27,8 @@ namespace smile::asset
     {
         if ( m_AssetLoaderMap.find( metadata.Type ) == m_AssetLoaderMap.end() )
         {
-            SM_LOG_ERROR( "AssetImporter::ImportAsset > No loader registered for asset type: {}",
-                static_cast< Uint16 >( metadata.Type ) );
+            SM_LOG_ERROR(
+                "AssetImporter::ImportAsset > No loader registered for asset type: {}", metadata.Type.GetName() );
 
             return nullptr;
         }
@@ -41,7 +41,7 @@ namespace smile::asset
         if ( m_AssetExtensionMap.find( extension ) == m_AssetExtensionMap.end() )
         {
             SM_LOG_WARNING( "GetAssetTypeFromFileExtension > Could not find AssetType for {}", extension.string() );
-            return AssetType::None;
+            return AssetType::NullType();
         }
 
         return m_AssetExtensionMap[extension];
