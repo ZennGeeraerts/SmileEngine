@@ -40,7 +40,7 @@ namespace smile::world
 
         asset::AssetType GetType() const override
         {
-            return asset::AssetType{ std::string{ foundation::TypeNameOf< World >() } };
+            return asset::AssetType{ foundation::TypeNameOf< World >() };
         }
 
         template < typename ComponentType >

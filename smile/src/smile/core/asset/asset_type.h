@@ -16,8 +16,8 @@ namespace smile::asset
         {
         }
 
-        explicit AssetType( const std::string &name )
-            : m_TypeID{ foundation::TypeRegistry::GetInstance().RegisterTypeIfNeeded( name ) }
+        explicit AssetType( std::string_view name )
+            : m_TypeID{ foundation::TypeRegistry::GetInstance().RegisterTypeIfNeeded( std::string{ name } ) }
         {
         }
 
