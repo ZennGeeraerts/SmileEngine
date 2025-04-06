@@ -24,6 +24,11 @@ namespace smile::project
         {
             pProject->m_ProjectDirectory = path.parent_path();
             s_pActiveProject = pProject;
+
+            auto pEditorAssetManager = std::make_shared< asset::EditorAssetManager >();
+            s_pActiveProject->m_AssetManager = pEditorAssetManager;
+            pEditorAssetManager->DeserializeAssetRegistry();
+            
             return s_pActiveProject;
         }
         else

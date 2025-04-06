@@ -14,7 +14,7 @@ namespace smile::world
 {
     std::unordered_map< foundation::TypeID, World::CopyComponentFunctions > World::s_CopyComponentFuncs{};
 
-    World::World() : m_UUID{}
+    World::World()
     {
         smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
 
@@ -94,9 +94,9 @@ namespace smile::world
         m_ECSEngine.OnUpdate();
     }
 
-    Ref< World > World::Copy( const Ref< World > &pWorld )
+    memory::Ref< World > World::Copy( memory::Ref< World > pWorld )
     {
-        Ref< World > pNewWorld = CreateRef< World >();
+        memory::Ref< World > pNewWorld = memory::CreateRef< World >();
 
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > entityMap{};
 

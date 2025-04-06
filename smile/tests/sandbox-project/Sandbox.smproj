@@ -1,5 +1,6 @@
 Project:
   Name: "Sandbox"
-  StartWorld: "worlds/PhysicsTest2.smile"
+  StartWorld: 12325285920687011863
   AssetDirectory: "assets"
+  AssetRegistryPath: "asset-registry.meta"
   ScriptModulePath: "scripts/bin/Debug/sandbox.dll"

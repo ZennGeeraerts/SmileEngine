@@ -59,8 +59,7 @@ namespace smile
 
         void SaveWorld();
         void SaveWorldAs();
-        void OpenWorld();
-        void OpenWorld( const std::filesystem::path &filePath );
+        void OpenWorld( asset::AssetHandle handle );
         void NewWorld();
 
         void OnWorldPlay();
@@ -73,7 +72,7 @@ namespace smile
         void DrawToolbar();
 
       private:
-        Ref< world::World > m_pEditorWorld;
+        memory::Ref< world::World > m_pEditorWorld;
         graphic::EditorCamera m_EditorCamera;
         std::filesystem::path m_EditorWorldPath;
 

@@ -4,20 +4,19 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/compiled.h"
-#include "smile/common/primitive/uuid.h"
-#include "smile/common/memory/object.h"
-#include "asset_type.h"
+#include "asset_metadata.h"
+#include "smile/common/memory/ref.h"
 
 namespace smile::asset
 {
-    using AssetHandle = primitive::UUID;
-
-    class Asset : public memory::Object
+    class AssetLoader
     {
       public:
-        virtual AssetType GetType() const = 0;
+        virtual ~AssetLoader() = default;
 
-        AssetHandle m_Handle;
+        virtual AssetType GetType() const = 0;
+        virtual const std::vector< std::filesystem::path > &GetExtensions() const = 0;
+
+        virtual memory::Ref< Asset > Load( AssetHandle handle, const AssetMetadata &metadata ) const = 0;
     };
 }

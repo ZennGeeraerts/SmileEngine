@@ -5,6 +5,7 @@
 #pragma once
 
 #include "world.h"
+#include "world_loader.h"
 
 #include <filesystem>
 
@@ -21,22 +22,25 @@ namespace smile::world
         };
 
       public:
-        static Ref< World > GetActive()
+        static memory::Ref< World > GetActive()
         {
             return s_pActiveWorld;
         }
 
-        static Ref< World > New();
-        static Ref< World > Load( const std::filesystem::path &path );
+        static memory::Ref< World > New();
+        static memory::Ref< World > Load( const std::filesystem::path &path );
+        static memory::Ref< World > Load( asset::AssetHandle handle );
         static void UnloadActive();
-        static void Open( const Ref< World > &pWorld );
+        static void Open( memory::Ref< World > pWorld );
         static void SaveActive( const std::filesystem::path &path );
-        static Ref< World > CopyActive();
+        static memory::Ref< World > CopyActive();
 
         static void AddListener( Listener *pListener );
 
       private:
-        inline static Ref< World > s_pActiveWorld;
+        inline static memory::Ref< World > s_pActiveWorld;
+        inline static WorldLoader s_WorldLoader;
+
         inline static std::vector< Listener * > s_pListeners;
     };
 }

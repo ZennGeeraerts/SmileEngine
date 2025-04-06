@@ -1,0 +1,4 @@
+AssetRegistry:
+  - Handle: 12325285920687011863
+    FilePath: worlds/PhysicsTest2.smile
+    Type: smile::world::World

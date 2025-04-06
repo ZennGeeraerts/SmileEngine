@@ -16,13 +16,13 @@ namespace smile::scripting::ecs
     {
         System::OnAdd( ecsEngine );
 
-        ScriptEngine::OnRuntimeStart( world::WorldManager::GetActive().get() );
+        ScriptEngine::OnRuntimeStart( world::WorldManager::GetActive().GetPointer() );
 
         // Instantiate all script entities
         auto view = ecsEngine.GetView< ScriptComponent >();
         for ( auto e : view )
         {
-            world::Entity entity = { e, world::WorldManager::GetActive().get() };
+            world::Entity entity = { e, world::WorldManager::GetActive().GetPointer() };
             ScriptEngine::OnCreateEntity( entity );
         }
     }
@@ -38,7 +38,7 @@ namespace smile::scripting::ecs
         auto view = m_pECSEngine->GetView< ScriptComponent >();
         for ( auto e : view )
         {
-            world::Entity entity = { e, world::WorldManager::GetActive().get() };
+            world::Entity entity = { e, world::WorldManager::GetActive().GetPointer() };
             ScriptEngine::OnUpdateEntity( entity, deltaTime );
         }
     }
