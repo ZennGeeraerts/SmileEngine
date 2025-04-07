@@ -4,6 +4,7 @@
 /*=============================================================================*/
 
 #include "smile.h"
+#include "smile/common/platform/executable_path.h"
 #include "smile/core/application/entry_point.h"
 #include "smile/blueprint/interactive/interactive_application.h"
 
@@ -29,8 +30,7 @@ namespace smile
     {
         application::ApplicationDescriptor descriptor{};
         descriptor.Name = "Smile Editor";
-
-        descriptor.WorkingDirectory = ".";
+        descriptor.WorkingDirectory = platform::GetExecutablePath().parent_path();
         descriptor.CommandLineArgs = commandLineArgs;
 
         // This application will get passed to the entry point of the engine

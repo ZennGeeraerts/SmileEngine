@@ -11,6 +11,8 @@
 #include "smile/core/window/events/event.h"
 #include "smile/core/window/events/application_event.h"
 
+#include <filesystem>
+
 namespace smile::application
 {
     struct ApplicationCommandLineArgs final
@@ -28,7 +30,7 @@ namespace smile::application
     struct ApplicationDescriptor final
     {
         std::string Name = "Smile Game";
-        std::string WorkingDirectory;
+        std::filesystem::path WorkingDirectory;
         ApplicationCommandLineArgs CommandLineArgs;
     };
 
