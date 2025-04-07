@@ -9,7 +9,7 @@
 
 #include "resource/resource_manager.h"
 #include "smile/graphic/renderer_backend/render_state.h"
-#include "smile/graphic/renderer_backend/resource/swap_chain.h"
+#include "smile/graphic/renderer_backend/swap_chain.h"
 
 #include <DirectXMath.h>
 

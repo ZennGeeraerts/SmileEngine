@@ -30,7 +30,6 @@ namespace smile
         application::ApplicationDescriptor descriptor{};
         descriptor.Name = "Smile Editor";
 
-        std::filesystem::path path = std::filesystem::current_path();
         descriptor.WorkingDirectory = ".";
         descriptor.CommandLineArgs = commandLineArgs;
 

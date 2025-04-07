@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/graphic/renderer_backend/resource/swap_chain.h"
+#include "smile/graphic/renderer_backend/swap_chain.h"
 #include "directx11_frame_buffer.h"
 
 #include "smile/common/memory/ref.h"

@@ -4,17 +4,14 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/memory/ref.h"
+#include "graphics_context.h"
+#include "render_handle.h"
+
 #include "resource/buffer.h"
-#include "resource/swap_chain.h"
 #include "resource/texture.h"
 #include "resource/frame_buffer.h"
 #include "shader/shader.h"
-
-#include "graphics_context.h"
-
-#include "render_handle.h"
-
-#include "smile/common/memory/ref.h"
 
 namespace smile::graphic
 {

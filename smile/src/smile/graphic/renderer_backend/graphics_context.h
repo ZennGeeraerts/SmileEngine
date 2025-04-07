@@ -6,11 +6,6 @@
 
 #include "render_state.h"
 #include "smile/common/memory/ref.h"
-
-#include "resource/swap_chain.h"
-#include "resource/frame_buffer.h"
-#include "shader/shader.h"
-
 #include "render_handle.h"
 
 #include <DirectXMath.h>
@@ -22,6 +17,10 @@ namespace smile::window
 
 namespace smile::graphic
 {
+    class SwapChain;
+    class Shader;
+    class Framebuffer;
+
     class GraphicsContext
     {
       public:
