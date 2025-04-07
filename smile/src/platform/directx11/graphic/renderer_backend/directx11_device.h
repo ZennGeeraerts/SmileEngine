@@ -6,6 +6,7 @@
 #include "smile/graphic/renderer_backend/graphics_device.h"
 #include "smile/graphic/renderer_backend/render_state.h"
 #include "resource/directx11_buffer.h"
+#include "resource/directx11_texture.h"
 #include "directx11_rasterizer_state_cache.h"
 #include "directx11_depth_stencil_state_cache.h"
 
@@ -52,6 +53,7 @@ namespace smile::graphic
             const std::string &techniqueName = "" ) override;
 
         void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) override;
+        void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) override;
         void DestroyTexture( TextureHandle handle ) override;
 
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) override;

@@ -108,7 +108,7 @@ namespace smile::graphic
         m_pDevice->CreateTexture( handle, path );
 
         auto pTexture = memory::CreateRef< Texture >( handle );
-        m_pIndexBuffers.push_back( pTexture );
+        m_pTextures.push_back( pTexture );
         return pTexture;
     }
 

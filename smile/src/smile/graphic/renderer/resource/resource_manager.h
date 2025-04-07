@@ -10,6 +10,7 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "uniform_buffer.h"
+#include "texture.h"
 #include "smile/graphic/renderer_backend/resource/buffer.h"
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"

@@ -51,6 +51,11 @@ namespace smile::graphic
             return m_Buffer.data();
         }
 
+        Uint32 GetDataSize() const
+        {
+            return static_cast< Uint32 >( m_Buffer.size() );
+        }
+
       private:
         Uint32 m_Width;
         Uint32 m_Height;

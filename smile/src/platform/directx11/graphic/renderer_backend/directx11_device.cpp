@@ -561,6 +561,11 @@ namespace smile::graphic
         m_Textures[handle.GetIndex()].Create( m_pInternal, path );
     }
 
+    void DirectX11Device::CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage )
+    {
+        m_Textures[handle.GetIndex()].Create( m_pInternal, std::move( pImage ) );
+    }
+
     void DirectX11Device::DestroyTexture( TextureHandle handle )
     {
         m_Textures[handle.GetIndex()].Destroy();

@@ -4,6 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/memory/ref.h"
+#include "smile/graphic/resource/image.h"
+
 #include <d3d11.h>
 
 #include <filesystem>
@@ -21,6 +24,7 @@ namespace smile::graphic
         DirectX11Texture &operator=( DirectX11Texture && ) = delete;
 
         void Create( ID3D11Device *pDevice, const std::filesystem::path &path );
+        void Create( ID3D11Device *pDevice, memory::Ref< const Image > pImage );
         void Destroy();
 
         union

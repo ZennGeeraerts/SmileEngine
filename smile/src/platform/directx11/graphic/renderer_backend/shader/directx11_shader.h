@@ -25,7 +25,7 @@ namespace smile::graphic
         void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) override;
         void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) override;
         void UploadInt( const std::string &sementicName, int value ) override;
-        void UploadTexture( const std::string &sementicName, const memory::Ref< Texture > &pTexture ) override;
+        void UploadTexture( const std::string &sementicName, TextureHandle texture ) override;
         void UploadBool( const std::string &sementicName, bool value ) override;
         void UploadFloat( const std::string &sementicName, float value ) override;
 

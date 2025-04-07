@@ -76,6 +76,21 @@ namespace smile::graphic
         return true;
     }
 
+    static DXGI_FORMAT ImageFormatToDirectXType( ImageFormat format )
+    {
+        switch ( format )
+        {
+            case ImageFormat::RGB:
+                return DXGI_FORMAT_R32G32B32_FLOAT;
+            case ImageFormat::RGBA:
+                return DXGI_FORMAT_R32G32B32A32_FLOAT;
+            default:
+                SM_ASSERT( false, "Unsupported format" );
+        }
+
+        return DXGI_FORMAT_UNKNOWN;
+    }
+
     DirectX11Texture::~DirectX11Texture()
     {
         Destroy();
@@ -89,6 +104,32 @@ namespace smile::graphic
             SAFE_RELEASE( pInternal );
             SAFE_RELEASE( pShaderResourceView );
             SM_ASSERT( false, "DirectX11Texture::Create > Failed to load texture" );
+        }
+    }
+
+    void DirectX11Texture::Create( ID3D11Device *pDevice, memory::Ref< const Image > pImage )
+    {
+        D3D11_TEXTURE2D_DESC desc{};
+        desc.Width = pImage->GetWidth();
+        desc.Height = pImage->GetHeight();
+        desc.MipLevels = 0;
+        desc.ArraySize = 1;
+        desc.Format = ImageFormatToDirectXType( pImage->GetFormat() );
+        desc.Usage = D3D11_USAGE_DEFAULT;
+        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        desc.CPUAccessFlags = 0;
+        desc.MiscFlags = 0;
+
+        D3D11_SUBRESOURCE_DATA subResourceData{};
+        subResourceData.pSysMem = pImage->GetData();
+        subResourceData.SysMemPitch = pImage->GetDataSize();
+
+        HRESULT result = pDevice->CreateTexture2D( &desc, &subResourceData, &pTexture2D );
+
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Texture::Create > Failed to create texture: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
         }
     }
 

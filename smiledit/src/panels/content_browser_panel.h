@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/resource/texture.h"
+#include "smile/graphic/renderer/resource/texture.h"
 #include "smile/common/memory/ref.h"
 #include "smile/core/project/project.h"
 

@@ -9,9 +9,10 @@
 #include "render_handle.h"
 
 #include "resource/buffer.h"
-#include "resource/texture.h"
 #include "resource/frame_buffer.h"
 #include "shader/shader.h"
+
+#include "smile/graphic/resource/image.h"
 
 #include <filesystem>
 
@@ -56,6 +57,7 @@ namespace smile::graphic
             const std::string &techniqueName = "" ) = 0;
 
         virtual void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) = 0;
+        virtual void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) = 0;
         virtual void DestroyTexture( TextureHandle handle ) = 0;
 
         virtual memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;

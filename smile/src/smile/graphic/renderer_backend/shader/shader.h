@@ -7,7 +7,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
 #include "smile/graphic/renderer_backend/resource/buffer.h"
-#include "smile/graphic/renderer_backend/resource/texture.h"
+#include "smile/graphic/renderer_backend/render_handle.h"
 
 #include <DirectXMath.h>
 
@@ -24,7 +24,7 @@ namespace smile::graphic
         virtual void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) = 0;
         virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) = 0;
         virtual void UploadInt( const std::string &sementicName, int value ) = 0;
-        virtual void UploadTexture( const std::string &sementicName, const memory::Ref< Texture > &pTexture ) = 0;
+        virtual void UploadTexture( const std::string &sementicName, TextureHandle texture ) = 0;
         virtual void UploadBool( const std::string &sementicName, bool value ) = 0;
         virtual void UploadFloat( const std::string &sementicName, float value ) = 0;
 

@@ -25,7 +25,7 @@ namespace smile::graphic
         memory::Ref< Texture > pCubeTexture = resourceManager.CreateTexture( "resources/textures/SkyBox.dds" );
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
-        s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture );
+        s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture->Handle );
 
         DirectX::XMFLOAT4X4 worldMatrix;
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );

@@ -124,7 +124,7 @@ namespace smile::graphic
         }
 
         m_Texture2DValues[semantic] = value;
-        m_pShader->UploadTexture( semantic, value );
+        m_pShader->UploadTexture( semantic, value->Handle );
     }
 
     float Material::GetFloatValue( const std::string &semantic ) const

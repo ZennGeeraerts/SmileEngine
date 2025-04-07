@@ -33,7 +33,7 @@ namespace smile::world
 
         if ( path.extension() != ".smile" )
         {
-            SM_LOG_WARNING( "WorldManager::LoadWorld > Failed to load world: wrong file extention" );
+            SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: wrong file extention" );
             return nullptr;
         }
 
