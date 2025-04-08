@@ -4,12 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    struct Texture final : public memory::Object
+    struct Texture final : public memory::Counted
     {
         Texture( TextureHandle handle ) : Handle{ handle }
         {

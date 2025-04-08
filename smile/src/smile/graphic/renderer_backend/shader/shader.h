@@ -13,7 +13,7 @@
 
 namespace smile::graphic
 {
-    struct Shader : public memory::Object
+    struct Shader : public memory::Counted
     {
         Shader() = default;
         virtual ~Shader() = default;

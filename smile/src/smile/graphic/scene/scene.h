@@ -16,7 +16,7 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class Scene final : public memory::Object
+    class Scene final : public memory::Counted
     {
       public:
         struct CameraData final

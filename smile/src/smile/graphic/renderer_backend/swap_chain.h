@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 
 namespace smile::window
 {
@@ -13,7 +13,7 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class SwapChain : public memory::Object
+    class SwapChain : public memory::Counted
     {
       public:
         SwapChain( const window::Window *pWindow ) : m_pWindow{ pWindow }

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 
 #include <DirectXMath.h>
 
@@ -54,7 +54,7 @@ namespace smile::graphic
         bool IsSwapChainTarget = false;
     };
 
-    struct Framebuffer : public memory::Object
+    struct Framebuffer : public memory::Counted
     {
         Framebuffer() = default;
         virtual ~Framebuffer() = default;

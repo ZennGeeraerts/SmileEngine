@@ -6,14 +6,14 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/uuid.h"
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 #include "asset_type.h"
 
 namespace smile::asset
 {
     using AssetHandle = primitive::UUID;
 
-    class Asset : public memory::Object
+    class Asset : public memory::Counted
     {
       public:
         virtual AssetType GetType() const = 0;

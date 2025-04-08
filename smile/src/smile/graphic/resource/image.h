@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 
 namespace smile::graphic
 {
@@ -25,7 +25,7 @@ namespace smile::graphic
         None
     };
 
-    class Image final : public memory::Object
+    class Image final : public memory::Counted
     {
       public:
         Image();

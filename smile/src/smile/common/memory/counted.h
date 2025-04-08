@@ -8,18 +8,18 @@
 
 namespace smile::memory
 {
-    class Object
+    class Counted
     {
       public:
-        Object() : m_RefCount{ 0 }
+        Counted() : m_RefCount{ 0 }
         {
         }
 
-        Object( const Object & ) : m_RefCount{ 0 }
+        Counted( const Counted & ) : m_RefCount{ 0 }
         {
         }
 
-        virtual ~Object();
+        virtual ~Counted();
 
         // This needs to be const to work in Reset function of Object
         inline void IncreaseRefCount() const

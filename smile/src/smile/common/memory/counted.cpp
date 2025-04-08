@@ -3,11 +3,11 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "object.h"
+#include "counted.h"
 
 namespace smile::memory
 {
-    Object::~Object()
+    Counted::~Counted()
     {
         SM_ASSERT( m_RefCount == 0, "RefCount is not 0" );
 

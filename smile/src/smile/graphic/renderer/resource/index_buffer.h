@@ -4,12 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    struct IndexBuffer : public memory::Object
+    struct IndexBuffer : public memory::Counted
     {
         IndexBuffer( GPUBufferHandle handle, Uint32 count ) : Handle{ handle }, Count{ count }
         {

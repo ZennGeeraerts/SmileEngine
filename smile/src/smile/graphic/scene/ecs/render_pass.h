@@ -4,13 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 #include "smile/core/ecs/ecs_engine.h"
 #include "smile/graphic/camera/camera.h"
 
 namespace smile::graphic::ecs
 {
-    class RenderPass : public memory::Object
+    class RenderPass : public memory::Counted
     {
       public:
         RenderPass() = default;

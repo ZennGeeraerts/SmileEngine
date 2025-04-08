@@ -10,7 +10,7 @@
 
 namespace smile::graphic
 {
-    class TextureManager final : public memory::Object, public foundation::Singleton< TextureManager >
+    class TextureManager final : public memory::Counted, public foundation::Singleton< TextureManager >
     {
       public:
         TextureManager() = default;

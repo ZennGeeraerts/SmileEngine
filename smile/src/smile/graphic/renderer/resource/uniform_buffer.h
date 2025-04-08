@@ -4,14 +4,14 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 
 #include <string>
 
 namespace smile::graphic
 {
-    struct UniformBuffer final : public memory::Object
+    struct UniformBuffer final : public memory::Counted
     {
         UniformBuffer( GPUBufferHandle handle, const std::string &name, Uint32 size )
             : Handle{ handle }, Name{ name }, Size{ size }

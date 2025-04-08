@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "smile/common/foundation/compiled.h"
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 
 namespace smile::graphic
 {

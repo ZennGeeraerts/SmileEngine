@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 
 #include <string>
 #include <string_view>
@@ -12,7 +12,7 @@
 
 namespace smile::ecs::state
 {
-    class State final : public memory::Object
+    class State final : public memory::Counted
     {
       public:
         using Iterator = std::vector< std::string >::iterator;

@@ -13,8 +13,8 @@ namespace smile
       public:
         AllocatedStackFixture()
         {
-            m_pAllocatedObject = new memory::Object;
-            m_pNonConstAllocatedObject = new memory::Object;
+            m_pAllocatedObject = new memory::Counted;
+            m_pNonConstAllocatedObject = new memory::Counted;
         }
 
         AllocatedStackFixture( const AllocatedStackFixture & ) = delete;
@@ -22,18 +22,18 @@ namespace smile
 
         ~AllocatedStackFixture() = default;
 
-        memory::Ref< memory::Object > GetNonConstRValue()
+        memory::Ref< memory::Counted > GetNonConstRValue()
         {
             return m_pNonConstAllocatedObject;
         }
 
-        memory::Ref< const memory::Object > m_pAllocatedObject, m_pEmptyRef;
-        memory::Ref< memory::Object > m_pNonConstAllocatedObject;
+        memory::Ref< const memory::Counted > m_pAllocatedObject, m_pEmptyRef;
+        memory::Ref< memory::Counted > m_pNonConstAllocatedObject;
     };
 
     TEST_CASE_METHOD( AllocatedStackFixture, "memory::Ref copy constructor behavior", "[memory]" )
     {
-        memory::Ref< const memory::Object > pEmptyCopy{ m_pEmptyRef }, pAllocatedObject{ m_pAllocatedObject },
+        memory::Ref< const memory::Counted > pEmptyCopy{ m_pEmptyRef }, pAllocatedObject{ m_pAllocatedObject },
             pNonConstStackObjectRValue{ GetNonConstRValue() }, pNonConstAllocatedObject{ m_pNonConstAllocatedObject };
 
         REQUIRE( 2 == pAllocatedObject->GetRefCount() );
@@ -43,7 +43,7 @@ namespace smile
 
     TEST_CASE_METHOD( AllocatedStackFixture, "memory::Ref copy operator", "[memory]" )
     {
-        memory::Ref< const memory::Object > pEmptyCopy, pAllocatedObject;
+        memory::Ref< const memory::Counted > pEmptyCopy, pAllocatedObject;
 
         pEmptyCopy = m_pEmptyRef;
         pAllocatedObject = m_pAllocatedObject;
@@ -61,7 +61,7 @@ namespace smile
 
     TEST_CASE_METHOD( AllocatedStackFixture, "memory::Ref equal operator", "[memory]" )
     {
-        memory::Ref< const memory::Object > pEmptyCopy{ m_pEmptyRef }, pAllocatedObject{ m_pAllocatedObject };
+        memory::Ref< const memory::Counted > pEmptyCopy{ m_pEmptyRef }, pAllocatedObject{ m_pAllocatedObject };
 
         REQUIRE( pAllocatedObject == m_pAllocatedObject );
         REQUIRE( m_pEmptyRef == pEmptyCopy );
@@ -70,14 +70,14 @@ namespace smile
 
     TEST_CASE_METHOD( AllocatedStackFixture, "memory::Ref not equal operator", "[memory]" )
     {
-        memory::Ref< const memory::Object > pEmptyCopy{ m_pEmptyRef }, pAllocatedObject{ m_pAllocatedObject };
+        memory::Ref< const memory::Counted > pEmptyCopy{ m_pEmptyRef }, pAllocatedObject{ m_pAllocatedObject };
 
         REQUIRE( !( pAllocatedObject != m_pAllocatedObject ) );
         REQUIRE( !( pEmptyCopy != m_pEmptyRef ) );
         REQUIRE( m_pAllocatedObject != pEmptyCopy );
     }
 
-    struct LocalConstnessTest : public memory::Object
+    struct LocalConstnessTest : public memory::Counted
     {
         bool TestConstness() const
         {
@@ -91,7 +91,7 @@ namespace smile
     static_assert(
         sizeof( memory::Ref< const LocalConstnessTest >().GetObject< LocalConstnessTest >().TestConstness() ) == 1 );
 
-    struct Dummy final : memory::Object
+    struct Dummy final : memory::Counted
     {
         explicit Dummy( bool &temp ) : Temp{ temp }
         {

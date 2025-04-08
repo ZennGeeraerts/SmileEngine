@@ -4,13 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/object.h"
+#include "smile/common/memory/counted.h"
 
 namespace smile::ecs
 {
     class ECSEngine;
 
-    class BaseSystem : public memory::Object
+    class BaseSystem : public memory::Counted
     {
       public:
         BaseSystem() = default;

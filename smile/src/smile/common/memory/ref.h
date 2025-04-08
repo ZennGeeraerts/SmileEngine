@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "object.h"
+#include "counted.h"
 #include "smile/common/foundation/hash_code.h"
 
 #include <type_traits>
@@ -14,7 +14,7 @@ namespace smile::memory
     template < typename Type >
     class Ref final
     {
-        static_assert( std::is_base_of_v< Object, Type >, "Type does not derive from object" );
+        static_assert( std::is_base_of_v< Counted, Type >, "Type does not derive from counted" );
 
       public:
         inline Ref() : m_pInstance{ nullptr }
