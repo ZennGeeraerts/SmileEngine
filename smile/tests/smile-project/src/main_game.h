@@ -18,7 +18,7 @@ class ExampleLayer final : public smile::application::Layer
     bool OnWindowResize( smile::window::WindowResizeEvent &e );
 
   private:
-    smile::Ref< smile::world::World > m_pActiveWorld;
+    smile::memory::Ref< smile::world::World > m_pActiveWorld;
 
     smile::world::Entity m_CameraEntity;
     float m_CameraMoveSpeed = 5.f;

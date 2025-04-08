@@ -10,7 +10,7 @@
 #include "smile/graphic/mesh/material.h"
 #include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/camera/ecs/camera_component.h"
-#include "smile/graphic/renderer_backend/resource/texture.h"
+#include "smile/graphic/sprite/texture_manager.h"
 #include "smile/graphic/mesh/ecs/mesh_renderer_component.h"
 #include "smile/graphic/ecs/graphic_system.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
@@ -165,7 +165,7 @@ void ExampleLayer::OnAttach()
 
     Smile::Ref<Smile::Shader> pShader = Smile::Shader::Create("Resources/Shaders/PosNormTex.fx", vertexLayout);*/
 
-    m_pActiveWorld.reset( new smile::world::World{} );
+    m_pActiveWorld.Reset( new smile::world::World{} );
     smile::world::WorldManager::Open( m_pActiveWorld );
 
     auto pRuntimeState = m_pActiveWorld->CreateState( "runtime" );
@@ -183,19 +183,19 @@ void ExampleLayer::OnAttach()
     auto &camera = m_CameraEntity.AddComponent< smile::graphic::ecs::CameraComponent >();
     camera.IsPrimary = true;
 
-    auto cube = m_pActiveWorld->CreateEntity("Cube");
-    auto& meshRendererComp = cube.AddComponent<smile::graphic::ecs::MeshRendererComponent>();
+    auto cube = m_pActiveWorld->CreateEntity( "Cube" );
+    auto &meshRendererComp = cube.AddComponent< smile::graphic::ecs::MeshRendererComponent >();
     meshRendererComp.pMesh = smile::graphic::MeshFactory::CreateCube(
         smile::graphic::VertexLayout{ { smile::graphic::ShaderDataType::Float3, "POSITION" } } );
 
-    cube.GetComponent<smile::world::ecs::TransformComponent>().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
-    cube.GetComponent<smile::world::ecs::TransformComponent>().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
+    cube.GetComponent< smile::world::ecs::TransformComponent >().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
+    cube.GetComponent< smile::world::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
 
     auto &resourceManager = smile::graphic::RenderEngine::GetRenderSystem().GetResourceManager();
     auto pShader = resourceManager.CreateShader( "assets/shaders/PBR.fx" );
     auto pMaterial = smile::CreateRef< smile::graphic::Material >( pShader );
     smile::memory::Ref< smile::graphic::Texture > pAlbedo =
-        resourceManager.CreateTexture2D( "assets/textures/uv_grid.png" );
+        smile::graphic::TextureManager::GetInstance().GetTexture( "assets/textures/uv_grid.png" )->GetTexture();
     pMaterial->SetTexture2D( "ALBEDOMAP", pAlbedo );
 
     /*m_ModelEntity = m_pActiveWorld->CreateEntity( "Model" );
