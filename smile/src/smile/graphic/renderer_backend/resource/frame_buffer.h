@@ -50,29 +50,9 @@ namespace smile::graphic
         FramebufferAttachmentData Attachments;
         Uint16 Samples = 1;
 
-        // if true -> Render to the swapchain
+        // TODO: if true -> Render to the swapchain
         bool IsSwapChainTarget = false;
-    };
 
-    struct Framebuffer : public memory::Counted
-    {
-        Framebuffer() = default;
-        virtual ~Framebuffer() = default;
-
-        virtual void *GetColor( Uint32 index ) const = 0;
-        virtual Uint32 GetRenderTargetViewCount() const = 0;
-        virtual void *GetRenderTargetViews() = 0;
-        virtual void *GetDepthStencilView() const = 0;
-        virtual void *GetDepthStencilAttachment() const = 0;
-        virtual void *GetViewport() = 0;
-
-        bool IsDepthFormat( FramebufferTextureFormat format );
-
-        FramebufferDescriptor Descriptor{};
         DirectX::XMFLOAT4 ClearColor = { 1.f, 1.f, 1.f, 1.f };
-        std::vector< FramebufferTextureData > ColorAttachmentData{};
-        FramebufferTextureData DepthAttachmentData = FramebufferTextureFormat::None;
-
-        static const Uint32 MaxFramebufferSize;
     };
 }

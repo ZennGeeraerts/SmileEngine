@@ -25,13 +25,13 @@ namespace smile::graphic
         frameBufferDesc.Width = pWindow->GetWidth();
         frameBufferDesc.Height = pWindow->GetHeight();
         frameBufferDesc.IsSwapChainTarget = false;
-
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        m_pFramebuffer = resourceManager.CreateFramebuffer( frameBufferDesc );
-        m_pFramebuffer->ClearColor = { DirectX::Colors::DodgerBlue.f[0],
+        frameBufferDesc.ClearColor = { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
             DirectX::Colors::DodgerBlue.f[3] };
+
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        m_pFramebuffer = resourceManager.CreateFramebuffer( frameBufferDesc );
     }
 
     void Scene::OnAdd( smile::ecs::ECSEngine &ecsEngine )
@@ -77,6 +77,11 @@ namespace smile::graphic
 
         if ( !m_RenderToSwapChain )
             renderSystem.BindBackBuffer();
+    }
+
+    void *Scene::GetFinalColor() const
+    {
+        return RenderEngine::GetRenderSystem().ReadTexture( m_pFramebuffer, 0 );
     }
 
     void Scene::OnViewportResize( Uint32 width, Uint32 height )

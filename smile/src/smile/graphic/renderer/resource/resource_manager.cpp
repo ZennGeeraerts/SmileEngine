@@ -22,6 +22,9 @@ namespace smile::graphic
 
         for ( auto pTexture : m_pTextures )
             m_pDevice->DestroyTexture( pTexture->Handle );
+
+        for ( auto pFramebuffer : m_pFramebuffers )
+            m_pDevice->DestroyFramebuffer( pFramebuffer->Handle );
     }
 
     void ResourceManager::Initialize( GraphicsDevice *pDevice )
@@ -129,7 +132,10 @@ namespace smile::graphic
 
     memory::Ref< Framebuffer > ResourceManager::CreateFramebuffer( const FramebufferDescriptor &descriptor )
     {
-        auto pFramebuffer = m_pDevice->CreateFramebuffer( descriptor );
+        FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
+        m_pDevice->CreateFramebuffer( handle, descriptor );
+
+        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle );
         m_pFramebuffers.push_back( pFramebuffer );
         return pFramebuffer;
     }
@@ -143,9 +149,9 @@ namespace smile::graphic
             return;
         }
 
-        pFramebuffer->Descriptor.Width = width;
-        pFramebuffer->Descriptor.Height = height;
+        pFramebuffer->Width = width;
+        pFramebuffer->Height = height;
 
-        m_pDevice->InvalidateFramebuffer( pFramebuffer );
+        m_pDevice->InvalidateFramebuffer( pFramebuffer->Handle );
     }
 }

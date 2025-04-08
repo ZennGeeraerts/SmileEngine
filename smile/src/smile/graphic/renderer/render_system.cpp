@@ -32,7 +32,7 @@ namespace smile::graphic
     {
         if ( m_pBoundFramebuffer )
         {
-            m_pRendererBackend->GetGraphicsContext()->ClearFramebuffer( m_pBoundFramebuffer );
+            m_pRendererBackend->GetGraphicsContext()->ClearFramebuffer( m_pBoundFramebuffer->Handle );
         }
         else
         {
@@ -90,7 +90,7 @@ namespace smile::graphic
 
     void RenderSystem::BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
     {
-        m_pRendererBackend->GetGraphicsContext()->BindFramebuffer( pFramebuffer );
+        m_pRendererBackend->GetGraphicsContext()->BindFramebuffer( pFramebuffer->Handle );
         m_pBoundFramebuffer = pFramebuffer;
     }
 
@@ -108,6 +108,11 @@ namespace smile::graphic
     void *RenderSystem::ReadTexture( memory::Ref< Texture > pTexture ) const
     {
         return m_pRendererBackend->GetGraphicsContext()->ReadTexture( pTexture->Handle );
+    }
+
+    void *RenderSystem::ReadTexture( memory::Ref< Framebuffer > pFramebuffer, Uint32 index ) const
+    {
+        return m_pRendererBackend->GetGraphicsContext()->ReadTexture( pFramebuffer->Handle, index );
     }
 
     void RenderSystem::DrawIndexed( Uint32 indexCount )

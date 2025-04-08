@@ -7,7 +7,6 @@
 #include "smile/common/memory/ref.h"
 #include "smile/core/world/entity.h"
 #include "ecs/render_pass_list.h"
-#include "smile/graphic/renderer_backend/resource/frame_buffer.h"
 
 namespace smile::window
 {
@@ -16,6 +15,8 @@ namespace smile::window
 
 namespace smile::graphic
 {
+    class Framebuffer;
+
     class Scene final : public memory::Counted
     {
       public:
@@ -38,11 +39,7 @@ namespace smile::graphic
 
         void OnRender();
 
-        void *GetFinalColor() const
-        {
-            return m_pFramebuffer->GetColor( 0 );
-        }
-
+        void *GetFinalColor() const;
         void OnViewportResize( Uint32 width, Uint32 height );
 
         Uint32 GetViewportWidth() const

@@ -248,28 +248,6 @@ namespace smile::graphic
         }
     }
 
-    namespace framebufferhelpers
-    {
-        static DXGI_FORMAT FramebufferTextureFormatToDirectXBaseType( FramebufferTextureFormat format )
-        {
-            switch ( format )
-            {
-                case FramebufferTextureFormat::RGBA8:
-                    return DXGI_FORMAT_B8G8R8A8_UNORM;
-                    break;
-                case FramebufferTextureFormat::Depth24Stencil8:
-                    return DXGI_FORMAT_D24_UNORM_S8_UINT;
-                    break;
-
-                case FramebufferTextureFormat::None:
-                default:
-                    SM_ASSERT( false,
-                        "DirectX11Framebuffer::framebufferTextureFormatToDirectXBaseType > Unknown ShaderDataType" );
-                    return DXGI_FORMAT_UNKNOWN;
-            }
-        }
-    }
-
     DirectX11Device::DirectX11Device()
     {
         // Create DXGI Factory to create SwapChain based on hardware
@@ -570,228 +548,19 @@ namespace smile::graphic
         m_Textures[handle.GetIndex()].Destroy();
     }
 
-    memory::Ref< Framebuffer > DirectX11Device::CreateFramebuffer( const FramebufferDescriptor &descriptor )
+    void DirectX11Device::CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor )
     {
-        memory::Ref< DirectX11Framebuffer > pFramebuffer = memory::CreateRef< DirectX11Framebuffer >();
-        pFramebuffer->Descriptor = descriptor;
-
-        for ( const auto &framebufferTextureData : descriptor.Attachments.Attachments )
-        {
-            if ( !pFramebuffer->IsDepthFormat( framebufferTextureData.TextureFormat ) )
-                pFramebuffer->ColorAttachmentData.emplace_back( framebufferTextureData );
-            else
-                pFramebuffer->DepthAttachmentData = framebufferTextureData;
-        }
-
-        InvalidateFramebuffer( pFramebuffer );
-
-        return pFramebuffer;
+        m_Framebuffers[handle.GetIndex()].Create( m_pInternal, descriptor );
     }
 
-    void DirectX11Device::InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer )
+    void DirectX11Device::DestroyFramebuffer( FramebufferHandle handle )
     {
-        memory::Ref< DirectX11Framebuffer > pD11Framebuffer = memory::Ref< DirectX11Framebuffer >{ pFramebuffer };
+        m_Framebuffers[handle.GetIndex()].Destroy();
+    }
 
-        for ( Uint32 i{}; i < pD11Framebuffer->pRenderTargetViews.size(); ++i )
-            SAFE_RELEASE( pD11Framebuffer->pRenderTargetViews[i] );
-
-        for ( Uint32 i{}; i < pD11Framebuffer->pColorAttachments.size(); ++i )
-            SAFE_RELEASE( pD11Framebuffer->pColorAttachments[i] );
-
-        for ( Uint32 i{}; i < pD11Framebuffer->pColorShaderResourceViews.size(); ++i )
-            SAFE_RELEASE( pD11Framebuffer->pColorShaderResourceViews[i] );
-
-        pD11Framebuffer->pRenderTargetViews.clear();
-        pD11Framebuffer->pColorAttachments.clear();
-        pD11Framebuffer->pColorShaderResourceViews.clear();
-
-        SAFE_RELEASE( pD11Framebuffer->pDepthStencilAttachment );
-        SAFE_RELEASE( pD11Framebuffer->pDepthStencilView );
-
-        // Attachments
-        if ( pD11Framebuffer->ColorAttachmentData.size() )
-        {
-            pD11Framebuffer->pColorAttachments.resize( pD11Framebuffer->ColorAttachmentData.size() );
-            pD11Framebuffer->pRenderTargetViews.resize( pD11Framebuffer->ColorAttachmentData.size() );
-            pD11Framebuffer->pColorShaderResourceViews.resize( pD11Framebuffer->ColorAttachmentData.size() );
-
-            for ( uint32_t i{}; i < pD11Framebuffer->pColorAttachments.size(); ++i )
-            {
-                D3D11_TEXTURE2D_DESC textureDesc = {};
-                textureDesc.Width = pD11Framebuffer->Descriptor.Width;
-                textureDesc.Height = pD11Framebuffer->Descriptor.Height;
-                textureDesc.MipLevels = 1;
-                textureDesc.ArraySize = 1;
-                textureDesc.Format = framebufferhelpers::FramebufferTextureFormatToDirectXBaseType(
-                    pD11Framebuffer->ColorAttachmentData[i].TextureFormat );
-                textureDesc.SampleDesc.Count = pD11Framebuffer->Descriptor.Samples;
-                textureDesc.SampleDesc.Quality = 0;
-                textureDesc.Usage = D3D11_USAGE_DEFAULT;
-                textureDesc.BindFlags =
-                    D3D11_BIND_RENDER_TARGET |
-                    ( ( pD11Framebuffer->ColorAttachmentData[i].UseInShader ) ? D3D11_BIND_SHADER_RESOURCE : 0 );
-                textureDesc.CPUAccessFlags = 0;
-                textureDesc.MiscFlags = 0;
-
-                HRESULT result =
-                    m_pInternal->CreateTexture2D( &textureDesc, nullptr, &pD11Framebuffer->pColorAttachments[i] );
-                if ( FAILED( result ) )
-                {
-                    SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create Texture2D: {}",
-                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                    return;
-                }
-
-                D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
-                renderTargetViewDesc.Format = textureDesc.Format;
-                renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-                renderTargetViewDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
-
-                result = m_pInternal->CreateRenderTargetView( pD11Framebuffer->pColorAttachments[i],
-                    &renderTargetViewDesc,
-                    &pD11Framebuffer->pRenderTargetViews[i] );
-                if ( FAILED( result ) )
-                {
-                    SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create render target view: {}",
-                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                    return;
-                }
-
-                if ( pD11Framebuffer->ColorAttachmentData[i].UseInShader )
-                {
-                    result = m_pInternal->CreateShaderResourceView( pD11Framebuffer->pColorAttachments[i],
-                        nullptr,
-                        &pD11Framebuffer->pColorShaderResourceViews[i] );
-                    if ( FAILED( result ) )
-                    {
-                        SM_LOG_ERROR(
-                            "DirectX11Device::InvalidateFramebuffer > Failed to create shader resource view: {}",
-                            fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                        return;
-                    }
-                }
-            }
-        }
-
-        if ( pD11Framebuffer->DepthAttachmentData.TextureFormat != FramebufferTextureFormat::None )
-        {
-            D3D11_TEXTURE2D_DESC depthStencilDesc{};
-            depthStencilDesc.Width = pD11Framebuffer->Descriptor.Width;
-            depthStencilDesc.Height = pD11Framebuffer->Descriptor.Height;
-            depthStencilDesc.MipLevels = 1;
-            depthStencilDesc.ArraySize = 1;
-            depthStencilDesc.Format = framebufferhelpers::FramebufferTextureFormatToDirectXBaseType(
-                pD11Framebuffer->DepthAttachmentData.TextureFormat );
-            depthStencilDesc.SampleDesc.Count = 1;
-            depthStencilDesc.SampleDesc.Quality = 0;
-            depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-            depthStencilDesc.BindFlags =
-                D3D11_BIND_DEPTH_STENCIL |
-                ( ( pD11Framebuffer->DepthAttachmentData.UseInShader ) ? D3D11_BIND_SHADER_RESOURCE : 0 );
-            depthStencilDesc.CPUAccessFlags = 0;
-            depthStencilDesc.MiscFlags = 0;
-
-            D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-            depthStencilViewDesc.Format = depthStencilDesc.Format;
-            depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-            depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-            HRESULT result =
-                m_pInternal->CreateTexture2D( &depthStencilDesc, 0, &pD11Framebuffer->pDepthStencilAttachment );
-            if ( FAILED( result ) )
-            {
-                SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create depth stencil buffer: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                return;
-            }
-
-            result = m_pInternal->CreateDepthStencilView(
-                pD11Framebuffer->pDepthStencilAttachment, &depthStencilViewDesc, &pD11Framebuffer->pDepthStencilView );
-            if ( FAILED( result ) )
-            {
-                SM_LOG_ERROR( "DirectX11Device::InvalidateFramebuffer > Failed to create depth stencil view: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                return;
-            }
-        }
-
-        /*D3D11_TEXTURE2D_DESC textureDesc = {};
-        textureDesc.Width = m_Data.Width;
-        textureDesc.Height = m_Data.Height;
-        textureDesc.MipLevels = 1;
-        textureDesc.ArraySize = 1;
-        textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-        textureDesc.SampleDesc.Count = 1;
-        textureDesc.SampleDesc.Quality = 0;
-        textureDesc.Usage = D3D11_USAGE_DEFAULT;
-        textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-        textureDesc.CPUAccessFlags = 0;
-        textureDesc.MiscFlags = 0;
-
-        HRESULT result = m_pDirectX11Context->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &m_pColorBuffer);
-        if (FAILED(result))
-        {
-            SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create Texture2D");
-            return;
-        }
-
-        D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
-        renderTargetViewDesc.Format = textureDesc.Format;
-        renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-        renderTargetViewDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
-
-        result = m_pDirectX11Context->GetDevice()->CreateRenderTargetView(m_pColorBuffer, &renderTargetViewDesc,
-        &m_pRenderTargetView); if (FAILED(result))
-        {
-            SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create render target view");
-            return;
-        }
-
-        result = m_pDirectX11Context->GetDevice()->CreateShaderResourceView(m_pColorBuffer, nullptr,
-        &m_pColorShaderResourceView); if (FAILED(result))
-        {
-            SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create shader resource view");
-            return;
-        }
-
-        D3D11_TEXTURE2D_DESC depthStencilDesc{};
-        depthStencilDesc.Width = m_Data.Width;
-        depthStencilDesc.Height = m_Data.Height;
-        depthStencilDesc.MipLevels = 1;
-        depthStencilDesc.ArraySize = 1;
-        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        depthStencilDesc.SampleDesc.Count = 1;
-        depthStencilDesc.SampleDesc.Quality = 0;
-        depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-        depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depthStencilDesc.CPUAccessFlags = 0;
-        depthStencilDesc.MiscFlags = 0;
-
-        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-        depthStencilViewDesc.Format = depthStencilDesc.Format;
-        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-
-        result = m_pDirectX11Context->GetDevice()->CreateTexture2D(&depthStencilDesc, 0, &m_pDepthStencilBuffer);
-        if (FAILED(result))
-        {
-            SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create depth stencil buffer");
-            return;
-        }
-
-        result = m_pDirectX11Context->GetDevice()->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc,
-        &m_pDepthStencilView); if (FAILED(result))
-        {
-            SM_LOG_ERROR("DirectX11Framebuffer::Invalidate > Failed to create depth stencil view");
-            return;
-        }*/
-
-        auto &viewPort = pD11Framebuffer->Viewport;
-        viewPort.Width = static_cast< FLOAT >( pD11Framebuffer->Descriptor.Width );
-        viewPort.Height = static_cast< FLOAT >( pD11Framebuffer->Descriptor.Height );
-        viewPort.MinDepth = 0.0f;
-        viewPort.MaxDepth = 1.0f;
-        viewPort.TopLeftX = 0.0f;
-        viewPort.TopLeftY = 0.0f;
+    void DirectX11Device::InvalidateFramebuffer( FramebufferHandle handle )
+    {
+        m_Framebuffers[handle.GetIndex()].Invalidate( m_pInternal );
     }
 
     const DirectX11RasterizerState *DirectX11Device::GetOrCreateRasterizerState( const RenderState &renderState )

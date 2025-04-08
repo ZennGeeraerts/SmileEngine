@@ -49,11 +49,12 @@ namespace smile::graphic
         void BindShader( const memory::Ref< Shader > &pShader ) const override;
         void UnbindShader() const override;
 
-        void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const override;
-        void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) override;
+        void BindFramebuffer( FramebufferHandle handle ) const override;
+        void ClearFramebuffer( FramebufferHandle handle ) override;
 
         void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
         void *ReadTexture( TextureHandle handle ) const override;
+        void *ReadTexture( FramebufferHandle handle, Uint32 index ) const override;
 
       private:
         DirectX11Device *m_pDevice = nullptr;
