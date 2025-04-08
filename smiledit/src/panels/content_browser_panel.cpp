@@ -90,7 +90,9 @@ namespace smile
                 ImGui::PushID( itemStr.c_str() );
                 memory::Ref< graphic::Texture > pIcon = isDirectory ? m_pDirectoryIcon : m_pFileIcon;
                 ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
-                ImGui::ImageButton( static_cast< ImTextureID >( pIcon->GetData() ), { thumbnailSize, thumbnailSize } );
+                ImGui::ImageButton(
+                    static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pIcon ) ),
+                    { thumbnailSize, thumbnailSize } );
 
                 if ( ImGui::BeginPopupContextItem() )
                 {
@@ -133,7 +135,8 @@ namespace smile
                 ImGui::PushID( fileName.c_str() );
                 memory::Ref< graphic::Texture > pIcon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
                 ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
-                ImGui::ImageButton( pIcon->GetData(), { thumbnailSize, thumbnailSize } );
+                ImGui::ImageButton(
+                    graphic::RenderEngine::GetRenderSystem().ReadTexture( pIcon ), { thumbnailSize, thumbnailSize } );
 
                 auto relativePath = std::filesystem::relative( path, m_pProject->GetAssetDirectory() );
 

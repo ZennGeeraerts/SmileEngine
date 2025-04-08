@@ -32,7 +32,7 @@ namespace smile::graphic
             return nullptr;
         }
 
-        if ( path.extension() != ".smile" )
+        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
         {
             SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load world: wrong file extention" );
             return nullptr;

@@ -13,10 +13,10 @@
 
 namespace smile::graphic
 {
-    struct DirectX11Texture
+    struct DirectX11Texture final
     {
         DirectX11Texture() = default;
-        virtual ~DirectX11Texture();
+        ~DirectX11Texture() = default;
 
         DirectX11Texture( const DirectX11Texture & ) = delete;
         DirectX11Texture( DirectX11Texture && ) = delete;

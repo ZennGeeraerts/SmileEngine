@@ -201,4 +201,10 @@ namespace smile::graphic
         memcpy( mappedResource.pData, pData, size );
         m_pInternal->Unmap( gpuBuffer.pInternal, 0 );
     }
+
+    void *DirectX11Context::ReadTexture( TextureHandle handle ) const
+    {
+        const auto &texture = m_pDevice->m_Textures[handle.GetIndex()];
+        return texture.pShaderResourceView;
+    }
 }

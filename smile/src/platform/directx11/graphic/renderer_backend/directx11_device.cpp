@@ -508,7 +508,7 @@ namespace smile::graphic
         const VertexLayout &layout,
         const std::string &techniqueName )
     {
-        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >();
+        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >( this );
         pShader->SetName( assetFile );
         pShader->BufferLayout = layout;
 
@@ -534,7 +534,7 @@ namespace smile::graphic
     memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
         const std::string &techniqueName )
     {
-        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >();
+        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >( this );
         pShader->SetName( assetFile );
 
         if ( !shaderhelpers::LoadEffect( m_pInternal, pShader, assetFile ) )

@@ -9,6 +9,21 @@
 
 namespace smile::graphic
 {
+    ResourceManager::~ResourceManager()
+    {
+        for ( auto pVertexBuffer : m_pVertexBuffers )
+            m_pDevice->DestroyGPUBuffer( pVertexBuffer->Handle );
+
+        for ( auto pIndexBuffer : m_pIndexBuffers )
+            m_pDevice->DestroyGPUBuffer( pIndexBuffer->Handle );
+
+        for ( auto pUniformBuffer : m_pUniformBuffers )
+            m_pDevice->DestroyGPUBuffer( pUniformBuffer->Handle );
+
+        for ( auto pTexture : m_pTextures )
+            m_pDevice->DestroyTexture( pTexture->Handle );
+    }
+
     void ResourceManager::Initialize( GraphicsDevice *pDevice )
     {
         m_pDevice = pDevice;

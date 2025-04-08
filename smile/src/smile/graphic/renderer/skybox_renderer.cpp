@@ -6,11 +6,8 @@
 #include "skybox_renderer.h"
 
 #include "render_engine.h"
-#include "resource/resource_manager.h"
 #include "smile/graphic/mesh/mesh_factory.h"
-
-#include "smile/graphic/resource/image.h"
-#include "smile/graphic/resource/reader/image_reader.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
@@ -20,9 +17,9 @@ namespace smile::graphic
 
     void SkyboxRenderer::Initialize()
     {
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        auto &textureManager = TextureManager::GetInstance();
 
-        memory::Ref< Texture > pCubeTexture = resourceManager.CreateTexture( "resources/textures/SkyBox.dds" );
+        memory::Ref< Texture > pCubeTexture = textureManager.GetTexture( "resources/textures/SkyBox.dds" )->GetTexture();
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
         s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture->Handle );

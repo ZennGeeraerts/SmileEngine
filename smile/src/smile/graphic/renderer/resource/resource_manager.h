@@ -26,7 +26,7 @@ namespace smile::graphic
     {
       public:
         ResourceManager() = default;
-        ~ResourceManager() = default;
+        ~ResourceManager();
 
         void Initialize( GraphicsDevice *pDevice );
 

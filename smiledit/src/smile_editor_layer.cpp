@@ -54,8 +54,6 @@ namespace smile
 
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
-        graphic::TextureManager::CreateInstance();
-
         // Icon
         graphic::TextureManager &textureManager = graphic::TextureManager::GetInstance();
         m_pIconPlay = textureManager.GetTexture( "resources/icons/play_button.png" )->GetTexture();
@@ -85,7 +83,6 @@ namespace smile
         OnWorldStop();
 
         physics::PhysicsEngine::RemoveInstance();
-        graphic::TextureManager::RemoveInstance();
     }
 
     void SmileEditorLayer::OnUpdate( primitive::Timestep deltaTime )
@@ -340,7 +337,8 @@ namespace smile
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) ? m_pIconPlay
                                                                                              : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
-            if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
+            if ( ImGui::ImageButton(
+                     static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pStateIcon ) ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
@@ -357,7 +355,8 @@ namespace smile
             memory::Ref< graphic::Texture > pStateIcon =
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play ) ? m_pIconSimulate
                                                                                          : m_pIconStop;
-            if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
+            if ( ImGui::ImageButton(
+                     static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pStateIcon ) ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },

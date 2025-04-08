@@ -91,11 +91,6 @@ namespace smile::graphic
         return DXGI_FORMAT_UNKNOWN;
     }
 
-    DirectX11Texture::~DirectX11Texture()
-    {
-        Destroy();
-    }
-
     void DirectX11Texture::Create( ID3D11Device *pDevice, const std::filesystem::path &path )
     {
         DirectX::TexMetadata info{};

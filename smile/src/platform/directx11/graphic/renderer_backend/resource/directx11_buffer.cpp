@@ -59,11 +59,6 @@ namespace smile::graphic
         return static_cast< D3D11_BIND_FLAG >( targetFlags );
     }
 
-    DirectX11Buffer::~DirectX11Buffer()
-    {
-        Destroy();
-    }
-
     void DirectX11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc )
     {
         D3D11_BUFFER_DESC bufferDesc = {};

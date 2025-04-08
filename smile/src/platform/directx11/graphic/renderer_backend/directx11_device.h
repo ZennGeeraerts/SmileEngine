@@ -77,5 +77,6 @@ namespace smile::graphic
         DirectX11DepthStencilStateCache m_DepthStencilStateCache;
 
         friend class DirectX11Context;
+        friend class DirectX11Shader;
     };
 }
