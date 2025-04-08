@@ -6,7 +6,7 @@
 #include "content_browser_panel.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
+#include "smile/graphic/sprite/texture_manager.h"
 #include "smile/core/project/project_manager.h"
 
 #include <imgui/imgui.h>
@@ -20,9 +20,10 @@ namespace smile
     {
         m_TreeNodes.emplace_back( TreeNode{ ".", 0 } );
 
-        graphic::ResourceManager &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
-        m_pDirectoryIcon = resourceManager.CreateTexture2D( "resources/icons/content_browser/directory_icon.png" );
-        m_pFileIcon = resourceManager.CreateTexture2D( "resources/icons/content_browser/file_icon.png" );
+        graphic::TextureManager &textureManager = graphic::TextureManager::GetInstance();
+        m_pDirectoryIcon =
+            textureManager.GetTexture( "resources/icons/content_browser/directory_icon.png" )->GetTexture();
+        m_pFileIcon = textureManager.GetTexture( "resources/icons/content_browser/file_icon.png" )->GetTexture();
 
         RefreshAssetTree();
 

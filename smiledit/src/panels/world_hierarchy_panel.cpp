@@ -10,7 +10,7 @@
 #include "smile/scripting/script_engine.h"
 #include "smile/graphic/mesh/mesh.h"
 #include "smile/graphic/mesh/mesh_factory.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -513,6 +513,7 @@ namespace smile::world
                     const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                     if ( pPayload )
                     {
+                        // FIXME: Use asset handle
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path modelPath = std::filesystem::path{ path };
 
@@ -580,6 +581,7 @@ namespace smile::world
                     {
                         skinnedMeshRendererComponent.pSkinnedMesh.reset();
 
+                        // FIXME: Use asset handle
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path modelPath = std::filesystem::path{ path };
 
@@ -643,6 +645,7 @@ namespace smile::world
                     const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                     if ( pPayload )
                     {
+                        // FIXME: Use asset handle
                         const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                         std::filesystem::path modelPath = std::filesystem::path{ path };
 
@@ -798,11 +801,9 @@ namespace smile::world
                     const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                     if ( pPayload )
                     {
-                        const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                        std::filesystem::path texturePath = std::filesystem::path{ path };
+                        asset::AssetHandle handle = *static_cast< asset::AssetHandle * >( pPayload->Data );
                         spriteRendererComponent.pTexture =
-                            graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
-                                texturePath.string() );
+                            graphic::TextureManager::GetInstance().GetTexture( handle )->GetTexture();
                     }
 
                     ImGui::EndDragDropTarget();
@@ -869,6 +870,7 @@ namespace smile::world
             const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
             if ( pPayload )
             {
+                // FIXME: Use asset handle
                 const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
                 std::filesystem::path shaderPath = std::filesystem::path{ path };
                 pMaterial->SetShader(
@@ -927,11 +929,9 @@ namespace smile::world
                 const ImGuiPayload *pPayload = ImGui::AcceptDragDropPayload( "ContentBrowserItem" );
                 if ( pPayload )
                 {
-                    const wchar_t *path = static_cast< const wchar_t * >( pPayload->Data );
-                    std::filesystem::path texturePath = std::filesystem::path{ path };
-                    pMaterial->SetTexture2D( pair.first,
-                        graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
-                            texturePath.string() ) );
+                    asset::AssetHandle handle = *static_cast< asset::AssetHandle * >( pPayload->Data );
+                    pMaterial->SetTexture2D(
+                        pair.first, graphic::TextureManager::GetInstance().GetTexture( handle )->GetTexture() );
                 }
 
                 ImGui::EndDragDropTarget();
