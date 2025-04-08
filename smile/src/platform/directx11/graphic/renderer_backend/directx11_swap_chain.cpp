@@ -17,6 +17,9 @@ namespace smile::graphic
     {
         SAFE_RELEASE( m_pRenderTargetBuffer );
         SAFE_RELEASE( m_pCurrentRenderTarget );
+
+        m_SwapChainTarget.Destroy();
+
         SAFE_RELEASE( m_pSwapChain );
     }
 

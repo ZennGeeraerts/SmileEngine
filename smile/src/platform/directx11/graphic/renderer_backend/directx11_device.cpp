@@ -351,7 +351,7 @@ namespace smile::graphic
         framebufferDesc.Samples = 1;
         framebufferDesc.Attachments = { { FramebufferTextureFormat::Depth24Stencil8, false } };
 
-        pSwapChain->m_pSwapChainTarget = memory::Ref< DirectX11Framebuffer >{ CreateFramebuffer( framebufferDesc ) };
+        pSwapChain->m_SwapChainTarget.Create( m_pInternal, framebufferDesc );
 
         // Create the RenderTargetView
         result = pSwapChain->m_pSwapChain->GetBuffer(
@@ -373,7 +373,7 @@ namespace smile::graphic
         }
 
         m_pContext->OMSetRenderTargets(
-            1, &pSwapChain->m_pCurrentRenderTarget, pSwapChain->m_pSwapChainTarget->pDepthStencilView );
+            1, &pSwapChain->m_pCurrentRenderTarget, pSwapChain->m_SwapChainTarget.pDepthStencilView );
         /*------------------------------------- Render Target Code End -------------------------------------*/
 
         // Set the Viewport
@@ -401,17 +401,17 @@ namespace smile::graphic
         m_pContext->OMSetRenderTargets( 0, 0, 0 );
 
         D3D11_TEXTURE2D_DESC depthStencilDesc{};
-        pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment->GetDesc( &depthStencilDesc );
+        pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment->GetDesc( &depthStencilDesc );
         depthStencilDesc.Width = width;
         depthStencilDesc.Height = height;
 
         D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-        pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView->GetDesc( &depthStencilViewDesc );
+        pDX11SwapChain->m_SwapChainTarget.pDepthStencilView->GetDesc( &depthStencilViewDesc );
 
         SAFE_RELEASE( pDX11SwapChain->m_pCurrentRenderTarget );
         SAFE_RELEASE( pDX11SwapChain->m_pRenderTargetBuffer );
-        SAFE_RELEASE( pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView );
-        SAFE_RELEASE( pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment );
+        SAFE_RELEASE( pDX11SwapChain->m_SwapChainTarget.pDepthStencilView );
+        SAFE_RELEASE( pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment );
 
         HRESULT result = pDX11SwapChain->m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
         if ( FAILED( result ) )
@@ -423,7 +423,7 @@ namespace smile::graphic
 
         // Depth stencil
         result = m_pInternal->CreateTexture2D(
-            &depthStencilDesc, 0, &pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment );
+            &depthStencilDesc, 0, &pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create depth stencil buffer: {}",
@@ -431,9 +431,9 @@ namespace smile::graphic
             return;
         }
 
-        result = m_pInternal->CreateDepthStencilView( pDX11SwapChain->m_pSwapChainTarget->pDepthStencilAttachment,
+        result = m_pInternal->CreateDepthStencilView( pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment,
             &depthStencilViewDesc,
-            &pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView );
+            &pDX11SwapChain->m_SwapChainTarget.pDepthStencilView );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create depth stencil view: {}",
@@ -461,7 +461,7 @@ namespace smile::graphic
         }
 
         m_pContext->OMSetRenderTargets(
-            1, &pDX11SwapChain->m_pCurrentRenderTarget, pDX11SwapChain->m_pSwapChainTarget->pDepthStencilView );
+            1, &pDX11SwapChain->m_pCurrentRenderTarget, pDX11SwapChain->m_SwapChainTarget.pDepthStencilView );
 
         pDX11SwapChain->m_Viewport.Width = static_cast< FLOAT >( width );
         pDX11SwapChain->m_Viewport.Height = static_cast< FLOAT >( height );

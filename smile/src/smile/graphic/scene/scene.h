@@ -7,6 +7,7 @@
 #include "smile/common/memory/ref.h"
 #include "smile/core/world/entity.h"
 #include "ecs/render_pass_list.h"
+#include "smile/graphic/renderer/resource/frame_buffer.h"
 
 namespace smile::window
 {
@@ -15,8 +16,6 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class Framebuffer;
-
     class Scene final : public memory::Counted
     {
       public:

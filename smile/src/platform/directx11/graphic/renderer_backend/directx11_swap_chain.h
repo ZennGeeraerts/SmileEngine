@@ -6,7 +6,7 @@
 #include "smile/graphic/renderer_backend/swap_chain.h"
 #include "resource/directx11_frame_buffer.h"
 
-#include "smile/common/memory/ref.h"
+#include <d3d11.h>
 
 namespace smile::graphic
 {
@@ -24,7 +24,7 @@ namespace smile::graphic
         }
         inline ID3D11DepthStencilView *GetDepthStencilView() const
         {
-            return m_pSwapChainTarget->pDepthStencilView;
+            return m_SwapChainTarget.pDepthStencilView;
         }
         inline const D3D11_VIEWPORT &GetViewport() const
         {
@@ -34,7 +34,7 @@ namespace smile::graphic
       protected:
         IDXGISwapChain *m_pSwapChain = nullptr;
 
-        memory::Ref< DirectX11Framebuffer > m_pSwapChainTarget = nullptr;
+        DirectX11Framebuffer m_SwapChainTarget;
 
         ID3D11RenderTargetView *m_pCurrentRenderTarget = nullptr;
         ID3D11Resource *m_pRenderTargetBuffer = nullptr;
