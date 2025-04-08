@@ -6,6 +6,7 @@
 #include "texture_manager.h"
 
 #include "smile/core/asset/asset_manager.h"
+#include "smile/graphic/renderer/resource/texture.h"
 
 namespace smile::graphic
 {
@@ -19,7 +20,22 @@ namespace smile::graphic
             return pTextureAsset;
         }
 
-        SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", handle );
+        SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", static_cast< Uint64 >( handle ) );
+
+        return m_pFallBackTexture;
+    }
+
+    memory::Ref< TextureAsset > TextureManager::GetTexture( const std::filesystem::path &path )
+    {
+        memory::Ref< TextureAsset > pTextureAsset = m_TextureLoader.LoadTexture( path );
+
+        if ( pTextureAsset )
+        {
+            m_Textures.insert( std::make_pair( pTextureAsset->GetTexture(), pTextureAsset ) );
+            return pTextureAsset;
+        }
+
+        SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", path.string() );
 
         return m_pFallBackTexture;
     }
@@ -33,7 +49,8 @@ namespace smile::graphic
             return it->second;
         }
 
-        SM_LOG_WARNING( "TextureManager::GetTexture > Could not find texture in texture map: {}", pTexture->Handle );
+        SM_LOG_WARNING(
+            "TextureManager::GetTexture > Could not find texture in texture map: {}", pTexture->Handle.GetIndex() );
 
         return m_pFallBackTexture;
     }

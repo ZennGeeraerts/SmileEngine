@@ -10,6 +10,7 @@
 #include "components.h"
 #include "smile/core/project/project_manager.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -193,19 +194,18 @@ namespace smile::world
         output << YAML::Key << "Texture2DValues";
         output << YAML::BeginMap;
         const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
-        for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
+        for ( const auto &[name, pTexture] : texture2DValues )
         {
-            if ( ( *it ).second )
+            if ( pTexture )
             {
-                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
-                auto fullPath = std::filesystem::path{ ( *it ).second->FilePath };
-                auto relativePath = fullPath.lexically_relative( basePath );
+                memory::Ref< graphic::TextureAsset > pTextureAsset =
+                    graphic::TextureManager::GetInstance().GetTexture( pTexture );
 
-                output << YAML::Key << ( *it ).first << YAML::Value << relativePath.string();
+                output << YAML::Key << name << YAML::Value << pTextureAsset->m_Handle;
             }
             else
             {
-                output << YAML::Key << ( *it ).first << YAML::Value << "";
+                output << YAML::Key << name << YAML::Value << "";
             }
         }
         output << YAML::EndMap;
@@ -485,11 +485,10 @@ namespace smile::world
 
             if ( spriteRendererComponent.pTexture )
             {
-                auto basePath = project::ProjectManager::GetActive()->GetAssetDirectory();
-                auto fullPath = std::filesystem::path{ spriteRendererComponent.pTexture->FilePath };
-                auto relativePath = fullPath.lexically_relative( basePath );
+                memory::Ref< graphic::TextureAsset > pTextureAsset =
+                    graphic::TextureManager::GetInstance().GetTexture( spriteRendererComponent.pTexture );
 
-                output << YAML::Key << "Texture" << YAML::Value << relativePath.string();
+                output << YAML::Key << "Texture" << YAML::Value << pTextureAsset->m_Handle;
             }
             else
             {
@@ -645,7 +644,7 @@ namespace smile::world
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             mrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture(
                                     path.string() ) );
                         }
                     }
@@ -720,7 +719,7 @@ namespace smile::world
                         {
                             auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
                             smrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture(
                                     path.string() ) );
                         }
                     }
@@ -847,7 +846,7 @@ namespace smile::world
                     if ( !texturePath.empty() )
                     {
                         auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                        src.pTexture = graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D(
+                        src.pTexture = graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture(
                             path.string() );
                     }
                 }

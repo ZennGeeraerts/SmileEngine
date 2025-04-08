@@ -17,7 +17,8 @@ namespace smile::graphic
         ~TextureManager() = default;
 
         memory::Ref< TextureAsset > GetTexture( asset::AssetHandle handle );
-        memory::Ref< TextureAsset > GetTexture( memory::Ref< Texture > ) const;
+        memory::Ref< TextureAsset > GetTexture( const std::filesystem::path &path );
+        memory::Ref< TextureAsset > GetTexture( memory::Ref< Texture > pTexture ) const;
 
       private:
         std::unordered_map< memory::Ref< Texture >, memory::Ref< TextureAsset > > m_Textures;
