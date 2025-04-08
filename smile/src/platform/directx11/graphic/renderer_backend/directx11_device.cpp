@@ -8,10 +8,10 @@
 #include "directx11_context.h"
 
 #include "directx11_diagnostics.h"
+#include "directx11_swap_chain.h"
 
 #include "smile/core/window/window.h"
 
-#include "resource/directx11_swap_chain.h"
 #include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
@@ -20,7 +20,6 @@
 #include "shader/directx11_shader.h"
 
 #include <d3dcompiler.h>
-#include <DirectXTex.h>
 
 namespace smile::graphic
 {

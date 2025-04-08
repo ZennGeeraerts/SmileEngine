@@ -12,8 +12,8 @@
 
 #include "directx11_device.h"
 #include "directx11_diagnostics.h"
+#include "directx11_swap_chain.h"
 
-#include "resource/directx11_swap_chain.h"
 #include "resource/directx11_frame_buffer.h"
 #include "shader/directx11_shader.h"
 
