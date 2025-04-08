@@ -55,11 +55,11 @@ Entities:
         Float3Values:
           ALBEDO: [1, 0, 0]
         Texture2DValues:
-          ALBEDOMAP: ""
-          NORMALMAP: ""
-          METALNESSMAP: ""
-          ROUGHNESSMAP: ""
-          AOMap: ""
+          ALBEDOMAP: 0
+          NORMALMAP: 0
+          METALNESSMAP: 0
+          ROUGHNESSMAP: 0
+          AOMap: 0
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0
@@ -85,8 +85,8 @@ Entities:
     TagComponent:
       Tag: box2
     TransformComponent:
-      Translation: [-0.551638722, 5.28429651, 0]
-      Rotation: [0.785398185, 0.209439516, 0]
+      Translation: [-0.6624192, 4.75147009, -0.521181822]
+      Rotation: [0.785398185, 0.209439382, 0]
       Scale: [0.100000001, 0.100000001, 0.100000001]
     MeshRendererComponent:
       Model: meshes\tuktuk.obj
@@ -98,7 +98,7 @@ Entities:
         IntValues:
           {}
         BoolValues:
-          USEALBEDOMAP: false
+          USEALBEDOMAP: true
           USENORMALMAP: false
           USEAOMAP: false
           USEMETALNESSMAP: false
@@ -108,11 +108,11 @@ Entities:
         Float3Values:
           ALBEDO: [0, 0, 0]
         Texture2DValues:
-          ALBEDOMAP: ""
-          NORMALMAP: ""
-          METALNESSMAP: ""
-          ROUGHNESSMAP: ""
-          AOMap: ""
+          ALBEDOMAP: 11905667816457453754
+          NORMALMAP: 0
+          METALNESSMAP: 0
+          ROUGHNESSMAP: 0
+          AOMap: 0
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0
@@ -161,11 +161,11 @@ Entities:
         Float3Values:
           ALBEDO: [0, 0, 0]
         Texture2DValues:
-          ALBEDOMAP: textures\base_albedo.jpg
-          NORMALMAP: textures\base_normal.jpg
-          METALNESSMAP: textures\base_metallic.jpg
-          ROUGHNESSMAP: textures\base_roughness.jpg
-          AOMap: textures\base_AO.jpg
+          ALBEDOMAP: 14798572956452277512
+          NORMALMAP: 3703203352008708884
+          METALNESSMAP: 14901167371678089106
+          ROUGHNESSMAP: 15384187417132445048
+          AOMap: 6925165931736994853
     RigidbodyComponent:
       BodyType: 1
       CollisionDetectionType: 0
@@ -290,11 +290,11 @@ Entities:
         Float3Values:
           ALBEDO: [1, 0, 0]
         Texture2DValues:
-          ALBEDOMAP: ""
-          NORMALMAP: ""
-          METALNESSMAP: ""
-          ROUGHNESSMAP: ""
-          AOMap: ""
+          ALBEDOMAP: 0
+          NORMALMAP: 0
+          METALNESSMAP: 0
+          ROUGHNESSMAP: 0
+          AOMap: 0
     AnimatorComponent:
       Model: meshes\model.dae
       ClipIndex: 0

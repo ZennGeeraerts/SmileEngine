@@ -115,7 +115,7 @@ namespace smile::graphic
         m_pShader->UploadFloat3( semantic, value );
     }
 
-    void Material::SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &value )
+    void Material::SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &pValue )
     {
         if ( m_Texture2DValues.find( semantic ) == m_Texture2DValues.end() )
         {
@@ -123,8 +123,9 @@ namespace smile::graphic
             return;
         }
 
-        m_Texture2DValues[semantic] = value;
-        m_pShader->UploadTexture( semantic, value );
+        m_Texture2DValues[semantic] = pValue;
+        if ( pValue )
+            m_pShader->UploadTexture( semantic, pValue->Handle );
     }
 
     float Material::GetFloatValue( const std::string &semantic ) const

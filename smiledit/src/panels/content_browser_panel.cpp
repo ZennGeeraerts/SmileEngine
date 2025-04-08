@@ -6,7 +6,7 @@
 #include "content_browser_panel.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
+#include "smile/graphic/sprite/texture_manager.h"
 #include "smile/core/project/project_manager.h"
 
 #include <imgui/imgui.h>
@@ -20,9 +20,10 @@ namespace smile
     {
         m_TreeNodes.emplace_back( TreeNode{ ".", 0 } );
 
-        graphic::ResourceManager &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
-        m_pDirectoryIcon = resourceManager.CreateTexture2D( "resources/icons/content_browser/directory_icon.png" );
-        m_pFileIcon = resourceManager.CreateTexture2D( "resources/icons/content_browser/file_icon.png" );
+        graphic::TextureManager &textureManager = graphic::TextureManager::GetInstance();
+        m_pDirectoryIcon =
+            textureManager.GetTexture( "resources/icons/content_browser/directory_icon.png" )->GetTexture();
+        m_pFileIcon = textureManager.GetTexture( "resources/icons/content_browser/file_icon.png" )->GetTexture();
 
         RefreshAssetTree();
 
@@ -89,7 +90,9 @@ namespace smile
                 ImGui::PushID( itemStr.c_str() );
                 memory::Ref< graphic::Texture > pIcon = isDirectory ? m_pDirectoryIcon : m_pFileIcon;
                 ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
-                ImGui::ImageButton( static_cast< ImTextureID >( pIcon->GetData() ), { thumbnailSize, thumbnailSize } );
+                ImGui::ImageButton(
+                    static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pIcon ) ),
+                    { thumbnailSize, thumbnailSize } );
 
                 if ( ImGui::BeginPopupContextItem() )
                 {
@@ -132,7 +135,8 @@ namespace smile
                 ImGui::PushID( fileName.c_str() );
                 memory::Ref< graphic::Texture > pIcon = directoryEntry.is_directory() ? m_pDirectoryIcon : m_pFileIcon;
                 ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ 0, 0, 0, 0 } );
-                ImGui::ImageButton( pIcon->GetData(), { thumbnailSize, thumbnailSize } );
+                ImGui::ImageButton(
+                    graphic::RenderEngine::GetRenderSystem().ReadTexture( pIcon ), { thumbnailSize, thumbnailSize } );
 
                 auto relativePath = std::filesystem::relative( path, m_pProject->GetAssetDirectory() );
 

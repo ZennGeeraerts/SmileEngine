@@ -11,6 +11,7 @@ class SmileEngine(ConanFile):
 		self.requires("sdl/2.30.5")
 		self.requires("physx/4.1.2")
 		self.requires("fmt/11.1.1")
+		self.requires("stb/cci.20240531")
 
 	def build_requirements(self):
 		self.tool_requires("cmake/[>=3.25]")
@@ -26,8 +27,6 @@ class SmileEngine(ConanFile):
 		# environment scripts allow to use the shared dependencies without copying
 		# them to the current location
 		for dep in self.dependencies.values():
-			# This code assumes dependencies will only have 1 libdir/bindir, if for some
-			# reason they have more than one, it will fail. Use ``dep.cpp_info.libdirs``
-			# and ``dep.cpp_info.bindirs`` lists for those cases.
 			# In Windows, dlls are in the "bindir", not "libdir"
-			copy(self, "*.dll", dep.cpp_info.bindir, self.build_folder)
+			for bindir in  dep.cpp_info.bindirs:
+				copy(self, "*.dll", bindir, self.build_folder)

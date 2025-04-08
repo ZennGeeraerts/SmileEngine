@@ -10,7 +10,6 @@
 #include "smile/core/window/file_dialog.h"
 #include "smile/core/ecs/state/system_factory.h"
 
-#include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/animation/ecs/animation_system.h"
 #include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
@@ -19,6 +18,7 @@
 #include "smile/graphic/scene/ecs/debug_render_pass.h"
 #include "smile/graphic/scene/ecs/render_pass_2d.h"
 #include "smile/graphic/scene/ecs/physics_render_pass.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 #include "smile/physics/physics_engine.h"
 #include "smile/physics/ecs/physics_system.h"
@@ -55,10 +55,10 @@ namespace smile
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
-        auto &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
-        m_pIconPlay = resourceManager.CreateTexture2D( "resources/icons/play_button.png" );
-        m_pIconSimulate = resourceManager.CreateTexture2D( "resources/icons/simulate_button.png" );
-        m_pIconStop = resourceManager.CreateTexture2D( "resources/icons/stop_button.png" );
+        graphic::TextureManager &textureManager = graphic::TextureManager::GetInstance();
+        m_pIconPlay = textureManager.GetTexture( "resources/icons/play_button.png" )->GetTexture();
+        m_pIconSimulate = textureManager.GetTexture( "resources/icons/simulate_button.png" )->GetTexture();
+        m_pIconStop = textureManager.GetTexture( "resources/icons/stop_button.png" )->GetTexture();
 
         auto commandLineArgs = application::Application::GetInstance().GetDescriptor().CommandLineArgs;
         if ( commandLineArgs.Count > 1 )
@@ -337,7 +337,8 @@ namespace smile
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) ? m_pIconPlay
                                                                                              : m_pIconStop;
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
-            if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
+            if ( ImGui::ImageButton(
+                     static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pStateIcon ) ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
@@ -354,7 +355,8 @@ namespace smile
             memory::Ref< graphic::Texture > pStateIcon =
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play ) ? m_pIconSimulate
                                                                                          : m_pIconStop;
-            if ( ImGui::ImageButton( static_cast< ImTextureID >( pStateIcon->GetData() ),
+            if ( ImGui::ImageButton(
+                     static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pStateIcon ) ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },

@@ -6,8 +6,14 @@
 #include "smpch.h"
 #include "directx11_shader.h"
 
+#include "platform/directx11/graphic/renderer_backend/directx11_device.h"
+
 namespace smile::graphic
 {
+    DirectX11Shader::DirectX11Shader( DirectX11Device *pDevice ) : pDevice{ pDevice }
+    {
+    }
+
     DirectX11Shader::~DirectX11Shader()
     {
         for ( auto &effectVar : EffectVariableMap )
@@ -68,12 +74,12 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Shader::UploadTexture( const std::string &sementicName, const memory::Ref< Texture > &pTexture )
+    void DirectX11Shader::UploadTexture( const std::string &sementicName, TextureHandle texture )
     {
         auto pTextureVariable = GetEffectVariable( sementicName )->AsShaderResource();
         if ( pTextureVariable->IsValid() )
         {
-            pTextureVariable->SetResource( static_cast< ID3D11ShaderResourceView * >( pTexture->GetData() ) );
+            pTextureVariable->SetResource( pDevice->m_Textures[texture.GetIndex()].pShaderResourceView );
         }
     }
 

@@ -105,6 +105,11 @@ namespace smile::graphic
         m_pRendererBackend->GetGraphicsContext()->SetState( state );
     }
 
+    void *RenderSystem::ReadTexture( memory::Ref< Texture > pTexture ) const
+    {
+        return m_pRendererBackend->GetGraphicsContext()->ReadTexture( pTexture->Handle );
+    }
+
     void RenderSystem::DrawIndexed( Uint32 indexCount )
     {
         m_pRendererBackend->GetGraphicsContext()->DrawIndexed( indexCount, m_pBoundShader );

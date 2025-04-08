@@ -6,6 +6,7 @@
 #include "graphic_application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 #include "smile/core/application/timer.h"
 
@@ -15,6 +16,8 @@ namespace smile::graphic
         : Application{ descriptor }
     {
         window::Window &mainWindow = GetMainWindow();
+
+        TextureManager::CreateInstance();
         RenderEngine::Initialize( &mainWindow );
 
         m_pImGuiLayer = new imgui::ImGuiLayer{};
@@ -23,6 +26,7 @@ namespace smile::graphic
 
     GraphicApplication::~GraphicApplication()
     {
+        TextureManager::RemoveInstance();
         RenderEngine::ShutDown();
     }
 

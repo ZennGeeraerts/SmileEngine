@@ -9,9 +9,12 @@
 #include "render_handle.h"
 
 #include "resource/buffer.h"
-#include "resource/texture.h"
 #include "resource/frame_buffer.h"
 #include "shader/shader.h"
+
+#include "smile/graphic/resource/image.h"
+
+#include <filesystem>
 
 namespace smile::graphic
 {
@@ -52,8 +55,11 @@ namespace smile::graphic
             const std::string &techniqueName = "" ) = 0;
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const std::string &techniqueName = "" ) = 0;
-        virtual memory::Ref< Texture > CreateTexture2D( const std::string &filePath ) = 0;
-        virtual memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) = 0;
+
+        virtual void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) = 0;
+        virtual void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) = 0;
+        virtual void DestroyTexture( TextureHandle handle ) = 0;
+
         virtual memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;
 
         virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
@@ -62,6 +68,6 @@ namespace smile::graphic
 
       protected:
         static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
-        static constexpr Uint16 s_MaxRasterizerStates = ( 4 << 10 );
+        static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
     };
 }

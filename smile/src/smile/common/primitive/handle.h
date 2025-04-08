@@ -81,7 +81,8 @@ namespace std
     template < typename IndexType, smile::Uint32 IndexBits, smile::Uint32 GenerationBits >
     struct hash< smile::primitive::Handle< IndexType, IndexBits, GenerationBits > >
     {
-        size_t operator()( smile::primitive::Handle< IndexType, IndexBits, GenerationBits > handle ) const
+        smile::foundation::HashCode operator()(
+            smile::primitive::Handle< IndexType, IndexBits, GenerationBits > handle ) const
         {
             return handle.Hash();
         }

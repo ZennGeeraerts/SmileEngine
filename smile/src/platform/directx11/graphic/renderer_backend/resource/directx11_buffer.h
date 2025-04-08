@@ -13,7 +13,7 @@ namespace smile::graphic
     struct DirectX11Buffer final
     {
         DirectX11Buffer() = default;
-        virtual ~DirectX11Buffer();
+        ~DirectX11Buffer() = default;
 
         void Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc );
         void Destroy();

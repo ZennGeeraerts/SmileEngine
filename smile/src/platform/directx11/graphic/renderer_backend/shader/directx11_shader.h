@@ -9,9 +9,11 @@
 
 namespace smile::graphic
 {
+    class DirectX11Device;
+
     struct DirectX11Shader final : public Shader
     {
-        DirectX11Shader() = default;
+        DirectX11Shader( DirectX11Device* pDevice );
         ~DirectX11Shader();
 
         DirectX11Shader( const DirectX11Shader & ) = delete;
@@ -25,7 +27,7 @@ namespace smile::graphic
         void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) override;
         void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) override;
         void UploadInt( const std::string &sementicName, int value ) override;
-        void UploadTexture( const std::string &sementicName, const memory::Ref< Texture > &pTexture ) override;
+        void UploadTexture( const std::string &sementicName, TextureHandle texture ) override;
         void UploadBool( const std::string &sementicName, bool value ) override;
         void UploadFloat( const std::string &sementicName, float value ) override;
 
@@ -36,6 +38,7 @@ namespace smile::graphic
 
         ID3DX11EffectVariable *GetEffectVariable( const std::string &sementicName );
 
+        DirectX11Device *pDevice;
         std::unordered_map< std::string, ID3DX11EffectVariable * > EffectVariableMap;
         ID3DX11Effect *pEffect = nullptr;
         ID3DX11EffectTechnique *pTechnique = nullptr;

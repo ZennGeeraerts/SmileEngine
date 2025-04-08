@@ -53,6 +53,7 @@ namespace smile::graphic
         void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) override;
 
         void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
+        void *ReadTexture( TextureHandle handle ) const override;
 
       private:
         DirectX11Device *m_pDevice = nullptr;

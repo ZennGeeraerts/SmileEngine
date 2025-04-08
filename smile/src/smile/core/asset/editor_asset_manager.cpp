@@ -44,6 +44,7 @@ namespace smile::asset
                 SM_LOG_ERROR( "EditorAssetManager::GetAsset > Failed to import asset" );
             }
 
+            pAsset->m_Handle = handle;
             m_LoadedAssets[handle] = pAsset;
         }
 

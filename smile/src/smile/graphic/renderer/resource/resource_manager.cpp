@@ -9,6 +9,21 @@
 
 namespace smile::graphic
 {
+    ResourceManager::~ResourceManager()
+    {
+        for ( auto pVertexBuffer : m_pVertexBuffers )
+            m_pDevice->DestroyGPUBuffer( pVertexBuffer->Handle );
+
+        for ( auto pIndexBuffer : m_pIndexBuffers )
+            m_pDevice->DestroyGPUBuffer( pIndexBuffer->Handle );
+
+        for ( auto pUniformBuffer : m_pUniformBuffers )
+            m_pDevice->DestroyGPUBuffer( pUniformBuffer->Handle );
+
+        for ( auto pTexture : m_pTextures )
+            m_pDevice->DestroyTexture( pTexture->Handle );
+    }
+
     void ResourceManager::Initialize( GraphicsDevice *pDevice )
     {
         m_pDevice = pDevice;
@@ -102,17 +117,13 @@ namespace smile::graphic
         return pShader;
     }
 
-    memory::Ref< Texture > ResourceManager::CreateTexture2D( const std::string &filePath )
+    memory::Ref< Texture > ResourceManager::CreateTexture( const std::filesystem::path &path )
     {
-        auto pTexture = m_pDevice->CreateTexture2D( filePath );
-        m_pTextures2D.push_back( pTexture );
-        return pTexture;
-    }
+        TextureHandle handle = m_TextureHandleManager.CreateHandle();
+        m_pDevice->CreateTexture( handle, path );
 
-    memory::Ref< Texture > ResourceManager::CreateTextureCube( const std::string &filePath )
-    {
-        auto pTexture = m_pDevice->CreateTextureCube( filePath );
-        m_pTexturesCube.push_back( pTexture );
+        auto pTexture = memory::CreateRef< Texture >( handle );
+        m_pTextures.push_back( pTexture );
         return pTexture;
     }
 

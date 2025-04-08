@@ -6,6 +6,7 @@
 #include "smile/graphic/renderer_backend/graphics_device.h"
 #include "smile/graphic/renderer_backend/render_state.h"
 #include "resource/directx11_buffer.h"
+#include "resource/directx11_texture.h"
 #include "directx11_rasterizer_state_cache.h"
 #include "directx11_depth_stencil_state_cache.h"
 
@@ -50,8 +51,11 @@ namespace smile::graphic
             const std::string &techniqueName = "" ) override;
         memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const std::string &techniqueName = "" ) override;
-        memory::Ref< Texture > CreateTexture2D( const std::string &filePath ) override;
-        memory::Ref< Texture > CreateTextureCube( const std::string &filePath ) override;
+
+        void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) override;
+        void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) override;
+        void DestroyTexture( TextureHandle handle ) override;
+
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) override;
 
         void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) override;
@@ -67,10 +71,12 @@ namespace smile::graphic
         std::vector< DirectX11Context * > m_pGraphicsContexts;
 
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
+        std::array< DirectX11Texture, s_MaxTextureCount > m_Textures;
         
         DirectX11RasterizerStateCache m_RasterizerStateCache;
         DirectX11DepthStencilStateCache m_DepthStencilStateCache;
 
         friend class DirectX11Context;
+        friend class DirectX11Shader;
     };
 }

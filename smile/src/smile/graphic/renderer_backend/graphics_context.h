@@ -54,5 +54,6 @@ namespace smile::graphic
         virtual void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) = 0;
 
         virtual void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const = 0;
+        virtual void *ReadTexture( TextureHandle handle ) const = 0;
     };
 }

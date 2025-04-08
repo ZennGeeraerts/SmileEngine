@@ -5,6 +5,7 @@
 #pragma once
 
 #include "object.h"
+#include "smile/common/foundation/hash_code.h"
 
 #include <type_traits>
 
@@ -31,7 +32,7 @@ namespace smile::memory
             Reset( static_cast< Type * >( other.GetPointer() ) );
         }
 
-        inline Ref( Ref &&other ) : m_pInstance{ other.m_pInstance }
+        inline Ref( Ref &&other ) noexcept : m_pInstance{ other.m_pInstance }
         {
             other.m_pInstance = nullptr;
         }
@@ -191,4 +192,16 @@ namespace smile::memory
     {
         return Ref< Object >{ new Object( std::forward< Args >( args )... ) };
     }
+}
+
+namespace std
+{
+    template < typename Type >
+    struct hash< smile::memory::Ref< Type > >
+    {
+        smile::foundation::HashCode operator()( const smile::memory::Ref< Type > &pRef ) const noexcept
+        {
+            return hash< Type * >()( pRef.GetPointer() );
+        }
+    };
 }
