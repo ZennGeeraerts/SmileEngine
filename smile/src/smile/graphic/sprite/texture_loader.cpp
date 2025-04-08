@@ -28,13 +28,13 @@ namespace smile::graphic
     {
         if ( path.empty() )
         {
-            SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load world: the path was empty" );
+            SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load texture: the path was empty" );
             return nullptr;
         }
 
         if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
         {
-            SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load world: wrong file extention" );
+            SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load texture: wrong file extension" );
             return nullptr;
         }
 

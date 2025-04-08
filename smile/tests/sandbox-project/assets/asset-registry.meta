@@ -1,4 +1,34 @@
 AssetRegistry:
+  - Handle: 1737752417370795148
+    FilePath: textures/tr0092_00_Body.tga.png
+    Type: smile::graphic::TextureAsset
+  - Handle: 3703203352008708884
+    FilePath: textures/base_normal.jpg
+    Type: smile::graphic::TextureAsset
+  - Handle: 6925165931736994853
+    FilePath: textures/base_AO.jpg
+    Type: smile::graphic::TextureAsset
+  - Handle: 11905667816457453754
+    FilePath: textures/tuktuk.png
+    Type: smile::graphic::TextureAsset
+  - Handle: 12029584814133085748
+    FilePath: textures/uv_grid.png
+    Type: smile::graphic::TextureAsset
+  - Handle: 12061561369189487287
+    FilePath: textures/Sunol_Cubemap.dds
+    Type: smile::graphic::TextureAsset
   - Handle: 12325285920687011863
     FilePath: worlds/PhysicsTest2.smile
     Type: smile::world::World
+  - Handle: 13687172907195239515
+    FilePath: textures/tr0092_00_Eye.tga.png
+    Type: smile::graphic::TextureAsset
+  - Handle: 14798572956452277512
+    FilePath: textures/base_albedo.jpg
+    Type: smile::graphic::TextureAsset
+  - Handle: 14901167371678089106
+    FilePath: textures/base_metallic.jpg
+    Type: smile::graphic::TextureAsset
+  - Handle: 15384187417132445048
+    FilePath: textures/base_roughness.jpg
+    Type: smile::graphic::TextureAsset

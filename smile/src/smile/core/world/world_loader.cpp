@@ -33,7 +33,7 @@ namespace smile::world
 
         if ( path.extension() != ".smile" )
         {
-            SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: wrong file extention" );
+            SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: wrong file extension" );
             return nullptr;
         }
 
@@ -49,6 +49,6 @@ namespace smile::world
     void WorldLoader::SaveWorld( memory::Ref< World > pWorld, const std::filesystem::path &path ) const
     {
         WorldSerializer worldSerializer{ pWorld };
-        worldSerializer.Serialize( path );
+        worldSerializer.Serialize( project::ProjectManager::GetAssetFileSystemPath( path ) );
     }
 }

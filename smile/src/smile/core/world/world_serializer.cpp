@@ -9,7 +9,6 @@
 #include "entity.h"
 #include "components.h"
 #include "smile/core/project/project_manager.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
 #include <yaml-cpp/yaml.h>
@@ -194,18 +193,18 @@ namespace smile::world
         output << YAML::Key << "Texture2DValues";
         output << YAML::BeginMap;
         const auto &texture2DValues{ pMaterial->GetTexture2DValues() };
-        for ( const auto &[name, pTexture] : texture2DValues )
+        for ( const auto &[semantic, pTexture] : texture2DValues )
         {
             if ( pTexture )
             {
                 memory::Ref< graphic::TextureAsset > pTextureAsset =
                     graphic::TextureManager::GetInstance().GetTexture( pTexture );
 
-                output << YAML::Key << name << YAML::Value << pTextureAsset->m_Handle;
+                output << YAML::Key << semantic << YAML::Value << pTextureAsset->m_Handle;
             }
             else
             {
-                output << YAML::Key << name << YAML::Value << "";
+                output << YAML::Key << semantic << YAML::Value << 0;
             }
         }
         output << YAML::EndMap;
@@ -639,13 +638,17 @@ namespace smile::world
                     for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
-                        auto texturePath = ( *it ).second.as< std::string >();
-                        if ( !texturePath.empty() )
+                        asset::AssetHandle assetHandle = ( *it ).second.as< Uint64 >();
+
+                        memory::Ref< graphic::TextureAsset > pTextureAsset =
+                            graphic::TextureManager::GetInstance().GetTexture( assetHandle );
+                        if ( pTextureAsset )
                         {
-                            auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                            mrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture(
-                                    path.string() ) );
+                            mrc.pMaterial->SetTexture2D( semantic, pTextureAsset->GetTexture() );
+                        }
+                        else
+                        {
+                            mrc.pMaterial->SetTexture2D( semantic, nullptr );
                         }
                     }
                 }
@@ -661,7 +664,7 @@ namespace smile::world
                     if ( !modelPath.empty() )
                     {
                         auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
-                        smrc.pModel = graphic::ModelLoader::LoadModel( path.string() );
+                        smrc.pModel = graphic::ModelLoader::LoadModel( path );
 
                         auto pSkinnedMeshFilter = smrc.pModel->GetSkinnedMeshFilter( smrc.MeshIndex );
                         smrc.pSkinnedMesh = graphic::MeshFactory::CreateSkinnedMesh(
@@ -714,13 +717,17 @@ namespace smile::world
                     for ( auto it{ texture2DValues.begin() }; it != texture2DValues.end(); ++it )
                     {
                         std::string semantic = ( *it ).first.as< std::string >();
-                        auto texturePath = ( *it ).second.as< std::string >();
-                        if ( !texturePath.empty() )
+                        asset::AssetHandle assetHandle = ( *it ).second.as< Uint64 >();
+
+                        memory::Ref< graphic::TextureAsset > pTextureAsset =
+                            graphic::TextureManager::GetInstance().GetTexture( assetHandle );
+                        if ( pTextureAsset )
                         {
-                            auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                            smrc.pMaterial->SetTexture2D( semantic,
-                                graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture(
-                                    path.string() ) );
+                            smrc.pMaterial->SetTexture2D( semantic, pTextureAsset->GetTexture() );
+                        }
+                        else
+                        {
+                            smrc.pMaterial->SetTexture2D( semantic, nullptr );
                         }
                     }
                 }
@@ -736,7 +743,7 @@ namespace smile::world
                     if ( !modelPath.empty() )
                     {
                         auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
-                        ac.pModel = graphic::ModelLoader::LoadModel( path.string() );
+                        ac.pModel = graphic::ModelLoader::LoadModel( path );
                         ac.pAnimationClips = ac.pModel->GetAnimationClips();
                     }
                 }
@@ -842,12 +849,18 @@ namespace smile::world
                     auto &src = deserializedEntity.AddComponent< graphic::ecs::SpriteRendererComponent >();
 
                     src.Color = spriteRendererComponent["Color"].as< DirectX::XMFLOAT4 >();
-                    auto texturePath = spriteRendererComponent["Texture"].as< std::string >();
-                    if ( !texturePath.empty() )
+
+                    asset::AssetHandle textureAssetHandle = spriteRendererComponent["Texture"].as< Uint64 >();
+
+                    memory::Ref< graphic::TextureAsset > pTextureAsset =
+                        graphic::TextureManager::GetInstance().GetTexture( textureAssetHandle );
+                    if ( pTextureAsset )
                     {
-                        auto path = project::ProjectManager::GetAssetFileSystemPath( texturePath );
-                        src.pTexture = graphic::RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture(
-                            path.string() );
+                        src.pTexture = pTextureAsset->GetTexture();
+                    }
+                    else
+                    {
+                        src.pTexture = nullptr;
                     }
                 }
             }

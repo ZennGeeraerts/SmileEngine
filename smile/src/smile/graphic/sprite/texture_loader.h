@@ -31,6 +31,6 @@ namespace smile::graphic
         memory::Ref< TextureAsset > LoadTexture( const std::filesystem::path &path ) const;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".png", ".dds" };
+        const std::vector< std::filesystem::path > m_Extensions{ ".png", ".jpg", ".dds" };
     };
 }
