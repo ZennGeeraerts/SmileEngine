@@ -16,7 +16,11 @@ namespace smile::graphic
         DirectX11SwapChain( const window::Window *pWindow );
         ~DirectX11SwapChain();
 
+        void Create( ID3D11Device *pDevice, IDXGIFactory *pDXGIFactory );
+        void Destroy();
+
         void Present() override;
+        void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
 
         inline ID3D11RenderTargetView *GetRenderTargetView() const
         {

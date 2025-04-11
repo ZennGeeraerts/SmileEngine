@@ -23,6 +23,7 @@ namespace smile::graphic
         virtual ~SwapChain() = default;
 
         virtual void Present() = 0;
+        virtual void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
       protected:
         const window::Window *m_pWindow;
