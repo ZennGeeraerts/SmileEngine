@@ -58,6 +58,7 @@ namespace smile::graphic
         void SetState( const RenderState &state ) const;
 
         void *ReadTexture( memory::Ref< Texture > pTexture ) const;
+        void *ReadTexture( memory::Ref< Framebuffer > pFramebuffer, Uint32 index ) const;
 
         void DrawIndexed( Uint32 indexCount );
         void Draw( Uint32 vertexCount );

@@ -19,7 +19,6 @@ namespace smile::graphic
 {
     class SwapChain;
     class Shader;
-    class Framebuffer;
 
     class GraphicsContext
     {
@@ -50,10 +49,11 @@ namespace smile::graphic
         virtual void BindShader( const memory::Ref< Shader > &pShader ) const = 0;
         virtual void UnbindShader() const = 0;
 
-        virtual void BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const = 0;
-        virtual void ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer ) = 0;
+        virtual void BindFramebuffer( FramebufferHandle handle ) const = 0;
+        virtual void ClearFramebuffer( FramebufferHandle handle ) = 0;
 
         virtual void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const = 0;
         virtual void *ReadTexture( TextureHandle handle ) const = 0;
+        virtual void *ReadTexture( FramebufferHandle handle, Uint32 index ) const = 0;
     };
 }

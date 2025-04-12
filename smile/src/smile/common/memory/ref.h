@@ -14,7 +14,7 @@ namespace smile::memory
     template < typename Type >
     class Ref final
     {
-        static_assert( std::is_base_of_v< Counted, Type >, "Type does not derive from counted" );
+        static_assert( std::is_base_of_v< Counted, Type >, "Type does not derive from Counted" );
 
       public:
         inline Ref() : m_pInstance{ nullptr }

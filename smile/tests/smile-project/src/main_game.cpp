@@ -280,6 +280,8 @@ void ExampleLayer::OnEvent( smile::window::Event &event )
 
 void ExampleLayer::OnImGuiRender()
 {
+    static bool open = true;
+    ImGui::ShowDemoWindow( &open );
 }
 
 bool ExampleLayer::OnWindowResize( smile::window::WindowResizeEvent &e )

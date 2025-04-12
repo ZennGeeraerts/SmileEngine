@@ -44,8 +44,6 @@ namespace smile::graphic
         virtual GraphicsContext *CreateGraphicsContext() = 0;
 
         virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
-        virtual void
-        ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain, Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
         virtual void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
@@ -60,14 +58,15 @@ namespace smile::graphic
         virtual void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) = 0;
         virtual void DestroyTexture( TextureHandle handle ) = 0;
 
-        virtual memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor ) = 0;
-
-        virtual void InvalidateFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) = 0;
+        virtual void CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor ) = 0;
+        virtual void DestroyFramebuffer( FramebufferHandle handle ) = 0;
+        virtual void InvalidateFramebuffer( FramebufferHandle handle ) = 0;
 
         static GraphicsDevice *Create( RendererBackendType backendType );
 
       protected:
         static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
         static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
+        static constexpr Uint16 s_MaxFramebufferCount = ( 4 << 10 );
     };
 }

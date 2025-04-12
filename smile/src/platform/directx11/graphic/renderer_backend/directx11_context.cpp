@@ -108,20 +108,21 @@ namespace smile::graphic
         }
     }
 
-    void DirectX11Context::ClearFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
+    void DirectX11Context::ClearFramebuffer( FramebufferHandle handle )
     {
-        const float *pClearColor = reinterpret_cast< const float * >( &pFramebuffer->ClearColor );
-        auto pRenderTargetViews =
-            static_cast< ID3D11RenderTargetView *const * >( pFramebuffer->GetRenderTargetViews() );
-        auto pDepthStencilView = static_cast< ID3D11DepthStencilView * >( pFramebuffer->GetDepthStencilView() );
+        const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
 
-        for ( Uint32 i{}; i < pFramebuffer->GetRenderTargetViewCount(); ++i )
+        const float *pClearColor = reinterpret_cast< const float * >( &framebuffer.Descriptor.ClearColor );
+        ID3D11RenderTargetView *const *pRenderTargetViews = framebuffer.pRenderTargetViews.data();
+
+        for ( size_t i{}; i < framebuffer.pRenderTargetViews.size(); ++i )
         {
             m_pInternal->ClearRenderTargetView( pRenderTargetViews[i], pClearColor );
         }
 
-        if ( pFramebuffer->DepthAttachmentData.TextureFormat != FramebufferTextureFormat::None )
-            m_pInternal->ClearDepthStencilView( pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
+        if ( framebuffer.DepthAttachmentData.TextureFormat != FramebufferTextureFormat::None )
+            m_pInternal->ClearDepthStencilView(
+                framebuffer.pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
     void DirectX11Context::BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const
@@ -180,16 +181,17 @@ namespace smile::graphic
         m_pInternal->IASetInputLayout( nullptr );
     }
 
-    void DirectX11Context::BindFramebuffer( const memory::Ref< Framebuffer > &pFramebuffer ) const
+    void DirectX11Context::BindFramebuffer( FramebufferHandle handle ) const
     {
-        auto pRenderTargetViews =
-            static_cast< ID3D11RenderTargetView *const * >( pFramebuffer->GetRenderTargetViews() );
-        auto pDepthStencilView = static_cast< ID3D11DepthStencilView * >( pFramebuffer->GetDepthStencilView() );
-        auto pViewport = static_cast< D3D11_VIEWPORT * >( pFramebuffer->GetViewport() );
+        const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
 
-        m_pInternal->OMSetRenderTargets(
-            pFramebuffer->GetRenderTargetViewCount(), &pRenderTargetViews[0], pDepthStencilView );
-        m_pInternal->RSSetViewports( 1, pViewport );
+        ID3D11RenderTargetView *const *pRenderTargetViews = framebuffer.pRenderTargetViews.data();
+
+        m_pInternal->OMSetRenderTargets( static_cast< UINT >( framebuffer.pRenderTargetViews.size() ),
+            &pRenderTargetViews[0],
+            framebuffer.pDepthStencilView );
+
+        m_pInternal->RSSetViewports( 1, &framebuffer.Viewport );
     }
 
     void DirectX11Context::FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const
@@ -206,5 +208,15 @@ namespace smile::graphic
     {
         const auto &texture = m_pDevice->m_Textures[handle.GetIndex()];
         return texture.pShaderResourceView;
+    }
+
+    void *DirectX11Context::ReadTexture( FramebufferHandle handle, Uint32 index ) const
+    {
+        const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
+
+        SM_ASSERT( index < framebuffer.pColorShaderResourceViews.size(),
+            "DirectX11Context::ReadTexture > Index out of range" );
+
+        return framebuffer.pColorShaderResourceViews[index];
     }
 }

@@ -11,6 +11,8 @@
 #include "index_buffer.h"
 #include "uniform_buffer.h"
 #include "texture.h"
+#include "frame_buffer.h"
+
 #include "smile/graphic/renderer_backend/resource/buffer.h"
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
@@ -57,5 +59,6 @@ namespace smile::graphic
 
         GPUBufferHandleManager m_GPUBufferHandleManager;
         TextureHandleManager m_TextureHandleManager;
+        FramebufferHandleManager m_FramebufferHandleManager;
     };
 }

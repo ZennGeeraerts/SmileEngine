@@ -13,4 +13,7 @@ namespace smile::graphic
 
     using TextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using TextureHandle = TextureHandleManager::HandleType;
+
+    using FramebufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using FramebufferHandle = FramebufferHandleManager::HandleType;
 }
