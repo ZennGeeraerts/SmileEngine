@@ -25,7 +25,7 @@ namespace smile::graphic
 
     void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
     {
-        m_pRendererBackend->GetGraphicsDevice()->ResizeBackBuffer( m_pSwapChain, x, y, width, height );
+        m_pSwapChain->Resize( x, y, width, height );
     }
 
     void RenderSystem::Clear()

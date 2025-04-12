@@ -44,8 +44,6 @@ namespace smile::graphic
         virtual GraphicsContext *CreateGraphicsContext() = 0;
 
         virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
-        virtual void
-        ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain, Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
         virtual void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;

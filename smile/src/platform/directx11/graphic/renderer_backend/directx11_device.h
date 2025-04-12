@@ -38,11 +38,6 @@ namespace smile::graphic
         GraphicsContext *CreateGraphicsContext() override;
 
         memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
-        void ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain,
-            Uint32 x,
-            Uint32 y,
-            Uint32 width,
-            Uint32 height ) override;
 
         void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;

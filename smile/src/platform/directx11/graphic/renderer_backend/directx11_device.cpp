@@ -309,90 +309,9 @@ namespace smile::graphic
 
     memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
     {
-        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >( pWindow );
-        pSwapChain->Create( m_pInternal, m_pDXGIFactory );
+        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >( pWindow, m_pInternal, m_pDXGIFactory );
+        pSwapChain->Create();
         return pSwapChain;
-    }
-
-    void DirectX11Device::ResizeBackBuffer( memory::Ref< SwapChain > pSwapChain,
-        Uint32 x,
-        Uint32 y,
-        Uint32 width,
-        Uint32 height )
-    {
-        memory::Ref< DirectX11SwapChain > pDX11SwapChain = memory::Ref< DirectX11SwapChain >{ pSwapChain };
-
-        m_pContext->OMSetRenderTargets( 0, 0, 0 );
-
-        D3D11_TEXTURE2D_DESC depthStencilDesc{};
-        pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment->GetDesc( &depthStencilDesc );
-        depthStencilDesc.Width = width;
-        depthStencilDesc.Height = height;
-
-        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-        pDX11SwapChain->m_SwapChainTarget.pDepthStencilView->GetDesc( &depthStencilViewDesc );
-
-        SAFE_RELEASE( pDX11SwapChain->m_pCurrentRenderTarget );
-        SAFE_RELEASE( pDX11SwapChain->m_pRenderTargetBuffer );
-        SAFE_RELEASE( pDX11SwapChain->m_SwapChainTarget.pDepthStencilView );
-        SAFE_RELEASE( pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment );
-
-        HRESULT result = pDX11SwapChain->m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to resize buffers: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        // Depth stencil
-        result = m_pInternal->CreateTexture2D(
-            &depthStencilDesc, 0, &pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create depth stencil buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        result = m_pInternal->CreateDepthStencilView( pDX11SwapChain->m_SwapChainTarget.pDepthStencilAttachment,
-            &depthStencilViewDesc,
-            &pDX11SwapChain->m_SwapChainTarget.pDepthStencilView );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create depth stencil view: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        // Render target
-        result = pDX11SwapChain->m_pSwapChain->GetBuffer(
-            0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &pDX11SwapChain->m_pRenderTargetBuffer ) );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to get buffer from swap chain: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        result = m_pInternal->CreateRenderTargetView(
-            pDX11SwapChain->m_pRenderTargetBuffer, 0, &pDX11SwapChain->m_pCurrentRenderTarget );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::ResizeBackBuffer > Failed to create render target view: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        m_pContext->OMSetRenderTargets(
-            1, &pDX11SwapChain->m_pCurrentRenderTarget, pDX11SwapChain->m_SwapChainTarget.pDepthStencilView );
-
-        pDX11SwapChain->m_Viewport.Width = static_cast< FLOAT >( width );
-        pDX11SwapChain->m_Viewport.Height = static_cast< FLOAT >( height );
-        pDX11SwapChain->m_Viewport.TopLeftX = static_cast< FLOAT >( x );
-        pDX11SwapChain->m_Viewport.TopLeftY = static_cast< FLOAT >( y );
-
-        m_pContext->RSSetViewports( 1, &pDX11SwapChain->m_Viewport );
     }
 
     void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
