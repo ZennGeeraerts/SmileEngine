@@ -8,21 +8,21 @@
 #include "entity.h"
 #include "smile/core/world/ecs/transform_system.h"
 #include "smile/core/ecs/relationship.h"
-#include "smile/core/ecs/state/system_factory.h"
 
 namespace smile::world
 {
     std::unordered_map< foundation::TypeID, World::CopyComponentFunctions > World::s_CopyComponentFuncs{};
 
-    World::World()
+    World::World( memory::Ref< smile::ecs::state::SystemRegistry > pSystemRegistry )
+        : m_pSystemRegistry{ std::move( pSystemRegistry ) }
     {
-        smile::ecs::state::SystemFactory::RegisterSystem< ecs::TransformSystem >();
+        RegisterSystem< ecs::TransformSystem >();
 
         auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
         pDefaultState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
         m_StateManager.AddState( "default", pDefaultState );
 
-        m_StateManager.Initialize( &m_ECSEngine, "default" );
+        m_StateManager.Initialize( &m_ECSEngine, m_pSystemRegistry.GetPointer(), "default" );
     }
 
     World::~World()
@@ -96,7 +96,7 @@ namespace smile::world
 
     memory::Ref< World > World::Copy( memory::Ref< World > pWorld )
     {
-        memory::Ref< World > pNewWorld = memory::CreateRef< World >();
+        memory::Ref< World > pNewWorld = memory::CreateRef< World >( pWorld->m_pSystemRegistry );
 
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > entityMap{};
 
@@ -116,8 +116,8 @@ namespace smile::world
             pair.second.ECSEngineCopy( srcWorldEngine, dstWorldEngine, entityMap );
         }
 
-        pNewWorld->m_StateManager =
-            smile::ecs::state::StateManager::Copy( pWorld->m_StateManager, &pNewWorld->m_ECSEngine );
+        pNewWorld->m_StateManager = smile::ecs::state::StateManager::Copy(
+            pWorld->m_StateManager, &pNewWorld->m_ECSEngine, pNewWorld->m_pSystemRegistry.GetPointer() );
 
         return pNewWorld;
     }

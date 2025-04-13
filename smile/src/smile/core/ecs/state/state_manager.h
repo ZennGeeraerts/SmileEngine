@@ -5,6 +5,7 @@
 #pragma once
 
 #include "state.h"
+#include "system_registry.h"
 #include "smile/core/ecs/system.h"
 #include "smile/common/memory/ref.h"
 
@@ -22,7 +23,7 @@ namespace smile::ecs
             StateManager() = default;
             ~StateManager() = default;
 
-            void Initialize( ECSEngine *pECSEngine, const std::string &initialState );
+            void Initialize( ECSEngine *pECSEngine, SystemRegistry *pSystemRegistry, const std::string &initialState );
             void ShutDown();
 
             void AddState( const std::string &name, memory::Ref< State > pState );
@@ -33,18 +34,16 @@ namespace smile::ecs
             State &GetState( const std::string &name ) const;
             memory::Ref< BaseSystem > GetSystem( const std::string &name ) const;
 
-            static StateManager Copy( const StateManager &stateManager, ECSEngine *pECSEngine );
+            static StateManager
+            Copy( const StateManager &stateManager, ECSEngine *pECSEngine, SystemRegistry *pSystemRegistry );
 
           private:
             memory::Ref< BaseSystem > GetOrCreateSystem( const std::string &systemName );
-            void SyncState( const std::string &name,
-                State::Iterator currentSystemsBegin,
-                State::Iterator currentSystemsEnd,
-                State::Iterator targetSystemsBegin,
-                State::Iterator targetSystemsEnd );
+            std::vector< std::string > TopologicalSort( const std::vector< std::string > &systemNames );
 
           private:
             ECSEngine *m_pECSEngine = nullptr;
+            SystemRegistry *m_pSystemRegistry = nullptr;
             std::unordered_map< std::string, memory::Ref< State > > m_StateMap;
             std::unordered_map< std::string, memory::Ref< BaseSystem > > m_SystemMap;
 

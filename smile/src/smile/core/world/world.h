@@ -21,8 +21,15 @@ namespace smile::world
     class World final : public asset::Asset
     {
       public:
-        World();
+        World( memory::Ref< smile::ecs::state::SystemRegistry > pSystemRegistry =
+                   memory::CreateRef< smile::ecs::state::SystemRegistry >() );
         ~World();
+
+        template < typename SystemType, typename... Args >
+        smile::ecs::state::SystemInfo &RegisterSystem( Args &&...args )
+        {
+            return m_pSystemRegistry->RegisterSystem< SystemType >( std::forward( args )... );
+        }
 
         memory::Ref< smile::ecs::state::State > CreateState( const std::string &name );
         void ChangeState( const std::string &name );
@@ -110,6 +117,7 @@ namespace smile::world
         smile::ecs::ECSEngine m_ECSEngine;
         std::unordered_map< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap{};
         smile::ecs::state::StateManager m_StateManager;
+        memory::Ref< smile::ecs::state::SystemRegistry > m_pSystemRegistry;
 
         static std::unordered_map< foundation::TypeID, CopyComponentFunctions > s_CopyComponentFuncs;
 
