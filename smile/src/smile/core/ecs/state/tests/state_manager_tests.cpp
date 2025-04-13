@@ -45,9 +45,11 @@ namespace smile
         SECTION( "main" )
         {
             using namespace ecsstatemanagertests;
-            ecs::state::SystemFactory::RegisterSystem< TestSystem >();
-            ecs::state::SystemFactory::RegisterSystem< TestFooSystem >();
-            ecs::state::SystemFactory::RegisterSystem< TestBarSystem >();
+
+            ecs::state::SystemRegistry systemRegistry{};
+            systemRegistry.RegisterSystem< TestSystem >();
+            systemRegistry.RegisterSystem< TestFooSystem >();
+            systemRegistry.RegisterSystem< TestBarSystem >();
 
             ecs::ECSEngine engine;
 
@@ -72,7 +74,7 @@ namespace smile
             stateManager.AddState( "bar", pBarState );
             stateManager.AddState( "full", pFullState );
 
-            stateManager.Initialize( &engine, "default" );
+            stateManager.Initialize( &engine, &systemRegistry, "default" );
 
             REQUIRE( engine.GetSystems().size() == 1 );
             CHECK( engine.GetSystems()[0] == pTestSystem );

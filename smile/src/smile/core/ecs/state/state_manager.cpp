@@ -8,11 +8,15 @@
 #include "smile/core/ecs/ecs_engine.h"
 #include "system_factory.h"
 
+#include <queue>
+
 namespace smile::ecs::state
 {
-    void StateManager::Initialize( ECSEngine *pECSEngine, const std::string &initialState )
+    void
+    StateManager::Initialize( ECSEngine *pECSEngine, SystemRegistry *pSystemRegistry, const std::string &initialState )
     {
         m_pECSEngine = pECSEngine;
+        m_pSystemRegistry = pSystemRegistry;
 
         SM_ASSERT( m_StateMap.find( initialState ) != m_StateMap.end(),
             "StateManager::Initialize > Initial state not found in state map" );
@@ -20,7 +24,9 @@ namespace smile::ecs::state
         m_pCurrentState = m_StateMap.at( initialState );
         const std::vector< std::string > &systemNames = m_pCurrentState->GetSystemNames();
 
-        for ( const auto &systemName : systemNames )
+        std::vector< std::string > sorted = TopologicalSort( systemNames );
+
+        for ( const auto &systemName : sorted )
         {
             auto pSystem = GetOrCreateSystem( systemName );
             m_pECSEngine->AddSystem( pSystem );
@@ -50,18 +56,61 @@ namespace smile::ecs::state
 
         std::vector< std::string > currentSystems = m_pCurrentState->GetSystemNames();
         std::vector< std::string > targetSystems = pTargetState->GetSystemNames();
+        std::vector< std::string > toBeRemovedSystems{};
+        std::vector< std::string > toBeAddedSystems{};
 
-        SyncState( name,
-            currentSystems.begin(),
-            currentSystems.begin() + m_pCurrentState->GetInsertIndex(),
-            targetSystems.begin(),
-            targetSystems.begin() + pTargetState->GetInsertIndex() );
+        std::sort( currentSystems.begin(), currentSystems.end() );
+        std::sort( targetSystems.begin(), targetSystems.end() );
 
-        SyncState( name,
-            currentSystems.begin() + m_pCurrentState->GetInsertIndex(),
+        std::set_difference( currentSystems.begin(),
             currentSystems.end(),
-            targetSystems.begin() + pTargetState->GetInsertIndex(),
-            targetSystems.end() );
+            targetSystems.begin(),
+            targetSystems.end(),
+            std::inserter( toBeRemovedSystems, toBeRemovedSystems.end() ) );
+
+        std::set_difference( targetSystems.begin(),
+            targetSystems.end(),
+            currentSystems.begin(),
+            currentSystems.end(),
+            std::inserter( toBeAddedSystems, toBeAddedSystems.end() ) );
+
+        const auto &pSystems = m_pECSEngine->GetSystems();
+
+        for ( const auto &toBeRemoved : toBeRemovedSystems )
+        {
+            auto systemIt = std::find_if( pSystems.begin(),
+                pSystems.end(),
+                [&toBeRemoved]( const auto &pSystem ) { return pSystem->GetName() == toBeRemoved; } );
+
+            if ( systemIt != pSystems.end() )
+            {
+                m_pECSEngine->RemoveSystem( *systemIt );
+            }
+            else
+            {
+                SM_LOG_WARNING( "StateManager::ChangeState > While transitionning to state {0}, System {1} was not "
+                                "found, while the states difference reports as to be removed",
+                    name,
+                    toBeRemoved );
+            }
+        }
+
+        std::vector< std::string > sorted = TopologicalSort( targetSystems );
+
+        for ( const std::string &systemName : sorted )
+        {
+            memory::Ref< BaseSystem > pSystem = GetOrCreateSystem( systemName );
+
+            if ( std::find( toBeAddedSystems.begin(), toBeAddedSystems.end(), systemName ) != toBeAddedSystems.end() )
+            {
+                m_pECSEngine->AddSystem( pSystem );
+            }
+            else
+            {
+                m_pECSEngine->RemoveSystem( pSystem );
+                m_pECSEngine->AddSystem( pSystem );
+            }
+        }
 
         m_pCurrentState = pTargetState;
     }
@@ -104,67 +153,74 @@ namespace smile::ecs::state
         }
     }
 
-    void StateManager::SyncState( const std::string &name,
-        State::Iterator currentSystemsBegin,
-        State::Iterator currentSystemsEnd,
-        State::Iterator targetSystemsBegin,
-        State::Iterator targetSystemsEnd )
+    std::vector< std::string > StateManager::TopologicalSort( const std::vector< std::string > &systemNames )
     {
-        std::vector< std::string > toBeRemovedSystems{};
-        std::vector< std::string > toBeAddedSystems{};
+        std::unordered_map< std::string, int > inDegree{};
+        std::unordered_map< std::string, std::vector< std::string > > adjacencyList{};
 
-        std::sort( currentSystemsBegin, currentSystemsEnd );
-        std::sort( targetSystemsBegin, targetSystemsEnd );
-
-        std::set_difference( currentSystemsBegin,
-            currentSystemsEnd,
-            targetSystemsBegin,
-            targetSystemsEnd,
-            std::inserter( toBeRemovedSystems, toBeRemovedSystems.end() ) );
-
-        std::set_difference( targetSystemsBegin,
-            targetSystemsEnd,
-            currentSystemsBegin,
-            currentSystemsEnd,
-            std::inserter( toBeAddedSystems, toBeAddedSystems.end() ) );
-
-        const auto &pSystems = m_pECSEngine->GetSystems();
-
-        for ( const auto &toBeRemoved : toBeRemovedSystems )
+        for ( const std::string &name : systemNames )
         {
-            auto systemIt = std::find_if( pSystems.begin(),
-                pSystems.end(),
-                [&toBeRemoved]( const auto &pSystem ) { return pSystem->GetName() == toBeRemoved; } );
+            inDegree[name] = 0;
+        }
 
-            if ( systemIt != pSystems.end() )
+        for ( const std::string &name : systemNames )
+        {
+            const auto &systemInfo = m_pSystemRegistry->GetSystemInfo( name );
+
+            for ( const std::string &dependency : systemInfo.GetDependencies() )
             {
-                m_pECSEngine->RemoveSystem( *systemIt );
-            }
-            else
-            {
-                SM_LOG_WARNING( "StateManager::SyncState > While transitionning to state {0}, System {1} was not "
-                                "found, while the states difference reports as to be removed",
-                    name,
-                    toBeRemoved );
+                if ( std::find( systemNames.begin(), systemNames.end(), dependency ) == systemNames.end() )
+                    continue;
+
+                adjacencyList[dependency].push_back( name );
+                ++inDegree[name];
             }
         }
 
-        for ( const auto &toBeAdded : toBeAddedSystems )
+        std::queue< std::string > resolveDependencyQueue{};
+
+        for ( const auto &[name, degree] : inDegree )
         {
-            m_pECSEngine->AddSystem( GetOrCreateSystem( toBeAdded ) );
+            if ( degree == 0 )
+                resolveDependencyQueue.push( name );
         }
+
+        std::vector< std::string > sorted{};
+
+        while ( !resolveDependencyQueue.empty() )
+        {
+            auto current = resolveDependencyQueue.front();
+            resolveDependencyQueue.pop();
+            sorted.push_back( current );
+
+            for ( const std::string &neighbor : adjacencyList[current] )
+            {
+                if ( --inDegree[neighbor] == 0 )
+                {
+                    resolveDependencyQueue.push( neighbor );
+                }
+            }
+        }
+
+        SM_ASSERT( sorted.size() == systemNames.size(),
+            "StateManager::TopologicalSort > Cycle detected or missing dependency" );
+
+        return sorted;
     }
 
-    StateManager StateManager::Copy( const StateManager &stateManager, ECSEngine *pECSEngine )
+    StateManager
+    StateManager::Copy( const StateManager &stateManager, ECSEngine *pECSEngine, SystemRegistry *pSystemRegistry )
     {
-        StateManager result;
+        StateManager result{};
         result.m_StateMap = stateManager.m_StateMap; // TODO: Make a deep copy instead
         result.m_pCurrentState = stateManager.m_pCurrentState;
         result.m_pECSEngine = pECSEngine;
+        result.m_pSystemRegistry = pSystemRegistry;
 
         const std::vector< std::string > &systemNames = result.m_pCurrentState->GetSystemNames();
+        std::vector< std::string > sorted = result.TopologicalSort( systemNames );
 
-        for ( const auto &systemName : systemNames )
+        for ( const auto &systemName : sorted )
         {
             auto pSystem = result.GetOrCreateSystem( systemName );
             result.m_pECSEngine->AddSystem( pSystem );

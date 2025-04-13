@@ -8,7 +8,6 @@
 #include "smile/core/world/world_manager.h"
 #include "smile/core/world/ecs/transform_system.h"
 #include "smile/core/window/file_dialog.h"
-#include "smile/core/ecs/state/system_factory.h"
 
 #include "smile/graphic/animation/ecs/animation_system.h"
 #include "smile/graphic/camera/ecs/camera_system.h"
@@ -40,13 +39,6 @@ namespace smile
 
     void SmileEditorLayer::OnAttach()
     {
-        smile::ecs::state::SystemFactory::RegisterSystem< scripting::ecs::ScriptSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< world::ecs::TransformSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< physics::ecs::PhysicsSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::AnimationSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::CameraSystem >();
-        smile::ecs::state::SystemFactory::RegisterSystem< graphic::ecs::GraphicSystem >();
-
         graphic::RenderEngine::GetRenderSystem().SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
             DirectX::Colors::DodgerBlue.f[1],
             DirectX::Colors::DodgerBlue.f[2],
@@ -507,14 +499,31 @@ namespace smile
         m_EditorWorldPath = project::ProjectManager::GetActive()->GetEditorAssetManager()->GetFilePath( handle );
         m_WorldHierarchyPanel.SetContext( m_pEditorWorld.GetPointer() );
 
+        m_pEditorWorld->RegisterSystem< graphic::ecs::AnimationSystem >().After(
+            std::string{ world::ecs::TransformSystem::GetStaticName() } );
+
+        m_pEditorWorld->RegisterSystem< graphic::ecs::CameraSystem >().After(
+            std::string{ world::ecs::TransformSystem::GetStaticName() } );
+
+        m_pEditorWorld->RegisterSystem< scripting::ecs::ScriptSystem >()
+            .After( std::string{ world::ecs::TransformSystem::GetStaticName() } )
+            .After( std::string{ graphic::ecs::CameraSystem::GetStaticName() } )
+            .After( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
+
+        m_pEditorWorld->RegisterSystem< physics::ecs::PhysicsSystem >().After(
+            std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
+
+        m_pEditorWorld->RegisterSystem< graphic::ecs::GraphicSystem >().After(
+            std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+
         auto pEditorState = m_pEditorWorld->CreateState( "editor" );
         pEditorState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pEditorState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pEditorState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
 
         auto pSimulateState = m_pEditorWorld->CreateState( "simulate" );
         pSimulateState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
         pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pSimulateState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pSimulateState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
 
         auto pRuntimeState = m_pEditorWorld->CreateState( "runtime" );
         pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
@@ -522,7 +531,7 @@ namespace smile
         pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
         pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
-        pRuntimeState->AddOverlaySystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
 
         graphic::ecs::RenderPassList &renderPassList =
             graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
