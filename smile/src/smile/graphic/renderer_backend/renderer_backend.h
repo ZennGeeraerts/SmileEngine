@@ -12,11 +12,11 @@ namespace smile::graphic
     {
       public:
         RendererBackend( RendererBackendType backendType );
-        ~RendererBackend();
+        ~RendererBackend() = default;
 
         inline GraphicsDevice *GetGraphicsDevice() const
         {
-            return m_pDevice;
+            return m_pDevice.get();
         }
 
         inline GraphicsContext *GetGraphicsContext() const
@@ -30,7 +30,7 @@ namespace smile::graphic
         }
 
       private:
-        GraphicsDevice *m_pDevice = nullptr;
+        Scope< GraphicsDevice > m_pDevice = nullptr;
         GraphicsContext *m_pContext = nullptr;
 
         RendererBackendType m_BackendType;

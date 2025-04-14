@@ -9,12 +9,12 @@
 
 namespace smile::graphic
 {
-    GraphicsDevice *GraphicsDevice::Create( RendererBackendType backendType )
+    Scope< GraphicsDevice > GraphicsDevice::Create( RendererBackendType backendType )
     {
         switch ( backendType )
         {
             case RendererBackendType::DirectX11:
-                return new DirectX11Device{};
+                return CreateScope< DirectX11Device >();
 
             default:
                 SM_ASSERT( false,

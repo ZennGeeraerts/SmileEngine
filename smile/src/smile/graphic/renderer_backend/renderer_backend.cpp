@@ -12,9 +12,4 @@ namespace smile::graphic
         m_pDevice = GraphicsDevice::Create( backendType );
         m_pContext = m_pDevice->CreateGraphicsContext();
     }
-
-    RendererBackend::~RendererBackend()
-    {
-        delete m_pDevice;
-    }
 }

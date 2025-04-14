@@ -64,7 +64,7 @@ namespace smile::graphic
         ID3D11DeviceContext *m_pContext = nullptr;
         IDXGIFactory *m_pDXGIFactory = nullptr;
 
-        std::vector< DirectX11Context * > m_pGraphicsContexts;
+        std::vector< Scope< DirectX11Context > > m_pGraphicsContexts;
 
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
         std::array< DirectX11Texture, s_MaxTextureCount > m_Textures;

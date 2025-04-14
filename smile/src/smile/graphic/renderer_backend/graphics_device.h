@@ -62,7 +62,7 @@ namespace smile::graphic
         virtual void DestroyFramebuffer( FramebufferHandle handle ) = 0;
         virtual void InvalidateFramebuffer( FramebufferHandle handle ) = 0;
 
-        static GraphicsDevice *Create( RendererBackendType backendType );
+        static Scope< GraphicsDevice > Create( RendererBackendType backendType );
 
       protected:
         static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );

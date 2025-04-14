@@ -287,9 +287,6 @@ namespace smile::graphic
 
     DirectX11Device::~DirectX11Device()
     {
-        for ( auto pGraphicsContext : m_pGraphicsContexts )
-            delete pGraphicsContext;
-
         if ( m_pContext )
         {
             m_pContext->ClearState();
@@ -302,9 +299,11 @@ namespace smile::graphic
 
     GraphicsContext *DirectX11Device::CreateGraphicsContext()
     {
-        auto pGraphicsContext = new DirectX11Context{ this, m_pContext };
-        m_pGraphicsContexts.push_back( pGraphicsContext );
-        return pGraphicsContext;
+        auto pGraphicsContext = CreateScope< DirectX11Context >( this, m_pContext );
+        DirectX11Context *pRawGraphicsContext = pGraphicsContext.get();
+        m_pGraphicsContexts.emplace_back( std::move( pGraphicsContext ) );
+
+        return pRawGraphicsContext;
     }
 
     memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
