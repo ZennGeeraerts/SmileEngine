@@ -12,8 +12,9 @@ namespace smile::graphic
 {
     DirectX11SwapChain::DirectX11SwapChain( const window::Window *pWindow,
         ID3D11Device *pDevice,
+        ID3D11DeviceContext *pDeviceContext,
         IDXGIFactory *pDXGIFactory )
-        : SwapChain{ pWindow }, m_pDevice{ pDevice }, m_pDXGIFactory{ pDXGIFactory }
+        : SwapChain{ pWindow }, m_pDevice{ pDevice }, m_pDeviceContext{ pDeviceContext }, m_pDXGIFactory{ pDXGIFactory }
     {
     }
 
@@ -92,6 +93,8 @@ namespace smile::graphic
         m_Viewport.TopLeftY = 0.0f;
         m_Viewport.MinDepth = 0.0f;
         m_Viewport.MaxDepth = 1.0;
+
+        m_pDeviceContext->RSSetViewports( 1, &m_Viewport );
     }
 
     void DirectX11SwapChain::Destroy()
@@ -172,5 +175,7 @@ namespace smile::graphic
         m_Viewport.Height = static_cast< FLOAT >( height );
         m_Viewport.TopLeftX = static_cast< FLOAT >( x );
         m_Viewport.TopLeftY = static_cast< FLOAT >( y );
+
+        m_pDeviceContext->RSSetViewports( 1, &m_Viewport );
     }
 }

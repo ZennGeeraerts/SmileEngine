@@ -308,7 +308,7 @@ namespace smile::graphic
 
     memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
     {
-        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >( pWindow, m_pInternal, m_pDXGIFactory );
+        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >( pWindow, m_pInternal, m_pContext, m_pDXGIFactory );
         pSwapChain->Create();
         return pSwapChain;
     }

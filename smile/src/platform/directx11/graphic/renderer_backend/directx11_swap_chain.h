@@ -13,7 +13,10 @@ namespace smile::graphic
     class DirectX11SwapChain final : public SwapChain
     {
       public:
-        DirectX11SwapChain( const window::Window *pWindow, ID3D11Device *pDevice, IDXGIFactory *pDXGIFactory );
+        DirectX11SwapChain( const window::Window *pWindow,
+            ID3D11Device *pDevice,
+            ID3D11DeviceContext *pDeviceContext,
+            IDXGIFactory *pDXGIFactory );
         ~DirectX11SwapChain();
 
         void Create();
@@ -46,6 +49,7 @@ namespace smile::graphic
         D3D11_VIEWPORT m_Viewport{};
 
         ID3D11Device *m_pDevice = nullptr;
+        ID3D11DeviceContext *m_pDeviceContext = nullptr;
         IDXGIFactory *m_pDXGIFactory = nullptr;
 
         friend class DirectX11Device;
