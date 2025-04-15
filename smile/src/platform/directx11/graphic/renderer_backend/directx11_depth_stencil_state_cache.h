@@ -34,7 +34,8 @@ namespace smile::graphic
         };
     }
 
-    using DirectX11DepthStencilStateCache = typename DirectX11StateCache< DirectX11DepthStencilState,
+    using DirectX11DepthStencilStateCache = typename DirectX11StateCache< RenderState,
+        DirectX11DepthStencilState,
         detail::DepthStencilStateHasher,
         detail::DepthStencilStateComparer >;
 }

@@ -34,7 +34,8 @@ namespace smile::graphic
         };
     }
 
-    using DirectX11RasterizerStateCache = typename DirectX11StateCache< DirectX11RasterizerState,
+    using DirectX11RasterizerStateCache = typename DirectX11StateCache< RenderState,
+        DirectX11RasterizerState,
         detail::RasterizerStateHasher,
         detail::RasterizerStateComparer >;
 }

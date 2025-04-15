@@ -426,4 +426,15 @@ namespace smile::graphic
         pNewDepthStencilState->Create( m_pInternal, renderState );
         return m_DepthStencilStateCache.Add( renderState, std::move( pNewDepthStencilState ) );
     }
+
+    const DirectX11SamplerState *DirectX11Device::GetOrCreateSamplerState( const SamplerState &samplerState )
+    {
+        const DirectX11SamplerState *pSamplerState = m_SamplerStateCache.Find( samplerState );
+        if ( pSamplerState )
+            return pSamplerState;
+
+        auto pNewSamplerState = CreateScope< DirectX11SamplerState >();
+        pNewSamplerState->Create( m_pInternal, samplerState );
+        return m_SamplerStateCache.Add( samplerState, std::move( pNewSamplerState ) );
+    }
 }

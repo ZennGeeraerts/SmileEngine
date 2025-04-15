@@ -5,8 +5,9 @@
 #pragma once
 
 #include "render_state.h"
-#include "smile/common/memory/ref.h"
+#include "sampler_state.h"
 #include "render_handle.h"
+#include "smile/common/memory/ref.h"
 
 #include <DirectXMath.h>
 
@@ -32,6 +33,9 @@ namespace smile::graphic
             const DirectX::XMFLOAT4 &clearColor ) const = 0;
 
         virtual void SetState( const RenderState &state ) const = 0;
+        virtual void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
+        virtual void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
+
         virtual void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) = 0;
         virtual void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) = 0;
 

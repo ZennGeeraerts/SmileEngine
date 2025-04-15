@@ -10,6 +10,7 @@
 #include "resource/directx11_frame_buffer.h"
 #include "directx11_rasterizer_state_cache.h"
 #include "directx11_depth_stencil_state_cache.h"
+#include "directx11_sampler_state_cache.h"
 
 #include <d3d11.h>
 
@@ -58,6 +59,7 @@ namespace smile::graphic
 
         const DirectX11RasterizerState *GetOrCreateRasterizerState( const RenderState &renderState );
         const DirectX11DepthStencilState *GetOrCreateDepthStencilState( const RenderState &renderState );
+        const DirectX11SamplerState *GetOrCreateSamplerState( const SamplerState &samplerState );
 
       private:
         ID3D11Device *m_pInternal = nullptr;
@@ -72,6 +74,7 @@ namespace smile::graphic
 
         DirectX11RasterizerStateCache m_RasterizerStateCache;
         DirectX11DepthStencilStateCache m_DepthStencilStateCache;
+        DirectX11SamplerStateCache m_SamplerStateCache;
 
         friend class DirectX11Context;
         friend class DirectX11Shader;

@@ -78,6 +78,18 @@ namespace smile::graphic
         m_pInternal->OMSetDepthStencilState( pDepthStencilState->pInternal, 1 );
     }
 
+    void DirectX11Context::SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const
+    {
+        const auto pSamplerState = m_pDevice->GetOrCreateSamplerState( samplerState );
+        m_pInternal->VSSetSamplers( slot, 1, &pSamplerState->pInternal );
+    }
+
+    void DirectX11Context::SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const
+    {
+        const auto pSamplerState = m_pDevice->GetOrCreateSamplerState( samplerState );
+        m_pInternal->PSSetSamplers( slot, 1, &pSamplerState->pInternal );
+    }
+
     void DirectX11Context::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
     {
         auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };

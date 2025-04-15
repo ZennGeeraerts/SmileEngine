@@ -32,6 +32,9 @@ namespace smile::graphic
         void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
 
         void SetState( const RenderState &state ) const override;
+        void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
+        void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
+
         void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
         void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
 

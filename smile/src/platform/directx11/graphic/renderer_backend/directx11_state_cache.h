@@ -4,24 +4,22 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/render_state.h"
-
 #include <unordered_map>
 
 namespace smile::graphic
 {
-    template < typename StateType, typename Hasher, typename Comparer >
+    template < typename KeyType, typename StateType, typename Hasher, typename Comparer >
     class DirectX11StateCache final
     {
       public:
-        const StateType *Add( const RenderState &state, Scope< StateType > pDirectX11State )
+        const StateType *Add( const KeyType &state, Scope< StateType > pDirectX11State )
         {
             Invalidate( state );
             auto pair = m_HashMap.emplace( state, std::move( pDirectX11State ) );
             return pair.first->second.get();
         }
 
-        const StateType *Find( const RenderState &state ) const
+        const StateType *Find( const KeyType &state ) const
         {
             typename HashMap::const_iterator it = m_HashMap.find( state );
 
@@ -31,7 +29,7 @@ namespace smile::graphic
             return nullptr;
         }
 
-        void Invalidate( const RenderState &state )
+        void Invalidate( const KeyType &state )
         {
             typename HashMap::const_iterator it = m_HashMap.find( state );
 
@@ -45,7 +43,7 @@ namespace smile::graphic
         }
 
       private:
-        using HashMap = std::unordered_map< RenderState, Scope< StateType >, Hasher, Comparer >;
+        using HashMap = std::unordered_map< KeyType, Scope< StateType >, Hasher, Comparer >;
 
         HashMap m_HashMap;
     };
