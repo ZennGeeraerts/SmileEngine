@@ -21,10 +21,10 @@ namespace smile::graphic
     class SwapChain;
     class Shader;
 
-    class GraphicsContext
+    class CommandList
     {
       public:
-        virtual ~GraphicsContext() = default;
+        virtual ~CommandList() = default;
 
         virtual void *GetInternal() const = 0;
 

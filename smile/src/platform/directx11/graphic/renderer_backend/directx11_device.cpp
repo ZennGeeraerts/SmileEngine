@@ -5,7 +5,7 @@
 
 #include "smpch.h"
 #include "directx11_device.h"
-#include "directx11_context.h"
+#include "directx11_command_list.h"
 
 #include "directx11_diagnostics.h"
 #include "directx11_swap_chain.h"
@@ -251,7 +251,8 @@ namespace smile::graphic
     DirectX11Device::DirectX11Device()
     {
         // Create DXGI Factory to create SwapChain based on hardware
-        HRESULT result = CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_pDXGIFactory ) );
+        HRESULT result =
+            CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_Context.pDXGIFactory ) );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
@@ -273,9 +274,9 @@ namespace smile::graphic
             0,
             0,
             D3D11_SDK_VERSION,
-            &m_pInternal,
+            &m_Context.pDevice,
             &featureLevel,
-            &m_pContext );
+            &m_Context.pImmediateContext );
 
         if ( FAILED( result ) )
         {
@@ -283,39 +284,38 @@ namespace smile::graphic
                 "DirectX11Device > Failed to create D3D11Device: {}", fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
+
+        m_pImmediateCommandList = CreateScope< DirectX11CommandList >( this, std::ref( m_Context ) );
     }
 
     DirectX11Device::~DirectX11Device()
     {
-        if ( m_pContext )
+        if ( m_Context.pImmediateContext )
         {
-            m_pContext->ClearState();
-            m_pContext->Flush();
-            SAFE_RELEASE( m_pContext );
+            m_Context.pImmediateContext->ClearState();
+            m_Context.pImmediateContext->Flush();
+            SAFE_RELEASE( m_Context.pImmediateContext );
         }
 
-        SAFE_RELEASE( m_pInternal );
+        SAFE_RELEASE( m_Context.pDevice );
     }
 
-    GraphicsContext *DirectX11Device::CreateGraphicsContext()
+    CommandList *DirectX11Device::CreateCommandList()
     {
-        auto pGraphicsContext = CreateScope< DirectX11Context >( this, m_pContext );
-        DirectX11Context *pRawGraphicsContext = pGraphicsContext.get();
-        m_pGraphicsContexts.emplace_back( std::move( pGraphicsContext ) );
-
-        return pRawGraphicsContext;
+        return m_pImmediateCommandList.get();
     }
 
     memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
     {
-        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >( pWindow, m_pInternal, m_pContext, m_pDXGIFactory );
+        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >(
+            pWindow, m_Context.pDevice, m_Context.pImmediateContext, m_Context.pDXGIFactory );
         pSwapChain->Create();
         return pSwapChain;
     }
 
     void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
     {
-        m_GPUBuffers[handle.GetIndex()].Create( m_pInternal, bufferDesc );
+        m_GPUBuffers[handle.GetIndex()].Create( m_Context.pDevice, bufferDesc );
     }
 
     void DirectX11Device::DestroyGPUBuffer( GPUBufferHandle handle )
@@ -331,7 +331,7 @@ namespace smile::graphic
         pShader->SetName( assetFile );
         pShader->BufferLayout = layout;
 
-        if ( !shaderhelpers::LoadEffect( m_pInternal, pShader, assetFile ) )
+        if ( !shaderhelpers::LoadEffect( m_Context.pDevice, pShader, assetFile ) )
         {
             SAFE_RELEASE( pShader->pEffect );
             SM_ASSERT( false, "DirectX11Device::CreateShader > Failed to load effect" );
@@ -345,7 +345,7 @@ namespace smile::graphic
         if ( !pShader->pTechnique->IsValid() )
             SM_LOG_WARNING( "DirectX11Device::CreateShader > Invalid technique" );
 
-        shaderhelpers::BuildInputLayout( m_pInternal, pShader, layout );
+        shaderhelpers::BuildInputLayout( m_Context.pDevice, pShader, layout );
 
         return pShader;
     }
@@ -356,7 +356,7 @@ namespace smile::graphic
         memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >( this );
         pShader->SetName( assetFile );
 
-        if ( !shaderhelpers::LoadEffect( m_pInternal, pShader, assetFile ) )
+        if ( !shaderhelpers::LoadEffect( m_Context.pDevice, pShader, assetFile ) )
         {
             SAFE_RELEASE( pShader->pEffect );
             SM_ASSERT( false, "DirectX11Device::CreateShader > Failed to load effect" );
@@ -370,19 +370,19 @@ namespace smile::graphic
         if ( !pShader->pTechnique->IsValid() )
             SM_LOG_WARNING( "DirectX11Device::CreateShader > Invalid technique" );
 
-        shaderhelpers::BuildInputLayout( m_pInternal, pShader );
+        shaderhelpers::BuildInputLayout( m_Context.pDevice, pShader );
 
         return pShader;
     }
 
     void DirectX11Device::CreateTexture( TextureHandle handle, const std::filesystem::path &path )
     {
-        m_Textures[handle.GetIndex()].Create( m_pInternal, path );
+        m_Textures[handle.GetIndex()].Create( m_Context.pDevice, path );
     }
 
     void DirectX11Device::CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage )
     {
-        m_Textures[handle.GetIndex()].Create( m_pInternal, std::move( pImage ) );
+        m_Textures[handle.GetIndex()].Create( m_Context.pDevice, std::move( pImage ) );
     }
 
     void DirectX11Device::DestroyTexture( TextureHandle handle )
@@ -392,7 +392,7 @@ namespace smile::graphic
 
     void DirectX11Device::CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor )
     {
-        m_Framebuffers[handle.GetIndex()].Create( m_pInternal, descriptor );
+        m_Framebuffers[handle.GetIndex()].Create( m_Context.pDevice, descriptor );
     }
 
     void DirectX11Device::DestroyFramebuffer( FramebufferHandle handle )
@@ -402,7 +402,7 @@ namespace smile::graphic
 
     void DirectX11Device::InvalidateFramebuffer( FramebufferHandle handle )
     {
-        m_Framebuffers[handle.GetIndex()].Invalidate( m_pInternal );
+        m_Framebuffers[handle.GetIndex()].Invalidate( m_Context.pDevice );
     }
 
     const DirectX11RasterizerState *DirectX11Device::GetOrCreateRasterizerState( const RenderState &renderState )
@@ -412,7 +412,7 @@ namespace smile::graphic
             return pRasterizerState;
 
         auto pNewRasterizerState = CreateScope< DirectX11RasterizerState >();
-        pNewRasterizerState->Create( m_pInternal, renderState );
+        pNewRasterizerState->Create( m_Context.pDevice, renderState );
         return m_RasterizerStateCache.Add( renderState, std::move( pNewRasterizerState ) );
     }
 
@@ -423,7 +423,7 @@ namespace smile::graphic
             return pDepthStencilState;
 
         auto pNewDepthStencilState = CreateScope< DirectX11DepthStencilState >();
-        pNewDepthStencilState->Create( m_pInternal, renderState );
+        pNewDepthStencilState->Create( m_Context.pDevice, renderState );
         return m_DepthStencilStateCache.Add( renderState, std::move( pNewDepthStencilState ) );
     }
 
@@ -434,7 +434,7 @@ namespace smile::graphic
             return pSamplerState;
 
         auto pNewSamplerState = CreateScope< DirectX11SamplerState >();
-        pNewSamplerState->Create( m_pInternal, samplerState );
+        pNewSamplerState->Create( m_Context.pDevice, samplerState );
         return m_SamplerStateCache.Add( samplerState, std::move( pNewSamplerState ) );
     }
 }

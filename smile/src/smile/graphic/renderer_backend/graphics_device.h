@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/common/memory/ref.h"
-#include "graphics_context.h"
+#include "command_list.h"
 #include "render_handle.h"
 
 #include "resource/buffer.h"
@@ -41,7 +41,7 @@ namespace smile::graphic
 
         virtual void *GetInternal() const = 0;
 
-        virtual GraphicsContext *CreateGraphicsContext() = 0;
+        virtual CommandList *CreateCommandList() = 0;
 
         virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
 

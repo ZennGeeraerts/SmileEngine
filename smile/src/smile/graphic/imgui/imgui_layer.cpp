@@ -10,7 +10,7 @@
 #include "smile/graphic/renderer/render_engine.h"
 
 #include "platform/directx11/graphic/renderer_backend/directx11_device.h"
-#include "platform/directx11/graphic/renderer_backend/directx11_context.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_command_list.h"
 
 #include "smile/common/logging/logger.h"
 #include "smile/core/input/key_codes.h"
@@ -82,7 +82,7 @@ namespace smile::imgui
 
         const graphic::RenderSystem &renderSystem = graphic::RenderEngine::GetRenderSystem();
         graphic::GraphicsDevice *pGraphicsDevice = renderSystem.GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = renderSystem.GetGraphicsContext();
+        graphic::CommandList *pImmediateCommandList = renderSystem.GetImmediateCommandList();
 
         switch ( renderSystem.GetRendererAPI() )
         {
@@ -92,7 +92,7 @@ namespace smile::imgui
 
                 ID3D11Device *pDevice = static_cast< ID3D11Device * >( pGraphicsDevice->GetInternal() );
                 ID3D11DeviceContext *pDeviceContext =
-                    static_cast< ID3D11DeviceContext * >( pGraphicsContext->GetInternal() );
+                    static_cast< ID3D11DeviceContext * >( pImmediateCommandList->GetInternal() );
 
                 ImGui_ImplDX11_Init( pDevice, pDeviceContext );
                 break;

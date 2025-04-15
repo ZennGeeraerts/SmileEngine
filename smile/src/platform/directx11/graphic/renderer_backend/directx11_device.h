@@ -8,11 +8,10 @@
 #include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
+#include "directx11_context.h"
 #include "directx11_rasterizer_state_cache.h"
 #include "directx11_depth_stencil_state_cache.h"
 #include "directx11_sampler_state_cache.h"
-
-#include <d3d11.h>
 
 #include <array>
 
@@ -23,7 +22,7 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class DirectX11Context;
+    class DirectX11CommandList;
 
     class DirectX11Device final : public GraphicsDevice
     {
@@ -31,12 +30,17 @@ namespace smile::graphic
         DirectX11Device();
         ~DirectX11Device();
 
+        DirectX11Device( const DirectX11Device & ) = delete;
+        DirectX11Device( DirectX11Device && ) = delete;
+        DirectX11Device &operator=( const DirectX11Device & ) = delete;
+        DirectX11Device &operator=( DirectX11Device && ) = delete;
+
         void *GetInternal() const override
         {
-            return m_pInternal;
+            return m_Context.pDevice;
         }
 
-        GraphicsContext *CreateGraphicsContext() override;
+        CommandList *CreateCommandList() override;
 
         memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
 
@@ -62,11 +66,8 @@ namespace smile::graphic
         const DirectX11SamplerState *GetOrCreateSamplerState( const SamplerState &samplerState );
 
       private:
-        ID3D11Device *m_pInternal = nullptr;
-        ID3D11DeviceContext *m_pContext = nullptr;
-        IDXGIFactory *m_pDXGIFactory = nullptr;
-
-        std::vector< Scope< DirectX11Context > > m_pGraphicsContexts;
+        DirectX11Context m_Context{};
+        Scope< DirectX11CommandList > m_pImmediateCommandList;
 
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
         std::array< DirectX11Texture, s_MaxTextureCount > m_Textures;
@@ -76,7 +77,7 @@ namespace smile::graphic
         DirectX11DepthStencilStateCache m_DepthStencilStateCache;
         DirectX11SamplerStateCache m_SamplerStateCache;
 
-        friend class DirectX11Context;
+        friend class DirectX11CommandList;
         friend class DirectX11Shader;
     };
 }

@@ -11,7 +11,7 @@ namespace smile::graphic
     {
         m_API = RendererBackendType::DirectX11;
         m_pDevice = GraphicsDevice::Create( m_API );
-        m_pGraphicsContext = m_pDevice->CreateGraphicsContext();
+        m_pImmediateCommandList = m_pDevice->CreateCommandList();
     }
 
     RenderSystem::~RenderSystem() = default;
@@ -32,38 +32,38 @@ namespace smile::graphic
     {
         if ( m_pBoundFramebuffer )
         {
-            m_pGraphicsContext->ClearFramebuffer( m_pBoundFramebuffer->Handle );
+            m_pImmediateCommandList->ClearFramebuffer( m_pBoundFramebuffer->Handle );
         }
         else
         {
-            m_pGraphicsContext->ClearBackBuffer( m_pSwapChain, m_ClearColor );
+            m_pImmediateCommandList->ClearBackBuffer( m_pSwapChain, m_ClearColor );
         }
     }
 
     void RenderSystem::BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const
     {
-        m_pGraphicsContext->BindVertexBuffer( pVertexBuffer->Handle, pVertexBuffer->Layout.GetStride() );
+        m_pImmediateCommandList->BindVertexBuffer( pVertexBuffer->Handle, pVertexBuffer->Layout.GetStride() );
     }
 
     void RenderSystem::UnbindVertexBuffer() const
     {
-        m_pGraphicsContext->UnbindVertexBuffer();
+        m_pImmediateCommandList->UnbindVertexBuffer();
     }
 
     void
     RenderSystem::FillVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer, void *pData, Uint32 vertexCount ) const
     {
-        m_pGraphicsContext->FillBuffer( pVertexBuffer->Handle, pData, vertexCount * pVertexBuffer->Layout.GetStride() );
+        m_pImmediateCommandList->FillBuffer( pVertexBuffer->Handle, pData, vertexCount * pVertexBuffer->Layout.GetStride() );
     }
 
     void RenderSystem::BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const
     {
-        m_pGraphicsContext->BindIndexBuffer( pIndexBuffer->Handle );
+        m_pImmediateCommandList->BindIndexBuffer( pIndexBuffer->Handle );
     }
 
     void RenderSystem::UnbindIndexBuffer() const
     {
-        m_pGraphicsContext->UnbindIndexBuffer();
+        m_pImmediateCommandList->UnbindIndexBuffer();
     }
 
     void RenderSystem::BindUniformBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const
@@ -76,51 +76,51 @@ namespace smile::graphic
 
     void RenderSystem::BindShader( memory::Ref< Shader > pShader )
     {
-        m_pGraphicsContext->BindShader( pShader );
+        m_pImmediateCommandList->BindShader( pShader );
         m_pBoundShader = pShader;
     }
 
     void RenderSystem::UnbindShader()
     {
-        m_pGraphicsContext->UnbindShader();
+        m_pImmediateCommandList->UnbindShader();
         m_pBoundShader = nullptr;
     }
 
     void RenderSystem::BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
     {
-        m_pGraphicsContext->BindFramebuffer( pFramebuffer->Handle );
+        m_pImmediateCommandList->BindFramebuffer( pFramebuffer->Handle );
         m_pBoundFramebuffer = pFramebuffer;
     }
 
     void RenderSystem::BindBackBuffer()
     {
-        m_pGraphicsContext->BindBackBuffer( m_pSwapChain );
+        m_pImmediateCommandList->BindBackBuffer( m_pSwapChain );
         m_pBoundFramebuffer = nullptr;
     }
 
     void RenderSystem::SetState( const RenderState &state ) const
     {
-        m_pGraphicsContext->SetState( state );
+        m_pImmediateCommandList->SetState( state );
     }
 
     void *RenderSystem::ReadTexture( memory::Ref< Texture > pTexture ) const
     {
-        return m_pGraphicsContext->ReadTexture( pTexture->Handle );
+        return m_pImmediateCommandList->ReadTexture( pTexture->Handle );
     }
 
     void *RenderSystem::ReadTexture( memory::Ref< Framebuffer > pFramebuffer, Uint32 index ) const
     {
-        return m_pGraphicsContext->ReadTexture( pFramebuffer->Handle, index );
+        return m_pImmediateCommandList->ReadTexture( pFramebuffer->Handle, index );
     }
 
     void RenderSystem::DrawIndexed( Uint32 indexCount )
     {
-        m_pGraphicsContext->DrawIndexed( indexCount, m_pBoundShader );
+        m_pImmediateCommandList->DrawIndexed( indexCount, m_pBoundShader );
     }
 
     void RenderSystem::Draw( Uint32 vertexCount )
     {
-        m_pGraphicsContext->Draw( vertexCount, m_pBoundShader );
+        m_pImmediateCommandList->Draw( vertexCount, m_pBoundShader );
     }
 
     void RenderSystem::Present()

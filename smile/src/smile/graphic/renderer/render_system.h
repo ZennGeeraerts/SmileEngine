@@ -78,15 +78,15 @@ namespace smile::graphic
             return m_pDevice.get();
         }
 
-        GraphicsContext *GetGraphicsContext() const
+        CommandList *GetImmediateCommandList() const
         {
-            return m_pGraphicsContext;
+            return m_pImmediateCommandList;
         }
 
       private:
         RendererBackendType m_API;
         Scope< GraphicsDevice > m_pDevice;
-        GraphicsContext *m_pGraphicsContext;
+        CommandList *m_pImmediateCommandList;
         ResourceManager m_ResourceManager{};
 
         DirectX::XMFLOAT4 m_ClearColor{};
