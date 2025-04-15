@@ -8,6 +8,7 @@
 #include "smile/common/memory/ref.h"
 
 #include "resource/resource_manager.h"
+#include "smile/graphic/renderer_backend/graphics_device.h"
 #include "smile/graphic/renderer_backend/render_state.h"
 #include "smile/graphic/renderer_backend/swap_chain.h"
 
@@ -20,8 +21,6 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class RendererBackend;
-
     class RenderSystem final
     {
       public:
@@ -69,10 +68,25 @@ namespace smile::graphic
             return m_ResourceManager;
         }
 
-        RendererBackend *GetRendererAPI() const; // TODO: Remove
+        RendererBackendType GetRendererAPI() const
+        {
+            return m_API;
+        }
+
+        GraphicsDevice *GetGraphicsDevice() const
+        {
+            return m_pDevice.get();
+        }
+
+        GraphicsContext *GetGraphicsContext() const
+        {
+            return m_pGraphicsContext;
+        }
 
       private:
-        Scope< RendererBackend > m_pRendererBackend = nullptr;
+        RendererBackendType m_API;
+        Scope< GraphicsDevice > m_pDevice;
+        GraphicsContext *m_pGraphicsContext;
         ResourceManager m_ResourceManager{};
 
         DirectX::XMFLOAT4 m_ClearColor{};

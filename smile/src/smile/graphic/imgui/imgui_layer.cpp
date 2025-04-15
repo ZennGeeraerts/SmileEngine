@@ -8,7 +8,6 @@
 #include "smile/core/application/application.h"
 #include "smile/core/window/window.h"
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer_backend/renderer_backend.h"
 
 #include "platform/directx11/graphic/renderer_backend/directx11_device.h"
 #include "platform/directx11/graphic/renderer_backend/directx11_context.h"
@@ -80,11 +79,12 @@ namespace smile::imgui
         SetDarkThemeColors();
 
         window::Window &window = application::Application::GetInstance().GetMainWindow();
-        graphic::RendererBackend *pRendererBackend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
-        graphic::GraphicsDevice *pGraphicsDevice = pRendererBackend->GetGraphicsDevice();
-        graphic::GraphicsContext *pGraphicsContext = pRendererBackend->GetGraphicsContext();
 
-        switch ( pRendererBackend->GetType() )
+        const graphic::RenderSystem &renderSystem = graphic::RenderEngine::GetRenderSystem();
+        graphic::GraphicsDevice *pGraphicsDevice = renderSystem.GetGraphicsDevice();
+        graphic::GraphicsContext *pGraphicsContext = renderSystem.GetGraphicsContext();
+
+        switch ( renderSystem.GetRendererAPI() )
         {
             case graphic::RendererBackendType::DirectX11:
             {
@@ -112,7 +112,7 @@ namespace smile::imgui
 
     void ImGuiLayer::Begin()
     {
-        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetType();
+        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
         switch ( backend )
         {
             case graphic::RendererBackendType::DirectX11:
@@ -137,7 +137,7 @@ namespace smile::imgui
 
         ImGui::Render();
 
-        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI()->GetType();
+        graphic::RendererBackendType backend = graphic::RenderEngine::GetRenderSystem().GetRendererAPI();
         switch ( backend )
         {
             case graphic::RendererBackendType::DirectX11:
