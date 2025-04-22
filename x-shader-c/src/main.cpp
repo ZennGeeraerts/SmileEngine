@@ -64,7 +64,105 @@ Microsoft::WRL::ComPtr< IDxcBlob > CompileShader( const std::filesystem::path &i
     Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob;
     pResult->GetOutput( DXC_OUT_OBJECT, IID_PPV_ARGS( &pCompiledBlob ), nullptr );
 
+    Microsoft::WRL::ComPtr< IDxcBlobUtf8 > pErrors;
+    pResult->GetOutput( DXC_OUT_ERRORS, IID_PPV_ARGS( &pErrors ), nullptr );
+    if ( pErrors && pErrors->GetStringLength() > 0 )
+    {
+        std::cerr << "Shader compile errors:\n" << pErrors->GetStringPointer() << '\n';
+    }
+
     return pCompiledBlob;
+}
+
+YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob,
+    const std::wstring &entryPoint,
+    const std::wstring &targetProfile )
+{
+    YAML::Node yaml;
+
+    Microsoft::WRL::ComPtr< ID3D11ShaderReflection > pReflector;
+    if ( FAILED( D3DReflect(
+             pCompiledBlob->GetBufferPointer(), pCompiledBlob->GetBufferSize(), IID_PPV_ARGS( &pReflector ) ) ) )
+    {
+        std::cerr << "Failed to reflect shader\n";
+        return yaml;
+    }
+
+    D3D11_SHADER_DESC shaderDesc;
+    pReflector->GetDesc( &shaderDesc );
+
+    yaml["EntryPoint"] = std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > >().to_bytes( entryPoint );
+    yaml["TargetProfile"] = std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > >().to_bytes( targetProfile );
+    yaml["BlobFormat"] = "dxil";
+
+    YAML::Node cbuffers;
+    for ( UINT i = 0; i < shaderDesc.ConstantBuffers; ++i )
+    {
+        auto cb = pReflector->GetConstantBufferByIndex( i );
+        D3D11_SHADER_BUFFER_DESC cbDesc;
+        cb->GetDesc( &cbDesc );
+
+        YAML::Node cbNode;
+        cbNode["Name"] = cbDesc.Name;
+        cbNode["Size"] = cbDesc.Size;
+        cbNode["Variables"] = YAML::Node( YAML::NodeType::Sequence );
+
+        for ( UINT j = 0; j < cbDesc.Variables; ++j )
+        {
+            auto var = cb->GetVariableByIndex( j );
+            D3D11_SHADER_VARIABLE_DESC varDesc;
+            var->GetDesc( &varDesc );
+
+            YAML::Node varNode;
+            varNode["Name"] = varDesc.Name;
+            varNode["Size"] = varDesc.Size;
+            varNode["Offset"] = varDesc.StartOffset;
+            cbNode["Variables"].push_back( varNode );
+        }
+
+        cbuffers.push_back( cbNode );
+    }
+    yaml["ConstantBuffers"] = cbuffers;
+
+    YAML::Node resources;
+    for ( UINT i = 0; i < shaderDesc.BoundResources; ++i )
+    {
+        D3D11_SHADER_INPUT_BIND_DESC resDesc;
+        pReflector->GetResourceBindingDesc( i, &resDesc );
+
+        YAML::Node resNode;
+        resNode["Name"] = resDesc.Name;
+        resNode["Type"] = static_cast< uint32_t >( resDesc.Type ); // TODO: convert type
+        resNode["BindPoint"] = resDesc.BindPoint;
+        resNode["BindCount"] = resDesc.BindCount;
+        resources.push_back( resNode );
+    }
+    yaml["resources"] = resources;
+
+    return yaml;
+
+    /*std::stringstream yamlStream;
+    yamlStream << yaml;
+    std::string yamlSerialized = yamlStream.str();
+
+    std::ofstream outFile( outputShaderFile, std::ios::binary );
+    if ( !outFile )
+    {
+        std::cerr << "Failed to open output file: " << outputShaderFile << std::endl;
+        return;
+    }
+
+    uint32_t blobSize = static_cast< uint32_t >( compiledBlob->GetBufferSize() );
+    uint32_t yamlSize = static_cast< uint32_t >( yamlSerialized.size() );
+
+    outFile.write( reinterpret_cast< const char * >( &SHADER_FILE_MAGIC ), sizeof( uint32_t ) );
+    outFile.write( reinterpret_cast< const char * >( &SHADER_FILE_VERSION ), sizeof( uint32_t ) );
+    outFile.write( reinterpret_cast< const char * >( &blobSize ), sizeof( uint32_t ) );
+    outFile.write( reinterpret_cast< const char * >( &yamlSize ), sizeof( uint32_t ) );
+    outFile.write( reinterpret_cast< const char * >( compiledBlob->GetBufferPointer() ), blobSize );
+    outFile.write( yamlSerialized.data(), yamlSize );
+
+    std::cout << "Shader compiled and saved to compound .shader format: " << outputShaderFile << std::endl;*/
 }
 
 int main( int argc, char *argv[] )
@@ -77,6 +175,8 @@ int main( int argc, char *argv[] )
     Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob = CompileShader( inputFile, entryPoint, targetProfile );
     if ( !pCompiledBlob )
         return 2;
+
+    YAML::Node data = ReflectBlob( pCompiledBlob, entryPoint, targetProfile );
 
     return 0;
 }
