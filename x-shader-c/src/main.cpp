@@ -1,5 +1,4 @@
 #include <Windows.h>
-#include <dxcapi.h>
 #include <d3dcompiler.h>
 #include <wrl.h>
 #include <yaml-cpp/yaml.h>
@@ -7,76 +6,195 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
-#include <stdint.h>
 #include <string>
-#include <vector>
-#include <locale>
-#include <codecvt>
 
 constexpr uint32_t SHADER_FILE_MAGIC = 0x53484452; // 'SHDR'
 constexpr uint32_t SHADER_FILE_VERSION = 1;
 
-Microsoft::WRL::ComPtr< IDxcBlob > CompileShader( const std::filesystem::path &inputFile,
-    const std::wstring &entryPoint,
-    const std::wstring &targetProfile )
+std::string GetD3D11ShaderVariableType( D3D11_SHADER_TYPE_DESC typeDesc )
 {
-    Microsoft::WRL::ComPtr< IDxcUtils > pUtils;
-    if ( FAILED( DxcCreateInstance( CLSID_DxcUtils, IID_PPV_ARGS( &pUtils ) ) ) )
+    switch ( typeDesc.Class )
     {
-        std::cerr << "Failed to create DxcUtils instance\n";
+        case D3D_SVC_SCALAR:
+        {
+            switch ( typeDesc.Type )
+            {
+                case D3D_SVT_FLOAT:
+                    return "Float";
+                case D3D_SVT_BOOL:
+                    return "Bool";
+                case D3D_SVT_INT:
+                    return "Int";
+                default:
+                    return "Unknown";
+            }
+        }
+        case D3D_SVC_VECTOR:
+        {
+            switch ( typeDesc.Type )
+            {
+                case D3D_SVT_FLOAT:
+                {
+                    switch ( typeDesc.Columns )
+                    {
+                        case 2:
+                            return "Float2";
+                        case 3:
+                            return "Float3";
+                        default:
+                            return "Float3";
+                    }
+                }
+                default:
+                    return "Unknown";
+            }
+        }
+        case D3D_SVC_MATRIX_COLUMNS:
+        {
+            switch ( typeDesc.Type )
+            {
+                case D3D_SVT_FLOAT:
+                {
+                    if ( ( typeDesc.Columns == 4 ) && ( typeDesc.Rows == 4 ) )
+                    {
+                        if ( typeDesc.Elements == 0 )
+                            return "Mat4";
+                        else
+                            return "Mat4Array";
+                    }
+
+                    return "Unknown";
+                }
+                default:
+                    return "Unknown";
+            }
+        }
+        case D3D_SVC_OBJECT:
+        {
+            switch ( typeDesc.Type )
+            {
+                case D3D_SVT_TEXTURE:
+                    return "Texture";
+                case D3D_SVT_TEXTURE2D:
+                    return "Texture2D";
+                case D3D_SVT_TEXTURE3D:
+                    return "Texture3D";
+                case D3D_SVT_TEXTURECUBE:
+                    return "TextureCube";
+                default:
+                    return "Unknown";
+            }
+        }
+        default:
+            return "Unknown";
+    }
+}
+
+std::string GetD3D11ParamType( D3D11_SIGNATURE_PARAMETER_DESC paramDesc )
+{
+    switch ( paramDesc.ComponentType )
+    {
+        case D3D10_REGISTER_COMPONENT_FLOAT32:
+            if ( paramDesc.Mask == 1 )
+                return "Float";
+            else if ( paramDesc.Mask == 3 )
+                return "Float2";
+            else if ( paramDesc.Mask == 7 )
+                return "Float3";
+            else if ( paramDesc.Mask == 15 )
+                return "Float4";
+            else
+                return "Unknown";
+        case D3D10_REGISTER_COMPONENT_UINT32:
+            if ( paramDesc.Mask == 1 )
+                return "UInt";
+            else if ( paramDesc.Mask == 3 )
+                return "UInt2";
+            else if ( paramDesc.Mask == 7 )
+                return "Uint3";
+            else if ( paramDesc.Mask == 15 )
+                return "Uint4";
+            else
+                return "Unknown";
+        case D3D10_REGISTER_COMPONENT_SINT32:
+            if ( paramDesc.Mask == 1 )
+                return "Int";
+            else if ( paramDesc.Mask == 3 )
+                return "Int2";
+            else if ( paramDesc.Mask == 7 )
+                return "Int3";
+            else if ( paramDesc.Mask == 15 )
+                return "Int4";
+            else
+                return "Unknown";
+        default:
+            return "Unknown";
+    }
+}
+
+std::string GetD3D11ShaderInputType( D3D_SHADER_INPUT_TYPE inputType )
+{
+    switch ( inputType )
+    {
+        case D3D_SIT_CBUFFER:
+            return "ConstantBuffer";
+        case D3D_SIT_TEXTURE:
+            return "Texture";
+        case D3D_SIT_SAMPLER:
+            return "Sampler";
+        default:
+            return "Unknown";
+    }
+}
+
+Microsoft::WRL::ComPtr< ID3DBlob >
+CompileShader( const std::filesystem::path &inputFile, const std::string &entryPoint, const std::string &targetProfile )
+{
+    std::ifstream input{ inputFile };
+    if ( !input.is_open() )
+    {
+        std::cerr << "Failed to open shader file: " << inputFile << '\n';
         return nullptr;
     }
 
-    Microsoft::WRL::ComPtr< IDxcCompiler3 > pCompiler;
-    if ( FAILED( DxcCreateInstance( CLSID_DxcCompiler, IID_PPV_ARGS( &pCompiler ) ) ) )
+    std::string source{ ( std::istreambuf_iterator< char >{ input } ), std::istreambuf_iterator< char >{} };
+
+    Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob;
+    Microsoft::WRL::ComPtr< ID3DBlob > pErrorBlob;
+
+    HRESULT hr = D3DCompile( source.c_str(),
+        source.size(),
+        inputFile.filename().string().c_str(),
+        nullptr,
+        D3D_COMPILE_STANDARD_FILE_INCLUDE,
+        entryPoint.c_str(),
+        targetProfile.c_str(),
+        D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_DEBUG,
+        0,
+        &pCompiledBlob,
+        &pErrorBlob );
+
+    if ( FAILED( hr ) )
     {
-        std::cerr << "Failed to create DxcCompiler instance\n";
+        if ( pErrorBlob )
+        {
+            std::cerr << "Shader compile error: " << reinterpret_cast< char * >( pErrorBlob->GetBufferPointer() )
+                      << '\n';
+        }
+        else
+        {
+            std::cerr << "Unknown shader compile error.\n";
+        }
+
         return nullptr;
-    }
-
-    Microsoft::WRL::ComPtr< IDxcIncludeHandler > pIncludeHandler;
-    pUtils->CreateDefaultIncludeHandler( &pIncludeHandler );
-
-    Microsoft::WRL::ComPtr< IDxcBlobEncoding > sourceBlob;
-    if ( FAILED( pUtils->LoadFile( inputFile.c_str(), nullptr, &sourceBlob ) ) )
-    {
-        std::cerr << "Failed to load shader file: " << inputFile << '\n';
-        return nullptr;
-    }
-
-    DxcBuffer sourceBuffer{ sourceBlob->GetBufferPointer(), sourceBlob->GetBufferSize(), DXC_CP_UTF8 };
-
-    // Compile with debug info for full reflection
-    std::vector< LPCWSTR > compileArgs{
-        inputFile.c_str(), L"-E", entryPoint.c_str(), L"-T", targetProfile.c_str(), L"-Zi", L"-Qembed_debug" };
-
-    Microsoft::WRL::ComPtr< IDxcResult > pResult;
-    if ( FAILED( pCompiler->Compile( &sourceBuffer,
-             compileArgs.data(),
-             static_cast< UINT >( compileArgs.size() ),
-             pIncludeHandler.Get(),
-             IID_PPV_ARGS( &pResult ) ) ) )
-    {
-        std::cerr << "Failed to compile shader\n";
-        return nullptr;
-    }
-
-    Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob;
-    pResult->GetOutput( DXC_OUT_OBJECT, IID_PPV_ARGS( &pCompiledBlob ), nullptr );
-
-    Microsoft::WRL::ComPtr< IDxcBlobUtf8 > pErrors;
-    pResult->GetOutput( DXC_OUT_ERRORS, IID_PPV_ARGS( &pErrors ), nullptr );
-    if ( pErrors && pErrors->GetStringLength() > 0 )
-    {
-        std::cerr << "Shader compile errors:\n" << pErrors->GetStringPointer() << '\n';
     }
 
     return pCompiledBlob;
 }
 
-YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob,
-    const std::wstring &entryPoint,
-    const std::wstring &targetProfile )
+YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
+    const std::string &entryPoint,
+    const std::string &targetProfile )
 {
     YAML::Node yaml;
 
@@ -91,36 +209,76 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob,
     D3D11_SHADER_DESC shaderDesc;
     pReflector->GetDesc( &shaderDesc );
 
-    yaml["EntryPoint"] = std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > >().to_bytes( entryPoint );
-    yaml["TargetProfile"] = std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > >().to_bytes( targetProfile );
-    yaml["BlobFormat"] = "dxil";
+    yaml["EntryPoint"] = entryPoint;
+    yaml["TargetProfile"] = targetProfile;
+    yaml["BlobFormat"] = "dxbc";
+
+    YAML::Node inputs;
+    for ( UINT i = 0; i < shaderDesc.InputParameters; ++i )
+    {
+        D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+        if ( SUCCEEDED( pReflector->GetInputParameterDesc( i, &paramDesc ) ) )
+        {
+            YAML::Node node;
+            node["SemanticName"] = paramDesc.SemanticName;
+            node["SemanticIndex"] = paramDesc.SemanticIndex;
+            node["Type"] = GetD3D11ParamType( paramDesc );
+            node["Register"] = paramDesc.Register;
+            inputs.push_back( node );
+        }
+    }
+    yaml["InputSignature"] = inputs;
+
+    YAML::Node outputs;
+    for ( UINT i = 0; i < shaderDesc.OutputParameters; ++i )
+    {
+        D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+        if ( SUCCEEDED( pReflector->GetOutputParameterDesc( i, &paramDesc ) ) )
+        {
+            YAML::Node node;
+            node["SemanticName"] = paramDesc.SemanticName;
+            node["SemanticIndex"] = paramDesc.SemanticIndex;
+            node["Type"] = GetD3D11ParamType( paramDesc );
+            node["Register"] = paramDesc.Register;
+            outputs.push_back( node );
+        }
+    }
+    yaml["OutputSignature"] = outputs;
 
     YAML::Node cbuffers;
     for ( UINT i = 0; i < shaderDesc.ConstantBuffers; ++i )
     {
         auto cb = pReflector->GetConstantBufferByIndex( i );
         D3D11_SHADER_BUFFER_DESC cbDesc;
-        cb->GetDesc( &cbDesc );
-
-        YAML::Node cbNode;
-        cbNode["Name"] = cbDesc.Name;
-        cbNode["Size"] = cbDesc.Size;
-        cbNode["Variables"] = YAML::Node( YAML::NodeType::Sequence );
-
-        for ( UINT j = 0; j < cbDesc.Variables; ++j )
+        if ( SUCCEEDED( cb->GetDesc( &cbDesc ) ) )
         {
-            auto var = cb->GetVariableByIndex( j );
-            D3D11_SHADER_VARIABLE_DESC varDesc;
-            var->GetDesc( &varDesc );
+            YAML::Node cbNode;
+            cbNode["Name"] = cbDesc.Name;
+            cbNode["Size"] = cbDesc.Size;
+            cbNode["Variables"] = YAML::Node{ YAML::NodeType::Sequence };
 
-            YAML::Node varNode;
-            varNode["Name"] = varDesc.Name;
-            varNode["Size"] = varDesc.Size;
-            varNode["Offset"] = varDesc.StartOffset;
-            cbNode["Variables"].push_back( varNode );
+            for ( UINT j = 0; j < cbDesc.Variables; ++j )
+            {
+                auto pVar = cb->GetVariableByIndex( j );
+
+                D3D11_SHADER_VARIABLE_DESC varDesc;
+                if ( SUCCEEDED( pVar->GetDesc( &varDesc ) ) )
+                {
+                    ID3D11ShaderReflectionType *pType = pVar->GetType();
+                    D3D11_SHADER_TYPE_DESC typeDesc;
+                    pType->GetDesc( &typeDesc );
+
+                    YAML::Node varNode;
+                    varNode["Name"] = varDesc.Name;
+                    varNode["Type"] = GetD3D11ShaderVariableType( typeDesc );
+                    varNode["Size"] = varDesc.Size;
+                    varNode["Offset"] = varDesc.StartOffset;
+                    cbNode["Variables"].push_back( varNode );
+                }
+            }
+
+            cbuffers.push_back( cbNode );
         }
-
-        cbuffers.push_back( cbNode );
     }
     yaml["ConstantBuffers"] = cbuffers;
 
@@ -132,12 +290,12 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob,
 
         YAML::Node resNode;
         resNode["Name"] = resDesc.Name;
-        resNode["Type"] = static_cast< uint32_t >( resDesc.Type ); // TODO: convert type
+        resNode["Type"] = GetD3D11ShaderInputType( resDesc.Type );
         resNode["BindPoint"] = resDesc.BindPoint;
         resNode["BindCount"] = resDesc.BindCount;
         resources.push_back( resNode );
     }
-    yaml["resources"] = resources;
+    yaml["Resources"] = resources;
 
     return yaml;
 
@@ -169,14 +327,16 @@ int main( int argc, char *argv[] )
 {
     std::filesystem::path inputFile{ "pbr.hlsl" };
     std::filesystem::path outputFile{ "pbr.shader" };
-    std::wstring entryPoint{ L"PSMain" };
-    std::wstring targetProfile{ L"ps_6_6" };
+    std::string entryPoint{ "PSMain" };
+    std::string targetProfile{ "ps_5_0" };
 
-    Microsoft::WRL::ComPtr< IDxcBlob > pCompiledBlob = CompileShader( inputFile, entryPoint, targetProfile );
+    Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob = CompileShader( inputFile, entryPoint, targetProfile );
     if ( !pCompiledBlob )
         return 2;
 
     YAML::Node data = ReflectBlob( pCompiledBlob, entryPoint, targetProfile );
+    std::ofstream outputStream{ outputFile };
+    outputStream << data;
 
     return 0;
 }

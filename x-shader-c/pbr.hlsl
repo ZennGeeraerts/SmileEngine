@@ -8,26 +8,26 @@ cbuffer Material : register(b1)
 {
     bool UseAlbedoMap = false;
     float3 AlbedoValue = float3(0.0f, 0.0f, 0.0f);
-    Texture2D AlbedoMap;
 
     bool UseNormalMap;
-    Texture2D NormalMap;
 
     bool UseMetalnessMap = false;
     float MetalnessValue = 0.0f;
-    Texture2D MetalnessMap;
 
     bool UseRoughnessMap = false;
     float RoughnessValue = 0.5f;
-    Texture2D RoughnessMap;
 
     bool UseAOMap = false;
-    Texture2D AOMap;
 
     float3 AmbientColor = 1.f;
-
-    TextureCube gEnvironmentMap : ENVIRONMENTMAP;
 }
+
+Texture2D AlbedoMap : register(t0);
+Texture2D NormalMap : register(t1);
+Texture2D MetalnessMap : register(t2);
+Texture2D RoughnessMap : register(t3);
+Texture2D AOMap : register(t4);
+TextureCube EnvironmentMap : register(t5);
 
 static const float3 gLightDirection = float3(-0.577f, -0.577f, 0.577f);
 static const float3 gLightColor = float3(1.0f, 1.0f, 1.0f);
@@ -134,7 +134,7 @@ PS_OUTPUT PSMain(PS_INPUT input) : SV_TARGET
     // Cube environment
     float3 reflected = reflect(-viewDirection, bumpNormal);
     float3 refracted = refract(-viewDirection, bumpNormal, gRefractionIndex);
-    float3 environment = gEnvironmentMap.Sample(SamLinear, reflected) * gReflectionStrength + gEnvironmentMap.Sample(SamLinear, refracted) * gRefractionStrength;
+    float3 environment = EnvironmentMap.Sample(SamLinear, reflected) * gReflectionStrength + EnvironmentMap.Sample(SamLinear, refracted) * gRefractionStrength;
     environment = saturate(environment);
     environment = environment * (1 - roughness);
     
