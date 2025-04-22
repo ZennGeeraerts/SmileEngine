@@ -17,6 +17,7 @@ set(LIB_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dxc/lib/x64/dxcompiler.lib
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dxc/lib/x64/dxil.lib
     yaml-cpp
+    d3dcompiler
 )
 
 target_include_directories(x-shader-c PRIVATE ${INCLUDE_DIRS})
