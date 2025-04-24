@@ -8,8 +8,8 @@
 #include <filesystem>
 #include <string>
 
-constexpr uint32_t SHADER_FILE_MAGIC = 0x53484452; // 'SHDR'
-constexpr uint32_t SHADER_FILE_VERSION = 1;
+constexpr uint32_t g_ShaderFileMagic = 0x53484452; // 'SHDR'
+constexpr uint32_t g_ShaderFileVersion = 1;
 
 std::string GetD3D11ShaderVariableType( D3D11_SHADER_TYPE_DESC typeDesc )
 {
@@ -217,32 +217,40 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
     for ( UINT i = 0; i < shaderDesc.InputParameters; ++i )
     {
         D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
-        if ( SUCCEEDED( pReflector->GetInputParameterDesc( i, &paramDesc ) ) )
+        if ( FAILED( pReflector->GetInputParameterDesc( i, &paramDesc ) ) )
         {
-            YAML::Node node;
-            node["SemanticName"] = paramDesc.SemanticName;
-            node["SemanticIndex"] = paramDesc.SemanticIndex;
-            node["Type"] = GetD3D11ParamType( paramDesc );
-            node["Register"] = paramDesc.Register;
-            inputs.push_back( node );
+            std::cerr << "Failed to reflect input parameters\n";
+            return yaml;
         }
+
+        YAML::Node node;
+        node["SemanticName"] = paramDesc.SemanticName;
+        node["SemanticIndex"] = paramDesc.SemanticIndex;
+        node["Type"] = GetD3D11ParamType( paramDesc );
+        node["Register"] = paramDesc.Register;
+        inputs.push_back( node );
     }
+
     yaml["InputSignature"] = inputs;
 
     YAML::Node outputs;
     for ( UINT i = 0; i < shaderDesc.OutputParameters; ++i )
     {
         D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
-        if ( SUCCEEDED( pReflector->GetOutputParameterDesc( i, &paramDesc ) ) )
+        if ( FAILED( pReflector->GetOutputParameterDesc( i, &paramDesc ) ) )
         {
-            YAML::Node node;
-            node["SemanticName"] = paramDesc.SemanticName;
-            node["SemanticIndex"] = paramDesc.SemanticIndex;
-            node["Type"] = GetD3D11ParamType( paramDesc );
-            node["Register"] = paramDesc.Register;
-            outputs.push_back( node );
+            std::cerr << "Failed to reflect output parameters\n";
+            return yaml;
         }
+
+        YAML::Node node;
+        node["SemanticName"] = paramDesc.SemanticName;
+        node["SemanticIndex"] = paramDesc.SemanticIndex;
+        node["Type"] = GetD3D11ParamType( paramDesc );
+        node["Register"] = paramDesc.Register;
+        outputs.push_back( node );
     }
+
     yaml["OutputSignature"] = outputs;
 
     YAML::Node cbuffers;
@@ -280,6 +288,7 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
             cbuffers.push_back( cbNode );
         }
     }
+
     yaml["ConstantBuffers"] = cbuffers;
 
     YAML::Node resources;
@@ -295,38 +304,52 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
         resNode["BindCount"] = resDesc.BindCount;
         resources.push_back( resNode );
     }
+
     yaml["Resources"] = resources;
 
     return yaml;
+}
 
-    /*std::stringstream yamlStream;
-    yamlStream << yaml;
-    std::string yamlSerialized = yamlStream.str();
+bool WriteFile( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
+    const YAML::Node &yaml,
+    const std::filesystem::path &outputFile )
+{
+    YAML::Emitter yamlOutput{};
+    yamlOutput << yaml;
 
-    std::ofstream outFile( outputShaderFile, std::ios::binary );
-    if ( !outFile )
+    std::ofstream outStream( outputFile, std::ios::binary );
+    if ( !outStream )
     {
-        std::cerr << "Failed to open output file: " << outputShaderFile << std::endl;
-        return;
+        std::cerr << "Failed to open output file: " << outputFile << std::endl;
+        return false;
     }
 
-    uint32_t blobSize = static_cast< uint32_t >( compiledBlob->GetBufferSize() );
-    uint32_t yamlSize = static_cast< uint32_t >( yamlSerialized.size() );
+    uint32_t blobOffset = sizeof( uint32_t ) * 6;
+    uint32_t blobSize = static_cast< uint32_t >( pCompiledBlob->GetBufferSize() );
+    uint32_t yamlOffset = blobOffset + blobSize;
+    uint32_t yamlSize = static_cast< uint32_t >( yamlOutput.size() );
 
-    outFile.write( reinterpret_cast< const char * >( &SHADER_FILE_MAGIC ), sizeof( uint32_t ) );
-    outFile.write( reinterpret_cast< const char * >( &SHADER_FILE_VERSION ), sizeof( uint32_t ) );
-    outFile.write( reinterpret_cast< const char * >( &blobSize ), sizeof( uint32_t ) );
-    outFile.write( reinterpret_cast< const char * >( &yamlSize ), sizeof( uint32_t ) );
-    outFile.write( reinterpret_cast< const char * >( compiledBlob->GetBufferPointer() ), blobSize );
-    outFile.write( yamlSerialized.data(), yamlSize );
+    // Header
+    outStream.write( reinterpret_cast< const char * >( &g_ShaderFileMagic ), sizeof( uint32_t ) );
+    outStream.write( reinterpret_cast< const char * >( &g_ShaderFileVersion ), sizeof( uint32_t ) );
+    outStream.write( reinterpret_cast< const char * >( &blobOffset ), sizeof( uint32_t ) );
+    outStream.write( reinterpret_cast< const char * >( &blobSize ), sizeof( uint32_t ) );
+    outStream.write( reinterpret_cast< const char * >( &yamlOffset ), sizeof( uint32_t ) );
+    outStream.write( reinterpret_cast< const char * >( &yamlSize ), sizeof( uint32_t ) );
 
-    std::cout << "Shader compiled and saved to compound .shader format: " << outputShaderFile << std::endl;*/
+    // Blob
+    outStream.write( reinterpret_cast< const char * >( pCompiledBlob->GetBufferPointer() ), blobSize );
+
+    // YAML
+    outStream.write( yamlOutput.c_str(), yamlSize );
+
+    std::cout << "Shader compiled and saved to compound .shader format: " << outputFile << std::endl;
 }
 
 int main( int argc, char *argv[] )
 {
     std::filesystem::path inputFile{ "pbr.hlsl" };
-    std::filesystem::path outputFile{ "pbr.shader" };
+    std::filesystem::path outputFile{ "pbr.smshader" };
     std::string entryPoint{ "PSMain" };
     std::string targetProfile{ "ps_5_0" };
 
@@ -335,8 +358,9 @@ int main( int argc, char *argv[] )
         return 2;
 
     YAML::Node data = ReflectBlob( pCompiledBlob, entryPoint, targetProfile );
-    std::ofstream outputStream{ outputFile };
-    outputStream << data;
+
+    if ( !WriteFile( pCompiledBlob, data, outputFile ) )
+        return 3;
 
     return 0;
 }
