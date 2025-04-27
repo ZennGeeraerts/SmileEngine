@@ -12,7 +12,7 @@ namespace smile::physics::ecs
     {
         SphereColliderComponent()
         {
-            graphic::VertexLayout vertexLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
+            graphic::BufferLayout vertexLayout{ { graphic::ShaderDataType::Float3, "POSITION" } };
             // TODO: Update wireframe mesh when Radius gets updated
             pWireframeMesh = graphic::MeshFactory::CreateSphere( vertexLayout, 0.5f, 10 );
         }

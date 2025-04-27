@@ -130,7 +130,7 @@ namespace smile::graphic
 
         static void BuildInputLayout( ID3D11Device *pDevice,
             const memory::Ref< DirectX11Shader > &pShader,
-            const VertexLayout &layout )
+            const BufferLayout &layout )
         {
             std::vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
             for ( const auto &element : layout )
@@ -226,7 +226,7 @@ namespace smile::graphic
 
                 inputDescs.push_back( inputLayout );
 
-                VertexParameter element{ DirectXBaseTypeToShaderDataType( type ), signatureParameterDesc.SemanticName };
+                BufferElement element{ DirectXBaseTypeToShaderDataType( type ), signatureParameterDesc.SemanticName };
                 pShader->BufferLayout.AddElement( element );
 
                 stride += offset;
@@ -324,7 +324,7 @@ namespace smile::graphic
     }
 
     memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
-        const VertexLayout &layout,
+        const BufferLayout &layout,
         const std::string &techniqueName )
     {
         memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >( this );

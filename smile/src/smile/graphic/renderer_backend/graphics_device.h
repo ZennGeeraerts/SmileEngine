@@ -49,7 +49,7 @@ namespace smile::graphic
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const VertexLayout &layout,
+            const BufferLayout &layout,
             const std::string &techniqueName = "" ) = 0;
         virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
             const std::string &techniqueName = "" ) = 0;

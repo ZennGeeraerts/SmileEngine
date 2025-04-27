@@ -21,7 +21,7 @@ namespace smile::graphic
 
         void SetShader( const memory::Ref< Shader > &pShader );
 
-        const VertexLayout &GetBufferLayout() const
+        const BufferLayout &GetBufferLayout() const
         {
             return m_pShader->BufferLayout;
         }

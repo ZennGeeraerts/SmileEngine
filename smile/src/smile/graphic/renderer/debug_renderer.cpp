@@ -15,7 +15,7 @@ namespace smile::graphic
     void DebugRenderer::Initialize()
     {
         auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-        VertexLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
+        BufferLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float4, "COLOR" } };
         m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
 
         m_State.Topology = PrimitiveTopology::LineList;

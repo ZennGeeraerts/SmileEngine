@@ -33,7 +33,7 @@ namespace smile::graphic
     }
 
     memory::Ref< VertexBuffer >
-    ResourceManager::CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const VertexLayout &layout )
+    ResourceManager::CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
         bufferDesc.pData = pVertices;
@@ -51,7 +51,7 @@ namespace smile::graphic
     }
 
     memory::Ref< VertexBuffer > ResourceManager::CreateDynamicVertexBuffer( Uint32 vertexCount,
-        const VertexLayout &layout )
+        const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
         bufferDesc.pData = nullptr;
@@ -104,7 +104,7 @@ namespace smile::graphic
     }
 
     memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
-        const VertexLayout &layout,
+        const BufferLayout &layout,
         const std::string &techniqueName )
     {
         auto pShader = m_pDevice->CreateShader( assetFile, layout, techniqueName );

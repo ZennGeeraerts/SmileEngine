@@ -12,12 +12,12 @@ namespace smile::graphic
 {
     struct VertexBuffer final : public memory::Counted
     {
-        VertexBuffer( GPUBufferHandle handle, const VertexLayout &layout ) : Handle{ handle }, Layout{ layout }
+        VertexBuffer( GPUBufferHandle handle, const BufferLayout &layout ) : Handle{ handle }, Layout{ layout }
         {
         }
         ~VertexBuffer() = default;
 
         GPUBufferHandle Handle;
-        VertexLayout Layout;
+        BufferLayout Layout;
     };
 }
