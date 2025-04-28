@@ -16,12 +16,12 @@ namespace smile::graphic
 {
     struct ShaderReflectionData final
     {
-        std::string m_EntryPoint;
-        std::string m_TargetProfile;
-        ShaderBlobFormat m_BlobFormat;
-        ShaderIOSignature m_InputSignature;
-        ShaderIOSignature m_OutputSignature;
-        std::vector< ConstantBufferDescriptor > m_ConstantBufferDescs;
-        std::vector< ShaderResourceDescriptor > m_ShaderResourceDescs;
+        std::string EntryPoint;
+        std::string TargetProfile;
+        ShaderBlobFormat BlobFormat;
+        ShaderIOSignature InputSignature;
+        ShaderIOSignature OutputSignature;
+        std::vector< ConstantBufferDescriptor > ConstantBufferDescs;
+        std::vector< ShaderResourceDescriptor > ShaderResourceDescs;
     };
 }

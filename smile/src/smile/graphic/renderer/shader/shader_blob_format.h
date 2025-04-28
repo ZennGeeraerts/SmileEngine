@@ -20,11 +20,11 @@ namespace smile::graphic
 
     static ShaderBlobFormat ShaderBlobFormatFromString( const std::string &blobFormat )
     {
-        if ( blobFormat == "DXBC" )
+        if ( blobFormat == "dxbc" )
             return ShaderBlobFormat::DXBC;
-        else if ( blobFormat == "DXIL" )
+        else if ( blobFormat == "dxil" )
             return ShaderBlobFormat::DXIL;
-        else if ( blobFormat == "SPIRV" )
+        else if ( blobFormat == "spirv" )
             return ShaderBlobFormat::SPIRV;
 
         return ShaderBlobFormat::Unknown;

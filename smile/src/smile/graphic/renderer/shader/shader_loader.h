@@ -9,6 +9,7 @@
 namespace smile::graphic
 {
     class ShaderAsset;
+    class ShaderReflectionData;
 
     class ShaderLoader final : public asset::AssetLoader
     {
@@ -29,6 +30,9 @@ namespace smile::graphic
             const asset::AssetMetadata &metadata ) const override;
 
         memory::Ref< ShaderAsset > LoadShader( const std::filesystem::path &path ) const;
+
+      private:
+        bool DeserializeReflectionData( const std::string &yamlContent, ShaderReflectionData &reflectionData ) const;
 
       private:
         const std::vector< std::filesystem::path > m_Extensions{ ".smshader" };
