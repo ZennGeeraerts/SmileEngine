@@ -8,7 +8,7 @@
 
 namespace smile::graphic
 {
-    struct ShaderResourceDescriptor final
+    struct ShaderResourceBinding final
     {
         std::string Name;
         ShaderDataType Type;

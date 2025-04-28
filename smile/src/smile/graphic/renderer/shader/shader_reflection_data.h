@@ -7,7 +7,7 @@
 #include "shader_blob_format.h"
 #include "shader_io_signature.h"
 #include "constant_buffer_descriptor.h"
-#include "shader_resource_descriptor.h"
+#include "shader_resource_binding.h"
 
 #include <string>
 #include <vector>
@@ -22,6 +22,6 @@ namespace smile::graphic
         ShaderIOSignature InputSignature;
         ShaderIOSignature OutputSignature;
         std::vector< ConstantBufferDescriptor > ConstantBufferDescs;
-        std::vector< ShaderResourceDescriptor > ShaderResourceDescs;
+        std::vector< ShaderResourceBinding > ShaderResourceBindings;
     };
 }
