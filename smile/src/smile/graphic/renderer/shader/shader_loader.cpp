@@ -14,6 +14,16 @@
 
 namespace smile::graphic
 {
+    struct ShaderHeader final
+    {
+        Uint32 Magic;
+        Uint32 Version;
+        Uint32 BlobOffset;
+        Uint32 BlobSize;
+        Uint32 YamlOffset;
+        Uint32 YamlSize;
+    };
+
     ShaderLoader::ShaderLoader()
     {
         asset::AssetImporter::GetInstance().RegisterLoader( this );
@@ -49,31 +59,30 @@ namespace smile::graphic
             return nullptr;
         }
 
-        Uint32 magic = 0;
-        Uint32 version = 0;
-        Uint32 blobSize = 0;
-        Uint32 yamlSize = 0;
+        std::vector< Byte > fileData{ ( std::istreambuf_iterator< char >{ file } ), {} };
+        ShaderHeader header{};
+        // TODO: Use binary stream class when we have it
+        std::memcpy( &header, fileData.data(), sizeof( ShaderHeader ) );
 
-        file.read( reinterpret_cast< char * >( &magic ), sizeof( Uint32 ) );
-        file.read( reinterpret_cast< char * >( &version ), sizeof( Uint32 ) );
-        file.read( reinterpret_cast< char * >( &blobSize ), sizeof( Uint32 ) );
-        file.read( reinterpret_cast< char * >( &yamlSize ), sizeof( Uint32 ) );
-
-        if ( magic != expectedMagic )
+        if ( header.Magic != expectedMagic )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: invalid shader file magic" );
             return nullptr;
         }
 
-        std::vector< Byte > byteCode{};
-        byteCode.resize( blobSize );
+        if ( header.BlobOffset + header.BlobSize > fileData.size() ||
+             header.YamlOffset + header.YamlSize > fileData.size() )
+        {
+            SM_LOG_WARNING(
+                "ShaderLoader::LoadShader > Failed to load shader: shader file blob or YAML section out of bounds" );
+            return nullptr;
+        }
 
-        file.read( reinterpret_cast< char * >( byteCode.data() ), blobSize );
+        const Byte *pBlobStart = fileData.data() + header.BlobOffset;
+        std::vector< Byte > byteCode{ pBlobStart, pBlobStart + header.BlobSize };
 
-        //std::string yamlText{ yamlSize, '\0' };
-        //file.read( &yamlText[0], yamlSize );
-
-        //shaderFile.metadata = YAML::Load( yamlText );
+        std::string yamlContent{
+            reinterpret_cast< const char * >( fileData.data() + header.YamlOffset ), header.YamlSize };
 
         return nullptr;
     }
