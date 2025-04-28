@@ -18,7 +18,7 @@ namespace smile::graphic
         SPIRV
     };
 
-    ShaderBlobFormat ShaderBlobFormatFromString( const std::string &blobFormat )
+    static ShaderBlobFormat ShaderBlobFormatFromString( const std::string &blobFormat )
     {
         if ( blobFormat == "DXBC" )
             return ShaderBlobFormat::DXBC;

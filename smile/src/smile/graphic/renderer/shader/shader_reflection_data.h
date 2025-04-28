@@ -6,17 +6,22 @@
 
 #include "shader_blob_format.h"
 #include "shader_io_signature.h"
+#include "constant_buffer_descriptor.h"
+#include "shader_resource_descriptor.h"
+
+#include <string>
+#include <vector>
 
 namespace smile::graphic
 {
-    class ShaderReflectionData final
+    struct ShaderReflectionData final
     {
-      public:
-      private:
         std::string m_EntryPoint;
         std::string m_TargetProfile;
         ShaderBlobFormat m_BlobFormat;
         ShaderIOSignature m_InputSignature;
         ShaderIOSignature m_OutputSignature;
+        std::vector< ConstantBufferDescriptor > m_ConstantBufferDescs;
+        std::vector< ShaderResourceDescriptor > m_ShaderResourceDescs;
     };
 }

@@ -14,6 +14,9 @@
 #include "smile/graphic/ecs/graphic_system.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
 
+#include "smile/graphic/renderer/shader/shader_loader.h"
+#include "smile/graphic/renderer/shader/shader_asset.h"
+
 #include <imgui/imgui.h>
 #include <DirectXColors.h>
 
@@ -214,6 +217,9 @@ void ExampleLayer::OnAttach()
     auto pScene = smile::graphic::RenderEngine::GetSceneManager().GetActive();
     pScene->OnViewportResize( 1280, 720 );
     pScene->SetRenderToSwapChain( true );
+
+    smile::graphic::ShaderLoader shaderLoader{};
+    shaderLoader.LoadShader( "resources/shaders/pbr.smshader" );
 }
 
 void ExampleLayer::OnDetach()

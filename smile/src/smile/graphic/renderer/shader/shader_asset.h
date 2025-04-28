@@ -12,12 +12,18 @@ namespace smile::graphic
     class ShaderAsset final : public asset::Asset
     {
       public:
+        ShaderAsset( const std::vector< Byte > &byteCode, const ShaderReflectionData &reflectionData )
+            : m_ByteCode{ byteCode }, m_ReflectionData{ reflectionData }
+        {
+        }
+
         asset::AssetType GetType() const override
         {
             return asset::AssetType{ foundation::TypeNameOf< ShaderAsset >() };
         }
 
       private:
+        std::vector< Byte > m_ByteCode;
         ShaderReflectionData m_ReflectionData;
     };
 }

@@ -4,17 +4,15 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/resource/buffer.h"
-
-#include <string>
-#include <vector>
+#include "shader_data_type.h"
 
 namespace smile::graphic
 {
-    struct ConstantBufferDescriptor final
+    struct ShaderResourceDescriptor final
     {
         std::string Name;
-        Uint32 Size;
-        BufferLayout Layout;
+        ShaderDataType Type;
+        Uint32 BindPoint;
+        Uint32 BindCount;
     };
 }

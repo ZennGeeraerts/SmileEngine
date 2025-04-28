@@ -25,7 +25,8 @@ namespace smile::graphic
         Texture2D,
         Texture3D,
         TextureCube,
-        String
+        String,
+        Sampler
     };
 
     static Uint32 ShaderDataTypeSize( ShaderDataType type )
