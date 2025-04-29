@@ -19,7 +19,7 @@ foreach(SHADER ${SHADER_FILES})
         OUTPUT ${SHADER_OUTPUT}
         COMMAND $<TARGET_FILE:x-shader-c> ${SHADER} -o ${SHADER_OUTPUT}
         DEPENDS ${SHADER} x-shader-c
-        COMMENT "Compiling shader ${SHADER_NAME_WE}.hlsl"
+        COMMENT "Compiling shader ${SHADER_FILENAME}"
         VERBATIM
     )
 

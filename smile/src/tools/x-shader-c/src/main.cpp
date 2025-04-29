@@ -343,7 +343,7 @@ bool WriteFile( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
     // YAML
     outStream.write( yamlOutput.c_str(), yamlSize );
 
-    std::cout << "Shader compiled and saved to compound .shader format: " << outputFile << std::endl;
+    std::cout << "Shader compiled and saved to compound .smshader format: " << outputFile << std::endl;
 }
 
 int main( int argc, char *argv[] )
