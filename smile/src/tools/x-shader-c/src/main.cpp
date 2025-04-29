@@ -348,12 +348,46 @@ bool WriteFile( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
 
 int main( int argc, char *argv[] )
 {
-    std::filesystem::path inputFile{ "pbr.hlsl" };
-    std::filesystem::path outputFile{ "pbr.smshader" };
-    std::string entryPoint{ "PSMain" };
-    std::string targetProfile{ "ps_5_0" };
+    if ( argc < 4 )
+    {
+        std::cerr << "Usage: x-shader-c <input_file> -o <output_file>\n";
+        return 1;
+    }
+
+    std::filesystem::path inputFile;
+    std::filesystem::path outputFile;
+
+    inputFile = argv[1];
+    if ( std::string( argv[2] ) != "-o" )
+    {
+        std::cerr << "Expected '-o' after input file" << std::endl;
+        return 1;
+    }
+    outputFile = argv[3];
+
+    std::string entryPoint;
+    std::string targetProfile;
+
+    std::string fileName = inputFile.filename().string();
+
+    if ( fileName.find( ".vs." ) != std::string::npos )
+    {
+        entryPoint = "VSMain";
+        targetProfile = "vs_5_0";
+    }
+    else if ( fileName.find( ".ps." ) != std::string::npos )
+    {
+        entryPoint = "PSMain";
+        targetProfile = "ps_5_0";
+    }
+    else
+    {
+        std::cerr << "Could not detect whether a vertex shader or pixel shader was used\n";
+        return 1;
+    }
 
     Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob = CompileShader( inputFile, entryPoint, targetProfile );
+
     if ( !pCompiledBlob )
         return 2;
 
