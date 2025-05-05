@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "render_state.h"
 #include "sampler_state.h"
 #include "render_handle.h"
 #include "smile/common/memory/ref.h"
@@ -19,7 +18,6 @@ namespace smile::window
 namespace smile::graphic
 {
     class SwapChain;
-    class Shader;
 
     class CommandList
     {
@@ -32,12 +30,13 @@ namespace smile::graphic
         virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
             const DirectX::XMFLOAT4 &clearColor ) const = 0;
 
-        virtual void SetState( const RenderState &state ) const = 0;
+        virtual void SetGraphicsPipeline( GraphicsPipelineHandle handle ) const = 0;
+
         virtual void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
         virtual void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
 
-        virtual void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) = 0;
-        virtual void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) = 0;
+        virtual void Draw( Uint32 vertexCount ) = 0;
+        virtual void DrawIndexed( Uint32 indexCount ) = 0;
 
         virtual void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const = 0;
         virtual void UnbindVertexBuffer() const = 0;
@@ -49,9 +48,6 @@ namespace smile::graphic
         virtual void UnbindVertexShaderUniformBuffer( Uint16 slot ) const = 0;
         virtual void BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const = 0;
         virtual void UnbindPixelShaderUniformBuffer( Uint16 slot ) const = 0;
-
-        virtual void BindShader( const memory::Ref< Shader > &pShader ) const = 0;
-        virtual void UnbindShader() const = 0;
 
         virtual void BindFramebuffer( FramebufferHandle handle ) const = 0;
         virtual void ClearFramebuffer( FramebufferHandle handle ) = 0;

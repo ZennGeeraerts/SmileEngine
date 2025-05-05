@@ -8,10 +8,13 @@
 #include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
+#include "resource/directx11_pipeline.h"
+#include "shader/directx11_shader.h"
 #include "directx11_context.h"
 #include "directx11_rasterizer_state_cache.h"
 #include "directx11_depth_stencil_state_cache.h"
 #include "directx11_sampler_state_cache.h"
+#include "directx11_input_layout_cache.h"
 
 #include <array>
 
@@ -47,11 +50,14 @@ namespace smile::graphic
         void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;
 
-        memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const BufferLayout &layout,
-            const std::string &techniqueName = "" ) override;
-        memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const std::string &techniqueName = "" ) override;
+        void CreateShader( ShaderHandle handle,
+            const ShaderDescriptor &shaderDesc,
+            const std::vector< Byte > &byteCode ) override;
+        void DestroyShader( ShaderHandle handle ) override;
+
+        void CreateGraphicsPipeline( GraphicsPipelineHandle handle,
+            const GraphicsPipelineDescriptor &pipelineDesc ) override;
+        void DestroyGraphicsPipeline( GraphicsPipelineHandle handle ) override;
 
         void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) override;
         void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) override;
@@ -61,9 +67,11 @@ namespace smile::graphic
         void DestroyFramebuffer( FramebufferHandle handle ) override;
         void InvalidateFramebuffer( FramebufferHandle handle ) override;
 
+      private:
         const DirectX11RasterizerState *GetOrCreateRasterizerState( const RenderState &renderState );
         const DirectX11DepthStencilState *GetOrCreateDepthStencilState( const RenderState &renderState );
         const DirectX11SamplerState *GetOrCreateSamplerState( const SamplerState &samplerState );
+        const DirectX11InputLayout *GetOrCreateInputLayout( const GraphicsPipelineDescriptor &pipelineDesc );
 
       private:
         DirectX11Context m_Context{};
@@ -72,12 +80,14 @@ namespace smile::graphic
         std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
         std::array< DirectX11Texture, s_MaxTextureCount > m_Textures;
         std::array< DirectX11Framebuffer, s_MaxFramebufferCount > m_Framebuffers;
+        std::array< DirectX11Shader, s_MaxShaderCount > m_Shaders;
+        std::array< DirectX11Pipeline, s_MaxGraphicsPipelineCount > m_Pipelines;
 
         DirectX11RasterizerStateCache m_RasterizerStateCache;
         DirectX11DepthStencilStateCache m_DepthStencilStateCache;
         DirectX11SamplerStateCache m_SamplerStateCache;
+        DirectX11InputLayoutCache m_InputLayoutCache;
 
         friend class DirectX11CommandList;
-        friend class DirectX11Shader;
     };
 }

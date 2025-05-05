@@ -1,119 +1,64 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 
 #include "smpch.h"
 #include "directx11_shader.h"
 
-#include "platform/directx11/graphic/renderer_backend/directx11_device.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
 
 namespace smile::graphic
 {
-    DirectX11Shader::DirectX11Shader( DirectX11Device *pDevice ) : pDevice{ pDevice }
-    {
-    }
-
     DirectX11Shader::~DirectX11Shader()
     {
-        for ( auto &effectVar : EffectVariableMap )
-        {
-            SAFE_RELEASE( effectVar.second );
-        }
-
-        EffectVariableMap.clear();
-
-        SAFE_RELEASE( pInputLayout );
-        SAFE_RELEASE( pTechnique );
-        SAFE_RELEASE( pEffect );
+        Destroy();
     }
 
-    void DirectX11Shader::UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix )
+    void
+    DirectX11Shader::Create( ID3D11Device *pDevice, const ShaderDescriptor &desc, const std::vector< Byte > &byteCode )
     {
-        auto pMatrixVariable = GetEffectVariable( sementicName )->AsMatrix();
-        if ( pMatrixVariable->IsValid() )
-        {
-            pMatrixVariable->SetMatrix( &matrix._11 );
-        }
-    }
+        Descriptor = desc;
+        ByteCode = byteCode;
 
-    void DirectX11Shader::UploadMat4Array( const std::string &sementicName,
-        const std::vector< DirectX::XMFLOAT4X4 > &matArray )
-    {
-        auto pMatArrayVariable = GetEffectVariable( sementicName )->AsMatrix();
-        if ( pMatArrayVariable->IsValid() )
+        switch ( desc.Type )
         {
-            pMatArrayVariable->SetMatrixArray( &matArray[0]._11, 0, static_cast< Uint32 >( matArray.size() ) );
-        }
-    }
+            case ShaderType::Vertex:
+            {
+                const HRESULT result =
+                    pDevice->CreateVertexShader( byteCode.data(), byteCode.size(), nullptr, &pVertexShader );
 
-    void DirectX11Shader::UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value )
-    {
-        auto pVectorVariable = GetEffectVariable( sementicName )->AsVector();
-        if ( pVectorVariable->IsValid() )
-        {
-            pVectorVariable->SetFloatVector( &value.x );
-        }
-    }
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Shader::Create > Failed to create shader: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                }
 
-    void DirectX11Shader::UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value )
-    {
-        auto pVectorVariable = GetEffectVariable( sementicName )->AsVector();
-        if ( pVectorVariable->IsValid() )
-        {
-            pVectorVariable->SetFloatVector( &value.x );
+                break;
+            }
+            case ShaderType::Pixel:
+            {
+                const HRESULT result =
+                    pDevice->CreatePixelShader( byteCode.data(), byteCode.size(), nullptr, &pPixelShader );
+
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Shader::Create > Failed to create shader: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                }
+
+                break;
+            }
+            default:
+            {
+                SM_LOG_ERROR( "DirectX11Shader::Create > Unsupported shader type" );
+                break;
+            }
         }
     }
 
-    void DirectX11Shader::UploadInt( const std::string &sementicName, int value )
+    void DirectX11Shader::Destroy()
     {
-        auto pIntVariable = GetEffectVariable( sementicName )->AsScalar();
-        if ( pIntVariable->IsValid() )
-        {
-            pIntVariable->SetInt( value );
-        }
-    }
-
-    void DirectX11Shader::UploadTexture( const std::string &sementicName, TextureHandle texture )
-    {
-        auto pTextureVariable = GetEffectVariable( sementicName )->AsShaderResource();
-        if ( pTextureVariable->IsValid() )
-        {
-            pTextureVariable->SetResource( pDevice->m_Textures[texture.GetIndex()].pShaderResourceView );
-        }
-    }
-
-    void DirectX11Shader::UploadBool( const std::string &sementicName, bool value )
-    {
-        auto pBoolVariable = GetEffectVariable( sementicName )->AsScalar();
-        if ( pBoolVariable->IsValid() )
-        {
-            pBoolVariable->SetBool( value );
-        }
-    }
-
-    void DirectX11Shader::UploadFloat( const std::string &sementicName, float value )
-    {
-        auto pFloatVariable = GetEffectVariable( sementicName )->AsScalar();
-        if ( pFloatVariable->IsValid() )
-        {
-            pFloatVariable->SetFloat( value );
-        }
-    }
-
-    ID3DX11EffectVariable *DirectX11Shader::GetEffectVariable( const std::string &sementicName )
-    {
-        if ( EffectVariableMap.find( sementicName ) != EffectVariableMap.end() )
-            return EffectVariableMap[sementicName];
-
-        auto pEffectVariable = pEffect->GetVariableBySemantic( sementicName.c_str() );
-        if ( !pEffectVariable->IsValid() )
-        {
-            SM_LOG_WARNING( "DirectX11Shader::GetEffectVariable > Invalid effect variable: {}", sementicName );
-            return nullptr;
-        }
-
-        EffectVariableMap[sementicName] = pEffectVariable;
-        return pEffectVariable;
+        SAFE_RELEASE( pPtr );
     }
 }

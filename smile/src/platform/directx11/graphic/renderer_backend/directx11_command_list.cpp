@@ -15,7 +15,6 @@
 #include "directx11_swap_chain.h"
 
 #include "resource/directx11_frame_buffer.h"
-#include "shader/directx11_shader.h"
 
 #include "smile/core/window/window.h"
 #include "smile/common/foundation/compiled.h"
@@ -23,21 +22,6 @@
 
 namespace smile::graphic
 {
-    static D3D11_PRIMITIVE_TOPOLOGY ConvertToDirectX11PrimitiveTopology( PrimitiveTopology primitiveTopology )
-    {
-        switch ( primitiveTopology )
-        {
-            case smile::graphic::PrimitiveTopology::None:
-                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-            case smile::graphic::PrimitiveTopology::TriangleList:
-                return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-            case smile::graphic::PrimitiveTopology::LineList:
-                return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-            default:
-                return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-        }
-    }
-
     DirectX11CommandList::DirectX11CommandList( DirectX11Device *pDevice,
         std::reference_wrapper< const DirectX11Context > context )
         : m_pDevice{ pDevice }, m_Context{ context.get() }
@@ -67,16 +51,18 @@ namespace smile::graphic
             pDX11SwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11CommandList::SetState( const RenderState &state ) const
+    void DirectX11CommandList::SetGraphicsPipeline( GraphicsPipelineHandle handle ) const
     {
-        D3D11_PRIMITIVE_TOPOLOGY directX11PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( state.Topology );
-        m_Context.pImmediateContext->IASetPrimitiveTopology( directX11PrimitiveTopology );
+        const auto &pipeline = m_pDevice->m_Pipelines[handle.GetIndex()];
 
-        const auto pRasterizerState = m_pDevice->GetOrCreateRasterizerState( state );
-        m_Context.pImmediateContext->RSSetState( pRasterizerState->pInternal );
+        m_Context.pImmediateContext->IASetInputLayout( pipeline.pInputLayout );
 
-        const auto pDepthStencilState = m_pDevice->GetOrCreateDepthStencilState( state );
-        m_Context.pImmediateContext->OMSetDepthStencilState( pDepthStencilState->pInternal, 1 );
+        m_Context.pImmediateContext->IASetPrimitiveTopology( pipeline.PrimitiveTopology );
+        m_Context.pImmediateContext->RSSetState( pipeline.pRasterizerState );
+        m_Context.pImmediateContext->OMSetDepthStencilState( pipeline.pDepthStencilState, 1 );
+
+        m_Context.pImmediateContext->VSSetShader( pipeline.pVertexShader, nullptr, 0 );
+        m_Context.pImmediateContext->PSSetShader( pipeline.pPixelShader, nullptr, 0 );
     }
 
     void DirectX11CommandList::SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const
@@ -91,34 +77,14 @@ namespace smile::graphic
         m_Context.pImmediateContext->PSSetSamplers( slot, 1, &pSamplerState->pInternal );
     }
 
-    void DirectX11CommandList::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
+    void DirectX11CommandList::Draw( Uint32 vertexCount )
     {
-        auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
-        SM_ASSERT( pDirectX11Shader, "DirectX11Context::Draw > Shader is not a DirectX11Shader" );
-
-        auto pTechnique = pDirectX11Shader->pTechnique;
-        D3DX11_TECHNIQUE_DESC techDesc{};
-        pTechnique->GetDesc( &techDesc );
-        for ( UINT p{}; p < techDesc.Passes; ++p )
-        {
-            pTechnique->GetPassByIndex( p )->Apply( 0, m_Context.pImmediateContext );
-            m_Context.pImmediateContext->Draw( vertexCount, 0 );
-        }
+        m_Context.pImmediateContext->Draw( vertexCount, 0 );
     }
 
-    void DirectX11CommandList::DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader )
+    void DirectX11CommandList::DrawIndexed( Uint32 indexCount )
     {
-        auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
-        SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::DrawIndexed > Shader is not a DirectX11Shader" );
-
-        auto pTechnique = pDirectX11Shader->pTechnique;
-        D3DX11_TECHNIQUE_DESC techDesc{};
-        pTechnique->GetDesc( &techDesc );
-        for ( UINT p{}; p < techDesc.Passes; ++p )
-        {
-            pTechnique->GetPassByIndex( p )->Apply( 0, m_Context.pImmediateContext );
-            m_Context.pImmediateContext->DrawIndexed( indexCount, 0, 0 );
-        }
+        m_Context.pImmediateContext->DrawIndexed( indexCount, 0, 0 );
     }
 
     void DirectX11CommandList::ClearFramebuffer( FramebufferHandle handle )
@@ -181,17 +147,6 @@ namespace smile::graphic
     void DirectX11CommandList::UnbindPixelShaderUniformBuffer( Uint16 slot ) const
     {
         m_Context.pImmediateContext->PSGetConstantBuffers( slot, 1, nullptr );
-    }
-
-    void DirectX11CommandList::BindShader( const memory::Ref< Shader > &pShader ) const
-    {
-        ID3D11InputLayout *pInputLayout = static_cast< ID3D11InputLayout * >( pShader->GetData() );
-        m_Context.pImmediateContext->IASetInputLayout( pInputLayout );
-    }
-
-    void DirectX11CommandList::UnbindShader() const
-    {
-        m_Context.pImmediateContext->IASetInputLayout( nullptr );
     }
 
     void DirectX11CommandList::BindFramebuffer( FramebufferHandle handle ) const

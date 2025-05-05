@@ -10,187 +10,12 @@
 #include "directx11_diagnostics.h"
 #include "directx11_swap_chain.h"
 #include "dxgi_format.h"
+#include "directx11_primitive_topology.h"
 
 #include "smile/core/window/window.h"
 
-#include "resource/directx11_buffer.h"
-#include "resource/directx11_texture.h"
-#include "resource/directx11_frame_buffer.h"
-#include "resource/directx11_rasterizer_state.h"
-
-#include "shader/directx11_shader.h"
-
-#include <d3dcompiler.h>
-
 namespace smile::graphic
 {
-    namespace shaderhelpers
-    {
-        static bool
-        LoadEffect( ID3D11Device *pDevice, const memory::Ref< DirectX11Shader > &pShader, const std::string &assetFile )
-        {
-            HRESULT result{ S_OK };
-            ID3D10Blob *pErrorBlob{ nullptr };
-
-            DWORD shaderFlags{ 0 };
-#ifdef SM_C_DEBUG
-            shaderFlags |= D3DCOMPILE_DEBUG;
-            shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-            std::wstring assetFileWideStr{ assetFile.begin(), assetFile.end() };
-            result = D3DX11CompileEffectFromFile(
-                assetFileWideStr.c_str(), nullptr, nullptr, shaderFlags, 0, pDevice, &pShader->pEffect, &pErrorBlob );
-
-            if ( FAILED( result ) )
-            {
-                if ( pErrorBlob )
-                {
-                    LPVOID longPtrError = pErrorBlob->GetBufferPointer();
-                    char *errors{ ( char * )longPtrError };
-
-                    std::wstringstream ss;
-                    for ( Uint32 i{}; i < pErrorBlob->GetBufferSize(); ++i )
-                    {
-                        ss << errors[i];
-                    }
-
-                    OutputDebugString( ss.str().c_str() );
-                    pErrorBlob->Release();
-                    pErrorBlob = nullptr;
-                }
-                else
-                {
-                    SM_LOG_ERROR( "DirectX11Device::LoadEffect > Failed to CreateEffectFromFile: {0} , error: {1}",
-                        assetFile,
-                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                }
-
-                return false;
-            }
-
-            return true;
-        }
-
-        static void BuildInputLayout( ID3D11Device *pDevice,
-            const memory::Ref< DirectX11Shader > &pShader,
-            const BufferLayout &layout )
-        {
-            std::vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
-            for ( const auto &element : layout )
-            {
-                inputDescs.push_back( D3D11_INPUT_ELEMENT_DESC{ element.Name.c_str(),
-                    0,
-                    GetDXGIFormatMapping( element.FormatType ).SRVFormat,
-                    0,
-                    element.Offset,
-                    D3D11_INPUT_PER_VERTEX_DATA,
-                    0 } );
-            }
-
-            Uint32 count{ static_cast< Uint32 >( inputDescs.size() ) };
-
-            D3DX11_PASS_DESC passDesc{};
-            pShader->pTechnique->GetPassByIndex( 0 )->GetDesc( &passDesc );
-            HRESULT result = pDevice->CreateInputLayout( inputDescs.data(),
-                count,
-                passDesc.pIAInputSignature,
-                passDesc.IAInputSignatureSize,
-                &pShader->pInputLayout );
-
-            if ( FAILED( result ) )
-                SM_LOG_ERROR( "DirectX11Device::BuildInputLayout > Failed to create input layout: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-        }
-
-        static void BuildInputLayout( ID3D11Device *pDevice, const memory::Ref< DirectX11Shader > &pShader )
-        {
-            D3DX11_PASS_SHADER_DESC passShaderDesc{};
-            pShader->pTechnique->GetPassByIndex( 0 )->GetVertexShaderDesc( &passShaderDesc );
-
-            D3DX11_EFFECT_SHADER_DESC effectShaderDesc{};
-            passShaderDesc.pShaderVariable->GetShaderDesc( passShaderDesc.ShaderIndex, &effectShaderDesc );
-
-            D3D11_SIGNATURE_PARAMETER_DESC signatureParameterDesc{};
-            std::vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
-            Uint32 stride = 0;
-
-            for ( Uint32 i{}; i < effectShaderDesc.NumInputSignatureEntries; ++i )
-            {
-                passShaderDesc.pShaderVariable->GetInputSignatureElementDesc(
-                    passShaderDesc.ShaderIndex, i, &signatureParameterDesc );
-
-                Uint32 offset = static_cast< Uint32 >( floor( log( signatureParameterDesc.Mask ) / log( 2 ) ) + 1 ) * 4;
-                Format format;
-
-                switch ( signatureParameterDesc.ComponentType )
-                {
-                    case D3D10_REGISTER_COMPONENT_FLOAT32:
-                        if ( signatureParameterDesc.Mask == 1 )
-                            format = Format::R32_FLOAT;
-                        else if ( signatureParameterDesc.Mask == 3 )
-                            format = Format::RG32_FLOAT;
-                        else if ( signatureParameterDesc.Mask == 7 )
-                            format = Format::RGB32_FLOAT;
-                        else
-                            format = Format::RGBA32_FLOAT;
-                        break;
-                    case D3D10_REGISTER_COMPONENT_UINT32:
-                        if ( signatureParameterDesc.Mask == 1 )
-                            format = Format::R32_UINT;
-                        else if ( signatureParameterDesc.Mask == 3 )
-                            format = Format::RG32_UINT;
-                        else if ( signatureParameterDesc.Mask == 7 )
-                            format = Format::RGB32_UINT;
-                        else
-                            format = Format::RGBA32_UINT;
-                        break;
-                    case D3D10_REGISTER_COMPONENT_SINT32:
-                        if ( signatureParameterDesc.Mask == 1 )
-                            format = Format::R32_SINT;
-                        else if ( signatureParameterDesc.Mask == 3 )
-                            format = Format::RG32_SINT;
-                        else if ( signatureParameterDesc.Mask == 7 )
-                            format = Format::RGB32_SINT;
-                        else
-                            format = Format::RGBA32_SINT;
-                        break;
-                    default:
-                        SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout() > Unsupported Component Type" );
-                        break;
-                }
-
-                D3D11_INPUT_ELEMENT_DESC inputLayout = { signatureParameterDesc.SemanticName,
-                    signatureParameterDesc.SemanticIndex,
-                    GetDXGIFormatMapping( format ).RTVFormat,
-                    0,
-                    stride,
-                    D3D11_INPUT_PER_VERTEX_DATA,
-                    0 };
-
-                inputDescs.push_back( inputLayout );
-
-                BufferElement element{ format, signatureParameterDesc.SemanticName };
-                pShader->BufferLayout.AddElement( element );
-
-                stride += offset;
-            }
-
-            Uint32 count{ static_cast< Uint32 >( inputDescs.size() ) };
-
-            D3DX11_PASS_DESC passDesc{};
-            pShader->pTechnique->GetPassByIndex( 0 )->GetDesc( &passDesc );
-            HRESULT result = pDevice->CreateInputLayout( inputDescs.data(),
-                count,
-                passDesc.pIAInputSignature,
-                passDesc.IAInputSignatureSize,
-                &pShader->pInputLayout );
-
-            if ( FAILED( result ) )
-                SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout > Failed to create input layout: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-        }
-    }
-
     DirectX11Device::DirectX11Device()
     {
         // Create DXGI Factory to create SwapChain based on hardware
@@ -266,56 +91,35 @@ namespace smile::graphic
         m_GPUBuffers[handle.GetIndex()].Destroy();
     }
 
-    memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
-        const BufferLayout &layout,
-        const std::string &techniqueName )
+    void DirectX11Device::CreateShader( ShaderHandle handle,
+        const ShaderDescriptor &shaderDesc,
+        const std::vector< Byte > &byteCode )
     {
-        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >( this );
-        pShader->SetName( assetFile );
-        pShader->BufferLayout = layout;
-
-        if ( !shaderhelpers::LoadEffect( m_Context.pDevice, pShader, assetFile ) )
-        {
-            SAFE_RELEASE( pShader->pEffect );
-            SM_ASSERT( false, "DirectX11Device::CreateShader > Failed to load effect" );
-        }
-
-        if ( !techniqueName.empty() )
-            pShader->pTechnique = pShader->pEffect->GetTechniqueByName( techniqueName.c_str() );
-        else
-            pShader->pTechnique = pShader->pEffect->GetTechniqueByIndex( 0 );
-
-        if ( !pShader->pTechnique->IsValid() )
-            SM_LOG_WARNING( "DirectX11Device::CreateShader > Invalid technique" );
-
-        shaderhelpers::BuildInputLayout( m_Context.pDevice, pShader, layout );
-
-        return pShader;
+        m_Shaders[handle.GetIndex()].Create( m_Context.pDevice, shaderDesc, byteCode );
     }
 
-    memory::Ref< Shader > DirectX11Device::CreateShader( const std::string &assetFile,
-        const std::string &techniqueName )
+    void DirectX11Device::DestroyShader( ShaderHandle handle )
     {
-        memory::Ref< DirectX11Shader > pShader = memory::CreateRef< DirectX11Shader >( this );
-        pShader->SetName( assetFile );
+        m_Shaders[handle.GetIndex()].Destroy();
+    }
 
-        if ( !shaderhelpers::LoadEffect( m_Context.pDevice, pShader, assetFile ) )
-        {
-            SAFE_RELEASE( pShader->pEffect );
-            SM_ASSERT( false, "DirectX11Device::CreateShader > Failed to load effect" );
-        }
+    void DirectX11Device::CreateGraphicsPipeline( GraphicsPipelineHandle handle,
+        const GraphicsPipelineDescriptor &pipelineDesc )
+    {
+        auto &pipeline = m_Pipelines[handle.GetIndex()];
 
-        if ( !techniqueName.empty() )
-            pShader->pTechnique = pShader->pEffect->GetTechniqueByName( techniqueName.c_str() );
-        else
-            pShader->pTechnique = pShader->pEffect->GetTechniqueByIndex( 0 );
+        pipeline.pInputLayout = GetOrCreateInputLayout( pipelineDesc )->pInternal;
 
-        if ( !pShader->pTechnique->IsValid() )
-            SM_LOG_WARNING( "DirectX11Device::CreateShader > Invalid technique" );
+        pipeline.PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( pipelineDesc.State.Topology );
+        pipeline.pRasterizerState = GetOrCreateRasterizerState( pipelineDesc.State )->pInternal;
+        pipeline.pDepthStencilState = GetOrCreateDepthStencilState( pipelineDesc.State )->pInternal;
 
-        shaderhelpers::BuildInputLayout( m_Context.pDevice, pShader );
+        pipeline.pVertexShader = m_Shaders[pipelineDesc.VertexShaderHandle.GetIndex()].pVertexShader;
+        pipeline.pPixelShader = m_Shaders[pipelineDesc.PixelShaderHandle.GetIndex()].pPixelShader;
+    }
 
-        return pShader;
+    void DirectX11Device::DestroyGraphicsPipeline( GraphicsPipelineHandle handle )
+    {
     }
 
     void DirectX11Device::CreateTexture( TextureHandle handle, const std::filesystem::path &path )
@@ -379,5 +183,19 @@ namespace smile::graphic
         auto pNewSamplerState = CreateScope< DirectX11SamplerState >();
         pNewSamplerState->Create( m_Context.pDevice, samplerState );
         return m_SamplerStateCache.Add( samplerState, std::move( pNewSamplerState ) );
+    }
+
+    const DirectX11InputLayout *DirectX11Device::GetOrCreateInputLayout(
+        const GraphicsPipelineDescriptor &pipelineDesc )
+    {
+        const DirectX11InputLayout *pInputLayout = m_InputLayoutCache.Find( pipelineDesc );
+        if ( pInputLayout )
+            return pInputLayout;
+
+        auto pNewInputLayout = CreateScope< DirectX11InputLayout >();
+        pNewInputLayout->Create(
+            m_Context.pDevice, pipelineDesc.InputLayout, m_Shaders[pipelineDesc.VertexShaderHandle.GetIndex()] );
+
+        return m_InputLayoutCache.Add( pipelineDesc, std::move( pNewInputLayout ) );
     }
 }

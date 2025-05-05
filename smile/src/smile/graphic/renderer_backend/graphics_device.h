@@ -10,6 +10,7 @@
 
 #include "resource/buffer.h"
 #include "resource/frame_buffer.h"
+#include "resource/graphics_pipeline.h"
 #include "shader/shader.h"
 
 #include "smile/graphic/resource/image.h"
@@ -48,11 +49,14 @@ namespace smile::graphic
         virtual void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
-        virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const BufferLayout &layout,
-            const std::string &techniqueName = "" ) = 0;
-        virtual memory::Ref< Shader > CreateShader( const std::string &assetFile,
-            const std::string &techniqueName = "" ) = 0;
+        virtual void CreateShader( ShaderHandle handle,
+            const ShaderDescriptor &shaderDesc,
+            const std::vector< Byte > &byteCode ) = 0;
+        virtual void DestroyShader( ShaderHandle handle ) = 0;
+
+        virtual void CreateGraphicsPipeline( GraphicsPipelineHandle handle,
+            const GraphicsPipelineDescriptor &pipelineDesc ) = 0;
+        virtual void DestroyGraphicsPipeline( GraphicsPipelineHandle handle ) = 0;
 
         virtual void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) = 0;
         virtual void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) = 0;
@@ -68,5 +72,7 @@ namespace smile::graphic
         static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
         static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxFramebufferCount = ( 4 << 10 );
+        static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
+        static constexpr Uint16 s_MaxGraphicsPipelineCount = ( 4 << 10 );
     };
 }

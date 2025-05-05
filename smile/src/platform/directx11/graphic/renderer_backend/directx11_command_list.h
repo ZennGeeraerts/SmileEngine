@@ -30,12 +30,13 @@ namespace smile::graphic
         void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
         void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
 
-        void SetState( const RenderState &state ) const override;
+        void SetGraphicsPipeline( GraphicsPipelineHandle handle ) const override;
+
         void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
         void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
 
-        void Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader ) override;
-        void DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader ) override;
+        void Draw( Uint32 vertexCount ) override;
+        void DrawIndexed( Uint32 indexCount ) override;
 
         void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const override;
         void UnbindVertexBuffer() const override;
@@ -47,9 +48,6 @@ namespace smile::graphic
         void UnbindVertexShaderUniformBuffer( Uint16 slot ) const;
         void BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const;
         void UnbindPixelShaderUniformBuffer( Uint16 slot ) const;
-
-        void BindShader( const memory::Ref< Shader > &pShader ) const override;
-        void UnbindShader() const override;
 
         void BindFramebuffer( FramebufferHandle handle ) const override;
         void ClearFramebuffer( FramebufferHandle handle ) override;
