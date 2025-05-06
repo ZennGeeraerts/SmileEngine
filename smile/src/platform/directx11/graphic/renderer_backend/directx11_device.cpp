@@ -9,6 +9,7 @@
 
 #include "directx11_diagnostics.h"
 #include "directx11_swap_chain.h"
+#include "dxgi_format.h"
 
 #include "smile/core/window/window.h"
 
@@ -25,64 +26,6 @@ namespace smile::graphic
 {
     namespace shaderhelpers
     {
-        static DXGI_FORMAT ShaderDataTypeToDirectXBaseType( ShaderDataType type )
-        {
-            switch ( type )
-            {
-                case ShaderDataType::Float:
-                    return DXGI_FORMAT_R32_FLOAT;
-                case ShaderDataType::Float2:
-                    return DXGI_FORMAT_R32G32_FLOAT;
-                case ShaderDataType::Float3:
-                    return DXGI_FORMAT_R32G32B32_FLOAT;
-                case ShaderDataType::Float4:
-                    return DXGI_FORMAT_R32G32B32A32_FLOAT;
-                case ShaderDataType::Mat3:
-                    return DXGI_FORMAT_UNKNOWN;
-                case ShaderDataType::Mat4:
-                    return DXGI_FORMAT_UNKNOWN;
-                case ShaderDataType::Int:
-                    return DXGI_FORMAT_R32_SINT;
-                case ShaderDataType::Int2:
-                    return DXGI_FORMAT_R32G32_SINT;
-                case ShaderDataType::Int3:
-                    return DXGI_FORMAT_R32G32B32_SINT;
-                case ShaderDataType::Int4:
-                    return DXGI_FORMAT_R32G32B32A32_SINT;
-                case ShaderDataType::Bool:
-                    return DXGI_FORMAT_UNKNOWN;
-                default:
-                    SM_ASSERT( false, "DirectX11Shader::ShaderDataTypeToDirectXBaseType > Unknown ShaderDataType" );
-                    return DXGI_FORMAT_UNKNOWN;
-            }
-        }
-
-        static ShaderDataType DirectXBaseTypeToShaderDataType( DXGI_FORMAT type )
-        {
-            switch ( type )
-            {
-                case DXGI_FORMAT_R32_FLOAT:
-                    return ShaderDataType::Float;
-                case DXGI_FORMAT_R32G32_FLOAT:
-                    return ShaderDataType::Float2;
-                case DXGI_FORMAT_R32G32B32_FLOAT:
-                    return ShaderDataType::Float3;
-                case DXGI_FORMAT_R32G32B32A32_FLOAT:
-                    return ShaderDataType::Float4;
-                case DXGI_FORMAT_R32_SINT:
-                    return ShaderDataType::Int;
-                case DXGI_FORMAT_R32G32_SINT:
-                    return ShaderDataType::Int2;
-                case DXGI_FORMAT_R32G32B32_SINT:
-                    return ShaderDataType::Int3;
-                case DXGI_FORMAT_R32G32B32A32_SINT:
-                    return ShaderDataType::Int4;
-                default:
-                    SM_ASSERT( false, "DirectX11Shader::DirectXBaseTypeToShaderDataType > Unknown DXGI Type" );
-                    return ShaderDataType::None;
-            }
-        }
-
         static bool
         LoadEffect( ID3D11Device *pDevice, const memory::Ref< DirectX11Shader > &pShader, const std::string &assetFile )
         {
@@ -137,7 +80,7 @@ namespace smile::graphic
             {
                 inputDescs.push_back( D3D11_INPUT_ELEMENT_DESC{ element.Name.c_str(),
                     0,
-                    ShaderDataTypeToDirectXBaseType( element.DataType ),
+                    GetDXGIFormatMapping( element.FormatType ).SRVFormat,
                     0,
                     element.Offset,
                     D3D11_INPUT_PER_VERTEX_DATA,
@@ -177,39 +120,39 @@ namespace smile::graphic
                     passShaderDesc.ShaderIndex, i, &signatureParameterDesc );
 
                 Uint32 offset = static_cast< Uint32 >( floor( log( signatureParameterDesc.Mask ) / log( 2 ) ) + 1 ) * 4;
-                DXGI_FORMAT type{};
+                Format format;
 
                 switch ( signatureParameterDesc.ComponentType )
                 {
                     case D3D10_REGISTER_COMPONENT_FLOAT32:
                         if ( signatureParameterDesc.Mask == 1 )
-                            type = DXGI_FORMAT_R32_FLOAT;
+                            format = Format::R32_FLOAT;
                         else if ( signatureParameterDesc.Mask == 3 )
-                            type = DXGI_FORMAT_R32G32_FLOAT;
+                            format = Format::RG32_FLOAT;
                         else if ( signatureParameterDesc.Mask == 7 )
-                            type = DXGI_FORMAT_R32G32B32_FLOAT;
+                            format = Format::RGB32_FLOAT;
                         else
-                            type = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                            format = Format::RGBA32_FLOAT;
                         break;
                     case D3D10_REGISTER_COMPONENT_UINT32:
                         if ( signatureParameterDesc.Mask == 1 )
-                            type = DXGI_FORMAT_R32_UINT;
+                            format = Format::R32_UINT;
                         else if ( signatureParameterDesc.Mask == 3 )
-                            type = DXGI_FORMAT_R32G32_UINT;
+                            format = Format::RG32_UINT;
                         else if ( signatureParameterDesc.Mask == 7 )
-                            type = DXGI_FORMAT_R32G32B32_UINT;
+                            format = Format::RGB32_UINT;
                         else
-                            type = DXGI_FORMAT_R32G32B32A32_UINT;
+                            format = Format::RGBA32_UINT;
                         break;
                     case D3D10_REGISTER_COMPONENT_SINT32:
                         if ( signatureParameterDesc.Mask == 1 )
-                            type = DXGI_FORMAT_R32_SINT;
+                            format = Format::R32_SINT;
                         else if ( signatureParameterDesc.Mask == 3 )
-                            type = DXGI_FORMAT_R32G32_SINT;
+                            format = Format::RG32_SINT;
                         else if ( signatureParameterDesc.Mask == 7 )
-                            type = DXGI_FORMAT_R32G32B32_SINT;
+                            format = Format::RGB32_SINT;
                         else
-                            type = DXGI_FORMAT_R32G32B32A32_SINT;
+                            format = Format::RGBA32_SINT;
                         break;
                     default:
                         SM_LOG_ERROR( "DirectX11Shader::BuildInputLayout() > Unsupported Component Type" );
@@ -218,7 +161,7 @@ namespace smile::graphic
 
                 D3D11_INPUT_ELEMENT_DESC inputLayout = { signatureParameterDesc.SemanticName,
                     signatureParameterDesc.SemanticIndex,
-                    type,
+                    GetDXGIFormatMapping( format ).RTVFormat,
                     0,
                     stride,
                     D3D11_INPUT_PER_VERTEX_DATA,
@@ -226,7 +169,7 @@ namespace smile::graphic
 
                 inputDescs.push_back( inputLayout );
 
-                BufferElement element{ DirectXBaseTypeToShaderDataType( type ), signatureParameterDesc.SemanticName };
+                BufferElement element{ format, signatureParameterDesc.SemanticName };
                 pShader->BufferLayout.AddElement( element );
 
                 stride += offset;

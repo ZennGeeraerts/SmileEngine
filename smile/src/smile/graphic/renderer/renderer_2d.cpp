@@ -16,7 +16,7 @@ namespace smile::graphic
         memory::Ref< IndexBuffer > pQuadIndexBuffer;
         memory::Ref< Shader > pShader;
 
-        const BufferLayout Layout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } };
+        const BufferLayout Layout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RG32_FLOAT, "TEXCOORD" } };
 
         DirectX::XMFLOAT4X4 ViewProjectionMatrix;
         RenderState State{};

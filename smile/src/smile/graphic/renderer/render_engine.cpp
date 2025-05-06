@@ -24,12 +24,12 @@ namespace smile::graphic
     {
         s_RenderSystem.Initialize( pWindow );
 
-        BufferLayout vertexLayout{ { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float3, "NORMAL" } };
+        BufferLayout vertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGB32_FLOAT, "NORMAL" } };
         s_ShaderLibrary.Load( "resources/shaders/PosColNorm.fx", vertexLayout );
-        s_ShaderLibrary.Load( "resources/shaders/PosCol.fx", { { ShaderDataType::Float3, "POSITION" } } );
+        s_ShaderLibrary.Load( "resources/shaders/PosCol.fx", { { Format::RGB32_FLOAT, "POSITION" } } );
         s_ShaderLibrary.Load( "resources/shaders/PosColTex.fx",
-            { { ShaderDataType::Float3, "POSITION" }, { ShaderDataType::Float2, "TEXCOORD" } } );
-        s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { ShaderDataType::Float3, "POSITION" } } );
+            { { Format::RGB32_FLOAT, "POSITION" }, { Format::RG32_FLOAT, "TEXCOORD" } } );
+        s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { Format::RGB32_FLOAT, "POSITION" } } );
 
         s_SceneManager.Initialize( pWindow );
         world::WorldManager::AddListener( &s_SceneManager );

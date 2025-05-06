@@ -28,7 +28,7 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
         s_pSkyboxShader->UploadMat4( "World", worldMatrix );
 
-        s_pCubeMesh = MeshFactory::CreateCube( { { ShaderDataType::Float3, "POSITION" } } );
+        s_pCubeMesh = MeshFactory::CreateCube( { { Format::RGB32_FLOAT, "POSITION" } } );
 
         s_State.CullMode = CullMode::None;
         s_State.DepthComparissonFunc = DepthComparissonFunc::LessEqual;

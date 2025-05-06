@@ -133,18 +133,17 @@ namespace smile::graphic
 
         reflectionData.BlobFormat = ShaderBlobFormatFromString( data["BlobFormat"].as< std::string >() );
 
-        auto parseSignature = []( const YAML::Node &node ) -> ShaderIOSignature
+        auto parseSignature = []( const YAML::Node &node ) -> BufferLayout
         {
-            ShaderIOSignature signature{};
+            BufferLayout signature{};
             for ( const auto &entry : node )
             {
-                ShaderIOParameter param;
-                param.SemanticName = entry["SemanticName"].as< std::string >();
-                param.SemanticIndex = entry["SemanticIndex"].as< Uint32 >();
-                param.DataType = ShaderDataTypeFromString( entry["Type"].as< std::string >() );
-                param.Register = entry["Register"].as< Uint32 >();
+                BufferElement element;
+                element.Name = entry["SemanticName"].as< std::string >();
+                auto val = entry["Format"].as< std::string >();
+                element.FormatType = GetFormatInfo( entry["Format"].as< std::string >() ).Format;
 
-                signature.AddParameter( param );
+                signature.AddElement( element );
             }
             return signature;
         };
@@ -169,7 +168,7 @@ namespace smile::graphic
                     {
                         BufferElement element;
                         element.Name = varNode["Name"].as< std::string >();
-                        element.DataType = ShaderDataTypeFromString( varNode["Type"].as< std::string >() );
+                        element.FormatType = GetFormatInfo( varNode["Type"].as< std::string >() ).Format;
                         element.Size = varNode["Size"].as< Uint32 >();
                         element.Offset = varNode["Offset"].as< Uint32 >();
 

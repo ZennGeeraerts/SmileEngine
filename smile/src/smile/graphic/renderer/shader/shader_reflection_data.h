@@ -5,7 +5,6 @@
 #pragma once
 
 #include "shader_blob_format.h"
-#include "shader_io_signature.h"
 #include "constant_buffer_descriptor.h"
 #include "shader_resource_binding.h"
 
@@ -19,8 +18,8 @@ namespace smile::graphic
         std::string EntryPoint;
         std::string TargetProfile;
         ShaderBlobFormat BlobFormat;
-        ShaderIOSignature InputSignature;
-        ShaderIOSignature OutputSignature;
+        BufferLayout InputSignature;
+        BufferLayout OutputSignature;
         std::vector< ConstantBufferDescriptor > ConstantBufferDescs;
         std::vector< ShaderResourceBinding > ShaderResourceBindings;
     };

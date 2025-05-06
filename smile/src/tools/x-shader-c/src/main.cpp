@@ -90,45 +90,45 @@ std::string GetD3D11ShaderVariableType( D3D11_SHADER_TYPE_DESC typeDesc )
     }
 }
 
-std::string GetD3D11ParamType( D3D11_SIGNATURE_PARAMETER_DESC paramDesc )
+std::string GetD3D11ParamFormat( D3D11_SIGNATURE_PARAMETER_DESC paramDesc )
 {
     switch ( paramDesc.ComponentType )
     {
         case D3D10_REGISTER_COMPONENT_FLOAT32:
             if ( paramDesc.Mask == 1 )
-                return "Float";
+                return "R32_FLOAT";
             else if ( paramDesc.Mask == 3 )
-                return "Float2";
+                return "RG32_FLOAT";
             else if ( paramDesc.Mask == 7 )
-                return "Float3";
+                return "RGB32_FLOAT";
             else if ( paramDesc.Mask == 15 )
-                return "Float4";
+                return "RGBA32_FLOAT";
             else
-                return "Unknown";
+                return "UNKNOWN";
         case D3D10_REGISTER_COMPONENT_UINT32:
             if ( paramDesc.Mask == 1 )
-                return "UInt";
+                return "R32_UINT";
             else if ( paramDesc.Mask == 3 )
-                return "UInt2";
+                return "RG32_UINT";
             else if ( paramDesc.Mask == 7 )
-                return "Uint3";
+                return "RGB32_UINT";
             else if ( paramDesc.Mask == 15 )
-                return "Uint4";
+                return "RGBA32_UINT";
             else
-                return "Unknown";
+                return "UNKNOWN";
         case D3D10_REGISTER_COMPONENT_SINT32:
             if ( paramDesc.Mask == 1 )
-                return "Int";
+                return "R32_SINT";
             else if ( paramDesc.Mask == 3 )
-                return "Int2";
+                return "RG32_SINT";
             else if ( paramDesc.Mask == 7 )
-                return "Int3";
+                return "RGB32_SINT";
             else if ( paramDesc.Mask == 15 )
-                return "Int4";
+                return "RGBA32_SINT";
             else
-                return "Unknown";
+                return "UNKNOWN";
         default:
-            return "Unknown";
+            return "UNKNOWN";
     }
 }
 
@@ -226,7 +226,7 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
         YAML::Node node;
         node["SemanticName"] = paramDesc.SemanticName;
         node["SemanticIndex"] = paramDesc.SemanticIndex;
-        node["Type"] = GetD3D11ParamType( paramDesc );
+        node["Format"] = GetD3D11ParamFormat( paramDesc );
         node["Register"] = paramDesc.Register;
         inputs.push_back( node );
     }
@@ -246,7 +246,7 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
         YAML::Node node;
         node["SemanticName"] = paramDesc.SemanticName;
         node["SemanticIndex"] = paramDesc.SemanticIndex;
-        node["Type"] = GetD3D11ParamType( paramDesc );
+        node["Format"] = GetD3D11ParamFormat( paramDesc );
         node["Register"] = paramDesc.Register;
         outputs.push_back( node );
     }

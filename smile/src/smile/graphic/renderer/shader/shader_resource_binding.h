@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "shader_data_type.h"
+#include "smile/graphic/renderer_backend/shader/shader_data_type.h"
 
 namespace smile::graphic
 {
