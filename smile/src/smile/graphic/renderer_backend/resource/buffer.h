@@ -105,4 +105,13 @@ namespace smile::graphic
         IndexBuffer = BIT( 2 ),
         UniformBuffer = BIT( 3 )
     };
+
+    struct GPUBufferDescriptor final
+    {
+        void *pData = nullptr;
+        Uint32 Size;
+        BufferUsage Usage = BufferUsage::Default;
+        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
+        BufferBindFlags BindFlags = BufferBindFlags::None;
+    };
 }

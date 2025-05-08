@@ -25,15 +25,6 @@ namespace smile::graphic
         DirectX11 = 1
     };
 
-    struct GPUBufferDescriptor final
-    {
-        void *pData = nullptr;
-        Uint32 Size;
-        BufferUsage Usage = BufferUsage::Default;
-        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
-        BufferBindFlags BindFlags = BufferBindFlags::None;
-    };
-
     class GraphicsDevice
     {
       public:
