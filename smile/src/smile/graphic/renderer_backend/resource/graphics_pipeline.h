@@ -7,6 +7,7 @@
 #include "buffer.h"
 #include "smile/graphic/renderer_backend/render_state.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
+#include "smile/graphic/renderer_backend/shader/binding_layout.h"
 
 namespace smile::graphic
 {
@@ -17,5 +18,7 @@ namespace smile::graphic
 
         ShaderHandle VertexShaderHandle;
         ShaderHandle PixelShaderHandle;
+
+        std::vector< BindingLayout > BindingLayouts;
     };
 }

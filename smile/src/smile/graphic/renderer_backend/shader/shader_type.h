@@ -4,18 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "shader_type.h"
-
 namespace smile::graphic
 {
-    struct ShaderDescriptor final
+    enum class ShaderType
     {
-        ShaderDescriptor( ShaderType type ) : Type{ type }
-        {
-        }
-
-        ShaderType Type = ShaderType::Unknown;
-        std::string EntryPoint = "main";
-        std::string TargetProfile;
+        Unknown,
+        Vertex,
+        Pixel
     };
 }
