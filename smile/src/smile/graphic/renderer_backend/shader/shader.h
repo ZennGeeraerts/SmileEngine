@@ -4,17 +4,17 @@
 /*=============================================================================*/
 #pragma once
 
-#include "shader_type.h"
+#include "shader_stage.h"
 
 namespace smile::graphic
 {
     struct ShaderDescriptor final
     {
-        ShaderDescriptor( ShaderType type ) : Type{ type }
+        ShaderDescriptor( ShaderStage stage ) : Stage{ stage }
         {
         }
 
-        ShaderType Type = ShaderType::Unknown;
+        ShaderStage Stage = ShaderStage::Unknown;
         std::string EntryPoint = "main";
         std::string TargetProfile;
     };

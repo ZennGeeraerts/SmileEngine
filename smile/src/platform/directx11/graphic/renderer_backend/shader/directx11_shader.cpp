@@ -21,9 +21,9 @@ namespace smile::graphic
         Descriptor = desc;
         ByteCode = byteCode;
 
-        switch ( desc.Type )
+        switch ( desc.Stage )
         {
-            case ShaderType::Vertex:
+            case ShaderStage::Vertex:
             {
                 const HRESULT result =
                     pDevice->CreateVertexShader( byteCode.data(), byteCode.size(), nullptr, &pVertexShader );
@@ -36,7 +36,7 @@ namespace smile::graphic
 
                 break;
             }
-            case ShaderType::Pixel:
+            case ShaderStage::Pixel:
             {
                 const HRESULT result =
                     pDevice->CreatePixelShader( byteCode.data(), byteCode.size(), nullptr, &pPixelShader );

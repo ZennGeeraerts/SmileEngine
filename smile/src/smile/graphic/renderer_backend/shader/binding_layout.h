@@ -5,13 +5,13 @@
 #pragma once
 
 #include "resource_type.h"
-#include "shader_type.h"
+#include "shader_stage.h"
 
 namespace smile::graphic
 {
     struct BindingLayoutElement final
     {
-        BindingLayout( Uint32 slot, ResourceType type, Uint16 size ) : Slot{ slot }, Type{ type }, Size{ size }
+        BindingLayoutElement( Uint32 slot, ResourceType type, Uint16 size ) : Slot{ slot }, Type{ type }, Size{ size }
         {
         }
 
@@ -23,11 +23,11 @@ namespace smile::graphic
     class BindingLayout final
     {
       public:
-        BindingLayout( ShaderType visibility ) : m_Visiblity{ visibility }
+        BindingLayout( ShaderStage visibility ) : m_Visiblity{ visibility }
         {
         }
 
-        BindingLayout( ShaderType visibility, const std::initializer_list< BindingLayoutElement > &elements )
+        BindingLayout( ShaderStage visibility, const std::initializer_list< BindingLayoutElement > &elements )
             : m_Visibility{ visibility }, m_Elements{ elements }
         {
         }
@@ -64,6 +64,6 @@ namespace smile::graphic
 
       private:
         std::vector< BindingLayoutElement > m_Elements;
-        ShaderType m_Visibility;
+        ShaderStage m_Visibility;
     };
 }

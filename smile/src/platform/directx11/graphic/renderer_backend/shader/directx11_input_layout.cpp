@@ -23,7 +23,7 @@ namespace smile::graphic
         const BufferLayout &layout,
         const DirectX11Shader &vertexShader )
     {
-        if ( vertexShader.Descriptor.Type != ShaderType::Vertex )
+        if ( vertexShader.Descriptor.Stage != ShaderStage::Vertex )
         {
             SM_LOG_ERROR( "DirectX11InputLayout::Create > Failed to create input layout: {}" );
             return;

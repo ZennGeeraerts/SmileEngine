@@ -6,7 +6,7 @@
 
 namespace smile::graphic
 {
-    enum class ShaderType
+    enum class ShaderStage
     {
         Unknown,
         Vertex,
