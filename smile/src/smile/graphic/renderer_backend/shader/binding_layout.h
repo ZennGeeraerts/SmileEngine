@@ -23,7 +23,7 @@ namespace smile::graphic
     class BindingLayout final
     {
       public:
-        BindingLayout( ShaderStage visibility ) : m_Visiblity{ visibility }
+        BindingLayout( ShaderStage visibility ) : m_Visibility{ visibility }
         {
         }
 

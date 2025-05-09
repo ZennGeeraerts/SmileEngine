@@ -8,7 +8,10 @@
 
 namespace smile::graphic
 {
-    template < typename KeyType, typename StateType, typename Hasher, typename Comparer >
+    template < typename KeyType,
+        typename StateType,
+        typename Hasher = std::hash< KeyType >,
+        typename Comparer = std::equal_to< StateType > >
     class DirectX11StateCache final
     {
       public:

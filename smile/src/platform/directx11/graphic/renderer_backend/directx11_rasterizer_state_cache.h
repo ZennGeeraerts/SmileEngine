@@ -17,9 +17,10 @@ namespace smile::graphic
             foundation::HashCode operator()( const RenderState &renderState ) const
             {
                 foundation::HashCode hash = 0;
-                hash ^= std::hash< int >()( static_cast< int >( renderState.CullMode ) );
-                hash ^= std::hash< int >()( static_cast< int >( renderState.FillMode ) );
-                hash ^= std::hash< bool >()( renderState.EnableDepthClip );
+                hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( renderState.CullMode ) );
+                hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( renderState.FillMode ) );
+                hash =
+                    foundation::HashCombine( hash, static_cast< foundation::HashCode >( renderState.EnableDepthClip ) );
                 return hash;
             }
         };

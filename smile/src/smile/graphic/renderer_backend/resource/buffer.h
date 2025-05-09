@@ -1,9 +1,10 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/hash_code.h"
 #include "smile/graphic/renderer_backend/format.h"
 
 namespace smile::graphic
@@ -14,6 +15,15 @@ namespace smile::graphic
         BufferElement( Format format, const std::string &name )
             : Name{ name }, FormatType{ format }, Size{ GetFormatInfo( format ).BytesPerBlock }, Offset{ 0 }
         {
+        }
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = std::hash< std::string >{}( Name );
+            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( FormatType ) );
+            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( Size ) );
+            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( Offset ) );
+            return hash;
         }
 
         std::string Name;
@@ -65,6 +75,23 @@ namespace smile::graphic
             CalculateOffsetAndStride();
         }
 
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+
+            for ( const BufferElement &elem : m_Elements )
+                hash = foundation::HashCombine( hash, elem.GetHashCode() );
+
+            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( m_Stride ) );
+
+            return hash;
+        }
+
+        bool operator()( const BufferLayout &lhs, const BufferLayout &rhs ) const
+        {
+            return lhs.GetHashCode() == rhs.GetHashCode();
+        }
+
       private:
         void CalculateOffsetAndStride()
         {
@@ -113,5 +140,17 @@ namespace smile::graphic
         BufferUsage Usage = BufferUsage::Default;
         BufferCPUAccess CPUAccess = BufferCPUAccess::None;
         BufferBindFlags BindFlags = BufferBindFlags::None;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::BufferLayout >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::BufferLayout &bufferLayout ) const
+        {
+            return bufferLayout.GetHashCode();
+        }
     };
 }

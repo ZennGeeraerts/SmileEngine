@@ -25,10 +25,9 @@ namespace smile::graphic
                 for ( const auto &elem : pipelineDesc.InputLayout )
                 {
                     hash ^= std::hash< std::string >{}( elem.Name );
-                    hash ^= std::hash< Uint32 >{}( static_cast< Uint32 >( elem.DataType ) );
+                    hash ^= std::hash< Uint32 >{}( static_cast< Uint32 >( elem.FormatType ) );
                     hash ^= std::hash< Uint32 >{}( elem.Size );
                     hash ^= std::hash< Uint32 >{}( elem.Offset );
-                    hash ^= std::hash< bool >{}( elem.IsNormalized );
                 }
 
                 hash ^= std::hash< Uint64 >{}( static_cast< Uint64 >( pipelineDesc.VertexShaderHandle ) );
