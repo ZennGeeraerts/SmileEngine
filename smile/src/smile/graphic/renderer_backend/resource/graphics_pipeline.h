@@ -20,5 +20,20 @@ namespace smile::graphic
         ShaderHandle PixelShaderHandle;
 
         std::vector< BindingLayout > BindingLayouts;
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, InputLayout.GetHashCode() );
+            hash = foundation::HashCombine( hash, State.GetHashCode() );
+            hash = foundation::HashCombine( hash, VertexShaderHandle.Hash() );
+            hash = foundation::HashCombine( hash, PixelShaderHandle.Hash() );
+            return hash;
+        }
+
+        bool operator()( const GraphicsPipelineDescriptor &lhs, const GraphicsPipelineDescriptor &rhs )
+        {
+            return lhs.GetHashCode() == rhs.GetHashCode();
+        }
     };
 }

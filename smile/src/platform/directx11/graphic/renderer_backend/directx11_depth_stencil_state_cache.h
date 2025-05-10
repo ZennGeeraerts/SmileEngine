@@ -17,11 +17,13 @@ namespace smile::graphic
             foundation::HashCode operator()( const RenderState &renderState ) const
             {
                 foundation::HashCode hash = 0;
-                hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( renderState.DepthEnable ) );
-                hash =
-                    foundation::HashCombine( hash, static_cast< foundation::HashCode >( renderState.DepthWriteMask ) );
+
+                hash = foundation::HashCombine( hash, std::hash< bool >{}( renderState.DepthEnable ) );
                 hash = foundation::HashCombine(
-                    hash, static_cast< foundation::HashCode >( renderState.DepthComparissonFunc ) );
+                    hash, std::hash< Uint8 >{}( static_cast< Uint8 >( renderState.DepthWriteMask ) ) );
+                hash = foundation::HashCombine(
+                    hash, std::hash< Uint8 >{}( static_cast< Uint8 >( renderState.DepthComparissonFunc ) ) );
+
                 return hash;
             }
         };

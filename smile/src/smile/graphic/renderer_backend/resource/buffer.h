@@ -20,9 +20,9 @@ namespace smile::graphic
         foundation::HashCode GetHashCode() const
         {
             foundation::HashCode hash = std::hash< std::string >{}( Name );
-            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( FormatType ) );
-            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( Size ) );
-            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( Offset ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( FormatType ) ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Size ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Offset ) );
             return hash;
         }
 
@@ -82,7 +82,7 @@ namespace smile::graphic
             for ( const BufferElement &elem : m_Elements )
                 hash = foundation::HashCombine( hash, elem.GetHashCode() );
 
-            hash = foundation::HashCombine( hash, static_cast< foundation::HashCode >( m_Stride ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( m_Stride ) );
 
             return hash;
         }

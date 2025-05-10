@@ -9,7 +9,7 @@ namespace smile::foundation
     using HashCode = std::size_t;
     using HashCode32 = Uint32;
 
-    foundation::HashCode HashCombine( foundation::HashCode seed, foundation::HashCode value )
+    inline constexpr foundation::HashCode HashCombine( foundation::HashCode seed, foundation::HashCode value )
     {
         return seed ^ ( value + 0x9e3779b9 + ( seed << 6 ) + ( seed >> 2 ) );
     }
