@@ -5,16 +5,20 @@
 #pragma once
 #include "smile/graphic/renderer_backend/graphics_device.h"
 #include "smile/graphic/renderer_backend/render_state.h"
+
 #include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
 #include "resource/directx11_pipeline.h"
+#include "resource/directx11_rasterizer_state.h"
+#include "resource/directx11_depth_stencil_state.h"
+#include "resource/directx11_sampler_state.h"
+
 #include "shader/directx11_shader.h"
+#include "shader/directx11_input_layout.h"
+
 #include "directx11_context.h"
-#include "directx11_rasterizer_state_cache.h"
-#include "directx11_depth_stencil_state_cache.h"
-#include "directx11_sampler_state_cache.h"
-#include "directx11_input_layout_cache.h"
+#include "directx11_state_cache.h"
 
 #include <array>
 
@@ -29,6 +33,11 @@ namespace smile::graphic
 
     class DirectX11Device final : public GraphicsDevice
     {
+        using DirectX11RasterizerStateCache = typename DirectX11StateCache< RasterizerState, DirectX11RasterizerState >;
+        using DirectX11DepthStencilStateCache = typename DirectX11StateCache< RenderState, DirectX11DepthStencilState >;
+        using DirectX11SamplerStateCache = typename DirectX11StateCache< SamplerState, DirectX11SamplerState >;
+        using DirectX11InputLayoutCache = typename DirectX11StateCache< BufferLayout, DirectX11InputLayout >;
+
       public:
         DirectX11Device();
         ~DirectX11Device();

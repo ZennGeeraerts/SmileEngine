@@ -5,6 +5,7 @@
 #pragma once
 
 #include "buffer.h"
+#include "smile/graphic/renderer_backend/primitive_topology.h"
 #include "smile/graphic/renderer_backend/render_state.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 #include "smile/graphic/renderer_backend/shader/binding_layout.h"
@@ -13,6 +14,7 @@ namespace smile::graphic
 {
     struct GraphicsPipelineDescriptor final
     {
+        PrimitiveTopology Topology;
         BufferLayout InputLayout;
         RenderState State;
 
@@ -23,7 +25,7 @@ namespace smile::graphic
 
         foundation::HashCode GetHashCode() const
         {
-            foundation::HashCode hash = 0;
+            foundation::HashCode hash = std::hash< Uint8 >{}( static_cast< Uint8 >( Topology ) );
             hash = foundation::HashCombine( hash, InputLayout.GetHashCode() );
             hash = foundation::HashCombine( hash, State.GetHashCode() );
             hash = foundation::HashCombine( hash, VertexShaderHandle.Hash() );

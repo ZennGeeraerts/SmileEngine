@@ -4,10 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "directx11_state_cache.h"
-#include "resource/directx11_sampler_state.h"
-
 namespace smile::graphic
 {
-    using DirectX11SamplerStateCache = typename DirectX11StateCache< SamplerState, DirectX11SamplerState >;
+    enum class PrimitiveTopology : Uint8
+    {
+        None = 0,
+        TriangleList,
+        LineList
+    };
 }

@@ -6,13 +6,6 @@
 
 namespace smile::graphic
 {
-    enum class PrimitiveTopology : Uint8
-    {
-        None = 0,
-        TriangleList,
-        LineList
-    };
-
     enum class CullMode : Uint8
     {
         None,
@@ -24,6 +17,27 @@ namespace smile::graphic
     {
         WireFrame,
         Solid
+    };
+
+    struct RasterizerState final
+    {
+        CullMode CullMode = CullMode::Back;
+        FillMode FillMode = FillMode::Solid;
+        bool EnableDepthClip = true;
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( CullMode ) ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( FillMode ) ) );
+            hash = foundation::HashCombine( hash, std::hash< bool >{}( EnableDepthClip ) );
+            return hash;
+        }
+
+        bool operator()( const RasterizerState &lhs, const RasterizerState &rhs ) const
+        {
+            return lhs.GetHashCode() == rhs.GetHashCode();
+        }
     };
 
     enum class DepthWriteMask : Uint8
@@ -44,14 +58,8 @@ namespace smile::graphic
         Always
     };
 
-    struct RenderState final
+    struct DepthStencilState final
     {
-        PrimitiveTopology Topology = PrimitiveTopology::TriangleList;
-
-        CullMode CullMode = CullMode::Back;
-        FillMode FillMode = FillMode::Solid;
-        bool EnableDepthClip = true;
-
         bool DepthEnable = true;
         DepthWriteMask DepthWriteMask = DepthWriteMask::All;
         DepthComparissonFunc DepthComparissonFunc = DepthComparissonFunc::Less;
@@ -59,16 +67,29 @@ namespace smile::graphic
         foundation::HashCode GetHashCode() const
         {
             foundation::HashCode hash = 0;
-
-            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( Topology ) ) );
-            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( CullMode ) ) );
-            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( FillMode ) ) );
-            hash = foundation::HashCombine( hash, std::hash< bool >{}( EnableDepthClip ) );
             hash = foundation::HashCombine( hash, std::hash< bool >{}( DepthEnable ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( DepthWriteMask ) ) );
             hash =
                 foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( DepthComparissonFunc ) ) );
+            return hash;
+        }
 
+        bool operator()( const DepthStencilState &lhs, const DepthStencilState &rhs ) const
+        {
+            return lhs.GetHashCode() == rhs.GetHashCode();
+        }
+    };
+
+    struct RenderState final
+    {
+        RasterizerState RasterizerState;
+        DepthStencilState DepthStencilState;
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, RasterizerState.GetHashCode() );
+            hash = foundation::HashCombine( hash, DepthStencilState.GetHashCode() );
             return hash;
         }
 
@@ -81,6 +102,24 @@ namespace smile::graphic
 
 namespace std
 {
+    template <>
+    struct hash< smile::graphic::RasterizerState >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::RasterizerState &rasterizerState ) const
+        {
+            return rasterizerState.GetHashCode();
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::DepthStencilState >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::DepthStencilState &depthStencilState ) const
+        {
+            return depthStencilState.GetHashCode();
+        }
+    };
+
     template <>
     struct hash< smile::graphic::RenderState >
     {
