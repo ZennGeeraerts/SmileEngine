@@ -30,10 +30,7 @@ namespace smile::graphic
         void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
         void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
 
-        void SetGraphicsPipeline( GraphicsPipelineHandle handle ) const override;
-
-        void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
-        void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
+        void BindGraphicsPipeline( GraphicsPipelineHandle handle ) const override;
 
         void SetGraphicsState( const GraphicsState &graphicsState ) const override;
         void Draw( const DrawParams &params ) override;

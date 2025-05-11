@@ -60,12 +60,12 @@ namespace smile::graphic
         Destroy();
     }
 
-    void DirectX11DepthStencilState::Create( ID3D11Device *pDevice, const RenderState &renderState )
+    void DirectX11DepthStencilState::Create( ID3D11Device *pDevice, const DepthStencilState &depthStencilState )
     {
         D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
-        depthStencilDesc.DepthEnable = renderState.DepthEnable;
-        depthStencilDesc.DepthWriteMask = DepthWriteMaskToDirectXType( renderState.DepthWriteMask );
-        depthStencilDesc.DepthFunc = DepthComparissonFuncToDirectXType( renderState.DepthComparissonFunc );
+        depthStencilDesc.DepthEnable = depthStencilState.DepthEnable;
+        depthStencilDesc.DepthWriteMask = DepthWriteMaskToDirectXType( depthStencilState.DepthWriteMask );
+        depthStencilDesc.DepthFunc = DepthComparissonFuncToDirectXType( depthStencilState.DepthComparissonFunc );
 
         [[maybe_unused]] HRESULT result = pDevice->CreateDepthStencilState( &depthStencilDesc, &pInternal );
         SM_ASSERT( result == S_OK, "DirectX11DepthStencilState::Create > Failed to create depth stencil state" );

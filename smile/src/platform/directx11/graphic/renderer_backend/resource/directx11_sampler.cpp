@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "directx11_sampler_state.h"
+#include "directx11_sampler.h"
 
 namespace smile::graphic
 {
@@ -38,16 +38,16 @@ namespace smile::graphic
         Destroy();
     }
 
-    void DirectX11SamplerState::Create( ID3D11Device *pDevice, const SamplerState &samplerState )
+    void DirectX11SamplerState::Create( ID3D11Device *pDevice, const SamplerDescriptor &samplerDesc )
     {
         D3D11_SAMPLER_DESC desc{};
-        desc.Filter = SamplerFilteringToDirectXType( samplerState.Filtering );
-        desc.AddressU = SamplerAddressingToDirectXType( samplerState.AddressingU );
-        desc.AddressV = SamplerAddressingToDirectXType( samplerState.AddressingV );
-        desc.AddressW = SamplerAddressingToDirectXType( samplerState.AddressingW );
+        desc.Filter = SamplerFilteringToDirectXType( samplerDesc.Filtering );
+        desc.AddressU = SamplerAddressingToDirectXType( samplerDesc.AddressingU );
+        desc.AddressV = SamplerAddressingToDirectXType( samplerDesc.AddressingV );
+        desc.AddressW = SamplerAddressingToDirectXType( samplerDesc.AddressingW );
 
         HRESULT result = pDevice->CreateSamplerState( &desc, &pInternal );
-        SM_ASSERT( result == S_OK, "DirectX11SamplerState::Create > Failed to create sampler state" );
+        SM_ASSERT( result == S_OK, "DirectX11SamplerState::Create > Failed to create sampler" );
     }
 
     void DirectX11SamplerState::Destroy()

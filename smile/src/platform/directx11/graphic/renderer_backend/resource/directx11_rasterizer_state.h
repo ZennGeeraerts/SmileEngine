@@ -20,7 +20,7 @@ namespace smile::graphic
         DirectX11RasterizerState &operator=( const DirectX11RasterizerState & ) = delete;
         DirectX11RasterizerState &operator=( DirectX11RasterizerState && ) = delete;
 
-        void Create( ID3D11Device *pDevice, const RenderState &renderState );
+        void Create( ID3D11Device *pDevice, const RasterizerState &rasterizerState );
         void Destroy();
 
         ID3D11RasterizerState *pInternal = nullptr;

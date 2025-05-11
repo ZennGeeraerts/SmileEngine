@@ -43,12 +43,12 @@ namespace smile::graphic
         Destroy();
     }
 
-    void DirectX11RasterizerState::Create( ID3D11Device *pDevice, const RenderState &renderState )
+    void DirectX11RasterizerState::Create( ID3D11Device *pDevice, const RasterizerState &rasterizerState )
     {
         D3D11_RASTERIZER_DESC rasterizerDesc = {};
-        rasterizerDesc.CullMode = CullModeToDirectXType( renderState.CullMode );
-        rasterizerDesc.FillMode = FillModeToDirectXType( renderState.FillMode );
-        rasterizerDesc.DepthClipEnable = renderState.EnableDepthClip;
+        rasterizerDesc.CullMode = CullModeToDirectXType( rasterizerState.CullMode );
+        rasterizerDesc.FillMode = FillModeToDirectXType( rasterizerState.FillMode );
+        rasterizerDesc.DepthClipEnable = rasterizerState.EnableDepthClip;
 
         HRESULT result = pDevice->CreateRasterizerState( &rasterizerDesc, &pInternal );
         if ( FAILED( result ) )

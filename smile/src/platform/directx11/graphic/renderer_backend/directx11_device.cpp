@@ -110,9 +110,9 @@ namespace smile::graphic
 
         pipeline.pInputLayout = GetOrCreateInputLayout( pipelineDesc )->pInternal;
 
-        pipeline.PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( pipelineDesc.State.Topology );
-        pipeline.pRasterizerState = GetOrCreateRasterizerState( pipelineDesc.State )->pInternal;
-        pipeline.pDepthStencilState = GetOrCreateDepthStencilState( pipelineDesc.State )->pInternal;
+        pipeline.PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( pipelineDesc.Topology );
+        pipeline.pRasterizerState = GetOrCreateRasterizerState( pipelineDesc.State.RasterizerState )->pInternal;
+        pipeline.pDepthStencilState = GetOrCreateDepthStencilState( pipelineDesc.State.DepthStencilState )->pInternal;
 
         pipeline.pVertexShader = m_Shaders[pipelineDesc.VertexShaderHandle.GetIndex()].pVertexShader;
         pipeline.pPixelShader = m_Shaders[pipelineDesc.PixelShaderHandle.GetIndex()].pPixelShader;
@@ -137,6 +137,16 @@ namespace smile::graphic
         m_Textures[handle.GetIndex()].Destroy();
     }
 
+    void DirectX11Device::CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc )
+    {
+        m_Samplers[handle.GetIndex()].Create( m_Context.pDevice, samplerDesc );
+    }
+
+    void DirectX11Device::DestroySampler( SamplerHandle handle )
+    {
+        m_Samplers[handle.GetIndex()].Destroy();
+    }
+
     void DirectX11Device::CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor )
     {
         m_Framebuffers[handle.GetIndex()].Create( m_Context.pDevice, descriptor );
@@ -152,43 +162,34 @@ namespace smile::graphic
         m_Framebuffers[handle.GetIndex()].Invalidate( m_Context.pDevice );
     }
 
-    const DirectX11RasterizerState *DirectX11Device::GetOrCreateRasterizerState( const RenderState &renderState )
+    const DirectX11RasterizerState *DirectX11Device::GetOrCreateRasterizerState(
+        const RasterizerState &rasterizerState )
     {
-        const DirectX11RasterizerState *pRasterizerState = m_RasterizerStateCache.Find( renderState );
+        const DirectX11RasterizerState *pRasterizerState = m_RasterizerStateCache.Find( rasterizerState );
         if ( pRasterizerState )
             return pRasterizerState;
 
         auto pNewRasterizerState = CreateScope< DirectX11RasterizerState >();
-        pNewRasterizerState->Create( m_Context.pDevice, renderState );
-        return m_RasterizerStateCache.Add( renderState, std::move( pNewRasterizerState ) );
+        pNewRasterizerState->Create( m_Context.pDevice, rasterizerState );
+        return m_RasterizerStateCache.Add( rasterizerState, std::move( pNewRasterizerState ) );
     }
 
-    const DirectX11DepthStencilState *DirectX11Device::GetOrCreateDepthStencilState( const RenderState &renderState )
+    const DirectX11DepthStencilState *DirectX11Device::GetOrCreateDepthStencilState(
+        const DepthStencilState &depthStencilState )
     {
-        const DirectX11DepthStencilState *pDepthStencilState = m_DepthStencilStateCache.Find( renderState );
+        const DirectX11DepthStencilState *pDepthStencilState = m_DepthStencilStateCache.Find( depthStencilState );
         if ( pDepthStencilState )
             return pDepthStencilState;
 
         auto pNewDepthStencilState = CreateScope< DirectX11DepthStencilState >();
-        pNewDepthStencilState->Create( m_Context.pDevice, renderState );
-        return m_DepthStencilStateCache.Add( renderState, std::move( pNewDepthStencilState ) );
-    }
-
-    const DirectX11SamplerState *DirectX11Device::GetOrCreateSamplerState( const SamplerState &samplerState )
-    {
-        const DirectX11SamplerState *pSamplerState = m_SamplerStateCache.Find( samplerState );
-        if ( pSamplerState )
-            return pSamplerState;
-
-        auto pNewSamplerState = CreateScope< DirectX11SamplerState >();
-        pNewSamplerState->Create( m_Context.pDevice, samplerState );
-        return m_SamplerStateCache.Add( samplerState, std::move( pNewSamplerState ) );
+        pNewDepthStencilState->Create( m_Context.pDevice, depthStencilState );
+        return m_DepthStencilStateCache.Add( depthStencilState, std::move( pNewDepthStencilState ) );
     }
 
     const DirectX11InputLayout *DirectX11Device::GetOrCreateInputLayout(
         const GraphicsPipelineDescriptor &pipelineDesc )
     {
-        const DirectX11InputLayout *pInputLayout = m_InputLayoutCache.Find( pipelineDesc );
+        const DirectX11InputLayout *pInputLayout = m_InputLayoutCache.Find( pipelineDesc.InputLayout );
         if ( pInputLayout )
             return pInputLayout;
 
@@ -196,6 +197,6 @@ namespace smile::graphic
         pNewInputLayout->Create(
             m_Context.pDevice, pipelineDesc.InputLayout, m_Shaders[pipelineDesc.VertexShaderHandle.GetIndex()] );
 
-        return m_InputLayoutCache.Add( pipelineDesc, std::move( pNewInputLayout ) );
+        return m_InputLayoutCache.Add( pipelineDesc.InputLayout, std::move( pNewInputLayout ) );
     }
 }

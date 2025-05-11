@@ -51,7 +51,7 @@ namespace smile::graphic
             pDX11SwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11CommandList::SetGraphicsPipeline( GraphicsPipelineHandle handle ) const
+    void DirectX11CommandList::BindGraphicsPipeline( GraphicsPipelineHandle handle ) const
     {
         const auto &pipeline = m_pDevice->m_Pipelines[handle.GetIndex()];
 
@@ -63,18 +63,6 @@ namespace smile::graphic
 
         m_Context.pImmediateContext->VSSetShader( pipeline.pVertexShader, nullptr, 0 );
         m_Context.pImmediateContext->PSSetShader( pipeline.pPixelShader, nullptr, 0 );
-    }
-
-    void DirectX11CommandList::SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const
-    {
-        const auto pSamplerState = m_pDevice->GetOrCreateSamplerState( samplerState );
-        m_Context.pImmediateContext->VSSetSamplers( slot, 1, &pSamplerState->pInternal );
-    }
-
-    void DirectX11CommandList::SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const
-    {
-        const auto pSamplerState = m_pDevice->GetOrCreateSamplerState( samplerState );
-        m_Context.pImmediateContext->PSSetSamplers( slot, 1, &pSamplerState->pInternal );
     }
 
     void DirectX11CommandList::SetGraphicsState(const GraphicsState& graphicsState) const
@@ -188,7 +176,7 @@ namespace smile::graphic
         const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
 
         SM_ASSERT( index < framebuffer.pColorShaderResourceViews.size(),
-            "DirectX11Context::ReadTexture > Index out of range" );
+            "DirectX11CommandList::ReadTexture > Index out of range" );
 
         return framebuffer.pColorShaderResourceViews[index];
     }

@@ -10,6 +10,7 @@
 
 #include "resource/buffer.h"
 #include "resource/frame_buffer.h"
+#include "resource/sampler.h"
 #include "resource/graphics_pipeline.h"
 #include "shader/shader.h"
 
@@ -53,6 +54,9 @@ namespace smile::graphic
         virtual void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) = 0;
         virtual void DestroyTexture( TextureHandle handle ) = 0;
 
+        virtual void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) = 0;
+        virtual void DestroySampler( SamplerHandle handle ) = 0;
+
         virtual void CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor ) = 0;
         virtual void DestroyFramebuffer( FramebufferHandle handle ) = 0;
         virtual void InvalidateFramebuffer( FramebufferHandle handle ) = 0;
@@ -62,6 +66,7 @@ namespace smile::graphic
       protected:
         static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
         static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
+        static constexpr Uint16 s_MaxSamplerCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxFramebufferCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxGraphicsPipelineCount = ( 4 << 10 );

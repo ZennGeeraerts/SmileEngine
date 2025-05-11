@@ -6,7 +6,6 @@
 
 #include "graphics_state.h"
 #include "draw_params.h"
-#include "sampler_state.h"
 #include "smile/common/memory/ref.h"
 
 #include <DirectXMath.h>
@@ -31,10 +30,7 @@ namespace smile::graphic
         virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
             const DirectX::XMFLOAT4 &clearColor ) const = 0;
 
-        virtual void SetGraphicsPipeline( GraphicsPipelineHandle handle ) const = 0;
-
-        virtual void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
-        virtual void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
+        virtual void BindGraphicsPipeline( GraphicsPipelineHandle handle ) const = 0;
 
         virtual void SetGraphicsState( const GraphicsState &graphicsState ) const = 0;
         virtual void Draw( const DrawParams &params ) = 0;

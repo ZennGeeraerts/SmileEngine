@@ -19,7 +19,7 @@ namespace smile::graphic
         DirectX11DepthStencilState &operator=( const DirectX11DepthStencilState & ) = delete;
         DirectX11DepthStencilState &operator=( DirectX11DepthStencilState && ) = delete;
 
-        void Create( ID3D11Device *pDevice, const RenderState &renderState );
+        void Create( ID3D11Device *pDevice, const DepthStencilState &depthStencilState );
         void Destroy();
 
         ID3D11DepthStencilState *pInternal = nullptr;
