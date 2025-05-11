@@ -35,8 +35,9 @@ namespace smile::graphic
         void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
         void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const override;
 
-        void Draw( Uint32 vertexCount ) override;
-        void DrawIndexed( Uint32 indexCount ) override;
+        void SetGraphicsState( const GraphicsState &graphicsState ) const override;
+        void Draw( const DrawParams &params ) override;
+        void DrawIndexed( const DrawIndexedParams &params ) override;
 
         void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const override;
         void UnbindVertexBuffer() const override;

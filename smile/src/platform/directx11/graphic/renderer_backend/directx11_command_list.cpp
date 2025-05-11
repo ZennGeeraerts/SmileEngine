@@ -77,14 +77,19 @@ namespace smile::graphic
         m_Context.pImmediateContext->PSSetSamplers( slot, 1, &pSamplerState->pInternal );
     }
 
-    void DirectX11CommandList::Draw( Uint32 vertexCount )
+    void DirectX11CommandList::SetGraphicsState(const GraphicsState& graphicsState) const
     {
-        m_Context.pImmediateContext->Draw( vertexCount, 0 );
+
     }
 
-    void DirectX11CommandList::DrawIndexed( Uint32 indexCount )
+    void DirectX11CommandList::Draw( const DrawParams &params )
     {
-        m_Context.pImmediateContext->DrawIndexed( indexCount, 0, 0 );
+        m_Context.pImmediateContext->Draw( params.VertexCount, params.VertexOffset );
+    }
+
+    void DirectX11CommandList::DrawIndexed( const DrawIndexedParams &params )
+    {
+        m_Context.pImmediateContext->DrawIndexed( params.IndexCount, params.IndexOffset, params.VertexOffset );
     }
 
     void DirectX11CommandList::ClearFramebuffer( FramebufferHandle handle )

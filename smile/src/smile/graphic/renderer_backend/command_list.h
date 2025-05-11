@@ -4,8 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
+#include "graphics_state.h"
+#include "draw_params.h"
 #include "sampler_state.h"
-#include "render_handle.h"
 #include "smile/common/memory/ref.h"
 
 #include <DirectXMath.h>
@@ -35,8 +36,9 @@ namespace smile::graphic
         virtual void SetVertexShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
         virtual void SetPixelShaderSamplerState( const SamplerState &samplerState, Uint16 slot ) const = 0;
 
-        virtual void Draw( Uint32 vertexCount ) = 0;
-        virtual void DrawIndexed( Uint32 indexCount ) = 0;
+        virtual void SetGraphicsState( const GraphicsState &graphicsState ) const = 0;
+        virtual void Draw( const DrawParams &params ) = 0;
+        virtual void DrawIndexed( const DrawIndexedParams &params ) = 0;
 
         virtual void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const = 0;
         virtual void UnbindVertexBuffer() const = 0;
