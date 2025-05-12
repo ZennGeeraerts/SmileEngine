@@ -23,8 +23,14 @@ namespace smile::graphic
             BufferRange bufferRange,
             ResourceType type );
 
+        ID3D11UnorderedAccessView *GetOrCreateUnorderedAccessView( ID3D11Device *pDevice,
+            Format format,
+            BufferRange bufferRange,
+            ResourceType type );
+
         ID3D11Buffer *pInternal = nullptr;
         GPUBufferDescriptor Descriptor;
         std::unordered_map< BufferBindingKey, ID3D11ShaderResourceView * > ShaderResourceViewMap;
+        std::unordered_map< BufferBindingKey, ID3D11UnorderedAccessView * > UnorderedAccessViewMap;
     };
 }

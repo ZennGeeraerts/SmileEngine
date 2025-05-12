@@ -143,7 +143,8 @@ namespace smile::graphic
         BufferUsage Usage = BufferUsage::Default;
         BufferCPUAccess CPUAccess = BufferCPUAccess::None;
         foundation::Flags< BufferBindFlags > BindFlags{ BufferBindFlags::None };
-        Uint32 StructStride = 0; // If non zero, it is structured
+        Uint32 StructStride = 0;               // If non zero, it is structured
+        Format BufferFormat = Format::UNKNOWN; // For typed buffer views
         bool AllowTypedViews = false;
         bool AllowRawViews = false;
     };

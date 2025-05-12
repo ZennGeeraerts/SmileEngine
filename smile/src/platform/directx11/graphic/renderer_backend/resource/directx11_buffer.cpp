@@ -114,8 +114,8 @@ namespace smile::graphic
         BufferRange bufferRange,
         ResourceType type )
     {
-        SM_ASSERT(
-            format != Format::UNKNOWN, "DirectX11Buffer::GetOrCreateShaderResourceView > Format cannot be unknown" );
+        if ( format == Format::UNKNOWN )
+            format = Descriptor.BufferFormat;
 
         bufferRange = bufferRange.Resolve( Descriptor );
 
@@ -137,15 +137,15 @@ namespace smile::graphic
                     "buffers" );
 
                 desc11.Format = DXGI_FORMAT_UNKNOWN;
-                desc11.BufferEx.FirstElement = static_cast< UINT >( bufferRange.Offset / Descriptor.StructStride );
-                desc11.BufferEx.NumElements = static_cast< UINT >( bufferRange.Size / Descriptor.StructStride );
+                desc11.BufferEx.FirstElement = bufferRange.Offset / Descriptor.StructStride;
+                desc11.BufferEx.NumElements = bufferRange.Size / Descriptor.StructStride;
                 break;
             }
             case ResourceType::RawBuffer_SRV:
             {
                 desc11.Format = DXGI_FORMAT_R32_TYPELESS;
-                desc11.BufferEx.FirstElement = static_cast< UINT >( bufferRange.Offset / 4 );
-                desc11.BufferEx.NumElements = static_cast< UINT >( bufferRange.Size / 4 );
+                desc11.BufferEx.FirstElement = bufferRange.Offset / 4;
+                desc11.BufferEx.NumElements = bufferRange.Size / 4;
                 desc11.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
                 break;
             }
@@ -158,8 +158,8 @@ namespace smile::graphic
                 const FormatInfo &formatInfo = GetFormatInfo( format );
 
                 desc11.Format = formatMapping.SRVFormat;
-                desc11.BufferEx.FirstElement = static_cast< UINT >( bufferRange.Offset / formatInfo.BytesPerBlock );
-                desc11.BufferEx.NumElements = static_cast< UINT >( bufferRange.Size / formatInfo.BytesPerBlock );
+                desc11.BufferEx.FirstElement = bufferRange.Offset / formatInfo.BytesPerBlock;
+                desc11.BufferEx.NumElements = bufferRange.Size / formatInfo.BytesPerBlock;
                 break;
             }
             default:
@@ -172,10 +172,83 @@ namespace smile::graphic
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11Buffer::GetOrCreateShaderResourceView > Failed to create shader resource view" );
+            return nullptr;
         }
 
         ShaderResourceViewMap.insert( std::make_pair( bufferBindingKey, pShaderResourceView ) );
 
         return pShaderResourceView;
+    }
+
+    ID3D11UnorderedAccessView *DirectX11Buffer::GetOrCreateUnorderedAccessView( ID3D11Device *pDevice,
+        Format format,
+        BufferRange bufferRange,
+        ResourceType type )
+    {
+        if ( format == Format::UNKNOWN )
+            format = Descriptor.BufferFormat;
+
+        bufferRange = bufferRange.Resolve( Descriptor );
+
+        BufferBindingKey bufferBindingKey{ bufferRange, format, type };
+        auto uavIt = UnorderedAccessViewMap.find( bufferBindingKey );
+        if ( uavIt != UnorderedAccessViewMap.end() )
+            return uavIt->second;
+
+        D3D11_UNORDERED_ACCESS_VIEW_DESC desc11;
+        desc11.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+        desc11.Buffer.Flags = 0;
+
+        switch ( type )
+        {
+            case ResourceType::StructuredBuffer_UAV:
+            {
+                SM_ASSERT( Descriptor.StructStride != 0,
+                    "DirectX11Buffer::GetOrCreateUnorderedAccessView > Struct stride must be known for structured "
+                    "buffers" );
+
+                desc11.Format = DXGI_FORMAT_UNKNOWN;
+                desc11.Buffer.FirstElement = bufferRange.Offset / Descriptor.StructStride;
+                desc11.Buffer.NumElements = bufferRange.Size / Descriptor.StructStride;
+                break;
+            }
+            case ResourceType::RawBuffer_UAV:
+            {
+                desc11.Format = DXGI_FORMAT_R32_TYPELESS;
+                desc11.Buffer.FirstElement = bufferRange.Offset / 4;
+                desc11.Buffer.NumElements = bufferRange.Size / 4;
+                desc11.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
+                break;
+            }
+            case ResourceType::TypedBuffer_UAV:
+            {
+                SM_ASSERT( format != Format::UNKNOWN,
+                    "DirectX11Buffer::GetOrCreateUnorderedAccessView > Format must be known for typed buffer" );
+
+                const DXGIFormatMapping &formatMapping = GetDXGIFormatMapping( format );
+                const FormatInfo &formatInfo = GetFormatInfo( format );
+
+                desc11.Format = formatMapping.SRVFormat;
+                desc11.Buffer.FirstElement = bufferRange.Offset / formatInfo.BytesPerBlock;
+                desc11.Buffer.NumElements = bufferRange.Size / formatInfo.BytesPerBlock;
+
+                break;
+            }
+            default:
+                SM_ASSERT( false, "Unsupported resource type" );
+                return nullptr;
+        }
+
+        ID3D11UnorderedAccessView *pUnorderedAccessView;
+        const HRESULT result = pDevice->CreateUnorderedAccessView( pInternal, &desc11, &pUnorderedAccessView );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Buffer::GetOrCreateUnorderedAccessView > Failed to create unordered access view" );
+            return nullptr;
+        }
+
+        UnorderedAccessViewMap.insert( std::make_pair( bufferBindingKey, pUnorderedAccessView ) );
+
+        return pUnorderedAccessView;
     }
 }
