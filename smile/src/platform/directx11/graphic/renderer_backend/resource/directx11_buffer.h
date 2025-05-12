@@ -18,6 +18,13 @@ namespace smile::graphic
         void Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc );
         void Destroy();
 
+        ID3D11ShaderResourceView *GetOrCreateShaderResourceView( ID3D11Device *pDevice,
+            Format format,
+            BufferRange bufferRange,
+            ResourceType type );
+
         ID3D11Buffer *pInternal = nullptr;
+        GPUBufferDescriptor Descriptor;
+        std::unordered_map< BufferBindingKey, ID3D11ShaderResourceView * > ShaderResourceViewMap;
     };
 }

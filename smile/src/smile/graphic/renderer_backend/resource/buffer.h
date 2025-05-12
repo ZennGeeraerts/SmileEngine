@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/hash_code.h"
+#include "smile/common/foundation/flags.h"
 #include "smile/graphic/renderer_backend/format.h"
 
 namespace smile::graphic
@@ -127,10 +128,12 @@ namespace smile::graphic
 
     enum class BufferBindFlags : Uint8
     {
-        None = BIT( 0 ),
-        VertexBuffer = BIT( 1 ),
-        IndexBuffer = BIT( 2 ),
-        UniformBuffer = BIT( 3 )
+        None,
+        VertexBuffer,
+        IndexBuffer,
+        UniformBuffer,
+        ShaderResource,
+        UnorderedAccess
     };
 
     struct GPUBufferDescriptor final
@@ -139,7 +142,55 @@ namespace smile::graphic
         Uint32 Size;
         BufferUsage Usage = BufferUsage::Default;
         BufferCPUAccess CPUAccess = BufferCPUAccess::None;
-        BufferBindFlags BindFlags = BufferBindFlags::None;
+        foundation::Flags< BufferBindFlags > BindFlags{ BufferBindFlags::None };
+        Uint32 StructStride = 0; // If non zero, it is structured
+        bool AllowTypedViews = false;
+        bool AllowRawViews = false;
+    };
+
+    struct BufferRange
+    {
+        BufferRange() = default;
+
+        constexpr BufferRange( Uint32 offset, Uint32 size ) : Offset{ offset }, Size{ size }
+        {
+        }
+
+        BufferRange Resolve( const GPUBufferDescriptor &bufferDesc ) const;
+
+        Uint32 Offset;
+        Uint32 Size;
+    };
+
+    constexpr static BufferRange s_EntireBuffer{ 0, std::numeric_limits< Uint32 >::max() };
+
+    struct BufferBindingKey final : public BufferRange
+    {
+        BufferBindingKey()
+        {
+        }
+
+        BufferBindingKey( const BufferRange &range, Format format, ResourceType type )
+            : BufferRange{ range }, Format{ format }, Type{ type }
+        {
+        }
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, std::hash< smile::graphic::Format >{}( Format ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Offset ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Size ) );
+            return hash;
+        }
+
+        bool operator==( const BufferBindingKey &other ) const
+        {
+            return Format == other.Format && Type == other.Type && Offset == other.Offset && Size == other.Size;
+        }
+
+        Format Format;
+        ResourceType Type;
     };
 }
 
@@ -148,9 +199,19 @@ namespace std
     template <>
     struct hash< smile::graphic::BufferLayout >
     {
-        smile::foundation::HashCode operator()( const smile::graphic::BufferLayout &bufferLayout ) const
+        smile::foundation::HashCode operator()( const smile::graphic::BufferLayout &bufferLayout ) const noexcept
         {
             return bufferLayout.GetHashCode();
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::BufferBindingKey >
+    {
+        smile::foundation::HashCode operator()(
+            const smile::graphic::BufferBindingKey &bufferBindingKey ) const noexcept
+        {
+            return bufferBindingKey.GetHashCode();
         }
     };
 }
