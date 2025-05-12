@@ -1,0 +1,1 @@
+add_subdirectory(x-shader-c EXCLUDE_FROM_ALL)

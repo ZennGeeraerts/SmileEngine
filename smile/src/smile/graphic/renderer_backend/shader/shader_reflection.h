@@ -5,6 +5,7 @@
 #pragma once
 
 #include "shader.h"
+#include "shader_data_type.h"
 
 namespace smile::graphic
 {

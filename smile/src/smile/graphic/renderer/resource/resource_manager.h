@@ -33,15 +33,15 @@ namespace smile::graphic
         void Initialize( GraphicsDevice *pDevice );
 
         memory::Ref< VertexBuffer >
-        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const VertexLayout &layout );
-        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const VertexLayout &layout );
+        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout );
+        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const BufferLayout &layout );
 
         memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
 
         memory::Ref< UniformBuffer > CreateUniformBuffer( const std::string &name, void *pData, Uint32 size );
 
         memory::Ref< Shader >
-        CreateShader( const std::string &assetFile, const VertexLayout &layout, const std::string &techniqueName = "" );
+        CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
         memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
         memory::Ref< Texture > CreateTexture( const std::filesystem::path &path );
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );

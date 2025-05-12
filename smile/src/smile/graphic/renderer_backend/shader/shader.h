@@ -33,6 +33,6 @@ namespace smile::graphic
         void SetName( const std::string &assetFile );
 
         std::string Name;
-        VertexLayout BufferLayout{};
+        BufferLayout BufferLayout{};
     };
 }

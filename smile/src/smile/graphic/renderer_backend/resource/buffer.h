@@ -4,125 +4,36 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/graphic/renderer_backend/format.h"
+
 namespace smile::graphic
 {
-    enum class ShaderDataType : Uint8
+    struct BufferElement final
     {
-        None = 0,
-        Float,
-        Float2,
-        Float3,
-        Float4,
-        Mat3,
-        Mat4,
-        Int,
-        Int2,
-        Int3,
-        Int4,
-        Bool,
-        Mat4Array,
-        Texture,
-        Texture2D,
-        Texture3D,
-        TextureCube,
-        String
-    };
-
-    static Uint32 ShaderDataTypeSize( ShaderDataType type )
-    {
-        switch ( type )
+        BufferElement() = default;
+        BufferElement( Format format, const std::string &name )
+            : Name{ name }, FormatType{ format }, Size{ GetFormatInfo( format ).BytesPerBlock }, Offset{ 0 }
         {
-            case ShaderDataType::Float:
-                return 4;
-            case ShaderDataType::Float2:
-                return 8;
-            case ShaderDataType::Float3:
-                return 12;
-            case ShaderDataType::Float4:
-                return 16;
-            case ShaderDataType::Mat3:
-                return 4 * 3 * 3;
-            case ShaderDataType::Mat4:
-                return 4 * 4 * 4;
-            case ShaderDataType::Int:
-                return 4;
-            case ShaderDataType::Int2:
-                return 8;
-            case ShaderDataType::Int3:
-                return 12;
-            case ShaderDataType::Int4:
-                return 16;
-            case ShaderDataType::Bool:
-                return 1;
-            default:
-                SM_ASSERT( false, "ShaderDataTypeSize > Unknown ShaderDataType" );
-                return 0;
-        }
-    }
-
-    struct VertexParameter final
-    {
-        VertexParameter() = default;
-        VertexParameter( ShaderDataType type, const std::string &name, bool isNormalized = false )
-            : Name{ name },
-              DataType{ type },
-              Size{ ShaderDataTypeSize( type ) },
-              Offset{ 0 },
-              IsNormalized{ isNormalized }
-        {
-        }
-
-        Uint32 GetComponentCount() const
-        {
-            switch ( DataType )
-            {
-                case ShaderDataType::Float:
-                    return 1;
-                case ShaderDataType::Float2:
-                    return 2;
-                case ShaderDataType::Float3:
-                    return 3;
-                case ShaderDataType::Float4:
-                    return 4;
-                case ShaderDataType::Mat3:
-                    return 9;
-                case ShaderDataType::Mat4:
-                    return 16;
-                case ShaderDataType::Int:
-                    return 1;
-                case ShaderDataType::Int2:
-                    return 2;
-                case ShaderDataType::Int3:
-                    return 3;
-                case ShaderDataType::Int4:
-                    return 4;
-                case ShaderDataType::Bool:
-                    return 1;
-                default:
-                    SM_ASSERT( false, "BufferElement::GetElementCount > Unknown ShaderDataType" );
-                    return 0;
-            }
         }
 
         std::string Name;
-        ShaderDataType DataType;
-        Uint32 Size;
-        Uint32 Offset;
-        bool IsNormalized;
+        Format FormatType;
+        Uint8 Size;
+        Uint8 Offset;
     };
 
-    class VertexLayout final
+    class BufferLayout final
     {
       public:
-        VertexLayout()
+        BufferLayout()
         {
         }
-        VertexLayout( const std::initializer_list< VertexParameter > &elements ) : m_Elements{ elements }
+        BufferLayout( const std::initializer_list< BufferElement > &elements ) : m_Elements{ elements }
         {
             CalculateOffsetAndStride();
         }
 
-        inline const std::vector< VertexParameter > &GetElements() const
+        inline const std::vector< BufferElement > &GetElements() const
         {
             return m_Elements;
         }
@@ -131,24 +42,24 @@ namespace smile::graphic
             return m_Stride;
         }
 
-        std::vector< VertexParameter >::iterator begin()
+        std::vector< BufferElement >::iterator begin()
         {
             return m_Elements.begin();
         }
-        std::vector< VertexParameter >::iterator end()
+        std::vector< BufferElement >::iterator end()
         {
             return m_Elements.end();
         }
-        std::vector< VertexParameter >::const_iterator begin() const
+        std::vector< BufferElement >::const_iterator begin() const
         {
             return m_Elements.cbegin();
         }
-        std::vector< VertexParameter >::const_iterator end() const
+        std::vector< BufferElement >::const_iterator end() const
         {
             return m_Elements.cend();
         }
 
-        void AddElement( const VertexParameter &element )
+        void AddElement( const BufferElement &element )
         {
             m_Elements.push_back( element );
             CalculateOffsetAndStride();
@@ -168,7 +79,7 @@ namespace smile::graphic
         }
 
       private:
-        std::vector< VertexParameter > m_Elements;
+        std::vector< BufferElement > m_Elements;
         Uint32 m_Stride = 0;
     };
 

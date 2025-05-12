@@ -26,3 +26,5 @@ target_compile_definitions(
 )
 
 add_definitions(-DUNICODE)
+
+add_subdirectory(tools)

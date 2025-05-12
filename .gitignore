@@ -1,8 +1,6 @@
 ﻿out/
-bin/
 .vs/
+Debug/
+Release/
 
 /smile/resources/scripts
-
-/conan/Debug
-/conan/Release

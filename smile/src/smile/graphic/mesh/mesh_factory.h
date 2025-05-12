@@ -16,13 +16,13 @@ namespace smile::graphic
     class MeshFactory final
     {
       public:
-        static Ref< Mesh > CreateMesh( const Ref< MeshFilter > &pMeshFilter, const VertexLayout &layout );
+        static Ref< Mesh > CreateMesh( const Ref< MeshFilter > &pMeshFilter, const BufferLayout &layout );
         static Ref< SkinnedMesh > CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
-            const VertexLayout &layout );
+            const BufferLayout &layout );
 
-        static Ref< Mesh > CreatePlane( const VertexLayout &vertexLayout );
-        static Ref< Mesh > CreateCube( const VertexLayout &vertexLayout );
-        static Ref< Mesh > CreateSphere( const VertexLayout &vertexLayout, const float radius, const Uint32 steps );
+        static Ref< Mesh > CreatePlane( const BufferLayout &vertexLayout );
+        static Ref< Mesh > CreateCube( const BufferLayout &vertexLayout );
+        static Ref< Mesh > CreateSphere( const BufferLayout &vertexLayout, const float radius, const Uint32 steps );
 
       private:
         static const DirectX::XMFLOAT4 s_DefaultColor;

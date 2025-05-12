@@ -14,6 +14,9 @@
 #include "smile/graphic/ecs/graphic_system.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
 
+#include "smile/graphic/renderer/shader/shader_loader.h"
+#include "smile/graphic/renderer/shader/shader_asset.h"
+
 #include <imgui/imgui.h>
 #include <DirectXColors.h>
 
@@ -100,9 +103,9 @@ void ExampleLayer::OnAttach()
         -0.5f,
         0.5f };
 
-    smile::graphic::VertexLayout vertexLayout{ { smile::graphic::ShaderDataType::Float3, "Position" },
-        { smile::graphic::ShaderDataType::Float3, "Normal" },
-        { smile::graphic::ShaderDataType::Float3, "TexCoord" } };
+    smile::graphic::BufferLayout vertexLayout{ { smile::graphic::Format::RGB32_FLOAT, "Position" },
+        { smile::graphic::Format::RGB32_FLOAT, "Normal" },
+        { smile::graphic::Format::RGB32_FLOAT, "TexCoord" } };
 
     smile::Uint32 indices[]{ 0,
         1,
@@ -190,7 +193,7 @@ void ExampleLayer::OnAttach()
     auto cube = m_pActiveWorld->CreateEntity( "Cube" );
     auto &meshRendererComp = cube.AddComponent< smile::graphic::ecs::MeshRendererComponent >();
     meshRendererComp.pMesh = smile::graphic::MeshFactory::CreateCube(
-        smile::graphic::VertexLayout{ { smile::graphic::ShaderDataType::Float3, "POSITION" } } );
+        smile::graphic::BufferLayout{ { smile::graphic::Format::RGB32_FLOAT, "POSITION" } } );
 
     cube.GetComponent< smile::world::ecs::TransformComponent >().Translation = DirectX::XMFLOAT3{ -2.5f, 0, 5 };
     cube.GetComponent< smile::world::ecs::TransformComponent >().Rotation = DirectX::XMFLOAT3{ 45, 45, 0 };
@@ -214,6 +217,9 @@ void ExampleLayer::OnAttach()
     auto pScene = smile::graphic::RenderEngine::GetSceneManager().GetActive();
     pScene->OnViewportResize( 1280, 720 );
     pScene->SetRenderToSwapChain( true );
+
+    smile::graphic::ShaderLoader shaderLoader{};
+    shaderLoader.LoadShader( "resources/shaders/pbr.vs.smshader" );
 }
 
 void ExampleLayer::OnDetach()

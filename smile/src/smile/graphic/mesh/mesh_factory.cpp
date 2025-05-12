@@ -146,7 +146,7 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f } };
 
-    Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const VertexLayout &layout )
+    Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const BufferLayout &layout )
     {
         pMeshFilter->m_pDataLocation =
             malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pMeshFilter->m_VertexCount ) );
@@ -160,7 +160,7 @@ namespace smile::graphic
 
         for ( Uint32 i{}; i < pMeshFilter->m_VertexCount; ++i )
         {
-            for ( const VertexParameter &element : layout )
+            for ( const BufferElement &element : layout )
             {
                 if ( element.Name == "POSITION" )
                     memcpy( pMeshFilter->m_pDataLocation,
@@ -204,7 +204,7 @@ namespace smile::graphic
     }
 
     Ref< SkinnedMesh > MeshFactory::CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
-        const VertexLayout &layout )
+        const BufferLayout &layout )
     {
         pSkinnedMeshFilter->m_pDataLocation = malloc(
             static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pSkinnedMeshFilter->m_VertexCount ) );
@@ -218,7 +218,7 @@ namespace smile::graphic
 
         for ( Uint32 i{}; i < pSkinnedMeshFilter->m_VertexCount; ++i )
         {
-            for ( const VertexParameter &element : layout )
+            for ( const BufferElement &element : layout )
             {
                 if ( element.Name == "POSITION" )
                     memcpy( pSkinnedMeshFilter->m_pDataLocation,
@@ -282,7 +282,7 @@ namespace smile::graphic
         return pSkinnedMesh;
     }
 
-    Ref< Mesh > MeshFactory::CreatePlane( const VertexLayout &vertexLayout )
+    Ref< Mesh > MeshFactory::CreatePlane( const BufferLayout &vertexLayout )
     {
         Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
 
@@ -306,7 +306,7 @@ namespace smile::graphic
         return CreateMesh( pMeshFilter, vertexLayout );
     }
 
-    Ref< Mesh > MeshFactory::CreateCube( const VertexLayout &vertexLayout )
+    Ref< Mesh > MeshFactory::CreateCube( const BufferLayout &vertexLayout )
     {
         Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
 
@@ -335,7 +335,7 @@ namespace smile::graphic
         return CreateMesh( pMeshFilter, vertexLayout );
     }
 
-    Ref< Mesh > MeshFactory::CreateSphere( const VertexLayout &vertexLayout, const float radius, const Uint32 steps )
+    Ref< Mesh > MeshFactory::CreateSphere( const BufferLayout &vertexLayout, const float radius, const Uint32 steps )
     {
         std::vector< DirectX::XMFLOAT3 > positions{};
         std::vector< DirectX::XMFLOAT3 > normals{};

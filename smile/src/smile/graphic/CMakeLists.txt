@@ -24,3 +24,5 @@ file(GLOB_RECURSE SOURCE_FILES
     ${THIRDPARTY_PATH}/ImGuizmo/ImGuizmo.cpp
 )
 target_sources(smile PRIVATE ${SOURCE_FILES})
+
+include(build/compile_shaders.cmake)
