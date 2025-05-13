@@ -9,10 +9,12 @@
 #include "render_handle.h"
 
 #include "resource/buffer.h"
+#include "resource/texture.h"
 #include "resource/frame_buffer.h"
 #include "resource/sampler.h"
 #include "resource/graphics_pipeline.h"
 #include "shader/shader.h"
+#include "shader/binding_set.h"
 
 #include "smile/graphic/resource/image.h"
 
@@ -41,6 +43,9 @@ namespace smile::graphic
         virtual void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
+        virtual void CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc ) = 0;
+        virtual void DestroyBindingSet( BindingSetHandle handle ) = 0;
+
         virtual void CreateShader( ShaderHandle handle,
             const ShaderDescriptor &shaderDesc,
             const std::vector< Byte > &byteCode ) = 0;
@@ -68,6 +73,7 @@ namespace smile::graphic
         static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxSamplerCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxFramebufferCount = ( 4 << 10 );
+        static constexpr Uint16 s_MaxBindingSetCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxGraphicsPipelineCount = ( 4 << 10 );
     };

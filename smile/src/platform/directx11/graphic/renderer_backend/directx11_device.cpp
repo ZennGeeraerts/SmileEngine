@@ -91,6 +91,16 @@ namespace smile::graphic
         m_GPUBuffers[handle.GetIndex()].Destroy();
     }
 
+    void DirectX11Device::CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc )
+    {
+        m_BindingSets[handle.GetIndex()].Create( *this, bindingSetDesc );
+    }
+
+    void DirectX11Device::DestroyBindingSet( BindingSetHandle handle )
+    {
+        m_BindingSets[handle.GetIndex()].Destroy();
+    }
+
     void DirectX11Device::CreateShader( ShaderHandle handle,
         const ShaderDescriptor &shaderDesc,
         const std::vector< Byte > &byteCode )

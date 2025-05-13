@@ -16,6 +16,7 @@
 
 #include "shader/directx11_shader.h"
 #include "shader/directx11_input_layout.h"
+#include "shader/directx11_binding_set.h"
 
 #include "directx11_context.h"
 #include "directx11_state_cache.h"
@@ -34,7 +35,8 @@ namespace smile::graphic
     class DirectX11Device final : public GraphicsDevice
     {
         using DirectX11RasterizerStateCache = typename DirectX11StateCache< RasterizerState, DirectX11RasterizerState >;
-        using DirectX11DepthStencilStateCache = typename DirectX11StateCache< DepthStencilState, DirectX11DepthStencilState >;
+        using DirectX11DepthStencilStateCache =
+            typename DirectX11StateCache< DepthStencilState, DirectX11DepthStencilState >;
         using DirectX11InputLayoutCache = typename DirectX11StateCache< BufferLayout, DirectX11InputLayout >;
 
       public:
@@ -57,6 +59,9 @@ namespace smile::graphic
 
         void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;
+
+        void CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc ) override;
+        void DestroyBindingSet( BindingSetHandle handle ) override;
 
         void CreateShader( ShaderHandle handle,
             const ShaderDescriptor &shaderDesc,
@@ -91,6 +96,7 @@ namespace smile::graphic
         std::array< DirectX11Texture, s_MaxTextureCount > m_Textures;
         std::array< DirectX11Sampler, s_MaxSamplerCount > m_Samplers;
         std::array< DirectX11Framebuffer, s_MaxFramebufferCount > m_Framebuffers;
+        std::array< DirectX11BindingSet, s_MaxBindingSetCount > m_BindingSets;
         std::array< DirectX11Shader, s_MaxShaderCount > m_Shaders;
         std::array< DirectX11Pipeline, s_MaxGraphicsPipelineCount > m_Pipelines;
 
@@ -99,5 +105,6 @@ namespace smile::graphic
         DirectX11InputLayoutCache m_InputLayoutCache;
 
         friend class DirectX11CommandList;
+        friend class DirectX11BindingSet;
     };
 }

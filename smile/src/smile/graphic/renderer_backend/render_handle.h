@@ -20,6 +20,9 @@ namespace smile::graphic
     using FramebufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using FramebufferHandle = FramebufferHandleManager::HandleType;
 
+    using BindingSetHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using BindingSetHandle = BindingSetHandleManager::HandleType;
+
     using ShaderHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using ShaderHandle = FramebufferHandleManager::HandleType;
 
