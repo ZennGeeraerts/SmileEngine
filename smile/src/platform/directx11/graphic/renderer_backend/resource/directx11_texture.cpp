@@ -9,6 +9,8 @@
 #include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
 #include "platform/directx11/graphic/renderer_backend/directx11_cpu_access.h"
 
+using Microsoft::WRL::ComPtr;
+
 namespace smile::graphic
 {
     void
@@ -49,9 +51,10 @@ namespace smile::graphic
                 desc11.Format = desc.IsTypeless ? formatMapping.ResourceFormat : formatMapping.RTVFormat;
                 desc11.Usage = usage;
                 desc11.BindFlags = bindFlags;
-                desc11.CPUAccessFlags = BufferCPUAccessToD3D11Type( desc.CPUAccess );
+                desc11.CPUAccessFlags = CPUAccessToD3D11Type( desc.CPUAccess );
                 desc11.MiscFlags = 0;
 
+                ComPtr< ID3D11Texture1D > pTexture1D;
                 const HRESULT result = [&]()
                 {
                     if ( !buffer.empty() )
@@ -75,6 +78,8 @@ namespace smile::graphic
                     return;
                 }
 
+                pInternal = std::move( pTexture1D );
+
                 break;
             }
             case TextureDimension::Texture2D:
@@ -92,7 +97,7 @@ namespace smile::graphic
                 desc11.SampleDesc.Quality = desc.SampleQuality;
                 desc11.Usage = usage;
                 desc11.BindFlags = bindFlags;
-                desc11.CPUAccessFlags = BufferCPUAccessToD3D11Type( desc.CPUAccess );
+                desc11.CPUAccessFlags = CPUAccessToD3D11Type( desc.CPUAccess );
 
                 if ( desc.Dimension == TextureDimension::TextureCube ||
                      desc.Dimension == TextureDimension::TextureCubeArray )
@@ -104,6 +109,7 @@ namespace smile::graphic
                     desc11.MiscFlags = 0;
                 }
 
+                ComPtr< ID3D11Texture2D > pTexture2D;
                 const HRESULT result = [&]()
                 {
                     if ( !buffer.empty() )
@@ -127,6 +133,8 @@ namespace smile::graphic
                     return;
                 }
 
+                pInternal = std::move( pTexture2D );
+
                 break;
             }
             case TextureDimension::Texture3D:
@@ -139,9 +147,10 @@ namespace smile::graphic
                 desc11.Format = desc.IsTypeless ? formatMapping.ResourceFormat : formatMapping.RTVFormat;
                 desc11.Usage = usage;
                 desc11.BindFlags = bindFlags;
-                desc11.CPUAccessFlags = BufferCPUAccessToD3D11Type( desc.CPUAccess );
+                desc11.CPUAccessFlags = CPUAccessToD3D11Type( desc.CPUAccess );
                 desc11.MiscFlags = 0;
 
+                ComPtr< ID3D11Texture3D > pTexture3D;
                 const HRESULT result = [&]()
                 {
                     if ( !buffer.empty() )
@@ -165,6 +174,8 @@ namespace smile::graphic
                     return;
                 }
 
+                pInternal = std::move( pTexture3D );
+
                 break;
             }
             case TextureDimension::Unknown:
@@ -176,7 +187,103 @@ namespace smile::graphic
 
     void DirectX11Texture::Destroy()
     {
-        SAFE_RELEASE( pInternal );
-        SAFE_RELEASE( pShaderResourceView );
+        pInternal.Reset();
+    }
+
+    ID3D11ShaderResourceView *DirectX11Texture::GetOrCreateShaderResourceView( ID3D11Device *pDevice,
+        Format format,
+        TextureSubresourceSet subresources,
+        TextureDimension dimension )
+    {
+        if ( format == Format::UNKNOWN )
+            format = Descriptor.TextureFormat;
+
+        if ( dimension == TextureDimension::Unknown )
+            dimension = Descriptor.Dimension;
+
+        subresources = subresources.Resolve( Descriptor, false );
+
+        TextureBindingKey textureBindingKey{ subresources, format };
+        auto srvIt = m_ShaderResourceViewMap.find( textureBindingKey );
+        if ( srvIt != m_ShaderResourceViewMap.end() )
+            return srvIt->second.Get();
+
+        D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+        viewDesc.Format = GetDXGIFormatMapping( format ).SRVFormat;
+
+        switch ( dimension )
+        {
+            case TextureDimension::Texture1D:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE1D;
+                viewDesc.Texture1D.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.Texture1D.MipLevels = subresources.MipLevelCount;
+                break;
+            }
+            case TextureDimension::Texture1DArray:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE1DARRAY;
+                viewDesc.Texture1DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture1DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture1DArray.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.Texture1DArray.MipLevels = subresources.BaseMipLevel;
+                break;
+            }
+            case TextureDimension::Texture2D:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                viewDesc.Texture2D.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.Texture2D.MipLevels = subresources.MipLevelCount;
+                break;
+            }
+            case TextureDimension::Texture2DArray:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+                viewDesc.Texture2DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture2DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture2DArray.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.Texture2DArray.MipLevels = subresources.MipLevelCount;
+                break;
+            }
+            case TextureDimension::TextureCube:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+                viewDesc.TextureCube.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.TextureCube.MipLevels = subresources.MipLevelCount;
+                break;
+            }
+            case TextureDimension::TextureCubeArray:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBEARRAY;
+                viewDesc.TextureCubeArray.First2DArrayFace = subresources.BaseArraySlice;
+                viewDesc.TextureCubeArray.NumCubes = subresources.ArraySliceCount / 6;
+                viewDesc.TextureCubeArray.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.TextureCubeArray.MipLevels = subresources.MipLevelCount;
+                break;
+            }
+            case TextureDimension::Texture3D:
+            {
+                viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+                viewDesc.Texture3D.MostDetailedMip = subresources.BaseMipLevel;
+                viewDesc.Texture3D.MipLevels = subresources.MipLevelCount;
+                break;
+            }
+            default:
+                SM_LOG_ERROR( "DirectX11Texture::GetOrCreateShaderResourceView > Invalid texture dimension used" );
+                return nullptr;
+        }
+
+        ComPtr< ID3D11ShaderResourceView > pShaderResourceView;
+        const HRESULT result = pDevice->CreateShaderResourceView( pInternal.Get(), &viewDesc, &pShaderResourceView );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Texture::GetOrCreateShaderResourceView > Failed to create shader resource view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return nullptr;
+        }
+
+        m_ShaderResourceViewMap.insert( std::make_pair( textureBindingKey, pShaderResourceView ) );
+
+        return pShaderResourceView.Get();
     }
 }

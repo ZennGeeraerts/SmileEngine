@@ -7,11 +7,13 @@
 #include "smile/graphic/renderer_backend/resource/texture.h"
 
 #include <d3d11.h>
+#include <wrl/client.h>
 
 namespace smile::graphic
 {
-    struct DirectX11Texture final
+    class DirectX11Texture final
     {
+      public:
         DirectX11Texture() = default;
         ~DirectX11Texture() = default;
 
@@ -23,14 +25,21 @@ namespace smile::graphic
         void Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const std::vector< Byte > &buffer );
         void Destroy();
 
-        union
-        {
-            ID3D11Resource *pInternal;
-            ID3D11Texture1D *pTexture1D;
-            ID3D11Texture2D *pTexture2D;
-            ID3D11Texture3D *pTexture3D;
-        };
+        ID3D11ShaderResourceView *GetOrCreateShaderResourceView( ID3D11Device *pDevice,
+            Format format,
+            TextureSubresourceSet subresources,
+            TextureDimension dimension );
+
+        Microsoft::WRL::ComPtr< ID3D11Resource > pInternal;
         TextureDescriptor Descriptor;
-        ID3D11ShaderResourceView *pShaderResourceView = nullptr;
+
+      private:
+        template < typename Type >
+        using TextureBindingMap = std::unordered_map< TextureBindingKey, Microsoft::WRL::ComPtr< Type > >;
+
+        TextureBindingMap< ID3D11ShaderResourceView > m_ShaderResourceViewMap;
+        TextureBindingMap< ID3D11RenderTargetView > m_RenderTargetViewMap;
+        TextureBindingMap< ID3D11DepthStencilView > m_DepthStencilViewMap;
+        TextureBindingMap< ID3D11UnorderedAccessView > m_UnorderedAccessViewMap;
     };
 }

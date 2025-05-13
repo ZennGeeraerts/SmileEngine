@@ -51,6 +51,8 @@ namespace smile::graphic
 
     struct TextureSlice final
     {
+        [[nodiscard]] TextureSlice Resolve( const TextureDescriptor &desc ) const;
+
         Uint32 x = 0;
         Uint32 y = 0;
         Uint32 z = 0;
@@ -61,11 +63,9 @@ namespace smile::graphic
 
         MipmapLevel MipLevelCount = 0;
         ArraySlice Slice = 0;
-
-        [[nodiscard]] TextureSlice Resolve( const TextureDescriptor &desc ) const;
     };
 
-    struct TextureSubresourceSet final
+    struct TextureSubresourceSet
     {
         TextureSubresourceSet() = default;
 
@@ -80,6 +80,9 @@ namespace smile::graphic
         {
         }
 
+        [[nodiscard]] TextureSubresourceSet Resolve( const TextureDescriptor &desc, bool useSingleMipLevel ) const;
+        [[nodiscard]] bool IsEntireTexture( const TextureDescriptor &desc ) const;
+
         static constexpr MipmapLevel MaxMipLevels = std::numeric_limits< Uint32 >::max();
         static constexpr ArraySlice MaxArraySlices = std::numeric_limits< Uint32 >::max();
 
@@ -87,8 +90,50 @@ namespace smile::graphic
         MipmapLevel MipLevelCount = 1;
         ArraySlice BaseArraySlice = 0;
         ArraySlice ArraySliceCount = 1;
+    };
 
-        [[nodiscard]] TextureSubresourceSet Resolve( const TextureDescriptor &desc, bool useSingleMipLevel ) const;
-        [[nodiscard]] bool IsEntireTexture( const TextureDescriptor &desc ) const;
+    struct TextureBindingKey final : public TextureSubresourceSet
+    {
+        TextureBindingKey()
+        {
+        }
+
+        TextureBindingKey( const TextureSubresourceSet &subresourceSet, Format format, bool isReadOnlyDSV = false )
+            : TextureSubresourceSet{ subresourceSet }, TextureFormat{ format }, IsReadOnlyDSV{ isReadOnlyDSV }
+        {
+        }
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, std::hash< Format >{}( TextureFormat ) );
+            hash = foundation::HashCombine( hash, std::hash< MipmapLevel >{}( BaseMipLevel ) );
+            hash = foundation::HashCombine( hash, std::hash< MipmapLevel >{}( MipLevelCount ) );
+            hash = foundation::HashCombine( hash, std::hash< ArraySlice >{}( BaseArraySlice ) );
+            hash = foundation::HashCombine( hash, std::hash< ArraySlice >{}( ArraySliceCount ) );
+            return hash;
+        }
+
+        bool operator==( const TextureBindingKey &other ) const
+        {
+            return TextureFormat == other.TextureFormat && BaseMipLevel == other.BaseMipLevel &&
+                   MipLevelCount == other.MipLevelCount && BaseArraySlice == other.BaseArraySlice &&
+                   ArraySliceCount == other.ArraySliceCount;
+        }
+
+        Format TextureFormat;
+        bool IsReadOnlyDSV;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::TextureBindingKey >
+    {
+        smile::foundation::HashCode operator=( const smile::graphic::TextureBindingKey &textureBindingKey ) const
+        {
+            return textureBindingKey.GetHashCode();
+        }
     };
 }
