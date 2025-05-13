@@ -8,6 +8,7 @@
 
 #include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
 #include "platform/directx11/graphic/renderer_backend/dxgi_format.h"
+#include "platform/directx11/graphic/renderer_backend/directx11_cpu_access.h"
 
 namespace smile::graphic
 {
@@ -25,21 +26,6 @@ namespace smile::graphic
                 return D3D11_USAGE_STAGING;
             default:
                 return D3D11_USAGE_DEFAULT;
-        }
-    }
-
-    static UINT BufferCPUAccessToDirectXType( BufferCPUAccess cpuAccess )
-    {
-        switch ( cpuAccess )
-        {
-            case BufferCPUAccess::None:
-                return 0;
-            case BufferCPUAccess::Read:
-                return D3D11_CPU_ACCESS_READ;
-            case BufferCPUAccess::Write:
-                return D3D11_CPU_ACCESS_WRITE;
-            default:
-                return 0;
         }
     }
 
@@ -73,7 +59,7 @@ namespace smile::graphic
         bufferDesc.Usage = BufferUsageToDirectXType( desc.Usage );
         bufferDesc.ByteWidth = desc.Size;
         bufferDesc.BindFlags = BindFlagsToDirectXType( desc.BindFlags );
-        bufferDesc.CPUAccessFlags = BufferCPUAccessToDirectXType( desc.CPUAccess );
+        bufferDesc.CPUAccessFlags = CPUAccessToD3D11Type( desc.CPUAccess );
         bufferDesc.MiscFlags = 0;
 
         if ( desc.StructStride != 0 )

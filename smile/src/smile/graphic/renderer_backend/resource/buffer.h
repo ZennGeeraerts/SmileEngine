@@ -7,6 +7,7 @@
 #include "smile/common/foundation/hash_code.h"
 #include "smile/common/foundation/flags.h"
 #include "smile/graphic/renderer_backend/format.h"
+#include "smile/graphic/renderer_backend/cpu_access_mode.h"
 
 namespace smile::graphic
 {
@@ -119,13 +120,6 @@ namespace smile::graphic
         Staging
     };
 
-    enum class BufferCPUAccess : Uint8
-    {
-        None,
-        Read,
-        Write
-    };
-
     enum class BufferBindFlags : Uint8
     {
         None,
@@ -141,7 +135,7 @@ namespace smile::graphic
         void *pData = nullptr;
         Uint32 Size;
         BufferUsage Usage = BufferUsage::Default;
-        BufferCPUAccess CPUAccess = BufferCPUAccess::None;
+        CPUAccessMode CPUAccess = CPUAccessMode::None;
         foundation::Flags< BufferBindFlags > BindFlags{ BufferBindFlags::None };
         Uint32 StructStride = 0;               // If non zero, it is structured
         Format BufferFormat = Format::UNKNOWN; // For typed buffer views

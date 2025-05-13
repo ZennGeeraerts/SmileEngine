@@ -132,14 +132,11 @@ namespace smile::graphic
     {
     }
 
-    void DirectX11Device::CreateTexture( TextureHandle handle, const std::filesystem::path &path )
+    void DirectX11Device::CreateTexture( TextureHandle handle,
+        const TextureDescriptor &desc,
+        const std::vector< Byte > &buffer )
     {
-        m_Textures[handle.GetIndex()].Create( m_Context.pDevice, path );
-    }
-
-    void DirectX11Device::CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage )
-    {
-        m_Textures[handle.GetIndex()].Create( m_Context.pDevice, std::move( pImage ) );
+        m_Textures[handle.GetIndex()].Create( m_Context.pDevice, desc, buffer );
     }
 
     void DirectX11Device::DestroyTexture( TextureHandle handle )

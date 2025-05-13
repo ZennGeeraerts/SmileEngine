@@ -5,126 +5,172 @@
 #include "smpch.h"
 #include "directx11_texture.h"
 
+#include "platform/directx11/graphic/renderer_backend/dxgi_format.h"
 #include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
-
-#include <DirectXTex.h>
+#include "platform/directx11/graphic/renderer_backend/directx11_cpu_access.h"
 
 namespace smile::graphic
 {
-    static bool LoadTexture( ID3D11Device *pDevice,
-        const std::filesystem::path &path,
-        ID3D11Resource **ppResource,
-        ID3D11ShaderResourceView **ppShaderResourceView,
-        DirectX::TexMetadata &info )
+    void
+    DirectX11Texture::Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const std::vector< Byte > &buffer )
     {
-        auto extension = path.extension();
+        Descriptor = desc;
 
-        DirectX::ScratchImage image{};
+        D3D11_USAGE usage = desc.CPUAccess == CPUAccessMode::None ? D3D11_USAGE_DEFAULT : D3D11_USAGE_STAGING;
 
-        HRESULT result{ S_OK };
-        if ( extension == ".dds" )
+        const DXGIFormatMapping &formatMapping = GetDXGIFormatMapping( desc.TextureFormat );
+        const FormatInfo &formatInfo = GetFormatInfo( desc.TextureFormat );
+
+        UINT bindFlags{ 0 };
+        if ( desc.CPUAccess == CPUAccessMode::None )
         {
-            result = DirectX::LoadFromDDSFile( path.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
-            if ( FAILED( result ) )
+            if ( desc.BindFlags.Has( TextureBindFlags::ShaderResource ) )
+                bindFlags |= D3D11_BIND_SHADER_RESOURCE;
+
+            if ( desc.BindFlags.Has( TextureBindFlags::RenderTarget ) )
             {
-                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from DDS file failed: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                return false;
+                bindFlags |= ( formatInfo.HasDepth || formatInfo.HasStencil ) ? D3D11_BIND_DEPTH_STENCIL
+                                                                              : D3D11_BIND_RENDER_TARGET;
             }
+
+            if ( desc.BindFlags.Has( TextureBindFlags::UnorderedAccess ) )
+                bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
         }
-        else if ( extension == ".tga" )
+
+        switch ( desc.Dimension )
         {
-            result = DirectX::LoadFromTGAFile( path.c_str(), &info, image );
-            if ( FAILED( result ) )
+            case TextureDimension::Texture1D:
+            case TextureDimension::Texture1DArray:
             {
-                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from TGA file failed: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                return false;
+                D3D11_TEXTURE1D_DESC desc11;
+                desc11.Width = desc.Width;
+                desc11.MipLevels = desc.MipLevelCount;
+                desc11.ArraySize = desc.ArrayLength;
+                desc11.Format = desc.IsTypeless ? formatMapping.ResourceFormat : formatMapping.RTVFormat;
+                desc11.Usage = usage;
+                desc11.BindFlags = bindFlags;
+                desc11.CPUAccessFlags = BufferCPUAccessToD3D11Type( desc.CPUAccess );
+                desc11.MiscFlags = 0;
+
+                const HRESULT result = [&]()
+                {
+                    if ( !buffer.empty() )
+                    {
+                        D3D11_SUBRESOURCE_DATA subResourceData{};
+                        subResourceData.pSysMem = buffer.data();
+                        subResourceData.SysMemPitch = static_cast< UINT >( buffer.size() );
+
+                        return pDevice->CreateTexture1D( &desc11, &subResourceData, &pTexture1D );
+                    }
+                    else
+                    {
+                        return pDevice->CreateTexture1D( &desc11, nullptr, &pTexture1D );
+                    }
+                }();
+
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Texture::Create > Failed to create texture: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                    return;
+                }
+
+                break;
             }
-        }
-        else
-        {
-            result = DirectX::LoadFromWICFile( path.c_str(), DirectX::WIC_FLAGS_NONE, &info, image );
-            if ( FAILED( result ) )
+            case TextureDimension::Texture2D:
+            case TextureDimension::Texture2DArray:
+            case TextureDimension::TextureCube:
+            case TextureDimension::TextureCubeArray:
             {
-                SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Loading from WIC file failed: {}",
-                    fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-                return false;
+                D3D11_TEXTURE2D_DESC desc11;
+                desc11.Width = desc.Width;
+                desc11.Height = desc.Height;
+                desc11.MipLevels = desc.MipLevelCount;
+                desc11.ArraySize = desc.ArrayLength;
+                desc11.Format = desc.IsTypeless ? formatMapping.ResourceFormat : formatMapping.RTVFormat;
+                desc11.SampleDesc.Count = desc.SampleCount;
+                desc11.SampleDesc.Quality = desc.SampleQuality;
+                desc11.Usage = usage;
+                desc11.BindFlags = bindFlags;
+                desc11.CPUAccessFlags = BufferCPUAccessToD3D11Type( desc.CPUAccess );
+
+                if ( desc.Dimension == TextureDimension::TextureCube ||
+                     desc.Dimension == TextureDimension::TextureCubeArray )
+                {
+                    desc11.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+                }
+                else
+                {
+                    desc11.MiscFlags = 0;
+                }
+
+                const HRESULT result = [&]()
+                {
+                    if ( !buffer.empty() )
+                    {
+                        D3D11_SUBRESOURCE_DATA subResourceData{};
+                        subResourceData.pSysMem = buffer.data();
+                        subResourceData.SysMemPitch = static_cast< UINT >( buffer.size() );
+
+                        return pDevice->CreateTexture2D( &desc11, &subResourceData, &pTexture2D );
+                    }
+                    else
+                    {
+                        return pDevice->CreateTexture2D( &desc11, nullptr, &pTexture2D );
+                    }
+                }();
+
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Texture::Create > Failed to create texture: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                    return;
+                }
+
+                break;
             }
-        }
+            case TextureDimension::Texture3D:
+            {
+                D3D11_TEXTURE3D_DESC desc11;
+                desc11.Width = desc.Width;
+                desc11.Height = desc.Height;
+                desc11.Depth = desc.Depth;
+                desc11.MipLevels = desc.MipLevelCount;
+                desc11.Format = desc.IsTypeless ? formatMapping.ResourceFormat : formatMapping.RTVFormat;
+                desc11.Usage = usage;
+                desc11.BindFlags = bindFlags;
+                desc11.CPUAccessFlags = BufferCPUAccessToD3D11Type( desc.CPUAccess );
+                desc11.MiscFlags = 0;
 
-        result = DirectX::CreateTexture(
-            pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), ppResource );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create texture: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            SAFE_RELEASE( ( *ppResource ) );
-            return false;
-        }
+                const HRESULT result = [&]()
+                {
+                    if ( !buffer.empty() )
+                    {
+                        D3D11_SUBRESOURCE_DATA subResourceData{};
+                        subResourceData.pSysMem = buffer.data();
+                        subResourceData.SysMemPitch = static_cast< UINT >( buffer.size() );
 
-        result = DirectX::CreateShaderResourceView(
-            pDevice, image.GetImages(), image.GetImageCount(), image.GetMetadata(), ppShaderResourceView );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Device::LoadTexture2D > Failed to create shader resource view: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            SAFE_RELEASE( ( *ppShaderResourceView ) );
-            return false;
-        }
+                        return pDevice->CreateTexture3D( &desc11, &subResourceData, &pTexture3D );
+                    }
+                    else
+                    {
+                        return pDevice->CreateTexture3D( &desc11, nullptr, &pTexture3D );
+                    }
+                }();
 
-        return true;
-    }
+                if ( FAILED( result ) )
+                {
+                    SM_LOG_ERROR( "DirectX11Texture::Create > Failed to create texture: {}",
+                        fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                    return;
+                }
 
-    static DXGI_FORMAT ImageFormatToDirectXType( ImageFormat format )
-    {
-        switch ( format )
-        {
-            case ImageFormat::RGB:
-                return DXGI_FORMAT_R32G32B32_FLOAT;
-            case ImageFormat::RGBA:
-                return DXGI_FORMAT_R32G32B32A32_FLOAT;
+                break;
+            }
+            case TextureDimension::Unknown:
             default:
-                SM_ASSERT( false, "Unsupported format" );
-        }
-
-        return DXGI_FORMAT_UNKNOWN;
-    }
-
-    void DirectX11Texture::Create( ID3D11Device *pDevice, const std::filesystem::path &path )
-    {
-        DirectX::TexMetadata info{};
-        if ( !LoadTexture( pDevice, path, &pInternal, &pShaderResourceView, info ) )
-        {
-            SAFE_RELEASE( pInternal );
-            SAFE_RELEASE( pShaderResourceView );
-            SM_ASSERT( false, "DirectX11Texture::Create > Failed to load texture" );
-        }
-    }
-
-    void DirectX11Texture::Create( ID3D11Device *pDevice, memory::Ref< const Image > pImage )
-    {
-        D3D11_TEXTURE2D_DESC desc{};
-        desc.Width = pImage->GetWidth();
-        desc.Height = pImage->GetHeight();
-        desc.MipLevels = 0;
-        desc.ArraySize = 1;
-        desc.Format = ImageFormatToDirectXType( pImage->GetFormat() );
-        desc.Usage = D3D11_USAGE_DEFAULT;
-        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-        desc.CPUAccessFlags = 0;
-        desc.MiscFlags = 0;
-
-        D3D11_SUBRESOURCE_DATA subResourceData{};
-        subResourceData.pSysMem = pImage->GetData();
-        subResourceData.SysMemPitch = pImage->GetDataSize();
-
-        HRESULT result = pDevice->CreateTexture2D( &desc, &subResourceData, &pTexture2D );
-
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Texture::Create > Failed to create texture: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                SM_ASSERT( false, "Invalid texture dimension" );
+                break;
         }
     }
 

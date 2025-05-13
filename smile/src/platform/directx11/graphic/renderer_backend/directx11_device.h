@@ -72,8 +72,9 @@ namespace smile::graphic
             const GraphicsPipelineDescriptor &pipelineDesc ) override;
         void DestroyGraphicsPipeline( GraphicsPipelineHandle handle ) override;
 
-        void CreateTexture( TextureHandle handle, const std::filesystem::path &path ) override;
-        void CreateTexture( TextureHandle handle, memory::Ref< const Image > pImage ) override;
+        void CreateTexture( TextureHandle handle,
+            const TextureDescriptor &desc,
+            const std::vector< Byte > &buffer = {} ) override;
         void DestroyTexture( TextureHandle handle ) override;
 
         void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) override;
