@@ -30,6 +30,17 @@ namespace smile::graphic
             TextureSubresourceSet subresources,
             TextureDimension dimension );
 
+        ID3D11RenderTargetView *
+        GetOrCreateRenderTargetView( ID3D11Device *pDevice, Format format, TextureSubresourceSet subresources );
+
+        ID3D11DepthStencilView *
+        GetOrCreateDepthStencilView( ID3D11Device *pDevice, TextureSubresourceSet subresources, bool isReadOnly );
+
+        ID3D11UnorderedAccessView *GetOrCreateUnorderedAccessView( ID3D11Device *pDevice,
+            Format format,
+            TextureSubresourceSet subresources,
+            TextureDimension dimension );
+
         Microsoft::WRL::ComPtr< ID3D11Resource > pInternal;
         TextureDescriptor Descriptor;
 

@@ -286,4 +286,210 @@ namespace smile::graphic
 
         return pShaderResourceView.Get();
     }
+
+    ID3D11RenderTargetView *DirectX11Texture::GetOrCreateRenderTargetView( ID3D11Device *pDevice,
+        Format format,
+        TextureSubresourceSet subresources )
+    {
+        if ( format == Format::UNKNOWN )
+            format = Descriptor.TextureFormat;
+
+        subresources = subresources.Resolve( Descriptor, true );
+
+        TextureBindingKey textureBindingKey{ subresources, format };
+        auto rtvIt = m_RenderTargetViewMap.find( textureBindingKey );
+        if ( rtvIt != m_RenderTargetViewMap.end() )
+            return rtvIt->second.Get();
+
+        D3D11_RENDER_TARGET_VIEW_DESC viewDesc;
+        viewDesc.Format = GetDXGIFormatMapping( format ).RTVFormat;
+
+        switch ( Descriptor.Dimension )
+        {
+            case TextureDimension::Texture1D:
+                viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE1D;
+                viewDesc.Texture1D.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture1DArray:
+                viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE1DARRAY;
+                viewDesc.Texture1DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture1DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture1DArray.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture2D:
+                viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+                viewDesc.Texture2D.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture2DArray:
+            case TextureDimension::TextureCube:
+            case TextureDimension::TextureCubeArray:
+                viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+                viewDesc.Texture2DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture2DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture2DArray.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture3D:
+                viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
+                viewDesc.Texture3D.FirstWSlice = subresources.BaseArraySlice;
+                viewDesc.Texture3D.WSize = subresources.ArraySliceCount;
+                viewDesc.Texture3D.MipSlice = subresources.BaseMipLevel;
+                break;
+            default:
+                SM_LOG_ERROR( "DirectX11Texture::GetOrCreateRenderTargetView > Invalid texture dimension used" );
+                return nullptr;
+        }
+
+        ComPtr< ID3D11RenderTargetView > pRenderTargetView;
+        const HRESULT result = pDevice->CreateRenderTargetView( pInternal.Get(), &viewDesc, &pRenderTargetView );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Texture::GetOrCreateShaderResourceView > Failed to create render target view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return nullptr;
+        }
+
+        m_RenderTargetViewMap.insert( std::make_pair( textureBindingKey, pRenderTargetView ) );
+
+        return pRenderTargetView.Get();
+    }
+
+    ID3D11DepthStencilView *DirectX11Texture::GetOrCreateDepthStencilView( ID3D11Device *pDevice,
+        TextureSubresourceSet subresources,
+        bool isReadOnly )
+    {
+        subresources = subresources.Resolve( Descriptor, true );
+
+        TextureBindingKey textureBindingKey{ subresources, Descriptor.TextureFormat, isReadOnly };
+        auto dsvIt = m_DepthStencilViewMap.find( textureBindingKey );
+        if ( dsvIt != m_DepthStencilViewMap.end() )
+            return dsvIt->second.Get();
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC viewDesc;
+        viewDesc.Format = GetDXGIFormatMapping( Descriptor.TextureFormat ).RTVFormat;
+        viewDesc.Flags = 0;
+
+        if ( isReadOnly )
+        {
+            viewDesc.Flags |= D3D11_DSV_READ_ONLY_DEPTH;
+
+            if ( viewDesc.Format == DXGI_FORMAT_D24_UNORM_S8_UINT ||
+                 viewDesc.Format == DXGI_FORMAT_D32_FLOAT_S8X24_UINT )
+            {
+                viewDesc.Flags |= D3D11_DSV_READ_ONLY_STENCIL;
+            }
+        }
+
+        switch ( Descriptor.Dimension )
+        {
+            case TextureDimension::Texture1D:
+                viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE1D;
+                viewDesc.Texture1D.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture1DArray:
+                viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE1DARRAY;
+                viewDesc.Texture1DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture1DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture1DArray.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture2D:
+                viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+                viewDesc.Texture2D.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture2DArray:
+            case TextureDimension::TextureCube:
+            case TextureDimension::TextureCubeArray:
+                viewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+                viewDesc.Texture2DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture2DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture2DArray.MipSlice = subresources.BaseMipLevel;
+                break;
+            default:
+                SM_LOG_ERROR( "DirectX11Texture::GetOrCreateDepthStencilView > Invalid texture dimension used" );
+                return nullptr;
+        }
+
+        ComPtr< ID3D11DepthStencilView > pDepthStencilView;
+        const HRESULT result = pDevice->CreateDepthStencilView( pInternal.Get(), &viewDesc, &pDepthStencilView );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR( "DirectX11Texture::GetOrCreateDepthStencilView > Failed to create depth stencil view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return nullptr;
+        }
+
+        m_DepthStencilViewMap.insert( std::make_pair( textureBindingKey, pDepthStencilView ) );
+
+        return pDepthStencilView.Get();
+    }
+
+    ID3D11UnorderedAccessView *DirectX11Texture::GetOrCreateUnorderedAccessView( ID3D11Device *pDevice,
+        Format format,
+        TextureSubresourceSet subresources,
+        TextureDimension dimension )
+    {
+        if ( format == Format::UNKNOWN )
+            format = Descriptor.TextureFormat;
+
+        if ( dimension == TextureDimension::Unknown )
+            dimension = Descriptor.Dimension;
+
+        subresources = subresources.Resolve( Descriptor, true );
+
+        TextureBindingKey textureBindingKey{ subresources, format };
+        auto uavIt = m_UnorderedAccessViewMap.find( textureBindingKey );
+        if ( uavIt != m_UnorderedAccessViewMap.end() )
+            return uavIt->second.Get();
+
+        D3D11_UNORDERED_ACCESS_VIEW_DESC viewDesc;
+        viewDesc.Format = GetDXGIFormatMapping( format ).SRVFormat;
+
+        switch ( dimension )
+        {
+            case TextureDimension::Texture1D:
+                viewDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE1D;
+                viewDesc.Texture1D.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture1DArray:
+                viewDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE1DARRAY;
+                viewDesc.Texture1DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture1DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture1DArray.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture2D:
+                viewDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+                viewDesc.Texture2D.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture2DArray:
+            case TextureDimension::TextureCube:
+            case TextureDimension::TextureCubeArray:
+                viewDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+                viewDesc.Texture2DArray.FirstArraySlice = subresources.BaseArraySlice;
+                viewDesc.Texture2DArray.ArraySize = subresources.ArraySliceCount;
+                viewDesc.Texture2DArray.MipSlice = subresources.BaseMipLevel;
+                break;
+            case TextureDimension::Texture3D:
+                viewDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
+                viewDesc.Texture3D.FirstWSlice = 0;
+                viewDesc.Texture3D.WSize = Descriptor.Depth;
+                viewDesc.Texture3D.MipSlice = subresources.BaseMipLevel;
+                break;
+            default:
+                SM_LOG_ERROR( "DirectX11Texture::GetOrCreateRenderTargetView > Invalid texture dimension used" );
+                return nullptr;
+        }
+
+        ComPtr< ID3D11UnorderedAccessView > pUnorderedAccessView;
+        const HRESULT result = pDevice->CreateUnorderedAccessView( pInternal.Get(), &viewDesc, &pUnorderedAccessView );
+        if ( FAILED( result ) )
+        {
+            SM_LOG_ERROR(
+                "DirectX11Texture::GetOrCreateUnorderedAccessView > Failed to create unordered access view: {}",
+                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+            return nullptr;
+        }
+
+        m_UnorderedAccessViewMap.insert( std::make_pair( textureBindingKey, pUnorderedAccessView ) );
+
+        return pUnorderedAccessView.Get();
+    }
 }
