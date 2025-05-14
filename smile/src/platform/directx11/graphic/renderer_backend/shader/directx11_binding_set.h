@@ -23,7 +23,7 @@ namespace smile::graphic
         DirectX11BindingSet &operator=( const DirectX11BindingSet & ) = delete;
         DirectX11BindingSet &operator=( DirectX11BindingSet && ) = delete;
 
-        void Create( const DirectX11Device &device, const BindingSetDescriptor &descriptor );
+        void Create( DirectX11Device &device, const BindingSetDescriptor &descriptor );
         void Destroy();
 
         std::array< ID3D11ShaderResourceView *, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT > pShaderResourceViews;

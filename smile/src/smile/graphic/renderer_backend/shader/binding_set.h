@@ -6,12 +6,13 @@
 
 #include "resource_type.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
+#include "smile/graphic/renderer_backend/resource/texture.h"
 
 namespace smile::graphic
 {
     struct BindingSetElement final
     {
-        BindingSetElement() {};
+        BindingSetElement(){};
 
         ResourceType Type;
         union
@@ -22,11 +23,13 @@ namespace smile::graphic
         };
         Uint32 Slot;
 
-        Format BindingFormat = Format::UNKNOWN; // Valid for textures, buffer srv and buffer uav
+        Format BindingFormat = Format::UNKNOWN;                 // Valid for textures, buffer srv and buffer uav
+        TextureDimension Dimension = TextureDimension::Unknown; // Valid for texture srv and texture uav
 
         union
         {
-            BufferRange Range; // Valid for buffers
+            TextureSubresourceSet Subresources; // Valid for texture srv and texture uav
+            BufferRange Range;                  // Valid for buffers
             std::array< Uint32, 2 > RawData;
         };
 

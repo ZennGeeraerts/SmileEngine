@@ -51,8 +51,9 @@ namespace smile::graphic
             const GraphicsPipelineDescriptor &pipelineDesc ) = 0;
         virtual void DestroyGraphicsPipeline( GraphicsPipelineHandle handle ) = 0;
 
-        virtual void
-        CreateTexture( TextureHandle handle, const TextureDescriptor &desc, const std::vector< Byte > &buffer = {} ) = 0;
+        virtual void CreateTexture( TextureHandle handle,
+            const TextureDescriptor &desc,
+            const std::vector< Byte > &buffer = {} ) = 0;
         virtual void DestroyTexture( TextureHandle handle ) = 0;
 
         virtual void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) = 0;
@@ -72,5 +73,7 @@ namespace smile::graphic
         static constexpr Uint16 s_MaxBindingSetCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
         static constexpr Uint16 s_MaxGraphicsPipelineCount = ( 4 << 10 );
+
+        static constexpr Uint32 s_ConstantBufferOffsetSizeAlignment = 256;
     };
 }
