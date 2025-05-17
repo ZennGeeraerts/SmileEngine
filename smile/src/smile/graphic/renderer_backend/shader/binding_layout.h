@@ -23,11 +23,12 @@ namespace smile::graphic
     class BindingLayout final
     {
       public:
-        BindingLayout( ShaderStage visibility ) : m_Visibility{ visibility }
+        BindingLayout( foundation::Flags< ShaderStage > visibility ) : m_Visibility{ visibility }
         {
         }
 
-        BindingLayout( ShaderStage visibility, const std::initializer_list< BindingLayoutElement > &elements )
+        BindingLayout( foundation::Flags< ShaderStage > visibility,
+            const std::initializer_list< BindingLayoutElement > &elements )
             : m_Visibility{ visibility }, m_Elements{ elements }
         {
         }
@@ -35,6 +36,11 @@ namespace smile::graphic
         inline const std::vector< BindingLayoutElement > &GetElements() const
         {
             return m_Elements;
+        }
+
+        inline foundation::Flags< ShaderStage > GetVisibility() const
+        {
+            return m_Visibility;
         }
 
         std::vector< BindingLayoutElement >::iterator begin()
@@ -64,6 +70,6 @@ namespace smile::graphic
 
       private:
         std::vector< BindingLayoutElement > m_Elements;
-        ShaderStage m_Visibility;
+        foundation::Flags< ShaderStage > m_Visibility;
     };
 }

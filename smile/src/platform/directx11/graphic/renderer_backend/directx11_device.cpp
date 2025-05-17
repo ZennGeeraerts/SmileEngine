@@ -10,7 +10,6 @@
 #include "directx11_diagnostics.h"
 #include "directx11_swap_chain.h"
 #include "dxgi_format.h"
-#include "directx11_primitive_topology.h"
 
 #include "smile/core/window/window.h"
 
@@ -118,16 +117,7 @@ namespace smile::graphic
     void DirectX11Device::CreateGraphicsPipeline( GraphicsPipelineHandle handle,
         const GraphicsPipelineDescriptor &pipelineDesc )
     {
-        auto &pipeline = m_Pipelines[handle.GetIndex()];
-
-        pipeline.pInputLayout = GetOrCreateInputLayout( pipelineDesc )->pInternal;
-
-        pipeline.PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( pipelineDesc.Topology );
-        pipeline.pRasterizerState = GetOrCreateRasterizerState( pipelineDesc.State.RasterizerState )->pInternal;
-        pipeline.pDepthStencilState = GetOrCreateDepthStencilState( pipelineDesc.State.DepthStencilState )->pInternal;
-
-        pipeline.pVertexShader = m_Shaders[pipelineDesc.VertexShaderHandle.GetIndex()].pVertexShader;
-        pipeline.pPixelShader = m_Shaders[pipelineDesc.PixelShaderHandle.GetIndex()].pPixelShader;
+        m_Pipelines[handle.GetIndex()].Create( *this, pipelineDesc );
     }
 
     void DirectX11Device::DestroyGraphicsPipeline( GraphicsPipelineHandle handle )
