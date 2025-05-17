@@ -133,7 +133,6 @@ namespace smile::graphic
 
     struct GPUBufferDescriptor final
     {
-        void *pData = nullptr;
         Uint32 Size;
         BufferUsage Usage = BufferUsage::Default;
         CPUAccessMode CPUAccess = CPUAccessMode::None;

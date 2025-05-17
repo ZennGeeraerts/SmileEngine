@@ -57,7 +57,9 @@ namespace smile::graphic
 
         memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
 
-        void CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc ) override;
+        void CreateGPUBuffer( GPUBufferHandle handle,
+            const GPUBufferDescriptor &bufferDesc,
+            void *pData = nullptr ) override;
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;
 
         void CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc ) override;

@@ -7,15 +7,17 @@
 #include "smile/graphic/renderer_backend/graphics_device.h"
 
 #include <d3d11.h>
+#include <wrl/client.h>
 
 namespace smile::graphic
 {
-    struct DirectX11Buffer final
+    class DirectX11Buffer final
     {
+      public:
         DirectX11Buffer() = default;
         ~DirectX11Buffer() = default;
 
-        void Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc );
+        void Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, void *pData );
         void Destroy();
 
         ID3D11ShaderResourceView *GetOrCreateShaderResourceView( ID3D11Device *pDevice,
@@ -30,7 +32,12 @@ namespace smile::graphic
 
         ID3D11Buffer *pInternal = nullptr;
         GPUBufferDescriptor Descriptor;
-        std::unordered_map< BufferBindingKey, ID3D11ShaderResourceView * > ShaderResourceViewMap;
-        std::unordered_map< BufferBindingKey, ID3D11UnorderedAccessView * > UnorderedAccessViewMap;
+
+      private:
+        template < typename Type >
+        using BufferBindingMap = std::unordered_map< BufferBindingKey, Microsoft::WRL::ComPtr< Type > >;
+
+        BufferBindingMap< ID3D11ShaderResourceView > m_ShaderResourceViewMap;
+        BufferBindingMap< ID3D11UnorderedAccessView > m_UnorderedAccessViewMap;
     };
 }

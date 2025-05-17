@@ -81,9 +81,11 @@ namespace smile::graphic
         return pSwapChain;
     }
 
-    void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc )
+    void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle,
+        const GPUBufferDescriptor &bufferDesc,
+        void *pData )
     {
-        m_GPUBuffers[handle.GetIndex()].Create( m_Context.pDevice, bufferDesc );
+        m_GPUBuffers[handle.GetIndex()].Create( m_Context.pDevice, bufferDesc, pData );
     }
 
     void DirectX11Device::DestroyGPUBuffer( GPUBufferHandle handle )

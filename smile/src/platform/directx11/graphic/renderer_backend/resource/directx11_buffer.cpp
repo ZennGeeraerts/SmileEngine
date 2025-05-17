@@ -10,6 +10,8 @@
 #include "platform/directx11/graphic/renderer_backend/dxgi_format.h"
 #include "platform/directx11/graphic/renderer_backend/directx11_cpu_access.h"
 
+using Microsoft::WRL::ComPtr;
+
 namespace smile::graphic
 {
     static D3D11_USAGE BufferUsageToDirectXType( BufferUsage bufferUsage )
@@ -51,7 +53,7 @@ namespace smile::graphic
         return static_cast< D3D11_BIND_FLAG >( targetFlags );
     }
 
-    void DirectX11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc )
+    void DirectX11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, void *pData )
     {
         Descriptor = desc;
 
@@ -70,18 +72,20 @@ namespace smile::graphic
 
         bufferDesc.StructureByteStride = desc.StructStride;
 
-        HRESULT result;
-        if ( desc.pData )
+        const HRESULT result = [&]()
         {
-            D3D11_SUBRESOURCE_DATA initData = { 0 };
-            initData.pSysMem = desc.pData;
+            if ( pData )
+            {
+                D3D11_SUBRESOURCE_DATA initData{ 0 };
+                initData.pSysMem = pData;
 
-            result = pDevice->CreateBuffer( &bufferDesc, &initData, &pInternal );
-        }
-        else
-        {
-            result = pDevice->CreateBuffer( &bufferDesc, nullptr, &pInternal );
-        }
+                return pDevice->CreateBuffer( &bufferDesc, &initData, &pInternal );
+            }
+            else
+            {
+                return pDevice->CreateBuffer( &bufferDesc, nullptr, &pInternal );
+            }
+        }();
 
         if ( FAILED( result ) )
         {
@@ -106,9 +110,9 @@ namespace smile::graphic
         bufferRange = bufferRange.Resolve( Descriptor );
 
         BufferBindingKey bufferBindingKey{ bufferRange, format, type };
-        auto srvIt = ShaderResourceViewMap.find( bufferBindingKey );
-        if ( srvIt != ShaderResourceViewMap.end() )
-            return srvIt->second;
+        auto srvIt = m_ShaderResourceViewMap.find( bufferBindingKey );
+        if ( srvIt != m_ShaderResourceViewMap.end() )
+            return srvIt->second.Get();
 
         D3D11_SHADER_RESOURCE_VIEW_DESC desc11;
         desc11.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
@@ -153,7 +157,7 @@ namespace smile::graphic
                 return nullptr;
         }
 
-        ID3D11ShaderResourceView *pShaderResourceView;
+        ComPtr< ID3D11ShaderResourceView > pShaderResourceView;
         const HRESULT result = pDevice->CreateShaderResourceView( pInternal, &desc11, &pShaderResourceView );
         if ( FAILED( result ) )
         {
@@ -161,9 +165,9 @@ namespace smile::graphic
             return nullptr;
         }
 
-        ShaderResourceViewMap.insert( std::make_pair( bufferBindingKey, pShaderResourceView ) );
+        m_ShaderResourceViewMap.insert( std::make_pair( bufferBindingKey, pShaderResourceView ) );
 
-        return pShaderResourceView;
+        return pShaderResourceView.Get();
     }
 
     ID3D11UnorderedAccessView *DirectX11Buffer::GetOrCreateUnorderedAccessView( ID3D11Device *pDevice,
@@ -177,9 +181,9 @@ namespace smile::graphic
         bufferRange = bufferRange.Resolve( Descriptor );
 
         BufferBindingKey bufferBindingKey{ bufferRange, format, type };
-        auto uavIt = UnorderedAccessViewMap.find( bufferBindingKey );
-        if ( uavIt != UnorderedAccessViewMap.end() )
-            return uavIt->second;
+        auto uavIt = m_UnorderedAccessViewMap.find( bufferBindingKey );
+        if ( uavIt != m_UnorderedAccessViewMap.end() )
+            return uavIt->second.Get();
 
         D3D11_UNORDERED_ACCESS_VIEW_DESC desc11;
         desc11.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
@@ -225,7 +229,7 @@ namespace smile::graphic
                 return nullptr;
         }
 
-        ID3D11UnorderedAccessView *pUnorderedAccessView;
+        ComPtr< ID3D11UnorderedAccessView > pUnorderedAccessView;
         const HRESULT result = pDevice->CreateUnorderedAccessView( pInternal, &desc11, &pUnorderedAccessView );
         if ( FAILED( result ) )
         {
@@ -233,8 +237,8 @@ namespace smile::graphic
             return nullptr;
         }
 
-        UnorderedAccessViewMap.insert( std::make_pair( bufferBindingKey, pUnorderedAccessView ) );
+        m_UnorderedAccessViewMap.insert( std::make_pair( bufferBindingKey, pUnorderedAccessView ) );
 
-        return pUnorderedAccessView;
+        return pUnorderedAccessView.Get();
     }
 }
