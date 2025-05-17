@@ -3,6 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+#include "smile/graphic/renderer_backend/rhi.h"
 #include "smile/graphic/renderer_backend/graphics_device.h"
 #include "smile/graphic/renderer_backend/render_state.h"
 
@@ -62,7 +63,9 @@ namespace smile::graphic
             void *pData = nullptr ) override;
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;
 
-        void CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc ) override;
+        void CreateBindingSet( BindingSetHandle handle,
+            const BindingSetDescriptor &bindingSetDesc,
+            const BindingLayout &layout ) override;
         void DestroyBindingSet( BindingSetHandle handle ) override;
 
         void CreateShader( ShaderHandle handle,
@@ -109,5 +112,6 @@ namespace smile::graphic
 
         friend class DirectX11CommandList;
         friend class DirectX11BindingSet;
+        friend class DirectX11Pipeline;
     };
 }

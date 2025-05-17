@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "rhi.h"
 #include "render_handle.h"
 #include "resource/buffer.h"
 
@@ -13,9 +14,9 @@ namespace smile::graphic
     {
         GraphicsPipelineHandle Pipeline;
         FramebufferHandle Framebuffer;
-        std::vector< BindingSetHandle > Bindings;
+        BindingSetArray Bindings;
 
-        std::vector< VertexBufferBinding > VertexBuffers;
+        std::array< VertexBufferBinding, s_MaxVertexAttributeCount > VertexBuffers;
         IndexBufferBinding IndexBuffer;
     };
 }

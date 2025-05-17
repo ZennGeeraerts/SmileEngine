@@ -193,6 +193,16 @@ namespace smile::graphic
         GPUBufferHandle VertexBuffer;
         Uint32 Slot;
         Uint64 Offset;
+
+        bool operator==( const VertexBufferBinding &other ) const
+        {
+            return VertexBuffer == other.VertexBuffer && Slot == other.Slot && Offset == other.Offset;
+        }
+
+        bool operator!=( const VertexBufferBinding &other ) const
+        {
+            return !( *this == other );
+        }
     };
 
     struct IndexBufferBinding final
@@ -200,6 +210,16 @@ namespace smile::graphic
         GPUBufferHandle IndexBuffer;
         Format BufferFormat;
         Uint32 Offset;
+
+        bool operator==( const IndexBufferBinding &other ) const
+        {
+            return IndexBuffer == other.IndexBuffer && BufferFormat == other.BufferFormat && Offset == other.Offset;
+        }
+
+        bool operator!=( const IndexBufferBinding &other ) const
+        {
+            return !( *this == other );
+        }
     };
 }
 

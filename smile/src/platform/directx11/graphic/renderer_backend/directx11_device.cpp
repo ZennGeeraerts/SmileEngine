@@ -80,9 +80,7 @@ namespace smile::graphic
         return pSwapChain;
     }
 
-    void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle,
-        const GPUBufferDescriptor &bufferDesc,
-        void *pData )
+    void DirectX11Device::CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc, void *pData )
     {
         m_GPUBuffers[handle.GetIndex()].Create( m_Context.pDevice, bufferDesc, pData );
     }
@@ -92,9 +90,11 @@ namespace smile::graphic
         m_GPUBuffers[handle.GetIndex()].Destroy();
     }
 
-    void DirectX11Device::CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc )
+    void DirectX11Device::CreateBindingSet( BindingSetHandle handle,
+        const BindingSetDescriptor &bindingSetDesc,
+        const BindingLayout &layout )
     {
-        m_BindingSets[handle.GetIndex()].Create( *this, bindingSetDesc );
+        m_BindingSets[handle.GetIndex()].Create( *this, bindingSetDesc, layout );
     }
 
     void DirectX11Device::DestroyBindingSet( BindingSetHandle handle )

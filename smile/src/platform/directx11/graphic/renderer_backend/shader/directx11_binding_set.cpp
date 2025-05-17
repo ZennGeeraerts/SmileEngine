@@ -15,8 +15,12 @@ namespace smile::graphic
         Destroy();
     }
 
-    void DirectX11BindingSet::Create( DirectX11Device &device, const BindingSetDescriptor &descriptor )
+    void DirectX11BindingSet::Create( DirectX11Device &device,
+        const BindingSetDescriptor &descriptor,
+        const BindingLayout &layout )
     {
+        Visibility = layout.GetVisibility();
+
         const Uint32 constantSize = 16;
 
         for ( const BindingSetElement &binding : descriptor.Elements )
@@ -101,7 +105,7 @@ namespace smile::graphic
 
                     ConstantBufferOffsets[binding.Slot] = range.Offset / constantSize;
                     ConstantBufferCounts[binding.Slot] =
-                        memory::Align( range.Size, device.s_ConstantBufferOffsetSizeAlignment ) / constantSize;
+                        memory::Align( range.Size, s_ConstantBufferOffsetSizeAlignment ) / constantSize;
 
                     MinConstantBufferSlot = std::min( MinConstantBufferSlot, binding.Slot );
                     MaxConstantBufferSlot = std::max( MaxConstantBufferSlot, binding.Slot );
@@ -132,5 +136,13 @@ namespace smile::graphic
 
     void DirectX11BindingSet::Destroy()
     {
+    }
+
+    bool DirectX11BindingSet::IsSuperSetOf( const DirectX11BindingSet &other ) const
+    {
+        return MinSRVSlot <= other.MinSRVSlot && MaxSRVSlot >= other.MaxSRVSlot && MinUAVSlot <= other.MinUAVSlot &&
+               MaxUAVSlot >= other.MaxUAVSlot && MinSamplerSlot <= other.MinSamplerSlot &&
+               MaxSamplerSlot >= other.MaxSamplerSlot && MinConstantBufferSlot <= other.MinConstantBufferSlot &&
+               MaxConstantBufferSlot >= other.MaxConstantBufferSlot;
     }
 }

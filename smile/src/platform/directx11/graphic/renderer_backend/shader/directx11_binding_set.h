@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/graphic/renderer_backend/shader/binding_set.h"
+#include "smile/graphic/renderer_backend/shader/binding_layout.h"
 
 #include <array>
 #include <d3d11.h>
@@ -23,8 +24,12 @@ namespace smile::graphic
         DirectX11BindingSet &operator=( const DirectX11BindingSet & ) = delete;
         DirectX11BindingSet &operator=( DirectX11BindingSet && ) = delete;
 
-        void Create( DirectX11Device &device, const BindingSetDescriptor &descriptor );
+        void Create( DirectX11Device &device, const BindingSetDescriptor &descriptor, const BindingLayout &layout );
         void Destroy();
+
+        bool IsSuperSetOf( const DirectX11BindingSet &other ) const;
+
+        foundation::Flags< ShaderStage > Visibility{ ShaderStage::Unknown };
 
         std::array< ID3D11ShaderResourceView *, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT > pShaderResourceViews;
         Uint32 MinSRVSlot = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;

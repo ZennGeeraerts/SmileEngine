@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/graphic/renderer_backend/command_list.h"
+#include "smile/graphic/renderer_backend/rhi.h"
 #include "directx11_context.h"
 
 namespace smile::graphic
@@ -55,7 +56,22 @@ namespace smile::graphic
         void *ReadTexture( FramebufferHandle handle, Uint32 index ) const override;
 
       private:
+        void PrepareToBindGraphicsResourceSets( const BindingSetArray &resourceSets,
+            const BindingSetArray *pCurrentResourceSets,
+            GraphicsPipelineHandle currentPipelineHandle,
+            GraphicsPipelineHandle newPipelineHandle,
+            bool updateFramebuffer,
+            BindingSetArray &outSetsToBind ) const;
+
+      private:
         DirectX11Device *m_pDevice;
         const DirectX11Context &m_Context;
+
+        GraphicsPipelineHandle m_CurrentGraphicsPipeline;
+        FramebufferHandle m_CurrentFramebuffer;
+        BindingSetArray m_CurrentBindings;
+        std::array< VertexBufferBinding, s_MaxVertexAttributeCount > m_CurrentVertexBufferBindings;
+        IndexBufferBinding m_CurrentIndexBufferBinding;
+        bool m_IsCurrentGraphicsStateValid = false;
     };
 }

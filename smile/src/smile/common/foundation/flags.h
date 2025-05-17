@@ -107,4 +107,20 @@ namespace smile::foundation
       private:
         UnderlyingType m_Flags{ 0 };
     };
+
+    template < typename EnumType >
+    inline constexpr Flags< EnumType > operator|( Flags< EnumType > flags, EnumType value )
+    {
+        auto result = flags;
+        result.Set( value );
+        return result;
+    }
+
+    template < typename EnumType >
+    inline constexpr Flags< EnumType > operator&( Flags< EnumType > lhs, Flags< EnumType > rhs )
+    {
+        Flags< EnumType > result;
+        result.SetFlags( lhs.GetFlags() & rhs.GetFlags() );
+        return result;
+    }
 }

@@ -22,6 +22,10 @@
 
 namespace smile::graphic
 {
+    static ID3D11Buffer *s_NullConstantBuffers[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT]{ nullptr };
+    static ID3D11ShaderResourceView *s_NullSRVs[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT]{ nullptr };
+    static ID3D11SamplerState *s_NullSamplers[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT]{ nullptr };
+
     DirectX11CommandList::DirectX11CommandList( DirectX11Device *pDevice,
         std::reference_wrapper< const DirectX11Context > context )
         : m_pDevice{ pDevice }, m_Context{ context.get() }
@@ -61,13 +65,36 @@ namespace smile::graphic
         m_Context.pImmediateContext->RSSetState( pipeline.pRasterizerState );
         m_Context.pImmediateContext->OMSetDepthStencilState( pipeline.pDepthStencilState, 1 );
 
-        m_Context.pImmediateContext->VSSetShader( pipeline.pVertexShader, nullptr, 0 );
-        m_Context.pImmediateContext->PSSetShader( pipeline.pPixelShader, nullptr, 0 );
+        m_Context.pImmediateContext->VSSetShader( pipeline.pVertexShader.Get(), nullptr, 0 );
+        m_Context.pImmediateContext->PSSetShader( pipeline.pPixelShader.Get(), nullptr, 0 );
     }
 
-    void DirectX11CommandList::SetGraphicsState(const GraphicsState& graphicsState) const
+    void DirectX11CommandList::SetGraphicsState( const GraphicsState &graphicsState ) const
     {
+        const DirectX11Pipeline &pipeline = m_pDevice->m_Pipelines[graphicsState.Pipeline.GetIndex()];
+        const DirectX11Framebuffer &framebuffer = m_pDevice->m_Framebuffers[graphicsState.Framebuffer.GetIndex()];
 
+        const bool updateFramebuffer =
+            !m_IsCurrentGraphicsStateValid || m_CurrentFramebuffer != graphicsState.Framebuffer;
+        const bool updatePipeline =
+            !m_IsCurrentGraphicsStateValid || m_CurrentGraphicsPipeline != graphicsState.Pipeline;
+        const bool updateBindings = updateFramebuffer || m_CurrentBindings != graphicsState.Bindings;
+
+        const bool updateIndexBuffer =
+            !m_IsCurrentGraphicsStateValid || m_CurrentIndexBufferBinding != graphicsState.IndexBuffer;
+        const bool updateVertexBuffers =
+            !m_IsCurrentGraphicsStateValid || m_CurrentVertexBufferBindings != graphicsState.VertexBuffers;
+
+        std::array< BindingSetHandle, s_MaxBindingLayoutCount > setsToBind;
+        if ( updateBindings )
+        {
+            PrepareToBindGraphicsResourceSets( graphicsState.Bindings,
+                m_IsCurrentGraphicsStateValid ? &m_CurrentBindings : nullptr,
+                m_CurrentGraphicsPipeline,
+                graphicsState.Pipeline,
+                updateFramebuffer,
+                setsToBind );
+        }
     }
 
     void DirectX11CommandList::Draw( const DrawParams &params )
@@ -179,5 +206,122 @@ namespace smile::graphic
             "DirectX11CommandList::ReadTexture > Index out of range" );
 
         return framebuffer.pColorShaderResourceViews[index];
+    }
+
+    void DirectX11CommandList::PrepareToBindGraphicsResourceSets( const BindingSetArray &resourceSets,
+        const BindingSetArray *pCurrentResourceSets,
+        GraphicsPipelineHandle currentPipelineHandle,
+        GraphicsPipelineHandle newPipelineHandle,
+        bool updateFramebuffer,
+        BindingSetArray &outSetsToBind ) const
+    {
+        outSetsToBind = resourceSets;
+
+        if ( !pCurrentResourceSets )
+            return;
+
+        SM_ASSERT( currentPipelineHandle.IsValid(),
+            "DirectX11CommandList::PrepareToBindGraphicsResourceSets > No valid pipeline set" );
+
+        const DirectX11Pipeline &currentPipeline = m_pDevice->m_Pipelines[currentPipelineHandle.GetIndex()];
+        const DirectX11Pipeline &newPipeline = m_pDevice->m_Pipelines[newPipelineHandle.GetIndex()];
+
+        std::vector< BindingSetHandle > setsToUnbind;
+
+        for ( const BindingSetHandle &bindingSet : *pCurrentResourceSets )
+        {
+            setsToUnbind.push_back( bindingSet );
+        }
+
+        if ( currentPipeline.ShaderMask == newPipeline.ShaderMask )
+        {
+            for ( auto &outSetToBind : outSetsToBind )
+            {
+                if ( !outSetToBind.IsValid() )
+                    continue;
+
+                for ( auto &setToUnbind : setsToUnbind )
+                {
+                    if ( outSetToBind == setToUnbind )
+                    {
+                        outSetToBind = BindingSetHandle::NullHandle();
+                        setToUnbind = BindingSetHandle::NullHandle();
+                        break;
+                    }
+                }
+            }
+
+            if ( !updateFramebuffer )
+            {
+                for ( auto &outSetToBind : outSetsToBind )
+                {
+                    if ( !outSetToBind.IsValid() )
+                        continue;
+
+                    for ( auto &setToUnbind : setsToUnbind )
+                    {
+                        if ( setToUnbind.IsValid() && m_pDevice->m_BindingSets[outSetToBind.GetIndex()].IsSuperSetOf(
+                                                          m_pDevice->m_BindingSets[setToUnbind.GetIndex()] ) )
+                        {
+                            setToUnbind = BindingSetHandle::NullHandle();
+                        }
+                    }
+                }
+            }
+        }
+
+        for ( const BindingSetHandle &setHandle : setsToUnbind )
+        {
+            if ( !setHandle.IsValid() )
+                continue;
+
+            const DirectX11BindingSet &set = m_pDevice->m_BindingSets[setHandle.GetIndex()];
+
+            foundation::Flags< ShaderStage > stagesToUnbind{ set.Visibility & currentPipeline.ShaderMask };
+
+            if ( stagesToUnbind.Has( ShaderStage::Vertex ) )
+            {
+                if ( set.MaxConstantBufferSlot >= set.MinConstantBufferSlot )
+                {
+                    m_Context.pImmediateContext->VSSetConstantBuffers( set.MinConstantBufferSlot,
+                        set.MaxConstantBufferSlot - ( set.MinConstantBufferSlot + 1 ),
+                        s_NullConstantBuffers );
+                }
+
+                if ( set.MaxSRVSlot >= set.MinSRVSlot )
+                {
+                    m_Context.pImmediateContext->VSSetShaderResources(
+                        set.MinSRVSlot, set.MaxSRVSlot - ( set.MinSRVSlot + 1 ), s_NullSRVs );
+                }
+
+                if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
+                {
+                    m_Context.pImmediateContext->VSSetSamplers(
+                        set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), s_NullSamplers );
+                }
+            }
+
+            if ( stagesToUnbind.Has( ShaderStage::Pixel ) )
+            {
+                if ( set.MaxConstantBufferSlot >= set.MinConstantBufferSlot )
+                {
+                    m_Context.pImmediateContext->PSSetConstantBuffers( set.MinConstantBufferSlot,
+                        set.MaxConstantBufferSlot - ( set.MinConstantBufferSlot + 1 ),
+                        s_NullConstantBuffers );
+                }
+
+                if ( set.MaxSRVSlot >= set.MinSRVSlot )
+                {
+                    m_Context.pImmediateContext->PSSetShaderResources(
+                        set.MinSRVSlot, set.MaxSRVSlot - ( set.MinSRVSlot + 1 ), s_NullSRVs );
+                }
+
+                if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
+                {
+                    m_Context.pImmediateContext->PSSetSamplers(
+                        set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), s_NullSamplers );
+                }
+            }
+        }
     }
 }

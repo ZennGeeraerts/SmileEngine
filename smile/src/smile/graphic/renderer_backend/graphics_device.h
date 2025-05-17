@@ -40,7 +40,9 @@ namespace smile::graphic
         CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesca, void *pData = nullptr ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
-        virtual void CreateBindingSet( BindingSetHandle handle, const BindingSetDescriptor &bindingSetDesc ) = 0;
+        virtual void CreateBindingSet( BindingSetHandle handle,
+            const BindingSetDescriptor &bindingSetDesc,
+            const BindingLayout &layout ) = 0;
         virtual void DestroyBindingSet( BindingSetHandle handle ) = 0;
 
         virtual void CreateShader( ShaderHandle handle,
@@ -65,16 +67,5 @@ namespace smile::graphic
         virtual void InvalidateFramebuffer( FramebufferHandle handle ) = 0;
 
         static Scope< GraphicsDevice > Create( RendererBackendType backendType );
-
-      protected:
-        static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
-        static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
-        static constexpr Uint16 s_MaxSamplerCount = ( 4 << 10 );
-        static constexpr Uint16 s_MaxFramebufferCount = ( 4 << 10 );
-        static constexpr Uint16 s_MaxBindingSetCount = ( 4 << 10 );
-        static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
-        static constexpr Uint16 s_MaxGraphicsPipelineCount = ( 4 << 10 );
-
-        static constexpr Uint32 s_ConstantBufferOffsetSizeAlignment = 256;
     };
 }
