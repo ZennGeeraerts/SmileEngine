@@ -5,11 +5,17 @@
 #pragma once
 
 #include "render_handle.h"
+#include "resource/buffer.h"
 
 namespace smile::graphic
 {
-	struct GraphicsState final
-	{
+    struct GraphicsState final
+    {
+        GraphicsPipelineHandle Pipeline;
+        FramebufferHandle Framebuffer;
+        std::vector< BindingSetHandle > Bindings;
 
-	};
+        std::vector< VertexBufferBinding > VertexBuffers;
+        IndexBufferBinding IndexBuffer;
+    };
 }

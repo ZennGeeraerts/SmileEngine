@@ -8,6 +8,7 @@
 #include "smile/common/foundation/flags.h"
 #include "smile/graphic/renderer_backend/format.h"
 #include "smile/graphic/renderer_backend/cpu_access_mode.h"
+#include "smile/graphic/renderer_backend/shader/resource_type.h"
 
 namespace smile::graphic
 {
@@ -186,6 +187,20 @@ namespace smile::graphic
 
         Format Format;
         ResourceType Type;
+    };
+
+    struct VertexBufferBinding final
+    {
+        GPUBufferHandle VertexBuffer;
+        Uint32 Slot;
+        Uint64 Offset;
+    };
+
+    struct IndexBufferBinding final
+    {
+        GPUBufferHandle IndexBuffer;
+        Format BufferFormat;
+        Uint32 Offset;
     };
 }
 

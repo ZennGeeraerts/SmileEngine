@@ -4,8 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
-
 #include <DirectXMath.h>
 
 namespace smile::graphic
