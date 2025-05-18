@@ -45,7 +45,7 @@ namespace smile::graphic
             default:
             {
                 m_Stride = 0;
-                SM_ASSERT( false, "Image > Unsupported format" )
+                SM_ASSERT_MSG( false, "Image > Unsupported format" )
             }
             break;
         }

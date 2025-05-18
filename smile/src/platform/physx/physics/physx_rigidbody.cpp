@@ -53,7 +53,7 @@ namespace smile::physics
                 break;
             }
             default:
-                SM_ASSERT( false, "Rigidbody::Rigidbody > Unsupported rigidbody type" )
+                SM_ASSERT_MSG( false, "Rigidbody::Rigidbody > Unsupported rigidbody type" )
                 break;
         }
 
@@ -86,7 +86,7 @@ namespace smile::physics
 
     void Rigidbody::SetLinearDrag( float linearDrag )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::SetLinearDrag > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::SetLinearDrag > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         pRigidActorDynamic->setLinearDamping( linearDrag );
@@ -94,7 +94,7 @@ namespace smile::physics
 
     float Rigidbody::GetLinearDrag() const
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::GetLinearDrag > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::GetLinearDrag > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         return pRigidActorDynamic->getLinearDamping();
@@ -102,7 +102,7 @@ namespace smile::physics
 
     void Rigidbody::SetAngularDrag( float angularDrag )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::SetAngularDrag > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::SetAngularDrag > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         pRigidActorDynamic->setAngularDamping( angularDrag );
@@ -110,7 +110,7 @@ namespace smile::physics
 
     float Rigidbody::GetAngularDrag() const
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::GetAngularDrag > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::GetAngularDrag > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         return pRigidActorDynamic->getAngularDamping();
@@ -118,7 +118,7 @@ namespace smile::physics
 
     void Rigidbody::SetKinematic( bool isKinematic )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::SetKinematic > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::SetKinematic > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         pRigidActorDynamic->setRigidBodyFlag( physx::PxRigidBodyFlag::eKINEMATIC, isKinematic );
@@ -135,7 +135,7 @@ namespace smile::physics
 
     void Rigidbody::SetCollisionDetection( CollisionDetectionType collisionDetection )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::SetCollisionDetection > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::SetCollisionDetection > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         pRigidActorDynamic->setRigidBodyFlag(
@@ -144,7 +144,7 @@ namespace smile::physics
 
     CollisionDetectionType Rigidbody::GetCollisionDetection() const
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::GetCollisionDetection > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::GetCollisionDetection > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         return pRigidActorDynamic->getRigidBodyFlags().isSet( physx::PxRigidBodyFlag::eENABLE_CCD )
@@ -154,7 +154,7 @@ namespace smile::physics
 
     void Rigidbody::LockTranslation( bool lockX, bool lockY, bool lockZ )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::LockTranslation > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::LockTranslation > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         pRigidActorDynamic->setRigidDynamicLockFlag( physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, lockX );
@@ -164,7 +164,7 @@ namespace smile::physics
 
     void Rigidbody::LockRotation( bool lockX, bool lockY, bool lockZ )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::LockRotation > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::LockRotation > Rigidbody type is not dynamic" );
 
         auto pRigidActorDynamic = static_cast< physx::PxRigidDynamic * >( m_pImplementation->pRigidActor );
         pRigidActorDynamic->setRigidDynamicLockFlag( physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, lockX );
@@ -184,7 +184,7 @@ namespace smile::physics
 
     void Rigidbody::SetMass( float mass )
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::SetMass > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::SetMass > Rigidbody type is not dynamic" );
 
         auto pRigidbody = static_cast< physx::PxRigidBody * >( m_pImplementation->pRigidActor );
         physx::PxRigidBodyExt::setMassAndUpdateInertia( *pRigidbody, mass );
@@ -192,7 +192,7 @@ namespace smile::physics
 
     float Rigidbody::GetMass() const
     {
-        SM_ASSERT( IsDynamic(), "Rigidbody::GetMass > Rigidbody type is not dynamic" );
+        SM_ASSERT_MSG( IsDynamic(), "Rigidbody::GetMass > Rigidbody type is not dynamic" );
 
         auto pRigidbody = static_cast< physx::PxRigidBody * >( m_pImplementation->pRigidActor );
         return pRigidbody->getMass();

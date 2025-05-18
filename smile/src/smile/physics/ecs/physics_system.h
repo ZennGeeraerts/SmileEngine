@@ -28,14 +28,14 @@ namespace smile::physics::ecs
 
         Ref< Rigidbody > GetRigidbody( primitive::UUID entityID ) const
         {
-            SM_ASSERT( m_RigidbodyMap.find( entityID ) != m_RigidbodyMap.end(),
+            SM_ASSERT_MSG( m_RigidbodyMap.find( entityID ) != m_RigidbodyMap.end(),
                 "PhysicsSystem::GetRigidbody > Entity has no rigidbody" );
 
             return m_RigidbodyMap[entityID];
         }
         Ref< CharacterController > GetCharacterController( primitive::UUID entityID ) const
         {
-            SM_ASSERT( m_CharacterControllerMap.find( entityID ) != m_CharacterControllerMap.end(),
+            SM_ASSERT_MSG( m_CharacterControllerMap.find( entityID ) != m_CharacterControllerMap.end(),
                 "PhysicsSystem::GetRigidbody > Entity has no rigidbody" );
 
             return m_CharacterControllerMap[entityID];

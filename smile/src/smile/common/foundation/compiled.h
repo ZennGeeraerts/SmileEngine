@@ -24,6 +24,9 @@
 
 #define BIT( x ) ( 1 << x )
 #define SM_BIND_EVENT_FN( fn ) std::bind( &fn, this, std::placeholders::_1 )
+#define SM_EXPAND_MACRO( x ) x
+#define SM_STRINGIFY_MACRO( x ) #x
+
 #define SAFE_DELETE( p )                                                                                               \
     if ( p )                                                                                                           \
     {                                                                                                                  \

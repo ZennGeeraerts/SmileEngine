@@ -202,8 +202,8 @@ namespace smile::graphic
     {
         const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
 
-        SM_ASSERT( index < framebuffer.pColorShaderResourceViews.size(),
-            "DirectX11CommandList::ReadTexture > Index out of range" );
+        SM_ASSERT_MSG( index < framebuffer.pColorShaderResourceViews.size(),
+            "DirectX11Context::ReadTexture > Index out of range" );
 
         return framebuffer.pColorShaderResourceViews[index];
     }

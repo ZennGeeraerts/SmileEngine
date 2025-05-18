@@ -44,7 +44,7 @@ namespace smile::ecs::state
 
         const SystemInfo &GetSystemInfo( const std::string &systemName ) const
         {
-            SM_ASSERT( m_SystemInfoMap.find( systemName ) != m_SystemInfoMap.end(),
+            SM_ASSERT_MSG( m_SystemInfoMap.find( systemName ) != m_SystemInfoMap.end(),
                 "SystemRegistry::GetSystemInfo > Failed to find system: {}",
                 systemName );
 

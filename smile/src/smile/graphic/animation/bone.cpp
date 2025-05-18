@@ -65,7 +65,7 @@ namespace smile::graphic
                 return i;
         }
 
-        SM_ASSERT( false, "Bone::GetTranslationIndex > Translation index is 0" );
+        SM_ASSERT_MSG( false, "Bone::GetTranslationIndex > Translation index is 0" );
         return 0;
     }
 
@@ -105,7 +105,7 @@ namespace smile::graphic
                 return i;
         }
 
-        SM_ASSERT( false, "Bone::GetRotationIndex > Rotation index is 0" );
+        SM_ASSERT_MSG( false, "Bone::GetRotationIndex > Rotation index is 0" );
         return 0;
     }
 
@@ -140,7 +140,7 @@ namespace smile::graphic
                 return i;
         }
 
-        SM_ASSERT( false, "Bone::GetScaleIndex > Scale index is 0" );
+        SM_ASSERT_MSG( false, "Bone::GetScaleIndex > Scale index is 0" );
         return 0;
     }
 

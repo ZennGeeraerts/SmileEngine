@@ -24,7 +24,7 @@ namespace smile::world
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &AddComponent( ConstructorArgs &&...constructor_args )
         {
-            SM_ASSERT( !HasComponent< ComponentType >(), "Entity::AddComponent > Entity already has component" );
+            SM_ASSERT_MSG( !HasComponent< ComponentType >(), "Entity::AddComponent > Entity already has component" );
 
             // forward the constructor arguments
             ComponentType &component = m_pWorld->m_ECSEngine.AddComponent< ComponentType >(
@@ -51,7 +51,7 @@ namespace smile::world
         template < typename ComponentType >
         ComponentType &GetComponent() const
         {
-            SM_ASSERT( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
+            SM_ASSERT_MSG( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
 
             return m_pWorld->m_ECSEngine.GetComponent< ComponentType >( m_EntityHandle );
         }

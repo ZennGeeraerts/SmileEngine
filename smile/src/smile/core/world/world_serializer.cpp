@@ -214,7 +214,7 @@ namespace smile::world
 
     static void SerializeEntity( YAML::Emitter &output, Entity entity )
     {
-        SM_ASSERT( entity.HasComponent< ecs::IDComponent >(),
+        SM_ASSERT_MSG( entity.HasComponent< ecs::IDComponent >(),
             "WorldSerializer::SerializeWorld > Entity does not have an IDComponent" );
 
         output << YAML::BeginMap;
@@ -500,7 +500,7 @@ namespace smile::world
 
     void WorldSerializer::SerializeRuntime( const std::filesystem::path &filePath )
     {
-        SM_ASSERT( false, "WorldSerializer::SerializeRuntime > Not implemented" );
+        SM_ASSERT_MSG( false, "WorldSerializer::SerializeRuntime > Not implemented" );
     }
 
     bool WorldSerializer::Deserialize( const std::filesystem::path &filePath )
@@ -871,7 +871,7 @@ namespace smile::world
 
     bool WorldSerializer::DeserializeRuntime( const std::filesystem::path &filePath )
     {
-        SM_ASSERT( false, "WorldSerializer::DeserializeRuntime > Not implemented" );
+        SM_ASSERT_MSG( false, "WorldSerializer::DeserializeRuntime > Not implemented" );
         return false;
     }
 }

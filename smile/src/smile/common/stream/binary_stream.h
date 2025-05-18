@@ -22,13 +22,13 @@ namespace smile::stream
 
         Uint32 GetSize() const
         {
-            SM_ASSERT( IsOpen(), "Binary stream is not open" );
+            SM_ASSERT_MSG( IsOpen(), "Binary stream is not open" );
             return m_Size;
         }
 
         Uint32 GetIndex() const
         {
-            SM_ASSERT( IsOpen(), "Binary stream is not open" );
+            SM_ASSERT_MSG( IsOpen(), "Binary stream is not open" );
             return m_Index;
         }
 
@@ -107,7 +107,7 @@ namespace smile::stream
 
         void UpdateIndex( const Uint32 index )
         {
-            SM_ASSERT( index <= m_Size, "Index has to be smaller than size" );
+            SM_ASSERT_MSG( index <= m_Size, "Index has to be smaller than size" );
             m_Index = index;
         }
 

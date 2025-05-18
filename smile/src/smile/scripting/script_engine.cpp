@@ -240,7 +240,7 @@ namespace smile::scripting
         mono_set_assemblies_path( "mono/lib" );
 
         MonoDomain *pRootDomain = mono_jit_init( "SmileJITRuntime" );
-        SM_ASSERT( pRootDomain, "ScriptEngine::initializeMono > Cannot initialize root domain" );
+        SM_ASSERT_MSG( pRootDomain, "ScriptEngine::initializeMono > Cannot initialize root domain" );
 
         // Store the root domain pointer
         s_pData->pRootDomain = pRootDomain;
@@ -413,7 +413,7 @@ namespace smile::scripting
     void ScriptEngine::OnUpdateEntity( world::Entity entity, primitive::Timestep deltaTime )
     {
         primitive::UUID entityUUID = entity.GetUUID();
-        SM_ASSERT( s_pData->EntityInstances.find( entityUUID ) != s_pData->EntityInstances.end(),
+        SM_ASSERT_MSG( s_pData->EntityInstances.find( entityUUID ) != s_pData->EntityInstances.end(),
             "ScriptEngine::OnUpdateEntity > Entity instance not found" );
 
         Ref< ScriptInstance > pInstance = s_pData->EntityInstances[entityUUID];

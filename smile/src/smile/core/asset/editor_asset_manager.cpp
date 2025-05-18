@@ -68,7 +68,7 @@ namespace smile::asset
         AssetMetadata metadata{};
         metadata.FilePath = path;
         metadata.Type = AssetImporter::GetInstance().GetAssetTypeFromFileExtension( path.extension() );
-        SM_ASSERT(
+        SM_ASSERT_MSG(
             metadata.Type.IsValid(), "AssetImporter::ImportAsset > Failed to get asset type from file extension" );
 
         memory::Ref< Asset > pAsset = AssetImporter::GetInstance().ImportAsset( handle, metadata );

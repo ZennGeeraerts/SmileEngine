@@ -39,7 +39,7 @@ namespace smile::imgui
 
     void ImGuiLayer::OnAttach()
     {
-        SM_ASSERT( !m_IsInitialized, "ImGui is initialized more than once. Only initialize it 1 time!" );
+        SM_ASSERT_MSG( !m_IsInitialized, "ImGui is initialized more than once. Only initialize it 1 time!" );
 
         ImGui_ImplWin32_EnableDpiAwareness();
 

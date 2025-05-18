@@ -12,7 +12,7 @@ namespace smile::graphic
 {
     void ShaderLibrary::Add( const std::string &name, const memory::Ref< Shader > &pShader )
     {
-        SM_ASSERT( !Exists( name ), "ShaderLibrary::Add > Shader: %s already exists!", name );
+        SM_ASSERT_MSG( !Exists( name ), "ShaderLibrary::Add > Shader: %s already exists!", name );
         m_Shaders[name] = pShader;
     }
 
@@ -38,7 +38,7 @@ namespace smile::graphic
 
     memory::Ref< Shader > ShaderLibrary::Get( const std::string &name )
     {
-        SM_ASSERT( Exists( name ), "ShaderLibrary::Add > Shader: %s not found!", name );
+        SM_ASSERT_MSG( Exists( name ), "ShaderLibrary::Add > Shader: %s not found!", name );
         return m_Shaders[name];
     }
 

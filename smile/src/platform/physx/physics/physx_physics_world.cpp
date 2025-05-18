@@ -76,7 +76,7 @@ namespace smile::physics
         sceneDesc.frictionType = SmileToPhysXFrictionType( m_pImplementation->Settings.FrictionModel );
         sceneDesc.flags |= physx::PxSceneFlag::eENABLE_CCD; // Enable continuous collision detection
 
-        SM_ASSERT( sceneDesc.isValid(), "PhysicsWorld::PhysicsWorld > Scene descriptor is not valid" );
+        SM_ASSERT_MSG( sceneDesc.isValid(), "PhysicsWorld::PhysicsWorld > Scene descriptor is not valid" );
         m_pImplementation->pScene = pPhysics->createScene( sceneDesc );
 
         if ( m_pImplementation->Settings.BroadPhaseAlgorithm != BroadPhaseType::AutomaticBoxPrune )
@@ -103,7 +103,7 @@ namespace smile::physics
             physx::PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f );
 
         m_pImplementation->pControllerManager = PxCreateControllerManager( *m_pImplementation->pScene );
-        SM_ASSERT( m_pImplementation->pControllerManager, "PhysicsWorld > Failed to create controller manager" );
+        SM_ASSERT_MSG( m_pImplementation->pControllerManager, "PhysicsWorld > Failed to create controller manager" );
     }
 
     PhysicsWorld::~PhysicsWorld()

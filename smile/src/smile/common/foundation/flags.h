@@ -27,7 +27,7 @@ namespace smile::foundation
 
         constexpr inline void Set( EnumType value )
         {
-            SM_ASSERT(
+            SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
             m_Flags |= ( 1 << static_cast< UnderlyingType >( value ) );
@@ -41,7 +41,7 @@ namespace smile::foundation
 
         constexpr inline bool Has( EnumType value ) const
         {
-            SM_ASSERT(
+            SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
             return ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) != 0;
@@ -51,7 +51,7 @@ namespace smile::foundation
         {
             for ( auto value : values )
             {
-                SM_ASSERT(
+                SM_ASSERT_MSG(
                     static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
                 if ( ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) == 0 )
@@ -63,7 +63,7 @@ namespace smile::foundation
 
         constexpr inline void Clear( EnumType value )
         {
-            SM_ASSERT(
+            SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
             m_Flags &= ~( 1 << static_cast< UnderlyingType >( value ) );
@@ -77,7 +77,7 @@ namespace smile::foundation
 
         constexpr inline void Toggle( EnumType value )
         {
-            SM_ASSERT(
+            SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
             m_Flags ^= ( 1 << static_cast< UnderlyingType >( value ) );

@@ -19,13 +19,13 @@ namespace smile::foundation
 
         static ObjectType &GetInstance()
         {
-            SM_ASSERT( m_pObject, "Object is nullptr" );
+            SM_ASSERT_MSG( m_pObject, "Object is nullptr" );
             return *m_pObject;
         }
 
         static void CreateInstance()
         {
-            SM_ASSERT( !m_pObject, "Object already exists" );
+            SM_ASSERT_MSG( !m_pObject, "Object already exists" );
 
             m_pObject = new ObjectType{};
             m_pObject->IncreaseRefCount();
@@ -33,7 +33,7 @@ namespace smile::foundation
 
         static void SetInstance( ObjectType &instance )
         {
-            SM_ASSERT( !m_pObject, "Object already exists" );
+            SM_ASSERT_MSG( !m_pObject, "Object already exists" );
 
             m_pObject = &instance;
             m_pObject->IncreaseRefCount();
@@ -41,7 +41,7 @@ namespace smile::foundation
 
         static void RemoveInstance()
         {
-            SM_ASSERT( m_pObject->GetRefCount() == 1, "Object has multiple references" );
+            SM_ASSERT_MSG( m_pObject->GetRefCount() == 1, "Object has multiple references" );
 
             m_pObject->DecreaseRefCount();
             m_pObject = nullptr;

@@ -18,7 +18,7 @@ namespace smile::ecs::state
         m_pECSEngine = pECSEngine;
         m_pSystemRegistry = pSystemRegistry;
 
-        SM_ASSERT( m_StateMap.find( initialState ) != m_StateMap.end(),
+        SM_ASSERT_MSG( m_StateMap.find( initialState ) != m_StateMap.end(),
             "StateManager::Initialize > Initial state not found in state map" );
 
         m_pCurrentState = m_StateMap.at( initialState );
@@ -50,7 +50,7 @@ namespace smile::ecs::state
 
     void StateManager::ChangeState( const std::string &name )
     {
-        SM_ASSERT( HasState( name ), "StateManager::ChangeState > State manager does not have state" );
+        SM_ASSERT_MSG( HasState( name ), "StateManager::ChangeState > State manager does not have state" );
 
         const auto &pTargetState = m_StateMap.at( name );
 
@@ -202,7 +202,7 @@ namespace smile::ecs::state
             }
         }
 
-        SM_ASSERT( sorted.size() == systemNames.size(),
+        SM_ASSERT_MSG( sorted.size() == systemNames.size(),
             "StateManager::TopologicalSort > Cycle detected or missing dependency" );
 
         return sorted;

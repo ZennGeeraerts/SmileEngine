@@ -131,7 +131,7 @@ namespace smile::graphic
     float Material::GetFloatValue( const std::string &semantic ) const
     {
         auto it = m_FloatValues.find( semantic );
-        SM_ASSERT( it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
+        SM_ASSERT_MSG( it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }
@@ -139,7 +139,7 @@ namespace smile::graphic
     int Material::GetIntValue( const std::string &semantic ) const
     {
         auto it = m_IntValues.find( semantic );
-        SM_ASSERT( it != m_IntValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
+        SM_ASSERT_MSG( it != m_IntValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }
@@ -147,7 +147,7 @@ namespace smile::graphic
     bool Material::GetBoolValue( const std::string &semantic ) const
     {
         auto it = m_BoolValues.find( semantic );
-        SM_ASSERT( it != m_BoolValues.end(), "Material::GetBoolValue > Couldn't find semantic: %s", semantic );
+        SM_ASSERT_MSG( it != m_BoolValues.end(), "Material::GetBoolValue > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }
@@ -155,7 +155,7 @@ namespace smile::graphic
     const DirectX::XMFLOAT2 &Material::GetFloat2Value( const std::string &semantic ) const
     {
         auto it = m_Float2Values.find( semantic );
-        SM_ASSERT( it != m_Float2Values.end(), "Material::GetFloat2Value > Couldn't find semantic: %s", semantic );
+        SM_ASSERT_MSG( it != m_Float2Values.end(), "Material::GetFloat2Value > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }
@@ -163,7 +163,7 @@ namespace smile::graphic
     const DirectX::XMFLOAT3 &Material::GetFloat3Value( const std::string &semantic ) const
     {
         auto it = m_Float3Values.find( semantic );
-        SM_ASSERT( it != m_Float3Values.end(), "Material::GetFloat3Value > Couldn't find semantic: %s", semantic );
+        SM_ASSERT_MSG( it != m_Float3Values.end(), "Material::GetFloat3Value > Couldn't find semantic: %s", semantic );
 
         return it->second;
     }

@@ -77,7 +77,7 @@ namespace smile
                 }
                 else
                 {
-                    SM_ASSERT( false, "Cannot find path" );
+                    SM_ASSERT_MSG( false, "Cannot find path" );
                 }
             }
 
@@ -99,7 +99,7 @@ namespace smile
                     if ( ImGui::MenuItem( "Delete" ) )
                     {
                         // TODO
-                        SM_ASSERT( false, "Not implemented" );
+                        SM_ASSERT_MSG( false, "Not implemented" );
                     }
                     ImGui::EndPopup();
                 }

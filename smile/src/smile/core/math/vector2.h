@@ -128,13 +128,13 @@ namespace smile::math
 
         inline Type operator[]( Uint8 index ) const
         {
-            SM_ASSERT( index < 2, "Vector2 > index of Vector2 [] operator is out of bounds!" );
+            SM_ASSERT_MSG( index < 2, "Vector2 > index of Vector2 [] operator is out of bounds!" );
             return Data[index];
         }
 
         inline Type &operator[]( Uint8 index )
         {
-            SM_ASSERT( index < 2, "Vector2 > index of Vector2 [] operator is out of bounds!" );
+            SM_ASSERT_MSG( index < 2, "Vector2 > index of Vector2 [] operator is out of bounds!" );
             return Data[index];
         }
 

@@ -134,7 +134,7 @@ namespace smile::world
 
     Entity World::GetEntityByUUID( primitive::UUID uuid )
     {
-        SM_ASSERT( m_EntityMap.find( uuid ) != m_EntityMap.end(), "world::GetEntityByUUID > Invalid UUID" )
+        SM_ASSERT_MSG( m_EntityMap.find( uuid ) != m_EntityMap.end(), "world::GetEntityByUUID > Invalid UUID" )
         return Entity{ m_EntityMap.at( uuid ), this };
     }
 }

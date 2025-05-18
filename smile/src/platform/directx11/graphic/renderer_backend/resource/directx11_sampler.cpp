@@ -16,7 +16,7 @@ namespace smile::graphic
             case SamplerFiltering::MinMagMipLinear:
                 return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
             default:
-                SM_ASSERT( false, "Unknown filter" );
+                SM_ASSERT_MSG( false, "Unknown filter" );
         }
     }
 
@@ -29,7 +29,7 @@ namespace smile::graphic
             case SamplerAddressing::Clamp:
                 return D3D11_TEXTURE_ADDRESS_CLAMP;
             default:
-                SM_ASSERT( false, "Unknown addressing" );
+                SM_ASSERT_MSG( false, "Unknown addressing" );
         }
     }
 
@@ -47,7 +47,7 @@ namespace smile::graphic
         desc.AddressW = SamplerAddressingToDirectXType( samplerDesc.AddressingW );
 
         HRESULT result = pDevice->CreateSamplerState( &desc, &pInternal );
-        SM_ASSERT( result == S_OK, "DirectX11SamplerState::Create > Failed to create sampler" );
+        SM_ASSERT_MSG( result == S_OK, "DirectX11SamplerState::Create > Failed to create sampler state" );
     }
 
     void DirectX11SamplerState::Destroy()

@@ -180,7 +180,7 @@ namespace smile::graphic
             }
             case TextureDimension::Unknown:
             default:
-                SM_ASSERT( false, "Invalid texture dimension" );
+                SM_ASSERT_MSG( false, "Invalid texture dimension" );
                 break;
         }
     }

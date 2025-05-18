@@ -57,14 +57,14 @@ namespace smile::world
 
     void Entity::RemoveChild( Entity child )
     {
-        SM_ASSERT( HasComponent< smile::ecs::Relationship >() && child.HasComponent< smile::ecs::Relationship >(),
+        SM_ASSERT_MSG( HasComponent< smile::ecs::Relationship >() && child.HasComponent< smile::ecs::Relationship >(),
             "Entity::RemoveChild > Child does not exist" );
 
         auto &relationship = GetComponent< smile::ecs::Relationship >();
         auto &childRel = child.GetComponent< smile::ecs::Relationship >();
 
-        SM_ASSERT( relationship.ChildrenCount > 0, "Entity::RemoveChild > Entity does not have children" );
-        SM_ASSERT( childRel.Parent == m_EntityHandle, "Entity::RemoveChild > Not a child of this entity" );
+        SM_ASSERT_MSG( relationship.ChildrenCount > 0, "Entity::RemoveChild > Entity does not have children" );
+        SM_ASSERT_MSG( childRel.Parent == m_EntityHandle, "Entity::RemoveChild > Not a child of this entity" );
 
         if ( relationship.First == child )
             relationship.First = childRel.Next;
@@ -90,12 +90,12 @@ namespace smile::world
 
     Entity Entity::GetChildAtIndex( const Uint32 index ) const
     {
-        SM_ASSERT(
+        SM_ASSERT_MSG(
             HasComponent< smile::ecs::Relationship >(), "Entity::GetChildAtIndex > Entity does not have children" );
 
         auto &relationship = GetComponent< smile::ecs::Relationship >();
 
-        SM_ASSERT( relationship.ChildrenCount > index, "Entity::GetChildAtIndex > Index out of range" );
+        SM_ASSERT_MSG( relationship.ChildrenCount > index, "Entity::GetChildAtIndex > Index out of range" );
 
         auto currentChildHandle = relationship.First;
         for ( Uint32 i{}; i < relationship.ChildrenCount; ++i )
@@ -107,7 +107,7 @@ namespace smile::world
                 m_pWorld->m_ECSEngine.GetComponent< smile::ecs::Relationship >( currentChildHandle ).Next;
         }
 
-        SM_ASSERT( false, "Entity::GetChildAtIndex > Failed to get child at index: {}", index ); // TODO: Add parameters to assert message
+        SM_ASSERT_MSG( false, "Entity::GetChildAtIndex > Failed to get child at index: {}", index ); // TODO: Add parameters to assert message
         return Entity{};
     }
 

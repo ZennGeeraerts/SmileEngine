@@ -22,13 +22,13 @@ namespace smile::window
 
         Window *GetWindow( Uint32 index )
         {
-            SM_ASSERT( index < m_pWindows.size() && index >= 0, "" );
+            SM_ASSERT( index < m_pWindows.size() && index >= 0 );
             return m_pWindows[index];
         }
 
         const Window *GetWindow( Uint32 index ) const
         {
-            SM_ASSERT( index < m_pWindows.size() && index >= 0, "" );
+            SM_ASSERT( index < m_pWindows.size() && index >= 0 );
             return m_pWindows[index];
         }
 

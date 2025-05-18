@@ -18,7 +18,7 @@ namespace smile::graphic
                 return D3D11_DEPTH_WRITE_MASK_ALL;
 
             default:
-                SM_ASSERT( false, "Unknown depth write mask" );
+                SM_ASSERT_MSG( false, "Unknown depth write mask" );
         }
     }
 
@@ -51,7 +51,7 @@ namespace smile::graphic
                 return D3D11_COMPARISON_ALWAYS;
 
             default:
-                SM_ASSERT( false, "Unknown depth comparisson function" );
+                SM_ASSERT_MSG( false, "Unknown depth comparisson function" );
         }
     }
 
@@ -68,7 +68,7 @@ namespace smile::graphic
         depthStencilDesc.DepthFunc = DepthComparissonFuncToDirectXType( depthStencilState.DepthComparissonFunc );
 
         [[maybe_unused]] HRESULT result = pDevice->CreateDepthStencilState( &depthStencilDesc, &pInternal );
-        SM_ASSERT( result == S_OK, "DirectX11DepthStencilState::Create > Failed to create depth stencil state" );
+        SM_ASSERT_MSG( result == S_OK, "DirectX11DepthStencilState::Create > Failed to create depth stencil state" );
     }
 
     void DirectX11DepthStencilState::Destroy()

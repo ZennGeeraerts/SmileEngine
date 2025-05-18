@@ -9,10 +9,10 @@
 
 namespace smile::foundation
 {
-    void
+    bool
     HandleAssert( const char *condition, const char *message, const char *file, const int line, const char *function )
     {
-        SM_LOG_ERROR( "Assertion Failed: {}", message );
-        SM_DEBUGBREAK();  
+        SM_LOG_ERROR( "Assertion '{0}' failed at {1}:{2} {3}", condition, file, line, message ? message : "" );
+        return true;
     }
 }

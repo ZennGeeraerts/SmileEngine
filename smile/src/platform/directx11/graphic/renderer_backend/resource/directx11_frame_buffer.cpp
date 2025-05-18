@@ -35,7 +35,7 @@ namespace smile::graphic
 
             case FramebufferTextureFormat::None:
             default:
-                SM_ASSERT(
+                SM_ASSERT_MSG(
                     false, "DirectX11Framebuffer::framebufferTextureFormatToDirectXBaseType > Unknown ShaderDataType" );
                 return DXGI_FORMAT_UNKNOWN;
         }

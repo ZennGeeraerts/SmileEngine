@@ -301,7 +301,7 @@ namespace smile::ecs
         {
             auto it = m_ComponentPoolMap.find( typeID );
 
-            SM_ASSERT( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
+            SM_ASSERT_MSG( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
             return it->second->Get< ComponentType >( entityHandle );
         }
@@ -312,7 +312,7 @@ namespace smile::ecs
         {
             auto it = m_ComponentPoolMap.find( typeID );
 
-            SM_ASSERT( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
+            SM_ASSERT_MSG( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
 
             return it->second->Get< ComponentType >( entityHandle );
         }
@@ -413,7 +413,7 @@ namespace smile::ecs
             if ( it != m_pGroups.end() )
                 return *( static_cast< Group< Owned..., Get... > * >( *it ) );
 
-            SM_ASSERT( std::none_of( pOwnedComponents.cbegin(),
+            SM_ASSERT_MSG( std::none_of( pOwnedComponents.cbegin(),
                            pOwnedComponents.cend(),
                            [&]( const ComponentPool *pCPool ) { return pCPool && IsComponentOwned( pCPool ); } ),
                 "ECSEngine::GetGroup > Component pool(s) are already owned by a group" );
@@ -451,7 +451,7 @@ namespace smile::ecs
         {
             ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
 
-            SM_ASSERT( !IsComponentOwned( pCPool ), "ECSEngine::SortComponent > Cannot sort owned component" );
+            SM_ASSERT_MSG( !IsComponentOwned( pCPool ), "ECSEngine::SortComponent > Cannot sort owned component" );
 
             auto comp = [this, compare = std::move( compare )]( const IndexType lhs, const IndexType rhs )
             {

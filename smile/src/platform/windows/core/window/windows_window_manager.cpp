@@ -56,7 +56,7 @@ namespace smile::window
         m_WindowClass.lpfnWndProc = WindowsProcedureStatic;
 
         int success = RegisterClassEx( &m_WindowClass );
-        SM_ASSERT( success, "WindowsWindowManager > Could not register window class!" );
+        SM_ASSERT_MSG( success, "WindowsWindowManager > Could not register window class!" );
     }
 
     WindowsWindowManager::~WindowsWindowManager()

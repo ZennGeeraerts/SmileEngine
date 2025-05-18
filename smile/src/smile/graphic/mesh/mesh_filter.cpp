@@ -61,7 +61,7 @@ namespace smile::graphic
 
     void MeshFilter::AddIndex( Uint32 bufferPosition, Uint32 index )
     {
-        SM_ASSERT( bufferPosition < m_Indices.size(), "MeshFilter::AddIndex > Invalid buffer position" );
+        SM_ASSERT_MSG( bufferPosition < m_Indices.size(), "MeshFilter::AddIndex > Invalid buffer position" );
         m_Indices[bufferPosition] = index;
     }
 }

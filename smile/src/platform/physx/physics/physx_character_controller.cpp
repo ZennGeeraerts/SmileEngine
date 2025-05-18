@@ -78,7 +78,7 @@ namespace smile::physics
         desc.userData = this;
 
         m_pImplementation->pController = pControllerManager->createController( desc );
-        SM_ASSERT( m_pImplementation->pController, "CharacterController > Failed to create controller" );
+        SM_ASSERT_MSG( m_pImplementation->pController, "CharacterController > Failed to create controller" );
 
         m_pImplementation->pController->getActor()->userData = this;
     }
@@ -95,14 +95,14 @@ namespace smile::physics
 
     void CharacterController::Translate( const DirectX::XMFLOAT3 &translation )
     {
-        SM_ASSERT( m_pImplementation->pController, "CharacterController::Translate > Controller is null" );
+        SM_ASSERT_MSG( m_pImplementation->pController, "CharacterController::Translate > Controller is null" );
 
         m_pImplementation->pController->setPosition( utils::ConvertToPhysXExtendedVector( translation ) );
     }
 
     CharacterController::CollisionFlag CharacterController::Move( const DirectX::XMFLOAT3 &displacement, float minDist )
     {
-        SM_ASSERT( m_pImplementation->pController, "CharacterController::Move > Controller is null" );
+        SM_ASSERT_MSG( m_pImplementation->pController, "CharacterController::Move > Controller is null" );
 
         auto physxControllerCollisionFlags = m_pImplementation->pController->move(
             utils::ConvertToPhysXVector( displacement ), minDist, 0, nullptr, nullptr );
@@ -116,7 +116,7 @@ namespace smile::physics
     {
         physx::PxFilterData filterData{ static_cast< Uint32 >( groups ), static_cast< Uint32 >( ignoreGroups ), 0, 0 };
 
-        SM_ASSERT( m_pImplementation->pController, "CharacterController::SetCollisionGroups > Controller is null" );
+        SM_ASSERT_MSG( m_pImplementation->pController, "CharacterController::SetCollisionGroups > Controller is null" );
 
         const auto pActor = m_pImplementation->pController->getActor();
         const auto shapeCount = pActor->getNbShapes();
@@ -139,14 +139,14 @@ namespace smile::physics
 
     DirectX::XMFLOAT3 CharacterController::GetPosition() const
     {
-        SM_ASSERT( m_pImplementation->pController, "CharacterController::GetPosition > Controller is null" );
+        SM_ASSERT_MSG( m_pImplementation->pController, "CharacterController::GetPosition > Controller is null" );
 
         return utils::ConvertToDirectXVector( m_pImplementation->pController->getPosition() );
     }
 
     DirectX::XMFLOAT3 CharacterController::GetFootPosition() const
     {
-        SM_ASSERT( m_pImplementation->pController, "CharacterController::GetFootPosition > Controller is null" );
+        SM_ASSERT_MSG( m_pImplementation->pController, "CharacterController::GetFootPosition > Controller is null" );
 
         return utils::ConvertToDirectXVector( m_pImplementation->pController->getFootPosition() );
     }

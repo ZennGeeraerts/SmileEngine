@@ -102,7 +102,7 @@ namespace smile::world
                 for ( auto entity : view )
                 {
                     primitive::UUID uuid = src.GetComponent< ecs::IDComponent >( entity ).ID;
-                    SM_ASSERT( entityMap.find( uuid ) != entityMap.end(), "UUID not found in entity map" );
+                    SM_ASSERT_MSG( entityMap.find( uuid ) != entityMap.end(), "UUID not found in entity map" );
                     smile::ecs::EntityHandle dstHandleID = entityMap.at( uuid );
 
                     auto &component = src.GetComponent< ComponentType >( entity );

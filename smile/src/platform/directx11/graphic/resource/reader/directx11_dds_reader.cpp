@@ -36,7 +36,7 @@ namespace smile::graphic
                 return memory::CreateRef< Image >( info.width, info.height, ImageFormat::BC1, image.GetPixels() );
 
             default:
-                SM_ASSERT( false, "DDSReader::Read > Unsupported image format" );
+                SM_ASSERT_MSG( false, "DDSReader::Read > Unsupported image format" );
         }
     }
 }

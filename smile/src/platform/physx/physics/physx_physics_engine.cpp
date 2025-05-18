@@ -34,7 +34,7 @@ namespace smile::physics
         // Setup the foundation
         m_pImplementation->pFoundation = PxCreateFoundation(
             PX_PHYSICS_VERSION, m_pImplementation->AllocatorCallback, m_pImplementation->ErrorCallback );
-        SM_ASSERT( m_pImplementation->pFoundation,
+        SM_ASSERT_MSG( m_pImplementation->pFoundation,
             "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX foundation" );
 
         // Create a PDV instance
@@ -50,12 +50,12 @@ namespace smile::physics
         scale.length = 10;
         m_pImplementation->pPhysics = PxCreatePhysics(
             PX_PHYSICS_VERSION, *m_pImplementation->pFoundation, scale, true, m_pImplementation->pPvd );
-        SM_ASSERT( m_pImplementation->pPhysics, "PhysicsEngine::PhysicsEngine > Failed to create PhysX physics" );
+        SM_ASSERT_MSG( m_pImplementation->pPhysics, "PhysicsEngine::PhysicsEngine > Failed to create PhysX physics" );
 
         // Create the cooking factory
         m_pImplementation->pCookingFactory = PxCreateCooking(
             PX_PHYSICS_VERSION, *m_pImplementation->pFoundation, m_pImplementation->pPhysics->getTolerancesScale() );
-        SM_ASSERT( m_pImplementation->pCookingFactory,
+        SM_ASSERT_MSG( m_pImplementation->pCookingFactory,
             "PhysXPhysicsEngine::PhysXPhysicsEngine > Failed to create PhysX cooking" );
         m_pImplementation->pDefaultCpuDispatcher = physx::PxDefaultCpuDispatcherCreate( 1 );
         PxSetAssertHandler( m_pImplementation->AssertHandler );
