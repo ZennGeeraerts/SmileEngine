@@ -8,7 +8,7 @@
 
 namespace smile::foundation
 {
-    void
+    bool
     HandleAssert( const char *condition, const char *message, const char *file, const int line, const char *function );
 }
 
@@ -26,7 +26,9 @@ namespace smile::foundation
         {                                                                                                              \
             if ( !( condition ) )                                                                                      \
             {                                                                                                          \
-                smile::foundation::HandleAssert( #condition, message, __FILE__, __LINE__, __FUNCTION__ );              \
+                ( smile::foundation::HandleAssert( #condition, message, __FILE__, __LINE__, __FUNCTION__ )             \
+                        ? ( void )( SM_DEBUGBREAK() )                                                                  \
+                        : ( void )0 );                                                                                 \
             }                                                                                                          \
         }
 #else
