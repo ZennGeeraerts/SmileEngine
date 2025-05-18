@@ -71,7 +71,7 @@ namespace smile::window
             HINSTANCE(),
             this );
 
-        SM_ASSERT( m_WindowHandle, "WindowsWindow::Initialize > Could not create window!" );
+        SM_ASSERT_MSG( m_WindowHandle, "WindowsWindow::Initialize > Could not create window!" );
 
         ShowWindow( m_WindowHandle, SW_SHOW );
         UpdateWindow( m_WindowHandle );

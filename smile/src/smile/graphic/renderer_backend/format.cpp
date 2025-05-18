@@ -867,7 +867,7 @@ namespace smile::graphic
 
         const FormatInfo &info = s_FormatInfo[static_cast< uint32_t >( format )];
 
-        SM_ASSERT( info.Format == format, "Format mismatch" );
+        SM_ASSERT_MSG( info.Format == format, "Format mismatch" );
 
         return info;
     }

@@ -94,7 +94,7 @@ namespace smile::graphic
     void DirectX11CommandList::Draw( Uint32 vertexCount, const memory::Ref< Shader > &pShader )
     {
         auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
-        SM_ASSERT( pDirectX11Shader, "DirectX11Context::Draw > Shader is not a DirectX11Shader" );
+        SM_ASSERT_MSG( pDirectX11Shader, "DirectX11Context::Draw > Shader is not a DirectX11Shader" );
 
         auto pTechnique = pDirectX11Shader->pTechnique;
         D3DX11_TECHNIQUE_DESC techDesc{};
@@ -109,7 +109,7 @@ namespace smile::graphic
     void DirectX11CommandList::DrawIndexed( Uint32 indexCount, const memory::Ref< Shader > &pShader )
     {
         auto pDirectX11Shader = memory::Ref< DirectX11Shader >{ pShader };
-        SM_ASSERT( pDirectX11Shader, "DirectX11RendererAPI::DrawIndexed > Shader is not a DirectX11Shader" );
+        SM_ASSERT_MSG( pDirectX11Shader, "DirectX11RendererAPI::DrawIndexed > Shader is not a DirectX11Shader" );
 
         auto pTechnique = pDirectX11Shader->pTechnique;
         D3DX11_TECHNIQUE_DESC techDesc{};
@@ -227,7 +227,7 @@ namespace smile::graphic
     {
         const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
 
-        SM_ASSERT( index < framebuffer.pColorShaderResourceViews.size(),
+        SM_ASSERT_MSG( index < framebuffer.pColorShaderResourceViews.size(),
             "DirectX11Context::ReadTexture > Index out of range" );
 
         return framebuffer.pColorShaderResourceViews[index];

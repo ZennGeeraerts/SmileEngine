@@ -20,7 +20,7 @@ namespace smile::project
         // TODO: move to asset manager when we have one
         static std::filesystem::path GetAssetFileSystemPath( const std::filesystem::path &assetPath )
         {
-            SM_ASSERT( s_pActiveProject, "Project::GetAssetFileSystemPath > No active project" );
+            SM_ASSERT_MSG( s_pActiveProject, "Project::GetAssetFileSystemPath > No active project" );
             return s_pActiveProject->GetAssetDirectory() / assetPath;
         }
 

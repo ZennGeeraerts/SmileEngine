@@ -28,12 +28,12 @@ namespace smile::scripting
     static bool Entity_HasComponent( primitive::UUID entityID, MonoReflectionType *pComponentType )
     {
         world::World *pWorld = ScriptEngine::GetWorldContext();
-        SM_ASSERT( pWorld, "" );
+        SM_ASSERT( pWorld );
         world::Entity entity = pWorld->GetEntityByUUID( entityID );
-        SM_ASSERT( entity, "" );
+        SM_ASSERT( entity );
 
         MonoType *pManagedType = mono_reflection_type_get_type( pComponentType );
-        SM_ASSERT( s_EntityHasComponentFuncs.find( pManagedType ) != s_EntityHasComponentFuncs.end(),
+        SM_ASSERT_MSG( s_EntityHasComponentFuncs.find( pManagedType ) != s_EntityHasComponentFuncs.end(),
             "ScriptGlue::Entity_HasComponent > UUnregistered type" );
 
         return s_EntityHasComponentFuncs.at( pManagedType )( entity );

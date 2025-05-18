@@ -11,13 +11,13 @@ namespace smile::math
     {
         inline Type operator[]( Uint8 index ) const
         {
-            SM_ASSERT( index < Size, "Vector > index of Vector [] operator is out of bounds!" );
+            SM_ASSERT_MSG( index < Size, "Vector > index of Vector [] operator is out of bounds!" );
             return Data[index];
         }
 
         inline Type &operator[]( Uint8 index )
         {
-            SM_ASSERT( index < Size, "Vector > index of Vector [] operator is out of bounds!" );
+            SM_ASSERT_MSG( index < Size, "Vector > index of Vector [] operator is out of bounds!" );
             return Data[index];
         }
 
@@ -45,7 +45,7 @@ namespace smile::math
     template < int Size, typename Type >
     inline Type Normalize( Vector< Size, Type > &vector )
     {
-        SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector is zero vector" );
+        SM_ASSERT_MSG( !IsZeroVector( vector ), "Normalize > Vector is zero vector" );
 
         const Type magnitude = Magnitude( vector );
         vector /= magnitude;
@@ -56,7 +56,7 @@ namespace smile::math
     template < Uint8 Size, typename Type >
     inline Vector< Size, Type > GetNormalized( const Vector< Size, Type > &vector )
     {
-        SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector is zero vector" );
+        SM_ASSERT_MSG( !IsZeroVector( vector ), "GetNormalized > Vector is zero vector" );
 
         const Type magnitude = Magnitude( vector );
         return Vector{ vector / magnitude };

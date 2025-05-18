@@ -71,7 +71,7 @@ namespace smile::math
 
     inline Vector4 GetNormalized( const Vector4 &vector )
     {
-        SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector4 is zero vector" );
+        SM_ASSERT_MSG( !IsZeroVector( vector ), "GetNormalized > Vector4 is zero vector" );
 
         const float length =
             SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
@@ -81,7 +81,7 @@ namespace smile::math
 
     inline void Normalize( Vector4 &vector )
     {
-        SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector4 is zero vector" );
+        SM_ASSERT_MSG( !IsZeroVector( vector ), "Normalize > Vector4 is zero vector" );
 
         const float length =
             SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );

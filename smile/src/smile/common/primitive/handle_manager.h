@@ -83,7 +83,7 @@ namespace smile::primitive
         {
             auto &managedHandle = m_Handles[handle.m_Index];
 
-            SM_ASSERT( managedHandle.m_Generation == handle.m_Generation,
+            SM_ASSERT_MSG( managedHandle.m_Generation == handle.m_Generation,
                 "HandleManager::DestroyHandle > Handle generation mismatch" );
 
             ++managedHandle.m_Generation;
@@ -105,7 +105,7 @@ namespace smile::primitive
 
         HandleType GetHandle( IndexType index ) const
         {
-            SM_ASSERT( index < m_Handles.size(), "HandleManager::GetHandle > Index out of range" );
+            SM_ASSERT_MSG( index < m_Handles.size(), "HandleManager::GetHandle > Index out of range" );
             return m_Handles[index];
         }
 

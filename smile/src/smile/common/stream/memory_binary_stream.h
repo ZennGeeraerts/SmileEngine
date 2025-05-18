@@ -23,13 +23,13 @@ namespace smile::stream
 
         const std::vector< Byte > &GetByteArray() const
         {
-            SM_ASSERT( !IsOpen(), "Binary stream is open" );
+            SM_ASSERT_MSG( !IsOpen(), "Binary stream is open" );
             return m_ByteArray;
         }
 
         std::vector< Byte > &GetByteArray()
         {
-            SM_ASSERT( !IsOpen(), "Binary stream is open" );
+            SM_ASSERT_MSG( !IsOpen(), "Binary stream is open" );
             return m_ByteArray;
         }
 

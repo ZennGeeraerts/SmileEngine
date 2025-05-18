@@ -33,7 +33,7 @@ namespace smile::primitive
 
         IndexType Insert( IndexType element )
         {
-            SM_ASSERT( !Contains( element ), "SparseSet::Insert > Sparse set already contains this value" );
+            SM_ASSERT_MSG( !Contains( element ), "SparseSet::Insert > Sparse set already contains this value" );
 
             const auto pos = static_cast< IndexType >( m_Dense.size() );
             m_Dense.push_back( element );
@@ -48,7 +48,7 @@ namespace smile::primitive
 
         IndexType Erase( IndexType element )
         {
-            SM_ASSERT( Contains( element ), "SparseSet::Erase > Sparse set doesn't contain this value" );
+            SM_ASSERT_MSG( Contains( element ), "SparseSet::Erase > Sparse set doesn't contain this value" );
 
             IndexType deadIndex = m_Sparse[element];
 
@@ -76,7 +76,7 @@ namespace smile::primitive
 
         void Swap( IndexType lhs, IndexType rhs )
         {
-            SM_ASSERT( Contains( lhs ) && Contains( rhs ), "SparseSet::Swap > Sparse set doesn't contains this value" );
+            SM_ASSERT_MSG( Contains( lhs ) && Contains( rhs ), "SparseSet::Swap > Sparse set doesn't contains this value" );
 
             if ( lhs == rhs )
                 return;
@@ -135,14 +135,14 @@ namespace smile::primitive
 
         IndexType GetIndex( IndexType element ) const
         {
-            SM_ASSERT( Contains( element ), "SparseSet::GetIndex > Sparse set doesn't contains this value" );
+            SM_ASSERT_MSG( Contains( element ), "SparseSet::GetIndex > Sparse set doesn't contains this value" );
 
             return m_Sparse[element];
         }
 
         IndexType GetElement( IndexType index ) const
         {
-            SM_ASSERT( index < m_Dense.size(), "SparseSet::GetElement > Index out of range" );
+            SM_ASSERT_MSG( index < m_Dense.size(), "SparseSet::GetElement > Index out of range" );
 
             return m_Dense[index];
         }

@@ -28,7 +28,7 @@ namespace smile::graphic::ecs
 
         virtual void OnRemove( smile::ecs::ECSEngine &ecsEngine )
         {
-            SM_ASSERT( m_pECSEngine == &ecsEngine, "System does not belong to this ecs engine" );
+            SM_ASSERT_MSG( m_pECSEngine == &ecsEngine, "System does not belong to this ecs engine" );
             m_pECSEngine = nullptr;
         };
 

@@ -13,12 +13,12 @@ namespace smile::asset
     {
         const AssetType assetType = pLoader->GetType();
 
-        SM_ASSERT( m_AssetLoaderMap.find( assetType ) == m_AssetLoaderMap.end(), "Asset type collision" );
+        SM_ASSERT_MSG( m_AssetLoaderMap.find( assetType ) == m_AssetLoaderMap.end(), "Asset type collision" );
         m_AssetLoaderMap.insert( std::make_pair( assetType, pLoader ) );
 
         for ( const std::filesystem::path &extension : pLoader->GetExtensions() )
         {
-            SM_ASSERT( m_AssetExtensionMap.find( extension ) == m_AssetExtensionMap.end(), "Extension collision" );
+            SM_ASSERT_MSG( m_AssetExtensionMap.find( extension ) == m_AssetExtensionMap.end(), "Extension collision" );
             m_AssetExtensionMap.insert( std::make_pair( extension, assetType ) );
         }
     }

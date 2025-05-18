@@ -24,7 +24,7 @@ namespace smile::memory
         // This needs to be const to work in Reset function of Object
         inline void IncreaseRefCount() const
         {
-            SM_ASSERT( m_RefCount != DestructedObjectRefCount(), "Object is destructed" );
+            SM_ASSERT_MSG( m_RefCount != DestructedObjectRefCount(), "Object is destructed" );
             ++m_RefCount;
         }
 

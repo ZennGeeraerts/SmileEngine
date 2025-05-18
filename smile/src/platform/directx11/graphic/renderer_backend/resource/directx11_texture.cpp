@@ -85,7 +85,7 @@ namespace smile::graphic
             case ImageFormat::RGBA:
                 return DXGI_FORMAT_R32G32B32A32_FLOAT;
             default:
-                SM_ASSERT( false, "Unsupported format" );
+                SM_ASSERT_MSG( false, "Unsupported format" );
         }
 
         return DXGI_FORMAT_UNKNOWN;
@@ -98,7 +98,7 @@ namespace smile::graphic
         {
             SAFE_RELEASE( pInternal );
             SAFE_RELEASE( pShaderResourceView );
-            SM_ASSERT( false, "DirectX11Texture::Create > Failed to load texture" );
+            SM_ASSERT_MSG( false, "DirectX11Texture::Create > Failed to load texture" );
         }
     }
 

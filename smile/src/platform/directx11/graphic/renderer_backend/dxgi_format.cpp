@@ -136,7 +136,7 @@ namespace smile::graphic
 
         const DXGIFormatMapping &mapping = s_FormatMappings[static_cast< uint32_t >( abstractFormat )];
 
-        SM_ASSERT( mapping.AbstractFormat == abstractFormat, "Abstract format mismatch" );
+        SM_ASSERT_MSG( mapping.AbstractFormat == abstractFormat, "Abstract format mismatch" );
 
         return mapping;
     }

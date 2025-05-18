@@ -126,13 +126,13 @@ namespace smile::memory
 
         inline Type *operator->() const
         {
-            SM_ASSERT( m_pInstance, "Instance is nullptr" );
+            SM_ASSERT_MSG( m_pInstance, "Instance is nullptr" );
             return m_pInstance;
         }
 
         inline Type &operator*() const
         {
-            SM_ASSERT( m_pInstance, "Instance is nullptr" );
+            SM_ASSERT_MSG( m_pInstance, "Instance is nullptr" );
             return *m_pInstance;
         }
 
@@ -160,7 +160,7 @@ namespace smile::memory
         inline typename std::conditional< std::is_const< Type >::value, const OtherType, OtherType >::type &
         GetObject() const
         {
-            SM_ASSERT( m_pInstance, "Instance is nullptr" );
+            SM_ASSERT_MSG( m_pInstance, "Instance is nullptr" );
 
             return static_cast< typename std::conditional< std::is_const< Type >::value, const Type, Type >::type & >(
                 *m_pInstance );

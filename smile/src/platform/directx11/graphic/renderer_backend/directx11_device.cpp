@@ -277,7 +277,7 @@ namespace smile::graphic
         if ( !shaderhelpers::LoadEffect( m_Context.pDevice, pShader, assetFile ) )
         {
             SAFE_RELEASE( pShader->pEffect );
-            SM_ASSERT( false, "DirectX11Device::CreateShader > Failed to load effect" );
+            SM_ASSERT_MSG( false, "DirectX11Device::CreateShader > Failed to load effect" );
         }
 
         if ( !techniqueName.empty() )
@@ -302,7 +302,7 @@ namespace smile::graphic
         if ( !shaderhelpers::LoadEffect( m_Context.pDevice, pShader, assetFile ) )
         {
             SAFE_RELEASE( pShader->pEffect );
-            SM_ASSERT( false, "DirectX11Device::CreateShader > Failed to load effect" );
+            SM_ASSERT_MSG( false, "DirectX11Device::CreateShader > Failed to load effect" );
         }
 
         if ( !techniqueName.empty() )

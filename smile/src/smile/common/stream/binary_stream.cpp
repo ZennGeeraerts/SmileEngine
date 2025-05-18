@@ -9,6 +9,6 @@ namespace smile::stream
 {
     BinaryStream::~BinaryStream()
     {
-        SM_ASSERT( !IsOpen(), "Binary stream is open while being destructed" );
+        SM_ASSERT_MSG( !IsOpen(), "Binary stream is open while being destructed" );
     }
 }

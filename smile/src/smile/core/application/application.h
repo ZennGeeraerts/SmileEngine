@@ -22,7 +22,7 @@ namespace smile::application
 
         const char *operator[]( int index ) const
         {
-            SM_ASSERT( index < Count, "ApplicationCommandLineArgs::*operator > Index out of range" );
+            SM_ASSERT_MSG( index < Count, "ApplicationCommandLineArgs::*operator > Index out of range" );
             return Args[index];
         }
     };

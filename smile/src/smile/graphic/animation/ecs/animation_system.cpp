@@ -93,7 +93,7 @@ namespace smile::graphic::ecs
         if ( pSkinnedMesh->SkeletonMap.find( nodeName ) != pSkinnedMesh->SkeletonMap.end() )
         {
             Uint32 id = pSkinnedMesh->SkeletonMap[nodeName].ID;
-            SM_ASSERT( id < s_MaxBoneCount, "AnimationSystem::CalculateBoneTransform > Max bone count reached" );
+            SM_ASSERT_MSG( id < s_MaxBoneCount, "AnimationSystem::CalculateBoneTransform > Max bone count reached" );
 
             DirectX::XMMATRIX transformMat =
                 DirectX::XMLoadFloat4x4( &pSkinnedMesh->SkeletonMap[nodeName].Offset ) * globalTransformMat;

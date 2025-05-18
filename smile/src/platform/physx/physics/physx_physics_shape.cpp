@@ -41,7 +41,7 @@ namespace smile::physics
 
                 m_pImplementation->pShape =
                     physx::PxRigidActorExt::createExclusiveShape( *pRigidActor, pxBoxGeometry, *pPxMaterial );
-                SM_ASSERT( m_pImplementation->pShape, "PhysicsShape::PhysicsShape > Failed to create PhysX Shape" );
+                SM_ASSERT_MSG( m_pImplementation->pShape, "PhysicsShape::PhysicsShape > Failed to create PhysX Shape" );
 
                 DirectX::XMMATRIX transformMat =
                     DirectX::XMMatrixScaling( 1.f, 1.f, 1.f ) * DirectX::XMMatrixRotationRollPitchYaw( 0.f, 0.f, 0.f ) *
@@ -87,7 +87,7 @@ namespace smile::physics
             }
             case PhysicsGeometryType::Undefined:
             default:
-                SM_ASSERT( false, "PhysicsShape > Unsupported shape" )
+                SM_ASSERT_MSG( false, "PhysicsShape > Unsupported shape" )
                 break;
         }
 

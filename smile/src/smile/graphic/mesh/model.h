@@ -23,7 +23,7 @@ namespace smile::graphic
 
         Ref< MeshFilter > GetMeshFilter( Uint32 index ) const
         {
-            SM_ASSERT( index >= 0 && index < m_pMeshes.size(), "Model::GetMeshFilter > Index out of range" );
+            SM_ASSERT_MSG( index >= 0 && index < m_pMeshes.size(), "Model::GetMeshFilter > Index out of range" );
             return m_pMeshes[index];
         }
 
@@ -34,7 +34,7 @@ namespace smile::graphic
 
         Ref< SkinnedMeshFilter > GetSkinnedMeshFilter( Uint32 index ) const
         {
-            SM_ASSERT(
+            SM_ASSERT_MSG(
                 index >= 0 && index < m_pSkinnedMeshes.size(), "Model::GetSkinnedMeshFilter > Index out of range" );
             return m_pSkinnedMeshes[index];
         }

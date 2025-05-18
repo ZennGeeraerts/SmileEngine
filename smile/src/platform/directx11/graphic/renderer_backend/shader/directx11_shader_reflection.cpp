@@ -101,7 +101,7 @@ namespace smile::graphic::utils
         for ( Uint32 i{}; i < effectDesc.GlobalVariables; ++i )
         {
             ID3DX11EffectVariable *pEffectVariable = pEffect->GetVariableByIndex( i );
-            SM_ASSERT( pEffectVariable, "ReflectShaderVariables > Invalid shader variable" );
+            SM_ASSERT_MSG( pEffectVariable, "ReflectShaderVariables > Invalid shader variable" );
 
             ID3DX11EffectType *pEffectType = pEffectVariable->GetType();
             D3DX11_EFFECT_TYPE_DESC effectTypeDescriptor{};

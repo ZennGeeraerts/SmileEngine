@@ -191,14 +191,14 @@ namespace smile::graphic
                     boneID = pMesh->m_SkeletonMap[boneName].ID;
                 }
 
-                SM_ASSERT( boneID != -1, "ModelLoader::LoadBones > Invalid bone ID" );
+                SM_ASSERT_MSG( boneID != -1, "ModelLoader::LoadBones > Invalid bone ID" );
 
                 for ( Uint32 j{}; j < pBone->mNumWeights; ++j )
                 {
                     aiVertexWeight &weight = pBone->mWeights[j];
                     if ( &weight )
                     {
-                        SM_ASSERT(
+                        SM_ASSERT_MSG(
                             weight.mVertexId <= pMesh->m_VertexCount, "ModelLoader::LoadBones > Invalid vertex ID" );
 
                         if ( pMesh->m_BlendIndices[weight.mVertexId].x < 0 )

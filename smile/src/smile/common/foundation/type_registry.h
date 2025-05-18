@@ -44,7 +44,7 @@ namespace smile::foundation
 
         std::string_view GetName( TypeID typeID ) const
         {
-            SM_ASSERT( Contains( typeID ), "TypeRegistry::GetName > ID not found" );
+            SM_ASSERT_MSG( Contains( typeID ), "TypeRegistry::GetName > ID not found" );
             return m_IDToNameMap[typeID];
         }
 

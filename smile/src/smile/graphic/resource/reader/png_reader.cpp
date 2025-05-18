@@ -26,7 +26,7 @@ namespace smile::graphic
                 return std::filesystem::absolute( path );
         }();
 
-        SM_ASSERT(
+        SM_ASSERT_MSG(
             std::filesystem::exists( finalPath ), "PNGReader::Read > Path: {} does not exist", finalPath.string() );
 
         stbi_uc *pData = stbi_load( finalPath.string().c_str(), &width, &height, &stridePerPixel, 0 );
@@ -44,7 +44,7 @@ namespace smile::graphic
                     return memory::CreateRef< Image >( width, height, ImageFormat::RGB, pData );
 
                 default:
-                    SM_ASSERT( false, "PNGReader::Read > Unsupported stride per pixel" );
+                    SM_ASSERT_MSG( false, "PNGReader::Read > Unsupported stride per pixel" );
             }
         }();
 

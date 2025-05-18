@@ -17,7 +17,7 @@ namespace smile::graphic
                 return CreateScope< DirectX11Device >();
 
             default:
-                SM_ASSERT( false,
+                SM_ASSERT_MSG( false,
                     "GraphicsDevice::Create > unknown renderer backend or renderer backend is not supported on "
                     "this "
                     "platform" );

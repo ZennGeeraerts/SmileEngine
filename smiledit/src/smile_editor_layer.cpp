@@ -487,7 +487,7 @@ namespace smile
 
     void SmileEditorLayer::OpenWorld( asset::AssetHandle handle )
     {
-        SM_ASSERT( handle, "Invalid asset handle" );
+        SM_ASSERT_MSG( handle, "Invalid asset handle" );
 
         if ( m_WorldState != WorldState::Edit )
             OnWorldStop();

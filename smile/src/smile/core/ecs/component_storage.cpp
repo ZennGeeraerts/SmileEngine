@@ -78,7 +78,7 @@ namespace smile::ecs
 
         m_Allocated = newSize;
 
-        SM_ASSERT( m_pData, "ComponentStorage::Reallocate > data is nullptr" );
+        SM_ASSERT_MSG( m_pData, "ComponentStorage::Reallocate > data is nullptr" );
     }
 
     void ComponentStorage::Clear()

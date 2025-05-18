@@ -56,7 +56,7 @@ namespace smile::graphic
             case ShaderDataType::Bool:
                 return 1;
             default:
-                SM_ASSERT( false, "ShaderDataTypeSize > Unknown ShaderDataType" );
+                SM_ASSERT_MSG( false, "ShaderDataTypeSize > Unknown ShaderDataType" );
                 return 0;
         }
     }

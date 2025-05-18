@@ -9,7 +9,7 @@ namespace smile::memory
 {
     Counted::~Counted()
     {
-        SM_ASSERT( m_RefCount == 0, "RefCount is not 0" );
+        SM_ASSERT_MSG( m_RefCount == 0, "RefCount is not 0" );
 
         // Volatile ensures the compiler will write the value
         volatile auto &dest = m_RefCount;
