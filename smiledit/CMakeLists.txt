@@ -56,11 +56,12 @@ add_custom_command(
     )
 
 add_custom_command(
-    TARGET smiledit
+    TARGET ${PROJECT_NAME}
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_SOURCE_DIR}/mono"
+        "${SMILE_PATH}/../mono"
         "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/mono"
+    COMMENT "Copying Mono runtime DLLs to output directory"
     )
 
 add_custom_command(
