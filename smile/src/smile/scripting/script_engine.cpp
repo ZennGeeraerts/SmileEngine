@@ -9,6 +9,8 @@
 #include "script_field.h"
 #include "ecs/script_component.h"
 
+#include "smile/core/project/project_manager.h"
+
 #include <fstream>
 
 #include <mono/jit/jit.h>
@@ -198,13 +200,10 @@ namespace smile::scripting
 
         InitializeMono();
 
-#ifdef SM_C_DEBUG
+        const auto &projectCfg = project::ProjectManager::GetActive()->GetConfig();
+
         LoadAssembly( "resources/scripts/Debug/smile-script-core.dll" );
-        LoadAppAssembly( "sandbox-project/assets/scripts/bin/Debug/sandbox.dll" );
-#elif SM_C_RELEASE
-        LoadAssembly( "resources/scripts/Release/smile-script-core.dll" );
-        LoadAppAssembly( "sandbox-project/assets/scripts/bin/Release/sandbox.dll" );
-#endif
+        LoadAppAssembly( project::ProjectManager::GetAssetFileSystemPath( projectCfg.ScriptModulePath ) ); // Maybe should have a debug and release module?
 
         LoadAssemblyClasses();
 
