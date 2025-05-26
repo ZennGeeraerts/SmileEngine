@@ -22,6 +22,7 @@
 #include "smile/physics/physics_engine.h"
 #include "smile/physics/ecs/physics_system.h"
 
+#include "smile/scripting/script_engine.h"
 #include "smile/scripting/ecs/script_system.h"
 
 #include <imgui/imgui.h>
@@ -67,6 +68,7 @@ namespace smile
                 application::Application::GetInstance().ShutDown();
         }
 
+        scripting::ScriptEngine::Initialize();
         physics::PhysicsEngine::CreateInstance();
     }
 
@@ -75,6 +77,7 @@ namespace smile
         OnWorldStop();
 
         physics::PhysicsEngine::RemoveInstance();
+        scripting::ScriptEngine::ShutDown();
     }
 
     void SmileEditorLayer::OnUpdate( primitive::Timestep deltaTime )
