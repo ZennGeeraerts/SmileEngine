@@ -71,6 +71,25 @@ namespace smile
     using Int8 = int8_t;
 
     using Byte = unsigned char;
+
+    using VoidPointer = void *;
+
+    template < int >
+    struct VoidPointerType;
+
+    template <>
+    struct VoidPointerType< 4 >
+    {
+        using Type = Uint32;
+    };
+
+    template <>
+    struct VoidPointerType< 8 >
+    {
+        using Type = Uint64;
+    };
+
+    using UintPointer = VoidPointerType< sizeof( VoidPointer ) >::Type;
 }
 
 #include "smile/common/foundation/assert.h"

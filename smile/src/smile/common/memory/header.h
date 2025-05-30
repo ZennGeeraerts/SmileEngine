@@ -54,6 +54,9 @@ namespace smile::memory
             return this + 1;
         }
 
+        void SetAllocated( const Uint32 size, const Uint32 allocatorIndex );
+        void SetDeallocated();
+
         const void *GetByteArray() const
         {
             return this + 1;
