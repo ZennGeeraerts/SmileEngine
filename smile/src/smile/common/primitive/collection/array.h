@@ -61,7 +61,7 @@ namespace smile::primitive
             return m_Items[index];
         }
 
-        bool IsValidIndex( const int index ) const
+        virtual bool IsValidIndex( const int index ) const
         {
             return ( 0 <= index ) && ( index < ItemCount );
         }
