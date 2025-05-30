@@ -13,4 +13,14 @@ namespace smile::memory
     {
         return ( addHeaderSize ? s_HeaderSize : 0 ) + GetAlignedSize( size );
     }
+
+#if SM_C_DEBUG
+    void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
+    {
+        if ( size > 0 )
+        {
+            std::memmove( pDestByteArray, pSrcByteArray, size );
+        }
+    }
+#endif
 }
