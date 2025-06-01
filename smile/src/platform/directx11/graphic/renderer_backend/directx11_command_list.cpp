@@ -85,7 +85,7 @@ namespace smile::graphic
         const bool updateVertexBuffers =
             !m_IsCurrentGraphicsStateValid || m_CurrentVertexBufferBindings != graphicsState.VertexBuffers;
 
-        std::array< BindingSetHandle, s_MaxBindingLayoutCount > setsToBind;
+        BindingSetVector setsToBind;
         if ( updateBindings )
         {
             PrepareToBindGraphicsResourceSets( graphicsState.Bindings,
@@ -208,12 +208,12 @@ namespace smile::graphic
         return framebuffer.pColorShaderResourceViews[index];
     }
 
-    void DirectX11CommandList::PrepareToBindGraphicsResourceSets( const BindingSetArray &resourceSets,
-        const BindingSetArray *pCurrentResourceSets,
+    void DirectX11CommandList::PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,
+        const BindingSetVector *pCurrentResourceSets,
         GraphicsPipelineHandle currentPipelineHandle,
         GraphicsPipelineHandle newPipelineHandle,
         bool updateFramebuffer,
-        BindingSetArray &outSetsToBind ) const
+        BindingSetVector &outSetsToBind ) const
     {
         outSetsToBind = resourceSets;
 

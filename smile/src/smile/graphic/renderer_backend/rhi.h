@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/fixed_vector.h"
+
 namespace smile::graphic
 {
     static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
@@ -19,5 +21,5 @@ namespace smile::graphic
 
     static constexpr Uint32 s_ConstantBufferOffsetSizeAlignment = 256;
 
-    using BindingSetArray = std::array< BindingSetHandle, s_MaxBindingLayoutCount >;
+    using BindingSetVector = primitive::FixedVector< BindingSetHandle, s_MaxBindingLayoutCount >;
 }
