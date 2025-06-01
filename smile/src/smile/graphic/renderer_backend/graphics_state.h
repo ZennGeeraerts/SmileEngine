@@ -14,7 +14,7 @@ namespace smile::graphic
     {
         GraphicsPipelineHandle Pipeline;
         FramebufferHandle Framebuffer;
-        BindingSetArray Bindings;
+        BindingSetVector Bindings;
 
         std::array< VertexBufferBinding, s_MaxVertexAttributeCount > VertexBuffers;
         IndexBufferBinding IndexBuffer;
