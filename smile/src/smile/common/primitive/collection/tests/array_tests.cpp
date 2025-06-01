@@ -103,5 +103,15 @@ namespace smile::primitive
                 ++expected;
             }
         }
+
+        SECTION( "operator==" )
+        {
+            Array< int, 10 > values{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            Array< int, 10 > other{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            Array< int, 10 > other2{ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 };
+
+            REQUIRE( values == other );
+            REQUIRE( values != other2 );
+        }
     }
 }

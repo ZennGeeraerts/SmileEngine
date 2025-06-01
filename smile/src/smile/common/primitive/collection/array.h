@@ -61,6 +61,16 @@ namespace smile::primitive
             return m_Items[index];
         }
 
+        bool operator==( const Array &other ) const
+        {
+            return std::equal( primitive::begin( *this ), primitive::end( *this ), primitive::begin( other ) );
+        }
+
+        bool operator!=(const Array& other) const
+        {
+            return !( *this == other );
+        }
+
         virtual bool IsValidIndex( const int index ) const
         {
             return ( 0 <= index ) && ( index < ItemCount );
