@@ -11,6 +11,7 @@
 namespace smile::graphic
 {
     class DirectX11Device;
+    class DirectX11Pipeline;
 
     class DirectX11CommandList final : public CommandList
     {
@@ -31,9 +32,7 @@ namespace smile::graphic
         void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
         void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
 
-        void BindGraphicsPipeline( GraphicsPipelineHandle handle ) const override;
-
-        void SetGraphicsState( const GraphicsState &graphicsState ) const override;
+        void SetGraphicsState( const GraphicsState &graphicsState ) override;
         void Draw( const DrawParams &params ) override;
         void DrawIndexed( const DrawIndexedParams &params ) override;
 
@@ -56,12 +55,15 @@ namespace smile::graphic
         void *ReadTexture( FramebufferHandle handle, Uint32 index ) const override;
 
       private:
-        void PrepareToBindGraphicsResourceSets( const BindingSetArray &resourceSets,
-            const BindingSetArray *pCurrentResourceSets,
+        void PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,
+            const BindingSetVector *pCurrentResourceSets,
             GraphicsPipelineHandle currentPipelineHandle,
             GraphicsPipelineHandle newPipelineHandle,
             bool updateFramebuffer,
-            BindingSetArray &outSetsToBind ) const;
+            BindingSetVector &outSetsToBind ) const;
+
+        void BindGraphicsPipeline( const DirectX11Pipeline &pipeline ) const;
+        void BindGraphicsResourceSets( const BindingSetVector &setsToBind, const DirectX11Pipeline &pipeline ) const;
 
       private:
         DirectX11Device *m_pDevice;
@@ -69,9 +71,11 @@ namespace smile::graphic
 
         GraphicsPipelineHandle m_CurrentGraphicsPipeline;
         FramebufferHandle m_CurrentFramebuffer;
-        BindingSetArray m_CurrentBindings;
-        std::array< VertexBufferBinding, s_MaxVertexAttributeCount > m_CurrentVertexBufferBindings;
+        BindingSetVector m_CurrentBindings;
+        primitive::FixedVector< VertexBufferBinding, s_MaxVertexAttributeCount > m_CurrentVertexBufferBindings;
         IndexBufferBinding m_CurrentIndexBufferBinding;
+        primitive::FixedVector< GPUBufferHandle, s_MaxVertexAttributeCount > m_CurrentVertexBuffers;
+        GPUBufferHandle m_CurrentIndexBuffer;
         bool m_IsCurrentGraphicsStateValid = false;
     };
 }

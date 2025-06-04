@@ -13,6 +13,7 @@
 #include "directx11_device.h"
 #include "directx11_diagnostics.h"
 #include "directx11_swap_chain.h"
+#include "dxgi_format.h"
 
 #include "resource/directx11_frame_buffer.h"
 
@@ -55,23 +56,10 @@ namespace smile::graphic
             pDX11SwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
     }
 
-    void DirectX11CommandList::BindGraphicsPipeline( GraphicsPipelineHandle handle ) const
-    {
-        const auto &pipeline = m_pDevice->m_Pipelines[handle.GetIndex()];
-
-        m_Context.pImmediateContext->IASetInputLayout( pipeline.pInputLayout );
-
-        m_Context.pImmediateContext->IASetPrimitiveTopology( pipeline.PrimitiveTopology );
-        m_Context.pImmediateContext->RSSetState( pipeline.pRasterizerState );
-        m_Context.pImmediateContext->OMSetDepthStencilState( pipeline.pDepthStencilState, 1 );
-
-        m_Context.pImmediateContext->VSSetShader( pipeline.pVertexShader.Get(), nullptr, 0 );
-        m_Context.pImmediateContext->PSSetShader( pipeline.pPixelShader.Get(), nullptr, 0 );
-    }
-
-    void DirectX11CommandList::SetGraphicsState( const GraphicsState &graphicsState ) const
+    void DirectX11CommandList::SetGraphicsState( const GraphicsState &graphicsState )
     {
         const DirectX11Pipeline &pipeline = m_pDevice->m_Pipelines[graphicsState.Pipeline.GetIndex()];
+        const DirectX11Pipeline &currentPipeline = m_pDevice->m_Pipelines[m_CurrentGraphicsPipeline.GetIndex()];
         const DirectX11Framebuffer &framebuffer = m_pDevice->m_Framebuffers[graphicsState.Framebuffer.GetIndex()];
 
         const bool updateFramebuffer =
@@ -94,6 +82,166 @@ namespace smile::graphic
                 graphicsState.Pipeline,
                 updateFramebuffer,
                 setsToBind );
+        }
+
+        if ( updateFramebuffer || currentPipeline.PixelShaderHasUAVs != pipeline.PixelShaderHasUAVs )
+        {
+            primitive::FixedVector< ID3D11RenderTargetView *, s_MaxRenderTargets > pRenderTargetsViews;
+
+            for ( const auto &pRTV : framebuffer.pRenderTargetViews )
+            {
+                pRenderTargetsViews.PushBack( pRTV );
+            }
+
+            if ( pipeline.PixelShaderHasUAVs )
+            {
+                m_Context.pImmediateContext->OMSetRenderTargetsAndUnorderedAccessViews(
+                    static_cast< UINT >( pRenderTargetsViews.GetCurrentItemCount() ),
+                    pRenderTargetsViews.GetData(),
+                    framebuffer.pDepthStencilView,
+                    D3D11_KEEP_UNORDERED_ACCESS_VIEWS,
+                    0,
+                    nullptr,
+                    nullptr );
+            }
+            else
+            {
+                m_Context.pImmediateContext->OMSetRenderTargets(
+                    static_cast< UINT >( pRenderTargetsViews.GetCurrentItemCount() ),
+                    pRenderTargetsViews.GetData(),
+                    framebuffer.pDepthStencilView );
+            }
+        }
+
+        if ( updatePipeline )
+        {
+            BindGraphicsPipeline( pipeline );
+        }
+
+        if ( updateBindings )
+        {
+            BindGraphicsResourceSets( setsToBind, pipeline );
+
+            if ( pipeline.PixelShaderHasUAVs )
+            {
+                primitive::Array< ID3D11UnorderedAccessView *, D3D11_1_UAV_SLOT_COUNT > pUnorderedAccessViews{};
+                static const primitive::Array< UINT, D3D11_1_UAV_SLOT_COUNT > initialCounts{};
+
+                Uint32 minUAVSlot = D3D11_1_UAV_SLOT_COUNT;
+                Uint32 maxUAVSlot = 0;
+
+                for ( BindingSetHandle bindingSetHandle : graphicsState.Bindings )
+                {
+                    SM_ASSERT( bindingSetHandle.IsValid() );
+                    SM_ASSERT( m_pDevice->m_BindingSets.IsValidIndex( bindingSetHandle.GetIndex() ) );
+
+                    const DirectX11BindingSet &bindingSet = m_pDevice->m_BindingSets[bindingSetHandle.GetIndex()];
+
+                    if ( !bindingSet.Visibility.Has( ShaderStage::Pixel ) )
+                        continue;
+
+                    for ( Uint32 slot = bindingSet.MinUAVSlot; slot <= bindingSet.MaxUAVSlot; ++slot )
+                    {
+                        pUnorderedAccessViews[slot] = bindingSet.pUnorderedAccessViews[slot];
+                    }
+
+                    minUAVSlot = std::min( minUAVSlot, bindingSet.MinUAVSlot );
+                    maxUAVSlot = std::max( maxUAVSlot, bindingSet.MaxUAVSlot );
+                }
+
+                m_Context.pImmediateContext->OMSetRenderTargetsAndUnorderedAccessViews(
+                    D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
+                    nullptr,
+                    nullptr,
+                    minUAVSlot,
+                    maxUAVSlot - minUAVSlot + 1,
+                    pUnorderedAccessViews.GetData() + minUAVSlot,
+                    initialCounts.GetData() );
+            }
+        }
+
+        if ( updateVertexBuffers )
+        {
+            primitive::Array< ID3D11Buffer *, s_MaxVertexAttributeCount > pVertexBuffers{};
+            primitive::Array< UINT, s_MaxVertexAttributeCount > vertexBufferStrides{};
+            primitive::Array< UINT, s_MaxVertexAttributeCount > vertexBufferOffsets{};
+            Uint32 maxVertexBufferIndex = 0;
+
+            const auto &vertexElements = pipeline.Layout.GetElements();
+
+            for ( auto i = 0; i < graphicsState.VertexBuffers.GetCurrentItemCount(); ++i )
+            {
+                const VertexBufferBinding &binding = graphicsState.VertexBuffers[i];
+
+                if ( binding.Slot >= s_MaxVertexAttributeCount )
+                    continue;
+
+                SM_ASSERT( binding.Offset <= std::numeric_limits< Uint64 >::max() );
+
+                SM_ASSERT( binding.VertexBuffer.IsValid() );
+                SM_ASSERT( m_pDevice->m_GPUBuffers.IsValidIndex( binding.VertexBuffer.GetIndex() ) );
+
+                pVertexBuffers[binding.Slot] = m_pDevice->m_GPUBuffers[binding.VertexBuffer.GetIndex()].pInternal;
+                vertexBufferStrides[binding.Slot] = static_cast< UINT >( vertexElements.at( binding.Slot ).Size );
+                vertexBufferOffsets[binding.Slot] = static_cast< UINT >( binding.Offset );
+                maxVertexBufferIndex = std::max( maxVertexBufferIndex, binding.Slot );
+            }
+
+            if ( m_IsCurrentGraphicsStateValid )
+            {
+                for ( const VertexBufferBinding &binding : m_CurrentVertexBufferBindings )
+                {
+                    if ( binding.Slot < s_MaxVertexAttributeCount )
+                        maxVertexBufferIndex = std::max( maxVertexBufferIndex, binding.Slot );
+                }
+            }
+
+            m_Context.pImmediateContext->IASetVertexBuffers( 0,
+                maxVertexBufferIndex + 1,
+                pVertexBuffers.GetData(),
+                vertexBufferStrides.GetData(),
+                vertexBufferOffsets.GetData() );
+        }
+
+        if ( updateIndexBuffer )
+        {
+            if ( graphicsState.IndexBuffer.IndexBuffer.IsValid() )
+            {
+                SM_ASSERT( m_pDevice->m_GPUBuffers.IsValidIndex( graphicsState.IndexBuffer.IndexBuffer.GetIndex() ) );
+
+                m_Context.pImmediateContext->IASetIndexBuffer(
+                    m_pDevice->m_GPUBuffers[graphicsState.IndexBuffer.IndexBuffer.GetIndex()].pInternal,
+                    GetDXGIFormatMapping( graphicsState.IndexBuffer.BufferFormat ).SRVFormat,
+                    graphicsState.IndexBuffer.Offset );
+            }
+            else
+            {
+                m_Context.pImmediateContext->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
+            }
+        }
+
+        m_IsCurrentGraphicsStateValid = true;
+        if ( updatePipeline || updateFramebuffer || updateBindings || updateVertexBuffers || updateIndexBuffer )
+        {
+            m_CurrentGraphicsPipeline = graphicsState.Pipeline;
+            m_CurrentFramebuffer = graphicsState.Framebuffer;
+
+            m_CurrentBindings.Resize( graphicsState.Bindings.GetCurrentItemCount() );
+            for ( auto i = 0; i < graphicsState.Bindings.GetCurrentItemCount(); ++i )
+            {
+                m_CurrentBindings[i] = graphicsState.Bindings[i];
+            }
+
+            m_CurrentVertexBufferBindings = graphicsState.VertexBuffers;
+            m_CurrentIndexBufferBinding = graphicsState.IndexBuffer;
+
+            m_CurrentVertexBuffers.Resize( graphicsState.VertexBuffers.GetCurrentItemCount() );
+            for ( auto i = 0; i < graphicsState.VertexBuffers.GetCurrentItemCount(); ++i )
+            {
+                m_CurrentVertexBuffers[i] = graphicsState.VertexBuffers[i].VertexBuffer;
+            }
+
+            m_CurrentIndexBuffer = graphicsState.IndexBuffer.IndexBuffer;
         }
     }
 
@@ -220,7 +368,7 @@ namespace smile::graphic
         if ( !pCurrentResourceSets )
             return;
 
-        SM_ASSERT( currentPipelineHandle.IsValid(),
+        SM_ASSERT_MSG( currentPipelineHandle.IsValid(),
             "DirectX11CommandList::PrepareToBindGraphicsResourceSets > No valid pipeline set" );
 
         const DirectX11Pipeline &currentPipeline = m_pDevice->m_Pipelines[currentPipelineHandle.GetIndex()];
@@ -320,6 +468,75 @@ namespace smile::graphic
                 {
                     m_Context.pImmediateContext->PSSetSamplers(
                         set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), s_NullSamplers );
+                }
+            }
+        }
+    }
+
+    void DirectX11CommandList::BindGraphicsPipeline( const DirectX11Pipeline &pipeline ) const
+    {
+        m_Context.pImmediateContext->IASetInputLayout( pipeline.pInputLayout );
+
+        m_Context.pImmediateContext->IASetPrimitiveTopology( pipeline.PrimitiveTopology );
+        m_Context.pImmediateContext->RSSetState( pipeline.pRasterizerState );
+        m_Context.pImmediateContext->OMSetDepthStencilState( pipeline.pDepthStencilState, 1 );
+
+        m_Context.pImmediateContext->VSSetShader( pipeline.pVertexShader.Get(), nullptr, 0 );
+        m_Context.pImmediateContext->PSSetShader( pipeline.pPixelShader.Get(), nullptr, 0 );
+    }
+
+    void DirectX11CommandList::BindGraphicsResourceSets( const BindingSetVector &setsToBind,
+        const DirectX11Pipeline &pipeline ) const
+    {
+        for ( BindingSetHandle setHandle : setsToBind )
+        {
+            SM_ASSERT( m_pDevice->m_BindingSets.IsValidIndex( setHandle.GetIndex() ) );
+
+            const DirectX11BindingSet &set = m_pDevice->m_BindingSets[setHandle.GetIndex()];
+
+            foundation::Flags< ShaderStage > stagesToBind{ set.Visibility & pipeline.ShaderMask };
+
+            if ( stagesToBind.Has( ShaderStage::Vertex ) )
+            {
+                if ( set.MaxConstantBufferSlot >= set.MinConstantBufferSlot )
+                {
+                    m_Context.pImmediateContext->VSSetConstantBuffers( set.MinConstantBufferSlot,
+                        set.MaxConstantBufferSlot - ( set.MinConstantBufferSlot + 1 ),
+                        set.pConstantBuffers.GetData() );
+                }
+
+                if ( set.MaxSRVSlot >= set.MinSRVSlot )
+                {
+                    m_Context.pImmediateContext->VSSetShaderResources(
+                        set.MinSRVSlot, set.MaxSRVSlot - ( set.MinSRVSlot + 1 ), set.pShaderResourceViews.GetData() );
+                }
+
+                if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
+                {
+                    m_Context.pImmediateContext->VSSetSamplers(
+                        set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), set.pSamplers.GetData() );
+                }
+            }
+
+            if ( stagesToBind.Has( ShaderStage::Pixel ) )
+            {
+                if ( set.MaxConstantBufferSlot >= set.MinConstantBufferSlot )
+                {
+                    m_Context.pImmediateContext->PSSetConstantBuffers( set.MinConstantBufferSlot,
+                        set.MaxConstantBufferSlot - ( set.MinConstantBufferSlot + 1 ),
+                        set.pConstantBuffers.GetData() );
+                }
+
+                if ( set.MaxSRVSlot >= set.MinSRVSlot )
+                {
+                    m_Context.pImmediateContext->PSSetShaderResources(
+                        set.MinSRVSlot, set.MaxSRVSlot - ( set.MinSRVSlot + 1 ), set.pShaderResourceViews.GetData() );
+                }
+
+                if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
+                {
+                    m_Context.pImmediateContext->PSSetSamplers(
+                        set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), set.pSamplers.GetData() );
                 }
             }
         }

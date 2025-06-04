@@ -22,7 +22,7 @@
 #include "directx11_context.h"
 #include "directx11_state_cache.h"
 
-#include <array>
+#include "smile/common/primitive/collection/array.h"
 
 namespace smile::window
 {
@@ -98,13 +98,13 @@ namespace smile::graphic
         DirectX11Context m_Context{};
         Scope< DirectX11CommandList > m_pImmediateCommandList;
 
-        std::array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
-        std::array< DirectX11Texture, s_MaxTextureCount > m_Textures;
-        std::array< DirectX11Sampler, s_MaxSamplerCount > m_Samplers;
-        std::array< DirectX11Framebuffer, s_MaxFramebufferCount > m_Framebuffers;
-        std::array< DirectX11BindingSet, s_MaxBindingSetCount > m_BindingSets;
-        std::array< DirectX11Shader, s_MaxShaderCount > m_Shaders;
-        std::array< DirectX11Pipeline, s_MaxGraphicsPipelineCount > m_Pipelines;
+        primitive::Array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
+        primitive::Array< DirectX11Texture, s_MaxTextureCount > m_Textures;
+        primitive::Array< DirectX11Sampler, s_MaxSamplerCount > m_Samplers;
+        primitive::Array< DirectX11Framebuffer, s_MaxFramebufferCount > m_Framebuffers;
+        primitive::Array< DirectX11BindingSet, s_MaxBindingSetCount > m_BindingSets;
+        primitive::Array< DirectX11Shader, s_MaxShaderCount > m_Shaders;
+        primitive::Array< DirectX11Pipeline, s_MaxGraphicsPipelineCount > m_Pipelines;
 
         DirectX11RasterizerStateCache m_RasterizerStateCache;
         DirectX11DepthStencilStateCache m_DepthStencilStateCache;

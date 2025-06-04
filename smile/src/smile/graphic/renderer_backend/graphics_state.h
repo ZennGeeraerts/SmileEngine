@@ -16,7 +16,7 @@ namespace smile::graphic
         FramebufferHandle Framebuffer;
         BindingSetVector Bindings;
 
-        std::array< VertexBufferBinding, s_MaxVertexAttributeCount > VertexBuffers;
+        primitive::FixedVector< VertexBufferBinding, s_MaxVertexAttributeCount > VertexBuffers;
         IndexBufferBinding IndexBuffer;
     };
 }

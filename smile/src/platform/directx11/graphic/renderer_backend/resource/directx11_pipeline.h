@@ -20,6 +20,7 @@ namespace smile::graphic
         void Create( DirectX11Device &device, const GraphicsPipelineDescriptor &desc );
 
         ID3D11InputLayout *pInputLayout;
+        BufferLayout Layout;
 
         D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology;
         ID3D11RasterizerState *pRasterizerState;

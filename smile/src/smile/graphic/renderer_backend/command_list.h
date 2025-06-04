@@ -30,9 +30,7 @@ namespace smile::graphic
         virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
             const DirectX::XMFLOAT4 &clearColor ) const = 0;
 
-        virtual void BindGraphicsPipeline( GraphicsPipelineHandle handle ) const = 0;
-
-        virtual void SetGraphicsState( const GraphicsState &graphicsState ) const = 0;
+        virtual void SetGraphicsState( const GraphicsState &graphicsState ) = 0;
         virtual void Draw( const DrawParams &params ) = 0;
         virtual void DrawIndexed( const DrawIndexedParams &params ) = 0;
 

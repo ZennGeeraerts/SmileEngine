@@ -13,6 +13,7 @@ namespace smile::graphic
     void DirectX11Pipeline::Create( DirectX11Device &device, const GraphicsPipelineDescriptor &desc )
     {
         pInputLayout = device.GetOrCreateInputLayout( desc )->pInternal;
+        Layout = desc.InputLayout;
 
         PrimitiveTopology = ConvertToDirectX11PrimitiveTopology( desc.Topology );
         pRasterizerState = device.GetOrCreateRasterizerState( desc.State.RasterizerState )->pInternal;
