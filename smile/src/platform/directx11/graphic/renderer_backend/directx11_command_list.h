@@ -51,7 +51,7 @@ namespace smile::graphic
         void ClearFramebuffer( FramebufferHandle handle ) override;
 
         void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
-        void *ReadTexture( TextureHandle handle ) const override;
+        void *ReadTexture( TextureHandle handle ) override;
         void *ReadTexture( FramebufferHandle handle, Uint32 index ) const override;
 
       private:

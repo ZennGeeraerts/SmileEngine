@@ -49,7 +49,7 @@ namespace smile::graphic
         virtual void ClearFramebuffer( FramebufferHandle handle ) = 0;
 
         virtual void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const = 0;
-        virtual void *ReadTexture( TextureHandle handle ) const = 0;
+        virtual void *ReadTexture( TextureHandle handle ) = 0;
         virtual void *ReadTexture( FramebufferHandle handle, Uint32 index ) const = 0;
     };
 }

@@ -340,10 +340,14 @@ namespace smile::graphic
         m_Context.pImmediateContext->Unmap( gpuBuffer.pInternal, 0 );
     }
 
-    void *DirectX11CommandList::ReadTexture( TextureHandle handle ) const
+    void *DirectX11CommandList::ReadTexture( TextureHandle handle )
     {
-        const auto &texture = m_pDevice->m_Textures[handle.GetIndex()];
-        return texture.pShaderResourceView;
+        auto &texture = m_pDevice->m_Textures[handle.GetIndex()];
+
+        return texture.GetOrCreateShaderResourceView( m_Context.pDevice,
+            texture.Descriptor.TextureFormat,
+            TextureSubresourceSet{},
+            texture.Descriptor.Dimension );
     }
 
     void *DirectX11CommandList::ReadTexture( FramebufferHandle handle, Uint32 index ) const
