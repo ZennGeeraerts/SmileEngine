@@ -29,26 +29,16 @@ namespace smile::graphic
             return m_Context.pImmediateContext;
         }
 
+        void Open() override;
+        void Close() override;
+        void ClearState() override;
+
         void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
         void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
 
         void SetGraphicsState( const GraphicsState &graphicsState ) override;
         void Draw( const DrawParams &params ) override;
         void DrawIndexed( const DrawIndexedParams &params ) override;
-
-        void BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const override;
-        void UnbindVertexBuffer() const override;
-
-        void BindIndexBuffer( GPUBufferHandle handle ) const override;
-        void UnbindIndexBuffer() const override;
-
-        void BindVertexShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const;
-        void UnbindVertexShaderUniformBuffer( Uint16 slot ) const;
-        void BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const;
-        void UnbindPixelShaderUniformBuffer( Uint16 slot ) const;
-
-        void BindFramebuffer( FramebufferHandle handle ) const override;
-        void ClearFramebuffer( FramebufferHandle handle ) override;
 
         void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
         void *ReadTexture( TextureHandle handle ) override;

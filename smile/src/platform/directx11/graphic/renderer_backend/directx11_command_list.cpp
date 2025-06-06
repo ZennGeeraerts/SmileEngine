@@ -33,6 +33,29 @@ namespace smile::graphic
     {
     }
 
+    void DirectX11CommandList::Open()
+    {
+        ClearState();
+    }
+
+    void DirectX11CommandList::Close()
+    {
+        ClearState();
+    }
+
+    void DirectX11CommandList::ClearState()
+    {
+        m_Context.pImmediateContext->ClearState();
+
+        m_IsCurrentGraphicsStateValid = false;
+
+        m_CurrentGraphicsPipeline = GraphicsPipelineHandle::NullHandle();
+        m_CurrentFramebuffer = FramebufferHandle::NullHandle();
+        m_CurrentBindings.Resize( 0 );
+        m_CurrentVertexBuffers.Resize( 0 );
+        m_CurrentIndexBuffer = GPUBufferHandle::NullHandle();
+    }
+
     void DirectX11CommandList::BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const
     {
         auto pDX11SwapChain = memory::Ref< DirectX11SwapChain >{ pSwapChain };
@@ -253,81 +276,6 @@ namespace smile::graphic
     void DirectX11CommandList::DrawIndexed( const DrawIndexedParams &params )
     {
         m_Context.pImmediateContext->DrawIndexed( params.IndexCount, params.IndexOffset, params.VertexOffset );
-    }
-
-    void DirectX11CommandList::ClearFramebuffer( FramebufferHandle handle )
-    {
-        const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
-
-        const float *pClearColor = reinterpret_cast< const float * >( &framebuffer.Descriptor.ClearColor );
-        ID3D11RenderTargetView *const *pRenderTargetViews = framebuffer.pRenderTargetViews.data();
-
-        for ( size_t i{}; i < framebuffer.pRenderTargetViews.size(); ++i )
-        {
-            m_Context.pImmediateContext->ClearRenderTargetView( pRenderTargetViews[i], pClearColor );
-        }
-
-        if ( framebuffer.DepthAttachmentData.TextureFormat != FramebufferTextureFormat::None )
-            m_Context.pImmediateContext->ClearDepthStencilView(
-                framebuffer.pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
-    }
-
-    void DirectX11CommandList::BindVertexBuffer( GPUBufferHandle handle, Uint32 stride ) const
-    {
-        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
-        Uint32 offset{ 0 };
-        m_Context.pImmediateContext->IASetVertexBuffers( 0, 1, &gpuBuffer.pInternal, &stride, &offset );
-    }
-
-    void DirectX11CommandList::UnbindVertexBuffer() const
-    {
-        m_Context.pImmediateContext->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
-    }
-
-    void DirectX11CommandList::BindIndexBuffer( GPUBufferHandle handle ) const
-    {
-        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
-        m_Context.pImmediateContext->IASetIndexBuffer( gpuBuffer.pInternal, DXGI_FORMAT_R32_UINT, 0 );
-    }
-
-    void DirectX11CommandList::UnbindIndexBuffer() const
-    {
-        m_Context.pImmediateContext->IASetIndexBuffer( nullptr, DXGI_FORMAT_UNKNOWN, 0 );
-    }
-
-    void DirectX11CommandList::BindVertexShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const
-    {
-        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
-        m_Context.pImmediateContext->VSSetConstantBuffers( slot, 1, &gpuBuffer.pInternal );
-    }
-
-    void DirectX11CommandList::UnbindVertexShaderUniformBuffer( Uint16 slot ) const
-    {
-        m_Context.pImmediateContext->VSSetConstantBuffers( slot, 1, nullptr );
-    }
-
-    void DirectX11CommandList::BindPixelShaderUniformBuffer( GPUBufferHandle handle, Uint16 slot ) const
-    {
-        const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
-        m_Context.pImmediateContext->PSSetConstantBuffers( slot, 1, &gpuBuffer.pInternal );
-    }
-
-    void DirectX11CommandList::UnbindPixelShaderUniformBuffer( Uint16 slot ) const
-    {
-        m_Context.pImmediateContext->PSGetConstantBuffers( slot, 1, nullptr );
-    }
-
-    void DirectX11CommandList::BindFramebuffer( FramebufferHandle handle ) const
-    {
-        const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
-
-        ID3D11RenderTargetView *const *pRenderTargetViews = framebuffer.pRenderTargetViews.data();
-
-        m_Context.pImmediateContext->OMSetRenderTargets( static_cast< UINT >( framebuffer.pRenderTargetViews.size() ),
-            &pRenderTargetViews[0],
-            framebuffer.pDepthStencilView );
-
-        m_Context.pImmediateContext->RSSetViewports( 1, &framebuffer.Viewport );
     }
 
     void DirectX11CommandList::FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const
