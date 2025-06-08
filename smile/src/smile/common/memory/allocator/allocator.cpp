@@ -5,6 +5,7 @@
 #include "smpch.h"
 #include "allocator.h"
 
+#include "smile/common/memory/memory.h"
 #include "smile/common/memory/header.h"
 
 namespace smile
