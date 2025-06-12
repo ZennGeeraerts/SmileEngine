@@ -8,8 +8,25 @@
 
 namespace smile::foundation
 {
+    using HandleAssertFunction = bool ( * )( const char *condition,
+        const char *message,
+        const char *file,
+        const int line,
+        const char *function );
+
     bool
     HandleAssert( const char *condition, const char *message, const char *file, const int line, const char *function );
+
+    void SetHandleAssertFunction( HandleAssertFunction func );
+
+    bool DefaultHandleAssert( const char *condition,
+        const char *message,
+        const char *file,
+        const int line,
+        const char *function );
+
+    bool
+    ThrowOnAssert( const char *condition, const char *message, const char *file, const int line, const char *function );
 }
 
 #ifdef SM_C_DEBUG
@@ -43,4 +60,12 @@ namespace smile::foundation
 #else
 #    define SM_ASSERT( x )
 #    define SM_ASSERT_MSG( x, ... )
+#endif
+
+#if SM_OPTION_UNIT_TESTS
+#    define REQUIRE_ASSERT( expression )                                                                               \
+        {                                                                                                              \
+            smile::foundation::SetHandleAssertFunction( smile::foundation::ThrowOnAssert );                            \
+            REQUIRE_THROWS( expression );                                                                              \
+        }
 #endif
