@@ -138,7 +138,7 @@ namespace smile::memory
 
         if ( !pHeader )
         {
-            SM_ASSERT_MSG( m_BreaksOnOutOfMemory, "ERROR: Not enough memory in allocator {}", m_AllocatorIndex );
+            SM_ASSERT_MSG( !m_BreaksOnOutOfMemory, "ERROR: Not enough memory in allocator {}", m_AllocatorIndex );
 
             return nullptr;
         }

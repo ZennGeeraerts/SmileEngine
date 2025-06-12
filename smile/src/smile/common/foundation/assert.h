@@ -68,4 +68,10 @@ namespace smile::foundation
             smile::foundation::SetHandleAssertFunction( smile::foundation::ThrowOnAssert );                            \
             REQUIRE_THROWS( expression );                                                                              \
         }
+
+#    define REQUIRE_NOASSERT( expression )                                                                             \
+        {                                                                                                              \
+            smile::foundation::SetHandleAssertFunction( smile::foundation::ThrowOnAssert );                            \
+            REQUIRE_NOTHROW( expression );                                                                             \
+        }
 #endif
