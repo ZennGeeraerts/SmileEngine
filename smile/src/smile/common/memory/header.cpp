@@ -3,11 +3,19 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
+#include "smile/common/memory/memory.h"
 #include "header.h"
+
+#include "allocator/allocator.h"
 
 namespace smile::memory
 {
     Uint32 Header::s_NextAllocatorIndex = 0;
+
+    Allocator& Header::GetAllocator() const
+    {
+        return Allocator::GetAllocatorByIndex( AllocatorIndex );
+    }
 
     void Header::SetAllocated( const Uint32 size, const Uint32 allocatorIndex )
     {

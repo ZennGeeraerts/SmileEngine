@@ -4,6 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
+#ifndef INTERNAL_MEMORY_INCLUDED_GUARD
+#    error You should include memory.h first
+#endif
+
 #include "memory.h"
 
 namespace smile::memory
@@ -43,6 +47,8 @@ namespace smile::memory
         {
             return IsUsed;
         }
+
+        Allocator &GetAllocator() const;
 
         bool IsDestructable() const
         {

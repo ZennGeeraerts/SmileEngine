@@ -5,6 +5,7 @@
 #include "smpch.h"
 #include "allocator.h"
 
+#include "smile/common/memory/memory.h"
 #include "smile/common/memory/header.h"
 
 namespace smile
@@ -137,7 +138,7 @@ namespace smile::memory
 
         if ( !pHeader )
         {
-            SM_ASSERT_MSG( m_BreaksOnOutOfMemory, "ERROR: Not enough memory in allocator {}", m_AllocatorIndex );
+            SM_ASSERT_MSG( !m_BreaksOnOutOfMemory, "ERROR: Not enough memory in allocator {}", m_AllocatorIndex );
 
             return nullptr;
         }

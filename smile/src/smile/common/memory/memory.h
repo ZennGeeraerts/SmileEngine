@@ -6,6 +6,14 @@
 
 namespace smile::memory
 {
+    class Header;
+    class Allocator;
+}
+
+#define INTERNAL_MEMORY_INCLUDED_GUARD
+
+namespace smile::memory
+{
     constexpr Uint32 g_AlignedSize = 8; // x64
     constexpr Uint32 g_DefaultAllocatorAlignedSize = 8;
 
@@ -14,7 +22,9 @@ namespace smile::memory
         return ( size + g_AlignedSize - 1 ) & ~( g_AlignedSize - 1 );
     }
 
+    Allocator &GetAllocator();
     Uint32 GetAllocatedSize( const Uint32 size, const bool addHeaderSize = true );
+    Header *GetHeader( const void *pObject );
 
 #if SM_C_DEBUG
     void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size );
@@ -24,6 +34,10 @@ namespace smile::memory
         std::memmove( pDestByteArray, pSrcByteArray, size );
     }
 #endif
+
+    bool IsAllocatedByteArray( const void *pByteArray );
+    void *AllocateByteArray( const Uint32 size );
+    void DeallocateByteArray( void *pByteArray );
 
     template < class Type >
     struct IsRawTypeTrait

@@ -6,12 +6,35 @@
 #include "memory.h"
 
 #include "header.h"
+#include "allocator/system_allocator.h"
 
 namespace smile::memory
 {
+    Allocator &GetAllocator()
+    {
+        static memory::Allocator *pAllocator{ nullptr };
+
+        if ( !pAllocator )
+        {
+            pAllocator = &SystemAllocator::GetInstance();
+        }
+
+        return *pAllocator;
+    }
+
     Uint32 GetAllocatedSize( const Uint32 size, const bool addHeaderSize )
     {
         return ( addHeaderSize ? s_HeaderSize : 0 ) + GetAlignedSize( size );
+    }
+
+    Header *GetHeader( const void *pObject )
+    {
+        const Header *pHeader = reinterpret_cast< const Header * >( pObject ) - 1;
+
+        if ( !pHeader->IsValid() )
+            pHeader = nullptr;
+
+        return const_cast< Header * >( pHeader );
     }
 
 #if SM_C_DEBUG
@@ -23,4 +46,34 @@ namespace smile::memory
         }
     }
 #endif
+
+    bool IsAllocatedByteArray( const void *pByteArray )
+    {
+        Header *pHeader = GetHeader( pByteArray );
+
+        return pHeader && pHeader->IsUsed;
+    }
+
+    void *AllocateByteArray( const Uint32 size )
+    {
+        void *pByteArray = GetAllocator().CreateByteArray( size );
+
+        SM_ASSERT( pByteArray );
+
+        return pByteArray;
+    }
+
+    void DeallocateByteArray( void *pByteArray )
+    {
+        Header *pHeader = GetHeader( pByteArray );
+
+        if ( !pHeader )
+        {
+            SystemAllocator::DestroyByteArray( pByteArray );
+        }
+        else
+        {
+            pHeader->GetAllocator().DestroyByteArray( pByteArray );
+        }
+    }
 }
