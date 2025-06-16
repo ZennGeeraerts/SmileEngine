@@ -1,0 +1,12 @@
+option(BUILD_UNIT_TESTS "Build with unit tests" FALSE)
+
+if(BUILD_UNIT_TESTS)
+    target_compile_definitions(smile PUBLIC SM_OPTION_UNIT_TESTS)
+    message(STATUS "Unit tests enabled")
+else()
+    function(target_sources)
+        set(ARGUMENTS ${ARGV})
+        list(FILTER ARGUMENTS EXCLUDE REGEX "/tests/")
+        _target_sources(${ARGUMENTS})
+    endfunction()
+endif()
