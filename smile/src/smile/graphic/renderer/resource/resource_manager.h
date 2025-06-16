@@ -13,11 +13,11 @@
 #include "texture.h"
 #include "frame_buffer.h"
 
+#include "smile/graphic/renderer/shader/shader.h"
 #include "smile/graphic/renderer_backend/resource/buffer.h"
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
 #include "smile/graphic/renderer_backend/shader/shader.h"
 
-#include <vector>
 #include <filesystem>
 
 namespace smile::graphic

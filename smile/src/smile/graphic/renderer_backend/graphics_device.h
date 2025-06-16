@@ -37,7 +37,7 @@ namespace smile::graphic
         virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
 
         virtual void
-        CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesca, void *pData = nullptr ) = 0;
+        CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc, void *pData = nullptr ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
         virtual void CreateBindingSet( BindingSetHandle handle,

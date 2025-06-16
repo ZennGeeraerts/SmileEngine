@@ -36,14 +36,13 @@ namespace smile::graphic
     ResourceManager::CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = pVertices;
         bufferDesc.Size = vertexCount * layout.GetStride();
         bufferDesc.Usage = BufferUsage::Immutable;
-        bufferDesc.CPUAccess = BufferCPUAccess::None;
-        bufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+        bufferDesc.CPUAccess = CPUAccessMode::None;
+        bufferDesc.BindFlags = { BufferBindFlags::VertexBuffer };
 
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pVertices );
 
         auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
         m_pVertexBuffers.push_back( pVertexBuffer );
@@ -54,11 +53,10 @@ namespace smile::graphic
         const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = nullptr;
         bufferDesc.Size = vertexCount * layout.GetStride();
         bufferDesc.Usage = BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = BufferCPUAccess::Write;
-        bufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+        bufferDesc.CPUAccess = CPUAccessMode::Write;
+        bufferDesc.BindFlags = { BufferBindFlags::VertexBuffer };
 
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
@@ -71,14 +69,13 @@ namespace smile::graphic
     memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount )
     {
         GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = pIndices;
         bufferDesc.Size = indexCount * sizeof( Uint32 );
         bufferDesc.Usage = BufferUsage::Immutable;
-        bufferDesc.CPUAccess = BufferCPUAccess::None;
-        bufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
+        bufferDesc.CPUAccess = CPUAccessMode::None;
+        bufferDesc.BindFlags = { BufferBindFlags::IndexBuffer };
 
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pIndices );
 
         auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, indexCount );
         m_pIndexBuffers.push_back( pIndexBuffer );
@@ -89,14 +86,13 @@ namespace smile::graphic
     ResourceManager::CreateUniformBuffer( const std::string &name, void *pData, Uint32 size )
     {
         GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = pData;
         bufferDesc.Size = size;
         bufferDesc.Usage = BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = BufferCPUAccess::Write;
-        bufferDesc.BindFlags = BufferBindFlags::UniformBuffer;
+        bufferDesc.CPUAccess = CPUAccessMode::Write;
+        bufferDesc.BindFlags = { BufferBindFlags::UniformBuffer };
 
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pData );
 
         auto pUniformBuffer = memory::CreateRef< UniformBuffer >( handle, name, bufferDesc.Size );
         m_pUniformBuffers.push_back( pUniformBuffer );
