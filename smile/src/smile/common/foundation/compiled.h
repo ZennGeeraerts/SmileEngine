@@ -90,6 +90,11 @@ namespace smile
     };
 
     using UintPointer = VoidPointerType< sizeof( VoidPointer ) >::Type;
+
+    using Index = Uint32;
+    using Count = Uint32;
+    static constexpr Index s_InvalidIndex = std::numeric_limits< Index >::max();
+    static constexpr Count s_InvalidCount = std::numeric_limits< Count >::max();
 }
 
 #include "smile/common/foundation/assert.h"
