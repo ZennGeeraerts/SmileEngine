@@ -71,10 +71,10 @@ namespace smile::foundation
         Count m_Count;
     };
 
-    template < typename ItemType, int Count >
-    inline constexpr Count GetArrayItemCount( const ItemType ( & )[Count] )
+    template < typename ItemType, int ItemCount >
+    inline constexpr Count GetArrayItemCount( const ItemType ( & )[ItemCount] )
     {
-        return Count;
+        return ItemCount;
     }
 
     inline RangeHolder< true > GetCountIterator( const Count count )
