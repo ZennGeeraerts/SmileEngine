@@ -185,7 +185,12 @@ namespace smile::memory
         typename std::enable_if_t< IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
     }
+}
 
+#include "header.h"
+
+namespace smile::memory
+{
     template < typename ItemType >
     void AllocateUninitializedArray( ItemType *&pItems, const Count itemCount )
     {
