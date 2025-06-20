@@ -65,7 +65,7 @@ namespace smile::memory
         const Count itemCount,
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
-        for ( auto index = 0; index < itemCount, ++index )
+        for ( auto index = 0; index < itemCount; ++index )
         {
             ::new ( pItems + index, g_pInPlace ) ItemType;
         }
