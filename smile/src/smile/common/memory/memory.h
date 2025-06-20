@@ -78,6 +78,29 @@ namespace smile::memory
     {
     }
 
+    template < typename ItemType, class OtherItemType >
+    inline void ConstructCopiedArrayItems( ItemType *pItems,
+        const Count itemCount,
+        const OtherItemType *pOtherItems,
+        typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value || !std::is_same_v< ItemType, OtherItemType > >
+            * = nullptr )
+    {
+        for ( auto index = 0; index < itemCount; ++index )
+        {
+            ::new ( pItems + index, memory::g_pInPlace ) ItemType{ pOtherItems[index] };
+        }
+    }
+
+    template < typename ItemType, class OtherItemType >
+    inline void ConstructCopiedArrayItems( ItemType *pItems,
+        const Count itemCount,
+        const OtherItemType *pOtherItems,
+        typename std::enable_if_t< !(
+            !IsRawTypeTrait< ItemType >::value || !std::is_same_v< ItemType, OtherItemType > ) > * = nullptr )
+    {
+        SetByteArray( pItems, pOtherItems, sizeof( *pItems ) * itemCount );
+    }
+
     template < typename ItemType >
     inline void ConstructMoveArrayItems( ItemType *pItems,
         const Count itemCount,
