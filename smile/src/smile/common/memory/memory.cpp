@@ -38,6 +38,19 @@ namespace smile::memory
     }
 
 #if SM_C_DEBUG
+    void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
+    {
+        if ( size > 0 )
+        {
+            SM_ASSERT( ( reinterpret_cast< const Byte * >( pDestByteArray ) + size ) <=
+                           reinterpret_cast< const Byte * >( pSrcByteArray ) ||
+                       ( reinterpret_cast< const Byte * >( pSrcByteArray ) + size ) <=
+                           reinterpret_cast< const Byte * >( pDestByteArray ) );
+
+            std::memcpy( pDestByteArray, pSrcByteArray, size );
+        }
+    }
+
     void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
     {
         if ( size > 0 )
@@ -75,5 +88,10 @@ namespace smile::memory
         {
             pHeader->GetAllocator().DestroyByteArray( pByteArray );
         }
+    }
+
+    Uint32 GetSize( void *pData )
+    {
+        return GetHeader( pData )->Size;
     }
 }

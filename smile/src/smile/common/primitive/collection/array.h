@@ -6,12 +6,13 @@
 
 #include "array_iterator.h"
 #include "smile/common/memory/memory.h"
+#include "smile/common/foundation/numeric_cast.h"
 
 #include <initializer_list>
 
 namespace smile::primitive
 {
-    template < typename ItemType, int ItemCount >
+    template < typename ItemType, Count ItemCount >
     class Array
     {
       public:
@@ -23,9 +24,9 @@ namespace smile::primitive
 
         Array( std::initializer_list< Item > items )
         {
-            SM_ASSERT( items.size() == ItemCount );
-            int index = 0;
+            SM_ASSERT( foundation::NumericCast< Count >( items.size() ) == ItemCount );
 
+            Index index = 0;
             for ( const Item &item : items )
             {
                 m_Items[index] = item;
@@ -47,14 +48,14 @@ namespace smile::primitive
             return *this;
         }
 
-        Item &operator[]( const int index )
+        Item &operator[]( const Index index )
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             return m_Items[index];
         }
 
-        const Item &operator[]( const int index ) const
+        const Item &operator[]( const Index index ) const
         {
             SM_ASSERT( IsValidIndex( index ) );
 
@@ -66,24 +67,24 @@ namespace smile::primitive
             return std::equal( primitive::begin( *this ), primitive::end( *this ), primitive::begin( other ) );
         }
 
-        bool operator!=(const Array& other) const
+        bool operator!=( const Array &other ) const
         {
             return !( *this == other );
         }
 
-        virtual bool IsValidIndex( const int index ) const
+        virtual bool IsValidIndex( const Index index ) const
         {
-            return ( 0 <= index ) && ( index < ItemCount );
+            return index < ItemCount;
         }
 
-        const Item &GetItemAtIndex( const int index ) const
+        const Item &GetItemAtIndex( const Index index ) const
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             return m_Items[index];
         }
 
-        void SetItemAtIndex( const Item &item, const int index )
+        void SetItemAtIndex( const Item &item, const Index index )
         {
             SM_ASSERT( IsValidIndex( index ) );
 
@@ -100,7 +101,7 @@ namespace smile::primitive
             return m_Items;
         }
 
-        int GetItemCount() const
+        Count GetItemCount() const
         {
             return ItemCount;
         }
@@ -141,32 +142,32 @@ namespace smile::primitive
         Item m_Items[ItemCount];
     };
 
-    template < typename ItemType, int ItemCount >
+    template < typename ItemType, Count ItemCount >
     typename Array< ItemType, ItemCount >::Iterator begin( Array< ItemType, ItemCount > &array )
     {
         return array.begin();
     }
 
-    template < typename ItemType, int ItemCount >
+    template < typename ItemType, Count ItemCount >
     typename Array< ItemType, ItemCount >::ConstIterator begin( const Array< ItemType, ItemCount > &array )
     {
         return array.begin();
     }
 
-    template < typename ItemType, int ItemCount >
+    template < typename ItemType, Count ItemCount >
     typename Array< ItemType, ItemCount >::Iterator end( Array< ItemType, ItemCount > &array )
     {
         return array.end();
     }
 
-    template < typename ItemType, int ItemCount >
+    template < typename ItemType, Count ItemCount >
     typename Array< ItemType, ItemCount >::ConstIterator end( const Array< ItemType, ItemCount > &array )
     {
         return array.end();
     }
 
-    template < typename ItemType, int ItemCount >
-    inline int GetArrayItemCount( const Array< ItemType, ItemCount > & )
+    template < typename ItemType, Count ItemCount >
+    inline Count GetArrayItemCount( const Array< ItemType, ItemCount > & )
     {
         return ItemCount;
     }

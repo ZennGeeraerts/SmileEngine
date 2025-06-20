@@ -20,7 +20,7 @@ namespace smile::primitive
 
         using value_type = ItemType;
         using iterator_category = std::bidirectional_iterator_tag;
-        using difference_type = int;
+        using difference_type = Index;
         using reference = ItemType &;
         using pointer = ItemType *;
 
@@ -91,12 +91,12 @@ namespace smile::primitive
             return std::move( temp );
         }
 
-        ArrayIterator operator+( const int offset ) const
+        ArrayIterator operator+( const Index offset ) const
         {
             return { m_pCollection, m_Index + offset };
         }
 
-        ArrayIterator operator+=( const int offset )
+        ArrayIterator operator+=( const Index offset )
         {
             auto temp = *this;
 
@@ -105,14 +105,14 @@ namespace smile::primitive
             return std::move( temp );
         }
 
-        int operator-( const ArrayIterator &other ) const
+        Index operator-( const ArrayIterator &other ) const
         {
             SM_ASSERT( m_pCollection == other.m_pCollection );
 
             return m_Index - other.m_Index;
         }
 
-        ArrayIterator operator-( int offset ) const
+        ArrayIterator operator-( const Index offset ) const
         {
             SM_ASSERT( m_Index >= offset );
 
@@ -126,14 +126,14 @@ namespace smile::primitive
             return ( *m_pCollection )[m_Index];
         }
 
-        typename std::conditional_t< IsConst, const ItemType, ItemType > &operator[]( const int offset ) const
+        typename std::conditional_t< IsConst, const ItemType, ItemType > &operator[]( const Index offset ) const
         {
             SM_ASSERT( m_pCollection->IsValidIndex( m_Index + offset ) );
 
             return ( *m_pCollection )[m_Index + offset];
         }
 
-        int GetIndex() const
+        Index GetIndex() const
         {
             return m_Index;
         }
@@ -141,12 +141,12 @@ namespace smile::primitive
       private:
         friend CollectionType;
 
-        ArrayIterator( CollectionType *pCollection, const int index ) : m_pCollection{ pCollection }, m_Index{ index }
+        ArrayIterator( CollectionType *pCollection, const Index index ) : m_pCollection{ pCollection }, m_Index{ index }
         {
         }
 
       private:
         CollectionType *m_pCollection;
-        int m_Index;
+        Index m_Index;
     };
 }

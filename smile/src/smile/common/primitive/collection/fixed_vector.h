@@ -8,7 +8,7 @@
 
 namespace smile::primitive
 {
-    template < typename ItemType, int MaxItemCount >
+    template < typename ItemType, Count MaxItemCount >
     class FixedVector final : public Array< ItemType, MaxItemCount >
     {
       public:
@@ -21,7 +21,7 @@ namespace smile::primitive
         {
         }
 
-        FixedVector( const int itemCount ) : Base{}, m_CurrentItemCount{ itemCount }
+        FixedVector( const Count itemCount ) : Base{}, m_CurrentItemCount{ itemCount }
         {
             SM_ASSERT( itemCount <= MaxItemCount );
         }
@@ -34,12 +34,12 @@ namespace smile::primitive
             }
         }
 
-        bool IsValidIndex( const int index ) const override
+        bool IsValidIndex( const Index index ) const override
         {
-            return ( 0 <= index ) && ( index < m_CurrentItemCount );
+            return index < m_CurrentItemCount;
         }
 
-        int GetCurrentItemCount() const
+        Count GetCurrentItemCount() const
         {
             return m_CurrentItemCount;
         }
@@ -72,18 +72,18 @@ namespace smile::primitive
             --m_CurrentItemCount;
         }
 
-        void Resize( const int newItemCount ) noexcept
+        void Resize( const Count newItemCount ) noexcept
         {
             SM_ASSERT( newItemCount <= MaxItemCount );
 
             if ( m_CurrentItemCount > newItemCount )
             {
-                for ( int i = newItemCount; i < m_CurrentItemCount; ++i )
+                for ( Count i = newItemCount; i < m_CurrentItemCount; ++i )
                     *( GetData() + i ) = Item{};
             }
             else
             {
-                for ( int i = m_CurrentItemCount; i < newItemCount; ++i )
+                for ( Count i = m_CurrentItemCount; i < newItemCount; ++i )
                     *( GetData() + i ) = Item{};
             }
 
@@ -111,6 +111,6 @@ namespace smile::primitive
         }
 
       private:
-        int m_CurrentItemCount;
+        Count m_CurrentItemCount;
     };
 }
