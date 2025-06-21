@@ -32,8 +32,8 @@ namespace smile::graphic
         m_pDevice = pDevice;
     }
 
-    memory::Ref< VertexBuffer >
-    ResourceManager::CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout )
+    VertexBuffer::Ref
+    ResourceManager::CreateVertexBuffer( void *pVertices, const Count vertexCount, const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = vertexCount * layout.GetStride();
@@ -44,13 +44,12 @@ namespace smile::graphic
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc, pVertices );
 
-        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
-        m_pVertexBuffers.push_back( pVertexBuffer );
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout, vertexCount );
+        m_pVertexBuffers.PushBack( pVertexBuffer );
         return pVertexBuffer;
     }
 
-    memory::Ref< VertexBuffer > ResourceManager::CreateDynamicVertexBuffer( Uint32 vertexCount,
-        const BufferLayout &layout )
+    VertexBuffer::Ref ResourceManager::CreateDynamicVertexBuffer( const Count vertexCount, const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = vertexCount * layout.GetStride();
@@ -62,7 +61,7 @@ namespace smile::graphic
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
         auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
-        m_pVertexBuffers.push_back( pVertexBuffer );
+        m_pVertexBuffers.PushBack( pVertexBuffer );
         return pVertexBuffer;
     }
 

@@ -6,6 +6,7 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
 
 #include "vertex_buffer.h"
 #include "index_buffer.h"
@@ -32,9 +33,8 @@ namespace smile::graphic
 
         void Initialize( GraphicsDevice *pDevice );
 
-        memory::Ref< VertexBuffer >
-        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout );
-        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const BufferLayout &layout );
+        VertexBuffer::Ref CreateVertexBuffer( void *pVertices, const Count vertexCount, const BufferLayout &layout );
+        VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const BufferLayout &layout );
 
         memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
 
@@ -50,7 +50,7 @@ namespace smile::graphic
 
       private:
         GraphicsDevice *m_pDevice = nullptr;
-        std::vector< memory::Ref< VertexBuffer > > m_pVertexBuffers;
+        primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
         std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
         std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
         std::vector< memory::Ref< Shader > > m_pShaders;
