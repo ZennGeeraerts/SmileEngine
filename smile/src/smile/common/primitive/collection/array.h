@@ -5,6 +5,7 @@
 #pragma once
 
 #include "array_iterator.h"
+#include "array_view.h"
 #include "smile/common/memory/memory.h"
 #include "smile/common/foundation/numeric_cast.h"
 
@@ -70,6 +71,16 @@ namespace smile::primitive
         bool operator!=( const Array &other ) const
         {
             return !( *this == other );
+        }
+
+        operator ArrayView< Item >()
+        {
+            return ArrayView{ m_Items, ItemCount };
+        }
+
+        operator ArrayView< const Item >() const
+        {
+            return ArrayView{ m_Items, ItemCount };
         }
 
         virtual bool IsValidIndex( const Index index ) const
@@ -138,6 +149,9 @@ namespace smile::primitive
             return { this, ItemCount };
         }
 
+        ArrayView< Item > AsView( const Count itemCount = s_InvalidCount );
+        ArrayView< const Item > AsView( const Count itemCount = s_InvalidCount ) const;
+
       private:
         Item m_Items[ItemCount];
     };
@@ -170,5 +184,25 @@ namespace smile::primitive
     inline Count GetArrayItemCount( const Array< ItemType, ItemCount > & )
     {
         return ItemCount;
+    }
+
+    template < typename ItemType, Count ItemCount >
+    ArrayView< ItemType > Array< ItemType, ItemCount >::AsView( const Count itemCount )
+    {
+        auto count = itemCount == s_InvalidCount ? GetItemCount() : itemCount;
+
+        SM_ASSERT( count <= GetItemCount() );
+
+        return { GetData(), count };
+    }
+
+    template < typename ItemType, Count ItemCount >
+    ArrayView< const ItemType > Array< ItemType, ItemCount >::AsView( const Count itemCount ) const
+    {
+        auto count = itemCount == s_InvalidCount ? GetItemCount() : itemCount;
+
+        SM_ASSERT( count <= GetItemCount() );
+
+        return { GetData(), count };
     }
 }

@@ -14,6 +14,9 @@
 namespace smile::primitive
 {
     template < typename ItemType >
+    class ArrayView;
+
+    template < typename ItemType >
     class Vector
     {
       public:
@@ -338,8 +341,54 @@ namespace smile::primitive
             m_pItems = pNewItems;
         }
 
+        ArrayView< Byte > AsByteView();
+        ArrayView< Item > AsView();
+        ArrayView< const Item > AsView() const;
+
       private:
         Item *m_pItems;
         Count m_ItemCount;
     };
+}
+
+#include "array_view.h"
+
+namespace smile::primitive
+{
+
+    template < typename ItemType >
+    ArrayView< ItemType > AsView( Vector< ItemType > &vector )
+    {
+        return { vector.GetData(), vector.GetItemCount() };
+    }
+
+    template < typename ItemType >
+    ArrayView< const ItemType > AsView( Vector< const ItemType > &vector )
+    {
+        return { vector.GetData(), vector.GetItemCount };
+    }
+
+    template < typename ItemType >
+    ArrayView< const ItemType > AsView( const Vector< ItemType > &vector )
+    {
+        return { vector.GetData(), vector.GetItemCount };
+    }
+
+    template < typename ItemType >
+    ArrayView< Byte > Vector< ItemType >::AsByteView()
+    {
+        return { reinterpret_cast< Byte * >( GetData() ), Count( sizeof( ItemType ) ) * GetItemCount() };
+    }
+
+    template < typename ItemType >
+    ArrayView< ItemType > Vector< ItemType >::AsView()
+    {
+        return { GetData(), GetItemCount() };
+    }
+
+    template < typename ItemType >
+    ArrayView< const ItemType > Vector< ItemType >::AsView() const
+    {
+        return { GetData(), GetItemCount() };
+    }
 }
