@@ -17,8 +17,8 @@ namespace smile::graphic
         for ( auto pIndexBuffer : m_pIndexBuffers )
             m_pDevice->DestroyGPUBuffer( pIndexBuffer->m_Handle );
 
-        for ( auto pUniformBuffer : m_pUniformBuffers )
-            m_pDevice->DestroyGPUBuffer( pUniformBuffer->Handle );
+        for ( auto pConstantBuffer : m_pConstantBuffers )
+            m_pDevice->DestroyGPUBuffer( pConstantBuffer->m_Handle );
 
         for ( auto pTexture : m_pTextures )
             m_pDevice->DestroyTexture( pTexture->Handle );
@@ -81,21 +81,20 @@ namespace smile::graphic
         return pIndexBuffer;
     }
 
-    memory::Ref< UniformBuffer >
-    ResourceManager::CreateUniformBuffer( const std::string &name, void *pData, Uint32 size )
+    ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
-        bufferDesc.Size = size;
+        bufferDesc.Size = layout.GetStride();
         bufferDesc.Usage = BufferUsage::Dynamic;
         bufferDesc.CPUAccess = CPUAccessMode::Write;
-        bufferDesc.BindFlags = { BufferBindFlags::UniformBuffer };
+        bufferDesc.BindFlags = { BufferBindFlags::ConstantBuffer };
 
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pData );
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
-        auto pUniformBuffer = memory::CreateRef< UniformBuffer >( handle, name, bufferDesc.Size );
-        m_pUniformBuffers.push_back( pUniformBuffer );
-        return pUniformBuffer;
+        auto pConstantBuffer = memory::CreateRef< ConstantBuffer >( handle, bufferDesc.Size );
+        m_pConstantBuffers.PushBack( pConstantBuffer );
+        return pConstantBuffer;
     }
 
     memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,

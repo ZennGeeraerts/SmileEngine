@@ -10,7 +10,7 @@
 
 #include "vertex_buffer.h"
 #include "index_buffer.h"
-#include "uniform_buffer.h"
+#include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "texture.h"
 #include "frame_buffer.h"
 
@@ -38,7 +38,7 @@ namespace smile::graphic
 
         IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
-        memory::Ref< UniformBuffer > CreateUniformBuffer( const std::string &name, void *pData, Uint32 size );
+        ConstantBuffer::Ref CreateConstantBuffer( const BufferLayout &layout );
 
         memory::Ref< Shader >
         CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
@@ -52,7 +52,7 @@ namespace smile::graphic
         GraphicsDevice *m_pDevice = nullptr;
         primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
         primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
-        std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
+        primitive::Vector< ConstantBuffer::Ref > m_pConstantBuffers;
         std::vector< memory::Ref< Shader > > m_pShaders;
         std::vector< memory::Ref< Texture > > m_pTextures;
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;

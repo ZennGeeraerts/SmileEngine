@@ -126,7 +126,7 @@ namespace smile::graphic
         None,
         VertexBuffer,
         IndexBuffer,
-        UniformBuffer,
+        ConstantBuffer,
         ShaderResource,
         UnorderedAccess
     };

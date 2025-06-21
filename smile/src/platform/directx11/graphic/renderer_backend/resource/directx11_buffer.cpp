@@ -41,7 +41,7 @@ namespace smile::graphic
         if ( bindFlags.Has( BufferBindFlags::IndexBuffer ) )
             targetFlags |= D3D11_BIND_INDEX_BUFFER;
 
-        if ( bindFlags.Has( BufferBindFlags::UniformBuffer ) )
+        if ( bindFlags.Has( BufferBindFlags::ConstantBuffer ) )
             targetFlags |= D3D11_BIND_CONSTANT_BUFFER;
 
         if ( bindFlags.Has( BufferBindFlags::ShaderResource ) )
