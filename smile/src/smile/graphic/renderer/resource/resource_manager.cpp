@@ -12,10 +12,10 @@ namespace smile::graphic
     ResourceManager::~ResourceManager()
     {
         for ( auto pVertexBuffer : m_pVertexBuffers )
-            m_pDevice->DestroyGPUBuffer( pVertexBuffer->Handle );
+            m_pDevice->DestroyGPUBuffer( pVertexBuffer->m_Handle );
 
         for ( auto pIndexBuffer : m_pIndexBuffers )
-            m_pDevice->DestroyGPUBuffer( pIndexBuffer->Handle );
+            m_pDevice->DestroyGPUBuffer( pIndexBuffer->m_Handle );
 
         for ( auto pUniformBuffer : m_pUniformBuffers )
             m_pDevice->DestroyGPUBuffer( pUniformBuffer->Handle );
@@ -65,7 +65,7 @@ namespace smile::graphic
         return pVertexBuffer;
     }
 
-    memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount )
+    memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( Uint32 *pIndices, const Count indexCount )
     {
         GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = indexCount * sizeof( Uint32 );
@@ -77,7 +77,7 @@ namespace smile::graphic
         m_pDevice->CreateGPUBuffer( handle, bufferDesc, pIndices );
 
         auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, indexCount );
-        m_pIndexBuffers.push_back( pIndexBuffer );
+        m_pIndexBuffers.PushBack( pIndexBuffer );
         return pIndexBuffer;
     }
 

@@ -46,5 +46,7 @@ namespace smile::graphic
         GPUBufferHandle m_Handle;
         BufferLayout m_BufferLayout;
         Count m_VertexCount;
+
+        friend class ResourceManager;
     };
 }

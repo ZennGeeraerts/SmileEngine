@@ -36,7 +36,7 @@ namespace smile::graphic
         VertexBuffer::Ref CreateVertexBuffer( void *pVertices, const Count vertexCount, const BufferLayout &layout );
         VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const BufferLayout &layout );
 
-        memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
+        IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
         memory::Ref< UniformBuffer > CreateUniformBuffer( const std::string &name, void *pData, Uint32 size );
 
@@ -51,7 +51,7 @@ namespace smile::graphic
       private:
         GraphicsDevice *m_pDevice = nullptr;
         primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
-        std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
+        primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
         std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
         std::vector< memory::Ref< Shader > > m_pShaders;
         std::vector< memory::Ref< Texture > > m_pTextures;
