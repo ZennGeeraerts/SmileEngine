@@ -4,18 +4,30 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/memory/ref.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    class Shader final
+    class PixelShader final : public memory::Counted
     {
       public:
-        Shader( ShaderHandle handle ) : m_Handle{ handle }
+        using Ref = memory::Ref< PixelShader >;
+
+        PixelShader( ShaderHandle handle ) : m_Handle{ handle }
         {
+        }
+
+        ~PixelShader() = default;
+
+        bool IsValid() const
+        {
+            return m_Handle.IsValid();
         }
 
       private:
         ShaderHandle m_Handle;
+
+        friend class ResourceManager;
     };
 }

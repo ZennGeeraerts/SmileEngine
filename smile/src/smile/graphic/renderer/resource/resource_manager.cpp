@@ -20,6 +20,12 @@ namespace smile::graphic
         for ( auto pConstantBuffer : m_pConstantBuffers )
             m_pDevice->DestroyGPUBuffer( pConstantBuffer->m_Handle );
 
+        for ( auto pVertexShader : m_pVertexShaders )
+            m_pDevice->DestroyShader( pVertexShader->m_Handle );
+
+        for ( auto pPixelShader : m_pPixelShaders )
+            m_pDevice->DestroyShader( pPixelShader->m_Handle );
+
         for ( auto pTexture : m_pTextures )
             m_pDevice->DestroyTexture( pTexture->Handle );
 
@@ -97,21 +103,36 @@ namespace smile::graphic
         return pConstantBuffer;
     }
 
-    memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
-        const BufferLayout &layout,
-        const std::string &techniqueName )
+    VertexShader::Ref ResourceManager::CreateVertexShader( const std::vector< Byte > &byteCode,
+        const std::string &entryPoint,
+        const std::string &targetProfile )
     {
-        auto pShader = m_pDevice->CreateShader( assetFile, layout, techniqueName );
-        m_pShaders.push_back( pShader );
-        return pShader;
+        ShaderDescriptor shaderDesc{ ShaderStage::Vertex };
+        shaderDesc.EntryPoint = entryPoint;
+        shaderDesc.TargetProfile = targetProfile;
+
+        ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        m_pDevice->CreateShader( handle, shaderDesc, byteCode );
+
+        auto pVertexShader = memory::CreateRef< VertexShader >( handle );
+        m_pVertexShaders.PushBack( pVertexShader );
+        return pVertexShader;
     }
 
-    memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
-        const std::string &techniqueName )
+    PixelShader::Ref ResourceManager::CreatePixelShader( const std::vector< Byte > &byteCode,
+        const std::string &entryPoint,
+        const std::string &targetProfile )
     {
-        auto pShader = m_pDevice->CreateShader( assetFile, techniqueName );
-        m_pShaders.push_back( pShader );
-        return pShader;
+        ShaderDescriptor shaderDesc{ ShaderStage::Pixel };
+        shaderDesc.EntryPoint = entryPoint;
+        shaderDesc.TargetProfile = targetProfile;
+
+        ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        m_pDevice->CreateShader( handle, shaderDesc, byteCode );
+
+        auto pPixelShader = memory::CreateRef< PixelShader >( handle );
+        m_pPixelShaders.PushBack( pPixelShader );
+        return pPixelShader;
     }
 
     memory::Ref< Texture > ResourceManager::CreateTexture( const std::filesystem::path &path )
