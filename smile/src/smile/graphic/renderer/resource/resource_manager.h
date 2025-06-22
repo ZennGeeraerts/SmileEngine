@@ -8,17 +8,17 @@
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 
+#include "smile/graphic/resource/image.h"
+
 #include "vertex_buffer.h"
 #include "index_buffer.h"
+#include "texture.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/shader/vertex_shader.h"
 #include "smile/graphic/renderer/shader/pixel_shader.h"
-#include "texture.h"
 #include "frame_buffer.h"
 
 #include "smile/graphic/renderer_backend/resource/frame_buffer.h"
-
-#include <filesystem>
 
 namespace smile::graphic
 {
@@ -37,6 +37,9 @@ namespace smile::graphic
 
         IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
+        Texture::Ref CreateTexture2D( Image::ConstRef pImage, bool updateable );
+        Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
+
         ConstantBuffer::Ref CreateConstantBuffer( const BufferLayout &layout );
 
         VertexShader::Ref CreateVertexShader( const std::vector< Byte > &byteCode,
@@ -47,7 +50,6 @@ namespace smile::graphic
             const std::string &entryPoint,
             const std::string &targetProfile );
 
-        memory::Ref< Texture > CreateTexture( const std::filesystem::path &path );
         memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
 
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
@@ -56,10 +58,10 @@ namespace smile::graphic
         GraphicsDevice *m_pDevice = nullptr;
         primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
         primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
+        primitive::Vector< Texture::Ref > m_pTextures;
         primitive::Vector< ConstantBuffer::Ref > m_pConstantBuffers;
         primitive::Vector< VertexShader::Ref > m_pVertexShaders;
         primitive::Vector< PixelShader::Ref > m_pPixelShaders;
-        std::vector< memory::Ref< Texture > > m_pTextures;
         std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
 
         GPUBufferHandleManager m_GPUBufferHandleManager;

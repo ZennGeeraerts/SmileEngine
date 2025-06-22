@@ -4,32 +4,20 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/graphic/renderer_backend/format.h"
 
 namespace smile::graphic
 {
-    enum class ImageFormat : Uint8
-    {
-        RGB,
-        RGBA,
-        BGRA,
-        BC1,
-        BC2,
-        BC3,
-        BC4,
-        BC5,
-        BC6,
-        BC7,
-        RG32F,
-        Count,
-        None
-    };
-
     class Image final : public memory::Counted
     {
       public:
+        using Ref = memory::Ref< Image >;
+        using ConstRef = memory::Ref< const Image >;
+
         Image();
-        Image( const Uint32 width, const Uint32 height, const ImageFormat format, const Byte *pData );
+        Image( const Uint32 width, const Uint32 height, const Format format, const Byte *pData );
 
         Uint32 GetWidth() const
         {
@@ -41,26 +29,31 @@ namespace smile::graphic
             return m_Height;
         }
 
-        ImageFormat GetFormat() const
+        Format GetFormat() const
         {
             return m_Format;
         }
 
         const Byte *GetData() const
         {
-            return m_Buffer.data();
+            return m_Buffer.GetData();
         }
 
-        Uint32 GetDataSize() const
+        Count GetDataSize() const
         {
-            return static_cast< Uint32 >( m_Buffer.size() );
+            return m_Buffer.GetItemCount();
+        }
+
+        Uint32 GetStride() const
+        {
+            return m_Stride;
         }
 
       private:
         Uint32 m_Width;
         Uint32 m_Height;
-        ImageFormat m_Format;
-        std::vector< Byte > m_Buffer;
+        Format m_Format;
+        primitive::Vector< Byte > m_Buffer;
         Uint32 m_Stride;
     };
 }

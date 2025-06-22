@@ -27,7 +27,7 @@ namespace smile::graphic
             m_pDevice->DestroyShader( pPixelShader->m_Handle );
 
         for ( auto pTexture : m_pTextures )
-            m_pDevice->DestroyTexture( pTexture->Handle );
+            m_pDevice->DestroyTexture( pTexture->m_Handle );
 
         for ( auto pFramebuffer : m_pFramebuffers )
             m_pDevice->DestroyFramebuffer( pFramebuffer->Handle );
@@ -87,6 +87,46 @@ namespace smile::graphic
         return pIndexBuffer;
     }
 
+    Texture::Ref ResourceManager::CreateTexture2D( Image::ConstRef pImage, bool updateable )
+    {
+        TextureDescriptor textureDesc{};
+        textureDesc.Width = pImage->GetWidth();
+        textureDesc.Height = pImage->GetHeight();
+        textureDesc.TextureFormat = pImage->GetFormat();
+        textureDesc.Dimension = TextureDimension::Texture2D;
+        textureDesc.BindFlags = { TextureBindFlags::ShaderResource };
+        textureDesc.CPUAccess = updateable ? CPUAccessMode::Write : CPUAccessMode::Read;
+
+        TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
+        m_pDevice->CreateTexture( handle, textureDesc, buffer );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight() );
+        m_pTextures.PushBack( pTexture );
+        return pTexture;
+    }
+
+    Texture::Ref ResourceManager::CreateTextureCube( Image::ConstRef pImage, bool updateable )
+    {
+        TextureDescriptor textureDesc{};
+        textureDesc.Width = pImage->GetWidth();
+        textureDesc.Height = pImage->GetHeight();
+        textureDesc.TextureFormat = pImage->GetFormat();
+        textureDesc.Dimension = TextureDimension::TextureCube;
+        textureDesc.BindFlags = { TextureBindFlags::ShaderResource };
+        textureDesc.CPUAccess = updateable ? CPUAccessMode::Write : CPUAccessMode::Read;
+
+        TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
+        m_pDevice->CreateTexture( handle, textureDesc, buffer );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight() );
+        m_pTextures.PushBack( pTexture );
+        return pTexture;
+    }
+
     ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const BufferLayout &layout )
     {
         GPUBufferDescriptor bufferDesc{};
@@ -133,16 +173,6 @@ namespace smile::graphic
         auto pPixelShader = memory::CreateRef< PixelShader >( handle );
         m_pPixelShaders.PushBack( pPixelShader );
         return pPixelShader;
-    }
-
-    memory::Ref< Texture > ResourceManager::CreateTexture( const std::filesystem::path &path )
-    {
-        TextureHandle handle = m_TextureHandleManager.CreateHandle();
-        m_pDevice->CreateTexture( handle, path );
-
-        auto pTexture = memory::CreateRef< Texture >( handle );
-        m_pTextures.push_back( pTexture );
-        return pTexture;
     }
 
     memory::Ref< Framebuffer > ResourceManager::CreateFramebuffer( const FramebufferDescriptor &descriptor )

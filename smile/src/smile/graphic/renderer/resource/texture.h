@@ -4,14 +4,19 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/memory/ref.h"
 #include "smile/graphic/renderer_backend/render_handle.h"
 
 namespace smile::graphic
 {
-    struct Texture final : public memory::Counted
+    class Texture final : public memory::Counted
     {
-        Texture( TextureHandle handle ) : Handle{ handle }
+      public:
+        using Ref = memory::Ref< Texture >;
+
+        Texture( TextureHandle handle, const Uint32 width, const Uint32 height )
+            : m_Handle{ handle }, m_Width{ width }, m_Height{ height }
         {
         }
 
@@ -19,6 +24,26 @@ namespace smile::graphic
         Texture( const Texture & ) = delete;
         Texture( Texture && ) = delete;
 
-        TextureHandle Handle;
+        Uint32 GetWidth() const
+        {
+            return m_Width;
+        }
+
+        Uint32 GetHeight() const
+        {
+            return m_Height;
+        }
+
+        bool IsValid() const
+        {
+            return m_Handle.IsValid();
+        }
+
+      private:
+        TextureHandle m_Handle;
+        Uint32 m_Width;
+        Uint32 m_Height;
+
+        friend class ResourceManager;
     };
 }

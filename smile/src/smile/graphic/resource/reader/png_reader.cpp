@@ -16,7 +16,7 @@ namespace smile::graphic
     {
         int width;
         int height;
-        int stridePerPixel;
+        int channelsPerPixel;
 
         std::filesystem::path finalPath = [&]()
         {
@@ -29,22 +29,20 @@ namespace smile::graphic
         SM_ASSERT_MSG(
             std::filesystem::exists( finalPath ), "PNGReader::Read > Path: {} does not exist", finalPath.string() );
 
-        stbi_uc *pData = stbi_load( finalPath.string().c_str(), &width, &height, &stridePerPixel, 0 );
+        stbi_uc *pData = stbi_load( finalPath.string().c_str(), &width, &height, &channelsPerPixel, 4 );
 
-        if ( pData )
+        if ( !pData )
             return memory::CreateRef< Image >();
 
         memory::Ref< Image > pImage = [&]()
         {
-            switch ( stridePerPixel )
+            switch ( channelsPerPixel )
             {
                 case 4:
-                    return memory::CreateRef< Image >( width, height, ImageFormat::RGBA, pData );
-                case 3:
-                    return memory::CreateRef< Image >( width, height, ImageFormat::RGB, pData );
+                    return memory::CreateRef< Image >( width, height, Format::RGBA8_UNORM, pData );
 
                 default:
-                    SM_ASSERT_MSG( false, "PNGReader::Read > Unsupported stride per pixel" );
+                    SM_ASSERT_MSG( false, "PNGReader::Read > Unsupported channels per pixel" );
             }
         }();
 
