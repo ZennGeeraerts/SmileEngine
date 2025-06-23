@@ -6,8 +6,8 @@
 #include "smile/common/foundation/meyers_singleton.h"
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
-#include "smile/graphic/renderer_backend/shader/shader.h"
-#include "smile/graphic/renderer_backend/render_state.h"
+#include "smile/graphic/rhi/shader/shader.h"
+#include "smile/graphic/rhi/render_state.h"
 
 #include "smile/graphic/camera/camera.h"
 

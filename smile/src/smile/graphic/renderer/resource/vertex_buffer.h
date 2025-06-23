@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
-#include "smile/graphic/renderer_backend/render_handle.h"
-#include "smile/graphic/renderer_backend/resource/buffer.h"
+#include "smile/common/memory/ref.h"
+#include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/rhi/resource/buffer.h"
 
 namespace smile::graphic
 {

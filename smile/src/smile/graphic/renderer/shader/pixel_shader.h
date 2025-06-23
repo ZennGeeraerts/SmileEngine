@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/common/memory/ref.h"
-#include "smile/graphic/renderer_backend/render_handle.h"
+#include "smile/graphic/rhi/render_handle.h"
 
 namespace smile::graphic
 {

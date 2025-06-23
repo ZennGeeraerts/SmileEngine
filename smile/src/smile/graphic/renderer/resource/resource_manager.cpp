@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "resource_manager.h"
 
-#include "smile/graphic/renderer_backend/graphics_device.h"
+#include "smile/graphic/rhi/graphics_device.h"
 
 namespace smile::graphic
 {

@@ -6,8 +6,8 @@
 
 #include "smile/graphic/camera/camera.h"
 #include "smile/graphic/mesh/mesh.h"
-#include "smile/graphic/renderer_backend/shader/shader.h"
-#include "smile/graphic/renderer_backend/render_state.h"
+#include "smile/graphic/rhi/shader/shader.h"
+#include "smile/graphic/rhi/render_state.h"
 
 namespace smile::graphic
 {

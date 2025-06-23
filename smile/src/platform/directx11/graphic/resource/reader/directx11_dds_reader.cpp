@@ -6,7 +6,7 @@
 #include "smile/graphic/resource/reader/dds_reader.h"
 
 #include "smile/graphic/resource/image.h"
-#include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
+#include "platform/directx11/graphic/rhi/directx11_diagnostics.h"
 
 #include <DirectXTex.h>
 

@@ -6,7 +6,7 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
-#include "smile/graphic/renderer_backend/format.h"
+#include "smile/graphic/rhi/format.h"
 
 namespace smile::graphic
 {
