@@ -1,0 +1,32 @@
+/*=============================================================================*/
+// Copyright 2022-2025 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+
+#include "smile/common/primitive/collection/array_utils.h"
+#include "smile/common/primitive/collection/vector.h"
+
+#include <catch/catch.hpp>
+
+namespace smile::primitive
+{
+    TEST_CASE( "Array utils", "[primitive][collection]" )
+    {
+        SECTION( "HasItem" )
+        {
+            Vector< int > items{ 1, 2, 4, 5 };
+            int rawItems[]{ 6, 7, 9 };
+
+            REQUIRE( array::HasItem( items, 1 ) );
+            REQUIRE( array::HasItem( items, 2 ) );
+            REQUIRE_FALSE( array::HasItem( items, 3 ) );
+            REQUIRE( array::HasItem( items, 4 ) );
+            REQUIRE( array::HasItem( items, 5 ) );
+
+            REQUIRE( array::HasItem( rawItems, 6 ) );
+            REQUIRE( array::HasItem( rawItems, 7 ) );
+            REQUIRE_FALSE( array::HasItem( rawItems, 8 ) );
+            REQUIRE( array::HasItem( rawItems, 9 ) );
+        }
+    }
+}
