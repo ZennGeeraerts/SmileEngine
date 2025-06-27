@@ -75,17 +75,6 @@ namespace smile::primitive
             return ( firstIndex + charCount ) <= m_CharCount;
         }
 
-        inline bool operator==( StringView other ) const
-        {
-            return m_CharCount == other.m_CharCount &&
-                   memory::CompareByteArrays( m_SubText, other.m_SubText, other.m_CharCount );
-        }
-
-        inline bool operator!=( StringView other ) const
-        {
-            return !( *this == other );
-        }
-
         inline const char *begin()
         {
             return m_SubText;
@@ -102,6 +91,17 @@ namespace smile::primitive
     };
 
     int Compare( StringView firstText, StringView secondText );
+
+    inline bool operator==( StringView firstView, StringView secondView )
+    {
+        return firstView.GetCharCount() == secondView.GetCharCount() &&
+               memory::CompareByteArrays( firstView.GetSubText(), secondView.GetSubText(), secondView.GetCharCount() );
+    }
+
+    inline bool operator!=( StringView firstView, StringView secondView )
+    {
+        return !( firstView == secondView );
+    }
 
     inline bool operator<( StringView first, StringView second )
     {
