@@ -129,5 +129,54 @@ namespace smile::primitive
 
             REQUIRE( values.GetItemCount() == 4 );
         }
+
+        SECTION( "Insert" )
+        {
+            Vector< int > values{ 1, 2, 3 };
+
+            values.Insert( 1 );
+
+            REQUIRE( values.GetItemCount() == 4 );
+            REQUIRE( values.GetItemAtIndex( 1 ) == 2 );
+            REQUIRE( values.GetItemAtIndex( 2 ) == 2 );
+
+            values.Insert( 10, 1 );
+
+            REQUIRE( values.GetItemCount() == 5 );
+            REQUIRE( values.GetItemAtIndex( 1 ) == 10 );
+        }
+
+        SECTION( "PopFront" )
+        {
+            Vector< int > values{ 1, 2, 3 };
+
+            values.PopFront();
+
+            REQUIRE( values.GetItemCount() == 2 );
+            REQUIRE( values.GetItemAtIndex( 0 ) == 2 );
+            REQUIRE( values.GetItemAtIndex( 1 ) == 3 );
+        }
+
+        SECTION( "EraseAtIndex" )
+        {
+            Vector< int > values{ 1, 2, 3 };
+
+            values.EraseAtIndex( 1 );
+
+            REQUIRE( values.GetItemCount() == 2 );
+            REQUIRE( values.GetItemAtIndex( 0 ) == 1 );
+            REQUIRE( values.GetItemAtIndex( 1 ) == 3 );
+        }
+
+        SECTION( "Erase" )
+        {
+            Vector< int > values{ 1, 2, 3 };
+
+            values.Erase( 2 );
+
+            REQUIRE( values.GetItemCount() == 2 );
+            REQUIRE( values.GetItemAtIndex( 0 ) == 1 );
+            REQUIRE( values.GetItemAtIndex( 1 ) == 3 );
+        }
     }
 }
