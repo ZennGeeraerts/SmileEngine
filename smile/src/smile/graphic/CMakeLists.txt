@@ -19,10 +19,5 @@ set(LIB_LINKS
 target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(smile PRIVATE ${LIB_LINKS})
 
-file(GLOB_RECURSE SOURCE_FILES
-    *.cpp
-    ${THIRDPARTY_PATH}/ImGuizmo/ImGuizmo.cpp
-)
-target_sources(smile PRIVATE ${SOURCE_FILES})
-
 include(build/compile_shaders.cmake)
+include(build/rhi.cmake)
