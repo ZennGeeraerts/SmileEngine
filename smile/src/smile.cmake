@@ -11,3 +11,12 @@ macro(add_platform name)
     message("Adding platform <" ${name} ">")
     add_subdirectory(${SMILE_PATH}/platform/${name} ${name})
 endmacro(add_platform)
+
+function(smile_option name description default)
+
+    if(DEFINED SMILE_${name}_DEFAULT)
+        set(default ${SMILE_${name}_DEFAULT})
+    endif()
+
+    option(SMILE_${name} "${description}" ${default})
+endfunction()
