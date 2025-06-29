@@ -40,11 +40,11 @@ namespace smile::foundation
     }
 
 #define RTTI_DEFINE( klass, base )                                                                                     \
-    virtual smile::foundation::RTTI_ID GetRTTI_ID() const                                                              \
+    virtual smile::foundation::RTTI_ID GetRTTI_ID() const override                                                     \
     {                                                                                                                  \
         return GetClassRTTI_ID();                                                                                      \
     }                                                                                                                  \
-    virtual bool HasRTTI_ID( smile::foundation::RTTI_ID id ) const                                                     \
+    virtual bool HasRTTI_ID( smile::foundation::RTTI_ID id ) const override                                            \
     {                                                                                                                  \
         return id == GetClassRTTI_ID() || base::HasRTTI_ID( id );                                                      \
     }                                                                                                                  \
