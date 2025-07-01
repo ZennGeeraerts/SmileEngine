@@ -283,7 +283,7 @@ namespace smile::primitive
             for ( const Item &item : items )
             {
                 ::new ( m_pItems + newItemCount, memory::g_pInPlace ) Item{ item };
-                ++newItemcount;
+                ++newItemCount;
             }
 
             m_ItemCount = newItemCount;
