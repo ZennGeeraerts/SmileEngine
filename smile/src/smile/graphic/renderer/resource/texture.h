@@ -24,6 +24,11 @@ namespace smile::graphic
         Texture( const Texture & ) = delete;
         Texture( Texture && ) = delete;
 
+        TextureHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
         Uint32 GetWidth() const
         {
             return m_Width;

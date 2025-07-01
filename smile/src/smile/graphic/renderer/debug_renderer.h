@@ -9,7 +9,7 @@
 #include "smile/graphic/rhi/shader/shader.h"
 #include "smile/graphic/rhi/render_state.h"
 
-#include "smile/graphic/camera/camera.h"
+#include "smile/graphic/renderer/camera.h"
 
 namespace smile::graphic
 {

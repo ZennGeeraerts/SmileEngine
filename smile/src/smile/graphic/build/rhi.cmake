@@ -1,4 +1,4 @@
-smile_option(RENDERER "Include rendering hardware interface" ON)
+smile_option(RHI "Include rendering hardware interface" ON)
 
 if(SMILE_RHI)
 	get_files_recursively(SOURCE_FILES "rhi")

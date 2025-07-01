@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/flags.h"
+#include "smile/common/foundation/hash_code.h"
 #include "smile/graphic/rhi/cpu_access_mode.h"
 #include "smile/graphic/rhi/format.h"
 
