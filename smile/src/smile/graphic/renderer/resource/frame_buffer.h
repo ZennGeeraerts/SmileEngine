@@ -4,23 +4,38 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 
 namespace smile::graphic
 {
-    struct Framebuffer final : public memory::Counted
+    class Framebuffer final : public memory::Counted
     {
       public:
-        Framebuffer( FramebufferHandle handle ) : Handle{ handle }
+        using Ref = memory::Ref< Framebuffer >;
+
+        Framebuffer( FramebufferHandle handle, const Uint32 width, const Uint32 height )
+            : m_Handle{ handle }, m_Width{ width }, m_Height{ height }
         {
         }
+
         ~Framebuffer() = default;
 
-        FramebufferHandle Handle;
-        Uint32 Width{};
-        Uint32 Height{};
+        Uint32 GetWidth() const
+        {
+            return m_Width;
+        }
 
-        static constexpr Uint32 MaxFramebufferSize{ 8192 };
+        Uint32 GetHeight() const
+        {
+            return m_Width;
+        }
+
+      private:
+        FramebufferHandle m_Handle;
+        Uint32 m_Width{};
+        Uint32 m_Height{};
+
+        friend class ResourceManager;
     };
 }

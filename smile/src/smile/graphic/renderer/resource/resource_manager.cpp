@@ -175,28 +175,28 @@ namespace smile::graphic
         return pPixelShader;
     }
 
-    memory::Ref< Framebuffer > ResourceManager::CreateFramebuffer( const FramebufferDescriptor &descriptor )
+    Framebuffer::Ref ResourceManager::CreateFramebuffer( const FramebufferDescriptor &descriptor )
     {
         FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
         m_pDevice->CreateFramebuffer( handle, descriptor );
 
-        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle );
-        m_pFramebuffers.push_back( pFramebuffer );
+        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle, descriptor.Width, descriptor.Height );
+        m_pFramebuffers.PushBack( pFramebuffer );
         return pFramebuffer;
     }
 
     void ResourceManager::ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height )
     {
-        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
-             ( height > pFramebuffer->MaxFramebufferSize ) )
+        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > s_MaxFramebufferCount ) ||
+             ( height > s_MaxFramebufferCount ) )
         {
             SM_LOG_WARNING( "ResourceManager::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
             return;
         }
 
-        pFramebuffer->Width = width;
-        pFramebuffer->Height = height;
+        pFramebuffer->m_Width = width;
+        pFramebuffer->m_Height = height;
 
-        m_pDevice->InvalidateFramebuffer( pFramebuffer->Handle );
+        m_pDevice->InvalidateFramebuffer( pFramebuffer->m_Handle );
     }
 }

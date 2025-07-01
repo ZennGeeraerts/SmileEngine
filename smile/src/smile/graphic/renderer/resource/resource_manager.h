@@ -50,7 +50,7 @@ namespace smile::graphic
             const std::string &entryPoint,
             const std::string &targetProfile );
 
-        memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
+        Framebuffer::Ref CreateFramebuffer( const FramebufferDescriptor &descriptor );
 
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
 
@@ -62,7 +62,7 @@ namespace smile::graphic
         primitive::Vector< ConstantBuffer::Ref > m_pConstantBuffers;
         primitive::Vector< VertexShader::Ref > m_pVertexShaders;
         primitive::Vector< PixelShader::Ref > m_pPixelShaders;
-        std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
+        primitive::Vector< Framebuffer::Ref > m_pFramebuffers;
 
         GPUBufferHandleManager m_GPUBufferHandleManager;
         TextureHandleManager m_TextureHandleManager;
