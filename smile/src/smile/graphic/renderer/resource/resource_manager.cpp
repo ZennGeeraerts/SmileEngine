@@ -30,7 +30,10 @@ namespace smile::graphic
             m_pDevice->DestroyTexture( pTexture->m_Handle );
 
         for ( auto pFramebuffer : m_pFramebuffers )
-            m_pDevice->DestroyFramebuffer( pFramebuffer->Handle );
+            m_pDevice->DestroyFramebuffer( pFramebuffer->m_Handle );
+
+        for ( auto pBindingSet : m_pBindingSets )
+            m_pDevice->DestroyBindingSet( pBindingSet->m_Handle );
     }
 
     void ResourceManager::Initialize( GraphicsDevice *pDevice )
@@ -198,5 +201,16 @@ namespace smile::graphic
         pFramebuffer->m_Height = height;
 
         m_pDevice->InvalidateFramebuffer( pFramebuffer->m_Handle );
+    }
+
+    BindingSet::Ref ResourceManager::CreateBindingSet( const BindingSetDescriptor &descriptor,
+        const BindingLayout &layout )
+    {
+        BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
+        m_pDevice->CreateBindingSet( handle, descriptor, layout );
+
+        auto pBindingSet = memory::CreateRef< BindingSet >( handle, descriptor, layout );
+        m_pBindingSets.PushBack( pBindingSet );
+        return pBindingSet;
     }
 }
