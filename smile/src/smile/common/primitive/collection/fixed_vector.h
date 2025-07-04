@@ -34,6 +34,8 @@ namespace smile::primitive
             }
         }
 
+        using Array< Item, MaxItemCount >::GetData;
+
         bool IsValidIndex( const Index index ) const override
         {
             return index < m_CurrentItemCount;

@@ -65,7 +65,7 @@ namespace smile::primitive
 
         bool operator==( const Array &other ) const
         {
-            return std::equal( primitive::begin( *this ), primitive::end( *this ), primitive::begin( other ) );
+            return std::equal( std::begin( *this ), std::end( *this ), std::begin( other ) );
         }
 
         bool operator!=( const Array &other ) const
