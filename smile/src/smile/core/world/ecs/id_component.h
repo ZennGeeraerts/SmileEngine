@@ -11,6 +11,9 @@ namespace smile::world::ecs
     {
         IDComponent() = default;
         IDComponent( const IDComponent & ) = default;
+        IDComponent( primitive::UUID uuid ) : ID{ uuid }
+        {
+        }
 
         primitive::UUID ID;
     };
