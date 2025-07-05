@@ -25,13 +25,9 @@ namespace smile::ecs
         if ( !pComponentData )
             return;
 
-        const IndexType deadEntityIndex = m_SparseSet.GetIndex( entityHandle.GetIndex() );
+        PublishOnDestruction( entityHandle );
 
-        for ( const auto &listenerFunc : m_DestructionListeners )
-        {
-            auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetHandle( deadEntityIndex );
-            listenerFunc( m_ECSEngine, entityHandle );
-        }
+        const IndexType deadEntityIndex = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
         m_pComponentStorage->RemoveSwap( deadEntityIndex );
         m_SparseSet.Erase( entityHandle.GetIndex() );
@@ -66,6 +62,22 @@ namespace smile::ecs
                 curr = next;
                 next = m_SparseSet.m_Sparse[sparseSetCopy.m_Dense[curr]];
             }
+        }
+    }
+
+    void ComponentPool::PublishOnConstruction( const EntityHandle entityHandle )
+    {
+        for ( const auto &listenerFunc : m_ContructionListeners )
+        {
+            listenerFunc( m_ECSEngine, entityHandle );
+        }
+    }
+
+    void ComponentPool::PublishOnDestruction( const EntityHandle entityHandle )
+    {
+        for ( const auto &listenerFunc : m_DestructionListeners )
+        {
+            listenerFunc( m_ECSEngine, entityHandle );
         }
     }
 }

@@ -45,7 +45,7 @@ namespace smile::ecs
             template < typename Component >
             bool RunComponent( Component &component )
             {
-                return Run( *reinterpret_cast< const EntityHandleType * >( &component ) );
+                return Run( *reinterpret_cast< const EntityHandle * >( &component ) );
             }
 
           private:
@@ -216,6 +216,13 @@ namespace smile::ecs
             {
                 GatherComponents< Components... > gatherComponents{ m_Engine };
                 return gatherComponents.Run( entityHandle );
+            }
+
+            template < typename Component >
+            bool ContainsComponentPool() const
+            {
+                auto pPool = m_Engine.GetComponentPool< Component >();
+                return ContainsComponentPool( pPool );
             }
         };
 
