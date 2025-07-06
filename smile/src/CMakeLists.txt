@@ -11,6 +11,8 @@ if (NOT TARGET smile)
     add_library(smile STATIC)
 endif()
 
+target_compile_features(smile PUBLIC cxx_std_20)
+
 target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
 
 target_precompile_headers(smile PUBLIC "smpch.h")

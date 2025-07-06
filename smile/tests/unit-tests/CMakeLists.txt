@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION "3.25.0")
 
 project(unit-tests)
-set(CMAKE_CXX_STANDARD 17)
 
 set(BUILD_UNIT_TESTS
     ON

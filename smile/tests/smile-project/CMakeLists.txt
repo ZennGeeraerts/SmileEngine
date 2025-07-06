@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION "3.25.0")
 
 project(smile-project)
-set(CMAKE_CXX_STANDARD 17)
 
 get_filename_component(SMILE_PATH "../../src" ABSOLUTE)
 get_filename_component(CMAKE_PATH "../../../cmake" ABSOLUTE)
