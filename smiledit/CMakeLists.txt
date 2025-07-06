@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION "3.25.0")
 
 project(smiledit)
-set(CMAKE_CXX_STANDARD 17)
 
 get_filename_component(SMILE_PATH "../smile/src" ABSOLUTE)
 get_filename_component(CMAKE_PATH "../cmake" ABSOLUTE)
@@ -20,7 +19,7 @@ add_executable(smiledit ${SOURCE_FILES})
 
 include(${SMILE_PATH}/smile.cmake)
 
-add_subdirectory(${SMILE_PATH} engine)
+add_subdirectory(${SMILE_PATH} smile)
 
 add_module(common)
 add_module(core)
