@@ -9,7 +9,7 @@
 namespace smile::primitive
 {
     template < typename ItemType, Count MaxItemCount >
-    class FixedVector final : public Array< ItemType, MaxItemCount >
+    class FixedVector final : protected Array< ItemType, MaxItemCount >
     {
       public:
         using Base = typename Array< ItemType, MaxItemCount >;
@@ -17,16 +17,16 @@ namespace smile::primitive
         using Iterator = typename ArrayIterator< FixedVector< Item, MaxItemCount >, false >;
         using ConstIterator = typename ArrayIterator< FixedVector< Item, MaxItemCount >, true >;
 
-        FixedVector() : Base{}, m_CurrentItemCount{ 0 }
+        FixedVector() : Base{}, m_ItemCount{ 0 }
         {
         }
 
-        FixedVector( const Count itemCount ) : Base{}, m_CurrentItemCount{ itemCount }
+        FixedVector( const Count itemCount ) : Base{}, m_ItemCount{ itemCount }
         {
             SM_ASSERT( itemCount <= MaxItemCount );
         }
 
-        FixedVector( std::initializer_list< Item > items ) : m_CurrentItemCount{ 0 }
+        FixedVector( std::initializer_list< Item > items ) : m_ItemCount{ 0 }
         {
             for ( const auto &item : items )
             {
@@ -34,62 +34,68 @@ namespace smile::primitive
             }
         }
 
+        using Array< Item, MaxItemCount >::operator[];
         using Array< Item, MaxItemCount >::GetData;
 
         bool IsValidIndex( const Index index ) const override
         {
-            return index < m_CurrentItemCount;
+            return index < m_ItemCount;
         }
 
-        Count GetCurrentItemCount() const
+        Count GetItemCount() const
         {
-            return m_CurrentItemCount;
+            return m_ItemCount;
+        }
+
+        Count GetMaxItemCount() const
+        {
+            return MaxItemCount;
         }
 
         bool IsEmpty() const
         {
-            return m_CurrentItemCount == 0;
+            return m_ItemCount == 0;
         }
 
         void PushBack( const Item &item ) noexcept
         {
-            SM_ASSERT( m_CurrentItemCount < MaxItemCount );
+            SM_ASSERT( m_ItemCount < MaxItemCount );
 
-            *( GetData() + m_CurrentItemCount ) = item;
-            ++m_CurrentItemCount;
+            *( GetData() + m_ItemCount ) = item;
+            ++m_ItemCount;
         }
 
         void PushBack( Item &&item ) noexcept
         {
-            SM_ASSERT( m_CurrentItemCount < MaxItemCount );
+            SM_ASSERT( m_ItemCount < MaxItemCount );
 
-            *( GetData() + m_CurrentItemCount ) = std::move( item );
-            ++m_CurrentItemCount;
+            *( GetData() + m_ItemCount ) = std::move( item );
+            ++m_ItemCount;
         }
 
         void PopBack() noexcept
         {
-            SM_ASSERT( m_CurrentItemCount > 0 );
+            SM_ASSERT( m_ItemCount > 0 );
 
-            --m_CurrentItemCount;
+            --m_ItemCount;
         }
 
         void Resize( const Count newItemCount ) noexcept
         {
             SM_ASSERT( newItemCount <= MaxItemCount );
 
-            if ( m_CurrentItemCount > newItemCount )
+            if ( m_ItemCount > newItemCount )
             {
-                for ( Count i = newItemCount; i < m_CurrentItemCount; ++i )
+                for ( Count i = newItemCount; i < m_ItemCount; ++i )
                     *( GetData() + i ) = Item{};
             }
             else
             {
-                for ( Count i = m_CurrentItemCount; i < newItemCount; ++i )
+                for ( Count i = m_ItemCount; i < newItemCount; ++i )
                     *( GetData() + i ) = Item{};
             }
 
-            m_CurrentItemCount = newItemCount;
+            m_ItemCount = newItemCount;
         }
 
         inline Iterator begin()
@@ -104,15 +110,15 @@ namespace smile::primitive
 
         inline Iterator end()
         {
-            return { this, m_CurrentItemCount };
+            return { this, m_ItemCount };
         }
 
         inline ConstIterator end() const
         {
-            return { this, m_CurrentItemCount };
+            return { this, m_ItemCount };
         }
 
       private:
-        Count m_CurrentItemCount;
+        Count m_ItemCount;
     };
 }
