@@ -41,14 +41,15 @@ namespace smile::world::ecs
         {
             auto &transform = m_pECSEngine->GetComponent< TransformComponent >( entityHandle );
 
-            DirectX::XMMATRIX worldTransformMat = DirectX::XMLoadFloat4x4( &transform.GetTransform() );
+            DirectX::XMFLOAT4X4 worldTransform = transform.GetTransform();
+            DirectX::XMMATRIX worldTransformMat = DirectX::XMLoadFloat4x4( &worldTransform );
 
             auto pRelationship = m_pECSEngine->TryGetComponent< smile::ecs::Relationship >( entityHandle );
             if ( pRelationship && pRelationship->Parent )
             {
                 auto parentTransformComp = m_pECSEngine->GetComponent< TransformComponent >( pRelationship->Parent );
-                DirectX::XMMATRIX parentTransformMat =
-                    DirectX::XMLoadFloat4x4( &parentTransformComp.GetWorldTransform() );
+                DirectX::XMFLOAT4X4 parentTransform = parentTransformComp.GetWorldTransform();
+                DirectX::XMMATRIX parentTransformMat = DirectX::XMLoadFloat4x4( &parentTransform );
                 worldTransformMat *= parentTransformMat;
             }
 

@@ -56,7 +56,7 @@ namespace smile::primitive
             m_ItemCount = other.m_ItemCount;
         }
 
-        Vector( Vector &&other ) : m_pItems{ other.m_pItems }, m_ItemCount{ other.m_ItemCount }
+        Vector( Vector &&other ) noexcept : m_pItems{ other.m_pItems }, m_ItemCount{ other.m_ItemCount }
         {
             other.m_pItems = nullptr;
             other.m_ItemCount = 0;
@@ -79,7 +79,7 @@ namespace smile::primitive
             return *this;
         }
 
-        Vector &operator=( Vector &&other )
+        Vector &operator=( Vector &&other ) noexcept
         {
             Clear();
             m_pItems = other.m_pItems;
@@ -283,7 +283,7 @@ namespace smile::primitive
             for ( const Item &item : items )
             {
                 ::new ( m_pItems + newItemCount, memory::g_pInPlace ) Item{ item };
-                ++newItemcount;
+                ++newItemCount;
             }
 
             m_ItemCount = newItemCount;
@@ -297,6 +297,81 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
+        void Insert( const Item &item, const Index index )
+        {
+            Reserve( m_ItemCount + 1 );
+
+            if ( index == m_ItemCount )
+            {
+                new ( m_pItems + m_ItemCount, memory::g_pInPlace ) Item{ item };
+            }
+            else
+            {
+                memory::ConstructMoveArrayItems( &m_pItems[m_ItemCount], 1, &m_pItems[m_ItemCount - 1] );
+
+                for ( Index i = m_ItemCount - 2; i >= index; --i )
+                {
+                    m_pItems[i + 1] = std::move( m_pItems[i] );
+                }
+
+                m_pItems[index] = item;
+            }
+
+            ++m_ItemCount;
+        }
+
+        void Insert( Item &&item, const Index index )
+        {
+            Reserve( m_ItemCount + 1 );
+
+            if ( index == m_ItemCount )
+            {
+                new ( m_pItems + m_ItemCount, memory::g_pInPlace ) Item{ std::move( item ) };
+            }
+            else
+            {
+                memory::ConstructMoveArrayItems( &m_pItems[m_ItemCount], 1, &m_pItems[m_ItemCount - 1] );
+
+                for ( Index i = m_ItemCount - 2; i >= index; --i )
+                {
+                    m_pItems[i + 1] = std::move( m_pItems[i] );
+                }
+
+                m_pItems[index] = std::move( item );
+            }
+
+            ++m_ItemCount;
+        }
+
+        void Insert( const Index index )
+        {
+            Reserve( m_ItemCount + 1 );
+
+            if ( index == m_ItemCount )
+            {
+                new ( m_pItems + m_ItemCount, memory::g_pInPlace ) Item{};
+            }
+            else
+            {
+                memory::ConstructMoveArrayItems( &m_pItems[m_ItemCount], 1, &m_pItems[m_ItemCount - 1] );
+
+                for ( Index i = m_ItemCount - 2; i >= index; --i )
+                {
+                    m_pItems[i + 1] = std::move( m_pItems[i] );
+                }
+            }
+
+            ++m_ItemCount;
+        }
+
+        void PopFront()
+        {
+            memory::MoveArrayItems( m_pItems, m_ItemCount - 1, m_pItems + 1 );
+
+            --m_ItemCount;
+            m_pItems[m_ItemCount].~Item();
+        }
+
         void PopBack()
         {
             SM_ASSERT( m_ItemCount );
@@ -304,6 +379,30 @@ namespace smile::primitive
             --m_ItemCount;
 
             m_pItems[m_ItemCount].~Item();
+        }
+
+        void Erase( const Item &item )
+        {
+            auto index = GetItemIndex( item );
+            EraseAtIndex( index );
+        }
+
+        Iterator Erase( Iterator iterator )
+        {
+            auto index = iterator.GetIndex();
+
+            EraseAtIndex( index );
+            return iterator;
+        }
+
+        void EraseAtIndex( const Index index )
+        {
+            SM_ASSERT( IsValidIndex( index ) );
+
+            memory::MoveArrayItems( m_pItems + index, m_ItemCount - index - 1, m_pItems + index + 1 );
+
+            m_pItems[m_ItemCount - 1].~Item();
+            --m_ItemCount;
         }
 
         void Reserve( const Count itemCount, const bool shrinkAllocatedMemory = false )

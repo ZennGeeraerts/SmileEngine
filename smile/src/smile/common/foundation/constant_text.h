@@ -12,7 +12,7 @@ namespace smile::foundation
       public:
         constexpr ConstantText() = default;
         constexpr ConstantText( const ConstantText & ) = default;
-        constexpr ConstantText( const char *text, const Uint32 charCount ) : m_Text{ text }, m_CharCount{ charCount }
+        constexpr ConstantText( const char *text, const Count charCount ) : m_Text{ text }, m_CharCount{ charCount }
         {
         }
 
@@ -21,12 +21,12 @@ namespace smile::foundation
         {
         }
 
-        constexpr ConstantText Skip( const Uint32 charCount ) const
+        constexpr ConstantText Skip( const Count charCount ) const
         {
             return ConstantText{ m_Text + charCount, m_CharCount - charCount };
         }
 
-        constexpr ConstantText Shrink( const Uint32 charCount ) const
+        constexpr ConstantText Shrink( const Count charCount ) const
         {
             return ConstantText{ m_Text, m_CharCount - charCount };
         }
@@ -36,7 +36,7 @@ namespace smile::foundation
             return m_Text;
         }
 
-        constexpr Uint32 GetCharCount() const
+        constexpr Count GetCharCount() const
         {
             return m_CharCount;
         }
@@ -46,20 +46,20 @@ namespace smile::foundation
             return m_CharCount == 0;
         }
 
-        template < Uint32 CharCount >
+        template < Count CharCount >
         constexpr bool StartsWith( const char ( &startingText )[CharCount] ) const
         {
             return StartsWith( startingText, CharCount - 1 );
         }
 
-        constexpr bool StartsWith( const char *startingText, Uint32 charCount ) const
+        constexpr bool StartsWith( const char *startingText, const Count charCount ) const
         {
             return m_CharCount >= 0 &&
                    ( ( charCount == 0 ) ||
                        ( *m_Text == *startingText && Skip( 1 ).StartsWith( startingText + 1, charCount - 1 ) ) );
         }
 
-        char operator[]( const Uint32 index ) const
+        char operator[]( const Index index ) const
         {
             return m_Text[index];
         }
@@ -69,7 +69,7 @@ namespace smile::foundation
             if ( m_CharCount != other.m_CharCount )
                 return false;
 
-            for ( Uint32 i{}; i < m_CharCount; ++i )
+            for ( Index i{}; i < m_CharCount; ++i )
             {
                 if ( m_Text[i] != other.m_Text[i] )
                     return false;
@@ -84,7 +84,7 @@ namespace smile::foundation
             if ( ( CharCount - 1 ) != m_CharCount )
                 return false;
 
-            for ( Uint32 i{}; i < m_CharCount; ++i )
+            for ( Index i{}; i < m_CharCount; ++i )
             {
                 if ( m_Text[i] != other[i] )
                     return false;
@@ -97,6 +97,6 @@ namespace smile::foundation
 
       private:
         const char *m_Text{ nullptr };
-        Uint32 m_CharCount = 0;
+        Count m_CharCount = 0;
     };
 }

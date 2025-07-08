@@ -36,16 +36,18 @@ namespace smile::primitive
             REQUIRE( !values.IsValidIndex( 2 ) );
         }
 
-        SECTION( "GetCurrentItemCount" )
+        SECTION( "GetItemCount" )
         {
             FixedVector< int, 10 > values{};
 
-            REQUIRE( values.GetCurrentItemCount() == 0 );
+            REQUIRE( values.GetItemCount() == 0 );
+            REQUIRE( values.GetMaxItemCount() == 10 );
 
             values.PushBack( 1 );
             values.PushBack( 2 );
 
-            REQUIRE( values.GetCurrentItemCount() == 2 );
+            REQUIRE( values.GetItemCount() == 2 );
+            REQUIRE( values.GetMaxItemCount() == 10 );
         }
 
         SECTION( "IsEmpty" )
@@ -64,7 +66,7 @@ namespace smile::primitive
             FixedVector< int, 10 > values{ 0, 1, 2, 3, 4 };
             int expected = 0;
 
-            REQUIRE( values.GetCurrentItemCount() == 5 );
+            REQUIRE( values.GetItemCount() == 5 );
             for ( auto value : values )
             {
                 REQUIRE( expected == value );
@@ -74,7 +76,7 @@ namespace smile::primitive
             values.PopBack();
             expected = 0;
 
-            REQUIRE( values.GetCurrentItemCount() == 4 );
+            REQUIRE( values.GetItemCount() == 4 );
             for ( auto value : values )
             {
                 REQUIRE( expected == value );

@@ -87,10 +87,13 @@ namespace smile::world
             if ( s_CopyComponentFuncs.find( typeID ) != s_CopyComponentFuncs.end() )
                 return;
 
-            s_CopyComponentFuncs[typeID].EntityCopy = []( Entity src, Entity dst )
+            s_CopyComponentFuncs[typeID].EntityCopy = [&]( smile::ecs::EntityHandle src, smile::ecs::EntityHandle dst )
             {
-                if ( src.HasComponent< ComponentType >() )
-                    dst.AddOrReplaceComponent< ComponentType >( src.GetComponent< ComponentType >() );
+                if ( m_ECSEngine.HasComponent< ComponentType >( src ) )
+                {
+                    m_ECSEngine.AddOrReplaceComponent< ComponentType >(
+                        dst, m_ECSEngine.GetComponent< ComponentType >( src ) );
+                }
             };
 
             s_CopyComponentFuncs[typeID].ECSEngineCopy =

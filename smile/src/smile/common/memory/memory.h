@@ -191,6 +191,11 @@ namespace smile::memory
 
 namespace smile::memory
 {
+    inline bool CompareByteArrays( const void *pFirstByteArray, const void *pSecondByteArray, const Count size )
+    {
+        return std::memcmp( pFirstByteArray, pSecondByteArray, size ) == 0;
+    }
+
     template < typename ItemType >
     void AllocateUninitializedArray( ItemType *&pItems, const Count itemCount )
     {

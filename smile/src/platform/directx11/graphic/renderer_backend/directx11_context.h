@@ -10,6 +10,8 @@ namespace smile::graphic
 {
     struct DirectX11Context final
     {
+        DirectX11Context() = default;
+
         DirectX11Context( const DirectX11Context & ) = delete;
         DirectX11Context( DirectX11Context && ) = delete;
         DirectX11Context &operator=( const DirectX11Context & ) = delete;

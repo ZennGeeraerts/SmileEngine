@@ -27,6 +27,8 @@ namespace smile::foundation
         template < typename Type >
         TypeID RegisterTypeIfNeeded()
         {
+            auto typeName = foundation::TypeNameOf< Type >();
+
             auto it = m_NameToIDMap.find( typeName );
             if ( it != m_NameToIDMap.end() )
                 return it->second;

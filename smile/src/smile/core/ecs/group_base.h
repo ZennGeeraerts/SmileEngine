@@ -24,13 +24,6 @@ namespace smile::ecs
         void AddEntity( EntityHandle entityHandle );
         void RemoveEntity( EntityHandle entityHandle );
 
-        template < typename Component >
-        bool ContainsComponentPool() const
-        {
-            auto pPool = m_Engine.GetComponentPool< Component >();
-            return ContainsComponentPool( pPool );
-        }
-
         bool ContainsComponentPool( ComponentPool *pPool ) const;
 
         GroupIterator begin() const;

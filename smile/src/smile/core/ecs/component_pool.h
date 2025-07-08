@@ -46,11 +46,7 @@ namespace smile::ecs
             auto &component = m_pComponentStorage->Append< ComponentType >(
                 entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
 
-            for ( const auto &listenerFunc : m_ContructionListeners )
-            {
-                auto entityHandle = m_ECSEngine.GetEntityHandleManager().GetHandle( index );
-                listenerFunc( m_ECSEngine, entityHandle );
-            }
+            PublishOnConstruction( entityHandle );
 
             return component;
         }
@@ -164,7 +160,11 @@ namespace smile::ecs
             return m_SparseSet.end();
         }
 
-      public:
+      private:
+        void PublishOnConstruction( const EntityHandle entityHandle );
+        void PublishOnDestruction( const EntityHandle entityHandle );
+
+      private:
         ECSEngine &m_ECSEngine;
         SparseSetType m_SparseSet{};
         ComponentStorage *m_pComponentStorage = nullptr;
