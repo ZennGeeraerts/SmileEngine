@@ -28,5 +28,28 @@ namespace smile::primitive
             REQUIRE_FALSE( array::HasItem( rawItems, 8 ) );
             REQUIRE( array::HasItem( rawItems, 9 ) );
         }
+
+        SECTION( "FindItemIndex" )
+        {
+            Vector< int > items{ 1, 2, 4, 5 };
+            int rawItems[]{ 6, 7, 9 };
+
+            REQUIRE( array::FindItemIndex( items, 1 ) );
+            REQUIRE( array::FindItemIndex( items, 1 ) == 0 );
+            REQUIRE( array::FindItemIndex( items, 2 ) );
+            REQUIRE( array::FindItemIndex( items, 2 ) == 1 );
+            REQUIRE_FALSE( array::FindItemIndex( items, 3 ) );
+            REQUIRE( array::FindItemIndex( items, 4 ) );
+            REQUIRE( array::FindItemIndex( items, 4 ) == 2 );
+            REQUIRE( array::FindItemIndex( items, 5 ) );
+            REQUIRE( array::FindItemIndex( items, 5 ) == 3 );
+            REQUIRE( array::FindItemIndex( rawItems, 6 ) );
+            REQUIRE( array::FindItemIndex( rawItems, 6 ) == 0 );
+            REQUIRE( array::FindItemIndex( rawItems, 7 ) );
+            REQUIRE( array::FindItemIndex( rawItems, 7 ) == 1 );
+            REQUIRE( !array::FindItemIndex( rawItems, 8 ) );
+            REQUIRE( array::FindItemIndex( rawItems, 9 ) );
+            REQUIRE( array::FindItemIndex( rawItems, 9 ) == 2 );
+        }
     }
 }

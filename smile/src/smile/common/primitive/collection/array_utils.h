@@ -11,14 +11,20 @@
 
 namespace smile::primitive::array
 {
-    template < typename ArrayType, typename ItemType >
+    template < typename ArrayType >
+    concept HasBeginEnd = requires( ArrayType array ) {
+        { std::begin( array ) };
+        { std::end( array ) };
+    };
+
+    template < HasBeginEnd ArrayType, typename ItemType >
     inline bool HasItem( const ArrayType &array, const ItemType &item )
     {
         auto iteratorEnd = std::end( array );
         return std::find( std::begin( array ), iteratorEnd, item ) != iteratorEnd;
     }
 
-    template < typename ArrayType, typename ItemType >
+    template < HasBeginEnd ArrayType, typename ItemType >
     std::optional< Index > FindItemIndex( const ArrayType &array, const ItemType &item )
     {
         auto iteratorEnd = std::end( array );
@@ -29,6 +35,15 @@ namespace smile::primitive::array
             return { index };
         }
 
-        return {};
+        return std::nullopt;
+    }
+
+    template < HasBeginEnd ArrayType >
+    inline bool IsEqual( const ArrayType &first, const ArrayType &second )
+    {
+        using std::begin;
+        using std::end;
+
+        return std::equal( begin( first ), end( first ), begin( second ), end( second ) );
     }
 }
