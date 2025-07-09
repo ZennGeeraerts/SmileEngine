@@ -41,7 +41,7 @@ namespace smile::graphic
         Texture::Ref CreateTexture2D( Image::ConstRef pImage, bool updateable );
         Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
 
-        ConstantBuffer::Ref CreateConstantBuffer( const BufferLayout &layout );
+        ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
 
         VertexShader::Ref CreateVertexShader( const std::vector< Byte > &byteCode,
             const std::string &entryPoint,

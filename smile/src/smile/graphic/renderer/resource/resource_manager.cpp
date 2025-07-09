@@ -130,10 +130,10 @@ namespace smile::graphic
         return pTexture;
     }
 
-    ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const BufferLayout &layout )
+    ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
     {
         GPUBufferDescriptor bufferDesc{};
-        bufferDesc.Size = layout.GetStride();
+        bufferDesc.Size = descriptor.GetSize();
         bufferDesc.Usage = BufferUsage::Dynamic;
         bufferDesc.CPUAccess = CPUAccessMode::Write;
         bufferDesc.BindFlags = { BufferBindFlags::ConstantBuffer };
@@ -141,7 +141,7 @@ namespace smile::graphic
         GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
-        auto pConstantBuffer = memory::CreateRef< ConstantBuffer >( handle, bufferDesc.Size );
+        auto pConstantBuffer = memory::CreateRef< ConstantBuffer >( handle, descriptor );
         m_pConstantBuffers.PushBack( pConstantBuffer );
         return pConstantBuffer;
     }
