@@ -7,6 +7,9 @@
 #include "smile/graphic/rhi/resource/buffer.h"
 #include "smile/graphic/rhi/render_handle.h"
 
+class ID3D11Device;
+class ID3D11InputLayout;
+
 namespace smile::graphic
 {
     struct DirectX11Shader;

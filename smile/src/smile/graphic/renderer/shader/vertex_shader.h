@@ -13,6 +13,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< VertexShader >;
+        using ConstRef = memory::Ref< const VertexShader >;
 
         VertexShader( ShaderHandle handle ) : m_Handle{ handle }
         {

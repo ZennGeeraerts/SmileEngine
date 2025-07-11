@@ -4,7 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/collection/fixed_vector.h"
+#include "render_handle.h"
 
 namespace smile::graphic
 {

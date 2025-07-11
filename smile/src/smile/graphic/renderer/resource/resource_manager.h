@@ -14,6 +14,7 @@
 #include "index_buffer.h"
 #include "texture.h"
 #include "frame_buffer.h"
+#include "graphics_pipeline.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/shader/vertex_shader.h"
 #include "smile/graphic/renderer/shader/pixel_shader.h"
@@ -57,6 +58,13 @@ namespace smile::graphic
 
         BindingSet::Ref CreateBindingSet( const BindingSetDescriptor &descriptor, const BindingLayout &layout );
 
+        GraphicsPipeline::Ref CreateGraphicsPipeline( PrimitiveTopology topology,
+            const BufferLayout &inputLayout,
+            const RenderState &renderState,
+            VertexShader::ConstRef pVertexShader,
+            PixelShader::ConstRef pPixelShader,
+            const primitive::Vector< BindingLayout > &bindingLayouts );
+
       private:
         GraphicsDevice *m_pDevice = nullptr;
         primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
@@ -67,11 +75,13 @@ namespace smile::graphic
         primitive::Vector< PixelShader::Ref > m_pPixelShaders;
         primitive::Vector< Framebuffer::Ref > m_pFramebuffers;
         primitive::Vector< BindingSet::Ref > m_pBindingSets;
+        primitive::Vector< GraphicsPipeline::Ref > m_pGraphicsPipelines;
 
         GPUBufferHandleManager m_GPUBufferHandleManager;
         TextureHandleManager m_TextureHandleManager;
         FramebufferHandleManager m_FramebufferHandleManager;
         ShaderHandleManager m_ShaderHandleManager;
         BindingSetHandleManager m_BindingSetHandleManager;
+        GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
     };
 }

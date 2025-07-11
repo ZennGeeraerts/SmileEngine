@@ -29,7 +29,7 @@ namespace smile::graphic
             {
                 case ResourceType::Texture_SRV:
                 {
-                    DirectX11Texture &texture = device.m_Textures[binding.Texture.GetIndex()];
+                    DirectX11Texture &texture = device.m_Textures[binding.TextureHandle.GetIndex()];
 
                     SM_ASSERT( pShaderResourceViews[binding.Slot] == nullptr,
                         "DirectX11BindingSet::Create > Shader resource view slot is not nullptr" );
@@ -44,7 +44,7 @@ namespace smile::graphic
                 }
                 case ResourceType::Texture_UAV:
                 {
-                    DirectX11Texture &texture = device.m_Textures[binding.Texture.GetIndex()];
+                    DirectX11Texture &texture = device.m_Textures[binding.TextureHandle.GetIndex()];
 
                     SM_ASSERT( pUnorderedAccessViews[binding.Slot] == nullptr,
                         "DirectX11BindingSet::Create > Unordered access view slot is not nullptr" );

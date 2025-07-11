@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/hash_code.h"
+
 namespace smile::graphic
 {
     enum class CullMode : Uint8

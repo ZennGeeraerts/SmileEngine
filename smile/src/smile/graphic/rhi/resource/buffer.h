@@ -4,8 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
 #include "smile/common/foundation/hash_code.h"
 #include "smile/common/foundation/flags.h"
+#include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/format.h"
 #include "smile/graphic/rhi/cpu_access_mode.h"
 #include "smile/graphic/rhi/shader/resource_type.h"

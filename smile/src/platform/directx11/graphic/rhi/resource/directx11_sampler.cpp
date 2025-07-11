@@ -33,12 +33,12 @@ namespace smile::graphic
         }
     }
 
-    DirectX11SamplerState::~DirectX11SamplerState()
+    DirectX11Sampler::~DirectX11Sampler()
     {
         Destroy();
     }
 
-    void DirectX11SamplerState::Create( ID3D11Device *pDevice, const SamplerDescriptor &samplerDesc )
+    void DirectX11Sampler::Create( ID3D11Device *pDevice, const SamplerDescriptor &samplerDesc )
     {
         D3D11_SAMPLER_DESC desc{};
         desc.Filter = SamplerFilteringToDirectXType( samplerDesc.Filtering );
@@ -50,7 +50,7 @@ namespace smile::graphic
         SM_ASSERT_MSG( result == S_OK, "DirectX11SamplerState::Create > Failed to create sampler state" );
     }
 
-    void DirectX11SamplerState::Destroy()
+    void DirectX11Sampler::Destroy()
     {
         SAFE_RELEASE( pInternal );
     }

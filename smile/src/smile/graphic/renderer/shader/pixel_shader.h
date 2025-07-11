@@ -13,6 +13,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< PixelShader >;
+        using ConstRef = memory::Ref< const PixelShader >;
 
         PixelShader( ShaderHandle handle ) : m_Handle{ handle }
         {

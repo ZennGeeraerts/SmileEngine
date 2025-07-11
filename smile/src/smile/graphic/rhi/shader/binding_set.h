@@ -6,6 +6,7 @@
 
 #include "resource_type.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/rhi/resource/buffer.h"
 #include "smile/graphic/rhi/resource/texture.h"
 
 namespace smile::graphic
@@ -30,10 +31,10 @@ namespace smile::graphic
         {
             TextureSubresourceSet Subresources; // Valid for texture srv and texture uav
             BufferRange Range;                  // Valid for buffers
-            std::array< Uint32, 2 > RawData;
+            Uint32 RawData[2];
         };
 
-        static BindingSetElement Unknown( Uint32 slot )
+        static BindingSetElement CreateUnknown( Uint32 slot )
         {
             BindingSetElement result;
             result.Type = ResourceType::Unknown;
@@ -42,7 +43,7 @@ namespace smile::graphic
             return result;
         }
 
-        static BindingSetElement Texture_SRV( Uint32 slot, TextureHandle texture, Format format = Format::UNKNOWN )
+        static BindingSetElement CreateTextureSRV( Uint32 slot, TextureHandle texture, Format format = Format::UNKNOWN )
         {
             BindingSetElement result;
             result.Type = ResourceType::Texture_SRV;
@@ -52,7 +53,7 @@ namespace smile::graphic
             return result;
         }
 
-        static BindingSetElement Texture_UAV( Uint32 slot, TextureHandle texture, Format format = Format::UNKNOWN )
+        static BindingSetElement CreateTextureUAV( Uint32 slot, TextureHandle texture, Format format = Format::UNKNOWN )
         {
             BindingSetElement result;
             result.Type = ResourceType::Texture_UAV;
@@ -62,7 +63,7 @@ namespace smile::graphic
             return result;
         }
 
-        static BindingSetElement TypedBuffer_SRV( Uint32 slot,
+        static BindingSetElement CreateTypedBufferSRV( Uint32 slot,
             GPUBufferHandle buffer,
             Format format = Format::UNKNOWN,
             BufferRange range = s_EntireBuffer )
@@ -76,7 +77,7 @@ namespace smile::graphic
             return result;
         }
 
-        static BindingSetElement TypedBuffer_UAV( Uint32 slot,
+        static BindingSetElement CreateTypedBufferUAV( Uint32 slot,
             GPUBufferHandle buffer,
             Format format = Format::UNKNOWN,
             BufferRange range = s_EntireBuffer )
@@ -91,7 +92,7 @@ namespace smile::graphic
         }
 
         static BindingSetElement
-        ConstantBuffer( Uint32 slot, GPUBufferHandle buffer, BufferRange range = s_EntireBuffer )
+        CreateConstantBuffer( Uint32 slot, GPUBufferHandle buffer, BufferRange range = s_EntireBuffer )
         {
             BindingSetElement result;
             result.Type = ResourceType::ConstantBuffer;
@@ -102,7 +103,7 @@ namespace smile::graphic
             return result;
         }
 
-        static BindingSetElement Sampler( Uint32 slot, SamplerHandle sampler )
+        static BindingSetElement CreateSampler( Uint32 slot, SamplerHandle sampler )
         {
             BindingSetElement result;
             result.Type = ResourceType::Sampler;

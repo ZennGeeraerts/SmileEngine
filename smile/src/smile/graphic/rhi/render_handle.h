@@ -26,6 +26,6 @@ namespace smile::graphic
     using ShaderHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using ShaderHandle = FramebufferHandleManager::HandleType;
 
-    using GraphicsPipelineManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using GraphicsPipelineHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using GraphicsPipelineHandle = FramebufferHandleManager::HandleType;
 }

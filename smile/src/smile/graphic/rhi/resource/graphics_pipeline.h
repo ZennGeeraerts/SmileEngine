@@ -21,7 +21,7 @@ namespace smile::graphic
         ShaderHandle VertexShaderHandle;
         ShaderHandle PixelShaderHandle;
 
-        std::vector< BindingLayout > BindingLayouts;
+        primitive::Vector< BindingLayout > BindingLayouts;
 
         foundation::HashCode GetHashCode() const
         {

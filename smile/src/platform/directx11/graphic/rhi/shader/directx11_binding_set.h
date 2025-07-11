@@ -6,8 +6,8 @@
 
 #include "smile/graphic/rhi/shader/binding_set.h"
 #include "smile/graphic/rhi/shader/binding_layout.h"
+#include "smile/common/primitive/collection/array.h"
 
-#include <array>
 #include <d3d11.h>
 
 namespace smile::graphic

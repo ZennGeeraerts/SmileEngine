@@ -21,6 +21,11 @@ namespace smile::graphic
         {
         }
 
+        bool IsValid() const
+        {
+            return m_Handle.IsValid();
+        }
+
       private:
         BindingSetHandle m_Handle;
         BindingSetDescriptor m_Descriptor;

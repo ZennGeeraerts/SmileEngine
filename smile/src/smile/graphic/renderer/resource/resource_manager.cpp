@@ -34,6 +34,9 @@ namespace smile::graphic
 
         for ( auto pBindingSet : m_pBindingSets )
             m_pDevice->DestroyBindingSet( pBindingSet->m_Handle );
+
+        for ( auto pGraphicsPipeline : m_pGraphicsPipelines )
+            m_pDevice->DestroyGraphicsPipeline( pGraphicsPipeline->m_Handle );
     }
 
     void ResourceManager::Initialize( GraphicsDevice *pDevice )
@@ -212,5 +215,29 @@ namespace smile::graphic
         auto pBindingSet = memory::CreateRef< BindingSet >( handle, descriptor, layout );
         m_pBindingSets.PushBack( pBindingSet );
         return pBindingSet;
+    }
+
+    GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( PrimitiveTopology topology,
+        const BufferLayout &inputLayout,
+        const RenderState &renderState,
+        VertexShader::ConstRef pVertexShader,
+        PixelShader::ConstRef pPixelShader,
+        const primitive::Vector< BindingLayout > &bindingLayouts )
+    {
+        GraphicsPipelineDescriptor desc;
+        desc.Topology = topology;
+        desc.InputLayout = inputLayout;
+        desc.State = renderState;
+        desc.VertexShaderHandle = pVertexShader->m_Handle;
+        desc.PixelShaderHandle = pPixelShader->m_Handle;
+        desc.BindingLayouts = bindingLayouts;
+
+        GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
+        m_pDevice->CreateGraphicsPipeline( handle, desc );
+
+        auto pGraphicsPipeline = memory::CreateRef< GraphicsPipeline >(
+            handle, topology, inputLayout, renderState, pVertexShader, pPixelShader, bindingLayouts );
+        m_pGraphicsPipelines.PushBack( pGraphicsPipeline );
+        return pGraphicsPipeline;
     }
 }
