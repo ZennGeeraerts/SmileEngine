@@ -62,7 +62,9 @@ namespace smile::primitive
 
         char *GetData()
         {
-            return GetItemCount() > 0 ? Vector< char >::GetData() : "";
+            static char emptyStr[] = "";
+
+            return GetItemCount() > 0 ? Vector< char >::GetData() : emptyStr;
         }
 
         const char *GetData() const
