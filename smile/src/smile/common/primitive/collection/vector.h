@@ -175,22 +175,22 @@ namespace smile::primitive
 
         inline Iterator begin()
         {
-            return Iterator{ this, 0, m_pItems };
+            return Iterator{ this, 0 };
         }
 
         inline ConstIterator begin() const
         {
-            return ConstIterator{ this, 0, m_pItems };
+            return ConstIterator{ this, 0 };
         }
 
         inline Iterator end()
         {
-            return Iterator{ this, m_ItemCount, m_pItems };
+            return Iterator{ this, m_ItemCount };
         }
 
         inline ConstIterator end() const
         {
-            return ConstIterator{ this, m_ItemCount, m_pItems };
+            return ConstIterator{ this, m_ItemCount };
         }
 
         inline bool IsEmpty() const
