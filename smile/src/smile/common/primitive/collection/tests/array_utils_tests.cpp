@@ -47,9 +47,32 @@ namespace smile::primitive
             REQUIRE( array::FindItemIndex( rawItems, 6 ) == 0 );
             REQUIRE( array::FindItemIndex( rawItems, 7 ) );
             REQUIRE( array::FindItemIndex( rawItems, 7 ) == 1 );
-            REQUIRE( !array::FindItemIndex( rawItems, 8 ) );
+            REQUIRE_FALSE( array::FindItemIndex( rawItems, 8 ) );
             REQUIRE( array::FindItemIndex( rawItems, 9 ) );
             REQUIRE( array::FindItemIndex( rawItems, 9 ) == 2 );
+        }
+
+        SECTION( "IsEqual" )
+        {
+            Vector< int > a{ 1, 2, 4, 5 };
+            Vector< int > b{ 1, 2, 4 };
+            Vector< int > c{ 1, 2, 4, 6 };
+            Vector< int > d{ 1, 2, 4, 5, 6 };
+            Vector< int > e{ 1, 2, 4, 5 };
+            Vector< int > empty1{};
+            Vector< int > empty2{};
+
+            REQUIRE( array::IsEqual( empty1, empty2 ) );
+            REQUIRE_FALSE( array::IsEqual( empty1, a ) );
+            REQUIRE_FALSE( array::IsEqual( a, b ) );
+            REQUIRE_FALSE( array::IsEqual( a, c ) );
+            REQUIRE_FALSE( array::IsEqual( a, d ) );
+            REQUIRE( array::IsEqual( a, e ) );
+            REQUIRE_FALSE( array::IsEqual( a, empty1 ) );
+            REQUIRE_FALSE( array::IsEqual( b, a ) );
+            REQUIRE_FALSE( array::IsEqual( c, a ) );
+            REQUIRE_FALSE( array::IsEqual( d, a ) );
+            REQUIRE( array::IsEqual( e, a ) );
         }
     }
 }
