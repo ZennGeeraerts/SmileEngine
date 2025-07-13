@@ -98,6 +98,11 @@ namespace smile::primitive
             m_ItemCount = newItemCount;
         }
 
+        void Clear() noexcept
+        {
+            Resize( 0 );
+        }
+
         inline Iterator begin()
         {
             return { this, 0 };
