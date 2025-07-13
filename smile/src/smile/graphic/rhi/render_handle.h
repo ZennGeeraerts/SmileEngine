@@ -6,7 +6,7 @@
 
 #include "smile/common/primitive/handle_manager.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     using GPUBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using GPUBufferHandle = GPUBufferHandleManager::HandleType;

@@ -10,7 +10,9 @@
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/shader/binding_layout.h"
 
-namespace smile::graphic
+#include "smile/common/primitive/collection/vector.h"
+
+namespace smile::graphic::rhi
 {
     struct GraphicsPipelineDescriptor final
     {

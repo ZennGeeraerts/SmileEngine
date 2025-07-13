@@ -11,7 +11,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     void
     DirectX11Texture::Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const std::vector< Byte > &buffer )

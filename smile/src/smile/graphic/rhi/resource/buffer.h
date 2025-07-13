@@ -12,7 +12,7 @@
 #include "smile/graphic/rhi/cpu_access_mode.h"
 #include "smile/graphic/rhi/shader/resource_type.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct BufferElement final
     {

@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "dxgi_format.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static const DXGIFormatMapping s_FormatMappings[] = {
         { Format::UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN, DXGI_FORMAT_UNKNOWN },

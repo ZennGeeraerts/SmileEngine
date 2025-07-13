@@ -8,7 +8,7 @@
 #include "platform/directx11/graphic/rhi/directx11_device.h"
 #include "smile/common/memory/memory.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     DirectX11BindingSet::~DirectX11BindingSet()
     {

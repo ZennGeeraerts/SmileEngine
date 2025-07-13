@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "format.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static const FormatInfo s_FormatInfo[] = {
         { Format::UNKNOWN,

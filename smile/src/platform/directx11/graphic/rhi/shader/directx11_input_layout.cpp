@@ -12,7 +12,7 @@
 
 #include <d3d11.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     DirectX11InputLayout::~DirectX11InputLayout()
     {

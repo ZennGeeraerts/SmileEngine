@@ -13,7 +13,7 @@
 
 #include "smile/core/window/window.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     DirectX11Device::DirectX11Device()
     {
@@ -197,5 +197,27 @@ namespace smile::graphic
             m_Context.pDevice, pipelineDesc.InputLayout, m_Shaders[pipelineDesc.VertexShaderHandle.GetIndex()] );
 
         return m_InputLayoutCache.Add( pipelineDesc.InputLayout, std::move( pNewInputLayout ) );
+    }
+
+    ID3D11RenderTargetView *DirectX11Device::GetOrCreateRenderTargetViewForAttachment(
+        const FramebufferAttachment &attachment )
+    {
+        SM_ASSERT( attachment.Texture.IsValid() && m_Textures.IsValidIndex( attachment.Texture.GetIndex() ) );
+
+        auto &texture = m_Textures[attachment.Texture.GetIndex()];
+
+        return texture.GetOrCreateRenderTargetView(
+            m_Context.pDevice, attachment.TextureDesc.TextureFormat, attachment.Subresources );
+    }
+
+    ID3D11DepthStencilView *DirectX11Device::GetOrCreateDepthStencilViewForAttachment(
+        const FramebufferAttachment &attachment )
+    {
+        SM_ASSERT( attachment.Texture.IsValid() && m_Textures.IsValidIndex( attachment.Texture.GetIndex() ) );
+
+        auto &texture = m_Textures[attachment.Texture.GetIndex()];
+
+        return texture.GetOrCreateDepthStencilView(
+            m_Context.pDevice, attachment.Subresources, attachment.TextureDesc.CPUAccess == CPUAccessMode::Read );
     }
 }

@@ -29,7 +29,10 @@ namespace smile::window
     class Window;
 }
 
-namespace smile::graphic
+class ID3D11RenderTargetView;
+class ID3D11DepthStencilView;
+
+namespace smile::graphic::rhi
 {
     class DirectX11CommandList;
 
@@ -94,6 +97,9 @@ namespace smile::graphic
         const DirectX11DepthStencilState *GetOrCreateDepthStencilState( const DepthStencilState &depthStencilState );
         const DirectX11InputLayout *GetOrCreateInputLayout( const GraphicsPipelineDescriptor &pipelineDesc );
 
+        ID3D11RenderTargetView *GetOrCreateRenderTargetViewForAttachment( const FramebufferAttachment &attachment );
+        ID3D11DepthStencilView *GetOrCreateDepthStencilViewForAttachment( const FramebufferAttachment &attachment );
+
       private:
         DirectX11Context m_Context{};
         Scope< DirectX11CommandList > m_pImmediateCommandList;
@@ -113,5 +119,6 @@ namespace smile::graphic
         friend class DirectX11CommandList;
         friend class DirectX11BindingSet;
         friend class DirectX11Pipeline;
+        friend class DirectX11Framebuffer;
     };
 }

@@ -15,7 +15,7 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< Texture >;
 
-        Texture( TextureHandle handle, const Uint32 width, const Uint32 height )
+        Texture( rhi::TextureHandle handle, const Uint32 width, const Uint32 height )
             : m_Handle{ handle }, m_Width{ width }, m_Height{ height }
         {
         }
@@ -24,7 +24,7 @@ namespace smile::graphic
         Texture( const Texture & ) = delete;
         Texture( Texture && ) = delete;
 
-        TextureHandle GetHandle() const
+        rhi::TextureHandle GetHandle() const
         {
             return m_Handle;
         }
@@ -45,7 +45,7 @@ namespace smile::graphic
         }
 
       private:
-        TextureHandle m_Handle;
+        rhi::TextureHandle m_Handle;
         Uint32 m_Width;
         Uint32 m_Height;
 

@@ -24,7 +24,10 @@
 
 namespace smile::graphic
 {
-    class GraphicsDevice;
+    namespace rhi
+    {
+        class GraphicsDevice;
+    }
 
     class ResourceManager final
     {
@@ -32,10 +35,11 @@ namespace smile::graphic
         ResourceManager() = default;
         ~ResourceManager();
 
-        void Initialize( GraphicsDevice *pDevice );
+        void Initialize( rhi::GraphicsDevice *pDevice );
 
-        VertexBuffer::Ref CreateVertexBuffer( void *pVertices, const Count vertexCount, const BufferLayout &layout );
-        VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const BufferLayout &layout );
+        VertexBuffer::Ref
+        CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
+        VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
 
         IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
@@ -52,21 +56,23 @@ namespace smile::graphic
             const std::string &entryPoint,
             const std::string &targetProfile );
 
-        Framebuffer::Ref CreateFramebuffer( const FramebufferDescriptor &descriptor );
+        Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
+            const FramebufferAttachment &depthAttachment );
 
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
 
-        BindingSet::Ref CreateBindingSet( const BindingSetDescriptor &descriptor, const BindingLayout &layout );
+        BindingSet::Ref CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+            const rhi::BindingLayout &layout );
 
-        GraphicsPipeline::Ref CreateGraphicsPipeline( PrimitiveTopology topology,
-            const BufferLayout &inputLayout,
-            const RenderState &renderState,
+        GraphicsPipeline::Ref CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
+            const rhi::BufferLayout &inputLayout,
+            const rhi::RenderState &renderState,
             VertexShader::ConstRef pVertexShader,
             PixelShader::ConstRef pPixelShader,
-            const primitive::Vector< BindingLayout > &bindingLayouts );
+            const primitive::Vector< rhi::BindingLayout > &bindingLayouts );
 
       private:
-        GraphicsDevice *m_pDevice = nullptr;
+        rhi::GraphicsDevice *m_pDevice = nullptr;
         primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
         primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
         primitive::Vector< Texture::Ref > m_pTextures;
@@ -77,11 +83,11 @@ namespace smile::graphic
         primitive::Vector< BindingSet::Ref > m_pBindingSets;
         primitive::Vector< GraphicsPipeline::Ref > m_pGraphicsPipelines;
 
-        GPUBufferHandleManager m_GPUBufferHandleManager;
-        TextureHandleManager m_TextureHandleManager;
-        FramebufferHandleManager m_FramebufferHandleManager;
-        ShaderHandleManager m_ShaderHandleManager;
-        BindingSetHandleManager m_BindingSetHandleManager;
-        GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
+        rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
+        rhi::TextureHandleManager m_TextureHandleManager;
+        rhi::FramebufferHandleManager m_FramebufferHandleManager;
+        rhi::ShaderHandleManager m_ShaderHandleManager;
+        rhi::BindingSetHandleManager m_BindingSetHandleManager;
+        rhi::GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
     };
 }

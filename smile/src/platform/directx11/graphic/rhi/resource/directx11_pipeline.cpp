@@ -8,7 +8,7 @@
 #include "platform/directx11/graphic/rhi/directx11_device.h"
 #include "platform/directx11/graphic/rhi/directx11_primitive_topology.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     void DirectX11Pipeline::Create( DirectX11Device &device, const GraphicsPipelineDescriptor &desc )
     {

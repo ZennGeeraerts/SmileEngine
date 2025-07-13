@@ -16,7 +16,7 @@
 #include "shader/shader.h"
 #include "shader/binding_set.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     enum class RendererBackendType
     {

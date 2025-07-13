@@ -7,7 +7,7 @@
 #include "resource_type.h"
 #include "shader_stage.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct BindingLayoutElement final
     {

@@ -6,7 +6,7 @@
 
 #include "smile/common/foundation/hash_code.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     enum class CullMode : Uint8
     {

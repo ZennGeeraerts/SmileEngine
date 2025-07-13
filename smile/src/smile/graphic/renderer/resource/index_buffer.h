@@ -14,7 +14,7 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< IndexBuffer >;
 
-        IndexBuffer( GPUBufferHandle handle, const Count indexCount )
+        IndexBuffer( rhi::GPUBufferHandle handle, const Count indexCount )
             : m_Handle{ handle }, m_IndexCount{ indexCount }
         {
         }
@@ -32,7 +32,7 @@ namespace smile::graphic
         }
 
       private:
-        GPUBufferHandle m_Handle;
+        rhi::GPUBufferHandle m_Handle;
         Count m_IndexCount;
 
         friend class ResourceManager;

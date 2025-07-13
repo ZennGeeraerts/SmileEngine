@@ -8,7 +8,7 @@
 #include "render_handle.h"
 #include "resource/buffer.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct GraphicsState final
     {

@@ -15,14 +15,14 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< VertexBuffer >;
 
-        VertexBuffer( GPUBufferHandle handle, const BufferLayout &layout, const Count vertexCount )
+        VertexBuffer( rhi::GPUBufferHandle handle, const rhi::BufferLayout &layout, const Count vertexCount )
             : m_Handle{ handle }, m_BufferLayout{ layout }, m_VertexCount{ vertexCount }
         {
         }
 
         ~VertexBuffer() = default;
 
-        const BufferLayout &GetBufferLayout() const
+        const rhi::BufferLayout &GetBufferLayout() const
         {
             return m_BufferLayout;
         }
@@ -43,8 +43,8 @@ namespace smile::graphic
         }
 
       private:
-        GPUBufferHandle m_Handle;
-        BufferLayout m_BufferLayout;
+        rhi::GPUBufferHandle m_Handle;
+        rhi::BufferLayout m_BufferLayout;
         Count m_VertexCount;
 
         friend class ResourceManager;

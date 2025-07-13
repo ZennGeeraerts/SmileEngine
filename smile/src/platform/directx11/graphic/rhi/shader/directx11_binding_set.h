@@ -10,7 +10,7 @@
 
 #include <d3d11.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     class DirectX11Device;
 

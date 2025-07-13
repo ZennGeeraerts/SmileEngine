@@ -8,7 +8,7 @@
 
 #include "platform/directx11/graphic/rhi/directx11_diagnostics.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static D3D11_CULL_MODE CullModeToDirectXType( CullMode cullMode )
     {

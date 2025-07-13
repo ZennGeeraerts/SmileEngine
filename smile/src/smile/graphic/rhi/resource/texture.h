@@ -9,7 +9,7 @@
 #include "smile/graphic/rhi/cpu_access_mode.h"
 #include "smile/graphic/rhi/format.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     using MipmapLevel = Uint32;
     using ArraySlice = Uint32;
@@ -130,9 +130,9 @@ namespace smile::graphic
 namespace std
 {
     template <>
-    struct hash< smile::graphic::TextureBindingKey >
+    struct hash< smile::graphic::rhi::TextureBindingKey >
     {
-        smile::foundation::HashCode operator=( const smile::graphic::TextureBindingKey &textureBindingKey ) const
+        smile::foundation::HashCode operator=( const smile::graphic::rhi::TextureBindingKey &textureBindingKey ) const
         {
             return textureBindingKey.GetHashCode();
         }

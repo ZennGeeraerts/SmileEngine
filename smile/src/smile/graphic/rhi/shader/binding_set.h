@@ -9,7 +9,7 @@
 #include "smile/graphic/rhi/resource/buffer.h"
 #include "smile/graphic/rhi/resource/texture.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct BindingSetElement final
     {

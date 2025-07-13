@@ -1,56 +1,74 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include <DirectXMath.h>
+#include "texture.h"
+#include "smile/graphic/rhi/rhi.h"
+#include "smile/graphic/rhi/viewport.h"
+#include "smile/common/primitive/collection/fixed_vector.h"
+#include "smile/common/primitive/collection/array_utils.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
-    enum class FramebufferTextureFormat
+    struct FramebufferAttachment final
     {
-        None = 0,
-        RGBA8,
-        Depth24Stencil8,
-
-        Depth = Depth24Stencil8
-    };
-
-    struct FramebufferTextureData final
-    {
-        FramebufferTextureData() = default;
-        FramebufferTextureData( FramebufferTextureFormat format, bool useInShader = false )
-            : TextureFormat{ format }, UseInShader{ useInShader }
+        FramebufferAttachment() = default;
+        FramebufferAttachment( TextureHandle handle, const TextureDescriptor &textureDesc )
+            : Texture{ handle }, TextureDesc{ textureDesc }
         {
         }
 
-        FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
-        bool UseInShader;
-        // TODO: filtering/wrap
-    };
+        TextureHandle Texture;
+        TextureDescriptor TextureDesc;
+        TextureSubresourceSet Subresources{ 0, 1, 0, 1 };
 
-    struct FramebufferAttachmentData final
-    {
-        FramebufferAttachmentData() = default;
-        FramebufferAttachmentData( const std::initializer_list< FramebufferTextureData > &attachments )
-            : Attachments{ attachments }
+        bool IsValid() const
         {
+            return Texture.IsValid();
         }
-
-        std::vector< FramebufferTextureData > Attachments;
     };
 
     struct FramebufferDescriptor final
     {
-        Uint32 Width = 0;
-        Uint32 Height = 0;
-        FramebufferAttachmentData Attachments;
-        Uint16 Samples = 1;
+        primitive::FixedVector< FramebufferAttachment, s_MaxRenderTargets > ColorAttachments;
+        FramebufferAttachment DepthAttachment;
+    };
 
-        // TODO: if true -> Render to the swapchain
-        bool IsSwapChainTarget = false;
+    struct FramebufferInfo
+    {
+        FramebufferInfo() = default;
+        FramebufferInfo( const FramebufferDescriptor &desc );
 
-        DirectX::XMFLOAT4 ClearColor = { 1.f, 1.f, 1.f, 1.f };
+        inline bool operator==( const FramebufferInfo &other ) const
+        {
+            return primitive::array::IsEqual( ColorFormats, other.ColorFormats ) && DepthFormat == other.DepthFormat &&
+                   SampleCount == other.SampleCount && SampleQuality == other.SampleQuality;
+        }
+
+        inline bool operator!=( const FramebufferInfo &other ) const
+        {
+            return !( *this == other );
+        }
+
+        primitive::FixedVector< Format, s_MaxRenderTargets > ColorFormats;
+        Format DepthFormat = Format::UNKNOWN;
+        Count SampleCount = 1;
+        Uint32 SampleQuality = 0;
+    };
+
+    struct FramebufferInfoExtented final : public FramebufferInfo
+    {
+        FramebufferInfoExtented() = default;
+        FramebufferInfoExtented( const FramebufferDescriptor &desc );
+
+        [[nodiscard]] Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f )
+        {
+            return Viewport{ 0.0f, static_cast< float >( Width ), 0.0f, static_cast< float >( Height ), minZ, maxZ };
+        }
+
+        Uint32 Width{ 0 };
+        Uint32 Height{ 0 };
     };
 }

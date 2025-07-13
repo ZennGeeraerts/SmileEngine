@@ -10,7 +10,7 @@
 class ID3D11Device;
 class ID3D11InputLayout;
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct DirectX11Shader;
 

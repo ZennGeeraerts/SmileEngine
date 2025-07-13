@@ -8,7 +8,7 @@
 
 #include <d3d11.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct DirectX11RasterizerState final
     {

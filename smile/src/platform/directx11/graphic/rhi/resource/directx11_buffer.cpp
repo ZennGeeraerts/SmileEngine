@@ -12,7 +12,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static D3D11_USAGE BufferUsageToDirectXType( BufferUsage bufferUsage )
     {

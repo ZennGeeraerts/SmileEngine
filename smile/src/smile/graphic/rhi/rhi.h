@@ -8,7 +8,7 @@
 #include "smile/common/primitive/collection/fixed_vector.h"
 #include "render_handle.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
     static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );

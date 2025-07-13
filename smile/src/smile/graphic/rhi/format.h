@@ -4,7 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-namespace smile::graphic
+#include "smile/common/foundation/compiled.h"
+
+namespace smile::graphic::rhi
 {
     enum class Format : Uint8
     {

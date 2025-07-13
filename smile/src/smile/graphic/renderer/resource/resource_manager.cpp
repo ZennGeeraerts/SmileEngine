@@ -39,21 +39,21 @@ namespace smile::graphic
             m_pDevice->DestroyGraphicsPipeline( pGraphicsPipeline->m_Handle );
     }
 
-    void ResourceManager::Initialize( GraphicsDevice *pDevice )
+    void ResourceManager::Initialize( rhi::GraphicsDevice *pDevice )
     {
         m_pDevice = pDevice;
     }
 
     VertexBuffer::Ref
-    ResourceManager::CreateVertexBuffer( void *pVertices, const Count vertexCount, const BufferLayout &layout )
+    ResourceManager::CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout )
     {
-        GPUBufferDescriptor bufferDesc{};
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = vertexCount * layout.GetStride();
-        bufferDesc.Usage = BufferUsage::Immutable;
-        bufferDesc.CPUAccess = CPUAccessMode::None;
-        bufferDesc.BindFlags = { BufferBindFlags::VertexBuffer };
+        bufferDesc.Usage = rhi::BufferUsage::Immutable;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::None;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc, pVertices );
 
         auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout, vertexCount );
@@ -61,15 +61,16 @@ namespace smile::graphic
         return pVertexBuffer;
     }
 
-    VertexBuffer::Ref ResourceManager::CreateDynamicVertexBuffer( const Count vertexCount, const BufferLayout &layout )
+    VertexBuffer::Ref ResourceManager::CreateDynamicVertexBuffer( const Count vertexCount,
+        const rhi::BufferLayout &layout )
     {
-        GPUBufferDescriptor bufferDesc{};
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = vertexCount * layout.GetStride();
-        bufferDesc.Usage = BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = CPUAccessMode::Write;
-        bufferDesc.BindFlags = { BufferBindFlags::VertexBuffer };
+        bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
         auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
@@ -79,13 +80,13 @@ namespace smile::graphic
 
     memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( Uint32 *pIndices, const Count indexCount )
     {
-        GPUBufferDescriptor bufferDesc{};
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = indexCount * sizeof( Uint32 );
-        bufferDesc.Usage = BufferUsage::Immutable;
-        bufferDesc.CPUAccess = CPUAccessMode::None;
-        bufferDesc.BindFlags = { BufferBindFlags::IndexBuffer };
+        bufferDesc.Usage = rhi::BufferUsage::Immutable;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::None;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::IndexBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc, pIndices );
 
         auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, indexCount );
@@ -95,15 +96,15 @@ namespace smile::graphic
 
     Texture::Ref ResourceManager::CreateTexture2D( Image::ConstRef pImage, bool updateable )
     {
-        TextureDescriptor textureDesc{};
+        rhi::TextureDescriptor textureDesc{};
         textureDesc.Width = pImage->GetWidth();
         textureDesc.Height = pImage->GetHeight();
         textureDesc.TextureFormat = pImage->GetFormat();
-        textureDesc.Dimension = TextureDimension::Texture2D;
-        textureDesc.BindFlags = { TextureBindFlags::ShaderResource };
-        textureDesc.CPUAccess = updateable ? CPUAccessMode::Write : CPUAccessMode::Read;
+        textureDesc.Dimension = rhi::TextureDimension::Texture2D;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
 
-        TextureHandle handle = m_TextureHandleManager.CreateHandle();
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
         auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
         m_pDevice->CreateTexture( handle, textureDesc, buffer );
@@ -115,15 +116,15 @@ namespace smile::graphic
 
     Texture::Ref ResourceManager::CreateTextureCube( Image::ConstRef pImage, bool updateable )
     {
-        TextureDescriptor textureDesc{};
+        rhi::TextureDescriptor textureDesc{};
         textureDesc.Width = pImage->GetWidth();
         textureDesc.Height = pImage->GetHeight();
         textureDesc.TextureFormat = pImage->GetFormat();
-        textureDesc.Dimension = TextureDimension::TextureCube;
-        textureDesc.BindFlags = { TextureBindFlags::ShaderResource };
-        textureDesc.CPUAccess = updateable ? CPUAccessMode::Write : CPUAccessMode::Read;
+        textureDesc.Dimension = rhi::TextureDimension::TextureCube;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
 
-        TextureHandle handle = m_TextureHandleManager.CreateHandle();
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
         auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
         m_pDevice->CreateTexture( handle, textureDesc, buffer );
@@ -135,13 +136,13 @@ namespace smile::graphic
 
     ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
     {
-        GPUBufferDescriptor bufferDesc{};
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = descriptor.GetSize();
-        bufferDesc.Usage = BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = CPUAccessMode::Write;
-        bufferDesc.BindFlags = { BufferBindFlags::ConstantBuffer };
+        bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::ConstantBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
         auto pConstantBuffer = memory::CreateRef< ConstantBuffer >( handle, descriptor );
@@ -153,11 +154,11 @@ namespace smile::graphic
         const std::string &entryPoint,
         const std::string &targetProfile )
     {
-        ShaderDescriptor shaderDesc{ ShaderStage::Vertex };
+        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Vertex };
         shaderDesc.EntryPoint = entryPoint;
         shaderDesc.TargetProfile = targetProfile;
 
-        ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
         m_pDevice->CreateShader( handle, shaderDesc, byteCode );
 
         auto pVertexShader = memory::CreateRef< VertexShader >( handle );
@@ -169,11 +170,11 @@ namespace smile::graphic
         const std::string &entryPoint,
         const std::string &targetProfile )
     {
-        ShaderDescriptor shaderDesc{ ShaderStage::Pixel };
+        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Pixel };
         shaderDesc.EntryPoint = entryPoint;
         shaderDesc.TargetProfile = targetProfile;
 
-        ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
         m_pDevice->CreateShader( handle, shaderDesc, byteCode );
 
         auto pPixelShader = memory::CreateRef< PixelShader >( handle );
@@ -181,20 +182,33 @@ namespace smile::graphic
         return pPixelShader;
     }
 
-    Framebuffer::Ref ResourceManager::CreateFramebuffer( const FramebufferDescriptor &descriptor )
+    Framebuffer::Ref ResourceManager::CreateFramebuffer(
+        std::initializer_list< FramebufferAttachment > colorAttachments,
+        const FramebufferAttachment &depthAttachment )
     {
-        FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
-        m_pDevice->CreateFramebuffer( handle, descriptor );
+        rhi::FramebufferDescriptor desc{};
 
-        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle, descriptor.Width, descriptor.Height );
+        for ( const auto &attachment : colorAttachments )
+        {
+            desc.ColorAttachments.PushBack( rhi::FramebufferAttachment{
+                attachment.pTexture->GetHandle(), attachment.TextureFormat, attachment.IsReadOnly } );
+        }
+
+        desc.DepthAttachment = rhi::FramebufferAttachment{
+            depthAttachment.pTexture->GetHandle(), depthAttachment.TextureFormat, depthAttachment.IsReadOnly };
+
+        rhi::FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
+        m_pDevice->CreateFramebuffer( handle, desc );
+
+        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle, colorAttachments, depthAttachment );
         m_pFramebuffers.PushBack( pFramebuffer );
         return pFramebuffer;
     }
 
     void ResourceManager::ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height )
     {
-        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > s_MaxFramebufferCount ) ||
-             ( height > s_MaxFramebufferCount ) )
+        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > rhi::s_MaxFramebufferCount ) ||
+             ( height > rhi::s_MaxFramebufferCount ) )
         {
             SM_LOG_WARNING( "ResourceManager::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
             return;
@@ -206,10 +220,10 @@ namespace smile::graphic
         m_pDevice->InvalidateFramebuffer( pFramebuffer->m_Handle );
     }
 
-    BindingSet::Ref ResourceManager::CreateBindingSet( const BindingSetDescriptor &descriptor,
-        const BindingLayout &layout )
+    BindingSet::Ref ResourceManager::CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+        const rhi::BindingLayout &layout )
     {
-        BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
+        rhi::BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
         m_pDevice->CreateBindingSet( handle, descriptor, layout );
 
         auto pBindingSet = memory::CreateRef< BindingSet >( handle, descriptor, layout );
@@ -217,14 +231,14 @@ namespace smile::graphic
         return pBindingSet;
     }
 
-    GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( PrimitiveTopology topology,
-        const BufferLayout &inputLayout,
-        const RenderState &renderState,
+    GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
+        const rhi::BufferLayout &inputLayout,
+        const rhi::RenderState &renderState,
         VertexShader::ConstRef pVertexShader,
         PixelShader::ConstRef pPixelShader,
-        const primitive::Vector< BindingLayout > &bindingLayouts )
+        const primitive::Vector< rhi::BindingLayout > &bindingLayouts )
     {
-        GraphicsPipelineDescriptor desc;
+        rhi::GraphicsPipelineDescriptor desc;
         desc.Topology = topology;
         desc.InputLayout = inputLayout;
         desc.State = renderState;
@@ -232,7 +246,7 @@ namespace smile::graphic
         desc.PixelShaderHandle = pPixelShader->m_Handle;
         desc.BindingLayouts = bindingLayouts;
 
-        GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
+        rhi::GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
         m_pDevice->CreateGraphicsPipeline( handle, desc );
 
         auto pGraphicsPipeline = memory::CreateRef< GraphicsPipeline >(

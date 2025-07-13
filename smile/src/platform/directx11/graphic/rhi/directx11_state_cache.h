@@ -6,7 +6,7 @@
 
 #include <unordered_map>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     template < typename KeyType,
         typename StateType,

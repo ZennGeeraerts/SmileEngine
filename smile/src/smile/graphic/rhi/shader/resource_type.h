@@ -6,7 +6,7 @@
 
 #include "smile/common/foundation/compiled.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     enum class ResourceType : Uint8
     {

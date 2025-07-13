@@ -15,7 +15,7 @@ namespace smile::window
     class Window;
 }
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     class SwapChain;
 

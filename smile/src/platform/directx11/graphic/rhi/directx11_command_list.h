@@ -8,7 +8,7 @@
 #include "smile/graphic/rhi/rhi.h"
 #include "directx11_context.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     class DirectX11Device;
     class DirectX11Pipeline;

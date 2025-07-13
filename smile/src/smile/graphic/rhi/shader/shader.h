@@ -6,7 +6,7 @@
 
 #include "shader_stage.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct ShaderDescriptor final
     {

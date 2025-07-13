@@ -8,7 +8,7 @@
 #include "smile/core/window/window.h"
 #include "directx11_diagnostics.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     DirectX11SwapChain::DirectX11SwapChain( const window::Window *pWindow,
         ID3D11Device *pDevice,

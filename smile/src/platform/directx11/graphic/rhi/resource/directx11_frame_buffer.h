@@ -4,14 +4,18 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/fixed_vector.h"
 #include "smile/graphic/rhi/resource/frame_buffer.h"
 
-#include <d3d11.h>
+#include <wrl/client.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
-    struct DirectX11Framebuffer final
+    class DirectX11Device;
+
+    class DirectX11Framebuffer final
     {
+      public:
         DirectX11Framebuffer() = default;
         ~DirectX11Framebuffer() = default;
 
@@ -20,21 +24,14 @@ namespace smile::graphic
         DirectX11Framebuffer &operator=( const DirectX11Framebuffer & ) = delete;
         DirectX11Framebuffer &operator=( DirectX11Framebuffer && ) = delete;
 
-        void Create( ID3D11Device *pDevice, const FramebufferDescriptor &desc );
+        void Create( DirectX11Device &device, const FramebufferDescriptor &desc );
         void Destroy();
-        void Invalidate( ID3D11Device *pDevice );
 
         FramebufferDescriptor Descriptor{};
-        std::vector< FramebufferTextureData > ColorAttachmentData{};
-        FramebufferTextureData DepthAttachmentData = FramebufferTextureFormat::None;
+        FramebufferInfoExtented FramebufferInfo{};
 
-        std::vector< ID3D11Texture2D * > pColorAttachments{};
-        std::vector< ID3D11RenderTargetView * > pRenderTargetViews{};
-        std::vector< ID3D11ShaderResourceView * > pColorShaderResourceViews{};
-
-        ID3D11Texture2D *pDepthStencilAttachment = nullptr;
-        ID3D11DepthStencilView *pDepthStencilView = nullptr;
-
-        D3D11_VIEWPORT Viewport{};
+        primitive::FixedVector< Microsoft::WRL::ComPtr< ID3D11RenderTargetView >, s_MaxRenderTargets >
+            pRenderTargetViews{};
+        Microsoft::WRL::ComPtr< ID3D11DepthStencilView > pDepthStencilView = nullptr;
     };
 }

@@ -21,7 +21,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/logging/logging.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static ID3D11Buffer *s_NullConstantBuffers[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT]{ nullptr };
     static ID3D11ShaderResourceView *s_NullSRVs[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT]{ nullptr };
@@ -113,15 +113,15 @@ namespace smile::graphic
 
             for ( const auto &pRTV : framebuffer.pRenderTargetViews )
             {
-                pRenderTargetsViews.PushBack( pRTV );
+                pRenderTargetsViews.PushBack( pRTV.Get() );
             }
 
             if ( pipeline.PixelShaderHasUAVs )
             {
                 m_Context.pImmediateContext->OMSetRenderTargetsAndUnorderedAccessViews(
-                    static_cast< UINT >( pRenderTargetsViews.GetCurrentItemCount() ),
+                    static_cast< UINT >( pRenderTargetsViews.GetItemCount() ),
                     pRenderTargetsViews.GetData(),
-                    framebuffer.pDepthStencilView,
+                    framebuffer.pDepthStencilView.Get(),
                     D3D11_KEEP_UNORDERED_ACCESS_VIEWS,
                     0,
                     nullptr,
@@ -130,9 +130,9 @@ namespace smile::graphic
             else
             {
                 m_Context.pImmediateContext->OMSetRenderTargets(
-                    static_cast< UINT >( pRenderTargetsViews.GetCurrentItemCount() ),
+                    static_cast< UINT >( pRenderTargetsViews.GetItemCount() ),
                     pRenderTargetsViews.GetData(),
-                    framebuffer.pDepthStencilView );
+                    framebuffer.pDepthStencilView.Get() );
             }
         }
 
@@ -192,7 +192,7 @@ namespace smile::graphic
 
             const auto &vertexElements = pipeline.Layout.GetElements();
 
-            for ( auto i = 0; i < graphicsState.VertexBuffers.GetCurrentItemCount(); ++i )
+            for ( auto i = 0; i < graphicsState.VertexBuffers.GetItemCount(); ++i )
             {
                 const VertexBufferBinding &binding = graphicsState.VertexBuffers[i];
 
@@ -249,8 +249,8 @@ namespace smile::graphic
             m_CurrentGraphicsPipeline = graphicsState.Pipeline;
             m_CurrentFramebuffer = graphicsState.Framebuffer;
 
-            m_CurrentBindings.Resize( graphicsState.Bindings.GetCurrentItemCount() );
-            for ( auto i = 0; i < graphicsState.Bindings.GetCurrentItemCount(); ++i )
+            m_CurrentBindings.Resize( graphicsState.Bindings.GetItemCount() );
+            for ( auto i = 0; i < graphicsState.Bindings.GetItemCount(); ++i )
             {
                 m_CurrentBindings[i] = graphicsState.Bindings[i];
             }
@@ -258,8 +258,8 @@ namespace smile::graphic
             m_CurrentVertexBufferBindings = graphicsState.VertexBuffers;
             m_CurrentIndexBufferBinding = graphicsState.IndexBuffer;
 
-            m_CurrentVertexBuffers.Resize( graphicsState.VertexBuffers.GetCurrentItemCount() );
-            for ( auto i = 0; i < graphicsState.VertexBuffers.GetCurrentItemCount(); ++i )
+            m_CurrentVertexBuffers.Resize( graphicsState.VertexBuffers.GetItemCount() );
+            for ( auto i = 0; i < graphicsState.VertexBuffers.GetItemCount(); ++i )
             {
                 m_CurrentVertexBuffers[i] = graphicsState.VertexBuffers[i].VertexBuffer;
             }

@@ -6,6 +6,7 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "frame_buffer_attachment.h"
 
 namespace smile::graphic
 {
@@ -14,27 +15,24 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< Framebuffer >;
 
-        Framebuffer( FramebufferHandle handle, const Uint32 width, const Uint32 height )
-            : m_Handle{ handle }, m_Width{ width }, m_Height{ height }
+        Framebuffer( rhi::FramebufferHandle handle,
+            std::initializer_list< FramebufferAttachment > colorAttachments,
+            const FramebufferAttachment &depthAttachment )
+            : m_Handle{ handle }, m_ColorAttachments{ colorAttachments }, m_DepthAttachment{ depthAttachment }
         {
         }
 
         ~Framebuffer() = default;
 
-        Uint32 GetWidth() const
+        bool IsValid() const
         {
-            return m_Width;
-        }
-
-        Uint32 GetHeight() const
-        {
-            return m_Width;
+            return m_Handle.IsValid();
         }
 
       private:
-        FramebufferHandle m_Handle;
-        Uint32 m_Width{};
-        Uint32 m_Height{};
+        rhi::FramebufferHandle m_Handle;
+        primitive::Vector< FramebufferAttachment > m_ColorAttachments;
+        FramebufferAttachment m_DepthAttachment;
 
         friend class ResourceManager;
     };

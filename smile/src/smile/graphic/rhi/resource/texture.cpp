@@ -1,7 +1,7 @@
 #include "smpch.h"
 #include "texture.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     TextureSlice TextureSlice::Resolve( const TextureDescriptor &desc ) const
     {

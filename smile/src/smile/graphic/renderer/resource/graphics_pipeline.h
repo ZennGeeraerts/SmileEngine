@@ -16,13 +16,13 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< GraphicsPipeline >;
 
-        GraphicsPipeline( GraphicsPipelineHandle handle,
-            PrimitiveTopology topology,
-            const BufferLayout &inputLayout,
-            const RenderState &renderState,
+        GraphicsPipeline( rhi::GraphicsPipelineHandle handle,
+            rhi::PrimitiveTopology topology,
+            const rhi::BufferLayout &inputLayout,
+            const rhi::RenderState &renderState,
             VertexShader::ConstRef pVertexShader,
             PixelShader::ConstRef pPixelShader,
-            const primitive::Vector< BindingLayout > &bindingLayouts )
+            const primitive::Vector< rhi::BindingLayout > &bindingLayouts )
             : m_Handle{ handle },
               m_PrimitiveTopology{ topology },
               m_InputLayout{ inputLayout },
@@ -39,16 +39,16 @@ namespace smile::graphic
         }
 
       private:
-        GraphicsPipelineHandle m_Handle;
+        rhi::GraphicsPipelineHandle m_Handle;
 
-        PrimitiveTopology m_PrimitiveTopology;
-        BufferLayout m_InputLayout;
-        RenderState m_RenderState;
+        rhi::PrimitiveTopology m_PrimitiveTopology;
+        rhi::BufferLayout m_InputLayout;
+        rhi::RenderState m_RenderState;
 
         VertexShader::ConstRef m_pVertexShader;
         PixelShader::ConstRef m_pPixelShader;
 
-        primitive::Vector< BindingLayout > m_BindingLayouts;
+        primitive::Vector< rhi::BindingLayout > m_BindingLayouts;
 
         friend class ResourceManager;
     };

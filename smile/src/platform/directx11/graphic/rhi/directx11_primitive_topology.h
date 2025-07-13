@@ -8,17 +8,17 @@
 
 #include <d3d11.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static D3D11_PRIMITIVE_TOPOLOGY ConvertToDirectX11PrimitiveTopology( PrimitiveTopology primitiveTopology )
     {
         switch ( primitiveTopology )
         {
-            case smile::graphic::PrimitiveTopology::None:
+            case PrimitiveTopology::None:
                 return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-            case smile::graphic::PrimitiveTopology::TriangleList:
+            case PrimitiveTopology::TriangleList:
                 return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-            case smile::graphic::PrimitiveTopology::LineList:
+            case PrimitiveTopology::LineList:
                 return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
             default:
                 return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;

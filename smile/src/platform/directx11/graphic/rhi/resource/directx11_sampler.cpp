@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "directx11_sampler.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static D3D11_FILTER SamplerFilteringToDirectXType( SamplerFiltering filtering )
     {

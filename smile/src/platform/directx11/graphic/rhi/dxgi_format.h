@@ -8,7 +8,7 @@
 
 #include <dxgi.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct DXGIFormatMapping final
     {

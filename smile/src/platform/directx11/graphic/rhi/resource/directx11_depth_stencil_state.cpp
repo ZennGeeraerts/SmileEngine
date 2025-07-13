@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "directx11_depth_stencil_state.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static D3D11_DEPTH_WRITE_MASK DepthWriteMaskToDirectXType( DepthWriteMask depthWriteMask )
     {

@@ -6,7 +6,7 @@
 
 #include <Windows.h>
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     LPTSTR GetDirectX11ErrorMessage( HRESULT result );
 }

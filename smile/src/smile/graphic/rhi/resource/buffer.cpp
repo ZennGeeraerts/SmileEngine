@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "buffer.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     BufferRange BufferRange::Resolve( const GPUBufferDescriptor &bufferDesc ) const
     {

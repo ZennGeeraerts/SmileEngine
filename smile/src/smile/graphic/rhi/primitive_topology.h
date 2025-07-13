@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     enum class PrimitiveTopology : Uint8
     {

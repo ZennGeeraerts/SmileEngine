@@ -7,7 +7,7 @@
 
 #include "platform/directx11/graphic/rhi/directx11_device.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     Scope< GraphicsDevice > GraphicsDevice::Create( RendererBackendType backendType )
     {
