@@ -59,12 +59,16 @@ namespace smile::graphic::rhi
             const std::vector< Byte > &buffer = {} ) = 0;
         virtual void DestroyTexture( TextureHandle handle ) = 0;
 
+        virtual void CreateStagingTexture( StagingTextureHandle handle, const TextureDescriptor &desc ) = 0;
+        virtual void DestroyStagingTexture( StagingTextureHandle handle ) = 0;
+        virtual void *MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) = 0;
+        virtual void UnmapStagingTexture( StagingTextureHandle handle ) = 0;
+
         virtual void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) = 0;
         virtual void DestroySampler( SamplerHandle handle ) = 0;
 
         virtual void CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor ) = 0;
         virtual void DestroyFramebuffer( FramebufferHandle handle ) = 0;
-        virtual void InvalidateFramebuffer( FramebufferHandle handle ) = 0;
 
         static Scope< GraphicsDevice > Create( RendererBackendType backendType );
     };

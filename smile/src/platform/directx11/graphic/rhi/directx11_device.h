@@ -9,6 +9,7 @@
 
 #include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
+#include "resource/directx11_staging_texture.h"
 #include "resource/directx11_frame_buffer.h"
 #include "resource/directx11_pipeline.h"
 #include "resource/directx11_rasterizer_state.h"
@@ -85,12 +86,17 @@ namespace smile::graphic::rhi
             const std::vector< Byte > &buffer = {} ) override;
         void DestroyTexture( TextureHandle handle ) override;
 
+        void CreateStagingTexture( StagingTextureHandle handle, const TextureDescriptor &desc ) override;
+        void DestroyStagingTexture( StagingTextureHandle handle ) override;
+        void *
+        MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) override;
+        void UnmapStagingTexture( StagingTextureHandle handle ) override;
+
         void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) override;
         void DestroySampler( SamplerHandle handle ) override;
 
         void CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor ) override;
         void DestroyFramebuffer( FramebufferHandle handle ) override;
-        void InvalidateFramebuffer( FramebufferHandle handle ) override;
 
       private:
         const DirectX11RasterizerState *GetOrCreateRasterizerState( const RasterizerState &rasterizerState );
@@ -106,6 +112,7 @@ namespace smile::graphic::rhi
 
         primitive::Array< DirectX11Buffer, s_MaxBufferCount > m_GPUBuffers;
         primitive::Array< DirectX11Texture, s_MaxTextureCount > m_Textures;
+        primitive::Array< DirectX11StagingTexture, s_MaxTextureCount > m_StagingTextures;
         primitive::Array< DirectX11Sampler, s_MaxSamplerCount > m_Samplers;
         primitive::Array< DirectX11Framebuffer, s_MaxFramebufferCount > m_Framebuffers;
         primitive::Array< DirectX11BindingSet, s_MaxBindingSetCount > m_BindingSets;

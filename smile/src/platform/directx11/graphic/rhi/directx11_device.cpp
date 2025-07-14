@@ -136,6 +136,32 @@ namespace smile::graphic::rhi
         m_Textures[handle.GetIndex()].Destroy();
     }
 
+    void DirectX11Device::CreateStagingTexture( StagingTextureHandle handle, const TextureDescriptor &desc )
+    {
+        m_StagingTextures[handle.GetIndex()].Create( m_Context, desc );
+    }
+
+    void DirectX11Device::DestroyStagingTexture( StagingTextureHandle handle )
+    {
+        m_StagingTextures[handle.GetIndex()].Destroy();
+    }
+
+    void *DirectX11Device::MapStagingTexture( StagingTextureHandle handle,
+        const TextureSlice &slice,
+        CPUAccessMode cpuAccess )
+    {
+        SM_ASSERT( handle.IsValid() && m_StagingTextures.IsValidIndex( handle.GetIndex() ) );
+
+        return m_StagingTextures[handle.GetIndex()].Map( m_Context, slice, cpuAccess );
+    }
+
+    void DirectX11Device::UnmapStagingTexture( StagingTextureHandle handle )
+    {
+        SM_ASSERT( handle.IsValid() && m_StagingTextures.IsValidIndex( handle.GetIndex() ) );
+
+        m_StagingTextures[handle.GetIndex()].Unmap( *this );
+    }
+
     void DirectX11Device::CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc )
     {
         m_Samplers[handle.GetIndex()].Create( m_Context.pDevice, samplerDesc );
@@ -148,17 +174,12 @@ namespace smile::graphic::rhi
 
     void DirectX11Device::CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor )
     {
-        m_Framebuffers[handle.GetIndex()].Create( m_Context.pDevice, descriptor );
+        m_Framebuffers[handle.GetIndex()].Create( *this, descriptor );
     }
 
     void DirectX11Device::DestroyFramebuffer( FramebufferHandle handle )
     {
         m_Framebuffers[handle.GetIndex()].Destroy();
-    }
-
-    void DirectX11Device::InvalidateFramebuffer( FramebufferHandle handle )
-    {
-        m_Framebuffers[handle.GetIndex()].Invalidate( m_Context.pDevice );
     }
 
     const DirectX11RasterizerState *DirectX11Device::GetOrCreateRasterizerState(

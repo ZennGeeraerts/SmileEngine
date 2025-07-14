@@ -14,6 +14,9 @@ namespace smile::graphic::rhi
     using TextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using TextureHandle = TextureHandleManager::HandleType;
 
+    using StagingTextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using StagingTextureHandle = StagingTextureHandleManager::HandleType;
+
     using SamplerHandlerManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using SamplerHandle = SamplerHandlerManager::HandleType;
 
