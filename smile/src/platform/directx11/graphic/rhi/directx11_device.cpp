@@ -159,7 +159,33 @@ namespace smile::graphic::rhi
     {
         SM_ASSERT( handle.IsValid() && m_StagingTextures.IsValidIndex( handle.GetIndex() ) );
 
-        m_StagingTextures[handle.GetIndex()].Unmap( *this );
+        m_StagingTextures[handle.GetIndex()].Unmap( m_Context );
+    }
+
+    Object DirectX11Device::GetNativeView( TextureHandle handle,
+        ObjectType type,
+        Format format,
+        const TextureSubresourceSet &subresources,
+        TextureDimension dimension,
+        bool isReadOnlyDSV )
+    {
+        SM_ASSERT( handle.IsValid() && m_Textures.IsValidIndex( handle.GetIndex() ) );
+
+        auto &texture = m_Textures[handle.GetIndex()];
+
+        switch ( type )
+        {
+            case ObjectType::D3D11_RenderTargetView:
+                return texture.GetOrCreateRenderTargetView( m_Context.pDevice, format, subresources );
+            case ObjectType::D3D11_DepthStencilView:
+                return texture.GetOrCreateDepthStencilView( m_Context.pDevice, subresources, isReadOnlyDSV );
+            case ObjectType::D3D11_ShaderResourceView:
+                return texture.GetOrCreateShaderResourceView( m_Context.pDevice, format, subresources, dimension );
+            case ObjectType::D3D11_UnorderedAccessView:
+                return texture.GetOrCreateUnorderedAccessView( m_Context.pDevice, format, subresources, dimension );
+            default:
+                return nullptr;
+        }
     }
 
     void DirectX11Device::CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc )

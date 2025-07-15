@@ -92,6 +92,13 @@ namespace smile::graphic::rhi
         MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) override;
         void UnmapStagingTexture( StagingTextureHandle handle ) override;
 
+        Object GetNativeView( TextureHandle handle,
+            ObjectType type,
+            Format format,
+            const TextureSubresourceSet &subresources,
+            TextureDimension dimension,
+            bool isReadOnlyDSV = false ) override;
+
         void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) override;
         void DestroySampler( SamplerHandle handle ) override;
 

@@ -7,6 +7,7 @@
 #include "smile/common/memory/ref.h"
 #include "command_list.h"
 #include "render_handle.h"
+#include "object.h"
 
 #include "resource/buffer.h"
 #include "resource/texture.h"
@@ -61,8 +62,16 @@ namespace smile::graphic::rhi
 
         virtual void CreateStagingTexture( StagingTextureHandle handle, const TextureDescriptor &desc ) = 0;
         virtual void DestroyStagingTexture( StagingTextureHandle handle ) = 0;
-        virtual void *MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) = 0;
+        virtual void *
+        MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) = 0;
         virtual void UnmapStagingTexture( StagingTextureHandle handle ) = 0;
+
+        virtual Object GetNativeView( TextureHandle handle,
+            ObjectType type,
+            Format format,
+            const TextureSubresourceSet &subresources,
+            TextureDimension dimension,
+            bool isReadOnlyDSV = false ) = 0;
 
         virtual void CreateSampler( SamplerHandle handle, const SamplerDescriptor &samplerDesc ) = 0;
         virtual void DestroySampler( SamplerHandle handle ) = 0;
