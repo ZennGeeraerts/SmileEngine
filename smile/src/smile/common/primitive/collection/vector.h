@@ -399,12 +399,10 @@ namespace smile::primitive
         {
             SM_ASSERT( first <= last && last <= end() );
 
-            const Count itemsToRemove = last - first;
-            for ( auto index : foundation::GetRangeIterator( last.GetIndex() - 1, m_ItemCount ) )
-            {
-                m_pItems[index - itemsToRemove] = m_pItems[index];
-            }
+            memory::MoveArrayItems(
+                m_pItems + first.GetIndex(), m_ItemCount - last.GetIndex(), m_pItems + last.GetIndex() );
 
+            const Count itemsToRemove = last - first;
             m_ItemCount -= itemsToRemove;
 
             return first;

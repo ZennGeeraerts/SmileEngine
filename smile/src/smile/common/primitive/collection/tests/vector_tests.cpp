@@ -191,6 +191,13 @@ namespace smile::primitive
 
             for ( int i{}; i < values.GetItemCount(); ++i )
                 REQUIRE( values[i] == 1 );
+
+            Vector< int > otherValues{ 1, 2, 4, 8, 12, 24, 48 };
+            otherValues.Erase( otherValues.begin() + 1, otherValues.end() - 1 );
+
+            REQUIRE( otherValues.GetItemCount() == 2 );
+            REQUIRE( otherValues[0] == 1 );
+            REQUIRE( otherValues[1] == 48 );
         }
     }
 }
