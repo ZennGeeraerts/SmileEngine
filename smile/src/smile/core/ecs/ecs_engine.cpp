@@ -11,8 +11,8 @@ namespace smile::ecs
 {
     ECSEngine::~ECSEngine()
     {
-        while ( !m_pSystems.empty() )
-            RemoveSystem( m_pSystems.back() );
+        while ( !m_pSystems.IsEmpty() )
+            RemoveSystem( m_pSystems.GetLastItem() );
 
         for ( auto pCPool : m_pComponentPools )
             delete pCPool;
@@ -44,7 +44,7 @@ namespace smile::ecs
             DestroyEntity( deadHandle );
         }
 
-        m_DeadHandles.clear();
+        m_DeadHandles.Clear();
     }
 
     void ECSEngine::RemoveComponent( ComponentPool *pCPool, EntityHandle entityHandle )
@@ -65,8 +65,8 @@ namespace smile::ecs
 
     bool ECSEngine::IsComponentOwned( const ComponentPool *pCPool ) const
     {
-        return std::any_of( m_pGroups.cbegin(),
-            m_pGroups.cend(),
+        return std::any_of( m_pGroups.begin(),
+            m_pGroups.end(),
             [pCPool]( const GroupBase *pGroup )
             {
                 const auto &pOwnedPools = pGroup->GetOwnedPools();
@@ -76,13 +76,13 @@ namespace smile::ecs
 
     void ECSEngine::AddSystem( memory::Ref< BaseSystem > pSystem )
     {
-        m_pSystems.emplace_back( pSystem );
         pSystem->OnAdd( *this );
+        m_pSystems.PushBack( std::move( pSystem ) );
     }
 
     void ECSEngine::RemoveSystem( memory::Ref< BaseSystem > pSystem )
     {
-        m_pSystems.erase( std::remove( m_pSystems.begin(), m_pSystems.end(), pSystem ) );
+        m_pSystems.Erase( std::remove( m_pSystems.begin(), m_pSystems.end(), pSystem ) );
         pSystem->OnRemove( *this );
     }
 
@@ -93,12 +93,12 @@ namespace smile::ecs
             pCPool->Clear();
         }
 
-        while ( !m_pSystems.empty() )
-            RemoveSystem( m_pSystems.back() );
+        while ( !m_pSystems.IsEmpty() )
+            RemoveSystem( m_pSystems.GetLastItem() );
 
         for ( auto pGroup : m_pGroups )
             delete pGroup;
 
-        m_pGroups.clear();
+        m_pGroups.Clear();
     }
 }

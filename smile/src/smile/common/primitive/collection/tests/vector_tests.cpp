@@ -178,5 +178,19 @@ namespace smile::primitive
             REQUIRE( values.GetItemAtIndex( 0 ) == 1 );
             REQUIRE( values.GetItemAtIndex( 1 ) == 3 );
         }
+
+        SECTION( "Erase range" )
+        {
+            Vector< int > values{ 1, 0, 0, 1, 1, 0, 1 };
+
+            auto iterator = values.Erase(
+                std::remove_if( values.begin(), values.end(), []( int value ) { return value == 0; } ), values.end() );
+
+            REQUIRE( values.GetItemCount() == 4 );
+            REQUIRE( iterator == values.end() );
+
+            for ( int i{}; i < values.GetItemCount(); ++i )
+                REQUIRE( values[i] == 1 );
+        }
     }
 }

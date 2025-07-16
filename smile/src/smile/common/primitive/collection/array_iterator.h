@@ -48,9 +48,19 @@ namespace smile::primitive
             return m_Index < other.m_Index;
         }
 
+        bool operator<=( const ArrayIterator &other ) const
+        {
+            return m_Index <= other.m_Index;
+        }
+
         bool operator>( const ArrayIterator &other ) const
         {
             return m_Index > other.m_Index;
+        }
+
+        bool operator>=( const ArrayIterator &other ) const
+        {
+            return m_Index >= other.m_Index;
         }
 
         ArrayIterator &operator++()

@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2024 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -11,11 +11,12 @@
 #include "group_base.h"
 
 #include "smile/common/foundation/type_id.h"
-
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/array.h"
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/collection/array_utils.h"
 
 #include <algorithm>
-#include <array>
 
 namespace smile::ecs
 {
@@ -63,7 +64,7 @@ namespace smile::ecs
 
           private:
             static constexpr Uint32 s_Size = sizeof...( Components );
-            std::array< ComponentPool *, s_Size > m_pComponentPools;
+            primitive::Array< ComponentPool *, s_Size > m_pComponentPools;
         };
 
         template < typename... Components >
@@ -127,10 +128,10 @@ namespace smile::ecs
           public:
             View( ECSEngine &engine ) : m_Engine{ engine }
             {
-                std::vector< ComponentPool * > pCPools{ engine.GetComponentPool< Components >()... };
+                primitive::Vector< ComponentPool * > pCPools{ engine.GetComponentPool< Components >()... };
 
                 // Remove non existent component interfaces
-                pCPools.erase( std::remove_if( std::begin( pCPools ),
+                pCPools.Erase( std::remove_if( std::begin( pCPools ),
                                    std::end( pCPools ),
                                    []( const ComponentPool *pCPool ) { return !pCPool; } ),
                     std::end( pCPools ) );
@@ -246,7 +247,7 @@ namespace smile::ecs
 
         void MarkEntityForDelete( EntityHandle entityHandle )
         {
-            m_DeadHandles.push_back( entityHandle );
+            m_DeadHandles.PushBack( entityHandle );
         }
 
         template < typename ComponentType >
@@ -255,7 +256,7 @@ namespace smile::ecs
             ComponentPool *pCPool = new ComponentPool{ *this };
             pCPool->Initialize< ComponentType >();
 
-            m_pComponentPools.push_back( pCPool );
+            m_pComponentPools.PushBack( pCPool );
             m_ComponentPoolMap[typeID] = pCPool;
         }
 
@@ -379,7 +380,7 @@ namespace smile::ecs
                 RemoveComponent( pCPool, entity );
             }
 
-            m_pComponentPools.erase( std::remove( m_pComponentPools.begin(), m_pComponentPools.end(), pCPool ) );
+            m_pComponentPools.Erase( std::remove( m_pComponentPools.begin(), m_pComponentPools.end(), pCPool ) );
             m_ComponentPoolMap.erase( typeID );
         }
 
@@ -421,12 +422,12 @@ namespace smile::ecs
                 return *( static_cast< Group< Owned..., Get... > * >( *it ) );
 
             SM_ASSERT_MSG( std::none_of( pOwnedComponents.cbegin(),
-                           pOwnedComponents.cend(),
-                           [&]( const ComponentPool *pCPool ) { return pCPool && IsComponentOwned( pCPool ); } ),
+                               pOwnedComponents.cend(),
+                               [&]( const ComponentPool *pCPool ) { return pCPool && IsComponentOwned( pCPool ); } ),
                 "ECSEngine::GetGroup > Component pool(s) are already owned by a group" );
 
             GroupBase *pNewGroup = new Group< Owned..., Get... >{ *this, pOwnedComponents, pGetComponents };
-            m_pGroups.push_back( pNewGroup );
+            m_pGroups.PushBack( pNewGroup );
 
             return *( static_cast< Group< Owned..., Get... > * >( pNewGroup ) );
         }
@@ -434,7 +435,7 @@ namespace smile::ecs
         void AddSystem( memory::Ref< BaseSystem > pSystem );
         void RemoveSystem( memory::Ref< BaseSystem > pSystem );
 
-        const std::vector< memory::Ref< BaseSystem > > &GetSystems() const
+        const primitive::Vector< memory::Ref< BaseSystem > > &GetSystems() const
         {
             return m_pSystems;
         }
@@ -505,10 +506,10 @@ namespace smile::ecs
 
       private:
         EntityHandleManager m_HandleManager{};
-        std::vector< ComponentPool * > m_pComponentPools{};
+        primitive::Vector< ComponentPool * > m_pComponentPools{};
         std::unordered_map< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
-        std::vector< GroupBase * > m_pGroups{};
-        std::vector< memory::Ref< BaseSystem > > m_pSystems{};
-        std::vector< EntityHandle > m_DeadHandles{};
+        primitive::Vector< GroupBase * > m_pGroups{};
+        primitive::Vector< memory::Ref< BaseSystem > > m_pSystems{};
+        primitive::Vector< EntityHandle > m_DeadHandles{};
     };
 }

@@ -395,6 +395,21 @@ namespace smile::primitive
             return iterator;
         }
 
+        Iterator Erase( Iterator first, Iterator last )
+        {
+            SM_ASSERT( first <= last && last <= end() );
+
+            const Count itemsToRemove = last - first;
+            for ( auto index : foundation::GetRangeIterator( last.GetIndex() - 1, m_ItemCount ) )
+            {
+                m_pItems[index - itemsToRemove] = m_pItems[index];
+            }
+
+            m_ItemCount -= itemsToRemove;
+
+            return first;
+        }
+
         void EraseAtIndex( const Index index )
         {
             SM_ASSERT( IsValidIndex( index ) );
