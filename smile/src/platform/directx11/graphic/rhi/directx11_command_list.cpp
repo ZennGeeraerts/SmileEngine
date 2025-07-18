@@ -33,6 +33,17 @@ namespace smile::graphic::rhi
     {
     }
 
+    Object DirectX11CommandList::GetInternal( ObjectType type ) const
+    {
+        switch ( type )
+        {
+            case ObjectType::D3D11_DeviceContext:
+                return Object{ m_Context.pImmediateContext };
+            default:
+                return nullptr;
+        }
+    }
+
     void DirectX11CommandList::Open()
     {
         ClearState();

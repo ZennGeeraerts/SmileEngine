@@ -24,7 +24,7 @@ namespace smile::graphic::rhi
       public:
         virtual ~CommandList() = default;
 
-        virtual void *GetInternal() const = 0;
+        virtual Object GetInternal( ObjectType type ) const = 0;
 
         virtual void Open() = 0;
         virtual void Close() = 0;

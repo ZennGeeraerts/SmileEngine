@@ -53,10 +53,7 @@ namespace smile::graphic::rhi
         DirectX11Device &operator=( const DirectX11Device & ) = delete;
         DirectX11Device &operator=( DirectX11Device && ) = delete;
 
-        void *GetInternal() const override
-        {
-            return m_Context.pDevice;
-        }
+        Object GetInternal( ObjectType type ) const override;
 
         CommandList *CreateCommandList() override;
 

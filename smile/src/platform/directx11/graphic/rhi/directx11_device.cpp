@@ -67,6 +67,19 @@ namespace smile::graphic::rhi
         SAFE_RELEASE( m_Context.pDevice );
     }
 
+    Object DirectX11Device::GetInternal( ObjectType type ) const
+    {
+        switch ( type )
+        {
+            case ObjectType::D3D11_Device:
+                return Object{ m_Context.pDevice };
+            case ObjectType::D3D11_DeviceContext:
+                return Object{ m_Context.pImmediateContext };
+            default:
+                return nullptr;
+        }
+    }
+
     CommandList *DirectX11Device::CreateCommandList()
     {
         return m_pImmediateCommandList.get();

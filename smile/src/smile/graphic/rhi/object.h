@@ -10,6 +10,8 @@ namespace smile::graphic::rhi
 {
     enum class ObjectType : Uint32
     {
+        D3D11_Device,
+        D3D11_DeviceContext,
         D3D11_Resource,
         D3D11_Buffer,
         D3D11_RenderTargetView,

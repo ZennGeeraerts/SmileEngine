@@ -31,7 +31,7 @@ namespace smile::graphic::rhi
         GraphicsDevice() = default;
         virtual ~GraphicsDevice() = default;
 
-        virtual void *GetInternal() const = 0;
+        virtual Object GetInternal( ObjectType type ) const = 0;
 
         virtual CommandList *CreateCommandList() = 0;
 
