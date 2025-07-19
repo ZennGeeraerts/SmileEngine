@@ -163,14 +163,14 @@ namespace smile::graphic::rhi
         const TextureSlice &slice,
         CPUAccessMode cpuAccess )
     {
-        SM_ASSERT( handle.IsValid() && m_StagingTextures.IsValidIndex( handle.GetIndex() ) );
+        SM_ASSERT( IsHandleValid( handle, m_StagingTextures ) );
 
         return m_StagingTextures[handle.GetIndex()].Map( m_Context, slice, cpuAccess );
     }
 
     void DirectX11Device::UnmapStagingTexture( StagingTextureHandle handle )
     {
-        SM_ASSERT( handle.IsValid() && m_StagingTextures.IsValidIndex( handle.GetIndex() ) );
+        SM_ASSERT( IsHandleValid( handle, m_StagingTextures ) );
 
         m_StagingTextures[handle.GetIndex()].Unmap( m_Context );
     }
@@ -182,7 +182,7 @@ namespace smile::graphic::rhi
         TextureDimension dimension,
         bool isReadOnlyDSV )
     {
-        SM_ASSERT( handle.IsValid() && m_Textures.IsValidIndex( handle.GetIndex() ) );
+        SM_ASSERT( IsHandleValid( handle, m_Textures ) );
 
         auto &texture = m_Textures[handle.GetIndex()];
 
@@ -262,7 +262,7 @@ namespace smile::graphic::rhi
     ID3D11RenderTargetView *DirectX11Device::GetOrCreateRenderTargetViewForAttachment(
         const FramebufferAttachment &attachment )
     {
-        SM_ASSERT( attachment.Texture.IsValid() && m_Textures.IsValidIndex( attachment.Texture.GetIndex() ) );
+        SM_ASSERT( IsHandleValid( attachment.Texture, m_Textures ) );
 
         auto &texture = m_Textures[attachment.Texture.GetIndex()];
 
@@ -273,7 +273,7 @@ namespace smile::graphic::rhi
     ID3D11DepthStencilView *DirectX11Device::GetOrCreateDepthStencilViewForAttachment(
         const FramebufferAttachment &attachment )
     {
-        SM_ASSERT( attachment.Texture.IsValid() && m_Textures.IsValidIndex( attachment.Texture.GetIndex() ) );
+        SM_ASSERT( IsHandleValid( attachment.Texture, m_Textures ) );
 
         auto &texture = m_Textures[attachment.Texture.GetIndex()];
 

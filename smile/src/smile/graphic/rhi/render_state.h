@@ -105,27 +105,27 @@ namespace smile::graphic::rhi
 namespace std
 {
     template <>
-    struct hash< smile::graphic::RasterizerState >
+    struct hash< smile::graphic::rhi::RasterizerState >
     {
-        smile::foundation::HashCode operator()( const smile::graphic::RasterizerState &rasterizerState ) const
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::RasterizerState &rasterizerState ) const
         {
             return rasterizerState.GetHashCode();
         }
     };
 
     template <>
-    struct hash< smile::graphic::DepthStencilState >
+    struct hash< smile::graphic::rhi::DepthStencilState >
     {
-        smile::foundation::HashCode operator()( const smile::graphic::DepthStencilState &depthStencilState ) const
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::DepthStencilState &depthStencilState ) const
         {
             return depthStencilState.GetHashCode();
         }
     };
 
     template <>
-    struct hash< smile::graphic::RenderState >
+    struct hash< smile::graphic::rhi::RenderState >
     {
-        smile::foundation::HashCode operator()( const smile::graphic::RenderState &renderState ) const
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::RenderState &renderState ) const
         {
             return renderState.GetHashCode();
         }

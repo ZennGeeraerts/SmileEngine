@@ -25,6 +25,13 @@ namespace smile::graphic::rhi
         DirectX11 = 1
     };
 
+    template < typename CollectionType >
+    concept HasIsValidIndex = requires( const CollectionType &collection, const Index index ) {
+        {
+            collection.IsValidIndex( index )
+        } -> std::convertible_to< bool >;
+    };
+
     class GraphicsDevice
     {
       public:
@@ -80,5 +87,12 @@ namespace smile::graphic::rhi
         virtual void DestroyFramebuffer( FramebufferHandle handle ) = 0;
 
         static Scope< GraphicsDevice > Create( RendererBackendType backendType );
+
+      protected:
+        template < HasIsValidIndex CollectionType >
+        bool IsHandleValid( primitive::Handle< Uint64, 32, 32 > handle, const CollectionType &collection )
+        {
+            return handle.IsValid() && collection.IsValidIndex( handle.GetIndex() );
+        }
     };
 }
