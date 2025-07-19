@@ -38,8 +38,17 @@ namespace smile::graphic::rhi
         void DrawIndexed( const DrawIndexedParams &params ) override;
 
         void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
-        void *ReadTexture( TextureHandle handle ) override;
-        void *ReadTexture( FramebufferHandle handle, Uint32 index ) const override;
+
+        void ClearTexture( TextureHandle handle,
+            TextureSubresourceSet subresources,
+            const math::Color &clearColor ) const override;
+
+        void ClearDepthStencilTexture( TextureHandle handle,
+            TextureSubresourceSet subresources,
+            bool clearDepth,
+            float depth,
+            bool clearStencil,
+            Uint8 stencil ) const override;
 
       private:
         void PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,

@@ -6,7 +6,11 @@
 
 #include "graphics_state.h"
 #include "draw_params.h"
+#include "object.h"
+#include "resource/texture.h"
+
 #include "smile/common/memory/ref.h"
+#include "smile/core/math/color.h"
 
 #include <DirectXMath.h>
 
@@ -39,7 +43,16 @@ namespace smile::graphic::rhi
         virtual void DrawIndexed( const DrawIndexedParams &params ) = 0;
 
         virtual void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const = 0;
-        virtual void *ReadTexture( TextureHandle handle ) = 0;
-        virtual void *ReadTexture( FramebufferHandle handle, Uint32 index ) const = 0;
+
+        virtual void ClearTexture( TextureHandle handle,
+            TextureSubresourceSet subresources,
+            const math::Color &clearColor ) const = 0;
+
+        virtual void ClearDepthStencilTexture( TextureHandle handle,
+            TextureSubresourceSet subresources,
+            bool clearDepth,
+            float depth,
+            bool clearStencil,
+            Uint8 stencil ) const = 0;
     };
 }

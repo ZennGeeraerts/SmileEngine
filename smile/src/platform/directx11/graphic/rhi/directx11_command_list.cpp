@@ -279,6 +279,90 @@ namespace smile::graphic::rhi
         }
     }
 
+    void DirectX11CommandList::ClearTexture( TextureHandle handle,
+        TextureSubresourceSet subresources,
+        const math::Color &clearColor ) const
+    {
+        SM_ASSERT( m_pDevice->IsHandleValid( handle, m_pDevice->m_Textures ) );
+
+        DirectX11Texture &texture = m_pDevice->m_Textures[handle.GetIndex()];
+
+#ifdef SM_C_DEBUG
+        const FormatInfo &formatInfo = GetFormatInfo( texture.Descriptor.TextureFormat );
+        SM_ASSERT( !formatInfo.HasDepth && !formatInfo.HasStencil );
+        SM_ASSERT( texture.Descriptor.BindFlags.Has( TextureBindFlags::UnorderedAccess ) ||
+                   texture.Descriptor.BindFlags.Has( TextureBindFlags::RenderTarget ) ); // TODO: Flags HasAny function
+#endif
+
+        subresources = subresources.Resolve( texture.Descriptor, false );
+
+        for ( const MipmapLevel mipLevel : foundation::GetRangeIterator(
+                  subresources.BaseMipLevel, subresources.BaseMipLevel + subresources.MipLevelCount ) )
+        {
+            auto currentMipSlice =
+                TextureSubresourceSet{ mipLevel, 1, subresources.BaseArraySlice, subresources.ArraySliceCount };
+
+            if ( texture.Descriptor.BindFlags.Has( TextureBindFlags::UnorderedAccess ) )
+            {
+                ID3D11UnorderedAccessView *pUAV = texture.GetOrCreateUnorderedAccessView(
+                    m_Context.pDevice, Format::UNKNOWN, currentMipSlice, TextureDimension::Unknown );
+
+                m_Context.pImmediateContext->ClearUnorderedAccessViewFloat( pUAV, &clearColor.r );
+            }
+            else if ( texture.Descriptor.BindFlags.Has( TextureBindFlags::RenderTarget ) )
+            {
+                ID3D11RenderTargetView *pRTV =
+                    texture.GetOrCreateRenderTargetView( m_Context.pDevice, Format::UNKNOWN, currentMipSlice );
+
+                m_Context.pImmediateContext->ClearRenderTargetView( pRTV, &clearColor.r );
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    void DirectX11CommandList::ClearDepthStencilTexture( TextureHandle handle,
+        TextureSubresourceSet subresources,
+        bool clearDepth,
+        float depth,
+        bool clearStencil,
+        Uint8 stencil ) const
+    {
+        if ( !clearDepth && !clearStencil )
+            return;
+
+        SM_ASSERT( m_pDevice->IsHandleValid( handle, m_pDevice->m_Textures ) );
+
+        DirectX11Texture &texture = m_pDevice->m_Textures[handle.GetIndex()];
+
+#ifdef SM_C_DEBUG
+        const FormatInfo &formatInfo = GetFormatInfo( texture.Descriptor.TextureFormat );
+        SM_ASSERT( texture.Descriptor.BindFlags.Has( TextureBindFlags::RenderTarget ) );
+        SM_ASSERT( formatInfo.HasDepth || formatInfo.HasStencil );
+#endif
+
+        subresources = subresources.Resolve( texture.Descriptor, false );
+
+        for ( const MipmapLevel mipLevel : foundation::GetRangeIterator(
+                  subresources.BaseMipLevel, subresources.BaseMipLevel + subresources.MipLevelCount ) )
+        {
+            auto currentMipSlice =
+                TextureSubresourceSet{ mipLevel, 1, subresources.BaseArraySlice, subresources.ArraySliceCount };
+
+            ID3D11DepthStencilView *pDSV = texture.GetOrCreateDepthStencilView( m_Context.pDevice, currentMipSlice );
+
+            UINT clearFlags = 0;
+            if ( clearDepth )
+                clearFlags |= D3D11_CLEAR_DEPTH;
+            if ( clearStencil )
+                clearFlags |= D3D11_CLEAR_STENCIL;
+
+            m_Context.pImmediateContext->ClearDepthStencilView( pDSV, clearFlags, depth, stencil );
+        }
+    }
+
     void DirectX11CommandList::Draw( const DrawParams &params )
     {
         m_Context.pImmediateContext->Draw( params.VertexCount, params.VertexOffset );
@@ -297,26 +381,6 @@ namespace smile::graphic::rhi
         m_Context.pImmediateContext->Map( gpuBuffer.pInternal, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
         memcpy( mappedResource.pData, pData, size );
         m_Context.pImmediateContext->Unmap( gpuBuffer.pInternal, 0 );
-    }
-
-    void *DirectX11CommandList::ReadTexture( TextureHandle handle )
-    {
-        auto &texture = m_pDevice->m_Textures[handle.GetIndex()];
-
-        return texture.GetOrCreateShaderResourceView( m_Context.pDevice,
-            texture.Descriptor.TextureFormat,
-            TextureSubresourceSet{},
-            texture.Descriptor.Dimension );
-    }
-
-    void *DirectX11CommandList::ReadTexture( FramebufferHandle handle, Uint32 index ) const
-    {
-        const auto &framebuffer = m_pDevice->m_Framebuffers[handle.GetIndex()];
-
-        SM_ASSERT_MSG( index < framebuffer.pColorShaderResourceViews.size(),
-            "DirectX11Context::ReadTexture > Index out of range" );
-
-        return framebuffer.pColorShaderResourceViews[index];
     }
 
     void DirectX11CommandList::PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,
