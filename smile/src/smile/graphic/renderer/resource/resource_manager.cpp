@@ -221,12 +221,32 @@ namespace smile::graphic
     }
 
     BindingSet::Ref ResourceManager::CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
-        const rhi::BindingLayout &layout )
+        foundation::Flags< rhi::ShaderStage > shaderStage )
     {
-        rhi::BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
-        m_pDevice->CreateBindingSet( handle, descriptor, layout );
+        auto convertSetToLayout = []( const rhi::BindingSetDescriptor &desc, rhi::BindingLayout &layout )
+        {
+            for ( const rhi::BindingSetElement &element : desc )
+            {
+                const Uint16 size = [&]()
+                {
+                    if ( element.Type == rhi::ResourceType::PushConstants )
+                        return element.Range.Size;
+                    else
+                        return 0u;
+                }();
 
-        auto pBindingSet = memory::CreateRef< BindingSet >( handle, descriptor, layout );
+                rhi::BindingLayoutElement layoutElement{ element.Slot, element.Type, size };
+                layout.AddElement( std::move( layoutElement ) );
+            }
+        };
+
+        rhi::BindingLayout bindingLayout{ shaderStage };
+        convertSetToLayout( descriptor, bindingLayout );
+
+        rhi::BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
+        m_pDevice->CreateBindingSet( handle, descriptor, bindingLayout );
+
+        auto pBindingSet = memory::CreateRef< BindingSet >( handle, descriptor, bindingLayout );
         m_pBindingSets.PushBack( pBindingSet );
         return pBindingSet;
     }

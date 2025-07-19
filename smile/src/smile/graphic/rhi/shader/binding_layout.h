@@ -68,6 +68,11 @@ namespace smile::graphic::rhi
             m_Elements.push_back( element );
         }
 
+        void AddElement( BindingLayoutElement &&element )
+        {
+            m_Elements.emplace_back( std::move( element ) );
+        }
+
       private:
         std::vector< BindingLayoutElement > m_Elements;
         foundation::Flags< ShaderStage > m_Visibility;

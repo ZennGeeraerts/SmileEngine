@@ -127,6 +127,26 @@ namespace smile::graphic::rhi
             Elements.push_back( elem );
         }
 
+        auto begin()
+        {
+            return Elements.begin();
+        }
+
+        auto begin() const
+        {
+            return Elements.begin();
+        }
+
+        auto end()
+        {
+            return Elements.end();
+        }
+
+        auto end() const
+        {
+            return Elements.end();
+        }
+
         std::vector< BindingSetElement > Elements;
     };
 }

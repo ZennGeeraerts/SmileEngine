@@ -24,10 +24,7 @@ namespace smile::graphic::rhi
         DirectX11CommandList &operator=( const DirectX11CommandList & ) = delete;
         DirectX11CommandList &operator=( DirectX11CommandList && ) = delete;
 
-        Object GetInternal(ObjectType type) const override
-        {
-            return m_Context.pImmediateContext;
-        }
+        Object GetInternal( ObjectType type ) const override;
 
         void Open() override;
         void Close() override;

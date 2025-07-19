@@ -16,7 +16,7 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< BindingSet >;
 
-        BindingSet( BindingSetHandle handle, const BindingSetDescriptor &descriptor, const BindingLayout &layout )
+        BindingSet( rhi::BindingSetHandle handle, const rhi::BindingSetDescriptor &descriptor, const rhi::BindingLayout &layout )
             : m_Handle{ handle }, m_Descriptor{ descriptor }, m_Layout{ layout }
         {
         }
@@ -27,9 +27,9 @@ namespace smile::graphic
         }
 
       private:
-        BindingSetHandle m_Handle;
-        BindingSetDescriptor m_Descriptor;
-        BindingLayout m_Layout;
+        rhi::BindingSetHandle m_Handle;
+        rhi::BindingSetDescriptor m_Descriptor;
+        rhi::BindingLayout m_Layout;
 
         friend class ResourceManager;
     };

@@ -62,7 +62,7 @@ namespace smile::graphic
         void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
 
         BindingSet::Ref CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
-            const rhi::BindingLayout &layout );
+            foundation::Flags< rhi::ShaderStage > shaderStage );
 
         GraphicsPipeline::Ref CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
             const rhi::BufferLayout &inputLayout,
