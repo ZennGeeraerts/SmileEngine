@@ -89,6 +89,11 @@ namespace smile::graphic::rhi
         MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) override;
         void UnmapStagingTexture( StagingTextureHandle handle ) override;
 
+        void CreateHandleForNativeTexture( TextureHandle handle,
+            Object nativeTexture,
+            ObjectType type,
+            const TextureDescriptor &desc ) override;
+
         Object GetNativeView( TextureHandle handle,
             ObjectType type,
             Format format,

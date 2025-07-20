@@ -73,6 +73,11 @@ namespace smile::graphic::rhi
         MapStagingTexture( StagingTextureHandle handle, const TextureSlice &slice, CPUAccessMode cpuAccess ) = 0;
         virtual void UnmapStagingTexture( StagingTextureHandle handle ) = 0;
 
+        virtual void CreateHandleForNativeTexture( TextureHandle handle,
+            Object nativeTexture,
+            ObjectType type,
+            const TextureDescriptor &desc ) = 0;
+
         virtual Object GetNativeView( TextureHandle handle,
             ObjectType type,
             Format format,

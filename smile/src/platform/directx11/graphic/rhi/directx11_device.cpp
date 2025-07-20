@@ -175,6 +175,21 @@ namespace smile::graphic::rhi
         m_StagingTextures[handle.GetIndex()].Unmap( m_Context );
     }
 
+    void DirectX11Device::CreateHandleForNativeTexture( TextureHandle handle,
+        Object nativeTexture,
+        ObjectType type,
+        const TextureDescriptor &desc )
+    {
+        SM_ASSERT( IsHandleValid( handle, m_Textures ) );
+
+        if ( !nativeTexture.Pointer || type != ObjectType::D3D11_Resource )
+            return;
+
+        DirectX11Texture &texture = m_Textures[handle.GetIndex()];
+        texture.pInternal = static_cast< ID3D11Resource * >( nativeTexture.Pointer );
+        texture.Descriptor = desc;
+    }
+
     Object DirectX11Device::GetNativeView( TextureHandle handle,
         ObjectType type,
         Format format,
