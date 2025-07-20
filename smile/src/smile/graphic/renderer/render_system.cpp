@@ -5,6 +5,8 @@
 #include "smpch.h"
 #include "render_system.h"
 
+#include "frame.h"
+
 namespace smile::graphic
 {
     RenderSystem::RenderSystem()
@@ -32,12 +34,32 @@ namespace smile::graphic
     {
         if ( m_pBoundFramebuffer )
         {
-            m_pImmediateCommandList->ClearFramebuffer( m_pBoundFramebuffer->Handle );
+            for ( const auto &colorAttachment : m_pBoundFramebuffer->GetColorAttachments() )
+            {
+                m_pImmediateCommandList->ClearTexture(
+                    colorAttachment.pTexture->GetHandle(), rhi::TextureSubresourceSet{}, m_ClearColor );
+            }
+
+            const auto &depthAttachment = m_pBoundFramebuffer->GetDepthAttachment();
+            m_pImmediateCommandList->ClearDepthStencilTexture(
+                depthAttachment.pTexture->GetHandle(), rhi::TextureSubresourceSet{}, true, 1.0f, true, 0 );
         }
         else
         {
             m_pImmediateCommandList->ClearBackBuffer( m_pSwapChain, m_ClearColor );
         }
+    }
+
+    void RenderSystem::BeginFrame()
+    {
+        m_CurrentFrameIndex = AssignFrameData();
+    }
+
+    void RenderSystem::EndFrame()
+    {
+        Present();
+        ReleaseFrameData( m_RenderedFrameIndex );
+        m_RenderedFrameIndex = m_CurrentFrameIndex;
     }
 
     void RenderSystem::BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const
@@ -66,11 +88,11 @@ namespace smile::graphic
         m_pImmediateCommandList->UnbindIndexBuffer();
     }
 
-    void RenderSystem::BindUniformBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const
+    void RenderSystem::BindConstantBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const
     {
     }
 
-    void RenderSystem::UnbindUniformBuffer() const
+    void RenderSystem::UnbindConstantBuffer() const
     {
     }
 

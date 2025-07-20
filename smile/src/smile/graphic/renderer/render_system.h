@@ -38,15 +38,18 @@ namespace smile::graphic
 
         void Clear();
 
-        void BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const;
-        void UnbindVertexBuffer() const;
-        void FillVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer, void *pData, Uint32 vertexCount ) const;
+        void BeginFrame();
+        void EndFrame();
 
-        void BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const;
+        void BindVertexBuffer( VertexBuffer::Ref pVertexBuffer ) const;
+        void UnbindVertexBuffer() const;
+        void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, Count vertexCount ) const;
+
+        void BindIndexBuffer( IndexBuffer::Ref pIndexBuffer ) const;
         void UnbindIndexBuffer() const;
 
-        void BindUniformBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const;
-        void UnbindUniformBuffer() const;
+        void BindConstantBuffer( ConstantBuffer::Ref pConstantBuffer ) const;
+        void UnbindConstantBuffer() const;
 
         void BindShader( memory::Ref< Shader > pShader );
         void UnbindShader();
@@ -68,31 +71,34 @@ namespace smile::graphic
             return m_ResourceManager;
         }
 
-        RendererBackendType GetRendererAPI() const
+        rhi::RendererBackendType GetRendererAPI() const
         {
             return m_API;
         }
 
-        GraphicsDevice *GetGraphicsDevice() const
+        rhi::GraphicsDevice *GetGraphicsDevice() const
         {
             return m_pDevice.get();
         }
 
-        CommandList *GetImmediateCommandList() const
+        rhi::CommandList *GetImmediateCommandList() const
         {
             return m_pImmediateCommandList;
         }
 
       private:
-        RendererBackendType m_API;
-        Scope< GraphicsDevice > m_pDevice;
-        CommandList *m_pImmediateCommandList;
+        rhi::RendererBackendType m_API;
+        Scope< rhi::GraphicsDevice > m_pDevice;
+        rhi::CommandList *m_pImmediateCommandList;
         ResourceManager m_ResourceManager{};
 
-        DirectX::XMFLOAT4 m_ClearColor{};
+        math::Color m_ClearColor{};
 
-        memory::Ref< SwapChain > m_pSwapChain = nullptr;
+        memory::Ref< rhi::SwapChain > m_pSwapChain = nullptr;
         memory::Ref< Shader > m_pBoundShader = nullptr;
         memory::Ref< Framebuffer > m_pBoundFramebuffer = nullptr;
+
+        Index m_CurrentFrameIndex{ 0 };
+        Index m_RenderedFrameIndex{ 0 };
     };
 }

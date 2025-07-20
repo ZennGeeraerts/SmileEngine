@@ -77,7 +77,7 @@ namespace smile::graphic::rhi
     }
 
     void DirectX11CommandList::ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
-        const DirectX::XMFLOAT4 &clearColor ) const
+        const math::Color &clearColor ) const
     {
         auto pDX11SwapChain = memory::Ref< DirectX11SwapChain >{ pSwapChain };
 

@@ -31,7 +31,7 @@ namespace smile::graphic::rhi
         void ClearState() override;
 
         void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const override;
-        void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const DirectX::XMFLOAT4 &clearColor ) const override;
+        void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const math::Color &clearColor ) const override;
 
         void SetGraphicsState( const GraphicsState &graphicsState ) override;
         void Draw( const DrawParams &params ) override;

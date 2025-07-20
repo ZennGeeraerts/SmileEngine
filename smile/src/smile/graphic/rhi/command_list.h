@@ -12,8 +12,6 @@
 #include "smile/common/memory/ref.h"
 #include "smile/core/math/color.h"
 
-#include <DirectXMath.h>
-
 namespace smile::window
 {
     class Window;
@@ -36,7 +34,7 @@ namespace smile::graphic::rhi
 
         virtual void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const = 0;
         virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
-            const DirectX::XMFLOAT4 &clearColor ) const = 0;
+            const math::Color &clearColor ) const = 0;
 
         virtual void SetGraphicsState( const GraphicsState &graphicsState ) = 0;
         virtual void Draw( const DrawParams &params ) = 0;
