@@ -42,7 +42,7 @@ namespace smile::graphic::rhi
 
         virtual CommandList *CreateCommandList() = 0;
 
-        virtual memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
+        virtual Scope< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
 
         virtual void
         CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc, void *pData = nullptr ) = 0;

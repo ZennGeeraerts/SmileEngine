@@ -73,7 +73,7 @@ namespace smile::graphic
         rhi::CommandList *m_pImmediateCommandList;
         ResourceManager m_ResourceManager{};
 
-        memory::Ref< rhi::SwapChain > m_pSwapChain = nullptr;
+        Scope< rhi::SwapChain > m_pSwapChain = nullptr;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

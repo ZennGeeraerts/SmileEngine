@@ -85,9 +85,9 @@ namespace smile::graphic::rhi
         return m_pImmediateCommandList.get();
     }
 
-    memory::Ref< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
+    Scope< SwapChain > DirectX11Device::CreateSwapChain( const window::Window *pWindow )
     {
-        auto pSwapChain = memory::CreateRef< DirectX11SwapChain >(
+        auto pSwapChain = CreateScope< DirectX11SwapChain >(
             pWindow, m_Context.pDevice, m_Context.pImmediateContext, m_Context.pDXGIFactory );
         pSwapChain->Create();
         return pSwapChain;

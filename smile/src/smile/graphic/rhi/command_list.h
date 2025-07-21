@@ -33,8 +33,7 @@ namespace smile::graphic::rhi
         virtual void ClearState() = 0;
 
         virtual void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const = 0;
-        virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
-            const math::Color &clearColor ) const = 0;
+        virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const math::Color &clearColor ) const = 0;
 
         virtual void SetGraphicsState( const GraphicsState &graphicsState ) = 0;
         virtual void Draw( const DrawParams &params ) = 0;
@@ -48,9 +47,7 @@ namespace smile::graphic::rhi
 
         virtual void ClearDepthStencilTexture( TextureHandle handle,
             TextureSubresourceSet subresources,
-            bool clearDepth,
-            float depth,
-            bool clearStencil,
-            Uint8 stencil ) const = 0;
+            std::optional< float > depth,
+            std::optional< Uint8 > stencil ) const = 0;
     };
 }

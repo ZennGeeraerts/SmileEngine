@@ -57,7 +57,7 @@ namespace smile::graphic::rhi
 
         CommandList *CreateCommandList() override;
 
-        memory::Ref< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
+        Scope< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
 
         void CreateGPUBuffer( GPUBufferHandle handle,
             const GPUBufferDescriptor &bufferDesc,
