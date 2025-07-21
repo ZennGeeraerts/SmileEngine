@@ -7,12 +7,13 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
 
-#include "resource/resource_manager.h"
-#include "smile/graphic/rhi/graphics_device.h"
-#include "smile/graphic/rhi/render_state.h"
-#include "smile/graphic/rhi/swap_chain.h"
+#include "smile/core/math/color.h"
 
-#include <DirectXMath.h>
+#include "graphics_state.h"
+#include "resource/resource_manager.h"
+#include "smile/graphic/rhi/command_list.h"
+#include "smile/graphic/rhi/graphics_device.h"
+#include "smile/graphic/rhi/swap_chain.h"
 
 namespace smile::window
 {
@@ -31,7 +32,7 @@ namespace smile::graphic
 
         void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
 
-        void SetClearColor( const DirectX::XMFLOAT4 &color )
+        void SetClearColor( const math::Color &color )
         {
             m_ClearColor = color;
         }
@@ -41,30 +42,12 @@ namespace smile::graphic
         void BeginFrame();
         void EndFrame();
 
-        void BindVertexBuffer( VertexBuffer::Ref pVertexBuffer ) const;
-        void UnbindVertexBuffer() const;
-        void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, Count vertexCount ) const;
-
-        void BindIndexBuffer( IndexBuffer::Ref pIndexBuffer ) const;
-        void UnbindIndexBuffer() const;
-
-        void BindConstantBuffer( ConstantBuffer::Ref pConstantBuffer ) const;
-        void UnbindConstantBuffer() const;
-
-        void BindShader( memory::Ref< Shader > pShader );
-        void UnbindShader();
-
-        void BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer );
-        void BindBackBuffer();
-
-        void SetState( const RenderState &state ) const;
-
-        void *ReadTexture( memory::Ref< Texture > pTexture ) const;
-        void *ReadTexture( memory::Ref< Framebuffer > pFramebuffer, Uint32 index ) const;
-
+        void SetGraphicsState( const GraphicsState &state );
         void DrawIndexed( Uint32 indexCount );
         void Draw( Uint32 vertexCount );
         void Present();
+
+        void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
 
         ResourceManager &GetResourceManager()
         {
@@ -95,10 +78,10 @@ namespace smile::graphic
         math::Color m_ClearColor{};
 
         memory::Ref< rhi::SwapChain > m_pSwapChain = nullptr;
-        memory::Ref< Shader > m_pBoundShader = nullptr;
-        memory::Ref< Framebuffer > m_pBoundFramebuffer = nullptr;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };
+
+        GraphicsState m_GraphicsState;
     };
 }

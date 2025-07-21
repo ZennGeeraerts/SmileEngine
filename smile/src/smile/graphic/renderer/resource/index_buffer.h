@@ -21,6 +21,11 @@ namespace smile::graphic
 
         ~IndexBuffer() = default;
 
+        rhi::GPUBufferHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
         Count GetIndexCount() const
         {
             return m_IndexCount;

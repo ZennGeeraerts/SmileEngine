@@ -29,6 +29,11 @@ namespace smile::graphic
             return m_Handle.IsValid();
         }
 
+        rhi::FramebufferHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
         const primitive::Vector< FramebufferAttachment > &GetColorAttachments() const
         {
             return m_ColorAttachments;

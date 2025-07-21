@@ -33,6 +33,11 @@ namespace smile::graphic
         {
         }
 
+        rhi::GraphicsPipelineHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
         bool IsValid() const
         {
             return m_Handle.IsValid();

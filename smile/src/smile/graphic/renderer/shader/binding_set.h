@@ -16,9 +16,16 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< BindingSet >;
 
-        BindingSet( rhi::BindingSetHandle handle, const rhi::BindingSetDescriptor &descriptor, const rhi::BindingLayout &layout )
+        BindingSet( rhi::BindingSetHandle handle,
+            const rhi::BindingSetDescriptor &descriptor,
+            const rhi::BindingLayout &layout )
             : m_Handle{ handle }, m_Descriptor{ descriptor }, m_Layout{ layout }
         {
+        }
+
+        rhi::BindingSetHandle GetHandle() const
+        {
+            return m_Handle;
         }
 
         bool IsValid() const

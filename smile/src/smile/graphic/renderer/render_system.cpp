@@ -11,8 +11,8 @@ namespace smile::graphic
 {
     RenderSystem::RenderSystem()
     {
-        m_API = RendererBackendType::DirectX11;
-        m_pDevice = GraphicsDevice::Create( m_API );
+        m_API = rhi::RendererBackendType::DirectX11;
+        m_pDevice = rhi::GraphicsDevice::Create( m_API );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
     }
 
@@ -62,91 +62,52 @@ namespace smile::graphic
         m_RenderedFrameIndex = m_CurrentFrameIndex;
     }
 
-    void RenderSystem::BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const
+    void RenderSystem::SetGraphicsState( const GraphicsState &state )
     {
-        m_pImmediateCommandList->BindVertexBuffer( pVertexBuffer->Handle, pVertexBuffer->Layout.GetStride() );
-    }
+        rhi::GraphicsState graphicsState{};
+        graphicsState.Pipeline = state.pPipeline->GetHandle();
+        graphicsState.Framebuffer = state.pFramebuffer->GetHandle();
 
-    void RenderSystem::UnbindVertexBuffer() const
-    {
-        m_pImmediateCommandList->UnbindVertexBuffer();
-    }
+        for ( const auto &pBinding : state.pBindings )
+        {
+            graphicsState.Bindings.PushBack( pBinding->GetHandle() );
+        }
 
-    void
-    RenderSystem::FillVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer, void *pData, Uint32 vertexCount ) const
-    {
-        m_pImmediateCommandList->FillBuffer( pVertexBuffer->Handle, pData, vertexCount * pVertexBuffer->Layout.GetStride() );
-    }
+        for ( const auto &vertexBuffer : state.VertexBuffers )
+        {
+            rhi::VertexBufferBinding vertexBufferBinding{
+                vertexBuffer.pVertexBuffer->GetHandle(), vertexBuffer.Slot, vertexBuffer.Offset };
 
-    void RenderSystem::BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const
-    {
-        m_pImmediateCommandList->BindIndexBuffer( pIndexBuffer->Handle );
-    }
+            graphicsState.VertexBuffers.PushBack(
+                std::move( vertexBufferBinding ) ); // TODO: Add EmlaceBack to fixed vector
+        }
 
-    void RenderSystem::UnbindIndexBuffer() const
-    {
-        m_pImmediateCommandList->UnbindIndexBuffer();
-    }
+        graphicsState.IndexBuffer = rhi::IndexBufferBinding{
+            state.IndexBuffer.pIndexBuffer->GetHandle(), state.IndexBuffer.BufferFormat, state.IndexBuffer.Offset };
 
-    void RenderSystem::BindConstantBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const
-    {
-    }
-
-    void RenderSystem::UnbindConstantBuffer() const
-    {
-    }
-
-    void RenderSystem::BindShader( memory::Ref< Shader > pShader )
-    {
-        m_pImmediateCommandList->BindShader( pShader );
-        m_pBoundShader = pShader;
-    }
-
-    void RenderSystem::UnbindShader()
-    {
-        m_pImmediateCommandList->UnbindShader();
-        m_pBoundShader = nullptr;
-    }
-
-    void RenderSystem::BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer )
-    {
-        m_pImmediateCommandList->BindFramebuffer( pFramebuffer->Handle );
-        m_pBoundFramebuffer = pFramebuffer;
-    }
-
-    void RenderSystem::BindBackBuffer()
-    {
-        m_pImmediateCommandList->BindBackBuffer( m_pSwapChain );
-        m_pBoundFramebuffer = nullptr;
-    }
-
-    void RenderSystem::SetState( const RenderState &state ) const
-    {
-        m_pImmediateCommandList->SetState( state );
-    }
-
-    void *RenderSystem::ReadTexture( memory::Ref< Texture > pTexture ) const
-    {
-        return m_pImmediateCommandList->ReadTexture( pTexture->Handle );
-    }
-
-    void *RenderSystem::ReadTexture( memory::Ref< Framebuffer > pFramebuffer, Uint32 index ) const
-    {
-        return m_pImmediateCommandList->ReadTexture( pFramebuffer->Handle, index );
+        m_pImmediateCommandList->SetGraphicsState( graphicsState );
     }
 
     void RenderSystem::DrawIndexed( Uint32 indexCount )
     {
-        m_pImmediateCommandList->DrawIndexed( indexCount, m_pBoundShader );
+        rhi::DrawIndexedParams params{ indexCount, 0, 0 };
+        m_pImmediateCommandList->DrawIndexed( params );
     }
 
     void RenderSystem::Draw( Uint32 vertexCount )
     {
-        m_pImmediateCommandList->Draw( vertexCount, m_pBoundShader );
+        rhi::DrawParams params{ vertexCount, 0 };
+        m_pImmediateCommandList->Draw( params );
     }
 
     void RenderSystem::Present()
     {
         m_pSwapChain->Present();
+    }
+
+    void RenderSystem::FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const
+    {
+        m_pImmediateCommandList->FillBuffer(
+            pVertexBuffer->GetHandle(), pData, vertexCount * pVertexBuffer->GetBufferLayout().GetStride() );
     }
 }

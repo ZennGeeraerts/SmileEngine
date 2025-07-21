@@ -22,6 +22,11 @@ namespace smile::graphic
 
         ~VertexBuffer() = default;
 
+        rhi::GPUBufferHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
         const rhi::BufferLayout &GetBufferLayout() const
         {
             return m_BufferLayout;
