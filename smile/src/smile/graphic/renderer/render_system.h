@@ -32,12 +32,10 @@ namespace smile::graphic
 
         void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
 
-        void SetClearColor( const math::Color &color )
-        {
-            m_ClearColor = color;
-        }
-
-        void Clear();
+        void Clear( Framebuffer::Ref pFramebuffer,
+            const std::optional< math::Color > &color,
+            std::optional< float > depth,
+            std::optional< Uint8 > stencil );
 
         void BeginFrame();
         void EndFrame();
@@ -74,8 +72,6 @@ namespace smile::graphic
         Scope< rhi::GraphicsDevice > m_pDevice;
         rhi::CommandList *m_pImmediateCommandList;
         ResourceManager m_ResourceManager{};
-
-        math::Color m_ClearColor{};
 
         memory::Ref< rhi::SwapChain > m_pSwapChain = nullptr;
 

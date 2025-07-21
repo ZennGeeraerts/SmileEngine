@@ -30,23 +30,26 @@ namespace smile::graphic
         m_pSwapChain->Resize( x, y, width, height );
     }
 
-    void RenderSystem::Clear()
+    void RenderSystem::Clear( Framebuffer::Ref pFramebuffer,
+        const std::optional< math::Color > &color,
+        std::optional< float > depth,
+        std::optional< Uint8 > stencil )
     {
-        if ( m_pBoundFramebuffer )
+        if ( color.has_value() )
         {
-            for ( const auto &colorAttachment : m_pBoundFramebuffer->GetColorAttachments() )
+            for ( const auto &colorAttachment : pFramebuffer->GetColorAttachments() )
             {
-                m_pImmediateCommandList->ClearTexture(
-                    colorAttachment.pTexture->GetHandle(), rhi::TextureSubresourceSet{}, m_ClearColor );
+                m_pImmediateCommandList->ClearTexture( colorAttachment.pTexture->GetHandle(),
+                    rhi::TextureSubresourceSet{},
+                    color.value_or( math::Color{ 0.0f, 0.0f, 0.0f, 1.0f } ) );
             }
-
-            const auto &depthAttachment = m_pBoundFramebuffer->GetDepthAttachment();
-            m_pImmediateCommandList->ClearDepthStencilTexture(
-                depthAttachment.pTexture->GetHandle(), rhi::TextureSubresourceSet{}, true, 1.0f, true, 0 );
         }
-        else
+
+        if ( depth.has_value() || stencil.has_value() )
         {
-            m_pImmediateCommandList->ClearBackBuffer( m_pSwapChain, m_ClearColor );
+            const auto &depthAttachment = pFramebuffer->GetDepthAttachment();
+            m_pImmediateCommandList->ClearDepthStencilTexture(
+                depthAttachment.pTexture->GetHandle(), rhi::TextureSubresourceSet{}, depth, stencil );
         }
     }
 

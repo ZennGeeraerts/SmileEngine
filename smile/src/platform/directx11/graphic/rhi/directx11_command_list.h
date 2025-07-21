@@ -45,10 +45,8 @@ namespace smile::graphic::rhi
 
         void ClearDepthStencilTexture( TextureHandle handle,
             TextureSubresourceSet subresources,
-            bool clearDepth,
-            float depth,
-            bool clearStencil,
-            Uint8 stencil ) const override;
+            std::optional< float > depth,
+            std::optional< Uint8 > stencil ) const override;
 
       private:
         void PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,

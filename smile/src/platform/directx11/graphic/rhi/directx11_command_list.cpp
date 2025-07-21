@@ -325,12 +325,10 @@ namespace smile::graphic::rhi
 
     void DirectX11CommandList::ClearDepthStencilTexture( TextureHandle handle,
         TextureSubresourceSet subresources,
-        bool clearDepth,
-        float depth,
-        bool clearStencil,
-        Uint8 stencil ) const
+        std::optional< float > depth,
+        std::optional< Uint8 > stencil ) const
     {
-        if ( !clearDepth && !clearStencil )
+        if ( !depth.has_value() && !stencil.has_value() )
             return;
 
         SM_ASSERT( m_pDevice->IsHandleValid( handle, m_pDevice->m_Textures ) );
@@ -354,12 +352,13 @@ namespace smile::graphic::rhi
             ID3D11DepthStencilView *pDSV = texture.GetOrCreateDepthStencilView( m_Context.pDevice, currentMipSlice );
 
             UINT clearFlags = 0;
-            if ( clearDepth )
+            if ( depth.has_value() )
                 clearFlags |= D3D11_CLEAR_DEPTH;
-            if ( clearStencil )
+            if ( stencil.has_value() )
                 clearFlags |= D3D11_CLEAR_STENCIL;
 
-            m_Context.pImmediateContext->ClearDepthStencilView( pDSV, clearFlags, depth, stencil );
+            m_Context.pImmediateContext->ClearDepthStencilView(
+                pDSV, clearFlags, depth.value_or( 1.0f ), stencil.value_or( 0 ) );
         }
     }
 
