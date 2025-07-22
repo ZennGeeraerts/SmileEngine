@@ -6,6 +6,18 @@
 
 #include <catch/catch.hpp>
 
+struct ComplexType final
+{
+    ComplexType() = default;
+    ComplexType( int i, float f, const std::string &str ) : I{ i }, F{ f }, Str{ str }
+    {
+    }
+
+    int I;
+    float F;
+    std::string Str;
+};
+
 namespace smile::primitive
 {
     TEST_CASE( "FixedVector" )
@@ -19,6 +31,17 @@ namespace smile::primitive
 
             REQUIRE( values[0] == 1 );
             REQUIRE( values[1] == 5 );
+        }
+
+        SECTION( "EmplaceBack" )
+        {
+            FixedVector< ComplexType, 10 > values{};
+
+            values.EmplaceBack( 1, 1.0f, "1" );
+            values.EmplaceBack( 2, 2.0f, "2" );
+
+            REQUIRE( values[0].I == 1 );
+            REQUIRE( values[1].I == 2 );
         }
 
         SECTION( "IsValidIndex" )

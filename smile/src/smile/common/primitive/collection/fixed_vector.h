@@ -73,6 +73,15 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
+        template < typename... Arguments >
+        void EmplaceBack( Arguments &&...arguments )
+        {
+            SM_ASSERT( m_ItemCount < MaxItemCount );
+
+            ::new ( GetData() + m_ItemCount, memory::g_pInPlace ) Item{ std::forward< Arguments >( arguments )... };
+            ++m_ItemCount;
+        }
+
         void PopBack() noexcept
         {
             SM_ASSERT( m_ItemCount > 0 );
