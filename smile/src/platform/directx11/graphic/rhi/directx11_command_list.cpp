@@ -290,8 +290,8 @@ namespace smile::graphic::rhi
 #ifdef SM_C_DEBUG
         const FormatInfo &formatInfo = GetFormatInfo( texture.Descriptor.TextureFormat );
         SM_ASSERT( !formatInfo.HasDepth && !formatInfo.HasStencil );
-        SM_ASSERT( texture.Descriptor.BindFlags.Has( TextureBindFlags::UnorderedAccess ) ||
-                   texture.Descriptor.BindFlags.Has( TextureBindFlags::RenderTarget ) ); // TODO: Flags HasAny function
+        SM_ASSERT( texture.Descriptor.BindFlags.HasAny(
+            { TextureBindFlags::UnorderedAccess, TextureBindFlags::RenderTarget } ) );
 #endif
 
         subresources = subresources.Resolve( texture.Descriptor, false );

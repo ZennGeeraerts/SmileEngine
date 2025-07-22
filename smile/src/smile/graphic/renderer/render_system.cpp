@@ -81,8 +81,7 @@ namespace smile::graphic
             rhi::VertexBufferBinding vertexBufferBinding{
                 vertexBuffer.pVertexBuffer->GetHandle(), vertexBuffer.Slot, vertexBuffer.Offset };
 
-            graphicsState.VertexBuffers.PushBack(
-                std::move( vertexBufferBinding ) ); // TODO: Add EmlaceBack to fixed vector
+            graphicsState.VertexBuffers.EmplaceBack( std::move( vertexBufferBinding ) );
         }
 
         graphicsState.IndexBuffer = rhi::IndexBufferBinding{
