@@ -38,5 +38,12 @@ namespace smile::foundation
             !Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAll( { TestFlags::Four, TestFlags::Two } ) );
         static_assert(
             !Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAll( { TestFlags::One, TestFlags::Three } ) );
+
+        static_assert(
+            Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAny( { TestFlags::One, TestFlags::Two } ) );
+        static_assert(
+            Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAny( { TestFlags::One, TestFlags::Four } ) );
+        static_assert(
+            !Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAny( { TestFlags::Two, TestFlags::Four } ) );
     }
 }
