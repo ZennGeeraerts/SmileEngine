@@ -15,7 +15,7 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< ConstantBuffer >;
 
-        ConstantBuffer( GPUBufferHandle handle, const ConstantBufferDescriptor &desc );
+        ConstantBuffer( rhi::GPUBufferHandle handle, const ConstantBufferDescriptor &desc );
         ~ConstantBuffer() = default;
 
         template < typename ConstantBufferType >
@@ -38,7 +38,7 @@ namespace smile::graphic
         void InitializeBuffer( const void *pBuffer, const Count size );
 
       private:
-        GPUBufferHandle m_Handle;
+        rhi::GPUBufferHandle m_Handle;
         const void *m_pBuffer;
         ConstantBufferDescriptor m_Descriptor;
 

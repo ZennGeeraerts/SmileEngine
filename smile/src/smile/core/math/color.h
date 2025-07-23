@@ -47,17 +47,17 @@ namespace smile::math
             return a << 24 | b << 16 | g << 8 | r;
         }
 
-        static constexpr Color Red()
+        static constexpr Color GetRed()
         {
             return { 1.0f, 0.0f, 0.0f, 1.0f };
         }
 
-        static constexpr Color Green()
+        static constexpr Color GetGreen()
         {
             return { 0.0f, 1.0f, 0.0f, 1.0f };
         }
 
-        static constexpr Color Blue()
+        static constexpr Color GetBlue()
         {
             return { 0.0f, 0.0f, 1.0f, 1.0f };
         }

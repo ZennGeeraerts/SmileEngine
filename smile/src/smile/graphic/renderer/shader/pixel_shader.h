@@ -15,7 +15,7 @@ namespace smile::graphic
         using Ref = memory::Ref< PixelShader >;
         using ConstRef = memory::Ref< const PixelShader >;
 
-        PixelShader( ShaderHandle handle ) : m_Handle{ handle }
+        PixelShader( rhi::ShaderHandle handle ) : m_Handle{ handle }
         {
         }
 
@@ -27,7 +27,7 @@ namespace smile::graphic
         }
 
       private:
-        ShaderHandle m_Handle;
+        rhi::ShaderHandle m_Handle;
 
         friend class ResourceManager;
     };

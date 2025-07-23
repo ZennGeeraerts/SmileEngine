@@ -17,7 +17,7 @@ namespace smile::graphic
         using ConstRef = memory::Ref< const Image >;
 
         Image();
-        Image( const Uint32 width, const Uint32 height, const Format format, const Byte *pData );
+        Image( const Uint32 width, const Uint32 height, const rhi::Format format, const Byte *pData );
 
         Uint32 GetWidth() const
         {
@@ -29,7 +29,7 @@ namespace smile::graphic
             return m_Height;
         }
 
-        Format GetFormat() const
+        rhi::Format GetFormat() const
         {
             return m_Format;
         }
@@ -52,7 +52,7 @@ namespace smile::graphic
       private:
         Uint32 m_Width;
         Uint32 m_Height;
-        Format m_Format;
+        rhi::Format m_Format;
         primitive::Vector< Byte > m_Buffer;
         Uint32 m_Stride;
     };

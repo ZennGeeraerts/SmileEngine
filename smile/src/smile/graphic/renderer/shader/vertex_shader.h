@@ -15,7 +15,7 @@ namespace smile::graphic
         using Ref = memory::Ref< VertexShader >;
         using ConstRef = memory::Ref< const VertexShader >;
 
-        VertexShader( ShaderHandle handle ) : m_Handle{ handle }
+        VertexShader( rhi::ShaderHandle handle ) : m_Handle{ handle }
         {
         }
 
@@ -27,7 +27,7 @@ namespace smile::graphic
         }
 
       private:
-        ShaderHandle m_Handle;
+        rhi::ShaderHandle m_Handle;
 
         friend class ResourceManager;
     };

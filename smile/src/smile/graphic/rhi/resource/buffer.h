@@ -175,7 +175,7 @@ namespace smile::graphic::rhi
         foundation::HashCode GetHashCode() const
         {
             foundation::HashCode hash = 0;
-            hash = foundation::HashCombine( hash, std::hash< smile::graphic::Format >{}( Format ) );
+            hash = foundation::HashCombine( hash, std::hash< smile::graphic::rhi::Format >{}( Format ) );
             hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Offset ) );
             hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Size ) );
             return hash;
@@ -228,19 +228,19 @@ namespace smile::graphic::rhi
 namespace std
 {
     template <>
-    struct hash< smile::graphic::BufferLayout >
+    struct hash< smile::graphic::rhi::BufferLayout >
     {
-        smile::foundation::HashCode operator()( const smile::graphic::BufferLayout &bufferLayout ) const noexcept
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::BufferLayout &bufferLayout ) const noexcept
         {
             return bufferLayout.GetHashCode();
         }
     };
 
     template <>
-    struct hash< smile::graphic::BufferBindingKey >
+    struct hash< smile::graphic::rhi::BufferBindingKey >
     {
         smile::foundation::HashCode operator()(
-            const smile::graphic::BufferBindingKey &bufferBindingKey ) const noexcept
+            const smile::graphic::rhi::BufferBindingKey &bufferBindingKey ) const noexcept
         {
             return bufferBindingKey.GetHashCode();
         }

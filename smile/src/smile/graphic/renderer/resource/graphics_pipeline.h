@@ -8,6 +8,7 @@
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/rhi/primitive_topology.h"
 
 namespace smile::graphic
 {

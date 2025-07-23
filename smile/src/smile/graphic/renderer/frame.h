@@ -16,9 +16,6 @@ namespace smile::graphic
     template < typename ItemType >
     primitive::ArrayView< ItemType > AllocateFrameData( const Count itemCount )
     {
-        return
-        {
-            reinterpret_cast< ItemType * >( AllocateFrameData( sizeof( ItemType ) * itemCount ), itemCount );
-        }
+        return { reinterpret_cast< ItemType * >( AllocateFrameData( sizeof( ItemType ) * itemCount ) ), itemCount };
     }
 }
