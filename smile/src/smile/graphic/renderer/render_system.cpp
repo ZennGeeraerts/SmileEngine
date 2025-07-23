@@ -6,6 +6,7 @@
 #include "render_system.h"
 
 #include "frame.h"
+#include "smile/core/window/window.h"
 
 namespace smile::graphic
 {
@@ -23,6 +24,28 @@ namespace smile::graphic
         m_ResourceManager.Initialize( m_pDevice.get() );
 
         m_pSwapChain = m_pDevice->CreateSwapChain( pWindow );
+
+        rhi::Object nativeRenderTarget = m_pSwapChain->GetNativeRenderTarget();
+
+        const rhi::ObjectType objectType = [&]()
+        {
+            switch ( m_API )
+            {
+                case rhi::RendererBackendType::DirectX11:
+                    return rhi::ObjectType::D3D11_Resource;
+                default:
+                    SM_ASSERT( false );
+            }
+        }();
+
+        rhi::TextureDescriptor backBufferDesc;
+        backBufferDesc.Dimension = rhi::TextureDimension::Texture2D;
+        backBufferDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
+        backBufferDesc.Width = pWindow->GetWidth();
+        backBufferDesc.Height = pWindow->GetHeight();
+        backBufferDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+
+        m_pBackBuffer = m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, backBufferDesc );
     }
 
     void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )

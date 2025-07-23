@@ -57,42 +57,6 @@ namespace smile::graphic::rhi
         }
 
         /*------------------------------------- Render Target Code -------------------------------------*/
-        // Create the Depth/Stencil Texture and View
-        D3D11_TEXTURE2D_DESC depthStencilDesc{};
-        depthStencilDesc.Width = width;
-        depthStencilDesc.Height = height;
-        depthStencilDesc.MipLevels = 1;
-        depthStencilDesc.ArraySize = 1;
-        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        depthStencilDesc.SampleDesc.Count = 1;
-        depthStencilDesc.SampleDesc.Quality = 0;
-        depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-        depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depthStencilDesc.CPUAccessFlags = 0;
-        depthStencilDesc.MiscFlags = 0;
-
-        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-        depthStencilViewDesc.Format = depthStencilDesc.Format;
-        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-        depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-        HRESULT result = m_pDevice->CreateTexture2D( &depthStencilDesc, 0, &m_pDepthStencilTexture );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Swapchain > Failed to create depth stencil buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        result =
-            m_pDevice->CreateDepthStencilView( m_pDepthStencilTexture, &depthStencilViewDesc, &m_pDepthStencilView );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11Swapchain > Failed to create depth stencil view: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
         // Create the RenderTargetView
         result = m_pSwapChain->GetBuffer(
             0, __uuidof( ID3D11Texture2D ), reinterpret_cast< void ** >( &m_pRenderTargetBuffer ) );
@@ -128,9 +92,6 @@ namespace smile::graphic::rhi
         SAFE_RELEASE( m_pRenderTargetBuffer );
         SAFE_RELEASE( m_pCurrentRenderTarget );
 
-        SAFE_RELEASE( m_pDepthStencilTexture );
-        SAFE_RELEASE( m_pDepthStencilView );
-
         SAFE_RELEASE( m_pSwapChain );
     }
 
@@ -141,41 +102,13 @@ namespace smile::graphic::rhi
 
     void DirectX11SwapChain::Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
     {
-        D3D11_TEXTURE2D_DESC depthStencilDesc{};
-        m_pDepthStencilTexture->GetDesc( &depthStencilDesc );
-        depthStencilDesc.Width = width;
-        depthStencilDesc.Height = height;
-
-        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-        m_pDepthStencilView->GetDesc( &depthStencilViewDesc );
-
         SAFE_RELEASE( m_pCurrentRenderTarget );
         SAFE_RELEASE( m_pRenderTargetBuffer );
-        SAFE_RELEASE( m_pDepthStencilView );
-        SAFE_RELEASE( m_pDepthStencilTexture );
 
         HRESULT result = m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11SwapChain::Resize > Failed to resize buffers: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        // Depth stencil
-        result = m_pDevice->CreateTexture2D( &depthStencilDesc, 0, &m_pDepthStencilTexture );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11SwapChain::Resize > Failed to create depth stencil buffer: {}",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
-            return;
-        }
-
-        result =
-            m_pDevice->CreateDepthStencilView( m_pDepthStencilTexture, &depthStencilViewDesc, &m_pDepthStencilView );
-        if ( FAILED( result ) )
-        {
-            SM_LOG_ERROR( "DirectX11SwapChain::Resize > Failed to create depth stencil view: {}",
                 fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
             return;
         }
@@ -204,5 +137,10 @@ namespace smile::graphic::rhi
         m_Viewport.TopLeftY = static_cast< FLOAT >( y );
 
         m_pDeviceContext->RSSetViewports( 1, &m_Viewport );
+    }
+
+    Object DirectX11SwapChain::GetNativeRenderTarget() const
+    {
+        return Object{ m_pRenderTargetBuffer };
     }
 }

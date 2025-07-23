@@ -24,14 +24,8 @@ namespace smile::graphic::rhi
         void Present() override;
         void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
 
-        inline ID3D11RenderTargetView *GetRenderTargetView() const
-        {
-            return m_pCurrentRenderTarget;
-        }
-        inline ID3D11DepthStencilView *GetDepthStencilView() const
-        {
-            return m_pDepthStencilView;
-        }
+        Object GetNativeRenderTarget() const override;
+
         inline const D3D11_VIEWPORT &GetViewport() const
         {
             return m_Viewport;
@@ -42,9 +36,6 @@ namespace smile::graphic::rhi
 
         ID3D11RenderTargetView *m_pCurrentRenderTarget = nullptr;
         ID3D11Resource *m_pRenderTargetBuffer = nullptr;
-
-        ID3D11DepthStencilView *m_pDepthStencilView;
-        ID3D11Texture2D *m_pDepthStencilTexture;
 
         D3D11_VIEWPORT m_Viewport{};
 

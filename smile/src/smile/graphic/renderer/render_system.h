@@ -74,6 +74,7 @@ namespace smile::graphic
         ResourceManager m_ResourceManager{};
 
         Scope< rhi::SwapChain > m_pSwapChain = nullptr;
+        Texture::Ref m_pBackBuffer = nullptr;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

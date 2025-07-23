@@ -134,6 +134,19 @@ namespace smile::graphic
         return pTexture;
     }
 
+    Texture::Ref ResourceManager::CreateTextureFromNative( rhi::Object nativeTexture,
+        rhi::ObjectType type,
+        const rhi::TextureDescriptor &desc )
+    {
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        m_pDevice->CreateHandleForNativeTexture( handle, nativeTexture, type, desc );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, desc.Width, desc.Height );
+        m_pTextures.PushBack( pTexture );
+        return pTexture;
+    }
+
     ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
     {
         rhi::GPUBufferDescriptor bufferDesc{};

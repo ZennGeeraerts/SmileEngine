@@ -20,7 +20,7 @@
 #include "smile/graphic/renderer/shader/pixel_shader.h"
 #include "smile/graphic/renderer/shader/binding_set.h"
 
-#include "smile/graphic/rhi/resource/frame_buffer.h"
+#include "smile/graphic/rhi/object.h"
 
 namespace smile::graphic
 {
@@ -45,6 +45,8 @@ namespace smile::graphic
 
         Texture::Ref CreateTexture2D( Image::ConstRef pImage, bool updateable );
         Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
+        Texture::Ref
+        CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
 
         ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
 
