@@ -47,6 +47,21 @@ namespace smile::math
             return a << 24 | b << 16 | g << 8 | r;
         }
 
+        static constexpr Color Red()
+        {
+            return { 1.0f, 0.0f, 0.0f, 1.0f };
+        }
+
+        static constexpr Color Green()
+        {
+            return { 0.0f, 1.0f, 0.0f, 1.0f };
+        }
+
+        static constexpr Color Blue()
+        {
+            return { 0.0f, 0.0f, 1.0f, 1.0f };
+        }
+
         union
         {
             struct
@@ -58,10 +73,6 @@ namespace smile::math
                 float r, g, b, a;
             };
         };
-
-        static constexpr float s_Red{ 1.0f, 0.0f, 0.0f, 1.0f };
-        static constexpr float s_Green{ 0.0f, 1.0f, 0.0f, 1.0f };
-        static constexpr float s_Blue{ 0.0f, 0.0f, 1.0f, 1.0f };
     };
 
     inline Color operator+( const Color &first, const Color &second )

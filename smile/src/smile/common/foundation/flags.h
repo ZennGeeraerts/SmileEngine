@@ -61,6 +61,20 @@ namespace smile::foundation
             return true;
         }
 
+        constexpr inline bool HasAny( std::initializer_list< EnumType > values ) const
+        {
+            for ( auto value : values )
+            {
+                SM_ASSERT_MSG(
+                    static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
+
+                if ( ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) == 1 )
+                    return true;
+            }
+
+            return false;
+        }
+
         constexpr inline void Clear( EnumType value )
         {
             SM_ASSERT_MSG(
