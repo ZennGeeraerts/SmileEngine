@@ -146,6 +146,24 @@ namespace smile::primitive
             REQUIRE( values.GetItemAtIndex( 1 ) == 10 );
         }
 
+        SECTION( "Insert range" )
+        {
+            Vector< int > first{ 1, 2, 3 };
+            Vector< int > second{ 10, 20, 30 };
+
+            auto iterator = first.Insert( first.begin() + 1, second.begin(), second.end() - 1 );
+
+            REQUIRE( first.GetItemCount() == 5 );
+
+            REQUIRE( first[0] == 1 );
+            REQUIRE( first[1] == 10 );
+            REQUIRE( first[2] == 20 );
+            REQUIRE( first[3] == 2 );
+            REQUIRE( first[4] == 3 );
+            
+            REQUIRE( *iterator == 10 );
+        }
+
         SECTION( "PopFront" )
         {
             Vector< int > values{ 1, 2, 3 };

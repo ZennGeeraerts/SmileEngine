@@ -364,6 +364,19 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
+        Iterator Insert( Iterator where, Iterator first, Iterator last )
+        {
+            const Count toAddCount = last - first;
+
+            Reserve( m_ItemCount + toAddCount );
+            m_ItemCount += toAddCount;
+
+            memory::MoveArrayItems( m_pItems + m_ItemCount - toAddCount, toAddCount, &*where );
+            memory::ConstructCopiedArrayItems( &*where, toAddCount, &*first );
+
+            return where;
+        }
+
         void PopFront()
         {
             memory::MoveArrayItems( m_pItems, m_ItemCount - 1, m_pItems + 1 );
