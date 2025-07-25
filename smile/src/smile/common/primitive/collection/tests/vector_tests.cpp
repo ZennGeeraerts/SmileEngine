@@ -128,6 +128,11 @@ namespace smile::primitive
             values.SetItemCount( 4 );
 
             REQUIRE( values.GetItemCount() == 4 );
+
+            values.SetItemCount( 6, 12 );
+
+            REQUIRE( values[4] == 12 );
+            REQUIRE( values[5] == 12 );
         }
 
         SECTION( "Insert" )
@@ -162,6 +167,21 @@ namespace smile::primitive
             REQUIRE( first[4] == 3 );
             
             REQUIRE( *iterator == 10 );
+
+            first.Insert( first.end(), second.begin(), second.end() );
+
+            REQUIRE( first.GetItemCount() == 8 );
+            REQUIRE( first[5] == 10 );
+            REQUIRE( first[6] == 20 );
+            REQUIRE( first[7] == 30 );
+
+            first.Insert( first.begin(), second.end() - 1, second.end() );
+
+            REQUIRE( first[0] == 30 );
+
+            first.Insert( first.end(), second.end() - 1, second.end() );
+
+            REQUIRE( first.GetLastItem() == 30 );
         }
 
         SECTION( "PopFront" )

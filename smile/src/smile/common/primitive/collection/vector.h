@@ -42,6 +42,12 @@ namespace smile::primitive
             }
         }
 
+        explicit Vector( const Count itemCount ) noexcept : m_pItems{ nullptr }, m_ItemCount{ 0 }
+        {
+            Reserve( itemCount );
+            m_ItemCount = itemCount;
+        }
+
         Vector( const Item *pOther, const Count itemCount ) : m_pItems{ nullptr }, m_ItemCount{ 0 }
         {
             Reserve( itemCount );
@@ -238,7 +244,7 @@ namespace smile::primitive
             m_ItemCount = 0;
         }
 
-        void SetItemCount( const Count newItemCount )
+        void SetItemCount( const Count newItemCount, const std::optional< Item > &item = std::nullopt )
         {
             if ( m_ItemCount >= newItemCount )
             {
@@ -248,6 +254,15 @@ namespace smile::primitive
             {
                 Reserve( newItemCount );
                 memory::ConstructArrayItems( &m_pItems[m_ItemCount], newItemCount - m_ItemCount );
+
+                if ( item.has_value() )
+                {
+                    const auto &value = item.value();
+                    for ( Index i = m_ItemCount; i < newItemCount; ++i )
+                    {
+                        m_pItems[i] = value;
+                    }
+                }
             }
 
             m_ItemCount = newItemCount;
@@ -364,15 +379,28 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
-        Iterator Insert( Iterator where, Iterator first, Iterator last )
+        template < typename InputIterator >
+        requires std::same_as< InputIterator, Iterator > || std::same_as< InputIterator, ConstIterator >
+        Iterator Insert( Iterator where, InputIterator first, InputIterator last )
         {
             const Count toAddCount = last - first;
-
             Reserve( m_ItemCount + toAddCount );
+
+            if ( where.GetIndex() != m_ItemCount )
+            {
+                memory::MoveArrayItems( m_pItems + m_ItemCount, toAddCount, &*where );
+            }
+
             m_ItemCount += toAddCount;
 
-            memory::MoveArrayItems( m_pItems + m_ItemCount - toAddCount, toAddCount, &*where );
-            memory::ConstructCopiedArrayItems( &*where, toAddCount, &*first );
+            if ( toAddCount == 1 )
+            {
+                new ( &*where, memory::g_pInPlace ) Item{ *first };
+            }
+            else
+            {
+                memory::ConstructCopiedArrayItems( &*where, toAddCount, &*first );
+            }
 
             return where;
         }
