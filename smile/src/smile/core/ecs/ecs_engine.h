@@ -179,16 +179,16 @@ namespace smile::ecs
         {
           public:
             Group( ECSEngine &engine,
-                const std::vector< ComponentPool * > &pOwned,
-                const std::vector< ComponentPool * > &pGet )
+                const primitive::Vector< ComponentPool * > &pOwned,
+                const primitive::Vector< ComponentPool * > &pGet )
                 : GroupBase{ engine, pOwned, pGet }
             {
-                std::vector< ComponentPool * > pCPools{};
-                pCPools.reserve( pOwned.size() + pGet.size() );
-                pCPools.insert( pCPools.end(), pOwned.begin(), pOwned.end() );
-                pCPools.insert( pCPools.end(), pGet.begin(), pGet.end() );
+                primitive::Vector< ComponentPool * > pCPools{};
+                pCPools.Reserve( pOwned.GetItemCount() + pGet.GetItemCount() );
+                pCPools.Insert( pCPools.end(), pOwned.begin(), pOwned.end() );
+                pCPools.Insert( pCPools.end(), pGet.begin(), pGet.end() );
 
-                if ( pCPools.empty() )
+                if ( pCPools.IsEmpty() )
                     return;
 
                 const ComponentPool *pSmallestCPool = *std::min_element( std::begin( pCPools ),
@@ -403,8 +403,8 @@ namespace smile::ecs
             ( RegisterComponentIfNeeded< Owned >(), ... );
             ( RegisterComponentIfNeeded< Get >(), ... );
 
-            std::vector< ComponentPool * > pOwnedComponents{ GetComponentPool< Owned >()... };
-            std::vector< ComponentPool * > pGetComponents{ GetComponentPool< Get >()... };
+            primitive::Vector< ComponentPool * > pOwnedComponents{ GetComponentPool< Owned >()... };
+            primitive::Vector< ComponentPool * > pGetComponents{ GetComponentPool< Get >()... };
 
             auto it = std::find_if( m_pGroups.begin(),
                 m_pGroups.end(),
@@ -413,7 +413,8 @@ namespace smile::ecs
                     const auto &pGroupOwned = pGroup->GetOwnedPools();
                     const auto &pGroupGet = pGroup->GetGetPools();
 
-                    return pOwnedComponents.size() == pGroupOwned.size() && pGetComponents.size() == pGroupGet.size() &&
+                    return pOwnedComponents.GetItemCount() == pGroupOwned.GetItemCount() &&
+                           pGetComponents.GetItemCount() == pGroupGet.GetItemCount() &&
                            std::equal( pOwnedComponents.begin(), pOwnedComponents.end(), pGroupOwned.begin() ) &&
                            std::equal( pGetComponents.begin(), pGetComponents.end(), pGroupGet.begin() );
                 } );
@@ -421,8 +422,8 @@ namespace smile::ecs
             if ( it != m_pGroups.end() )
                 return *( static_cast< Group< Owned..., Get... > * >( *it ) );
 
-            SM_ASSERT_MSG( std::none_of( pOwnedComponents.cbegin(),
-                               pOwnedComponents.cend(),
+            SM_ASSERT_MSG( std::none_of( pOwnedComponents.begin(),
+                               pOwnedComponents.end(),
                                [&]( const ComponentPool *pCPool ) { return pCPool && IsComponentOwned( pCPool ); } ),
                 "ECSEngine::GetGroup > Component pool(s) are already owned by a group" );
 

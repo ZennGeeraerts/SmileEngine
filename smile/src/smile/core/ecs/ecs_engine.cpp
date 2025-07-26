@@ -70,7 +70,7 @@ namespace smile::ecs
             [pCPool]( const GroupBase *pGroup )
             {
                 const auto &pOwnedPools = pGroup->GetOwnedPools();
-                return std::find( pOwnedPools.cbegin(), pOwnedPools.cend(), pCPool ) != pOwnedPools.end();
+                return std::find( pOwnedPools.begin(), pOwnedPools.end(), pCPool ) != pOwnedPools.end();
             } );
     }
 
