@@ -10,8 +10,8 @@
 namespace smile::ecs
 {
     GroupBase::GroupBase( ECSEngine &engine,
-        const std::vector< ComponentPool * > &pOwned,
-        const std::vector< ComponentPool * > &pGet )
+        const primitive::Vector< ComponentPool * > &pOwned,
+        const primitive::Vector< ComponentPool * > &pGet )
         : m_Engine{ engine }, m_pOwnedPools{ pOwned }, m_pGetPools{ pGet }
     {
     }
@@ -50,7 +50,7 @@ namespace smile::ecs
 
     GroupIterator GroupBase::begin() const
     {
-        if ( !m_pOwnedPools.empty() )
+        if ( !m_pOwnedPools.IsEmpty() )
             return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->begin() };
         else
             return GroupIterator{ m_Engine, ComponentPool::ConstIterator{} };
@@ -58,7 +58,7 @@ namespace smile::ecs
 
     GroupIterator GroupBase::end() const
     {
-        if ( !m_pOwnedPools.empty() )
+        if ( !m_pOwnedPools.IsEmpty() )
             return GroupIterator{ m_Engine, ( *m_pOwnedPools.begin() )->begin() + m_EndIndex };
         else
             return GroupIterator{ m_Engine, ComponentPool::ConstIterator{} };

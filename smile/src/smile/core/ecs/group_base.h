@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/vector.h"
 #include "group_iterator.h"
 
 namespace smile::ecs
@@ -14,8 +15,8 @@ namespace smile::ecs
     {
       public:
         GroupBase( ECSEngine &engine,
-            const std::vector< ComponentPool * > &pOwned,
-            const std::vector< ComponentPool * > &pGet );
+            const primitive::Vector< ComponentPool * > &pOwned,
+            const primitive::Vector< ComponentPool * > &pGet );
 
         virtual ~GroupBase() = default;
 
@@ -29,11 +30,11 @@ namespace smile::ecs
         GroupIterator begin() const;
         GroupIterator end() const;
 
-        const std::vector< ComponentPool * > &GetOwnedPools() const
+        const primitive::Vector< ComponentPool * > &GetOwnedPools() const
         {
             return m_pOwnedPools;
         }
-        const std::vector< ComponentPool * > &GetGetPools() const
+        const primitive::Vector< ComponentPool * > &GetGetPools() const
         {
             return m_pGetPools;
         }
@@ -41,8 +42,8 @@ namespace smile::ecs
       protected:
         ECSEngine &m_Engine;
 
-        std::vector< ComponentPool * > m_pOwnedPools{};
-        std::vector< ComponentPool * > m_pGetPools{};
+        primitive::Vector< ComponentPool * > m_pOwnedPools{};
+        primitive::Vector< ComponentPool * > m_pGetPools{};
 
         IndexType m_EndIndex{ 0 };
     };

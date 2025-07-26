@@ -4,7 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include <vector>
+#include "smile/common/foundation/compiled.h"
+#include "vector.h"
+
 #include <numeric>
 #include <initializer_list>
 
@@ -16,11 +18,11 @@ namespace smile::primitive
         static_assert( std::is_unsigned< IndexType >::value, "SparseSet can only contain unsigned integers" );
 
       public:
-        using Iterator = typename std::vector< IndexType >::iterator;
-        using ConstIterator = typename std::vector< IndexType >::const_iterator;
+        using Iterator = typename ArrayIterator< Vector< IndexType >, false >;
+        using ConstIterator = typename ArrayIterator< Vector< IndexType >, true >;
 
         SparseSet() = default;
-        SparseSet( const std::initializer_list< IndexType > &elements )
+        SparseSet( std::initializer_list< IndexType > elements )
         {
             for ( IndexType element : elements )
                 Insert( element );
@@ -35,15 +37,15 @@ namespace smile::primitive
         {
             SM_ASSERT_MSG( !Contains( element ), "SparseSet::Insert > Sparse set already contains this value" );
 
-            const auto pos = static_cast< IndexType >( m_Dense.size() );
-            m_Dense.push_back( element );
+            const auto pos = static_cast< IndexType >( m_Dense.GetItemCount() );
+            m_Dense.PushBack( element );
 
-            if ( element >= m_Sparse.size() )
-                m_Sparse.resize( element + 1, std::numeric_limits< IndexType >::max() );
+            if ( element >= m_Sparse.GetItemCount() )
+                m_Sparse.SetItemCount( element + 1, std::numeric_limits< IndexType >::max() );
 
             m_Sparse[element] = pos;
 
-            return m_Dense.size() - 1;
+            return m_Dense.GetItemCount() - 1;
         }
 
         IndexType Erase( IndexType element )
@@ -52,10 +54,10 @@ namespace smile::primitive
 
             IndexType deadIndex = m_Sparse[element];
 
-            const IndexType last = m_Dense.back();
-            std::swap( m_Dense.back(), m_Dense[deadIndex] );
+            const IndexType last = m_Dense.GetLastItem();
+            std::swap( m_Dense.GetLastItem(), m_Dense[deadIndex] );
             std::swap( m_Sparse[last], m_Sparse[element] );
-            m_Dense.pop_back();
+            m_Dense.PopBack();
 
             m_Sparse[element] = std::numeric_limits< IndexType >::max();
 
@@ -64,19 +66,20 @@ namespace smile::primitive
 
         bool Contains( IndexType element ) const
         {
-            return ( element < m_Sparse.size() ) && ( m_Sparse[element] < m_Dense.size() ) &&
+            return ( element < m_Sparse.GetItemCount() ) && ( m_Sparse[element] < m_Dense.GetItemCount() ) &&
                    ( m_Sparse[element] != std::numeric_limits< IndexType >::max() );
         }
 
         void Clear()
         {
-            m_Sparse.clear();
-            m_Dense.clear();
+            m_Sparse.Clear();
+            m_Dense.Clear();
         }
 
         void Swap( IndexType lhs, IndexType rhs )
         {
-            SM_ASSERT_MSG( Contains( lhs ) && Contains( rhs ), "SparseSet::Swap > Sparse set doesn't contains this value" );
+            SM_ASSERT_MSG(
+                Contains( lhs ) && Contains( rhs ), "SparseSet::Swap > Sparse set doesn't contains this value" );
 
             if ( lhs == rhs )
                 return;
@@ -88,7 +91,7 @@ namespace smile::primitive
         template < typename Compare >
         void Sort( Compare compare )
         {
-            std::vector< IndexType > copy( m_Dense.size() );
+            Vector< IndexType > copy( m_Dense.GetItemCount() );
             std::iota( copy.begin(), copy.end(), IndexType{} );
 
             std::sort( copy.begin(),
@@ -96,7 +99,7 @@ namespace smile::primitive
                 [this, compare = std::move( compare )]( const IndexType lhs, const IndexType rhs )
                 { return compare( m_Dense[lhs], m_Dense[rhs] ); } );
 
-            for ( IndexType pos{}; pos < copy.size(); ++pos )
+            for ( IndexType pos{}; pos < copy.GetItemCount(); ++pos )
             {
                 auto curr = pos;
                 auto next = copy[curr];
@@ -142,23 +145,23 @@ namespace smile::primitive
 
         IndexType GetElement( IndexType index ) const
         {
-            SM_ASSERT_MSG( index < m_Dense.size(), "SparseSet::GetElement > Index out of range" );
+            SM_ASSERT_MSG( index < m_Dense.GetItemCount(), "SparseSet::GetElement > Index out of range" );
 
             return m_Dense[index];
         }
 
-        size_t GetItemCount() const
+        Count GetItemCount() const
         {
-            return m_Dense.size();
+            return m_Dense.GetItemCount();
         }
 
         bool IsEmpty() const
         {
-            return m_Dense.empty();
+            return m_Dense.IsEmpty();
         }
 
       public:
-        std::vector< IndexType > m_Sparse{};
-        std::vector< IndexType > m_Dense{};
+        Vector< IndexType > m_Sparse{};
+        Vector< IndexType > m_Dense{};
     };
 }

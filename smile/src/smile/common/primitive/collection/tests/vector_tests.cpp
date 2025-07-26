@@ -128,6 +128,11 @@ namespace smile::primitive
             values.SetItemCount( 4 );
 
             REQUIRE( values.GetItemCount() == 4 );
+
+            values.SetItemCount( 6, 12 );
+
+            REQUIRE( values[4] == 12 );
+            REQUIRE( values[5] == 12 );
         }
 
         SECTION( "Insert" )
@@ -144,6 +149,44 @@ namespace smile::primitive
 
             REQUIRE( values.GetItemCount() == 5 );
             REQUIRE( values.GetItemAtIndex( 1 ) == 10 );
+        }
+
+        SECTION( "Insert range" )
+        {
+            Vector< int > first{ 1, 2, 3 };
+            Vector< int > second{ 10, 20, 30 };
+            Vector< int > empty{};
+
+            auto iterator = first.Insert( first.begin() + 1, second.begin(), second.end() - 1 );
+
+            REQUIRE( first.GetItemCount() == 5 );
+
+            REQUIRE( first[0] == 1 );
+            REQUIRE( first[1] == 10 );
+            REQUIRE( first[2] == 20 );
+            REQUIRE( first[3] == 2 );
+            REQUIRE( first[4] == 3 );
+            
+            REQUIRE( *iterator == 10 );
+
+            first.Insert( first.end(), second.begin(), second.end() );
+
+            REQUIRE( first.GetItemCount() == 8 );
+            REQUIRE( first[5] == 10 );
+            REQUIRE( first[6] == 20 );
+            REQUIRE( first[7] == 30 );
+
+            first.Insert( first.begin(), second.end() - 1, second.end() );
+
+            REQUIRE( first[0] == 30 );
+
+            first.Insert( first.end(), second.end() - 1, second.end() );
+
+            REQUIRE( first.GetLastItem() == 30 );
+            
+            first.Insert( first.end(), empty.begin(), empty.end() );
+
+            REQUIRE( first.GetLastItem() == 30 );
         }
 
         SECTION( "PopFront" )
@@ -177,6 +220,27 @@ namespace smile::primitive
             REQUIRE( values.GetItemCount() == 2 );
             REQUIRE( values.GetItemAtIndex( 0 ) == 1 );
             REQUIRE( values.GetItemAtIndex( 1 ) == 3 );
+        }
+
+        SECTION( "Erase range" )
+        {
+            Vector< int > values{ 1, 0, 0, 1, 1, 0, 1 };
+
+            auto iterator = values.Erase(
+                std::remove_if( values.begin(), values.end(), []( int value ) { return value == 0; } ), values.end() );
+
+            REQUIRE( values.GetItemCount() == 4 );
+            REQUIRE( iterator == values.end() );
+
+            for ( int i{}; i < values.GetItemCount(); ++i )
+                REQUIRE( values[i] == 1 );
+
+            Vector< int > otherValues{ 1, 2, 4, 8, 12, 24, 48 };
+            otherValues.Erase( otherValues.begin() + 1, otherValues.end() - 1 );
+
+            REQUIRE( otherValues.GetItemCount() == 2 );
+            REQUIRE( otherValues[0] == 1 );
+            REQUIRE( otherValues[1] == 48 );
         }
     }
 }
