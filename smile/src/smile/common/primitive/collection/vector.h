@@ -384,6 +384,9 @@ namespace smile::primitive
         Iterator Insert( Iterator where, InputIterator first, InputIterator last )
         {
             const Count toAddCount = last - first;
+            if ( toAddCount == 0 )
+                return where;
+
             Reserve( m_ItemCount + toAddCount );
 
             if ( where.GetIndex() != m_ItemCount )

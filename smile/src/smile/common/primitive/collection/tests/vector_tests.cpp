@@ -155,6 +155,7 @@ namespace smile::primitive
         {
             Vector< int > first{ 1, 2, 3 };
             Vector< int > second{ 10, 20, 30 };
+            Vector< int > empty{};
 
             auto iterator = first.Insert( first.begin() + 1, second.begin(), second.end() - 1 );
 
@@ -180,6 +181,10 @@ namespace smile::primitive
             REQUIRE( first[0] == 30 );
 
             first.Insert( first.end(), second.end() - 1, second.end() );
+
+            REQUIRE( first.GetLastItem() == 30 );
+            
+            first.Insert( first.end(), empty.begin(), empty.end() );
 
             REQUIRE( first.GetLastItem() == 30 );
         }
