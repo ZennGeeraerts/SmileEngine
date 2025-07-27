@@ -21,6 +21,12 @@ namespace smile::graphic
     ConstantBufferDescriptor::Add( primitive::String name, ConstantType type, const Count size, const Count itemCount )
     {
         m_Items.EmplaceBack( std::move( name ), type, size, itemCount );
-        m_Size += graphic::GetSize( type );
+        m_Size += graphic::GetConstantTypeInfo( type ).Size;
+    }
+
+    void ConstantBufferDescriptor::Add( const ConstantBufferItem &item )
+    {
+        m_Items.PushBack( item );
+        m_Size += graphic::GetConstantTypeInfo( item.Type ).Size;
     }
 }

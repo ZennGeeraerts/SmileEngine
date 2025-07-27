@@ -4,16 +4,22 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "smile/core/asset/asset.h"
 #include "shader_reflection_data.h"
+#include "vertex_shader.h"
+#include "pixel_shader.h"
 
 namespace smile::graphic
 {
     class ShaderAsset final : public asset::Asset
     {
       public:
-        ShaderAsset( const std::vector< Byte > &byteCode, const ShaderReflectionData &reflectionData )
-            : m_ByteCode{ byteCode }, m_ReflectionData{ reflectionData }
+        ShaderAsset( const primitive::String &name,
+            const primitive::Vector< Byte > &byteCode,
+            const ShaderReflectionData &reflectionData )
+            : m_Name{ name }, m_ByteCode{ byteCode }, m_ReflectionData{ reflectionData }
         {
         }
 
@@ -22,8 +28,20 @@ namespace smile::graphic
             return asset::AssetType{ foundation::TypeNameOf< ShaderAsset >() };
         }
 
+        primitive::StringView GetName() const
+        {
+            return m_Name.AsStringView();
+        }
+
       private:
-        std::vector< Byte > m_ByteCode;
+        primitive::String m_Name;
+        primitive::Vector< Byte > m_ByteCode;
         ShaderReflectionData m_ReflectionData;
+
+        union
+        {
+            VertexShader::Ref m_pVertexShader;
+            PixelShader::Ref m_pPixelShader;
+        };
     };
 }

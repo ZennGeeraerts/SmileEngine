@@ -4,24 +4,23 @@
 /*=============================================================================*/
 #pragma once
 
-#include "shader.h"
-#include "smile/common/memory/ref.h"
+#include "smile/common/primitive/text/string.h"
+#include "shader_loader.h"
 
 namespace smile::graphic
 {
     class ShaderLibrary final
     {
       public:
-        void Add( const std::string &name, const memory::Ref< Shader > &pShader );
-        void Add( const memory::Ref< Shader > &pShader );
-        memory::Ref< Shader > Load( const std::string &filePath, const BufferLayout &vertexLayout );
-        memory::Ref< Shader >
-        Load( const std::string &name, const std::string &filePath, const BufferLayout &vertexLayout );
+        memory::Ref< ShaderAsset > GetShader( asset::AssetHandle handle );
+        memory::Ref< ShaderAsset > GetShader( const primitive::StringView shaderName );
+        memory::Ref< ShaderAsset > GetShader( const std::filesystem::path &path );
 
-        memory::Ref< Shader > Get( const std::string &name );
-        bool Exists( const std::string &name ) const;
+        bool Exists( const primitive::StringView shaderName ) const;
 
       private:
-        std::unordered_map< std::string, memory::Ref< Shader > > m_Shaders;
+        ShaderLoader m_ShaderLoader;
+        std::unordered_map< primitive::String, memory::Ref< ShaderAsset > > m_Shaders;
+        std::unordered_map< memory::Ref< ShaderAsset >, primitive::String > m_ShadersToNameMap;
     };
 }

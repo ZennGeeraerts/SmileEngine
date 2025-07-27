@@ -7,28 +7,40 @@
 
 namespace smile::graphic
 {
-    Count GetSize( ConstantType type )
+    static const ConstantTypeInfo s_ConstantTypeInfo[] = { { ConstantType::Unknown, 0, "Unknown" },
+        { ConstantType::Float, 4, "Float" },
+        { ConstantType::Float2, 8, "Float2" },
+        { ConstantType::Float3, 12, "Float3" },
+        { ConstantType::Int, 4, "Int" },
+        { ConstantType::Bool, 1, "Bool" },
+        { ConstantType::Mat4, 4 * 4 * sizeof( float ), "Mat4" },
+        { ConstantType::Mat4Array, 4 * 4 * sizeof( float ), "Mat4Array" } };
+
+    const ConstantTypeInfo &GetConstantTypeInfo( ConstantType type )
     {
-        switch ( type )
+        static_assert(
+            sizeof( s_ConstantTypeInfo ) / sizeof( ConstantTypeInfo ) == static_cast< size_t >( ConstantType::Count ) );
+
+        if ( static_cast< Uint32 >( type ) >= static_cast< Uint32 >( ConstantType::Count ) )
+            return s_ConstantTypeInfo[0]; // Unknown constant type
+
+        const ConstantTypeInfo &info = s_ConstantTypeInfo[static_cast< uint32_t >( type )];
+
+        SM_ASSERT_MSG( info.Type == type, "Constant type mismatch" );
+
+        return info;
+    }
+
+    const ConstantTypeInfo &GetConstantTypeInfo( const primitive::StringView constantView )
+    {
+        for ( const ConstantTypeInfo &info : s_ConstantTypeInfo )
         {
-            case ConstantType::Unknown:
-                return 0;
-            case ConstantType::Float:
-                return 4;
-            case ConstantType::Float2:
-                return 8;
-            case ConstantType::Float3:
-                return 12;
-            case ConstantType::Int:
-                return 4;
-            case ConstantType::Bool:
-                return 1;
-            case ConstantType::Mat4:
-                return 4 * 4 * sizeof( float );
-            default:
-                SM_ASSERT_MSG( false, "Invalid constant type" );
+            if ( constantView == info.Name )
+            {
+                return info;
+            }
         }
 
-        return 0;
+        return s_ConstantTypeInfo[0]; // Unknown constant type
     }
 }

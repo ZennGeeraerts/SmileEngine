@@ -4,23 +4,24 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/text/string.h"
+
 #include "shader_blob_format.h"
 #include "constant_buffer_descriptor.h"
 #include "shader_resource_binding.h"
-
-#include <string>
-#include <vector>
+#include "smile/graphic/rhi/resource/buffer.h"
 
 namespace smile::graphic
 {
     struct ShaderReflectionData final
     {
-        std::string EntryPoint;
-        std::string TargetProfile;
+        primitive::String EntryPoint;
+        primitive::String TargetProfile;
         ShaderBlobFormat BlobFormat;
-        BufferLayout InputSignature;
-        BufferLayout OutputSignature;
-        std::vector< ConstantBufferDescriptor > ConstantBufferDescs;
-        std::vector< ShaderResourceBinding > ShaderResourceBindings;
+        rhi::BufferLayout InputSignature;
+        rhi::BufferLayout OutputSignature;
+        primitive::Vector< ConstantBufferDescriptor > ConstantBufferDescs;
+        primitive::Vector< ShaderResourceBinding > ShaderResourceBindings;
     };
 }

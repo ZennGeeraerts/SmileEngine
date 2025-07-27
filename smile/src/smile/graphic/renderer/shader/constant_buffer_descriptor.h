@@ -23,10 +23,15 @@ namespace smile::graphic
     class ConstantBufferDescriptor final
     {
       public:
+        ConstantBufferDescriptor() : m_Items{}, m_Size{ 0 }
+        {
+        }
+
         ConstantBufferDescriptor(
             std::initializer_list< std::tuple< primitive::String, ConstantType, Count, Count > > list );
 
         void Add( primitive::String name, ConstantType type, const Count size, const Count itemCount = 1 );
+        void Add( const ConstantBufferItem &item );
 
         Count GetSize() const
         {

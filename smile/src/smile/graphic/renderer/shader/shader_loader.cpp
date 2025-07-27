@@ -6,6 +6,7 @@
 #include "shader_loader.h"
 
 #include "shader_asset.h"
+#include "constant_type.h"
 
 #include "smile/core/asset/asset_importer.h"
 #include "smile/core/project/project_manager.h"
@@ -121,27 +122,27 @@ namespace smile::graphic
         if ( !data["EntryPoint"] )
             return false;
 
-        reflectionData.EntryPoint = data["EntryPoint"].as< std::string >();
+        reflectionData.EntryPoint = data["EntryPoint"].as< primitive::String >();
 
         if ( !data["TargetProfile"] )
             return false;
 
-        reflectionData.TargetProfile = data["TargetProfile"].as< std::string >();
+        reflectionData.TargetProfile = data["TargetProfile"].as< primitive::String >();
 
         if ( !data["BlobFormat"] )
             return false;
 
         reflectionData.BlobFormat = ShaderBlobFormatFromString( data["BlobFormat"].as< std::string >() );
 
-        auto parseSignature = []( const YAML::Node &node ) -> BufferLayout
+        auto parseSignature = []( const YAML::Node &node ) -> rhi::BufferLayout
         {
-            BufferLayout signature{};
+            rhi::BufferLayout signature{};
             for ( const auto &entry : node )
             {
-                BufferElement element;
+                rhi::BufferElement element;
                 element.Name = entry["SemanticName"].as< std::string >();
                 auto val = entry["Format"].as< std::string >();
-                element.FormatType = GetFormatInfo( entry["Format"].as< std::string >() ).Format;
+                element.FormatType = rhi::GetFormatInfo( entry["Format"].as< std::string >() ).Format;
 
                 signature.AddElement( element );
             }
@@ -159,24 +160,22 @@ namespace smile::graphic
             for ( const auto &bufferNode : data["ConstantBuffers"] )
             {
                 ConstantBufferDescriptor buffer;
-                buffer.Name = bufferNode["Name"].as< std::string >();
-                buffer.Size = bufferNode["Size"].as< Uint32 >();
 
                 if ( bufferNode["Variables"] )
                 {
                     for ( const auto &varNode : bufferNode["Variables"] )
                     {
-                        BufferElement element;
-                        element.Name = varNode["Name"].as< std::string >();
-                        element.FormatType = GetFormatInfo( varNode["Type"].as< std::string >() ).Format;
-                        element.Size = varNode["Size"].as< Uint32 >();
-                        element.Offset = varNode["Offset"].as< Uint32 >();
+                        ConstantBufferItem item;
+                        item.Name = varNode["Name"].as< primitive::String >();
+                        item.Type = GetConstantTypeInfo( varNode["Type"].as< primitive::String >() ).Type;
+                        item.Size = varNode["Size"].as< Count >();
+                        item.ItemCount = 1; // TODO: Support item count
 
-                        buffer.Layout.AddElement( element );
+                        buffer.Add( item );
                     }
                 }
 
-                reflectionData.ConstantBufferDescs.emplace_back( std::move( buffer ) );
+                reflectionData.ConstantBufferDescs.EmplaceBack( std::move( buffer ) );
             }
         }
 

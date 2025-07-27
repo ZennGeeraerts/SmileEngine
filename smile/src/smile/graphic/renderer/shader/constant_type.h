@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/text/string_view.h"
 
 namespace smile::graphic
 {
@@ -17,8 +18,17 @@ namespace smile::graphic
         Int,
         Bool,
         Mat4,
-        Mat4Array
+        Mat4Array,
+        Count
     };
 
-    Count GetSize( ConstantType type );
+    struct ConstantTypeInfo final
+    {
+        ConstantType Type;
+        Count Size;
+        primitive::StringView Name;
+    };
+
+    const ConstantTypeInfo &GetConstantTypeInfo( ConstantType type );
+    const ConstantTypeInfo &GetConstantTypeInfo( const primitive::StringView constantView );
 }

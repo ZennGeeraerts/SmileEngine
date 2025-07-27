@@ -5,45 +5,58 @@
 #include "smpch.h"
 #include "shader_library.h"
 
+#include "shader_asset.h"
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
 
+#include "smile/core/asset/asset_manager.h"
+
 namespace smile::graphic
 {
-    void ShaderLibrary::Add( const std::string &name, const memory::Ref< Shader > &pShader )
+    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( asset::AssetHandle handle )
     {
-        SM_ASSERT_MSG( !Exists( name ), "ShaderLibrary::Add > Shader: %s already exists!", name );
-        m_Shaders[name] = pShader;
+        memory::Ref< ShaderAsset > pShaderAsset = asset::AssetManager::GetAsset< ShaderAsset >( handle );
+
+        if ( pShaderAsset )
+        {
+            m_Shaders.insert( std::make_pair( pShaderAsset->GetName(), pShaderAsset ) );
+            return pShaderAsset;
+        }
+
+        SM_LOG_WARNING( "ShaderLibrary::GetShader > Could not load shader: {}", static_cast< Uint64 >( handle ) );
+
+        return nullptr;
     }
 
-    void ShaderLibrary::Add( const memory::Ref< Shader > &pShader )
+    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( const primitive::StringView shaderName )
     {
-        Add( pShader->Name, pShader );
+        if ( Exists( shaderName ) )
+        {
+            return m_Shaders[shaderName];
+        }
+
+        SM_LOG_WARNING( "ShaderLibrary::GetShader > Could not load shader with name: {}", shaderName );
+
+        return nullptr;
     }
 
-    memory::Ref< Shader > ShaderLibrary::Load( const std::string &filePath, const BufferLayout &vertexLayout )
+    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( const std::filesystem::path &path )
     {
-        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, vertexLayout );
-        Add( pShader );
-        return pShader;
+        memory::Ref< ShaderAsset > pShaderAsset = m_ShaderLoader.LoadShader( path );
+
+        if ( pShaderAsset )
+        {
+            m_Shaders.insert( std::make_pair( pShaderAsset->GetName(), pShaderAsset ) );
+            return pShaderAsset;
+        }
+
+        SM_LOG_WARNING( "ShaderLibrary::GetShader > Could not load shader: {}", path.string() );
+
+        return nullptr;
     }
 
-    memory::Ref< Shader >
-    ShaderLibrary::Load( const std::string &name, const std::string &filePath, const BufferLayout &vertexLayout )
+    bool ShaderLibrary::Exists( const primitive::StringView shaderName ) const
     {
-        auto pShader = RenderEngine::GetRenderSystem().GetResourceManager().CreateShader( filePath, vertexLayout );
-        Add( name, pShader );
-        return pShader;
-    }
-
-    memory::Ref< Shader > ShaderLibrary::Get( const std::string &name )
-    {
-        SM_ASSERT_MSG( Exists( name ), "ShaderLibrary::Add > Shader: %s not found!", name );
-        return m_Shaders[name];
-    }
-
-    bool ShaderLibrary::Exists( const std::string &name ) const
-    {
-        return m_Shaders.find( name ) != m_Shaders.end();
+        return m_Shaders.find( shaderName ) != m_Shaders.end();
     }
 }
