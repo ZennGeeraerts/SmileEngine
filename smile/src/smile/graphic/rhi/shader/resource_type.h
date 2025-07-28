@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/text/string_view.h"
 
 namespace smile::graphic::rhi
 {
@@ -28,4 +29,13 @@ namespace smile::graphic::rhi
 
         Count
     };
+
+    struct ResourceTypeInfo final
+    {
+        ResourceType Type;
+        primitive::StringView Name;
+    };
+
+    const ResourceTypeInfo &GetResourceTypeInfo( ResourceType resourceType );
+    const ResourceTypeInfo &GetResourceTypeInfo( const primitive::StringView resourceTypeView );
 }

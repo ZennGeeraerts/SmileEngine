@@ -184,12 +184,12 @@ namespace smile::graphic
             for ( const auto &resourceNode : data["Resources"] )
             {
                 ShaderResourceBinding resource;
-                resource.Name = resourceNode["Name"].as< std::string >();
-                resource.Type = ShaderDataTypeFromString( resourceNode["Type"].as< std::string >() );
+                resource.Name = resourceNode["Name"].as< primitive::String >();
+                resource.Type = rhi::GetResourceTypeInfo( resourceNode["Type"].as< primitive::String >() ).Type;
                 resource.BindPoint = resourceNode["BindPoint"].as< Uint32 >();
                 resource.BindCount = resourceNode["BindCount"].as< Uint32 >();
 
-                reflectionData.ShaderResourceBindings.emplace_back( std::move( resource ) );
+                reflectionData.ShaderResourceBindings.EmplaceBack( std::move( resource ) );
             }
         }
 

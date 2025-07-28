@@ -4,14 +4,16 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/shader/shader_data_type.h"
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/text/string.h"
+#include "smile/graphic/rhi/shader/resource_type.h"
 
 namespace smile::graphic
 {
     struct ShaderResourceBinding final
     {
-        std::string Name;
-        ShaderDataType Type;
+        primitive::String Name;
+        rhi::ResourceType Type;
         Uint32 BindPoint;
         Uint32 BindCount;
     };
