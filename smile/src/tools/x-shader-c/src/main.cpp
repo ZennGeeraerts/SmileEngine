@@ -132,16 +132,61 @@ std::string GetD3D11ParamFormat( D3D11_SIGNATURE_PARAMETER_DESC paramDesc )
     }
 }
 
-std::string GetD3D11ShaderInputType( D3D_SHADER_INPUT_TYPE inputType )
+std::string GetD3D11ShaderInputType( const D3D11_SHADER_INPUT_BIND_DESC &resDesc )
 {
-    switch ( inputType )
+    switch ( resDesc.Type )
     {
         case D3D_SIT_CBUFFER:
             return "ConstantBuffer";
+
+        case D3D_SIT_TBUFFER:
+            return "TypedBuffer_SRV";
+
         case D3D_SIT_TEXTURE:
-            return "Texture";
+            return "Texture_SRV";
+
         case D3D_SIT_SAMPLER:
             return "Sampler";
+
+        case D3D_SIT_UAV_RWTYPED:
+            switch ( resDesc.Dimension )
+            {
+                case D3D_SRV_DIMENSION_BUFFER:
+                case D3D_SRV_DIMENSION_BUFFEREX:
+                    return "TypedBuffer_UAV";
+                case D3D_SRV_DIMENSION_TEXTURE1D:
+                case D3D_SRV_DIMENSION_TEXTURE1DARRAY:
+                case D3D_SRV_DIMENSION_TEXTURE2D:
+                case D3D_SRV_DIMENSION_TEXTURE2DARRAY:
+                case D3D_SRV_DIMENSION_TEXTURE3D:
+                    return "Texture_UAV";
+                default:
+                    return "Unknown";
+            }
+
+        case D3D_SIT_UAV_RWSTRUCTURED:
+        case D3D_SIT_UAV_APPEND_STRUCTURED:
+        case D3D_SIT_UAV_CONSUME_STRUCTURED:
+            if ( resDesc.Dimension == D3D_SRV_DIMENSION_BUFFER || resDesc.Dimension == D3D_SRV_DIMENSION_BUFFEREX )
+                return "StructuredBuffer_UAV";
+            else
+                return "Unknown";
+
+        case D3D_SIT_UAV_RWBYTEADDRESS:
+            if ( resDesc.Dimension == D3D_SRV_DIMENSION_BUFFER || resDesc.Dimension == D3D_SRV_DIMENSION_BUFFEREX )
+                return "RawBuffer_UAV";
+            else
+                return "Unknown";
+
+        case D3D_SIT_STRUCTURED:
+            return "StructuredBuffer_SRV";
+
+        case D3D_SIT_BYTEADDRESS:
+            return "RawBuffer_SRV";
+
+        case D3D_SIT_RTACCELERATIONSTRUCTURE:
+            return "RayTracingAccelStruct";
+
         default:
             return "Unknown";
     }
@@ -299,7 +344,7 @@ YAML::Node ReflectBlob( Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob,
 
         YAML::Node resNode;
         resNode["Name"] = resDesc.Name;
-        resNode["Type"] = GetD3D11ShaderInputType( resDesc.Type );
+        resNode["Type"] = GetD3D11ShaderInputType( resDesc );
         resNode["BindPoint"] = resDesc.BindPoint;
         resNode["BindCount"] = resDesc.BindCount;
         resources.push_back( resNode );
