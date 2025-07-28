@@ -9,6 +9,11 @@
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/primitive_topology.h"
+#include "smile/graphic/rhi/resource/buffer.h"
+#include "smile/graphic/rhi/render_state.h"
+#include "smile/graphic/rhi/shader/binding_layout.h"
+#include "smile/graphic/renderer/shader/vertex_shader.h"
+#include "smile/graphic/renderer/shader/pixel_shader.h"
 
 namespace smile::graphic
 {

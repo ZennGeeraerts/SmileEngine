@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 #include "smile/graphic/sprite/ecs/sprite_renderer_component.h"
-#include "smile/graphic/camera/camera.h"
+#include "smile/graphic/renderer/camera.h"
 
 namespace smile::graphic
 {

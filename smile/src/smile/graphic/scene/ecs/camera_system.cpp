@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "camera_system.h"
 
-#include "smile/graphic/camera/camera.h"
+#include "smile/graphic/renderer/camera.h"
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/core/world/components.h"
 #include "smile/core/world/world_manager.h"

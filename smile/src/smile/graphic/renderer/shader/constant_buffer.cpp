@@ -7,7 +7,7 @@
 
 namespace smile::graphic
 {
-    ConstantBuffer::ConstantBuffer( GPUBufferHandle handle, const ConstantBufferDescriptor &desc )
+    ConstantBuffer::ConstantBuffer( rhi::GPUBufferHandle handle, const ConstantBufferDescriptor &desc )
         : m_Handle{ handle }, m_pBuffer{ nullptr }, m_Descriptor{ desc }
     {
     }

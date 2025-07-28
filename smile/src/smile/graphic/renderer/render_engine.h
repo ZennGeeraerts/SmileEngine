@@ -6,7 +6,7 @@
 
 #include "render_system.h"
 #include "smile/graphic/scene/scene_manager.h"
-#include "smile/graphic/rhi/shader/shader_library.h"
+#include "smile/graphic/renderer/shader/shader_library.h"
 
 namespace smile::window
 {

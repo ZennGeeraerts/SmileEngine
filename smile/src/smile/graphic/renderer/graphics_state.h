@@ -11,6 +11,7 @@
 #include "shader/binding_set.h"
 #include "shader/vertex_buffer_binding.h"
 #include "shader/index_buffer_binding.h"
+#include "smile/graphic/rhi/rhi.h"
 
 namespace smile::graphic
 {

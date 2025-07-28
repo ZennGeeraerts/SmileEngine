@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/core/geometric/box.h"
-#include "smile/graphic/mesh/mesh_factory.h"
+#include "smile/graphic/scene/mesh_factory.h"
 
 namespace smile::physics::ecs
 {
@@ -13,7 +13,7 @@ namespace smile::physics::ecs
     {
         BoxColliderComponent()
         {
-            graphic::BufferLayout vertexLayout{ { graphic::Format::RGB32_FLOAT, "POSITION" } };
+            graphic::rhi::BufferLayout vertexLayout{ { graphic::rhi::Format::RGB32_FLOAT, "POSITION" } };
             pWireframeMesh = graphic::MeshFactory::CreateCube( vertexLayout );
         }
 
