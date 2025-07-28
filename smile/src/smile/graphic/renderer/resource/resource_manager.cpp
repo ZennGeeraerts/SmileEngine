@@ -203,12 +203,20 @@ namespace smile::graphic
 
         for ( const auto &attachment : colorAttachments )
         {
-            desc.ColorAttachments.PushBack( rhi::FramebufferAttachment{
-                attachment.pTexture->GetHandle(), attachment.TextureFormat, attachment.IsReadOnly } );
+            rhi::TextureDescriptor colorDesc;
+            colorDesc.TextureFormat = attachment.TextureFormat;
+            colorDesc.CPUAccess = attachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+
+            desc.ColorAttachments.PushBack( rhi::FramebufferAttachment{ attachment.pTexture->GetHandle(), colorDesc } );
         }
 
-        desc.DepthAttachment = rhi::FramebufferAttachment{
-            depthAttachment.pTexture->GetHandle(), depthAttachment.TextureFormat, depthAttachment.IsReadOnly };
+        {
+            rhi::TextureDescriptor depthDesc;
+            depthDesc.TextureFormat = depthAttachment.TextureFormat;
+            depthDesc.CPUAccess = depthAttachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+
+            desc.DepthAttachment = rhi::FramebufferAttachment{ depthAttachment.pTexture->GetHandle(), depthDesc };
+        }
 
         rhi::FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
         m_pDevice->CreateFramebuffer( handle, desc );
