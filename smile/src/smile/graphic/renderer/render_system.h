@@ -47,6 +47,8 @@ namespace smile::graphic
 
         void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
 
+        void ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height );
+
         ResourceManager &GetResourceManager()
         {
             return m_ResourceManager;
@@ -74,7 +76,7 @@ namespace smile::graphic
         ResourceManager m_ResourceManager{};
 
         Scope< rhi::SwapChain > m_pSwapChain = nullptr;
-        Texture::Ref m_pBackBuffer = nullptr;
+        Framebuffer::Ref m_pBackBuffer = nullptr;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

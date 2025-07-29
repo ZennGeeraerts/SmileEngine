@@ -38,14 +38,21 @@ namespace smile::graphic
             }
         }();
 
-        rhi::TextureDescriptor backBufferDesc;
-        backBufferDesc.Dimension = rhi::TextureDimension::Texture2D;
-        backBufferDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
-        backBufferDesc.Width = pWindow->GetWidth();
-        backBufferDesc.Height = pWindow->GetHeight();
-        backBufferDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+        rhi::TextureDescriptor colorDesc;
+        colorDesc.Dimension = rhi::TextureDimension::Texture2D;
+        colorDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
+        colorDesc.Width = pWindow->GetWidth();
+        colorDesc.Height = pWindow->GetHeight();
+        colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
 
-        m_pBackBuffer = m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, backBufferDesc );
+        Texture::Ref pColorTexture =
+            m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
+
+        FramebufferAttachment depthAttachment =
+            m_ResourceManager.CreateDepthAttachment( pWindow->GetWidth(), pWindow->GetHeight() );
+
+        m_pBackBuffer = m_ResourceManager.CreateFramebuffer(
+            { FramebufferAttachment{ pColorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
     }
 
     void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )

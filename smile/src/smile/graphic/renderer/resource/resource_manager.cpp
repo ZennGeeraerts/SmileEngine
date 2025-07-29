@@ -147,6 +147,26 @@ namespace smile::graphic
         return pTexture;
     }
 
+    FramebufferAttachment ResourceManager::CreateDepthAttachment( const Uint32 width, const Uint32 height )
+    {
+        rhi::TextureDescriptor textureDesc{};
+        textureDesc.Width = width;
+        textureDesc.Height = height;
+        textureDesc.TextureFormat = rhi::Format::D24S8;
+        textureDesc.Dimension = rhi::TextureDimension::TextureCube;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+        textureDesc.CPUAccess = rhi::CPUAccessMode::Read;
+
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        m_pDevice->CreateTexture( handle, textureDesc );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, width, height );
+        m_pTextures.PushBack( pTexture );
+
+        return FramebufferAttachment{ pTexture, textureDesc.TextureFormat, true };
+    }
+
     ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
     {
         rhi::GPUBufferDescriptor bufferDesc{};

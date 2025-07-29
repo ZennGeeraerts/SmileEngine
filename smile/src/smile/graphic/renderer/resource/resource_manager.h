@@ -47,6 +47,8 @@ namespace smile::graphic
         Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
         Texture::Ref
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
+        
+        FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
         ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
 
