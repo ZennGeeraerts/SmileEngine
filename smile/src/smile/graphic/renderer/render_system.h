@@ -47,8 +47,6 @@ namespace smile::graphic
 
         void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
 
-        void ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height );
-
         ResourceManager &GetResourceManager()
         {
             return m_ResourceManager;

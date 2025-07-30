@@ -109,7 +109,8 @@ namespace smile::graphic
         auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
         m_pDevice->CreateTexture( handle, textureDesc, buffer );
 
-        auto pTexture = memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight() );
+        auto pTexture =
+            memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight(), pImage->GetFormat() );
         m_pTextures.PushBack( pTexture );
         return pTexture;
     }
@@ -129,7 +130,8 @@ namespace smile::graphic
         auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
         m_pDevice->CreateTexture( handle, textureDesc, buffer );
 
-        auto pTexture = memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight() );
+        auto pTexture =
+            memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight(), pImage->GetFormat() );
         m_pTextures.PushBack( pTexture );
         return pTexture;
     }
@@ -142,7 +144,7 @@ namespace smile::graphic
 
         m_pDevice->CreateHandleForNativeTexture( handle, nativeTexture, type, desc );
 
-        auto pTexture = memory::CreateRef< Texture >( handle, desc.Width, desc.Height );
+        auto pTexture = memory::CreateRef< Texture >( handle, desc.Width, desc.Height, desc.TextureFormat );
         m_pTextures.PushBack( pTexture );
         return pTexture;
     }
@@ -161,7 +163,7 @@ namespace smile::graphic
 
         m_pDevice->CreateTexture( handle, textureDesc );
 
-        auto pTexture = memory::CreateRef< Texture >( handle, width, height );
+        auto pTexture = memory::CreateRef< Texture >( handle, width, height, textureDesc.TextureFormat );
         m_pTextures.PushBack( pTexture );
 
         return FramebufferAttachment{ pTexture, textureDesc.TextureFormat, true };
@@ -246,10 +248,10 @@ namespace smile::graphic
         return pFramebuffer;
     }
 
-    void ResourceManager::ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height )
+    void ResourceManager::ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height )
     {
-        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > rhi::s_MaxFramebufferCount ) ||
-             ( height > rhi::s_MaxFramebufferCount ) )
+        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > rhi::s_MaxFramebufferSize ) ||
+             ( height > rhi::s_MaxFramebufferSize ) )
         {
             SM_LOG_WARNING( "ResourceManager::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
             return;

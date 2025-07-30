@@ -15,8 +15,8 @@ namespace smile::graphic
       public:
         using Ref = memory::Ref< Texture >;
 
-        Texture( rhi::TextureHandle handle, const Uint32 width, const Uint32 height )
-            : m_Handle{ handle }, m_Width{ width }, m_Height{ height }
+        Texture( rhi::TextureHandle handle, const Uint32 width, const Uint32 height, const rhi::Format format )
+            : m_Handle{ handle }, m_Width{ width }, m_Height{ height }, m_Format{ format }
         {
         }
 
@@ -39,6 +39,11 @@ namespace smile::graphic
             return m_Height;
         }
 
+        rhi::Format GetFormat() const
+        {
+            return m_Format;
+        }
+
         bool IsValid() const
         {
             return m_Handle.IsValid();
@@ -48,6 +53,7 @@ namespace smile::graphic
         rhi::TextureHandle m_Handle;
         Uint32 m_Width;
         Uint32 m_Height;
+        rhi::Format m_Format;
 
         friend class ResourceManager;
     };

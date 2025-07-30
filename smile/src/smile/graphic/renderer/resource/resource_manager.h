@@ -63,7 +63,7 @@ namespace smile::graphic
         Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );
 
-        void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
+        void ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height );
 
         BindingSet::Ref CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
             foundation::Flags< rhi::ShaderStage > shaderStage );

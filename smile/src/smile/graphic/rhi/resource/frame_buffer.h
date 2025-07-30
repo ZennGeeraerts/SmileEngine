@@ -12,6 +12,8 @@
 
 namespace smile::graphic::rhi
 {
+    static constexpr Uint32 s_MaxFramebufferSize = 8192;
+
     struct FramebufferAttachment final
     {
         FramebufferAttachment() = default;
