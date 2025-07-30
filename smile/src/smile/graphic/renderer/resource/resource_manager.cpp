@@ -73,7 +73,7 @@ namespace smile::graphic
         rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
-        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout, vertexCount );
         m_pVertexBuffers.PushBack( pVertexBuffer );
         return pVertexBuffer;
     }

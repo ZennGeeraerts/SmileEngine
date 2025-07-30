@@ -11,6 +11,8 @@
 #include "vertex_shader.h"
 #include "pixel_shader.h"
 
+#include <variant>
+
 namespace smile::graphic
 {
     class ShaderAsset final : public asset::Asset
@@ -38,10 +40,6 @@ namespace smile::graphic
         primitive::Vector< Byte > m_ByteCode;
         ShaderReflectionData m_ReflectionData;
 
-        union
-        {
-            VertexShader::Ref m_pVertexShader;
-            PixelShader::Ref m_pPixelShader;
-        };
+        std::variant< VertexShader::Ref, PixelShader::Ref > m_pShader;
     };
 }

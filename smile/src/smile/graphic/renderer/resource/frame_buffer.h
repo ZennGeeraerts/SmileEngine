@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "frame_buffer_attachment.h"
 
@@ -16,7 +17,7 @@ namespace smile::graphic
         using Ref = memory::Ref< Framebuffer >;
 
         Framebuffer( rhi::FramebufferHandle handle,
-            std::initializer_list< FramebufferAttachment > colorAttachments,
+            const primitive::Vector< FramebufferAttachment > &colorAttachments,
             const FramebufferAttachment &depthAttachment )
             : m_Handle{ handle }, m_ColorAttachments{ colorAttachments }, m_DepthAttachment{ depthAttachment }
         {

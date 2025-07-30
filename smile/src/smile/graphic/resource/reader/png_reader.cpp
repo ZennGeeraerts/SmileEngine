@@ -39,7 +39,7 @@ namespace smile::graphic
             switch ( channelsPerPixel )
             {
                 case 4:
-                    return memory::CreateRef< Image >( width, height, Format::RGBA8_UNORM, pData );
+                    return memory::CreateRef< Image >( width, height, rhi::Format::RGBA8_UNORM, pData );
 
                 default:
                     SM_ASSERT_MSG( false, "PNGReader::Read > Unsupported channels per pixel" );
