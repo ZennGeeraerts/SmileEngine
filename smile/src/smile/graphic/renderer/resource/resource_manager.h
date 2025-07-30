@@ -48,6 +48,7 @@ namespace smile::graphic
         Texture::Ref
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
         
+        FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
         FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
         ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
