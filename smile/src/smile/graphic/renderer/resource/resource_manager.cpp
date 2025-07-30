@@ -241,6 +241,13 @@ namespace smile::graphic
         std::initializer_list< FramebufferAttachment > colorAttachments,
         const FramebufferAttachment &depthAttachment )
     {
+        return CreateFramebuffer( primitive::Vector< FramebufferAttachment >{ colorAttachments }, depthAttachment );
+    }
+
+    Framebuffer::Ref ResourceManager::CreateFramebuffer(
+        const primitive::Vector< FramebufferAttachment > &colorAttachments,
+        const FramebufferAttachment &depthAttachment )
+    {
         rhi::FramebufferDescriptor desc{};
 
         for ( const auto &attachment : colorAttachments )
@@ -277,10 +284,23 @@ namespace smile::graphic
             return;
         }
 
-        pFramebuffer->m_Width = width;
-        pFramebuffer->m_Height = height;
+        m_pDevice->DestroyFramebuffer( pFramebuffer->GetHandle() );
 
-        m_pDevice->InvalidateFramebuffer( pFramebuffer->m_Handle );
+        primitive::Vector< FramebufferAttachment > newColorAttachments{};
+        for ( auto &colorAttachment : pFramebuffer->GetColorAttachments() )
+        {
+            m_pDevice->DestroyTexture( colorAttachment.pTexture->GetHandle() );
+
+            FramebufferAttachment newColorAttachment = CreateColorAttachment( width, height );
+            newColorAttachments.EmplaceBack( std::move( newColorAttachment ) );
+        }
+
+        const FramebufferAttachment &depthAttachment = pFramebuffer->GetDepthAttachment();
+        m_pDevice->DestroyTexture( depthAttachment.pTexture->GetHandle() );
+
+        FramebufferAttachment newDepthAttachment = CreateDepthAttachment( width, height );
+        
+        pFramebuffer = CreateFramebuffer( newColorAttachments, newDepthAttachment );
     }
 
     BindingSet::Ref ResourceManager::CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
