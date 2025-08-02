@@ -29,6 +29,9 @@ namespace smile::graphic
         for ( auto pTexture : m_pTextures )
             m_pDevice->DestroyTexture( pTexture->m_Handle );
 
+        for ( auto pSampler : m_pSamplers )
+            m_pDevice->DestroySampler( pSampler->m_Handle );
+
         for ( auto pFramebuffer : m_pFramebuffers )
             m_pDevice->DestroyFramebuffer( pFramebuffer->m_Handle );
 
@@ -147,6 +150,17 @@ namespace smile::graphic
         auto pTexture = memory::CreateRef< Texture >( handle, desc.Width, desc.Height, desc.TextureFormat );
         m_pTextures.PushBack( pTexture );
         return pTexture;
+    }
+
+    Sampler::Ref ResourceManager::CreateSampler( const rhi::SamplerDescriptor &descriptor )
+    {
+        rhi::SamplerHandle handle = m_SamplerHandleManager.CreateHandle();
+
+        m_pDevice->CreateSampler( handle, descriptor );
+
+        auto pSampler = memory::CreateRef< Sampler >( handle, descriptor );
+        m_pSamplers.PushBack( pSampler );
+        return pSampler;
     }
 
     FramebufferAttachment ResourceManager::CreateColorAttachment( const Uint32 width, const Uint32 height )
@@ -299,7 +313,7 @@ namespace smile::graphic
         m_pDevice->DestroyTexture( depthAttachment.pTexture->GetHandle() );
 
         FramebufferAttachment newDepthAttachment = CreateDepthAttachment( width, height );
-        
+
         pFramebuffer = CreateFramebuffer( newColorAttachments, newDepthAttachment );
     }
 

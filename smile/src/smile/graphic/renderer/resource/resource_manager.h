@@ -13,6 +13,7 @@
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "texture.h"
+#include "sampler.h"
 #include "frame_buffer.h"
 #include "graphics_pipeline.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
@@ -48,6 +49,8 @@ namespace smile::graphic
         Texture::Ref
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
         
+        Sampler::Ref CreateSampler( const rhi::SamplerDescriptor &descriptor );
+
         FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
         FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
@@ -80,9 +83,11 @@ namespace smile::graphic
 
       private:
         rhi::GraphicsDevice *m_pDevice = nullptr;
+
         primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
         primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
         primitive::Vector< Texture::Ref > m_pTextures;
+        primitive::Vector< Sampler::Ref > m_pSamplers;
         primitive::Vector< ConstantBuffer::Ref > m_pConstantBuffers;
         primitive::Vector< VertexShader::Ref > m_pVertexShaders;
         primitive::Vector< PixelShader::Ref > m_pPixelShaders;
@@ -92,6 +97,7 @@ namespace smile::graphic
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;
+        rhi::SamplerHandlerManager m_SamplerHandleManager;
         rhi::FramebufferHandleManager m_FramebufferHandleManager;
         rhi::ShaderHandleManager m_ShaderHandleManager;
         rhi::BindingSetHandleManager m_BindingSetHandleManager;
