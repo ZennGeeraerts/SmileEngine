@@ -58,6 +58,15 @@ namespace smile::memory
             std::memmove( pDestByteArray, pSrcByteArray, size );
         }
     }
+
+    void FillByteArray( void *pDestByteArray, const Byte value, const Count size )
+    {
+        if ( size > 0 )
+        {
+            SM_ASSERT( pDestByteArray );
+            std::memset( pDestByteArray, value, static_cast< std::size_t >( size ) );
+        }
+    }
 #endif
 
     bool IsAllocatedByteArray( const void *pByteArray )
