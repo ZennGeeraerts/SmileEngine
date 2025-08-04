@@ -48,6 +48,8 @@ namespace smile::primitive
 
         ~String() = default;
 
+        String &operator=( const String & ) = default;
+
         using Vector< char >::operator[];
 
         operator StringView() const
