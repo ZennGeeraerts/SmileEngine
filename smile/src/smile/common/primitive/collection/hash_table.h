@@ -30,7 +30,9 @@ namespace smile::primitive
         {
             node.SetNextNode( pNode )
         } -> std::same_as< void >;
-    } && std::is_same_v< typename Type::Hash, foundation::HashCode >;
+
+        requires std::is_same_v< decltype( node.Hash ), foundation::HashCode >;
+    };
 
     template < NodeTypeConcept NodeType >
     class HashTable final
@@ -238,9 +240,9 @@ namespace smile::primitive
         {
             SM_ASSERT( !HasItemAtKey( pNode->GetKey() ) );
 
-            pNode->HashCode = std::hash< KeyType >{}( pNode->GetKey() );
+            pNode->Hash = std::hash< KeyType >{}( pNode->GetKey() );
 
-            auto bucketIndex = pNode->HashCode & s_BucketMask;
+            auto bucketIndex = pNode->Hash & s_BucketMask;
             pNode->SetNextNode( m_ppBuckets[bucketIndex] );
             m_ppBuckets[bucketIndex] = pNode;
 
@@ -298,7 +300,7 @@ namespace smile::primitive
 
         void Clear()
         {
-            const NodeType *pCurrentNode{ nullptr };
+            NodeType *pCurrentNode{ nullptr };
 
             for ( auto bucketIndex : foundation::GetCountIterator( s_BucketSize ) )
             {
@@ -307,7 +309,7 @@ namespace smile::primitive
                 while ( pCurrentNode )
                 {
                     auto pNextNode = pCurrentNode->GetNextNode();
-                    pNextNode->SetNextNode( nullptr );
+                    pCurrentNode->SetNextNode( nullptr );
                     pCurrentNode = pNextNode;
                 }
             }
@@ -372,7 +374,7 @@ namespace smile::primitive
         {
             if ( !pNode->GetNextNode() )
             {
-                auto bucketIndex = ( pNode->HashCode & s_BucketMask ) + 1;
+                auto bucketIndex = ( pNode->Hash & s_BucketMask ) + 1;
 
                 while ( bucketIndex < s_BucketSize && !m_ppBuckets[bucketIndex] )
                 {
@@ -392,11 +394,11 @@ namespace smile::primitive
             return pNode->GetNextNode();
         }
 
-        const NodeType *GetNextNode( NodeType *pNode ) const
+        const NodeType *GetNextNode( const NodeType *pNode ) const
         {
             if ( !pNode->GetNextNode() )
             {
-                auto bucketIndex = ( pNode->HashCode & s_BucketMask ) + 1;
+                auto bucketIndex = ( pNode->Hash & s_BucketMask ) + 1;
 
                 while ( bucketIndex < s_BucketSize && !m_ppBuckets[bucketIndex] )
                 {
@@ -425,7 +427,7 @@ namespace smile::primitive
 
             while ( pCurrentNode )
             {
-                if ( pCurrentNode->HashCode == hashCode && pCurrentNode->GetKey() == key )
+                if ( pCurrentNode->Hash == hashCode && pCurrentNode->GetKey() == key )
                 {
                     return pCurrentNode;
                 }
@@ -445,7 +447,7 @@ namespace smile::primitive
 
             while ( pCurrentNode )
             {
-                if ( pCurrentNode->HashCode == hashCode && pCurrentNode->GetKey() == key )
+                if ( pCurrentNode->Hash == hashCode && pCurrentNode->GetKey() == key )
                 {
                     return pCurrentNode;
                 }
@@ -460,8 +462,8 @@ namespace smile::primitive
         NodeType **m_ppBuckets;
         Count m_ItemCount;
 
-        static constexpr int s_DefaultBucketExponent = 4;
-        static constexpr int s_BucketSize = 1 << s_DefaultBucketExponent;
-        static constexpr int s_BucketMask = ( 1 << s_DefaultBucketExponent ) - 1;
+        static constexpr Uint32 s_DefaultBucketExponent = 4;
+        static constexpr Count s_BucketSize = 1 << s_DefaultBucketExponent;
+        static constexpr Uint32 s_BucketMask = ( 1 << s_DefaultBucketExponent ) - 1;
     };
 }
