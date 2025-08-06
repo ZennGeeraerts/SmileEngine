@@ -76,24 +76,24 @@ namespace smile
 
             stateManager.Initialize( &engine, &systemRegistry, "default" );
 
-            REQUIRE( engine.GetSystems().size() == 1 );
+            REQUIRE( engine.GetSystems().GetItemCount() == 1 );
             CHECK( engine.GetSystems()[0] == pTestSystem );
 
             stateManager.ChangeState( "foo" );
 
-            REQUIRE( engine.GetSystems().size() == 2 );
+            REQUIRE( engine.GetSystems().GetItemCount() == 2 );
             CHECK( engine.GetSystems()[0] == pTestSystem );
             CHECK( engine.GetSystems()[1]->GetName() == "smile::ecsstatemanagertests::TestFooSystem" );
 
             stateManager.ChangeState( "bar" );
 
-            REQUIRE( engine.GetSystems().size() == 2 );
+            REQUIRE( engine.GetSystems().GetItemCount() == 2 );
             CHECK( engine.GetSystems()[0] == pTestSystem );
             CHECK( engine.GetSystems()[1]->GetName() == "smile::ecsstatemanagertests::TestBarSystem" );
 
             stateManager.ChangeState( "full" );
 
-            REQUIRE( engine.GetSystems().size() == 3 );
+            REQUIRE( engine.GetSystems().GetItemCount() == 3 );
             CHECK( engine.GetSystems()[0] == pTestSystem );
             CHECK( engine.GetSystems()[1]->GetName() == "smile::ecsstatemanagertests::TestBarSystem" );
             CHECK( engine.GetSystems()[2]->GetName() == "smile::ecsstatemanagertests::TestFooSystem" );

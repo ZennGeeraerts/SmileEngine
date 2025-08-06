@@ -36,17 +36,23 @@ namespace smile::memory
     Header *GetHeader( const void *pObject );
 
 #if SM_C_DEBUG
-    void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size );
-    void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size );
+    void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size );
+    void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size );
+    void FillByteArray( void *pDestByteArray, const Byte value, const Count size );
 #else
-    inline void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
+    inline void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size )
     {
         std::memcpy( pDestByteArray, pSrcByteArray, size );
     }
 
-    inline void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
+    inline void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size )
     {
         std::memmove( pDestByteArray, pSrcByteArray, size );
+    }
+
+    inline void FillByteArray( void *pDestByteArray, const Byte value, const Count size )
+    {
+        std::memset( pDestByteArray, value, size );
     }
 #endif
 

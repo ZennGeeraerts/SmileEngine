@@ -42,6 +42,12 @@ namespace smile::primitive
             }
         }
 
+        explicit Vector( const Count itemCount ) noexcept : m_pItems{ nullptr }, m_ItemCount{ 0 }
+        {
+            Reserve( itemCount );
+            m_ItemCount = itemCount;
+        }
+
         Vector( const Item *pOther, const Count itemCount ) : m_pItems{ nullptr }, m_ItemCount{ 0 }
         {
             Reserve( itemCount );
@@ -238,7 +244,7 @@ namespace smile::primitive
             m_ItemCount = 0;
         }
 
-        void SetItemCount( const Count newItemCount )
+        void SetItemCount( const Count newItemCount, const std::optional< Item > &item = std::nullopt )
         {
             if ( m_ItemCount >= newItemCount )
             {
@@ -248,6 +254,15 @@ namespace smile::primitive
             {
                 Reserve( newItemCount );
                 memory::ConstructArrayItems( &m_pItems[m_ItemCount], newItemCount - m_ItemCount );
+
+                if ( item.has_value() )
+                {
+                    const auto &value = item.value();
+                    for ( Index i = m_ItemCount; i < newItemCount; ++i )
+                    {
+                        m_pItems[i] = value;
+                    }
+                }
             }
 
             m_ItemCount = newItemCount;
@@ -364,6 +379,35 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
+        template < typename InputIterator >
+        requires std::same_as< InputIterator, Iterator > || std::same_as< InputIterator, ConstIterator >
+        Iterator Insert( Iterator where, InputIterator first, InputIterator last )
+        {
+            const Count toAddCount = last - first;
+            if ( toAddCount == 0 )
+                return where;
+
+            Reserve( m_ItemCount + toAddCount );
+
+            if ( where.GetIndex() != m_ItemCount )
+            {
+                memory::MoveArrayItems( m_pItems + m_ItemCount, toAddCount, &*where );
+            }
+
+            m_ItemCount += toAddCount;
+
+            if ( toAddCount == 1 )
+            {
+                new ( &*where, memory::g_pInPlace ) Item{ *first };
+            }
+            else
+            {
+                memory::ConstructCopiedArrayItems( &*where, toAddCount, &*first );
+            }
+
+            return where;
+        }
+
         void PopFront()
         {
             memory::MoveArrayItems( m_pItems, m_ItemCount - 1, m_pItems + 1 );
@@ -393,6 +437,19 @@ namespace smile::primitive
 
             EraseAtIndex( index );
             return iterator;
+        }
+
+        Iterator Erase( Iterator first, Iterator last )
+        {
+            SM_ASSERT( first <= last && last <= end() );
+
+            memory::MoveArrayItems(
+                m_pItems + first.GetIndex(), m_ItemCount - last.GetIndex(), m_pItems + last.GetIndex() );
+
+            const Count itemsToRemove = last - first;
+            m_ItemCount -= itemsToRemove;
+
+            return first;
         }
 
         void EraseAtIndex( const Index index )
