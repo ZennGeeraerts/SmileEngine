@@ -283,7 +283,7 @@ namespace smile::primitive
             }
             else
             {
-                const NodeType *pCurrentNode = m_ppBuckets[bucketIndex];
+                NodeType *pCurrentNode = m_ppBuckets[bucketIndex];
 
                 while ( pCurrentNode->GetNextNode() != pNodeToErase )
                 {
@@ -296,6 +296,19 @@ namespace smile::primitive
             pNodeToErase->SetNextNode( nullptr );
 
             --m_ItemCount;
+        }
+
+        NodeType *EraseAndSetNext( Iterator &where )
+        {
+            SM_ASSERT( where != end() );
+
+            auto pNodeToErase = where.m_pNode;
+
+            where.m_pNode = GetNextNode( pNodeToErase );
+
+            EraseNode( pNodeToErase );
+
+            return pNodeToErase;
         }
 
         void Clear()
