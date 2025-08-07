@@ -1,80 +1,99 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/shader/shader.h"
+#include "smile/graphic/renderer/shader/shader_asset.h"
+#include "smile/graphic/renderer/shader/constant_buffer.h"
+#include "smile/graphic/renderer/resource/sampler.h"
 #include "smile/graphic/renderer/resource/texture.h"
+#include "smile/graphic/rhi/shader/binding_layout.h"
 #include "smile/common/memory/ref.h"
-
-#include <DirectXMath.h>
+#include "smile/common/primitive/collection/hash_map.h"
 
 namespace smile::graphic
 {
     class Material final
     {
       public:
-        Material( const memory::Ref< Shader > &pShader );
-        ~Material();
+        Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader ) noexcept;
+        ~Material() noexcept;
 
-        void SetShader( const memory::Ref< Shader > &pShader );
+        void SetShaders( ShaderAsset::Ref pVertexShader, ShaderAsset::Ref pPixelShader );
 
-        const BufferLayout &GetBufferLayout() const
+        void Clear();
+
+        inline const rhi::BufferLayout &GetBufferLayout() const
         {
-            return m_pShader->BufferLayout;
-        }
-        const memory::Ref< Shader > &GetShader() const
-        {
-            return m_pShader;
+            return m_pVertexShader->GetReflectionData().InputSignature;
         }
 
-        void SetFloatValue( const std::string &semantic, float value );
-        void SetIntValue( const std::string &semantic, int value );
-        void SetBoolValue( const std::string &semantic, bool value );
-        void SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
-        void SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
-        void SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &pValue );
+        inline VertexShader::Ref GetVertexShader() const
+        {
+            return m_pVertexShader->GetVertexShader();
+        }
 
-        float GetFloatValue( const std::string &semantic ) const;
-        int GetIntValue( const std::string &semantic ) const;
-        bool GetBoolValue( const std::string &semantic ) const;
-        const DirectX::XMFLOAT2 &GetFloat2Value( const std::string &semantic ) const;
-        const DirectX::XMFLOAT3 &GetFloat3Value( const std::string &semantic ) const;
+        inline PixelShader::Ref GetPixelShader() const
+        {
+            return m_pPixelShader->GetPixelShader();
+        }
 
-        const std::unordered_map< std::string, float > &GetFloatValues() const
+        inline Texture::Ref GetTexture( const primitive::StringView name ) const
         {
-            return m_FloatValues;
+            return m_Textures.GetItemAtKey( name );
         }
-        const std::unordered_map< std::string, int > &GetIntValues() const
+
+        inline Sampler::Ref GetSampler( const primitive::StringView name ) const
+
         {
-            return m_IntValues;
+            return m_Samplers.GetItemAtKey( name );
         }
-        const std::unordered_map< std::string, bool > &GetBoolValues() const
+
+        inline ConstantBuffer::Ref GetConstantBuffer( const primitive::StringView name ) const
         {
-            return m_BoolValues;
+            return m_ConstantBuffers.GetItemAtKey( name );
         }
-        const std::unordered_map< std::string, DirectX::XMFLOAT2 > &GetFloat2Values() const
+
+        void SetTexture( const primitive::StringView name, Texture::Ref pNewTexture );
+        void SetSampler( const primitive::StringView name, Sampler::Ref pNewSampler );
+
+        template < typename ConstantBufferType >
+        void SetConstantBuffer( const primitive::StringView name, ConstantBufferType *pBuffer )
         {
-            return m_Float2Values;
+            if ( !m_ConstantBuffers.HasItemAtKey( name ) )
+            {
+                SM_LOG_WARNING( "Material::SetConstantBuffer > Couldn't find constant buffer with name: {}", name );
+                return;
+            }
+
+            auto pConstantBuffer = m_ConstantBuffers.GetItemAtKey( name );
+            pConstantBuffer->Initialize( pBuffer );
         }
-        const std::unordered_map< std::string, DirectX::XMFLOAT3 > &GetFloat3Values() const
+
+        const primitive::HashMap< primitive::String, Texture::Ref > &GetTextures() const
         {
-            return m_Float3Values;
+            return m_Textures;
         }
-        const std::unordered_map< std::string, memory::Ref< Texture > > &GetTexture2DValues() const
+
+        const primitive::HashMap< primitive::String, Sampler::Ref > &GetSamplers() const
         {
-            return m_Texture2DValues;
+            return m_Samplers;
+        }
+
+        const primitive::HashMap< primitive::String, ConstantBuffer::Ref > GetConstantBuffers() const
+        {
+            return m_ConstantBuffers;
         }
 
       private:
-        std::unordered_map< std::string, float > m_FloatValues{};
-        std::unordered_map< std::string, int > m_IntValues{};
-        std::unordered_map< std::string, bool > m_BoolValues{};
-        std::unordered_map< std::string, DirectX::XMFLOAT2 > m_Float2Values{};
-        std::unordered_map< std::string, DirectX::XMFLOAT3 > m_Float3Values{};
-        std::unordered_map< std::string, memory::Ref< Texture > > m_Texture2DValues{};
+        ShaderAsset::Ref m_pVertexShader;
+        ShaderAsset::Ref m_pPixelShader;
 
-        memory::Ref< Shader > m_pShader = nullptr;
+        rhi::BindingLayout m_BindingLayout;
+
+        primitive::HashMap< primitive::String, Texture::Ref > m_Textures;
+        primitive::HashMap< primitive::String, Sampler::Ref > m_Samplers;
+        primitive::HashMap< primitive::String, ConstantBuffer::Ref > m_ConstantBuffers;
     };
 }

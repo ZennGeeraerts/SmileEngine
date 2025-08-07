@@ -161,6 +161,9 @@ namespace smile::graphic
             {
                 ConstantBufferDescriptor buffer;
 
+                SM_ASSERT( bufferNode["Name"] );
+                primitive::String bufferName = bufferNode["Name"].as< primitive::String >();
+
                 if ( bufferNode["Variables"] )
                 {
                     for ( const auto &varNode : bufferNode["Variables"] )
@@ -175,7 +178,7 @@ namespace smile::graphic
                     }
                 }
 
-                reflectionData.ConstantBufferDescs.EmplaceBack( std::move( buffer ) );
+                reflectionData.ConstantBufferDescs.Insert( bufferName, std::move( buffer ) );
             }
         }
 

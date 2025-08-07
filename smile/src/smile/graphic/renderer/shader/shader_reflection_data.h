@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/collection/hash_map.h"
 #include "smile/common/primitive/text/string.h"
 
 #include "shader_blob_format.h"
@@ -21,7 +22,7 @@ namespace smile::graphic
         ShaderBlobFormat BlobFormat;
         rhi::BufferLayout InputSignature;
         rhi::BufferLayout OutputSignature;
-        primitive::Vector< ConstantBufferDescriptor > ConstantBufferDescs;
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > ConstantBufferDescs;
         primitive::Vector< ShaderResourceBinding > ShaderResourceBindings;
     };
 }

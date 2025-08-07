@@ -5,166 +5,95 @@
 #include "smpch.h"
 #include "material.h"
 
-#include "smile/graphic/rhi/shader/shader_reflection.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
-    Material::Material( const memory::Ref< Shader > &shader ) : m_pShader{ shader }
+    Material::Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader )
+        : m_BindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } }
     {
-        SetShader( shader );
+        SetShaders( pVertexShader, pPixelShader );
     }
 
     Material::~Material()
     {
-        m_FloatValues.clear();
-        m_IntValues.clear();
-        m_BoolValues.clear();
-        m_Float2Values.clear();
-        m_Float3Values.clear();
-        m_Texture2DValues.clear();
     }
 
-    void Material::SetShader( const memory::Ref< Shader > &pShader )
+    void Material::SetShaders( ShaderAsset::Ref pVertexShader, ShaderAsset::Ref pPixelShader )
     {
-        m_pShader = pShader;
+        m_pVertexShader = pVertexShader;
+        m_pPixelShader = pPixelShader;
 
-        const auto &shaderVariables{ utils::ReflectShaderVariables( pShader ) };
-        for ( const ShaderVariable &variable : shaderVariables )
+        Clear();
+
+        auto insertResourcesFunc = [&]( const ShaderReflectionData &reflectionData )
         {
-            switch ( variable.Type )
+            for ( const ShaderResourceBinding &binding : reflectionData.ShaderResourceBindings )
             {
-                case ShaderDataType::Float:
-                    m_FloatValues.insert( std::make_pair( variable.Semantic, 0.0f ) );
-                    break;
-                case ShaderDataType::Int:
-                    m_IntValues.insert( std::make_pair( variable.Semantic, 0 ) );
-                    break;
-                case ShaderDataType::Bool:
-                    m_BoolValues.insert( std::make_pair( variable.Semantic, false ) );
-                    break;
-                case ShaderDataType::Float2:
-                    m_Float2Values.insert( std::make_pair( variable.Semantic, DirectX::XMFLOAT2{} ) );
-                    break;
-                case ShaderDataType::Float3:
-                    m_Float3Values.insert( std::make_pair( variable.Semantic, DirectX::XMFLOAT3{} ) );
-                    break;
-                case ShaderDataType::Texture2D:
-                    m_Texture2DValues.insert( std::make_pair( variable.Semantic, nullptr ) );
-                    break;
+                rhi::BindingLayoutElement element{ binding.BindPoint, binding.Type };
+                m_BindingLayout.AddElement( std::move( element ) );
+
+                switch ( binding.Type )
+                {
+                    case rhi::ResourceType::Texture_SRV:
+                    case rhi::ResourceType::Texture_UAV:
+                        m_Textures.Insert( binding.Name, nullptr );
+                        break;
+
+                    case rhi::ResourceType::Sampler:
+                        m_Samplers.Insert( binding.Name, nullptr );
+                        break;
+
+                    case rhi::ResourceType::ConstantBuffer:
+                    {
+                        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+
+                        const auto &constantBufferDesc = reflectionData.ConstantBufferDescs.at( binding.Name );
+                        auto pConstantBuffer = resourceManager.CreateConstantBuffer( constantBufferDesc );
+                        m_ConstantBuffers.Insert( binding.Name, pConstantBuffer );
+
+                        break;
+                    }
+
+                    default:
+                        SM_ASSERT_MSG( false, "Unsupported resource type" );
+                }
             }
-        }
+        };
+
+        insertResourcesFunc( pVertexShader->GetReflectionData() );
+        insertResourcesFunc( pPixelShader->GetReflectionData() );
     }
 
-    void Material::SetFloatValue( const std::string &semantic, float value )
+    void Material::Clear()
     {
-        if ( m_FloatValues.find( semantic ) == m_FloatValues.end() )
+        m_BindingLayout.Clear();
+        m_ConstantBuffers.Clear();
+        m_Textures.Clear();
+        m_Samplers.Clear();
+    }
+
+    void Material::SetTexture( const primitive::StringView name, Texture::Ref pNewTexture )
+    {
+        if ( !m_Textures.HasItemAtKey( name ) )
         {
-            SM_LOG_WARNING( "Material::SetFloatValue > Couldn't find semantic: {}", semantic.c_str() );
+            SM_LOG_WARNING( "Material::SetTexture > Couldn't find texture with name: {}", name );
             return;
         }
 
-        m_FloatValues[semantic] = value;
-        m_pShader->UploadFloat( semantic, value );
+        auto &pTexture = m_Textures.GetItemAtKey( name );
+        pTexture = pNewTexture;
     }
 
-    void Material::SetIntValue( const std::string &semantic, int value )
+    void Material::SetSampler( const primitive::StringView name, Sampler::Ref pNewSampler )
     {
-        if ( m_IntValues.find( semantic ) == m_IntValues.end() )
+        if ( !m_Samplers.HasItemAtKey( name ) )
         {
-            SM_LOG_WARNING( "Material::SetIntValue > Couldn't find semantic: {}", semantic );
+            SM_LOG_WARNING( "Material::SetSampler > Couldn't find sampler with name: {}", name );
             return;
         }
 
-        m_IntValues[semantic] = value;
-        m_pShader->UploadInt( semantic, value );
-    }
-
-    void Material::SetBoolValue( const std::string &semantic, bool value )
-    {
-        if ( m_BoolValues.find( semantic ) == m_BoolValues.end() )
-        {
-            SM_LOG_WARNING( "Material::setBoolValue > Couldn't find semantic: {}", semantic );
-            return;
-        }
-
-        m_BoolValues[semantic] = value;
-        m_pShader->UploadBool( semantic, value );
-    }
-
-    void Material::SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value )
-    {
-        if ( m_Float2Values.find( semantic ) == m_Float2Values.end() )
-        {
-            SM_LOG_WARNING( "Material::SetFloat2Value > Couldn't find semantic: {}", semantic );
-            return;
-        }
-
-        m_Float2Values[semantic] = value;
-        m_pShader->UploadFloat2( semantic, value );
-    }
-
-    void Material::SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value )
-    {
-        if ( m_Float3Values.find( semantic ) == m_Float3Values.end() )
-        {
-            SM_LOG_WARNING( "Material::SetFloat3Value > Couldn't find semantic: {}", semantic );
-            return;
-        }
-
-        m_Float3Values[semantic] = value;
-        m_pShader->UploadFloat3( semantic, value );
-    }
-
-    void Material::SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &pValue )
-    {
-        if ( m_Texture2DValues.find( semantic ) == m_Texture2DValues.end() )
-        {
-            SM_LOG_WARNING( "Material::SetTexture2D > Couldn't find semantic: {}", semantic );
-            return;
-        }
-
-        m_Texture2DValues[semantic] = pValue;
-        if ( pValue )
-            m_pShader->UploadTexture( semantic, pValue->Handle );
-    }
-
-    float Material::GetFloatValue( const std::string &semantic ) const
-    {
-        auto it = m_FloatValues.find( semantic );
-        SM_ASSERT_MSG( it != m_FloatValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
-
-        return it->second;
-    }
-
-    int Material::GetIntValue( const std::string &semantic ) const
-    {
-        auto it = m_IntValues.find( semantic );
-        SM_ASSERT_MSG( it != m_IntValues.end(), "Material::GetFloatValue > Couldn't find semantic: %s", semantic );
-
-        return it->second;
-    }
-
-    bool Material::GetBoolValue( const std::string &semantic ) const
-    {
-        auto it = m_BoolValues.find( semantic );
-        SM_ASSERT_MSG( it != m_BoolValues.end(), "Material::GetBoolValue > Couldn't find semantic: %s", semantic );
-
-        return it->second;
-    }
-
-    const DirectX::XMFLOAT2 &Material::GetFloat2Value( const std::string &semantic ) const
-    {
-        auto it = m_Float2Values.find( semantic );
-        SM_ASSERT_MSG( it != m_Float2Values.end(), "Material::GetFloat2Value > Couldn't find semantic: %s", semantic );
-
-        return it->second;
-    }
-
-    const DirectX::XMFLOAT3 &Material::GetFloat3Value( const std::string &semantic ) const
-    {
-        auto it = m_Float3Values.find( semantic );
-        SM_ASSERT_MSG( it != m_Float3Values.end(), "Material::GetFloat3Value > Couldn't find semantic: %s", semantic );
-
-        return it->second;
+        auto &pSampler = m_Samplers.GetItemAtKey( name );
+        pSampler = pNewSampler;
     }
 }

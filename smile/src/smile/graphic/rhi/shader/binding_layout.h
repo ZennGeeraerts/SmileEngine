@@ -11,6 +11,10 @@ namespace smile::graphic::rhi
 {
     struct BindingLayoutElement final
     {
+        BindingLayoutElement( Uint32 slot, ResourceType type ) : Slot{ slot }, Type{ type }, Size{ 0 }
+        {
+        }
+
         BindingLayoutElement( Uint32 slot, ResourceType type, Uint16 size ) : Slot{ slot }, Type{ type }, Size{ size }
         {
         }
@@ -71,6 +75,11 @@ namespace smile::graphic::rhi
         void AddElement( BindingLayoutElement &&element )
         {
             m_Elements.emplace_back( std::move( element ) );
+        }
+
+        void Clear()
+        {
+            m_Elements.clear();
         }
 
       private:
