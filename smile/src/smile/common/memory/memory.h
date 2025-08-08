@@ -71,7 +71,7 @@ namespace smile::memory
         const Count itemCount,
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
-        for ( auto index = 0; index < itemCount; ++index )
+        for ( Index index = 0; index < itemCount; ++index )
         {
             ::new ( pItems + index, g_pInPlace ) ItemType;
         }
@@ -91,7 +91,7 @@ namespace smile::memory
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value || !std::is_same_v< ItemType, OtherItemType > >
             * = nullptr )
     {
-        for ( auto index = 0; index < itemCount; ++index )
+        for ( Index index = 0; index < itemCount; ++index )
         {
             ::new ( pItems + index, memory::g_pInPlace ) ItemType{ pOtherItems[index] };
         }
@@ -113,7 +113,7 @@ namespace smile::memory
         ItemType *pOtherItems,
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
-        for ( auto index = 0; index < itemCount; ++index )
+        for ( Index index = 0; index < itemCount; ++index )
         {
             ::new ( pItems + index, memory::g_pInPlace ) ItemType{ std::move( pOtherItems[index] ) };
         }
@@ -159,7 +159,7 @@ namespace smile::memory
     {
         SM_ASSERT( pItems < pOtherItems || pOtherItems + itemCount <= pItems );
 
-        for ( auto index = 0; index < itemCount; ++index )
+        for ( Index index = 0; index < itemCount; ++index )
         {
             pItems[index] = pOtherItems[index];
         }
@@ -179,7 +179,7 @@ namespace smile::memory
         const Count itemCount,
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
-        for ( auto index = 0; index < itemCount; ++index )
+        for ( Index index = 0; index < itemCount; ++index )
         {
             pItems[index].~ItemType();
         }
