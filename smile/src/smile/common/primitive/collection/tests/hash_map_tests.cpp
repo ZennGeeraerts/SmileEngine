@@ -315,6 +315,25 @@ namespace smile::primitive
         }
     }
 
+    TEST_CASE_METHOD( Fixture, "HashMap::operator[]", "[primitive]" )
+    {
+        {
+            REQUIRE( TestMap["first_key"].Value == 166 );
+            REQUIRE( TestMap["second_key"].Value == 666 );
+            REQUIRE( TestMap["third_key"].Value == 5150 );
+            REQUIRE_ASSERT( TestMap["unknown_key"] );
+        }
+
+        {
+            const HashMap< DummyKey, DummyClass > &constTestMap = TestMap;
+
+            REQUIRE( constTestMap["first_key"].Value == 166 );
+            REQUIRE( constTestMap["second_key"].Value == 666 );
+            REQUIRE( constTestMap["third_key"].Value == 5150 );
+            REQUIRE_ASSERT( constTestMap["unknown_key"] );
+        }
+    }
+
     TEST_CASE_METHOD( Fixture, "HashMap::FindItemAtKey", "[primitive]" )
     {
         HashMap< DummyKey, DummyClass >::Iterator iterator;
