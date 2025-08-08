@@ -12,7 +12,7 @@
 
 namespace smile::primitive
 {
-    class String final : protected Vector< char >
+    class String : protected Vector< char >
     {
       public:
         String() = default;
