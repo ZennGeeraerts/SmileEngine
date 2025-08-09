@@ -6,12 +6,12 @@
 #include "world_serializer.h"
 
 #include "smile/common/logging/logger.h"
+#include "smile/common/primitive/text/string.h"
 #include "entity.h"
 #include "components.h"
 #include "smile/core/project/project_manager.h"
+#include "smile/core/yaml/string.h"
 #include "smile/graphic/sprite/texture_manager.h"
-
-#include <yaml-cpp/yaml.h>
 
 #include <fstream>
 
@@ -519,7 +519,7 @@ namespace smile::world
         if ( !data["World"] )
             return false;
 
-        std::string worldName = data["World"].as< std::string >();
+        primitive::String worldName = data["World"].as< primitive::String >();
         SM_LOG_TRACE( "Deserializing world '{}'", worldName );
 
         auto entities = data["Entities"];
@@ -529,10 +529,10 @@ namespace smile::world
             {
                 Uint64 uuid = entity["Entity"].as< Uint64 >();
 
-                std::string name{};
+                primitive::String name{};
                 auto tagComponent = entity["TagComponent"];
                 if ( tagComponent )
-                    name = tagComponent["Tag"].as< std::string >();
+                    name = tagComponent["Tag"].as< primitive::String >();
 
                 SM_LOG_TRACE( "Deserialized entity with ID: {0}, name: {1}", uuid, name );
 

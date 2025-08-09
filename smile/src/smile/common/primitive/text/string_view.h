@@ -133,3 +133,23 @@ namespace smile::primitive
         return view.GetSubText() + view.GetCharCount();
     }
 }
+
+namespace std
+{
+    template <>
+    struct formatter< smile::primitive::StringView >
+    {
+        formatter< basic_string_view< char > > Base;
+
+        constexpr auto parse( format_parse_context &ctx )
+        {
+            return Base.parse( ctx );
+        }
+
+        auto format( smile::primitive::StringView &view, format_context &ctx ) const
+        {
+            basic_string_view< char > temp{ view.GetData(), static_cast< size_t >( view.GetCharCount() ) };
+            return Base.format( temp, ctx );
+        }
+    };
+}

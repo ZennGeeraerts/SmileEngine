@@ -1,9 +1,10 @@
 /*=============================================================================*/
-// Copyright 2022-2024 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include <string>
+
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::world::ecs
 {
@@ -11,10 +12,10 @@ namespace smile::world::ecs
     {
         TagComponent() = default;
         TagComponent( const TagComponent & ) = default;
-        TagComponent( const std::string &tag ) : Tag{ tag }
+        TagComponent( const primitive::String &tag ) : Tag{ tag }
         {
         }
 
-        std::string Tag;
+        primitive::String Tag;
     };
 }

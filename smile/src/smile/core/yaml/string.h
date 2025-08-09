@@ -35,7 +35,7 @@ namespace YAML
         }
     };
 
-    template<>
+    template <>
     struct convert< smile::primitive::StringView >
     {
         static Node encode( const smile::primitive::StringView value )
@@ -50,4 +50,32 @@ namespace YAML
             }
         }
     };
+
+    Emitter &operator<<( Emitter &output, const smile::primitive::String &value )
+    {
+        if ( value.GetCharCount() > 0 )
+        {
+            output << value.GetData();
+        }
+        else
+        {
+            output << "";
+        }
+
+        return output;
+    }
+
+    Emitter &operator<<( Emitter &output, const smile::primitive::StringView value )
+    {
+        if ( value.GetCharCount() > 0 )
+        {
+            output << value.GetData();
+        }
+        else
+        {
+            output << "";
+        }
+
+        return output;
+    }
 }

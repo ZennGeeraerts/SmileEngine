@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -66,7 +66,7 @@ namespace smile::world
         {
             return GetComponent< ecs::IDComponent >().ID;
         }
-        const std::string &GetName() const
+        const primitive::String &GetName() const
         {
             return GetComponent< ecs::TagComponent >().Tag;
         }

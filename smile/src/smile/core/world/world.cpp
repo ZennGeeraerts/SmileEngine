@@ -47,12 +47,12 @@ namespace smile::world
         return CreateEntity( "Entity" );
     }
 
-    Entity World::CreateEntity( const std::string &name )
+    Entity World::CreateEntity( const primitive::String &name )
     {
         return CreateEntity( primitive::UUID{}, name );
     }
 
-    Entity World::CreateEntity( primitive::UUID uuid, const std::string &name )
+    Entity World::CreateEntity( primitive::UUID uuid, const primitive::String &name )
     {
         Entity entity{ m_ECSEngine.CreateEntity(), this };
         entity.AddComponent< ecs::IDComponent >( uuid );
