@@ -11,108 +11,13 @@
 #include "components.h"
 #include "smile/core/project/project_manager.h"
 #include "smile/core/yaml/string.h"
+#include "smile/core/yaml/math.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
 #include <fstream>
 
-namespace YAML
-{
-    template <>
-    struct convert< DirectX::XMFLOAT2 >
-    {
-        static Node encode( const DirectX::XMFLOAT2 &v )
-        {
-            Node node{};
-            node.push_back( v.x );
-            node.push_back( v.y );
-            return node;
-        }
-
-        static bool decode( const Node &node, DirectX::XMFLOAT2 &v )
-        {
-            if ( !node.IsSequence() || node.size() != 2 )
-                return false;
-
-            v.x = node[0].as< float >();
-            v.y = node[1].as< float >();
-            return true;
-        }
-    };
-
-    template <>
-    struct convert< DirectX::XMFLOAT3 >
-    {
-        static Node encode( const DirectX::XMFLOAT3 &v )
-        {
-            Node node{};
-            node.push_back( v.x );
-            node.push_back( v.y );
-            node.push_back( v.z );
-            return node;
-        }
-
-        static bool decode( const Node &node, DirectX::XMFLOAT3 &v )
-        {
-            if ( !node.IsSequence() || node.size() != 3 )
-                return false;
-
-            v.x = node[0].as< float >();
-            v.y = node[1].as< float >();
-            v.z = node[2].as< float >();
-            return true;
-        }
-    };
-
-    template <>
-    struct convert< DirectX::XMFLOAT4 >
-    {
-        static Node encode( const DirectX::XMFLOAT4 &v )
-        {
-            Node node{};
-            node.push_back( v.x );
-            node.push_back( v.y );
-            node.push_back( v.z );
-            node.push_back( v.w );
-            return node;
-        }
-
-        static bool decode( const Node &node, DirectX::XMFLOAT4 &v )
-        {
-            if ( !node.IsSequence() || node.size() != 4 )
-                return false;
-
-            v.x = node[0].as< float >();
-            v.y = node[1].as< float >();
-            v.z = node[2].as< float >();
-            v.w = node[3].as< float >();
-            return true;
-        }
-    };
-}
-
 namespace smile::world
 {
-    YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT2 &v )
-    {
-        output << YAML::Flow;
-        output << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
-        return output;
-    }
-
-    YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT3 &v )
-    {
-        output << YAML::Flow;
-        output << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
-        return output;
-    }
-
-    YAML::Emitter &operator<<( YAML::Emitter &output, const DirectX::XMFLOAT4 &v )
-    {
-        output << YAML::Flow;
-        output << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
-        return output;
-    }
-
     WorldSerializer::WorldSerializer( memory::Ref< World > pWorld ) : m_pWorld{ pWorld }
     {
     }
