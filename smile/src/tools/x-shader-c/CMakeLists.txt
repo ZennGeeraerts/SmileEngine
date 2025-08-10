@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION "3.25.0")
 
 project(x-shader-c)
-set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 

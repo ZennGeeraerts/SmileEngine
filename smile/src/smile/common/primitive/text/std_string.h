@@ -29,7 +29,7 @@ namespace smile::primitive
         {
         }
 
-        StdString( const std::string &text ) : String{ text.c_str(), text.size() }
+        StdString( const std::string &text ) : String{ text.c_str(), static_cast< Count >( text.size() ) }
         {
         }
 
