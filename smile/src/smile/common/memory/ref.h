@@ -60,7 +60,7 @@ namespace smile::memory
             return *this;
         }
 
-        inline Ref &operator=( Ref &&other )
+        inline Ref &operator=( Ref &&other ) noexcept
         {
             Reset();
 
