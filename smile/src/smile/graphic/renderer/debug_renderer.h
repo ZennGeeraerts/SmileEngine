@@ -6,6 +6,8 @@
 #include "smile/common/foundation/meyers_singleton.h"
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
+#include "smile/graphic/renderer/shader/vertex_shader.h"
+#include "smile/graphic/renderer/shader/pixel_shader.h"
 #include "smile/graphic/rhi/shader/shader.h"
 #include "smile/graphic/rhi/render_state.h"
 
@@ -41,14 +43,16 @@ namespace smile::graphic
         };
 
         std::vector< VertexPosCol > m_LineList{};
-        memory::Ref< VertexBuffer > m_pVertexBuffer;
-        memory::Ref< Shader > m_pShader;
+        VertexBuffer::Ref m_pVertexBuffer;
+        VertexShader::Ref m_pVertexShader;
+        PixelShader::Ref m_pPixelShaderShader;
 
         DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
 
         Uint32 m_VertexCount{ 100 };
-        const BufferLayout m_VertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGBA32_FLOAT, "COLOR" } };
+        const rhi::BufferLayout m_VertexLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" },
+            { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
-        RenderState m_State{};
+        rhi::RenderState m_State{};
     };
 }

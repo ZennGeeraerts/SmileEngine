@@ -6,6 +6,7 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/rhi/resource/sampler.h"
 
 namespace smile::graphic
 {

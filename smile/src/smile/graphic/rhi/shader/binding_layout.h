@@ -27,6 +27,8 @@ namespace smile::graphic::rhi
     class BindingLayout final
     {
       public:
+        BindingLayout() = default;
+
         BindingLayout( foundation::Flags< ShaderStage > visibility ) : m_Visibility{ visibility }
         {
         }
