@@ -38,8 +38,10 @@ namespace smile::graphic
         for ( auto &item : m_Items )
         {
             item.Offset = offset;
-            offset += item.Size * item.ItemCount;
-            m_Size += item.Size * item.ItemCount;
+
+            const Count stride = item.GetStride();
+            offset += stride;
+            m_Size += stride;
         }
     }
 }

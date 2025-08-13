@@ -14,6 +14,11 @@ namespace smile::graphic
 {
     struct ConstantBufferItem final
     {
+        Count GetStride() const
+        {
+            return Size * ItemCount;
+        }
+
         primitive::String Name;
         ConstantType Type;
         Count Size;

@@ -12,11 +12,40 @@
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/hash_map.h"
 
+#include <DirectXMath.h>
+
 namespace smile::graphic
 {
+    enum class MaterialParamType
+    {
+        Texture,
+        Sampler,
+        Float,
+        Int,
+        Bool,
+        Float2,
+        Float3,
+    };
+
+    using MaterialParamValue = std::variant< primitive::Vector< Byte >, Texture::Ref, Sampler::Ref >;
+
+    struct MaterialParam final
+    {
+        MaterialParam( const primitive::String &name, MaterialParamType type, const MaterialParamValue &value )
+            : Name{ name }, Type{ type }, Data{ value }
+        {
+        }
+
+        primitive::String Name;
+        MaterialParamType Type;
+        MaterialParamValue Data;
+    };
+
     class Material final
     {
       public:
+        using ConstantBufferData = primitive::Vector< Byte >;
+
         Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader ) noexcept;
         ~Material() noexcept;
 
@@ -39,52 +68,17 @@ namespace smile::graphic
             return m_pPixelShader->GetPixelShader();
         }
 
-        inline Texture::Ref GetTexture( const primitive::StringView name ) const
+        inline const MaterialParam &GetParam( const primitive::StringView name ) const
         {
-            return m_Textures.GetItemAtKey( name );
+            return m_Params.GetItemAtKey( name );
         }
 
-        inline Sampler::Ref GetSampler( const primitive::StringView name ) const
-
+        inline const ConstantBufferData &GetConstantBufferData( const primitive::StringView name ) const
         {
-            return m_Samplers.GetItemAtKey( name );
+            return m_ConstantBufferData.GetItemAtKey( name );
         }
 
-        inline ConstantBuffer::Ref GetConstantBuffer( const primitive::StringView name ) const
-        {
-            return m_ConstantBuffers.GetItemAtKey( name );
-        }
-
-        void SetTexture( const primitive::StringView name, Texture::Ref pNewTexture );
-        void SetSampler( const primitive::StringView name, Sampler::Ref pNewSampler );
-
-        template < typename ConstantBufferType >
-        void SetConstantBuffer( const primitive::StringView name, ConstantBufferType *pBuffer )
-        {
-            if ( !m_ConstantBuffers.HasItemAtKey( name ) )
-            {
-                SM_LOG_WARNING( "Material::SetConstantBuffer > Couldn't find constant buffer with name: {}", name );
-                return;
-            }
-
-            auto pConstantBuffer = m_ConstantBuffers.GetItemAtKey( name );
-            pConstantBuffer->Initialize( pBuffer );
-        }
-
-        const primitive::HashMap< primitive::String, Texture::Ref > &GetTextures() const
-        {
-            return m_Textures;
-        }
-
-        const primitive::HashMap< primitive::String, Sampler::Ref > &GetSamplers() const
-        {
-            return m_Samplers;
-        }
-
-        const primitive::HashMap< primitive::String, ConstantBuffer::Ref > GetConstantBuffers() const
-        {
-            return m_ConstantBuffers;
-        }
+        void SetParam( const primitive::StringView name, const MaterialParamValue &data );
 
       private:
         ShaderAsset::Ref m_pVertexShader;
@@ -92,8 +86,7 @@ namespace smile::graphic
 
         rhi::BindingLayout m_BindingLayout;
 
-        primitive::HashMap< primitive::String, Texture::Ref > m_Textures;
-        primitive::HashMap< primitive::String, Sampler::Ref > m_Samplers;
-        primitive::HashMap< primitive::String, ConstantBuffer::Ref > m_ConstantBuffers;
+        primitive::HashMap< primitive::String, MaterialParam > m_Params;
+        primitive::HashMap< primitive::String, ConstantBufferData > m_ConstantBufferData;
     };
 }

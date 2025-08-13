@@ -1,14 +1,51 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
 #include "material.h"
 
-#include "smile/graphic/renderer/render_engine.h"
+#include "smile/common/memory/memory.h"
 
 namespace smile::graphic
 {
+    static MaterialParamType ConvertConstantTypeToMaterialParamType( ConstantType constantType )
+    {
+        switch ( constantType )
+        {
+            case ConstantType::Float:
+                return MaterialParamType::Float;
+            case ConstantType::Float2:
+                return MaterialParamType::Float2;
+            case ConstantType::Float3:
+                return MaterialParamType::Float3;
+            case ConstantType::Int:
+                return MaterialParamType::Int;
+            case ConstantType::Bool:
+                return MaterialParamType::Bool;
+            default:
+                SM_ASSERT( false, "Unsupported constant type for material system" );
+        }
+    }
+
+    static bool IsConstantBufferMaterialParamType( MaterialParamType type )
+    {
+        switch ( type )
+        {
+            case MaterialParamType::Float:
+            case MaterialParamType::Float2:
+            case MaterialParamType::Float3:
+            case MaterialParamType::Int:
+            case MaterialParamType::Bool:
+                return true;
+            case MaterialParamType::Texture:
+            case MaterialParamType::Sampler:
+                return false;
+            default:
+                SM_ASSERT( false, "Unsupported material parameter type" );
+        }
+    }
+
     Material::Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader )
         : m_BindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } }
     {
@@ -37,21 +74,40 @@ namespace smile::graphic
                 {
                     case rhi::ResourceType::Texture_SRV:
                     case rhi::ResourceType::Texture_UAV:
-                        m_Textures.Insert( binding.Name, nullptr );
+                    {
+                        SM_ASSERT( !m_Params.HasItemAtKey( binding.Name ) );
+
+                        MaterialParam param{ binding.Name, MaterialParamType::Texture, Texture::Ref{} };
+                        m_Params.Insert( binding.Name, std::move( param ) );
                         break;
+                    }
 
                     case rhi::ResourceType::Sampler:
-                        m_Samplers.Insert( binding.Name, nullptr );
+                    {
+                        SM_ASSERT( !m_Params.HasItemAtKey( binding.Name ) );
+
+                        MaterialParam param{ binding.Name, MaterialParamType::Sampler, Sampler::Ref{} };
+                        m_Params.Insert( binding.Name, std::move( param ) );
                         break;
+                    }
 
                     case rhi::ResourceType::ConstantBuffer:
                     {
-                        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+                        const auto &constantBufferDesc =
+                            reflectionData.ConstantBufferDescs.GetItemAtKey( binding.Name );
 
-                        const auto &constantBufferDesc = reflectionData.ConstantBufferDescs.at( binding.Name );
-                        auto pConstantBuffer = resourceManager.CreateConstantBuffer( constantBufferDesc );
-                        m_ConstantBuffers.Insert( binding.Name, pConstantBuffer );
+                        m_ConstantBufferData.Insert( binding.Name, ConstantBufferData( constantBufferDesc.GetSize() ) );
 
+                        for ( const auto &item : constantBufferDesc )
+                        {
+                            SM_ASSERT( !m_Params.HasItemAtKey( item.Name ) );
+
+                            MaterialParam param{ item.Name,
+                                ConvertConstantTypeToMaterialParamType( item.Type ),
+                                primitive::Vector< Byte >( item.Size ) };
+
+                            m_Params.Insert( item.Name, std::move( param ) );
+                        }
                         break;
                     }
 
@@ -68,32 +124,51 @@ namespace smile::graphic
     void Material::Clear()
     {
         m_BindingLayout.Clear();
-        m_ConstantBuffers.Clear();
-        m_Textures.Clear();
-        m_Samplers.Clear();
+        m_Params.Clear();
+        m_ConstantBufferData.Clear();
     }
 
-    void Material::SetTexture( const primitive::StringView name, Texture::Ref pNewTexture )
+    void Material::SetParam( const primitive::StringView name, const MaterialParamValue &data )
     {
-        if ( !m_Textures.HasItemAtKey( name ) )
+        if ( !m_Params.HasItemAtKey( name ) )
         {
-            SM_LOG_WARNING( "Material::SetTexture > Couldn't find texture with name: {}", name );
+            SM_LOG_WARNING( "Material::SetParam > Could not find material parameter with name: {}", name );
             return;
         }
 
-        auto &pTexture = m_Textures.GetItemAtKey( name );
-        pTexture = pNewTexture;
-    }
+        auto &param = m_Params.GetItemAtKey( name );
+        param.Data = data;
 
-    void Material::SetSampler( const primitive::StringView name, Sampler::Ref pNewSampler )
-    {
-        if ( !m_Samplers.HasItemAtKey( name ) )
+        if ( IsConstantBufferMaterialParamType( param.Type ) )
         {
-            SM_LOG_WARNING( "Material::SetSampler > Couldn't find sampler with name: {}", name );
-            return;
-        }
+            auto trySetValueInConstantBufferData = [&]( const ShaderReflectionData &reflectionData )
+            {
+                for ( const auto &constantBufferDesc : reflectionData.ConstantBufferDescs )
+                {
+                    auto it = std::find_if( constantBufferDesc.Value.begin(),
+                        constantBufferDesc.Value.end(),
+                        [name]( const auto &constantBufferItem ) { return constantBufferItem.Name == name; } );
 
-        auto &pSampler = m_Samplers.GetItemAtKey( name );
-        pSampler = pNewSampler;
+                    if ( it != constantBufferDesc.Value.end() )
+                    {
+                        auto &cbData = m_ConstantBufferData.GetItemAtKey( constantBufferDesc.Key );
+                        const auto &cbItem = ( *it );
+                        const auto &valueData = std::get< primitive::Vector< Byte > >( data );
+
+                        memory::CopyArrayItems(
+                            cbData.GetData() + cbItem.Offset, cbItem.GetStride(), valueData.GetData() );
+
+                        return true;
+                    }
+                }
+
+                return false;
+            };
+
+            if ( trySetValueInConstantBufferData( m_pVertexShader->GetReflectionData() ) )
+                return;
+
+            trySetValueInConstantBufferData( m_pPixelShader->GetReflectionData() );
+        }
     }
 }
