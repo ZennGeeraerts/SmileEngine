@@ -8,25 +8,38 @@
 namespace smile::graphic
 {
     ConstantBufferDescriptor::ConstantBufferDescriptor(
-        std::initializer_list< std::tuple< primitive::String, ConstantType, Count, Count > > list )
+        std::initializer_list< std::tuple< primitive::String, ConstantType, Count > > list )
         : m_Items{}, m_Size{}
     {
         for ( auto &item : list )
         {
-            Add( std::get< 0 >( item ), std::get< 1 >( item ), std::get< 2 >( item ), std::get< 3 >( item ) );
+            Add( std::get< 0 >( item ), std::get< 1 >( item ), std::get< 2 >( item ) );
         }
     }
 
-    void
-    ConstantBufferDescriptor::Add( primitive::String name, ConstantType type, const Count size, const Count itemCount )
+    void ConstantBufferDescriptor::Add( primitive::String name, ConstantType type, const Count itemCount )
     {
+        const Count size = graphic::GetConstantTypeInfo( type ).Size;
         m_Items.EmplaceBack( std::move( name ), type, size, itemCount );
-        m_Size += graphic::GetConstantTypeInfo( type ).Size;
+        CalculateOffsetAndSize();
     }
 
     void ConstantBufferDescriptor::Add( const ConstantBufferItem &item )
     {
         m_Items.PushBack( item );
-        m_Size += graphic::GetConstantTypeInfo( item.Type ).Size;
+        CalculateOffsetAndSize();
+    }
+
+    void ConstantBufferDescriptor::CalculateOffsetAndSize()
+    {
+        Count offset{ 0 };
+        m_Size = 0;
+
+        for ( auto &item : m_Items )
+        {
+            item.Offset = offset;
+            offset += item.Size * item.ItemCount;
+            m_Size += item.Size * item.ItemCount;
+        }
     }
 }
