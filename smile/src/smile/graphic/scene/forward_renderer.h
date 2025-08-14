@@ -4,12 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
-#include "render_collector.h"
+#include "smile/graphic/renderer/render_collector.h"
+#include "smile/graphic/renderer/camera.h"
 
-#include "smile/graphic/camera/camera.h"
-
-#include "smile/graphic/mesh/ecs/mesh_renderer_component.h"
-#include "smile/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
+#include "ecs/mesh_renderer_component.h"
+#include "ecs/skinned_mesh_renderer_component.h"
 
 namespace smile::graphic
 {
@@ -23,12 +22,15 @@ namespace smile::graphic
         static void EndScene();
         static void OnRender();
 
-        static void Submit( const memory::Ref< VertexBuffer > &pVertexBuffer,
-            const memory::Ref< IndexBuffer > &pIndexBuffer,
-            const memory::Ref< Shader > &pShader,
+        static void Submit( const VertexBuffer::Ref &pVertexBuffer,
+            const IndexBuffer::Ref &pIndexBuffer,
+            const VertexShader::Ref &pVertexShader,
+            const PixelShader::Ref &pPixelShader,
             const DirectX::XMFLOAT4X4 &worldTransform );
+
         static void Submit( const ecs::MeshRendererComponent &meshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
+
         static void Submit( const ecs::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
             const DirectX::XMFLOAT4X4 &worldTransform );
 

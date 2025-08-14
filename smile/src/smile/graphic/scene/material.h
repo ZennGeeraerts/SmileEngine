@@ -41,9 +41,12 @@ namespace smile::graphic
         MaterialParamValue Data;
     };
 
-    class Material final
+    class Material final : public memory::Counted
     {
       public:
+        using Ref = memory::Ref< Material >;
+        using ConstRef = memory::Ref< const Material >;
+
         using ConstantBufferData = primitive::Vector< Byte >;
 
         Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader ) noexcept;
