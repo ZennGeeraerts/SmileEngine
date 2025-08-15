@@ -26,6 +26,13 @@ namespace smile::memory
         {
         }
 
+        template < typename OtherType >
+        requires std::is_base_of_v< Type, OtherType >
+        constexpr Scope( Scope< OtherType > &&other ) : m_pObject{ other.m_pObject }
+        {
+            other.m_pObject = nullptr;
+        }
+
         ~Scope()
         {
             delete m_pObject;
@@ -98,11 +105,11 @@ namespace smile::memory
 
       private:
         Type *m_pObject{ nullptr };
-    }
+    };
 
     template < typename Type, typename... Args >
     constexpr Scope< Type > CreateScope( Args &&...args )
     {
-        return Scope< Type >{ new Scope( std::forward< Args >( args )... ) };
+        return Scope< Type >{ new Type{ std::forward< Args >( args )... } };
     }
 }
