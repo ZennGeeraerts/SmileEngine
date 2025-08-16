@@ -33,6 +33,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< GraphicsPipeline >;
+        using ConstRef = memory::Ref< const GraphicsPipeline >;
 
         GraphicsPipeline( rhi::GraphicsPipelineHandle handle, const GraphicsPipelineDescriptor &desc )
             : m_Handle{ handle }, m_Descriptor{ desc }

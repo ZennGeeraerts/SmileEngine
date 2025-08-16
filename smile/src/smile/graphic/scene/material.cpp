@@ -6,6 +6,7 @@
 #include "material.h"
 
 #include "smile/common/memory/memory.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
@@ -47,7 +48,6 @@ namespace smile::graphic
     }
 
     Material::Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader )
-        : m_BindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } }
     {
         SetShaders( pVertexShader, pPixelShader );
     }
@@ -63,12 +63,21 @@ namespace smile::graphic
 
         Clear();
 
-        auto insertResourcesFunc = [&]( const ShaderReflectionData &reflectionData )
+        GraphicsPipelineDescriptor psoDesc{};
+        psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
+        psoDesc.InputLayout = GetBufferLayout();
+        psoDesc.pVertexShader = pVertexShader->GetVertexShader();
+        psoDesc.pPixelShader = pPixelShader->GetPixelShader();
+
+        rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } };
+        psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
+
+        auto insertMaterialParams = [&]( const ShaderReflectionData &reflectionData )
         {
             for ( const ShaderResourceBinding &binding : reflectionData.ShaderResourceBindings )
             {
                 rhi::BindingLayoutElement element{ binding.BindPoint, binding.Type };
-                m_BindingLayout.AddElement( std::move( element ) );
+                psoDesc.BindingLayouts[0].AddElement( std::move( element ) );
 
                 switch ( binding.Type )
                 {
@@ -117,13 +126,14 @@ namespace smile::graphic
             }
         };
 
-        insertResourcesFunc( pVertexShader->GetReflectionData() );
-        insertResourcesFunc( pPixelShader->GetReflectionData() );
+        insertMaterialParams( pVertexShader->GetReflectionData() );
+        insertMaterialParams( pPixelShader->GetReflectionData() );
+
+        m_pGraphicsPipeline = RenderEngine::GetRenderSystem().GetResourceManager().CreateGraphicsPipeline( psoDesc );
     }
 
     void Material::Clear()
     {
-        m_BindingLayout.Clear();
         m_Params.Clear();
         m_ConstantBufferData.Clear();
     }

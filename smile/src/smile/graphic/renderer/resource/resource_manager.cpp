@@ -348,8 +348,7 @@ namespace smile::graphic
         return pBindingSet;
     }
 
-    GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
-        const GraphicsPipelineDescriptor &descriptor )
+    GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor )
     {
         rhi::GraphicsPipelineDescriptor desc;
         desc.Topology = descriptor.Topology;

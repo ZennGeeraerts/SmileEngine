@@ -74,8 +74,7 @@ namespace smile::graphic
         BindingSet::Ref CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
             foundation::Flags< rhi::ShaderStage > shaderStage );
 
-        GraphicsPipeline::Ref CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
-            const GraphicsPipelineDescriptor &descriptor );
+        GraphicsPipeline::Ref CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
 
       private:
         rhi::GraphicsDevice *m_pDevice = nullptr;

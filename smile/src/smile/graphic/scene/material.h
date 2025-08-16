@@ -8,7 +8,7 @@
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/resource/sampler.h"
 #include "smile/graphic/renderer/resource/texture.h"
-#include "smile/graphic/rhi/shader/binding_layout.h"
+#include "smile/graphic/renderer/resource/graphics_pipeline.h
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/hash_map.h"
 
@@ -81,13 +81,18 @@ namespace smile::graphic
             return m_ConstantBufferData.GetItemAtKey( name );
         }
 
+        inline GraphicsPipeline::Ref GetGraphicsPipeline() const
+        {
+            return m_pGraphicsPipeline;
+        }
+
         void SetParam( const primitive::StringView name, const MaterialParamValue &data );
 
       private:
         ShaderAsset::Ref m_pVertexShader;
         ShaderAsset::Ref m_pPixelShader;
 
-        rhi::BindingLayout m_BindingLayout;
+        GraphicsPipeline::Ref m_pGraphicsPipeline;
 
         primitive::HashMap< primitive::String, MaterialParam > m_Params;
         primitive::HashMap< primitive::String, ConstantBufferData > m_ConstantBufferData;
