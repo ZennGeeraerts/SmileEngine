@@ -48,7 +48,7 @@ namespace smile::graphic
         Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
         Texture::Ref
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
-        
+
         Sampler::Ref CreateSampler( const rhi::SamplerDescriptor &descriptor );
 
         FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
@@ -75,11 +75,7 @@ namespace smile::graphic
             foundation::Flags< rhi::ShaderStage > shaderStage );
 
         GraphicsPipeline::Ref CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
-            const rhi::BufferLayout &inputLayout,
-            const rhi::RenderState &renderState,
-            VertexShader::ConstRef pVertexShader,
-            PixelShader::ConstRef pPixelShader,
-            const primitive::Vector< rhi::BindingLayout > &bindingLayouts );
+            const GraphicsPipelineDescriptor &descriptor );
 
       private:
         rhi::GraphicsDevice *m_pDevice = nullptr;

@@ -349,25 +349,20 @@ namespace smile::graphic
     }
 
     GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( rhi::PrimitiveTopology topology,
-        const rhi::BufferLayout &inputLayout,
-        const rhi::RenderState &renderState,
-        VertexShader::ConstRef pVertexShader,
-        PixelShader::ConstRef pPixelShader,
-        const primitive::Vector< rhi::BindingLayout > &bindingLayouts )
+        const GraphicsPipelineDescriptor &descriptor )
     {
         rhi::GraphicsPipelineDescriptor desc;
-        desc.Topology = topology;
-        desc.InputLayout = inputLayout;
-        desc.State = renderState;
-        desc.VertexShaderHandle = pVertexShader->m_Handle;
-        desc.PixelShaderHandle = pPixelShader->m_Handle;
-        desc.BindingLayouts = bindingLayouts;
+        desc.Topology = descriptor.Topology;
+        desc.InputLayout = descriptor.InputLayout;
+        desc.State = descriptor.RenderState;
+        desc.VertexShaderHandle = descriptor.pVertexShader->m_Handle;
+        desc.PixelShaderHandle = descriptor.pPixelShader->m_Handle;
+        desc.BindingLayouts = descriptor.BindingLayouts;
 
         rhi::GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
         m_pDevice->CreateGraphicsPipeline( handle, desc );
 
-        auto pGraphicsPipeline = memory::CreateRef< GraphicsPipeline >(
-            handle, topology, inputLayout, renderState, pVertexShader, pPixelShader, bindingLayouts );
+        auto pGraphicsPipeline = memory::CreateRef< GraphicsPipeline >( handle, descriptor );
         m_pGraphicsPipelines.PushBack( pGraphicsPipeline );
         return pGraphicsPipeline;
     }

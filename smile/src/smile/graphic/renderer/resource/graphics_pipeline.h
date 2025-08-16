@@ -17,25 +17,25 @@
 
 namespace smile::graphic
 {
+    struct GraphicsPipelineDescriptor final
+    {
+        rhi::PrimitiveTopology Topology;
+        rhi::BufferLayout InputLayout;
+        rhi::RenderState RenderState;
+
+        VertexShader::ConstRef pVertexShader;
+        PixelShader::ConstRef pPixelShader;
+
+        primitive::Vector< rhi::BindingLayout > BindingLayouts;
+    };
+
     class GraphicsPipeline final : public memory::Counted
     {
       public:
         using Ref = memory::Ref< GraphicsPipeline >;
 
-        GraphicsPipeline( rhi::GraphicsPipelineHandle handle,
-            rhi::PrimitiveTopology topology,
-            const rhi::BufferLayout &inputLayout,
-            const rhi::RenderState &renderState,
-            VertexShader::ConstRef pVertexShader,
-            PixelShader::ConstRef pPixelShader,
-            const primitive::Vector< rhi::BindingLayout > &bindingLayouts )
-            : m_Handle{ handle },
-              m_PrimitiveTopology{ topology },
-              m_InputLayout{ inputLayout },
-              m_RenderState{ renderState },
-              m_pVertexShader{ pVertexShader },
-              m_pPixelShader{ pPixelShader },
-              m_BindingLayouts{ bindingLayouts }
+        GraphicsPipeline( rhi::GraphicsPipelineHandle handle, const GraphicsPipelineDescriptor &desc )
+            : m_Handle{ handle }, m_Descriptor{ desc }
         {
         }
 
@@ -51,15 +51,7 @@ namespace smile::graphic
 
       private:
         rhi::GraphicsPipelineHandle m_Handle;
-
-        rhi::PrimitiveTopology m_PrimitiveTopology;
-        rhi::BufferLayout m_InputLayout;
-        rhi::RenderState m_RenderState;
-
-        VertexShader::ConstRef m_pVertexShader;
-        PixelShader::ConstRef m_pPixelShader;
-
-        primitive::Vector< rhi::BindingLayout > m_BindingLayouts;
+        GraphicsPipelineDescriptor m_Descriptor;
 
         friend class ResourceManager;
     };
