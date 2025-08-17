@@ -5,6 +5,7 @@
 #pragma once
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/logging/sink/log_sink.h"
+#include "smile/common/primitive/text/string.h"
 #include "memory_buffer.h"
 
 #include <format>
@@ -13,7 +14,9 @@ namespace smile::logging
 {
     template < typename Type >
     concept StringLike =
-        std::is_convertible_v< Type, std::string_view > || std::is_same_v< std::decay_t< Type >, const char * >;
+        std::is_convertible_v< Type, std::string_view > || std::is_same_v< std::decay_t< Type >, const char * > ||
+        std::is_same_v< std::decay_t< Type >, primitive::String > ||
+        std::is_same_v< std::decay_t< Type >, primitive::StringView >;
 
     class Logger final : public BaseLogger
     {

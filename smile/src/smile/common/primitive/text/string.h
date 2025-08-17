@@ -12,7 +12,7 @@
 
 namespace smile::primitive
 {
-    class String final : protected Vector< char >
+    class String : protected Vector< char >
     {
       public:
         String() = default;
@@ -149,6 +149,23 @@ namespace std
         smile::foundation::HashCode operator()( const smile::primitive::String &text ) const
         {
             return smile::foundation::identifier::GetHashCode( text.GetData() );
+        }
+    };
+
+    template <>
+    struct formatter< smile::primitive::String >
+    {
+        formatter< basic_string_view< char > > Base;
+
+        constexpr auto parse( format_parse_context &ctx )
+        {
+            return Base.parse( ctx );
+        }
+
+        auto format( const smile::primitive::String &str, format_context &ctx ) const
+        {
+            basic_string_view< char > temp{ str.GetData(), static_cast< size_t >( str.GetCharCount() ) };
+            return Base.format( temp, ctx );
         }
     };
 }

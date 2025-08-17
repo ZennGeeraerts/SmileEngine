@@ -6,6 +6,7 @@
 
 #include "smile/common/primitive/uuid.h"
 #include "smile/common/primitive/timestep.h"
+#include "smile/common/primitive/text/string.h"
 
 #include "smile/core/asset/asset.h"
 #include "smile/core/ecs/ecs_engine.h"
@@ -35,8 +36,8 @@ namespace smile::world
         void ChangeState( const std::string &name );
 
         Entity CreateEntity();
-        Entity CreateEntity( const std::string &name );
-        Entity CreateEntity( primitive::UUID uuid, const std::string &name );
+        Entity CreateEntity( const primitive::String &name );
+        Entity CreateEntity( primitive::UUID uuid, const primitive::String &name );
         void DestroyEntity( Entity entity );
 
         void OnUpdate( primitive::Timestep deltaTime );

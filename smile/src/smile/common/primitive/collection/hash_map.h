@@ -111,6 +111,16 @@ namespace smile::primitive
             return *this;
         }
 
+        TValue &operator[]( const TKey &key )
+        {
+            return m_Table.GetItemAtKey( key );
+        }
+
+        const TValue &operator[]( const TKey &key ) const
+        {
+            return m_Table.GetItemAtKey( key );
+        }
+
         Count GetItemCount() const
         {
             return m_Table.GetItemCount();

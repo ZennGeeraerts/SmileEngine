@@ -96,7 +96,7 @@ namespace smile::world
             ( ( !pRelationship || pRelationship->ChildrenCount == 0 ) ? ImGuiTreeNodeFlags_Leaf : 0 ) |
             ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
 
-        bool isNodeExpanded = ImGui::TreeNodeEx( ( const void * )( Uint64 )entity, flags, tag.c_str() );
+        bool isNodeExpanded = ImGui::TreeNodeEx( ( const void * )( Uint64 )entity, flags, tag.GetData() );
 
         if ( ImGui::BeginDragDropSource() )
         {
@@ -271,11 +271,11 @@ namespace smile::world
 
             char tagBuffer[256];
             memset( tagBuffer, 0, sizeof( tagBuffer ) );
-            strcpy_s( tagBuffer, sizeof( tagBuffer ), tag.c_str() );
+            strcpy_s( tagBuffer, sizeof( tagBuffer ), tag.GetData() );
 
             if ( ImGui::InputText( "##Tag", tagBuffer, sizeof( tagBuffer ) ) )
             {
-                tag = std::string{ tagBuffer };
+                tag = primitive::StringView{ tagBuffer };
             }
         }
 
