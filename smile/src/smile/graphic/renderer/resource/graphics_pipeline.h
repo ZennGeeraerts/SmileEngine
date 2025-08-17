@@ -45,6 +45,11 @@ namespace smile::graphic
             return m_Handle;
         }
 
+        const GraphicsPipelineDescriptor &GetDescriptor() const
+        {
+            return m_Descriptor;
+        }
+
         bool IsValid() const
         {
             return m_Handle.IsValid();

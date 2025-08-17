@@ -5,80 +5,36 @@
 #pragma once
 
 #include "smile/graphic/renderer/shader/shader_asset.h"
-#include "smile/graphic/renderer/shader/constant_buffer.h"
-#include "smile/graphic/renderer/resource/sampler.h"
-#include "smile/graphic/renderer/resource/texture.h"
-#include "smile/graphic/renderer/resource/graphics_pipeline.h
+#include "smile/graphic/renderer/resource/graphics_pipeline.h"
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/hash_map.h"
 
-#include <DirectXMath.h>
-
 namespace smile::graphic
 {
-    enum class MaterialParamType
-    {
-        Texture,
-        Sampler,
-        Float,
-        Int,
-        Bool,
-        Float2,
-        Float3,
-    };
-
-    using MaterialParamValue = std::variant< primitive::Vector< Byte >, Texture::Ref, Sampler::Ref >;
-
-    struct MaterialParam final
-    {
-        MaterialParam( const primitive::String &name, MaterialParamType type, const MaterialParamValue &value )
-            : Name{ name }, Type{ type }, Data{ value }
-        {
-        }
-
-        primitive::String Name;
-        MaterialParamType Type;
-        MaterialParamValue Data;
-    };
-
     class Material final : public memory::Counted
     {
       public:
         using Ref = memory::Ref< Material >;
         using ConstRef = memory::Ref< const Material >;
 
-        using ConstantBufferData = primitive::Vector< Byte >;
-
-        Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader ) noexcept;
+        Material( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader ) noexcept;
         ~Material() noexcept;
 
-        void SetShaders( ShaderAsset::Ref pVertexShader, ShaderAsset::Ref pPixelShader );
-
-        void Clear();
+        void SetShaders( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader );
 
         inline const rhi::BufferLayout &GetBufferLayout() const
         {
             return m_pVertexShader->GetReflectionData().InputSignature;
         }
 
-        inline VertexShader::Ref GetVertexShader() const
+        inline VertexShader::ConstRef GetVertexShader() const
         {
             return m_pVertexShader->GetVertexShader();
         }
 
-        inline PixelShader::Ref GetPixelShader() const
+        inline PixelShader::ConstRef GetPixelShader() const
         {
             return m_pPixelShader->GetPixelShader();
-        }
-
-        inline const MaterialParam &GetParam( const primitive::StringView name ) const
-        {
-            return m_Params.GetItemAtKey( name );
-        }
-
-        inline const ConstantBufferData &GetConstantBufferData( const primitive::StringView name ) const
-        {
-            return m_ConstantBufferData.GetItemAtKey( name );
         }
 
         inline GraphicsPipeline::Ref GetGraphicsPipeline() const
@@ -86,15 +42,28 @@ namespace smile::graphic
             return m_pGraphicsPipeline;
         }
 
-        void SetParam( const primitive::StringView name, const MaterialParamValue &data );
+        inline const primitive::HashMap< primitive::String, rhi::BindingLayoutElement > &GetBindings() const
+        {
+            return m_Bindings;
+        }
+
+        inline const ConstantBufferDescriptor &GetConstantBufferDesc( const primitive::StringView name ) const
+        {
+            return m_ConstantBufferDescs.GetItemAtKey( name );
+        }
+
+        inline const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &GetConstantBufferDescs() const
+        {
+            return m_ConstantBufferDescs;
+        }
 
       private:
-        ShaderAsset::Ref m_pVertexShader;
-        ShaderAsset::Ref m_pPixelShader;
+        ShaderAsset::ConstRef m_pVertexShader;
+        ShaderAsset::ConstRef m_pPixelShader;
 
         GraphicsPipeline::Ref m_pGraphicsPipeline;
 
-        primitive::HashMap< primitive::String, MaterialParam > m_Params;
-        primitive::HashMap< primitive::String, ConstantBufferData > m_ConstantBufferData;
+        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > m_Bindings;
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;
     };
 }

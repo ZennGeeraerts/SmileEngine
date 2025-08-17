@@ -4,14 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/primitive/collection/vector.h"
 #include "smile/common/primitive/collection/hash_map.h"
 #include "smile/common/primitive/text/string.h"
 
 #include "shader_blob_format.h"
 #include "constant_buffer_descriptor.h"
-#include "shader_resource_binding.h"
 #include "smile/graphic/rhi/resource/buffer.h"
+#include "smile/graphic/rhi/shader/binding_layout.h"
 
 namespace smile::graphic
 {
@@ -23,6 +22,6 @@ namespace smile::graphic
         rhi::BufferLayout InputSignature;
         rhi::BufferLayout OutputSignature;
         primitive::HashMap< primitive::String, ConstantBufferDescriptor > ConstantBufferDescs;
-        primitive::Vector< ShaderResourceBinding > ShaderResourceBindings;
+        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > ShaderResourceBindings;
     };
 }

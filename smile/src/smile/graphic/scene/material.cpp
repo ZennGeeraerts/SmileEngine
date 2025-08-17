@@ -5,49 +5,11 @@
 #include "smpch.h"
 #include "material.h"
 
-#include "smile/common/memory/memory.h"
 #include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
-    static MaterialParamType ConvertConstantTypeToMaterialParamType( ConstantType constantType )
-    {
-        switch ( constantType )
-        {
-            case ConstantType::Float:
-                return MaterialParamType::Float;
-            case ConstantType::Float2:
-                return MaterialParamType::Float2;
-            case ConstantType::Float3:
-                return MaterialParamType::Float3;
-            case ConstantType::Int:
-                return MaterialParamType::Int;
-            case ConstantType::Bool:
-                return MaterialParamType::Bool;
-            default:
-                SM_ASSERT( false, "Unsupported constant type for material system" );
-        }
-    }
-
-    static bool IsConstantBufferMaterialParamType( MaterialParamType type )
-    {
-        switch ( type )
-        {
-            case MaterialParamType::Float:
-            case MaterialParamType::Float2:
-            case MaterialParamType::Float3:
-            case MaterialParamType::Int:
-            case MaterialParamType::Bool:
-                return true;
-            case MaterialParamType::Texture:
-            case MaterialParamType::Sampler:
-                return false;
-            default:
-                SM_ASSERT( false, "Unsupported material parameter type" );
-        }
-    }
-
-    Material::Material( const ShaderAsset::Ref &pVertexShader, const ShaderAsset::Ref &pPixelShader )
+    Material::Material( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader )
     {
         SetShaders( pVertexShader, pPixelShader );
     }
@@ -56,12 +18,13 @@ namespace smile::graphic
     {
     }
 
-    void Material::SetShaders( ShaderAsset::Ref pVertexShader, ShaderAsset::Ref pPixelShader )
+    void Material::SetShaders( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader )
     {
+        m_Bindings.Clear();
+        m_ConstantBufferDescs.Clear();
+
         m_pVertexShader = pVertexShader;
         m_pPixelShader = pPixelShader;
-
-        Clear();
 
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
@@ -72,113 +35,33 @@ namespace smile::graphic
         rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } };
         psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
 
-        auto insertMaterialParams = [&]( const ShaderReflectionData &reflectionData )
+        auto addBindingLayoutElements = [&]( const ShaderReflectionData &reflectionData )
         {
-            for ( const ShaderResourceBinding &binding : reflectionData.ShaderResourceBindings )
+            for ( const auto &binding : reflectionData.ShaderResourceBindings )
             {
-                rhi::BindingLayoutElement element{ binding.BindPoint, binding.Type };
-                psoDesc.BindingLayouts[0].AddElement( std::move( element ) );
+                SM_ASSERT_MSG( !m_Bindings.HasItemAtKey( binding.Key ),
+                    "Bindings already contain an element with the name: {}",
+                    binding.Key );
 
-                switch ( binding.Type )
+                psoDesc.BindingLayouts[0].AddElement( binding.Value );
+
+                m_Bindings.Insert( binding.Key, binding.Value );
+
+                if ( binding.Value.Type == rhi::ResourceType::ConstantBuffer )
                 {
-                    case rhi::ResourceType::Texture_SRV:
-                    case rhi::ResourceType::Texture_UAV:
-                    {
-                        SM_ASSERT( !m_Params.HasItemAtKey( binding.Name ) );
+                    SM_ASSERT_MSG( !m_ConstantBufferDescs.HasItemAtKey( binding.Key ),
+                        "Constant buffer descriptors already contain a descriptor with the name: {}",
+                        binding.Key )
 
-                        MaterialParam param{ binding.Name, MaterialParamType::Texture, Texture::Ref{} };
-                        m_Params.Insert( binding.Name, std::move( param ) );
-                        break;
-                    }
-
-                    case rhi::ResourceType::Sampler:
-                    {
-                        SM_ASSERT( !m_Params.HasItemAtKey( binding.Name ) );
-
-                        MaterialParam param{ binding.Name, MaterialParamType::Sampler, Sampler::Ref{} };
-                        m_Params.Insert( binding.Name, std::move( param ) );
-                        break;
-                    }
-
-                    case rhi::ResourceType::ConstantBuffer:
-                    {
-                        const auto &constantBufferDesc =
-                            reflectionData.ConstantBufferDescs.GetItemAtKey( binding.Name );
-
-                        m_ConstantBufferData.Insert( binding.Name, ConstantBufferData( constantBufferDesc.GetSize() ) );
-
-                        for ( const auto &item : constantBufferDesc )
-                        {
-                            SM_ASSERT( !m_Params.HasItemAtKey( item.Name ) );
-
-                            MaterialParam param{ item.Name,
-                                ConvertConstantTypeToMaterialParamType( item.Type ),
-                                primitive::Vector< Byte >( item.Size ) };
-
-                            m_Params.Insert( item.Name, std::move( param ) );
-                        }
-                        break;
-                    }
-
-                    default:
-                        SM_ASSERT_MSG( false, "Unsupported resource type" );
+                    const auto &constantBufferDesc = reflectionData.ConstantBufferDescs.GetItemAtKey( binding.Key );
+                    m_ConstantBufferDescs.Insert( binding.Key, std::move( constantBufferDesc ) );
                 }
             }
         };
 
-        insertMaterialParams( pVertexShader->GetReflectionData() );
-        insertMaterialParams( pPixelShader->GetReflectionData() );
+        addBindingLayoutElements( pVertexShader->GetReflectionData() );
+        addBindingLayoutElements( pPixelShader->GetReflectionData() );
 
         m_pGraphicsPipeline = RenderEngine::GetRenderSystem().GetResourceManager().CreateGraphicsPipeline( psoDesc );
-    }
-
-    void Material::Clear()
-    {
-        m_Params.Clear();
-        m_ConstantBufferData.Clear();
-    }
-
-    void Material::SetParam( const primitive::StringView name, const MaterialParamValue &data )
-    {
-        if ( !m_Params.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetParam > Could not find material parameter with name: {}", name );
-            return;
-        }
-
-        auto &param = m_Params.GetItemAtKey( name );
-        param.Data = data;
-
-        if ( IsConstantBufferMaterialParamType( param.Type ) )
-        {
-            auto trySetValueInConstantBufferData = [&]( const ShaderReflectionData &reflectionData )
-            {
-                for ( const auto &constantBufferDesc : reflectionData.ConstantBufferDescs )
-                {
-                    auto it = std::find_if( constantBufferDesc.Value.begin(),
-                        constantBufferDesc.Value.end(),
-                        [name]( const auto &constantBufferItem ) { return constantBufferItem.Name == name; } );
-
-                    if ( it != constantBufferDesc.Value.end() )
-                    {
-                        auto &cbData = m_ConstantBufferData.GetItemAtKey( constantBufferDesc.Key );
-                        const auto &cbItem = ( *it );
-                        const auto &valueData = std::get< primitive::Vector< Byte > >( data );
-
-                        memory::CopyArrayItems(
-                            cbData.GetData() + cbItem.Offset, cbItem.GetStride(), valueData.GetData() );
-
-                        return true;
-                    }
-                }
-
-                return false;
-            };
-
-            if ( trySetValueInConstantBufferData( m_pVertexShader->GetReflectionData() ) )
-                return;
-
-            trySetValueInConstantBufferData( m_pPixelShader->GetReflectionData() );
-        }
     }
 }
