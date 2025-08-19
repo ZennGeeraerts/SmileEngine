@@ -24,12 +24,6 @@ namespace smile::math
         Type Data[Size];
     };
 
-    //template < Uint8 Size, typename Type >
-    //inline bool IsZeroVector( const Vector< Size, Type > &vector, float precision = g_Epsilon )
-    //{
-    //    return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
-    //}
-
     template < Uint8 Size, typename Type >
     inline Type MagnitudeSqr( const Vector< Size, Type > &vector )
     {

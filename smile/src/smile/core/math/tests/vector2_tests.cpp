@@ -5,7 +5,20 @@ namespace smile
 {
     TEST_CASE( "Vector2" )
     {
-        SECTION( "+" )
+        SECTION( "Constructors" )
+        {
+            math::Vector2 vector{};
+
+            REQUIRE( vector.x == 0.0f );
+            REQUIRE( vector.y == 0.0f );
+
+            math::Vector2 vector2{ 1.0f, 2.0f };
+
+            REQUIRE( vector2.x == 1.0f );
+            REQUIRE( vector2.y == 2.0f );
+        }
+
+        SECTION( "operator+" )
         {
             math::Vector2 vector1{ 1.0f, 2.0f };
             math::Vector2 vector2{ 3.0f, 4.0f };
@@ -15,18 +28,7 @@ namespace smile
             REQUIRE( result.y == 6.0f );
         }
 
-        SECTION( "+=" )
-        {
-            math::Vector2 vector1{ 1.0f, 2.0f };
-            math::Vector2 vector2{ 3.0f, 4.0f };
-
-            vector1 += vector2;
-
-            REQUIRE( vector1.x == 4.0f );
-            REQUIRE( vector1.y == 6.0f );
-        }
-
-        SECTION( "-" )
+        SECTION( "operator-" )
         {
             math::Vector2 vector1{ 1.0f, 2.0f };
             math::Vector2 vector2{ 3.0f, 4.0f };
@@ -41,18 +43,7 @@ namespace smile
             REQUIRE( result.y == 2.0f );
         }
 
-        SECTION( "-=" )
-        {
-            math::Vector2 vector1{ 1.0f, 2.0f };
-            math::Vector2 vector2{ 3.0f, 4.0f };
-
-            vector1 -= vector2;
-
-            REQUIRE( vector1.x == -2.0f );
-            REQUIRE( vector1.y == -2.0f );
-        }
-
-        SECTION( "*" )
+        SECTION( "operator*" )
         {
             math::Vector2 vector1{ 1.0f, 2.0f };
             math::Vector2 vector2{ 3.0f, 4.0f };
@@ -66,9 +57,70 @@ namespace smile
 
             REQUIRE( result.x == 15.0f );
             REQUIRE( result.y == 18.0f );
+
+            const float scalar = 3.0f;
+            result = vector1 * scalar;
+
+            REQUIRE( result.x == 3.0f );
+            REQUIRE( result.y == 6.0f );
+
+            result = scalar * vector1;
+
+            REQUIRE( result.x == 3.0f );
+            REQUIRE( result.y == 6.0f );
         }
 
-        SECTION( "*=" )
+        SECTION( "operator/" )
+        {
+            math::Vector2 vector1{ 18.0f, 20.0f };
+            math::Vector2 vector2{ 2.0f, 4.0f };
+            math::Vector2 result = vector1 / vector2;
+
+            REQUIRE( result.x == 9.0f );
+            REQUIRE( result.y == 5.0f );
+
+            math::Vector2 another{ 6.0f, 18.0f };
+            const float scalar = 3.0f;
+            result = another / scalar;
+
+            REQUIRE( result.x == 2.0f );
+            REQUIRE( result.y == 6.0f );
+        }
+
+        SECTION( "operator=" )
+        {
+            math::Vector2 vector1{ 1.0f, 2.0f };
+            math::Vector2 vector2{ 3.0f, 4.0f };
+
+            vector1 = vector2;
+
+            REQUIRE( vector1.x == 3.0f );
+            REQUIRE( vector1.y == 4.0f );
+        }
+
+        SECTION( "operator+=" )
+        {
+            math::Vector2 vector1{ 1.0f, 2.0f };
+            math::Vector2 vector2{ 3.0f, 4.0f };
+
+            vector1 += vector2;
+
+            REQUIRE( vector1.x == 4.0f );
+            REQUIRE( vector1.y == 6.0f );
+        }
+
+        SECTION( "operator-=" )
+        {
+            math::Vector2 vector1{ 1.0f, 2.0f };
+            math::Vector2 vector2{ 3.0f, 4.0f };
+
+            vector1 -= vector2;
+
+            REQUIRE( vector1.x == -2.0f );
+            REQUIRE( vector1.y == -2.0f );
+        }
+
+        SECTION( "operator*=" )
         {
             math::Vector2 vector1{ 1.0f, 2.0f };
             math::Vector2 vector2{ 3.0f, 4.0f };
@@ -79,30 +131,15 @@ namespace smile
             REQUIRE( vector1.y == 8.0f );
 
             math::Vector2 another{ 2.0f, 4.0f };
+            const float scalar = 5.0f;
 
-            another *= 5.0f;
+            another *= scalar;
 
             REQUIRE( another.x == 10.0f );
             REQUIRE( another.y == 20.0f );
         }
 
-        SECTION( "/" )
-        {
-            math::Vector2 vector1{ 18.0f, 20.0f };
-            math::Vector2 vector2{ 2.0f, 4.0f };
-            math::Vector2 result = vector1 / vector2;
-
-            REQUIRE( result.x == 9.0f );
-            REQUIRE( result.y == 5.0f );
-
-            math::Vector2 another{ 6.0f, 18.0f };
-            result = another / 3.0f;
-
-            REQUIRE( result.x == 2.0f );
-            REQUIRE( result.y == 6.0f );
-        }
-
-        SECTION( "/=" )
+        SECTION( "operator/=" )
         {
             math::Vector2 vector1{ 18.0f, 20.0f };
             math::Vector2 vector2{ 2.0f, 4.0f };
@@ -113,14 +150,15 @@ namespace smile
             REQUIRE( vector1.y == 5.0f );
 
             math::Vector2 another{ 6.0f, 18.0f };
+            const float scalar = 3.0f;
 
-            another /= 3.0f;
+            another /= scalar;
 
             REQUIRE( another.x == 2.0f );
             REQUIRE( another.y == 6.0f );
         }
 
-        SECTION( "==" )
+        SECTION( "operator==" )
         {
             math::Vector2 vector1{ 18.0f, 20.0f };
             math::Vector2 vector2{ 18.0f, 20.0f };
@@ -174,7 +212,7 @@ namespace smile
             REQUIRE( result == 1.0f );
         }
 
-        SECTION( "LengthSqr" )
+        SECTION( "MagnitudeSqr" )
         {
             math::Vector2 vector{ 5.0f, 2.0f };
 
@@ -185,7 +223,7 @@ namespace smile
             CHECK( math::MagnitudeSqr( vector2 ) == Approx( 2.f ) );
         }
 
-        SECTION( "Length" )
+        SECTION( "Magnitude" )
         {
             float length{};
 

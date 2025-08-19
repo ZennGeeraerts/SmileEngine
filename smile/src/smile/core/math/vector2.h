@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -10,23 +10,29 @@
 namespace smile::math
 {
     template < typename Type >
-    struct Vector< 2, Type >
+    class Vector< 2, Type >
     {
-        Vector< 2, Type >() = default;
-        Vector< 2, Type >( Type x, Type y ) : x{ x }, y{ y }
+      public:
+        Vector< 2, Type >() noexcept = default;
+
+        Vector< 2, Type >( Type x, Type y ) noexcept : x{ x }, y{ y }
         {
         }
-        Vector< 2, Type >( const Vector< 2, Type > &vector ) : x{ vector.x }, y{ vector.y }
+
+        Vector< 2, Type >( const Vector< 2, Type > &vector ) noexcept : x{ vector.x }, y{ vector.y }
         {
         }
+
         Vector< 2, Type >( Vector< 2, Type > &&vector ) noexcept
             : x{ std::move( vector.x ) }, y{ std::move( vector.y ) }
         {
         }
-        explicit Vector< 2, Type >( const Vector< 3, Type > &vector ) : x{ vector.x }, y{ vector.y }
+
+        explicit Vector< 2, Type >( const Vector< 3, Type > &vector ) noexcept : x{ vector.x }, y{ vector.y }
         {
         }
-        explicit Vector< 2, Type >( const Vector< 4, Type > &vector ) : x{ vector.x }, y{ vector.y }
+
+        explicit Vector< 2, Type >( const Vector< 4, Type > &vector ) noexcept : x{ vector.x }, y{ vector.y }
         {
         }
 
@@ -126,18 +132,6 @@ namespace smile::math
             return !( *this == vector );
         }
 
-        inline Type operator[]( Uint8 index ) const
-        {
-            SM_ASSERT_MSG( index < 2, "Vector2 > index of Vector2 [] operator is out of bounds!" );
-            return Data[index];
-        }
-
-        inline Type &operator[]( Uint8 index )
-        {
-            SM_ASSERT_MSG( index < 2, "Vector2 > index of Vector2 [] operator is out of bounds!" );
-            return Data[index];
-        }
-
         static constexpr Vector< 2, Type > ZeroVector();
         static constexpr Vector< 2, Type > XAxis();
         static constexpr Vector< 2, Type > YAxis();
@@ -158,20 +152,20 @@ namespace smile::math
     };
 
     template < typename Type, typename U >
-    inline Vector< 2, Type > operator*( const Vector< 2, Type > &vector, U scale )
+    inline Vector< 2, Type > operator*( U scale, const Vector< 2, Type > &vector )
     {
         Type s = static_cast< Type >( scale );
         return Vector< 2, Type >( vector.x * s, vector.y * s );
     }
 
-    template < typename Type >  
+    template < typename Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::ZeroVector()
     {
         Type zero = static_cast< Type >( 0 );
         return Vector< 2, Type >( zero, zero );
     }
 
-    template < typename Type >  
+    template < typename Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::XAxis()
     {
         Type zero = static_cast< Type >( 0 );
@@ -179,7 +173,7 @@ namespace smile::math
         return Vector< 2, Type >( one, zero );
     }
 
-    template < typename Type >  
+    template < typename Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::YAxis()
     {
         Type zero = static_cast< Type >( 0 );
@@ -187,7 +181,7 @@ namespace smile::math
         return Vector< 2, Type >( zero, one );
     }
 
-    template < typename Type >  
+    template < typename Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::OneVector()
     {
         Type one = static_cast< Type >( 1 );
@@ -218,146 +212,37 @@ namespace smile::math
         return SquareRoot( DistanceSqr( v1, v2 ) );
     }
 
-    //inline bool IsUnitVector( const Vector2 &vector )
-    //{
-    //    return IsOne( vector.x * vector.x + vector.y * vector.y );
-    //}
+    template < Uint8 Size, typename Type >
+    inline bool IsZeroVector( const Vector< 2, Type > &vector, float precision = g_Epsilon )
+    {
+        return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
+    }
 
-    //inline bool HasZeroLength( const Vector2 &vector, float precision = g_Epsilon )
-    //{
-    //    return IsSquareZero( vector.x * vector.x + vector.y * vector.y, precision );
-    //}
+    template < Uint8 Size, typename Type >
+    inline bool IsUnitVector( const Vector< 2, Type > &vector )
+    {
+        return IsOne( vector.x * vector.x + vector.y * vector.y );
+    }
 
-    //inline bool IsZeroVector( const Vector2 &vector, float precision = g_Epsilon )
-    //{
-    //    return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
-    //}
+    template < Uint8 Size, typename Type >
+    inline bool HasZeroLength( const Vector< 2, Type > &vector, float precision = g_Epsilon )
+    {
+        return IsSquareZero( vector.x * vector.x + vector.y * vector.y, precision );
+    }
 
-    //inline Vector2 GetNormalized( const Vector2 &vector )
-    //{
-    //    SM_ASSERT( !IsZeroVector( vector ), "GetNormalized > Vector2 is zero vector" );
+    template < Uint8 Size, typename Type >
+    inline Vector< 2, Type > RotateVector( const Vector< 2, Type > &vector, float angle )
+    {
+        const float cosinusResult = Cosinus( angle );
+        const float sinusResult = Sinus( angle );
 
-    //    const float length = SquareRoot( vector.x * vector.x + vector.y * vector.y );
-    //    return Vector2{ vector.x / length, vector.y / length };
-    //}
+        return Vector< 2, Type >{
+            vector.x * cosinusResult + vector.y * sinusResult, -vector.x * sinusResult + vector.y * cosinusResult };
+    }
 
-    //inline void Normalize( Vector2 &vector )
-    //{
-    //    SM_ASSERT( !IsZeroVector( vector ), "Normalize > Vector2 is zero vector" );
-
-    //    float length = SquareRoot( vector.x * vector.x + vector.y * vector.y );
-    //    vector.x /= length;
-    //    vector.y /= length;
-    //}
-
-    //inline Vector2 Lerp( const Vector2 &v1, const Vector2 &v2, float percentage )
-    //{
-    //    const float oneMinusPercentage = 1.0f - percentage;
-
-    //    return Vector2{
-    //        v1.x * oneMinusPercentage + v2.x * percentage, v1.y * oneMinusPercentage + v2.y * percentage };
-    //}
-
-    //inline Vector2 RotateVector( const Vector2 &vector, float angle )
-    //{
-    //    const float cosinusResult = Cosinus( angle );
-    //    const float sinusResult = Sinus( angle );
-
-    //    return Vector2{
-    //        vector.x * cosinusResult + vector.y * sinusResult, -vector.x * sinusResult + vector.y * cosinusResult };
-    //}
-
-    //inline float GetAngle( const Vector2 &vector )
-    //{
-    //    return ArcTangent( vector.y, vector.x );
-    //}
-
-    //// Operators
-
-    //inline bool operator==( const Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    return ( lhs.x == rhs.x ) && ( lhs.y == rhs.y );
-    //}
-
-    //inline bool operator!=( const Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    return ( lhs.x != rhs.x ) || ( lhs.y != rhs.y );
-    //}
-
-    //inline Vector2 operator+( const Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    return Vector2{ lhs.x + rhs.x, lhs.y + rhs.y };
-    //}
-
-    //inline Vector2 &operator+=( Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    lhs.x += rhs.x;
-    //    lhs.y += rhs.y;
-    //    return lhs;
-    //}
-
-    //inline Vector2 operator-( const Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    return Vector2{ lhs.x - rhs.x, lhs.y - rhs.y };
-    //}
-
-    //inline Vector2 &operator-=( Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    lhs.x -= rhs.x;
-    //    lhs.y -= rhs.y;
-    //    return lhs;
-    //}
-
-    //inline Vector2 operator*( const Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    return Vector2{ lhs.x * rhs.x, lhs.y * rhs.y };
-    //}
-
-    //inline Vector2 operator*( const Vector2 &lhs, float rhs )
-    //{
-    //    return Vector2{ lhs.x * rhs, lhs.y * rhs };
-    //}
-
-    //inline Vector2 &operator*=( Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    lhs.x *= rhs.x;
-    //    lhs.y *= rhs.y;
-    //    return lhs;
-    //}
-
-    //inline Vector2 &operator*=( Vector2 &lhs, float rhs )
-    //{
-    //    lhs.x *= rhs;
-    //    lhs.y *= rhs;
-    //    return lhs;
-    //}
-
-    //inline Vector2 operator/( const Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    return Vector2{ lhs.x / rhs.x, lhs.y / rhs.y };
-    //}
-
-    //inline Vector2 operator/( const Vector2 &lhs, float rhs )
-    //{
-    //    return Vector2{ lhs.x / rhs, lhs.y / rhs };
-    //}
-
-    //inline Vector2 &operator/=( Vector2 &lhs, const Vector2 &rhs )
-    //{
-    //    lhs.x /= rhs.x;
-    //    lhs.y /= rhs.y;
-    //    return lhs;
-    //}
-
-    //inline Vector2 &operator/=( Vector2 &lhs, float rhs )
-    //{
-    //    lhs.x /= rhs;
-    //    lhs.y /= rhs;
-    //    return lhs;
-    //}
-
-    //inline Vector2 operator-( const Vector2 &vector )
-    //{
-    //    return Vector2{ -vector.x, -vector.y };
-    //}
+    template < Uint8 Size, typename Type >
+    inline float GetAngle( const Vector< 2, Type > &vector )
+    {
+        return ArcTangent( vector.y, vector.x );
+    }
 }
