@@ -7,7 +7,7 @@
 namespace smile::math
 {
     template < Uint8 Size, typename Type >
-    struct Vector
+    struct Vector final
     {
         inline Type operator[]( Uint8 index ) const
         {
@@ -57,7 +57,8 @@ namespace smile::math
     }
 
     template < Uint8 Size, typename Type >
-    inline Vector< Size, Type > Lerp( const Vector< Size, Type > &v1, const Vector< Size, Type > &v2, float percentage )
+    inline Vector< Size, Type >
+    Lerp( const Vector< Size, Type > &v1, const Vector< Size, Type > &v2, const float percentage )
     {
         return v2 + ( ( v2 - v1 ) * static_cast< Type >( percentage ) );
     }

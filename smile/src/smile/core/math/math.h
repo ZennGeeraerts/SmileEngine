@@ -13,5 +13,6 @@
 
 namespace smile::math
 {
-	typedef Vector< 2, float > Vector2;
+    using Vector2 = Vector< 2, float >;
+    using Vector3 = Vector< 3, float >;
 }

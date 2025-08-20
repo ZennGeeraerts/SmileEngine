@@ -5,12 +5,13 @@
 #pragma once
 
 #include "vector.h"
+#include "math_utilities.h"
 #include "angle.h"
 
 namespace smile::math
 {
     template < Numeric Type >
-    class Vector< 2, Type >
+    class Vector< 2, Type > final
     {
       public:
         Vector< 2, Type >() noexcept = default;
@@ -19,20 +20,19 @@ namespace smile::math
         {
         }
 
-        Vector< 2, Type >( const Vector< 2, Type > &vector ) noexcept : x{ vector.x }, y{ vector.y }
+        Vector< 2, Type >( const Vector< 2, Type > &other ) noexcept : x{ other.x }, y{ other.y }
         {
         }
 
-        Vector< 2, Type >( Vector< 2, Type > &&vector ) noexcept
-            : x{ std::move( vector.x ) }, y{ std::move( vector.y ) }
+        Vector< 2, Type >( Vector< 2, Type > &&other ) noexcept : x{ std::move( other.x ) }, y{ std::move( other.y ) }
         {
         }
 
-        explicit Vector< 2, Type >( const Vector< 3, Type > &vector ) noexcept : x{ vector.x }, y{ vector.y }
+        explicit Vector< 2, Type >( const Vector< 3, Type > &other ) noexcept : x{ other.x }, y{ other.y }
         {
         }
 
-        explicit Vector< 2, Type >( const Vector< 4, Type > &vector ) noexcept : x{ vector.x }, y{ vector.y }
+        explicit Vector< 2, Type >( const Vector< 4, Type > &other ) noexcept : x{ other.x }, y{ other.y }
         {
         }
 
@@ -178,30 +178,30 @@ namespace smile::math
     template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::ZeroVector()
     {
-        Type zero = static_cast< Type >( 0 );
+        const Type zero = static_cast< Type >( 0 );
         return Vector< 2, Type >{ zero, zero };
     }
 
     template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::XAxis()
     {
-        Type zero = static_cast< Type >( 0 );
-        Type one = static_cast< Type >( 1 );
+        const Type zero = static_cast< Type >( 0 );
+        const Type one = static_cast< Type >( 1 );
         return Vector< 2, Type >{ one, zero };
     }
 
     template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::YAxis()
     {
-        Type zero = static_cast< Type >( 0 );
-        Type one = static_cast< Type >( 1 );
+        const Type zero = static_cast< Type >( 0 );
+        const Type one = static_cast< Type >( 1 );
         return Vector< 2, Type >{ zero, one };
     }
 
     template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::OneVector()
     {
-        Type one = static_cast< Type >( 1 );
+        const Type one = static_cast< Type >( 1 );
         return Vector< 2, Type >{ one, one };
     }
 
