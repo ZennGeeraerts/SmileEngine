@@ -6,6 +6,7 @@
 
 #include "math.h"
 #include "vector.h"
+#include "angle.h"
 
 namespace smile::math
 {
@@ -231,7 +232,7 @@ namespace smile::math
     }
 
     template < Uint8 Size, typename Type >
-    inline Vector< 2, Type > RotateVector( const Vector< 2, Type > &vector, float angle )
+    inline Vector< 2, Type > RotateVector( const Vector< 2, Type > &vector, const Angle angle )
     {
         const float cosinusResult = Cosinus( angle );
         const float sinusResult = Sinus( angle );
@@ -241,7 +242,7 @@ namespace smile::math
     }
 
     template < Uint8 Size, typename Type >
-    inline float GetAngle( const Vector< 2, Type > &vector )
+    inline Angle GetAngle( const Vector< 2, Type > &vector )
     {
         return ArcTangent( vector.y, vector.x );
     }
