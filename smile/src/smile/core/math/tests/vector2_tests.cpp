@@ -187,6 +187,16 @@ namespace smile
             REQUIRE( result == ( 1.0f * -2.0f + 2.0f * 7.0f ) );
         }
 
+        SECTION( "CrossProduct" )
+        {
+            math::Vector2 vector1{ 2.0f, 3.0f };
+            math::Vector2 vector2{ 4.0f, 1.0f };
+
+            const float result = math::CrossProduct( vector1, vector2 );
+
+            REQUIRE( result == -10 );
+        }
+
         SECTION( "DistanceSqr" )
         {
             math::Vector2 vector1{ 1.0f, 2.0f };

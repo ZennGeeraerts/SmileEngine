@@ -16,6 +16,9 @@ namespace smile::math
     constexpr float g_Epsilon = 0.00001f;
 
     template < typename Type >
+    concept Numeric = std::integral< Type > || std::floating_point< Type >;
+
+    template < typename Type >
     inline Type SquareRoot( Type value )
     {
         return static_cast< Type >( sqrt( value ) );

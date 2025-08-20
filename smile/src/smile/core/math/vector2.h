@@ -4,13 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
-#include "math.h"
 #include "vector.h"
 #include "angle.h"
 
 namespace smile::math
 {
-    template < typename Type >
+    template < Numeric Type >
     class Vector< 2, Type >
     {
       public:
@@ -37,100 +36,11 @@ namespace smile::math
         {
         }
 
-        template < typename U >
-        inline Vector< 2, Type > operator+( const Vector< 2, U > &vector ) const
+        inline Vector< 2, Type > &operator=( const Vector< 2, Type > &other ) noexcept
         {
-            return Vector< 2, Type >{ x + static_cast< Type >( vector.x ), y + static_cast< Type >( vector.y ) };
-        }
-
-        template < typename U >
-        inline Vector< 2, Type > operator-( const Vector< 2, U > &vector ) const
-        {
-            return Vector< 2, Type >{ x - static_cast< Type >( vector.x ), y - static_cast< Type >( vector.y ) };
-        }
-
-        inline Vector< 2, Type > operator*( const Vector< 2, Type > &vector ) const
-        {
-            return Vector< 2, Type >{ x * vector.x, y * vector.y };
-        }
-
-        inline Vector< 2, Type > operator*( Type scale ) const
-        {
-            return Vector< 2, Type >{ x * scale, y * scale };
-        }
-
-        inline Vector< 2, Type > operator/( const Vector< 2, Type > &vector ) const
-        {
-            return Vector< 2, Type >{ x / vector.x, y / vector.y };
-        }
-
-        inline Vector< 2, Type > operator/( Type scale ) const
-        {
-            return Vector< 2, Type >{ x / scale, y / scale };
-        }
-
-        inline Vector< 2, Type > &operator=( const Vector< 2, Type > &vector )
-        {
-            x = vector.x;
-            y = vector.y;
+            x = other.x;
+            y = other.y;
             return *this;
-        }
-
-        inline Vector< 2, Type > &operator+=( const Vector< 2, Type > &vector )
-        {
-            x += vector.x;
-            y += vector.y;
-            return *this;
-        }
-
-        inline Vector< 2, Type > &operator-=( const Vector< 2, Type > &vector )
-        {
-            x -= vector.x;
-            y -= vector.y;
-            return *this;
-        }
-
-        inline Vector< 2, Type > &operator*=( const Vector< 2, Type > &vector )
-        {
-            x *= vector.x;
-            y *= vector.y;
-            return *this;
-        }
-
-        inline Vector< 2, Type > &operator*=( Type scale )
-        {
-            x *= scale;
-            y *= scale;
-            return *this;
-        }
-
-        inline Vector< 2, Type > &operator/=( const Vector< 2, Type > &vector )
-        {
-            x /= vector.x;
-            y /= vector.y;
-            return *this;
-        }
-
-        inline Vector< 2, Type > &operator/=( Type scale )
-        {
-            x /= scale;
-            y /= scale;
-            return *this;
-        }
-
-        inline Vector< 2, Type > operator-() const
-        {
-            return Vector< 2, Type >{ -x, -y };
-        }
-
-        inline bool operator==( const Vector< 2, Type > &vector ) const
-        {
-            return AreEqual< Type >( x, vector.x ) && AreEqual< Type >( y, vector.y );
-        }
-
-        inline bool operator!=( const Vector< 2, Type > &vector ) const
-        {
-            return !( *this == vector );
         }
 
         static constexpr Vector< 2, Type > ZeroVector();
@@ -152,86 +62,192 @@ namespace smile::math
         };
     };
 
-    template < typename Type, typename U >
-    inline Vector< 2, Type > operator*( U scale, const Vector< 2, Type > &vector )
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator+( const Vector< 2, T > &first, const Vector< 2, U > &second )
     {
-        Type s = static_cast< Type >( scale );
-        return Vector< 2, Type >( vector.x * s, vector.y * s );
+        return Vector< 2, T >{ first.x + static_cast< T >( second.x ), first.y + static_cast< T >( second.y ) };
     }
 
-    template < typename Type >
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator-( const Vector< 2, T > &first, const Vector< 2, U > &second )
+    {
+        return Vector< 2, T >{ first.x - static_cast< T >( second.x ), first.y - static_cast< T >( second.y ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator*( const Vector< 2, T > &first, const Vector< 2, U > &second )
+    {
+        return Vector< 2, T >{ first.x * static_cast< T >( second.x ), first.y * static_cast< T >( second.y ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator*( const Vector< 2, T > &vector, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        return Vector< 2, T >{ vector.x * s, vector.y * s };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator*( const U scale, const Vector< 2, T > &vector )
+    {
+        const T s = static_cast< T >( scale );
+        return Vector< 2, T >{ vector.x * s, vector.y * s };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator/( const Vector< 2, T > &first, const Vector< 2, U > &second )
+    {
+        return Vector< 2, T >{ first.x / static_cast< T >( second.x ), first.y / static_cast< T >( second.y ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > operator/( const Vector< 2, T > &vector, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        return Vector< 2, T >{ vector.x / s, vector.y / s };
+    }
+
+    template < Numeric T >
+    inline Vector< 2, T > &operator+=( Vector< 2, T > &first, const Vector< 2, T > &second )
+    {
+        first.x += second.x;
+        first.y += second.y;
+        return first;
+    }
+
+    template < Numeric T >
+    inline Vector< 2, T > &operator-=( Vector< 2, T > &first, const Vector< 2, T > &second )
+    {
+        first.x -= second.x;
+        first.y -= second.y;
+        return first;
+    }
+
+    template < Numeric T >
+    inline Vector< 2, T > &operator*=( Vector< 2, T > &first, const Vector< 2, T > &second )
+    {
+        first.x *= second.x;
+        first.y *= second.y;
+        return first;
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > &operator*=( Vector< 2, T > &vector, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        vector.x *= s;
+        vector.y *= s;
+        return vector;
+    }
+
+    template < Numeric T >
+    inline Vector< 2, T > &operator/=( Vector< 2, T > &first, const Vector< 2, T > &second )
+    {
+        first.x /= second.x;
+        first.y /= second.y;
+        return first;
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 2, T > &operator/=( Vector< 2, T > &first, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        first.x /= s;
+        first.y /= s;
+        return first;
+    }
+
+    template < Numeric T >
+    inline Vector< 2, T > operator-( const Vector< 2, T > &vector )
+    {
+        return Vector< 2, T >{ -vector.x, -vector.y };
+    }
+
+    template < Numeric T >
+    inline bool operator==( const Vector< 2, T > &first, const Vector< 2, T > &second )
+    {
+        return AreEqual< T >( first.x, second.x ) && AreEqual< T >( first.y, second.y );
+    }
+
+    template < Numeric T >
+    inline bool operator!=( const Vector< 2, T > &first, const Vector< 2, T > &second )
+    {
+        return !( first == second );
+    }
+
+    template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::ZeroVector()
     {
         Type zero = static_cast< Type >( 0 );
-        return Vector< 2, Type >( zero, zero );
+        return Vector< 2, Type >{ zero, zero };
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::XAxis()
     {
         Type zero = static_cast< Type >( 0 );
         Type one = static_cast< Type >( 1 );
-        return Vector< 2, Type >( one, zero );
+        return Vector< 2, Type >{ one, zero };
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::YAxis()
     {
         Type zero = static_cast< Type >( 0 );
         Type one = static_cast< Type >( 1 );
-        return Vector< 2, Type >( zero, one );
+        return Vector< 2, Type >{ zero, one };
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline constexpr Vector< 2, Type > Vector< 2, Type >::OneVector()
     {
         Type one = static_cast< Type >( 1 );
-        return Vector< 2, Type >( one, one );
+        return Vector< 2, Type >{ one, one };
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline Type DotProduct( const Vector< 2, Type > &v1, const Vector< 2, Type > &v2 )
     {
         return v1.x * v2.x + v1.y * v2.y;
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline Type CrossProduct( const Vector< 2, Type > &v1, const Vector< 2, Type > &v2 )
     {
         return v1.x * v2.y - v1.y * v2.x;
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline Type DistanceSqr( const Vector< 2, Type > &v1, const Vector< 2, Type > &v2 )
     {
         return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y );
     }
 
-    template < typename Type >
+    template < Numeric Type >
     inline Type Distance( const Vector< 2, Type > &v1, const Vector< 2, Type > &v2 )
     {
         return SquareRoot( DistanceSqr( v1, v2 ) );
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline bool IsZeroVector( const Vector< 2, Type > &vector, float precision = g_Epsilon )
     {
         return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline bool IsUnitVector( const Vector< 2, Type > &vector )
     {
         return IsOne( vector.x * vector.x + vector.y * vector.y );
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline bool HasZeroLength( const Vector< 2, Type > &vector, float precision = g_Epsilon )
     {
         return IsSquareZero( vector.x * vector.x + vector.y * vector.y, precision );
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Vector< 2, Type > RotateVector( const Vector< 2, Type > &vector, const Angle angle )
     {
         const float cosinusResult = Cosinus( angle );
@@ -241,7 +257,7 @@ namespace smile::math
             vector.x * cosinusResult + vector.y * sinusResult, -vector.x * sinusResult + vector.y * cosinusResult };
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Angle GetAngle( const Vector< 2, Type > &vector )
     {
         return ArcTangent( vector.y, vector.x );
