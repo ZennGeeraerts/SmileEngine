@@ -22,7 +22,7 @@ namespace smile::memory
         return *pAllocator;
     }
 
-    Uint32 GetAllocatedSize( const Uint32 size, const bool addHeaderSize )
+    Count GetAllocatedSize( const Count size, const bool addHeaderSize )
     {
         return ( addHeaderSize ? s_HeaderSize : 0 ) + GetAlignedSize( size );
     }
@@ -38,7 +38,7 @@ namespace smile::memory
     }
 
 #if SM_C_DEBUG
-    void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
+    void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size )
     {
         if ( size > 0 )
         {
@@ -51,7 +51,7 @@ namespace smile::memory
         }
     }
 
-    void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Uint32 size )
+    void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size )
     {
         if ( size > 0 )
         {
@@ -76,7 +76,7 @@ namespace smile::memory
         return pHeader && pHeader->IsUsed;
     }
 
-    void *AllocateByteArray( const Uint32 size )
+    void *AllocateByteArray( const Count size )
     {
         void *pByteArray = GetAllocator().CreateByteArray( size );
 
@@ -99,7 +99,7 @@ namespace smile::memory
         }
     }
 
-    Uint32 GetSize( void *pData )
+    Count GetSize( void *pData )
     {
         return GetHeader( pData )->Size;
     }
