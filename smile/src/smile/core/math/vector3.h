@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -12,7 +12,6 @@ namespace smile::math
     template < Numeric Type >
     class Vector< 3, Type > final
     {
-      public:
       public:
         Vector< 3, Type >() noexcept = default;
 
