@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "compiled.h"
 #include "type_name.h"
 #include "identifier.h"
 
@@ -14,7 +15,12 @@ namespace smile::foundation
       public:
         TypeID() = default;
 
-        constexpr TypeID( const std::string_view &text ) : m_HashCode( identifier::GetHashCode( text ) )
+        constexpr TypeID( const ConstantText text ) : m_HashCode( identifier::GetHashCode( text ) )
+        {
+        }
+
+        template < Count CharCount >
+        constexpr TypeID( const char ( &text )[CharCount] ) : m_HashCode( identifier::GetHashCode( text ) )
         {
         }
 

@@ -31,6 +31,13 @@ namespace smile::foundation
             return ConstantText{ m_Text, m_CharCount - charCount };
         }
 
+        constexpr ConstantText SubStr( const Count skipCount, const Count shrinkCount )
+        {
+            SM_ASSERT( m_CharCount >= skipCount + shrinkCount );
+
+            return Skip( skipCount ).Shrink( shrinkCount );
+        }
+
         constexpr const char *GetText() const
         {
             return m_Text;
@@ -57,6 +64,36 @@ namespace smile::foundation
             return m_CharCount >= 0 &&
                    ( ( charCount == 0 ) ||
                        ( *m_Text == *startingText && Skip( 1 ).StartsWith( startingText + 1, charCount - 1 ) ) );
+        }
+
+        template < Count CharCount >
+        constexpr Index Find( const char ( &text )[CharCount] ) const
+        {
+            return Find( text, CharCount - 1 );
+        }
+
+        constexpr Index Find( const char *text, const Count charCount ) const
+        {
+            for ( Index i{}; i < m_CharCount; ++i )
+            {
+                if ( Skip( i ).StartsWith( text, charCount ) )
+                {
+                    return i;
+                }
+            }
+
+            return s_InvalidIndex;
+        }
+
+        constexpr Index ReverseFind( const char element ) const
+        {
+            for ( Index i{ m_CharCount - 1 }; i < m_CharCount; ++i )
+            {
+                if ( element == m_Text[i] )
+                    return i;
+            }
+
+            return s_InvalidIndex;
         }
 
         char operator[]( const Index index ) const

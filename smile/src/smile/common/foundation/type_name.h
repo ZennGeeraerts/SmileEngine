@@ -1,17 +1,16 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
 #include "compiler.h"
-
-#include <string_view>
+#include "constant_text.h"
 
 namespace smile::foundation
 {
     template < typename Type >
-    constexpr std::string_view GetFullTypeName()
+    constexpr ConstantText GetFullTypeName()
     {
 #if defined SM_COMPILER_MSVC
         return __FUNCSIG__;
@@ -23,28 +22,28 @@ namespace smile::foundation
     }
 
     template < typename Type, bool ExcludeNamespace = false >
-    constexpr std::string_view GetTypeName()
+    constexpr ConstantText GetTypeName()
     {
-        size_t prefixLen = GetFullTypeName< void >().find( "void" );
-        size_t multiple = GetFullTypeName< void >().size() - GetFullTypeName< int >().size();
-        size_t dummyLen = GetFullTypeName< void >().size() - 4 * multiple;
-        size_t targetLen = ( GetFullTypeName< Type >().size() - dummyLen ) / multiple;
-        std::string_view rv = GetFullTypeName< Type >().substr( prefixLen, targetLen );
+        Count prefixCount = GetFullTypeName< void >().Find( "void" );
+        Count multiple = GetFullTypeName< void >().GetCharCount() - GetFullTypeName< int >().GetCharCount();
+        Count dummyCount = GetFullTypeName< void >().GetCharCount() - 4 * multiple;
+        Count targetCount = ( GetFullTypeName< Type >().GetCharCount() - dummyCount ) / multiple;
+        ConstantText rv = GetFullTypeName< Type >().SubStr( prefixCount, targetCount );
 
         if constexpr ( ExcludeNamespace )
         {
-            size_t pos = rv.find_last_of( ':' );
-            rv = rv.substr( pos + 1 );
+            Index pos = rv.ReverseFind( ':' );
+            rv = rv.SubStr( pos + 1 );
         }
 
-        if ( rv.rfind( ' ' ) == rv.npos )
+        if ( rv.ReverseFind( ' ' ) == s_InvalidIndex )
             return rv;
 
-        return rv.substr( rv.rfind( ' ' ) + 1 );
+        return rv.SubStr( rv.ReverseFind( ' ' ) + 1 );
     }
 
     template < typename Type, bool ExcludeNamespace = false >
-    constexpr std::string_view TypeNameOf()
+    constexpr ConstantText TypeNameOf()
     {
         return GetTypeName< Type, ExcludeNamespace >();
     }
