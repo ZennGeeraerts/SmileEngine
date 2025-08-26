@@ -10,7 +10,7 @@
 #include "smile/core/window/file_dialog.h"
 
 #include "smile/graphic/animation/ecs/animation_system.h"
-#include "smile/graphic/camera/ecs/camera_system.h"
+#include "smile/graphic/scene/ecs/camera_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
 #include "smile/graphic/scene/ecs/wireframe_render_pass.h"

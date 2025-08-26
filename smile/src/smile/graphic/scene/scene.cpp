@@ -8,7 +8,7 @@
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/skybox_renderer.h"
-#include "smile/graphic/camera/ecs/camera_component.h"
+#include "ecs/camera_component.h"
 
 #include "smile/core/window/window.h"
 

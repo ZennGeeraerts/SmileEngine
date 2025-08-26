@@ -6,7 +6,7 @@
 
 #include "smile/common/memory/counted.h"
 #include "smile/core/ecs/ecs_engine.h"
-#include "smile/graphic/camera/camera.h"
+#include "smile/graphic/renderer/camera.h"
 
 namespace smile::graphic::ecs
 {

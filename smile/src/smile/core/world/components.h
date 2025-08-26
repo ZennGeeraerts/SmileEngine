@@ -10,7 +10,7 @@
 #include "smile/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
 #include "smile/graphic/sprite/ecs/sprite_renderer_component.h"
 #include "smile/graphic/animation/ecs/animator_component.h"
-#include "smile/graphic/camera/ecs/camera_component.h"
+#include "smile/graphic/scene/ecs/camera_component.h"
 
 #include "smile/scripting/ecs/script_component.h"
 

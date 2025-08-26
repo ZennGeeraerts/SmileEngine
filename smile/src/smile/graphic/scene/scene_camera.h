@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "camera.h"
+#include "smile/graphic/renderer/camera.h"
 #include "smile/common/foundation/compiled.h"
 
 namespace smile::graphic
