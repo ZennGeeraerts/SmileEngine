@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/graphic/renderer_backend/render_state.h"
+#include "smile/graphic/rhi/render_state.h"
 
 #include <d3d11.h>
 

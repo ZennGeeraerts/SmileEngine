@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/sampler_state.h"
+#include "smile/graphic/rhi/sampler_state.h"
 
 #include <d3d11.h>
 

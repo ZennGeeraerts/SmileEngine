@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/resource/buffer.h"
+#include "smile/graphic/rhi/resource/buffer.h"
 
 #include <string>
 #include <vector>

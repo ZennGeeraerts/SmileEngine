@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/graphics_device.h"
+#include "smile/graphic/rhi/graphics_device.h"
 
 #include <d3d11.h>
 
