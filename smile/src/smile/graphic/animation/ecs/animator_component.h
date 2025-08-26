@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/graphic/mesh/model.h"
+#include "smile/graphic/scene/model.h"
 
 namespace smile::graphic::ecs
 {

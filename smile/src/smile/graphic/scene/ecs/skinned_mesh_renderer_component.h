@@ -6,9 +6,9 @@
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
-#include "smile/graphic/mesh/model_loader.h"
-#include "smile/graphic/mesh/mesh_factory.h"
-#include "smile/graphic/mesh/material.h"
+#include "smile/graphic/scene/model_loader.h"
+#include "smile/graphic/scene/mesh_factory.h"
+#include "smile/graphic/scene/material.h"
 
 namespace smile::graphic::ecs
 {

@@ -38,9 +38,9 @@
 //#include "smile/graphic/resource/index_buffer.h"
 //#include "smile/graphic/resource/frame_buffer.h"
 //#include "smile/graphic/resource/texture.h"
-#include "smile/graphic/mesh/mesh_filter.h"
-#include "smile/graphic/mesh/skinned_mesh_filter.h"
-#include "smile/graphic/mesh/material.h"
+#include "smile/graphic/scene/mesh_filter.h"
+#include "smile/graphic/scene/skinned_mesh_filter.h"
+#include "smile/graphic/scene/material.h"
 
 /* --- DirectX --- */
 #include <DirectXMath.h>

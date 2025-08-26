@@ -5,7 +5,7 @@
 #pragma once
 
 #include "camera.h"
-#include "smile/graphic/mesh/mesh.h"
+#include "smile/graphic/scene/mesh.h"
 #include "smile/graphic/rhi/shader/shader.h"
 #include "smile/graphic/rhi/render_state.h"
 

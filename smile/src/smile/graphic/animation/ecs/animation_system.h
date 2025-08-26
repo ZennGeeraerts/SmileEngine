@@ -5,7 +5,7 @@
 #pragma once
 
 #include "smile/core/ecs/timed_system.h"
-#include "smile/graphic/mesh/skinned_mesh.h"
+#include "smile/graphic/scene/skinned_mesh.h"
 #include "animator_component.h"
 
 namespace smile::graphic::ecs

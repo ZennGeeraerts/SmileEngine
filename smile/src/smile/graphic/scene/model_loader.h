@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/mesh/model.h"
+#include "model.h"
 
 #include <filesystem>
 

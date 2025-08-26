@@ -6,8 +6,8 @@
 
 #include "ecs/transform_component.h"
 
-#include "smile/graphic/mesh/ecs/mesh_renderer_component.h"
-#include "smile/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
+#include "smile/graphic/scene/ecs/mesh_renderer_component.h"
+#include "smile/graphic/scene/ecs/skinned_mesh_renderer_component.h"
 #include "smile/graphic/sprite/ecs/sprite_renderer_component.h"
 #include "smile/graphic/animation/ecs/animator_component.h"
 #include "smile/graphic/scene/ecs/camera_component.h"
