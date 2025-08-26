@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "render_pass.h"
+#include "smile/graphic/renderer/ecs/render_pass.h"
 
 namespace smile::graphic::ecs
 {
