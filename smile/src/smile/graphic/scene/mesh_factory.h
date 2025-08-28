@@ -9,7 +9,7 @@
 
 #include "mesh_filter.h"
 #include "skinned_mesh_filter.h"
-#include "smile/graphic/renderer_backend/resource/buffer.h"
+#include "smile/graphic/rhi/resource/buffer.h"
 
 namespace smile::graphic
 {

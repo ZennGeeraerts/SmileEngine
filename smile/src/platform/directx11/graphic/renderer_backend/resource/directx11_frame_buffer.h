@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/resource/frame_buffer.h"
+#include "smile/graphic/rhi/resource/frame_buffer.h"
 
 #include <d3d11.h>
 

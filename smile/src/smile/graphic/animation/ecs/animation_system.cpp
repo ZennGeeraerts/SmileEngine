@@ -6,7 +6,7 @@
 #include "animation_system.h"
 
 #include "smile/core/ecs/ecs_engine.h"
-#include "smile/graphic/mesh/ecs/skinned_mesh_renderer_component.h"
+#include "smile/graphic/scene/ecs/skinned_mesh_renderer_component.h"
 #include "smile/graphic/animation/ecs/animator_component.h"
 #include "smile/core/world/ecs/transform_component.h"
 

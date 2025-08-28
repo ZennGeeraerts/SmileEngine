@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #pragma once
 #include "smile/core/ecs/system.h"
-#include "smile/graphic/camera/camera.h"
 
 namespace smile::ecs
 {

@@ -8,8 +8,8 @@
 #include "smile/core/world/components.h"
 #include "smile/core/ecs/relationship.h"
 #include "smile/scripting/script_engine.h"
-#include "smile/graphic/mesh/mesh.h"
-#include "smile/graphic/mesh/mesh_factory.h"
+#include "smile/graphic/scene/mesh.h"
+#include "smile/graphic/scene/mesh_factory.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
 #include <imgui/imgui.h>

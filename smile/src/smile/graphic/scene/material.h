@@ -4,8 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/shader/shader.h"
-#include "smile/graphic/renderer_backend/shader/shader_reflection.h"
+#include "smile/graphic/rhi/shader/shader.h"
+#include "smile/graphic/rhi/shader/shader_reflection.h"
 #include "smile/graphic/renderer/resource/texture.h"
 #include "smile/common/memory/ref.h"
 

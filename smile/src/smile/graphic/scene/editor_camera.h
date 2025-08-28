@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "camera.h"
+#include "smile/graphic/renderer/camera.h"
 #include "smile/core/window/events/event.h"
 #include "smile/core/window/events/mouse_event.h"
 
