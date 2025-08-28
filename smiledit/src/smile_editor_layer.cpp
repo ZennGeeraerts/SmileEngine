@@ -11,11 +11,11 @@
 
 #include "smile/graphic/animation/ecs/animation_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
-#include "smile/graphic/renderer/ecs/wireframe_render_pass.h"
-#include "smile/graphic/renderer/ecs/debug_render_pass.h"
 #include "smile/graphic/scene/ecs/camera_system.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
 #include "smile/graphic/scene/ecs/physics_render_pass.h"
+#include "smile/graphic/renderer/ecs/wireframe_render_pass.h"
+#include "smile/graphic/renderer/ecs/debug_render_pass.h"
 #include "smile/graphic/sprite/ecs/render_pass_2d.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
