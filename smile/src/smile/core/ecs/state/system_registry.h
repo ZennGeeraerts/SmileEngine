@@ -40,9 +40,9 @@ namespace smile::ecs::state
         {
             SystemFactory::RegisterSystem< SystemType >( std::forward< Args >( args )... );
 
-            primitive::String systemName{ SystemType::GetStaticName() };
-            auto pair = m_SystemInfoMap.Insert( systemName, SystemInfo{} );
-            return pair.GetItem();
+            const primitive::String systemName{ SystemType::GetStaticName() };
+            auto [iterator, _] = m_SystemInfoMap.TryCreateItemAtKey( systemName );
+            return iterator.GetItem();
         }
 
         const SystemInfo &GetSystemInfo( const primitive::StringView systemName ) const

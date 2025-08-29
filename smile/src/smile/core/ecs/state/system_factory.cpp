@@ -16,6 +16,6 @@ namespace smile::ecs::state
 
     void SystemFactory::RegisterSystem( const primitive::String &systemName, SystemProvider *pSystemProvider )
     {
-        s_SystemProviderMap.Insert( systemName, pSystemProvider );
+        s_SystemProviderMap.TryInsert( systemName, pSystemProvider );
     }
 }
