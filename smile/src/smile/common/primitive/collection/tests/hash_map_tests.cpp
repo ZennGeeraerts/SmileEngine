@@ -321,7 +321,7 @@ namespace smile::primitive
             REQUIRE( TestMap["first_key"].Value == 166 );
             REQUIRE( TestMap["second_key"].Value == 666 );
             REQUIRE( TestMap["third_key"].Value == 5150 );
-            REQUIRE_ASSERT( TestMap["unknown_key"] );
+            REQUIRE( TestMap["unknown_key"] == 0 );
         }
 
         {
@@ -330,7 +330,7 @@ namespace smile::primitive
             REQUIRE( constTestMap["first_key"].Value == 166 );
             REQUIRE( constTestMap["second_key"].Value == 666 );
             REQUIRE( constTestMap["third_key"].Value == 5150 );
-            REQUIRE_ASSERT( constTestMap["unknown_key"] );
+            REQUIRE( constTestMap["unknown_key"] == 0 );
         }
     }
 
@@ -373,6 +373,43 @@ namespace smile::primitive
         REQUIRE( 444 == TestMap.GetItemAtKey( "fourth_key" ).Value );
 
         REQUIRE_ASSERT( TestMap.Insert( "fourth_key", DummyClass{ 555 } ) );
+    }
+
+    TEST_CASE_METHOD( Fixture, "HashMap::TryInsert", "[primitive]" )
+    {
+        REQUIRE( 3 == TestMap.GetItemCount() );
+
+        auto [iterator1, hasInserted1] = TestMap.TryInsert( "first_key", DummyClass{ 166 } );
+        auto [iterator2, hasInserted2] = TestMap.TryInsert( "second_key", DummyClass{ 666 } );
+
+        REQUIRE( 3 == TestMap.GetItemCount() );
+        REQUIRE_FALSE( hasInserted1 );
+        REQUIRE_FALSE( hasInserted2 );
+        REQUIRE( DummyKey{ "first_key" } == iterator1.GetKey() );
+        REQUIRE( DummyClass{ 166 } == iterator1.GetItem() );
+        REQUIRE( DummyKey{ "second_key" } == iterator2.GetKey() );
+        REQUIRE( DummyClass{ 666 } == iterator2.GetItem() );
+
+        auto [iterator3, hasInserted3] = TestMap.TryInsert( "fourth_key", DummyClass{ 555 } );
+
+        REQUIRE( 4 == TestMap.GetItemCount() );
+        REQUIRE( hasInserted3 );
+        REQUIRE( DummyKey{ "fourth_key" } == iterator3.GetKey() );
+        REQUIRE( DummyClass{ 555 } == iterator3.GetItem() );
+    }
+
+    TEST_CASE_METHOD( Fixture, "HashMap::TryCreateItemAtKey", "[primitive]" )
+    {
+        auto [iterator, _] = TestMap.TryCreateItemAtKey( "first_key" );
+        DummyClass &item = iterator.GetItem();
+
+        REQUIRE( &TestMap.GetItemAtKey( "first_key" ) == &item );
+
+        REQUIRE_FALSE( TestMap.HasItemAtKey( "new_key" ) );
+
+        HashMap< NoDefaultConstructorDummyKey, DummyClass > noDefaultConstructorMap;
+
+        noDefaultConstructorMap.TryCreateItemAtKey( "new_key" );
     }
 
     TEST_CASE_METHOD( Fixture, "HashMap::Clear", "[primitive]" )
