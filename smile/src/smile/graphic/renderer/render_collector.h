@@ -6,7 +6,7 @@
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer/resource/index_buffer.h"
-#include "smile/graphic/renderer_backend/shader/shader.h"
+#include "smile/graphic/rhi/shader/shader.h"
 
 #include "smile/common/memory/ref.h"
 

@@ -6,9 +6,9 @@
 #include "smpch.h"
 #include "directx11_command_list.h"
 
-#include "smile/graphic/renderer_backend/swap_chain.h"
-#include "smile/graphic/renderer_backend/resource/frame_buffer.h"
-#include "smile/graphic/renderer_backend/shader/shader.h"
+#include "smile/graphic/rhi/swap_chain.h"
+#include "smile/graphic/rhi/resource/frame_buffer.h"
+#include "smile/graphic/rhi/shader/shader.h"
 
 #include "directx11_device.h"
 #include "directx11_diagnostics.h"

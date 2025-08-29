@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer_backend/format.h"
+#include "smile/graphic/rhi/format.h"
 
 #include <dxgi.h>
 

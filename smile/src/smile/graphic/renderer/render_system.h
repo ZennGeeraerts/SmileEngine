@@ -8,9 +8,9 @@
 #include "smile/common/memory/ref.h"
 
 #include "resource/resource_manager.h"
-#include "smile/graphic/renderer_backend/graphics_device.h"
-#include "smile/graphic/renderer_backend/render_state.h"
-#include "smile/graphic/renderer_backend/swap_chain.h"
+#include "smile/graphic/rhi/graphics_device.h"
+#include "smile/graphic/rhi/render_state.h"
+#include "smile/graphic/rhi/swap_chain.h"
 
 #include <DirectXMath.h>
 

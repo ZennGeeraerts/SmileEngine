@@ -3,8 +3,8 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/graphic/renderer_backend/graphics_device.h"
-#include "smile/graphic/renderer_backend/render_state.h"
+#include "smile/graphic/rhi/graphics_device.h"
+#include "smile/graphic/rhi/render_state.h"
 #include "resource/directx11_buffer.h"
 #include "resource/directx11_texture.h"
 #include "resource/directx11_frame_buffer.h"
