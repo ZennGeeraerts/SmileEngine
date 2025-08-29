@@ -4,8 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/constant_text.h"
 #include "smile/common/foundation/type_id.h"
 #include "smile/common/foundation/type_registry.h"
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::asset
 {
@@ -16,8 +18,14 @@ namespace smile::asset
         {
         }
 
-        explicit AssetType( std::string_view name )
-            : m_TypeID{ foundation::TypeRegistry::GetInstance().RegisterTypeIfNeeded( std::string{ name } ) }
+        explicit AssetType( foundation::ConstantText name )
+            : m_TypeID{ foundation::TypeRegistry::GetInstance().RegisterTypeIfNeeded( name ) }
+        {
+        }
+
+        explicit AssetType( const primitive::String &name )
+            : m_TypeID{ foundation::TypeRegistry::GetInstance().RegisterTypeIfNeeded(
+                  { name.GetData(), name.GetCharCount() } ) }
         {
         }
 
@@ -46,7 +54,7 @@ namespace smile::asset
             return m_TypeID.GetHashCode();
         }
 
-        std::string_view GetName() const
+        primitive::StringView GetName() const
         {
             return foundation::TypeRegistry::GetInstance().GetName( m_TypeID );
         }

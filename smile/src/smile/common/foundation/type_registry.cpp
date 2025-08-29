@@ -7,7 +7,7 @@
 
 namespace smile::foundation
 {
-    TypeID TypeRegistry::RegisterType( const std::string &typeName )
+    TypeID TypeRegistry::RegisterType( const foundation::ConstantText typeName )
     {
         TypeID id{ typeName };
         m_IDToNameMap[id] = typeName;
@@ -16,11 +16,11 @@ namespace smile::foundation
         return id;
     }
 
-    TypeID TypeRegistry::RegisterTypeIfNeeded( const std::string &typeName )
+    TypeID TypeRegistry::RegisterTypeIfNeeded( const foundation::ConstantText typeName )
     {
-        auto it = m_NameToIDMap.find( typeName );
+        auto it = m_NameToIDMap.FindItemAtKey( typeName );
         if ( it != m_NameToIDMap.end() )
-            return it->second;
+            return it.GetItem();
 
         return RegisterType( typeName );
     }

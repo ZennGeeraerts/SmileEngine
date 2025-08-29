@@ -32,8 +32,8 @@ namespace smile::world
             return m_pSystemRegistry->RegisterSystem< SystemType >( std::forward( args )... );
         }
 
-        memory::Ref< smile::ecs::state::State > CreateState( const std::string &name );
-        void ChangeState( const std::string &name );
+        memory::Ref< smile::ecs::state::State > CreateState( const primitive::String &name );
+        void ChangeState( const primitive::StringView name );
 
         Entity CreateEntity();
         Entity CreateEntity( const primitive::String &name );

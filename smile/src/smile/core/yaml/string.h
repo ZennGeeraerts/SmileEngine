@@ -50,7 +50,7 @@ namespace YAML
         }
     };
 
-    Emitter &operator<<( Emitter &output, const smile::primitive::String &value )
+    inline Emitter &operator<<( Emitter &output, const smile::primitive::String &value )
     {
         if ( value.GetCharCount() > 0 )
         {
@@ -64,7 +64,7 @@ namespace YAML
         return output;
     }
 
-    Emitter &operator<<( Emitter &output, const smile::primitive::StringView value )
+    inline Emitter &operator<<( Emitter &output, const smile::primitive::StringView value )
     {
         if ( value.GetCharCount() > 0 )
         {

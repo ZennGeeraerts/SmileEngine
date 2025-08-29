@@ -146,7 +146,7 @@ namespace std
             return Base.parse( ctx );
         }
 
-        auto format( smile::primitive::StringView &view, format_context &ctx ) const
+        auto format( const smile::primitive::StringView view, format_context &ctx ) const
         {
             basic_string_view< char > temp{ view.GetData(), static_cast< size_t >( view.GetCharCount() ) };
             return Base.format( temp, ctx );
