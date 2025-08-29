@@ -168,17 +168,17 @@ void ExampleLayer::OnAttach()
     m_pActiveWorld->RegisterSystem< smile::world::ecs::TransformSystem >();
 
     m_pActiveWorld->RegisterSystem< smile::graphic::ecs::CameraSystem >().After(
-        std::string{ smile::foundation::TypeNameOf< smile::world::ecs::TransformSystem >() } );
+        smile::foundation::TypeNameOf< smile::world::ecs::TransformSystem >() );
 
     m_pActiveWorld->RegisterSystem< smile::graphic::ecs::GraphicSystem >().After(
-        std::string{ smile::foundation::TypeNameOf< smile::graphic::ecs::CameraSystem >() } );
+        smile::foundation::TypeNameOf< smile::graphic::ecs::CameraSystem >() );
 
     smile::world::WorldManager::Open( m_pActiveWorld );
 
     auto pRuntimeState = m_pActiveWorld->CreateState( "runtime" );
-    pRuntimeState->AddSystem( std::string{ smile::world::ecs::TransformSystem::GetStaticName() } );
-    pRuntimeState->AddSystem( std::string{ smile::graphic::ecs::CameraSystem::GetStaticName() } );
-    pRuntimeState->AddSystem( std::string{ smile::graphic::ecs::GraphicSystem::GetStaticName() } );
+    pRuntimeState->AddSystem( smile::world::ecs::TransformSystem::GetStaticName() );
+    pRuntimeState->AddSystem( smile::graphic::ecs::CameraSystem::GetStaticName() );
+    pRuntimeState->AddSystem( smile::graphic::ecs::GraphicSystem::GetStaticName() );
 
     smile::graphic::ecs::RenderPassList &renderPassList =
         smile::graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();

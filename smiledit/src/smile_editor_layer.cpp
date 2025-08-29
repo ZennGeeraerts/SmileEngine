@@ -503,38 +503,38 @@ namespace smile
         m_WorldHierarchyPanel.SetContext( m_pEditorWorld.GetPointer() );
 
         m_pEditorWorld->RegisterSystem< graphic::ecs::AnimationSystem >().After(
-            std::string{ world::ecs::TransformSystem::GetStaticName() } );
+            world::ecs::TransformSystem::GetStaticName() );
 
         m_pEditorWorld->RegisterSystem< graphic::ecs::CameraSystem >().After(
-            std::string{ world::ecs::TransformSystem::GetStaticName() } );
+            world::ecs::TransformSystem::GetStaticName() );
 
         m_pEditorWorld->RegisterSystem< scripting::ecs::ScriptSystem >()
-            .After( std::string{ world::ecs::TransformSystem::GetStaticName() } )
-            .After( std::string{ graphic::ecs::CameraSystem::GetStaticName() } )
-            .After( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
+            .After( world::ecs::TransformSystem::GetStaticName() )
+            .After( graphic::ecs::CameraSystem::GetStaticName() )
+            .After( graphic::ecs::AnimationSystem::GetStaticName() );
 
         m_pEditorWorld->RegisterSystem< physics::ecs::PhysicsSystem >().After(
-            std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
+            scripting::ecs::ScriptSystem::GetStaticName() );
 
         m_pEditorWorld->RegisterSystem< graphic::ecs::GraphicSystem >().After(
-            std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
+            physics::ecs::PhysicsSystem::GetStaticName() );
 
         auto pEditorState = m_pEditorWorld->CreateState( "editor" );
-        pEditorState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pEditorState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pEditorState->AddSystem( world::ecs::TransformSystem::GetStaticName() );
+        pEditorState->AddSystem( graphic::ecs::GraphicSystem::GetStaticName() );
 
         auto pSimulateState = m_pEditorWorld->CreateState( "simulate" );
-        pSimulateState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pSimulateState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pSimulateState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pSimulateState->AddSystem( world::ecs::TransformSystem::GetStaticName() );
+        pSimulateState->AddSystem( physics::ecs::PhysicsSystem::GetStaticName() );
+        pSimulateState->AddSystem( graphic::ecs::GraphicSystem::GetStaticName() );
 
         auto pRuntimeState = m_pEditorWorld->CreateState( "runtime" );
-        pRuntimeState->AddSystem( std::string{ scripting::ecs::ScriptSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ world::ecs::TransformSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ physics::ecs::PhysicsSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::AnimationSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::CameraSystem::GetStaticName() } );
-        pRuntimeState->AddSystem( std::string{ graphic::ecs::GraphicSystem::GetStaticName() } );
+        pRuntimeState->AddSystem( scripting::ecs::ScriptSystem::GetStaticName() );
+        pRuntimeState->AddSystem( world::ecs::TransformSystem::GetStaticName() );
+        pRuntimeState->AddSystem( physics::ecs::PhysicsSystem::GetStaticName() );
+        pRuntimeState->AddSystem( graphic::ecs::AnimationSystem::GetStaticName() );
+        pRuntimeState->AddSystem( graphic::ecs::CameraSystem::GetStaticName() );
+        pRuntimeState->AddSystem( graphic::ecs::GraphicSystem::GetStaticName() );
 
         graphic::ecs::RenderPassList &renderPassList =
             graphic::RenderEngine::GetSceneManager().GetActive()->GetRenderPassList();
