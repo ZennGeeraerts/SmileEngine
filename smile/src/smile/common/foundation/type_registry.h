@@ -53,7 +53,7 @@ namespace smile::foundation
         }
 
       private:
-        mutable primitive::HashMap< primitive::String, TypeID > m_NameToIDMap;
-        mutable primitive::HashMap< TypeID, primitive::String > m_IDToNameMap;
+        primitive::HashMap< primitive::String, TypeID > m_NameToIDMap;
+        primitive::HashMap< TypeID, primitive::String > m_IDToNameMap;
     };
 }

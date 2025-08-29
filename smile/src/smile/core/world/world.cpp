@@ -19,7 +19,7 @@ namespace smile::world
         RegisterSystem< ecs::TransformSystem >();
 
         auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
-        pDefaultState->AddSystem( primitive::String{ ecs::TransformSystem::GetStaticName() } );
+        pDefaultState->AddSystem( ecs::TransformSystem::GetStaticName() );
         m_StateManager.AddState( "default", pDefaultState );
 
         m_StateManager.Initialize( &m_ECSEngine, m_pSystemRegistry.GetPointer(), "default" );

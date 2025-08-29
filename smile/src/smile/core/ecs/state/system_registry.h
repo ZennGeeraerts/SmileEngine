@@ -47,7 +47,7 @@ namespace smile::ecs::state
 
         const SystemInfo &GetSystemInfo( const primitive::StringView systemName ) const
         {
-            SM_ASSERT_MSG( m_SystemInfoMap.FindItemAtKey( systemName ) != m_SystemInfoMap.end(),
+            SM_ASSERT_MSG( m_SystemInfoMap.HasItemAtKey( systemName ),
                 "SystemRegistry::GetSystemInfo > Failed to find system: {}",
                 systemName );
 
