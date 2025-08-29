@@ -19,7 +19,7 @@ namespace smile::world
         RegisterSystem< ecs::TransformSystem >();
 
         auto pDefaultState = memory::CreateRef< smile::ecs::state::State >();
-        pDefaultState->AddSystem( std::string{ ecs::TransformSystem::GetStaticName() } );
+        pDefaultState->AddSystem( primitive::String{ ecs::TransformSystem::GetStaticName() } );
         m_StateManager.AddState( "default", pDefaultState );
 
         m_StateManager.Initialize( &m_ECSEngine, m_pSystemRegistry.GetPointer(), "default" );
@@ -30,14 +30,14 @@ namespace smile::world
         m_ECSEngine.Clear();
     }
 
-    memory::Ref< smile::ecs::state::State > World::CreateState( const std::string &name )
+    memory::Ref< smile::ecs::state::State > World::CreateState( const primitive::String &name )
     {
         auto pState = memory::CreateRef< smile::ecs::state::State >();
         m_StateManager.AddState( name, pState );
         return pState;
     }
 
-    void World::ChangeState( const std::string &name )
+    void World::ChangeState( const primitive::StringView name )
     {
         m_StateManager.ChangeState( name );
     }

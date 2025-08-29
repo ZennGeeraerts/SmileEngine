@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2024 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -8,7 +8,7 @@
 
 namespace smile::ecs
 {
-    template< typename DerivedType >
+    template < typename DerivedType >
     class System : public BaseSystem
     {
       public:
@@ -26,12 +26,12 @@ namespace smile::ecs
             m_pECSEngine = nullptr;
         };
 
-        std::string_view GetName() const override
+        foundation::ConstantText GetName() const override
         {
             return GetStaticName();
         }
 
-        static std::string_view GetStaticName()
+        static foundation::ConstantText GetStaticName()
         {
             return foundation::TypeNameOf< DerivedType >();
         }

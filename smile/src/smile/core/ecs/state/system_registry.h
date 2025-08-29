@@ -6,6 +6,9 @@
 
 #include "system_factory.h"
 #include "smile/common/memory/counted.h"
+#include "smile/common/primitive/collection/hash_map.h"
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::ecs::state
 {
@@ -14,19 +17,19 @@ namespace smile::ecs::state
       public:
         SystemInfo() = default;
 
-        SystemInfo &After( const std::string &systemName )
+        SystemInfo &After( const primitive::String &systemName )
         {
-            m_Dependencies.push_back( systemName );
+            m_Dependencies.PushBack( systemName );
             return *this;
         }
 
-        const std::vector< std::string > &GetDependencies() const
+        const primitive::Vector< primitive::String > &GetDependencies() const
         {
             return m_Dependencies;
         }
 
       private:
-        std::vector< std::string > m_Dependencies{};
+        primitive::Vector< primitive::String > m_Dependencies{};
     };
 
     class SystemRegistry final : public memory::Counted
@@ -37,14 +40,14 @@ namespace smile::ecs::state
         {
             SystemFactory::RegisterSystem< SystemType >( std::forward< Args >( args )... );
 
-            std::string systemName{ SystemType::GetStaticName() };
-            const auto [pair, _] = m_SystemInfoMap.emplace( systemName, SystemInfo{} );
-            return pair->second;
+            primitive::String systemName{ SystemType::GetStaticName() };
+            auto pair = m_SystemInfoMap.Insert( systemName, SystemInfo{} );
+            return pair.GetItem();
         }
 
-        const SystemInfo &GetSystemInfo( const std::string &systemName ) const
+        const SystemInfo &GetSystemInfo( const primitive::StringView systemName ) const
         {
-            SM_ASSERT_MSG( m_SystemInfoMap.find( systemName ) != m_SystemInfoMap.end(),
+            SM_ASSERT_MSG( m_SystemInfoMap.FindItemAtKey( systemName ) != m_SystemInfoMap.end(),
                 "SystemRegistry::GetSystemInfo > Failed to find system: {}",
                 systemName );
 
@@ -52,6 +55,6 @@ namespace smile::ecs::state
         }
 
       private:
-        mutable std::unordered_map< std::string, SystemInfo > m_SystemInfoMap;
+        primitive::HashMap< primitive::String, SystemInfo > m_SystemInfoMap;
     };
 }

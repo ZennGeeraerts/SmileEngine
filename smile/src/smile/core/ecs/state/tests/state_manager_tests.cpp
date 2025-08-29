@@ -61,11 +61,11 @@ namespace smile
             auto pBarState = memory::CreateRef< ecs::state::State >();
             auto pFullState = memory::CreateRef< ecs::state::State >();
 
-            pFooState->AddSystem( std::string{ TestFooSystem::GetStaticName() } );
-            pBarState->AddSystem( std::string{ TestBarSystem::GetStaticName() } );
+            pFooState->AddSystem( primitive::String{ TestFooSystem::GetStaticName() } );
+            pBarState->AddSystem( primitive::String{ TestBarSystem::GetStaticName() } );
 
-            pFullState->AddSystem( std::string{ TestFooSystem::GetStaticName() } );
-            pFullState->AddSystem( std::string{ TestBarSystem::GetStaticName() } );
+            pFullState->AddSystem( primitive::String{ TestFooSystem::GetStaticName() } );
+            pFullState->AddSystem( primitive::String{ TestBarSystem::GetStaticName() } );
 
             ecs::state::StateManager stateManager;
 

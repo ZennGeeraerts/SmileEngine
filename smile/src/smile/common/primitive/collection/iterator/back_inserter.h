@@ -33,7 +33,7 @@ namespace smile::primitive
             CollectionType *pCollection;
         };
 
-        BackInserter( CollectionType &pCollection ) noexcept : pCollection{ pCollection }
+        BackInserter( CollectionType &collection ) noexcept : pCollection{ &collection }
         {
         }
 
@@ -65,8 +65,8 @@ namespace std
     {
         using value_type = typename smile::primitive::BackInserter< CollectionType >::Item;
         using pointer = typename smile::primitive::BackInserter< CollectionType >::Item *;
-        using reference = typename smile::smileprimitive::BackInserter< CollectionType >::Item &;
-        using difference_type = Uint64;
+        using reference = typename smile::primitive::BackInserter< CollectionType >::Item &;
+        using difference_type = smile::Uint64;
         using iterator_category = std::output_iterator_tag;
     };
 }

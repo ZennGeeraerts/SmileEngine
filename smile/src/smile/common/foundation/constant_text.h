@@ -31,11 +31,11 @@ namespace smile::foundation
             return ConstantText{ m_Text, m_CharCount - charCount };
         }
 
-        constexpr ConstantText SubStr( const Count skipCount, const Count shrinkCount )
+        constexpr ConstantText SubStr( const Index pos, const Count charCount )
         {
-            SM_ASSERT( m_CharCount >= skipCount + shrinkCount );
+            SM_ASSERT( m_CharCount >= pos + charCount );
 
-            return Skip( skipCount ).Shrink( shrinkCount );
+            return ConstantText{ m_Text + pos, charCount };
         }
 
         constexpr const char *GetText() const
@@ -87,10 +87,10 @@ namespace smile::foundation
 
         constexpr Index ReverseFind( const char element ) const
         {
-            for ( Index i{ m_CharCount - 1 }; i < m_CharCount; ++i )
+            for ( Index i{ m_CharCount }; i > 0; --i )
             {
-                if ( element == m_Text[i] )
-                    return i;
+                if ( element == m_Text[i - 1] )
+                    return i - 1;
             }
 
             return s_InvalidIndex;

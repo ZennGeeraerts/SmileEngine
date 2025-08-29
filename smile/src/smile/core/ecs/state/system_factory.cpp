@@ -7,15 +7,15 @@
 
 namespace smile::ecs::state
 {
-    std::unordered_map< std::string, SystemProvider * > SystemFactory::s_SystemProviderMap{};
+    primitive::HashMap< primitive::String, SystemProvider * > SystemFactory::s_SystemProviderMap{};
 
-    memory::Ref< BaseSystem > SystemFactory::Create( const std::string &systemName )
+    memory::Ref< BaseSystem > SystemFactory::Create( const primitive::String &systemName )
     {
-        return s_SystemProviderMap.at( systemName )->Create();
+        return s_SystemProviderMap.GetItemAtKey( systemName )->Create();
     }
 
-    void SystemFactory::RegisterSystem( const std::string &systemName, SystemProvider *pSystemProvider )
+    void SystemFactory::RegisterSystem( const primitive::String &systemName, SystemProvider *pSystemProvider )
     {
-        s_SystemProviderMap.insert( std::make_pair( systemName, pSystemProvider ) );
+        s_SystemProviderMap.Insert( systemName, pSystemProvider );
     }
 }

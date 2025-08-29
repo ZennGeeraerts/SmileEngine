@@ -33,13 +33,13 @@ namespace smile::foundation
         if constexpr ( ExcludeNamespace )
         {
             Index pos = rv.ReverseFind( ':' );
-            rv = rv.SubStr( pos + 1 );
+            rv = rv.Skip( pos + 1 );
         }
 
         if ( rv.ReverseFind( ' ' ) == s_InvalidIndex )
             return rv;
 
-        return rv.SubStr( rv.ReverseFind( ' ' ) + 1 );
+        return rv.Skip( rv.ReverseFind( ' ' ) + 1 );
     }
 
     template < typename Type, bool ExcludeNamespace = false >

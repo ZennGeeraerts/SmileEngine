@@ -6,6 +6,8 @@
 
 #include "meyers_singleton.h"
 #include "type_id.h"
+#include "smile/common/primitive/collection/hash_map.h"
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::foundation
 {
@@ -16,9 +18,9 @@ namespace smile::foundation
         constexpr TypeID RegisterType()
         {
             TypeID id = TypeIDOf< Type >();
-            std::string typeName = TypeNameOf< Type >();
+            primitive::String typeName = TypeNameOf< Type >();
 
-            m_IDToNameMap[id] = typeName;
+            m_IDToNameMap[id] = std::move( typeName );
             m_NameToIDMap[typeName] = id;
 
             return id;
@@ -29,29 +31,29 @@ namespace smile::foundation
         {
             auto typeName = foundation::TypeNameOf< Type >();
 
-            auto it = m_NameToIDMap.find( typeName );
+            auto it = m_NameToIDMap.FindItemAtKey( typeName );
             if ( it != m_NameToIDMap.end() )
-                return it->second;
+                return it.GetValue();
 
             return RegisterType< Type >();
         }
 
-        TypeID RegisterType( const std::string &typeName );
-        TypeID RegisterTypeIfNeeded( const std::string &typeName );
+        TypeID RegisterType( const foundation::ConstantText typeName );
+        TypeID RegisterTypeIfNeeded( const foundation::ConstantText typeName );
 
         bool Contains( TypeID typeID ) const
         {
-            return m_IDToNameMap.find( typeID ) != m_IDToNameMap.end();
+            return m_IDToNameMap.FindItemAtKey( typeID ) != m_IDToNameMap.end();
         }
 
-        std::string_view GetName( TypeID typeID ) const
+        primitive::StringView GetName( TypeID typeID ) const
         {
             SM_ASSERT_MSG( Contains( typeID ), "TypeRegistry::GetName > ID not found" );
             return m_IDToNameMap[typeID];
         }
 
       private:
-        mutable std::unordered_map< std::string, TypeID > m_NameToIDMap;
-        mutable std::unordered_map< TypeID, std::string > m_IDToNameMap;
+        mutable primitive::HashMap< primitive::String, TypeID > m_NameToIDMap;
+        mutable primitive::HashMap< TypeID, primitive::String > m_IDToNameMap;
     };
 }
