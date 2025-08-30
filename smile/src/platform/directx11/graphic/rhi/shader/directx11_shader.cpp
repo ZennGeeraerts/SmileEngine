@@ -6,7 +6,7 @@
 #include "smpch.h"
 #include "directx11_shader.h"
 
-#include "platform/directx11/graphic/renderer_backend/directx11_device.h"
+#include "platform/directx11/graphic/rhi/directx11_device.h"
 
 namespace smile::graphic
 {

@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "directx11_texture.h"
 
-#include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
+#include "platform/directx11/graphic/rhi/directx11_diagnostics.h"
 
 #include <DirectXTex.h>
 

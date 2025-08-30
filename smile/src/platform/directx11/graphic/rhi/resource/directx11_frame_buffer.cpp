@@ -6,7 +6,7 @@
 #include "smpch.h"
 #include "directx11_frame_buffer.h"
 
-#include "platform/directx11/graphic/renderer_backend/directx11_diagnostics.h"
+#include "platform/directx11/graphic/rhi/directx11_diagnostics.h"
 
 namespace smile::graphic
 {
