@@ -20,3 +20,13 @@ function(smile_option name description default)
 
     option(SMILE_${name} "${description}" ${default})
 endfunction()
+
+macro(get_files_recursively output_var)
+    set(directories ${ARGV})
+    list(REMOVE_AT directories 0)
+    foreach( directory ${directories} )
+        file(GLOB_RECURSE local_files CONFIGURE_DEPENDS "${directory}/**.cpp")
+
+        list(APPEND ${output_var} ${local_files})
+    endforeach()
+endmacro()
