@@ -1,12 +1,11 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
 #include "hash_code.h"
-
-#include <string_view>
+#include "constant_text.h"
 
 namespace smile::foundation::identifier
 {
@@ -17,15 +16,15 @@ namespace smile::foundation::identifier
         return *text ? GetHashCode( text + 1, static_cast< HashCode >( code * 16777619ull ) ^ *text ) : code;
     }
 
-    constexpr HashCode GetHashCodeWithSize( const char *text, const int size, const HashCode code = g_InitialValue )
+    constexpr HashCode GetHashCodeWithSize( const char *text, const Count size, const HashCode code = g_InitialValue )
     {
         return size > 0
                    ? GetHashCodeWithSize( text + 1, size - 1, static_cast< HashCode >( code * 16777619ull ) ^ *text )
                    : code;
     }
 
-    constexpr HashCode GetHashCode( const std::string_view &text )
+    constexpr HashCode GetHashCode( const ConstantText text )
     {
-        return GetHashCodeWithSize( text.data(), text.size() );
+        return GetHashCodeWithSize( text.GetText(), text.GetCharCount() );
     }
 }

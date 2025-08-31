@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/memory/counted.h"
+#include "smile/common/foundation/constant_text.h"
 
 namespace smile::ecs
 {
@@ -19,6 +20,6 @@ namespace smile::ecs
         virtual void OnAdd( ECSEngine &ecsEngine ) = 0;
         virtual void OnRemove( ECSEngine &ecsEngine ) = 0;
         virtual void OnUpdate() = 0;
-        virtual std::string_view GetName() const = 0;
+        virtual foundation::ConstantText GetName() const = 0;
     };
 }

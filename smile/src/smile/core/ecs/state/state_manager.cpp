@@ -7,24 +7,26 @@
 
 #include "smile/core/ecs/ecs_engine.h"
 #include "system_factory.h"
+#include "smile/common/primitive/collection/iterator/back_inserter.h"
 
 #include <queue>
 
 namespace smile::ecs::state
 {
-    void
-    StateManager::Initialize( ECSEngine *pECSEngine, SystemRegistry *pSystemRegistry, const std::string &initialState )
+    void StateManager::Initialize( ECSEngine *pECSEngine,
+        SystemRegistry *pSystemRegistry,
+        const primitive::StringView initialState )
     {
         m_pECSEngine = pECSEngine;
         m_pSystemRegistry = pSystemRegistry;
 
-        SM_ASSERT_MSG( m_StateMap.find( initialState ) != m_StateMap.end(),
+        SM_ASSERT_MSG( m_StateMap.FindItemAtKey( initialState ) != m_StateMap.end(),
             "StateManager::Initialize > Initial state not found in state map" );
 
-        m_pCurrentState = m_StateMap.at( initialState );
-        const std::vector< std::string > &systemNames = m_pCurrentState->GetSystemNames();
+        m_pCurrentState = m_StateMap.GetItemAtKey( initialState );
+        const primitive::Vector< primitive::String > &systemNames = m_pCurrentState->GetSystemNames();
 
-        std::vector< std::string > sorted = TopologicalSort( systemNames );
+        primitive::Vector< primitive::String > sorted = TopologicalSort( systemNames );
 
         for ( const auto &systemName : sorted )
         {
@@ -38,26 +40,26 @@ namespace smile::ecs::state
         m_pECSEngine = nullptr;
     }
 
-    void StateManager::AddState( const std::string &name, memory::Ref< State > pState )
+    void StateManager::AddState( const primitive::String &name, memory::Ref< State > pState )
     {
-        m_StateMap.insert( std::make_pair( name, pState ) );
+        m_StateMap.Insert( name, std::move( pState ) );
     }
 
-    bool StateManager::HasState( const std::string &name ) const
+    bool StateManager::HasState( const primitive::StringView name ) const
     {
-        return m_StateMap.find( name ) != m_StateMap.end();
+        return m_StateMap.HasItemAtKey( name );
     }
 
-    void StateManager::ChangeState( const std::string &name )
+    void StateManager::ChangeState( const primitive::StringView name )
     {
         SM_ASSERT_MSG( HasState( name ), "StateManager::ChangeState > State manager does not have state" );
 
-        const auto &pTargetState = m_StateMap.at( name );
+        const auto &pTargetState = m_StateMap.GetItemAtKey( name );
 
-        std::vector< std::string > currentSystems = m_pCurrentState->GetSystemNames();
-        std::vector< std::string > targetSystems = pTargetState->GetSystemNames();
-        std::vector< std::string > toBeRemovedSystems{};
-        std::vector< std::string > toBeAddedSystems{};
+        primitive::Vector< primitive::String > currentSystems = m_pCurrentState->GetSystemNames();
+        primitive::Vector< primitive::String > targetSystems = pTargetState->GetSystemNames();
+        primitive::Vector< primitive::String > toBeRemovedSystems{};
+        primitive::Vector< primitive::String > toBeAddedSystems{};
 
         std::sort( currentSystems.begin(), currentSystems.end() );
         std::sort( targetSystems.begin(), targetSystems.end() );
@@ -66,13 +68,13 @@ namespace smile::ecs::state
             currentSystems.end(),
             targetSystems.begin(),
             targetSystems.end(),
-            std::inserter( toBeRemovedSystems, toBeRemovedSystems.end() ) );
+            primitive::BackInserter{ toBeRemovedSystems } );
 
         std::set_difference( targetSystems.begin(),
             targetSystems.end(),
             currentSystems.begin(),
             currentSystems.end(),
-            std::inserter( toBeAddedSystems, toBeAddedSystems.end() ) );
+            primitive::BackInserter{ toBeAddedSystems } );
 
         const auto &pSystems = m_pECSEngine->GetSystems();
 
@@ -95,9 +97,9 @@ namespace smile::ecs::state
             }
         }
 
-        std::vector< std::string > sorted = TopologicalSort( targetSystems );
+        primitive::Vector< primitive::String > sorted = TopologicalSort( targetSystems );
 
-        for ( const std::string &systemName : sorted )
+        for ( const primitive::String &systemName : sorted )
         {
             memory::Ref< BaseSystem > pSystem = GetOrCreateSystem( systemName );
 
@@ -115,69 +117,70 @@ namespace smile::ecs::state
         m_pCurrentState = pTargetState;
     }
 
-    std::vector< std::string > StateManager::GetStates() const
+    primitive::Vector< primitive::String > StateManager::GetStates() const
     {
-        std::vector< std::string > states;
+        primitive::Vector< primitive::String > states;
 
         for ( const auto &pair : m_StateMap )
         {
-            states.emplace_back( pair.first );
+            states.PushBack( pair.Key );
         }
 
         return states;
     }
 
-    State &StateManager::GetState( const std::string &name ) const
+    State &StateManager::GetState( const primitive::StringView name ) const
     {
-        return *m_StateMap.at( name );
+        return *m_StateMap.GetItemAtKey( name );
     }
 
-    memory::Ref< BaseSystem > StateManager::GetSystem( const std::string &name ) const
+    memory::Ref< BaseSystem > StateManager::GetSystem( const primitive::StringView name ) const
     {
-        return m_SystemMap.at( name );
+        return m_SystemMap.GetItemAtKey( name );
     }
 
-    memory::Ref< BaseSystem > StateManager::GetOrCreateSystem( const std::string &systemName )
+    memory::Ref< BaseSystem > StateManager::GetOrCreateSystem( const primitive::String &systemName )
     {
-        auto systemIt = m_SystemMap.find( systemName );
+        auto systemIt = m_SystemMap.FindItemAtKey( systemName );
 
         if ( systemIt == m_SystemMap.end() )
         {
             auto pNewSystem = SystemFactory::Create( systemName );
-            m_SystemMap.insert( std::make_pair( systemName, pNewSystem ) );
-            return pNewSystem;
+            auto insertIt = m_SystemMap.Insert( systemName, std::move( pNewSystem ) );
+            return insertIt.GetItem();
         }
         else
         {
-            return systemIt->second;
+            return systemIt.GetItem();
         }
     }
 
-    std::vector< std::string > StateManager::TopologicalSort( const std::vector< std::string > &systemNames )
+    primitive::Vector< primitive::String > StateManager::TopologicalSort(
+        const primitive::Vector< primitive::String > &systemNames )
     {
-        std::unordered_map< std::string, int > inDegree{};
-        std::unordered_map< std::string, std::vector< std::string > > adjacencyList{};
+        primitive::HashMap< primitive::String, int > inDegree{};
+        primitive::HashMap< primitive::String, primitive::Vector< primitive::String > > adjacencyList{};
 
-        for ( const std::string &name : systemNames )
+        for ( const primitive::String &name : systemNames )
         {
             inDegree[name] = 0;
         }
 
-        for ( const std::string &name : systemNames )
+        for ( const primitive::String &name : systemNames )
         {
             const auto &systemInfo = m_pSystemRegistry->GetSystemInfo( name );
 
-            for ( const std::string &dependency : systemInfo.GetDependencies() )
+            for ( const primitive::String &dependency : systemInfo.GetDependencies() )
             {
                 if ( std::find( systemNames.begin(), systemNames.end(), dependency ) == systemNames.end() )
                     continue;
 
-                adjacencyList[dependency].push_back( name );
+                adjacencyList[dependency].PushBack( name );
                 ++inDegree[name];
             }
         }
 
-        std::queue< std::string > resolveDependencyQueue{};
+        std::queue< primitive::String > resolveDependencyQueue{};
 
         for ( const auto &[name, degree] : inDegree )
         {
@@ -185,15 +188,15 @@ namespace smile::ecs::state
                 resolveDependencyQueue.push( name );
         }
 
-        std::vector< std::string > sorted{};
+        primitive::Vector< primitive::String > sorted{};
 
         while ( !resolveDependencyQueue.empty() )
         {
             auto current = resolveDependencyQueue.front();
             resolveDependencyQueue.pop();
-            sorted.push_back( current );
+            sorted.PushBack( current );
 
-            for ( const std::string &neighbor : adjacencyList[current] )
+            for ( const primitive::String &neighbor : adjacencyList[current] )
             {
                 if ( --inDegree[neighbor] == 0 )
                 {
@@ -202,7 +205,7 @@ namespace smile::ecs::state
             }
         }
 
-        SM_ASSERT_MSG( sorted.size() == systemNames.size(),
+        SM_ASSERT_MSG( sorted.GetItemCount() == systemNames.GetItemCount(),
             "StateManager::TopologicalSort > Cycle detected or missing dependency" );
 
         return sorted;
@@ -217,8 +220,8 @@ namespace smile::ecs::state
         result.m_pECSEngine = pECSEngine;
         result.m_pSystemRegistry = pSystemRegistry;
 
-        const std::vector< std::string > &systemNames = result.m_pCurrentState->GetSystemNames();
-        std::vector< std::string > sorted = result.TopologicalSort( systemNames );
+        const primitive::Vector< primitive::String > &systemNames = result.m_pCurrentState->GetSystemNames();
+        primitive::Vector< primitive::String > sorted = result.TopologicalSort( systemNames );
 
         for ( const auto &systemName : sorted )
         {

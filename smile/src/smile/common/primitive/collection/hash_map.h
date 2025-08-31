@@ -113,7 +113,8 @@ namespace smile::primitive
 
         TValue &operator[]( const TKey &key )
         {
-            return m_Table.GetItemAtKey( key );
+            auto [iterator, _] = TryCreateItemAtKey( key );
+            return iterator.GetItem();
         }
 
         const TValue &operator[]( const TKey &key ) const
@@ -168,26 +169,84 @@ namespace smile::primitive
             return m_Table.GetItemAtKey( key );
         }
 
+        Iterator CreateItemAtKey( const TKey &key )
+        {
+            SM_ASSERT( !HasItemAtKey( key ) );
+
+            auto pNode = new Node{ key };
+            m_Table.Insert( pNode );
+
+            return Iterator{ pNode, &m_Table };
+        }
+
+        std::pair< Iterator, bool > TryCreateItemAtKey( const TKey &key )
+        {
+            auto it = FindItemAtKey( key );
+
+            if ( it == end() )
+            {
+                auto pNode = new Node{ key };
+
+                m_Table.Insert( pNode );
+
+                return std::make_pair( Iterator{ pNode, &m_Table }, true );
+            }
+
+            return std::make_pair( it, false );
+        }
+
         Iterator Insert( const TKey &key, const TValue &item )
         {
             SM_ASSERT( !HasItemAtKey( key ) );
 
-            auto newNode = new Node{ key, item };
+            auto pNewNode = new Node{ key, item };
 
-            m_Table.Insert( newNode );
+            m_Table.Insert( pNewNode );
 
-            return { newNode, &m_Table };
+            return { pNewNode, &m_Table };
+        }
+
+        std::pair< Iterator, bool > TryInsert( const TKey &key, const TValue &item )
+        {
+            auto it = FindItemAtKey( key );
+
+            if ( it == end() )
+            {
+                auto pNewNode = new Node{ key, item };
+
+                m_Table.Insert( pNewNode );
+
+                return std::make_pair( Iterator{ pNewNode, &m_Table }, true );
+            }
+
+            return std::make_pair( it, false );
         }
 
         Iterator Insert( const TKey &key, TValue &&item )
         {
             SM_ASSERT( !HasItemAtKey( key ) );
 
-            auto newNode = new Node{ key, std::move( item ) };
+            auto pNewNode = new Node{ key, std::move( item ) };
 
-            m_Table.Insert( newNode );
+            m_Table.Insert( pNewNode );
 
-            return { newNode, &m_Table };
+            return { pNewNode, &m_Table };
+        }
+
+        std::pair< Iterator, bool > TryInsert( const TKey &key, TValue &&item )
+        {
+            auto it = FindItemAtKey( key );
+
+            if ( it == end() )
+            {
+                auto pNewNode = new Node{ key, std::move( item ) };
+
+                m_Table.Insert( pNewNode );
+
+                return std::make_pair( Iterator{ pNewNode, &m_Table }, true );
+            }
+
+            return std::make_pair( it, false );
         }
 
         void InsertItems( const HashMap &other )

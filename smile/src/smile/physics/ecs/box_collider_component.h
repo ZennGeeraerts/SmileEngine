@@ -5,8 +5,8 @@
 #pragma once
 
 #include "smile/core/geometric/box.h"
-#include "smile/graphic/mesh/mesh_factory.h"
 #include "smile/physics/physics_material.h"
+#include "smile/graphic/scene/mesh_factory.h"
 
 namespace smile::physics::ecs
 {

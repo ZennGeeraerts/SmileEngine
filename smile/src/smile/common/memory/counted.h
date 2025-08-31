@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
+
 #include <atomic>
 
 namespace smile::memory
@@ -24,14 +26,14 @@ namespace smile::memory
         // This needs to be const to work in Reset function of Object
         inline void IncreaseRefCount() const
         {
-            SM_ASSERT_MSG( m_RefCount != DestructedObjectRefCount(), "Object is destructed" );
+            SM_ASSERT_MSG( m_RefCount != s_InvalidCount, "Object is destructed" );
             ++m_RefCount;
         }
 
         // This needs to be const to work in Reset function of Object
         inline void DecreaseRefCount() const
         {
-            Uint32 decreasedRefCount = --m_RefCount;
+            const Count decreasedRefCount = --m_RefCount;
 
             if ( decreasedRefCount == 0 )
             {
@@ -39,17 +41,12 @@ namespace smile::memory
             }
         }
 
-        Uint32 GetRefCount() const
+        Count GetRefCount() const
         {
             return m_RefCount;
         }
 
-        static constexpr Uint32 DestructedObjectRefCount()
-        {
-            return std::numeric_limits< Uint32 >{}.max();
-        }
-
       private:
-        mutable std::atomic< Uint32 > m_RefCount;
+        mutable std::atomic< Count > m_RefCount;
     };
 }

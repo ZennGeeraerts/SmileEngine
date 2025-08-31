@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -7,7 +7,7 @@
 namespace smile::math
 {
     template < Uint8 Size, typename Type >
-    struct Vector
+    struct Vector final
     {
         inline Type operator[]( Uint8 index ) const
         {
@@ -23,12 +23,6 @@ namespace smile::math
 
         Type Data[Size];
     };
-
-    //template < Uint8 Size, typename Type >
-    //inline bool IsZeroVector( const Vector< Size, Type > &vector, float precision = g_Epsilon )
-    //{
-    //    return IsZero( vector.x, precision ) && IsZero( vector.y, precision );
-    //}
 
     template < Uint8 Size, typename Type >
     inline Type MagnitudeSqr( const Vector< Size, Type > &vector )
@@ -63,7 +57,8 @@ namespace smile::math
     }
 
     template < Uint8 Size, typename Type >
-    inline Vector< Size, Type > Lerp( const Vector< Size, Type > &v1, const Vector< Size, Type > &v2, float percentage )
+    inline Vector< Size, Type >
+    Lerp( const Vector< Size, Type > &v1, const Vector< Size, Type > &v2, const float percentage )
     {
         return v2 + ( ( v2 - v1 ) * static_cast< Type >( percentage ) );
     }

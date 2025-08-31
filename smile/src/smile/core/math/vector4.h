@@ -1,204 +1,285 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include "math.h"
+#include "vector.h"
+#include "math_utilities.h"
 
 namespace smile::math
 {
-    struct Vector4 final
+    template < Numeric Type >
+    class Vector< 4, Type > final
     {
+      public:
+        Vector< 4, Type >() noexcept = default;
+
+        Vector< 4, Type >( Type x, Type y, Type z, Type w ) noexcept : x{ x }, y{ y }, z{ z }, w{ w }
+        {
+        }
+
+        Vector< 4, Type >( const Vector< 4, Type > &other ) noexcept
+            : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w }
+        {
+        }
+
+        Vector< 4, Type >( Vector< 3, Type > &&other ) noexcept
+            : x{ std::move( other.x ) }, y{ std::move( other.y ) }, z{ std::move( other.z ) }, w{ std::move( other.w ) }
+        {
+        }
+
+        inline Vector< 4, Type > &operator=( const Vector< 4, Type > &other ) noexcept
+        {
+            x = other.x;
+            y = other.y;
+            z = other.z;
+            w = other.w;
+            return *this;
+        }
+
+        static constexpr Vector< 4, Type > ZeroVector();
+        static constexpr Vector< 4, Type > XAxis();
+        static constexpr Vector< 4, Type > YAxis();
+        static constexpr Vector< 4, Type > ZAxis();
+        static constexpr Vector< 4, Type > WAxis();
+        static constexpr Vector< 4, Type > OneVector();
+
         union
         {
-            float M[4];
+            Type Data[4];
             struct
             {
-                float x;
-                float y;
-                float z;
-                float w;
+                Type x, y, z, w;
+            };
+            struct
+            {
+                Type r, g, b, a;
             };
         };
-
-        static const Vector4 Zero, One;
     };
 
-    inline float DotProduct( const Vector4 &v1, const Vector4 &v2 )
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator+( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    {
+        return Vector< 4, T >{ first.x + static_cast< T >( second.x ),
+            first.y + static_cast< T >( second.y ),
+            first.z + static_cast< T >( second.z ),
+            first.w + static_cast< T >( second.w ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator-( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    {
+        return Vector< 4, T >{ first.x - static_cast< T >( second.x ),
+            first.y - static_cast< T >( second.y ),
+            first.z - static_cast< T >( second.z ),
+            first.w - static_cast< T >( second.w ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator*( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    {
+        return Vector< 4, T >{ first.x * static_cast< T >( second.x ),
+            first.y * static_cast< T >( second.y ),
+            first.z * static_cast< T >( second.z ),
+            first.w * static_cast< T >( second.w ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator*( const Vector< 4, T > &vector, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        return Vector< 4, T >{ vector.x * s, vector.y * s, vector.z * s, vector.w * s };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator*( const U scale, const Vector< 4, T > &vector )
+    {
+        const T s = static_cast< T >( scale );
+        return Vector< 4, T >{ vector.x * s, vector.y * s, vector.z * s, vector.w * s };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator/( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    {
+        return Vector< 4, T >{ first.x / static_cast< T >( second.x ),
+            first.y / static_cast< T >( second.y ),
+            first.z / static_cast< T >( second.z ),
+            first.w / static_cast< T >( second.w ) };
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > operator/( const Vector< 4, T > &vector, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        return Vector< 4, T >{ vector.x / s, vector.y / s, vector.z / s, vector.w / s };
+    }
+
+    template < Numeric T >
+    inline Vector< 4, T > &operator+=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    {
+        first.x += second.x;
+        first.y += second.y;
+        first.z += second.z;
+        first.w += second.w;
+        return first;
+    }
+
+    template < Numeric T >
+    inline Vector< 4, T > &operator-=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    {
+        first.x -= second.x;
+        first.y -= second.y;
+        first.z -= second.z;
+        first.w -= second.w;
+        return first;
+    }
+
+    template < Numeric T >
+    inline Vector< 4, T > &operator*=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    {
+        first.x *= second.x;
+        first.y *= second.y;
+        first.z *= second.z;
+        first.w *= second.w;
+        return first;
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > &operator*=( Vector< 4, T > &vector, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        vector.x *= s;
+        vector.y *= s;
+        vector.z *= s;
+        vector.w *= s;
+        return vector;
+    }
+
+    template < Numeric T >
+    inline Vector< 4, T > &operator/=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    {
+        first.x /= second.x;
+        first.y /= second.y;
+        first.z /= second.z;
+        first.w /= second.w;
+        return first;
+    }
+
+    template < Numeric T, Numeric U >
+    inline Vector< 4, T > &operator/=( Vector< 4, T > &first, const U scale )
+    {
+        const T s = static_cast< T >( scale );
+        first.x /= s;
+        first.y /= s;
+        first.z /= s;
+        first.w /= s;
+        return first;
+    }
+
+    template < Numeric T >
+    inline Vector< 4, T > operator-( const Vector< 4, T > &vector )
+    {
+        return Vector< 4, T >{ -vector.x, -vector.y, -vector.z, -vector.w };
+    }
+
+    template < Numeric T >
+    inline bool operator==( const Vector< 4, T > &first, const Vector< 4, T > &second )
+    {
+        return AreEqual< T >( first.x, second.x ) && AreEqual< T >( first.y, second.y ) &&
+               AreEqual< T >( first.z, second.z ) && AreEqual< T >( first.w, second.w );
+    }
+
+    template < Numeric T >
+    inline bool operator!=( const Vector< 4, T > &first, const Vector< 4, T > &second )
+    {
+        return !( first == second );
+    }
+
+    template < Numeric Type >
+    inline constexpr Vector< 4, Type > Vector< 4, Type >::ZeroVector()
+    {
+        const Type zero = static_cast< Type >( 0 );
+        return Vector< 4, Type >{ zero, zero, zero, zero };
+    }
+
+    template < Numeric Type >
+    inline constexpr Vector< 4, Type > Vector< 4, Type >::XAxis()
+    {
+        const Type zero = static_cast< Type >( 0 );
+        const Type one = static_cast< Type >( 1 );
+        return Vector< 3, Type >{ one, zero, zero, zero };
+    }
+
+    template < Numeric Type >
+    inline constexpr Vector< 4, Type > Vector< 4, Type >::YAxis()
+    {
+        const Type zero = static_cast< Type >( 0 );
+        const Type one = static_cast< Type >( 1 );
+        return Vector< 4, Type >{ zero, one, zero, zero };
+    }
+
+    template < Numeric Type >
+    inline constexpr Vector< 4, Type > Vector< 4, Type >::ZAxis()
+    {
+        const Type zero = static_cast< Type >( 0 );
+        const Type one = static_cast< Type >( 1 );
+        return Vector< 4, Type >{ zero, zero, one, zero };
+    }
+
+    template < Numeric Type >
+    inline constexpr Vector< 4, Type > Vector< 4, Type >::WAxis()
+    {
+        const Type zero = static_cast< Type >( 0 );
+        const Type one = static_cast< Type >( 1 );
+        return Vector< 4, Type >{ zero, zero, zero, one };
+    }
+
+    template < Numeric Type >
+    inline constexpr Vector< 4, Type > Vector< 4, Type >::OneVector()
+    {
+        const Type one = static_cast< Type >( 1 );
+        return Vector< 4, Type >{ one, one, one, one };
+    }
+
+    template < Numeric Type >
+    inline float DotProduct( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 )
     {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
     }
 
-    inline float DistanceSqr( const Vector4 &v1, const Vector4 &v2 )
+    template < Numeric Type >
+    inline float DistanceSqr( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 )
     {
         return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                ( v1.z - v2.z ) * ( v1.z - v2.z ) + ( v1.w - v2.w ) * ( v1.w - v2.w );
     }
 
-    inline float Distance( const Vector4 &v1, const Vector4 &v2 )
+    template < Numeric Type >
+    inline float Distance( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 )
     {
         return SquareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                            ( v1.z - v2.z ) * ( v1.z - v2.z ) + ( v1.w - v2.w ) * ( v1.w - v2.w ) );
     }
 
-    inline float LengthSqr( const Vector4 &vector )
-    {
-        return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w;
-    }
-
-    inline float Length( const Vector4 &vector )
-    {
-        return SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
-    }
-
-    inline bool IsUnitVector( const Vector4 &vector )
+    template < Numeric Type >
+    inline bool IsUnitVector( const Vector< 4, Type > &vector )
     {
         return IsOne( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
     }
 
-    inline bool HasZeroLength( const Vector4 &vector, float precision = g_Epsilon )
+    template < Numeric Type >
+    inline bool HasZeroLength( const Vector< 4, Type > &vector, float precision = g_Epsilon )
     {
         return IsSquareZero(
             vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w, precision );
     }
 
-    inline bool IsZeroVector( const Vector4 &vector, float precision = g_Epsilon )
+    template < Numeric Type >
+    inline bool IsZeroVector( const Vector< 4, Type > &vector, float precision = g_Epsilon )
     {
         return IsZero( vector.x, precision ) && IsZero( vector.y, precision ) && IsZero( vector.z, precision ) &&
                IsZero( vector.w, precision );
-    }
-
-    inline Vector4 GetNormalized( const Vector4 &vector )
-    {
-        SM_ASSERT_MSG( !IsZeroVector( vector ), "GetNormalized > Vector4 is zero vector" );
-
-        const float length =
-            SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
-
-        return Vector4{ vector.x / length, vector.y / length, vector.z / length, vector.w / length };
-    }
-
-    inline void Normalize( Vector4 &vector )
-    {
-        SM_ASSERT_MSG( !IsZeroVector( vector ), "Normalize > Vector4 is zero vector" );
-
-        const float length =
-            SquareRoot( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
-        vector.x /= length;
-        vector.y /= length;
-        vector.z /= length;
-        vector.w /= length;
-    }
-
-    inline Vector4 Lerp( const Vector4 &v1, const Vector4 &v2, float percentage )
-    {
-        const float oneMinusPercentage = 1.0f - percentage;
-
-        return Vector4{ v1.x * oneMinusPercentage + v2.x * percentage,
-            v1.y * oneMinusPercentage + v2.y * percentage,
-            v1.z * oneMinusPercentage + v2.z * percentage,
-            v1.w * oneMinusPercentage + v2.w * percentage };
-    }
-
-    // Operators
-
-    inline bool operator==( const Vector4 &lhs, const Vector4 &rhs )
-    {
-        return ( lhs.x == rhs.x ) && ( lhs.y == rhs.y ) && ( lhs.z == rhs.z ) && ( lhs.w == rhs.w );
-    }
-
-    inline bool operator!=( const Vector4 &lhs, const Vector4 &rhs )
-    {
-        return ( lhs.x != rhs.x ) || ( lhs.y != rhs.y ) || ( lhs.z != rhs.z ) || ( lhs.w != rhs.w );
-    }
-
-    inline Vector4 operator+( const Vector4 &lhs, const Vector4 &rhs )
-    {
-        return Vector4{ lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w };
-    }
-
-    inline Vector4 &operator+=( Vector4 &lhs, const Vector4 &rhs )
-    {
-        lhs.x += rhs.x;
-        lhs.y += rhs.y;
-        lhs.z += rhs.z;
-        lhs.w += rhs.w;
-        return lhs;
-    }
-
-    inline Vector4 operator-( const Vector4 &lhs, const Vector4 &rhs )
-    {
-        return Vector4{ lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w };
-    }
-
-    inline Vector4 &operator-=( Vector4 &lhs, const Vector4 &rhs )
-    {
-        lhs.x -= rhs.x;
-        lhs.y -= rhs.y;
-        lhs.z -= rhs.z;
-        lhs.w -= rhs.w;
-        return lhs;
-    }
-
-    inline Vector4 operator*( const Vector4 &lhs, const Vector4 &rhs )
-    {
-        return Vector4{ lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w };
-    }
-
-    inline Vector4 operator*( const Vector4 &lhs, float rhs )
-    {
-        return Vector4{ lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs };
-    }
-
-    inline Vector4 &operator*=( Vector4 &lhs, const Vector4 &rhs )
-    {
-        lhs.x *= rhs.x;
-        lhs.y *= rhs.y;
-        lhs.z *= rhs.z;
-        lhs.w *= rhs.w;
-        return lhs;
-    }
-
-    inline Vector4 &operator*=( Vector4 &lhs, float rhs )
-    {
-        lhs.x *= rhs;
-        lhs.y *= rhs;
-        lhs.z *= rhs;
-        lhs.w *= rhs;
-        return lhs;
-    }
-
-    inline Vector4 operator/( const Vector4 &lhs, const Vector4 &rhs )
-    {
-        return Vector4{ lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w };
-    }
-
-    inline Vector4 operator/( const Vector4 &lhs, float rhs )
-    {
-        return Vector4{ lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs };
-    }
-
-    inline Vector4 &operator/=( Vector4 &lhs, const Vector4 &rhs )
-    {
-        lhs.x /= rhs.x;
-        lhs.y /= rhs.y;
-        lhs.z /= rhs.z;
-        lhs.w /= rhs.w;
-        return lhs;
-    }
-
-    inline Vector4 &operator/=( Vector4 &lhs, float rhs )
-    {
-        lhs.x /= rhs;
-        lhs.y /= rhs;
-        lhs.z /= rhs;
-        lhs.w /= rhs;
-        return lhs;
-    }
-
-    inline Vector4 operator-( const Vector4 &vector )
-    {
-        return Vector4{ -vector.x, -vector.y, -vector.z, -vector.w };
     }
 }

@@ -6,8 +6,7 @@
 #include "smile/common/foundation/meyers_singleton.h"
 
 #include "render_collector.h"
-
-#include "smile/graphic/camera/camera.h"
+#include "camera.h"
 
 #include "smile/core/world/components.h"
 

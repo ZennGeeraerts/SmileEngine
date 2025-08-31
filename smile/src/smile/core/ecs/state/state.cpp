@@ -7,12 +7,12 @@
 
 namespace smile::ecs::state
 {
-    void State::AddSystem( std::string systemName )
+    void State::AddSystem( primitive::String systemName )
     {
-        m_SystemNames.emplace_back( std::move( systemName ) );
+        m_SystemNames.EmplaceBack( std::move( systemName ) );
     }
 
-    bool State::HasSystem( std::string_view systemName )
+    bool State::HasSystem( const primitive::StringView systemName )
     {
         return std::find( m_SystemNames.begin(), m_SystemNames.end(), systemName ) != m_SystemNames.end();
     }
