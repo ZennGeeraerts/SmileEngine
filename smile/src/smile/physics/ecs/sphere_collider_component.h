@@ -6,7 +6,7 @@
 
 #include "smile/core/geometric/sphere.h"
 #include "smile/physics/physics_material.h"
-#include "smile/graphic/mesh/mesh_factory.h"
+#include "smile/graphic/scene/mesh_factory.h"
 
 namespace smile::physics::ecs
 {

@@ -14,7 +14,6 @@
 
 #include "ecs/id_component.h"
 #include "ecs/tag_component.h"
-#include "component_serializer_registry.h"
 
 namespace smile::world
 {
@@ -56,7 +55,6 @@ namespace smile::world
         void OnComponentAdded()
         {
             RegisterCopyComponentFunctionsIfNeeded< ComponentType >();
-            ComponentSerializerRegistry::GetInstance().RegisterComponentSerializerIfNeeded< ComponentType >();
         }
 
         template <>

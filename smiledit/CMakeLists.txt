@@ -44,6 +44,8 @@ set(INCLUDE_DIRS
 target_include_directories(smiledit PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(smiledit PRIVATE ${LIB_DIRS})
 
+generate_serializer_file(smiledit)
+
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 
 add_custom_command(
@@ -110,8 +112,5 @@ add_custom_command(
         ${CONAN_PATH}/$<CONFIG>/PhysXFoundation.dll
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
-
-include(${CMAKE_PATH}/group_sources_by_folder.cmake)
-group_sources_by_folder(smiledit)
 
 set_property(TARGET smiledit PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")

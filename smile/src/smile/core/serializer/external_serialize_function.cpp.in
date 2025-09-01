@@ -1,0 +1,19 @@
+
+#include "smile/common/foundation/weak_function.h"
+#include "smile/core/world/entity.h"
+#include "smile/core/yaml/yaml.h"
+
+${forward_definition}
+
+SM_FOUNDATION_WEAK_FUNCTION_DECLARE( void SerializeAdditional( smile::yaml::Emitter &output, smile::world::Entity entity ) );
+SM_FOUNDATION_WEAK_FUNCTION_DECLARE( void DeserializeAdditional( const smile::yaml::Node &data, smile::world::Entity entity ) );
+
+void SerializeAdditional( smile::yaml::Emitter &output, smile::world::Entity entity )
+{
+${serializer_code}
+}
+
+void DeserializeAdditional( const smile::yaml::Node &data, smile::world::Entity entity )
+{
+${deserializer_code}
+}

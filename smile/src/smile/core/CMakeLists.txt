@@ -1,6 +1,7 @@
 include(smile)
 
 include(build/yaml.cmake)
+include(build/serializer.cmake)
 
 set(DIRECTORIES
     application
