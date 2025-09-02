@@ -6,7 +6,6 @@
 
 #include "world.h"
 #include "smile/common/memory/ref.h"
-#include "smile/common/primitive/collection/hash_map.h"
 
 #include <filesystem>
 

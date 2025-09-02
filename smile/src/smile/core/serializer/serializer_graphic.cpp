@@ -17,7 +17,7 @@
 
 namespace smile::graphic::serializer
 {
-    static void SerializeMaterial( YAML::Emitter &output, const Ref< Material > &pMaterial )
+    static void SerializeMaterial( yaml::Emitter &output, const Ref< Material > &pMaterial )
     {
         output << YAML::Key << "Material";
         output << YAML::BeginMap;
@@ -218,52 +218,53 @@ namespace smile::graphic::serializer
 
     void Deserialize( const yaml::Node &data, world::Entity entity )
     {
-        auto cameraComponent = data["CameraComponent"];
-        if ( cameraComponent )
+        auto cameraData = data["CameraComponent"];
+        if ( cameraData )
         {
-            auto &cc = entity.AddComponent< ecs::CameraComponent >();
+            auto &cameraComponent = entity.AddComponent< ecs::CameraComponent >();
 
-            auto cameraProps = cameraComponent["Camera"];
-            cc.Camera.SetProjectionType(
+            auto cameraProps = cameraData["Camera"];
+            cameraComponent.Camera.SetProjectionType(
                 static_cast< SceneCamera::ProjectionType >( cameraProps["ProjectionType"].as< int >() ) );
 
-            cc.Camera.SetFOV( cameraProps["FOV"].as< float >() );
-            cc.Camera.SetPerspectiveNearPlane( cameraProps["PerspectiveNearPlane"].as< float >() );
-            cc.Camera.SetPerspectiveFarPlane( cameraProps["PerspectiveFarPlane"].as< float >() );
+            cameraComponent.Camera.SetFOV( cameraProps["FOV"].as< float >() );
+            cameraComponent.Camera.SetPerspectiveNearPlane( cameraProps["PerspectiveNearPlane"].as< float >() );
+            cameraComponent.Camera.SetPerspectiveFarPlane( cameraProps["PerspectiveFarPlane"].as< float >() );
 
-            cc.Camera.SetSize( cameraProps["Size"].as< float >() );
-            cc.Camera.SetOrthographicNearPlane( cameraProps["OrthographicNearPlane"].as< float >() );
-            cc.Camera.SetOrthographicFarPlane( cameraProps["OrthographicFarPlane"].as< float >() );
+            cameraComponent.Camera.SetSize( cameraProps["Size"].as< float >() );
+            cameraComponent.Camera.SetOrthographicNearPlane( cameraProps["OrthographicNearPlane"].as< float >() );
+            cameraComponent.Camera.SetOrthographicFarPlane( cameraProps["OrthographicFarPlane"].as< float >() );
 
-            cc.IsPrimary = cameraComponent["bPrimary"].as< bool >();
-            cc.HasFixedAspectRatio = cameraComponent["bFixedAspectRatio"].as< bool >();
+            cameraComponent.IsPrimary = cameraData["bPrimary"].as< bool >();
+            cameraComponent.HasFixedAspectRatio = cameraData["bFixedAspectRatio"].as< bool >();
         }
 
-        auto meshRendererComponent = data["MeshRendererComponent"];
-        if ( meshRendererComponent )
+        auto meshRendererData = data["MeshRendererComponent"];
+        if ( meshRendererData )
         {
-            auto &mrc = entity.AddComponent< ecs::MeshRendererComponent >();
+            auto &meshRendererComponent = entity.AddComponent< ecs::MeshRendererComponent >();
 
-            mrc.MeshIndex = meshRendererComponent["MeshIndex"].as< Uint32 >();
+            meshRendererComponent.MeshIndex = meshRendererData["MeshIndex"].as< Uint32 >();
 
-            auto modelPath = meshRendererComponent["Model"].as< std::string >();
+            auto modelPath = meshRendererData["Model"].as< std::string >();
             if ( !modelPath.empty() )
             {
                 auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
-                mrc.pModel = ModelLoader::LoadModel( path.string() );
+                meshRendererComponent.pModel = ModelLoader::LoadModel( path.string() );
 
-                auto pMeshFilter = mrc.pModel->GetMeshFilter( mrc.MeshIndex );
-                mrc.pMesh = MeshFactory::CreateMesh( pMeshFilter, mrc.pMaterial->GetBufferLayout() );
+                auto pMeshFilter = meshRendererComponent.pModel->GetMeshFilter( meshRendererComponent.MeshIndex );
+                meshRendererComponent.pMesh =
+                    MeshFactory::CreateMesh( pMeshFilter, meshRendererComponent.pMaterial->GetBufferLayout() );
             }
 
-            auto material = meshRendererComponent["Material"];
+            auto material = meshRendererData["Material"];
 
             auto floatValues = material["FloatValues"];
             for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< float >();
-                mrc.pMaterial->SetFloatValue( semantic, value );
+                meshRendererComponent.pMaterial->SetFloatValue( semantic, value );
             }
 
             auto intValues = material["IntValues"];
@@ -271,7 +272,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< int >();
-                mrc.pMaterial->SetIntValue( semantic, value );
+                meshRendererComponent.pMaterial->SetIntValue( semantic, value );
             }
 
             auto boolValues = material["BoolValues"];
@@ -279,7 +280,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< bool >();
-                mrc.pMaterial->SetBoolValue( semantic, value );
+                meshRendererComponent.pMaterial->SetBoolValue( semantic, value );
             }
 
             auto float2Values = material["Float2Values"];
@@ -287,7 +288,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
-                mrc.pMaterial->SetFloat2Value( semantic, value );
+                meshRendererComponent.pMaterial->SetFloat2Value( semantic, value );
             }
 
             auto float3Values = material["Float3Values"];
@@ -295,7 +296,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
-                mrc.pMaterial->SetFloat3Value( semantic, value );
+                meshRendererComponent.pMaterial->SetFloat3Value( semantic, value );
             }
 
             auto texture2DValues = material["Texture2DValues"];
@@ -307,41 +308,42 @@ namespace smile::graphic::serializer
                 memory::Ref< TextureAsset > pTextureAsset = TextureManager::GetInstance().GetTexture( assetHandle );
                 if ( pTextureAsset )
                 {
-                    mrc.pMaterial->SetTexture2D( semantic, pTextureAsset->GetTexture() );
+                    meshRendererComponent.pMaterial->SetTexture2D( semantic, pTextureAsset->GetTexture() );
                 }
                 else
                 {
-                    mrc.pMaterial->SetTexture2D( semantic, nullptr );
+                    meshRendererComponent.pMaterial->SetTexture2D( semantic, nullptr );
                 }
             }
         }
 
-        auto skinnedMeshRendererComponent = data["SkinnedMeshRendererComponent"];
-        if ( skinnedMeshRendererComponent )
+        auto skinnedMeshRendererData = data["SkinnedMeshRendererComponent"];
+        if ( skinnedMeshRendererData )
         {
-            auto &smrc = entity.AddComponent< ecs::SkinnedMeshRendererComponent >();
+            auto &skinnedMeshRendererComponent = entity.AddComponent< ecs::SkinnedMeshRendererComponent >();
 
-            smrc.MeshIndex = skinnedMeshRendererComponent["MeshIndex"].as< Uint32 >();
+            skinnedMeshRendererComponent.MeshIndex = skinnedMeshRendererData["MeshIndex"].as< Uint32 >();
 
-            auto modelPath = skinnedMeshRendererComponent["Model"].as< std::string >();
+            auto modelPath = skinnedMeshRendererData["Model"].as< std::string >();
             if ( !modelPath.empty() )
             {
                 auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
-                smrc.pModel = ModelLoader::LoadModel( path );
+                skinnedMeshRendererComponent.pModel = ModelLoader::LoadModel( path );
 
-                auto pSkinnedMeshFilter = smrc.pModel->GetSkinnedMeshFilter( smrc.MeshIndex );
-                smrc.pSkinnedMesh =
-                    MeshFactory::CreateSkinnedMesh( pSkinnedMeshFilter, smrc.pMaterial->GetBufferLayout() );
+                auto pSkinnedMeshFilter =
+                    skinnedMeshRendererComponent.pModel->GetSkinnedMeshFilter( skinnedMeshRendererComponent.MeshIndex );
+                skinnedMeshRendererComponent.pSkinnedMesh = MeshFactory::CreateSkinnedMesh(
+                    pSkinnedMeshFilter, skinnedMeshRendererComponent.pMaterial->GetBufferLayout() );
             }
 
-            auto material = skinnedMeshRendererComponent["Material"];
+            auto material = skinnedMeshRendererData["Material"];
 
             auto floatValues = material["FloatValues"];
             for ( auto it{ floatValues.begin() }; it != floatValues.end(); ++it )
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< float >();
-                smrc.pMaterial->SetFloatValue( semantic, value );
+                skinnedMeshRendererComponent.pMaterial->SetFloatValue( semantic, value );
             }
 
             auto intValues = material["IntValues"];
@@ -349,7 +351,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< int >();
-                smrc.pMaterial->SetIntValue( semantic, value );
+                skinnedMeshRendererComponent.pMaterial->SetIntValue( semantic, value );
             }
 
             auto boolValues = material["BoolValues"];
@@ -357,7 +359,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< bool >();
-                smrc.pMaterial->SetBoolValue( semantic, value );
+                skinnedMeshRendererComponent.pMaterial->SetBoolValue( semantic, value );
             }
 
             auto float2Values = material["Float2Values"];
@@ -365,7 +367,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< DirectX::XMFLOAT2 >();
-                smrc.pMaterial->SetFloat2Value( semantic, value );
+                skinnedMeshRendererComponent.pMaterial->SetFloat2Value( semantic, value );
             }
 
             auto float3Values = material["Float3Values"];
@@ -373,7 +375,7 @@ namespace smile::graphic::serializer
             {
                 std::string semantic = ( *it ).first.as< std::string >();
                 auto value = ( *it ).second.as< DirectX::XMFLOAT3 >();
-                smrc.pMaterial->SetFloat3Value( semantic, value );
+                skinnedMeshRendererComponent.pMaterial->SetFloat3Value( semantic, value );
             }
 
             auto texture2DValues = material["Texture2DValues"];
@@ -385,48 +387,48 @@ namespace smile::graphic::serializer
                 memory::Ref< TextureAsset > pTextureAsset = TextureManager::GetInstance().GetTexture( assetHandle );
                 if ( pTextureAsset )
                 {
-                    smrc.pMaterial->SetTexture2D( semantic, pTextureAsset->GetTexture() );
+                    skinnedMeshRendererComponent.pMaterial->SetTexture2D( semantic, pTextureAsset->GetTexture() );
                 }
                 else
                 {
-                    smrc.pMaterial->SetTexture2D( semantic, nullptr );
+                    skinnedMeshRendererComponent.pMaterial->SetTexture2D( semantic, nullptr );
                 }
             }
         }
 
-        auto animatorComponent = data["AnimatorComponent"];
-        if ( animatorComponent )
+        auto animatorData = data["AnimatorComponent"];
+        if ( animatorData )
         {
-            auto &ac = entity.AddComponent< ecs::AnimatorComponent >();
+            auto &animatorComponent = entity.AddComponent< ecs::AnimatorComponent >();
 
-            ac.CurrentClipIndex = animatorComponent["ClipIndex"].as< Uint32 >();
+            animatorComponent.CurrentClipIndex = animatorData["ClipIndex"].as< Uint32 >();
 
-            auto modelPath = animatorComponent["Model"].as< std::string >();
+            auto modelPath = animatorData["Model"].as< std::string >();
             if ( !modelPath.empty() )
             {
                 auto path = project::ProjectManager::GetAssetFileSystemPath( modelPath );
-                ac.pModel = ModelLoader::LoadModel( path );
-                ac.pAnimationClips = ac.pModel->GetAnimationClips();
+                animatorComponent.pModel = ModelLoader::LoadModel( path );
+                animatorComponent.pAnimationClips = animatorComponent.pModel->GetAnimationClips();
             }
         }
 
-        auto spriteRendererComponent = data["SpriteRendererComponent"];
-        if ( spriteRendererComponent )
+        auto spriteRendererData = data["SpriteRendererComponent"];
+        if ( spriteRendererData )
         {
-            auto &src = entity.AddComponent< ecs::SpriteRendererComponent >();
+            auto &spriteRendererComponent = entity.AddComponent< ecs::SpriteRendererComponent >();
 
-            src.Color = spriteRendererComponent["Color"].as< DirectX::XMFLOAT4 >();
+            spriteRendererComponent.Color = spriteRendererData["Color"].as< DirectX::XMFLOAT4 >();
 
-            asset::AssetHandle textureAssetHandle = spriteRendererComponent["Texture"].as< Uint64 >();
+            asset::AssetHandle textureAssetHandle = spriteRendererData["Texture"].as< Uint64 >();
 
             memory::Ref< TextureAsset > pTextureAsset = TextureManager::GetInstance().GetTexture( textureAssetHandle );
             if ( pTextureAsset )
             {
-                src.pTexture = pTextureAsset->GetTexture();
+                spriteRendererComponent.pTexture = pTextureAsset->GetTexture();
             }
             else
             {
-                src.pTexture = nullptr;
+                spriteRendererComponent.pTexture = nullptr;
             }
         }
     }

@@ -69,13 +69,13 @@ namespace smile::serializer
 
     void Deserialize( const yaml::Node &data, world::Entity entity )
     {
-        auto transformComponent = data["TransformComponent"];
-        if ( transformComponent )
+        auto transformData = data["TransformComponent"];
+        if ( transformData )
         {
-            auto &tc = entity.GetComponent< world::ecs::TransformComponent >();
-            tc.Translation = transformComponent["Translation"].as< DirectX::XMFLOAT3 >();
-            tc.Rotation = transformComponent["Rotation"].as< DirectX::XMFLOAT3 >();
-            tc.Scale = transformComponent["Scale"].as< DirectX::XMFLOAT3 >();
+            auto &transformComponent = entity.GetComponent< world::ecs::TransformComponent >();
+            transformComponent.Translation = transformData["Translation"].as< DirectX::XMFLOAT3 >();
+            transformComponent.Rotation = transformData["Rotation"].as< DirectX::XMFLOAT3 >();
+            transformComponent.Scale = transformData["Scale"].as< DirectX::XMFLOAT3 >();
         }
 
         using DserializeAdditionalFunction = void ( * )( const yaml::Node &, world::Entity );

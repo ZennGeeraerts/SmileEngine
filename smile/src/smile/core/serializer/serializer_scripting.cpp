@@ -26,11 +26,11 @@ namespace smile::scripting::serializer
 
     void Deserialize( const yaml::Node &data, world::Entity entity )
     {
-        auto scriptComponent = data["ScriptComponent"];
-        if ( scriptComponent )
+        auto scriptData = data["ScriptComponent"];
+        if ( scriptData )
         {
-            auto &sc = entity.AddComponent< ecs::ScriptComponent >();
-            sc.ClassName = scriptComponent["ClassName"].as< std::string >();
+            auto &scriptComponent = entity.AddComponent< ecs::ScriptComponent >();
+            scriptComponent.ClassName = scriptData["ClassName"].as< std::string >();
         }
     }
 }

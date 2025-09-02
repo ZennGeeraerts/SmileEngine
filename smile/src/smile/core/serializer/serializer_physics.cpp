@@ -134,45 +134,45 @@ namespace smile::physics::serializer
 
     void Deserialize( const yaml::Node &data, world::Entity entity )
     {
-        auto rigidbodyComponent = data["RigidbodyComponent"];
-        if ( rigidbodyComponent )
+        auto rigidbodyData = data["RigidbodyComponent"];
+        if ( rigidbodyData )
         {
-            auto &rbc = entity.AddComponent< ecs::RigidbodyComponent >();
+            auto &rigidbodyComponent = entity.AddComponent< ecs::RigidbodyComponent >();
 
-            rbc.BodyType = static_cast< RigidbodyType >( rigidbodyComponent["BodyType"].as< int >() );
-            rbc.CollisionDetection =
-                static_cast< CollisionDetectionType >( rigidbodyComponent["CollisionDetectionType"].as< int >() );
+            rigidbodyComponent.BodyType = static_cast< RigidbodyType >( rigidbodyData["BodyType"].as< int >() );
+            rigidbodyComponent.CollisionDetection =
+                static_cast< CollisionDetectionType >( rigidbodyData["CollisionDetectionType"].as< int >() );
 
-            auto physicsMaterial = rigidbodyComponent["PhysicsMaterial"];
+            auto physicsMaterial = rigidbodyData["PhysicsMaterial"];
             /*rbc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
             rbc.pPhysicsMaterial->DynamicFriction = physicsMaterial["DynamicFriction"].as<float>();
             rbc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
 
-            rbc.Mass = rigidbodyComponent["Mass"].as< float >();
-            rbc.LinearDrag = rigidbodyComponent["LinearDrag"].as< float >();
-            rbc.AngularDrag = rigidbodyComponent["AngularDrag"].as< float >();
+            rigidbodyComponent.Mass = rigidbodyData["Mass"].as< float >();
+            rigidbodyComponent.LinearDrag = rigidbodyData["LinearDrag"].as< float >();
+            rigidbodyComponent.AngularDrag = rigidbodyData["AngularDrag"].as< float >();
 
-            rbc.DisableGravity = rigidbodyComponent["bDisableGravity"].as< bool >();
-            rbc.IsKinematic = rigidbodyComponent["bKinematic"].as< bool >();
+            rigidbodyComponent.DisableGravity = rigidbodyData["bDisableGravity"].as< bool >();
+            rigidbodyComponent.IsKinematic = rigidbodyData["bKinematic"].as< bool >();
 
-            rbc.LockPositionX = rigidbodyComponent["bLockPositionX"].as< bool >();
-            rbc.LockPositionY = rigidbodyComponent["bLockPositionY"].as< bool >();
-            rbc.LockPositionZ = rigidbodyComponent["bLockPositionZ"].as< bool >();
+            rigidbodyComponent.LockPositionX = rigidbodyData["bLockPositionX"].as< bool >();
+            rigidbodyComponent.LockPositionY = rigidbodyData["bLockPositionY"].as< bool >();
+            rigidbodyComponent.LockPositionZ = rigidbodyData["bLockPositionZ"].as< bool >();
 
-            rbc.LockRotationX = rigidbodyComponent["bLockRotationX"].as< bool >();
-            rbc.LockRotationY = rigidbodyComponent["bLockRotationY"].as< bool >();
-            rbc.LockRotationZ = rigidbodyComponent["bLockRotationZ"].as< bool >();
+            rigidbodyComponent.LockRotationX = rigidbodyData["bLockRotationX"].as< bool >();
+            rigidbodyComponent.LockRotationY = rigidbodyData["bLockRotationY"].as< bool >();
+            rigidbodyComponent.LockRotationZ = rigidbodyData["bLockRotationZ"].as< bool >();
         }
 
-        auto boxColliderComponent = data["BoxColliderComponent"];
-        if ( boxColliderComponent )
+        auto boxColliderData = data["BoxColliderComponent"];
+        if ( boxColliderData )
         {
-            auto &bcc = entity.AddComponent< ecs::BoxColliderComponent >();
+            auto &boxColliderComponent = entity.AddComponent< ecs::BoxColliderComponent >();
 
-            bcc.Box.Size = boxColliderComponent["Size"].as< DirectX::XMFLOAT3 >();
-            bcc.Box.Center = boxColliderComponent["Offset"].as< DirectX::XMFLOAT3 >();
-            bcc.IsTrigger = boxColliderComponent["bTrigger"].as< bool >();
-            bcc.ShowColliderBounds = boxColliderComponent["bShowColliderBounds"].as< bool >();
+            boxColliderComponent.Box.Size = boxColliderData["Size"].as< DirectX::XMFLOAT3 >();
+            boxColliderComponent.Box.Center = boxColliderData["Offset"].as< DirectX::XMFLOAT3 >();
+            boxColliderComponent.IsTrigger = boxColliderData["bTrigger"].as< bool >();
+            boxColliderComponent.ShowColliderBounds = boxColliderData["bShowColliderBounds"].as< bool >();
 
             /*auto physicsMaterial = rigidBodyComponent["PhysicsMaterial"];
             bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
@@ -180,14 +180,14 @@ namespace smile::physics::serializer
             bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
         }
 
-        auto sphereColliderComponent = data["SphereColliderComponent"];
-        if ( sphereColliderComponent )
+        auto sphereColliderData = data["SphereColliderComponent"];
+        if ( sphereColliderData )
         {
-            auto &scc = entity.AddComponent< ecs::SphereColliderComponent >();
+            auto &sphereColliderComponent = entity.AddComponent< ecs::SphereColliderComponent >();
 
-            scc.Sphere.Radius = sphereColliderComponent["Radius"].as< float >();
-            scc.IsTrigger = sphereColliderComponent["bTrigger"].as< bool >();
-            scc.ShowColliderBounds = sphereColliderComponent["bShowColliderBounds"].as< bool >();
+            sphereColliderComponent.Sphere.Radius = sphereColliderData["Radius"].as< float >();
+            sphereColliderComponent.IsTrigger = sphereColliderData["bTrigger"].as< bool >();
+            sphereColliderComponent.ShowColliderBounds = sphereColliderData["bShowColliderBounds"].as< bool >();
 
             /*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];
             bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
@@ -195,33 +195,33 @@ namespace smile::physics::serializer
             bcc.pPhysicsMaterial->Bounciness = physicsMaterial["Bounciness"].as<float>();*/
         }
 
-        auto capsuleColliderComponent = data["CapsuleColliderComponent"];
-        if ( capsuleColliderComponent )
+        auto capsuleColliderData = data["CapsuleColliderComponent"];
+        if ( capsuleColliderData )
         {
-            auto &ccc = entity.AddComponent< ecs::CapsuleColliderComponent >();
+            auto &capsuleColliderComponent = entity.AddComponent< ecs::CapsuleColliderComponent >();
 
-            ccc.Capsule.Radius = capsuleColliderComponent["Radius"].as< float >();
-            ccc.Capsule.Height = capsuleColliderComponent["Height"].as< float >();
-            ccc.IsTrigger = capsuleColliderComponent["bTrigger"].as< bool >();
-            ccc.ShowColliderBounds = capsuleColliderComponent["bShowColliderBounds"].as< bool >();
+            capsuleColliderComponent.Capsule.Radius = capsuleColliderData["Radius"].as< float >();
+            capsuleColliderComponent.Capsule.Height = capsuleColliderData["Height"].as< float >();
+            capsuleColliderComponent.IsTrigger = capsuleColliderData["bTrigger"].as< bool >();
+            capsuleColliderComponent.ShowColliderBounds = capsuleColliderData["bShowColliderBounds"].as< bool >();
         }
 
-        auto characterControllerComponent = data["CharacterControllerComponent"];
-        if ( characterControllerComponent )
+        auto characterControllerData = data["CharacterControllerComponent"];
+        if ( characterControllerData )
         {
-            auto &ccc = entity.AddComponent< ecs::CharacterControllerComponent >();
+            auto &characterControllerComponent = entity.AddComponent< ecs::CharacterControllerComponent >();
 
-            ccc.Radius = characterControllerComponent["Radius"].as< float >();
-            ccc.Height = characterControllerComponent["Height"].as< float >();
-            ccc.ClimbingMode = static_cast< CharacterController::ClimbingModeType >(
-                characterControllerComponent["ClimbingMode"].as< Uint32 >() );
-            ccc.Name = characterControllerComponent["Name"].as< std::string >();
-            ccc.CollisionGroups =
-                static_cast< CollisionGroupFlag >( characterControllerComponent["CollisionGroups"].as< Uint32 >() );
-            ccc.CollisionIgnoreGroups = static_cast< CollisionGroupFlag >(
-                characterControllerComponent["CollisionIgnoreGroups"].as< Uint32 >() );
-            ccc.CollisionFlags = static_cast< CharacterController::CollisionFlag >(
-                characterControllerComponent["CollisionFlags"].as< Uint32 >() );
+            characterControllerComponent.Radius = characterControllerData["Radius"].as< float >();
+            characterControllerComponent.Height = characterControllerData["Height"].as< float >();
+            characterControllerComponent.ClimbingMode = static_cast< CharacterController::ClimbingModeType >(
+                characterControllerData["ClimbingMode"].as< Uint32 >() );
+            characterControllerComponent.Name = characterControllerData["Name"].as< std::string >();
+            characterControllerComponent.CollisionGroups =
+                static_cast< CollisionGroupFlag >( characterControllerData["CollisionGroups"].as< Uint32 >() );
+            characterControllerComponent.CollisionIgnoreGroups =
+                static_cast< CollisionGroupFlag >( characterControllerData["CollisionIgnoreGroups"].as< Uint32 >() );
+            characterControllerComponent.CollisionFlags = static_cast< CharacterController::CollisionFlag >(
+                characterControllerData["CollisionFlags"].as< Uint32 >() );
 
             /*auto physicsMaterial = sphereColliderComponent["PhysicsMaterial"];
             bcc.pPhysicsMaterial->StaticFriction = physicsMaterial["StaticFriction"].as<float>();
