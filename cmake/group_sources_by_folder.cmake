@@ -6,6 +6,10 @@ function(group_sources_by_folder target)
   get_target_property(sources ${target} SOURCES)
 
   foreach(file ${sources})
+    if(NOT file MATCHES "^${PROJECT_SOURCE_DIR}")
+      continue()
+    endif()
+
     file(RELATIVE_PATH relative_file "${PROJECT_SOURCE_DIR}" ${file})
     get_filename_component(dir "${relative_file}" PATH)
     if(NOT "${dir}" STREQUAL "${last_dir}")

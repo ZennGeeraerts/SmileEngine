@@ -113,4 +113,7 @@ add_custom_command(
         ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>
     )
 
+include(${CMAKE_PATH}/group_sources_by_folder.cmake)
+group_sources_by_folder(smiledit)
+
 set_property(TARGET smiledit PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
