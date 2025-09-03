@@ -2,6 +2,10 @@ include(smile)
 
 add_subdirectory(${THIRDPARTY_PATH}/imgui imgui)
 
+if(COMMAND add_serializer)
+    add_serializer(graphic)
+endif()
+
 set(INCLUDE_DIRS
     ${THIRDPARTY_PATH}/imgui
     ${THIRDPARTY_PATH}/ImGuizmo

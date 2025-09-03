@@ -6,6 +6,7 @@
 
 #include "smile/physics/character_controller.h"
 #include "smile/physics/collision_group.h"
+#include "smile/physics/physics_material.h"
 
 namespace smile::physics::ecs
 {

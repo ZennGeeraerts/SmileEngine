@@ -44,6 +44,8 @@ set(INCLUDE_DIRS
 target_include_directories(smiledit PRIVATE ${INCLUDE_DIRS})
 target_link_libraries(smiledit PRIVATE ${LIB_DIRS})
 
+generate_serializer_file(smiledit)
+
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 
 add_custom_command(

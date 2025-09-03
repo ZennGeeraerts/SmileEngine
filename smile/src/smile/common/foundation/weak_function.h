@@ -6,7 +6,9 @@
 
 #include "smile/common/platform/platform_detection.h"
 
-#if SM_PLATFORM_WINDOWS
+#ifdef SM_PLATFORM_WINDOWS
+#    include <Windows.h>
+
 #    define SM_FOUNDATION_WEAK_FUNCTION_DECLARE( function ) extern "C" __declspec( dllexport ) function;
 
 #    define SM_FOUNDATION_WEAK_FUNCTION_RESOLVE( functionPointerType, functionPointer, function )                      \
