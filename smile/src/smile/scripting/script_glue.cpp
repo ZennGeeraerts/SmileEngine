@@ -6,11 +6,10 @@
 #include "script_glue.h"
 
 #include "script_engine.h"
+#include "components.h"
 
 #include "smile/common/foundation/type_name.h"
 #include "smile/common/primitive/text/string.h"
-
-#include "smile/core/world/components.h"
 
 #include "smile/core/input/key_codes.h"
 #include "smile/core/input/input.h"
@@ -107,14 +106,14 @@ namespace smile::scripting
     }
 
     template < typename... ComponentType >
-    static void RegisterComponentType( world::ComponentGroup< ComponentType... > )
+    static void RegisterComponentType( ComponentGroup< ComponentType... > )
     {
         RegisterComponentType< ComponentType... >();
     }
 
     void ScriptGlue::RegisterComponentTypes()
     {
-        RegisterComponentType( world::AllComponents{} );
+        RegisterComponentType( AllComponents{} );
     }
 
     void ScriptGlue::RegisterFunctions()

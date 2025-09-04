@@ -25,7 +25,6 @@
 
 #include "smile/core/world/world.h"
 #include "smile/core/world/entity.h"
-#include "smile/core/world/components.h"
 
 #include "smile/core/project/project_manager.h"
 

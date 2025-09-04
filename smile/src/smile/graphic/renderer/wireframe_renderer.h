@@ -8,7 +8,9 @@
 #include "render_collector.h"
 #include "camera.h"
 
-#include "smile/core/world/components.h"
+#include "smile/physics/ecs/box_collider_component.h"
+#include "smile/physics/ecs/sphere_collider_component.h"
+#include "smile/graphic/rhi/render_state.h"
 
 namespace smile::graphic
 {
