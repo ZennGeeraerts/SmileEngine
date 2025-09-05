@@ -13,6 +13,6 @@ namespace smile::memory
 
         // Volatile ensures the compiler will write the value
         volatile auto &dest = m_RefCount;
-        dest = DestructedObjectRefCount();
+        dest = s_InvalidCount;
     }
 }

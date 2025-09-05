@@ -1,12 +1,20 @@
 include(smile)
 
-if(WIN32)
-    add_platform(windows)
-endif()
+include(build/yaml.cmake)
+include(build/serializer.cmake)
 
-find_package(yaml-cpp REQUIRED)
+set(DIRECTORIES
+    application
+    asset
+    ecs
+    geometric
+    input
+    math
+    project
+    window
+    world
+)
 
-target_link_libraries(smile PUBLIC yaml-cpp)
+get_files_recursively(SOURCE_FILES ${DIRECTORIES})
 
-file(GLOB_RECURSE SOURCE_FILES *.cpp)
 target_sources(smile PRIVATE ${SOURCE_FILES})

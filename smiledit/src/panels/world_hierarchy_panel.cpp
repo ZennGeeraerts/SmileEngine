@@ -5,11 +5,28 @@
 
 #include "world_hierarchy_panel.h"
 
-#include "smile/core/world/components.h"
+#include "smile/core/world/ecs/transform_component.h"
+#include "smile/core/world/ecs/id_component.h"
+#include "smile/core/world/ecs/tag_component.h"
 #include "smile/core/ecs/relationship.h"
+
+#include "smile/graphic/scene/ecs/camera_component.h"
+#include "smile/graphic/scene/ecs/mesh_renderer_component.h"
+#include "smile/graphic/scene/ecs/skinned_mesh_renderer_component.h"
+#include "smile/graphic/sprite/ecs/sprite_renderer_component.h"
+#include "smile/graphic/animation/ecs/animator_component.h"
+
+#include "smile/physics/ecs/rigidbody_component.h"
+#include "smile/physics/ecs/box_collider_component.h"
+#include "smile/physics/ecs/sphere_collider_component.h"
+#include "smile/physics/ecs/capsule_collider_component.h"
+#include "smile/physics/ecs/character_controller_component.h"
+
+#include "smile/scripting/ecs/script_component.h"
+
 #include "smile/scripting/script_engine.h"
-#include "smile/graphic/mesh/mesh.h"
-#include "smile/graphic/mesh/mesh_factory.h"
+#include "smile/graphic/scene/mesh.h"
+#include "smile/graphic/scene/mesh_factory.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
 #include <imgui/imgui.h>

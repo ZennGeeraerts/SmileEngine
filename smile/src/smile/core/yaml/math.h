@@ -82,21 +82,21 @@ namespace YAML
         }
     };
 
-    Emitter &operator<<( Emitter &output, const DirectX::XMFLOAT2 &v )
+    inline Emitter &operator<<( Emitter &output, const DirectX::XMFLOAT2 &v )
     {
         output << Flow;
         output << BeginSeq << v.x << v.y << EndSeq;
         return output;
     }
 
-    Emitter &operator<<( Emitter &output, const DirectX::XMFLOAT3 &v )
+    inline Emitter &operator<<( Emitter &output, const DirectX::XMFLOAT3 &v )
     {
         output << Flow;
         output << BeginSeq << v.x << v.y << v.z << EndSeq;
         return output;
     }
 
-    Emitter &operator<<( Emitter &output, const DirectX::XMFLOAT4 &v )
+    inline Emitter &operator<<( Emitter &output, const DirectX::XMFLOAT4 &v )
     {
         output << Flow;
         output << BeginSeq << v.x << v.y << v.z << v.w << EndSeq;

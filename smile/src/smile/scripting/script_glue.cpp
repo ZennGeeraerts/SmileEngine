@@ -6,8 +6,10 @@
 #include "script_glue.h"
 
 #include "script_engine.h"
+#include "components.h"
 
-#include "smile/core/world/components.h"
+#include "smile/common/foundation/type_name.h"
+#include "smile/common/primitive/text/string.h"
 
 #include "smile/core/input/key_codes.h"
 #include "smile/core/input/input.h"
@@ -17,7 +19,6 @@
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
-#include <string_view>
 
 namespace smile::scripting
 {
@@ -85,11 +86,11 @@ namespace smile::scripting
         (
             []()
             {
-                std::string_view structName = foundation::TypeNameOf< ComponentType, true >();
-                std::string managedTypeName = "Smile." + std::string{ structName };
+                foundation::ConstantText structName = foundation::TypeNameOf< ComponentType, true >();
+                primitive::String managedTypeName = "Smile." + primitive::String{ structName };
 
                 MonoType *pManagedType =
-                    mono_reflection_type_from_name( managedTypeName.data(), ScriptEngine::GetCoreAssemblyImage() );
+                    mono_reflection_type_from_name( managedTypeName.GetData(), ScriptEngine::GetCoreAssemblyImage() );
 
                 if ( !pManagedType )
                 {
@@ -105,14 +106,14 @@ namespace smile::scripting
     }
 
     template < typename... ComponentType >
-    static void RegisterComponentType( world::ComponentGroup< ComponentType... > )
+    static void RegisterComponentType( ComponentGroup< ComponentType... > )
     {
         RegisterComponentType< ComponentType... >();
     }
 
     void ScriptGlue::RegisterComponentTypes()
     {
-        RegisterComponentType( world::AllComponents{} );
+        RegisterComponentType( AllComponents{} );
     }
 
     void ScriptGlue::RegisterFunctions()

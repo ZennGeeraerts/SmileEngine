@@ -1,8 +1,9 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
 #include "smile/graphic/renderer/ecs/render_pass.h"
 
 namespace smile::graphic::ecs

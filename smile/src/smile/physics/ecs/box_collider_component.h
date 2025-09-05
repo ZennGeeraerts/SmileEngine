@@ -1,10 +1,11 @@
 /*=============================================================================*/
-// Copyright 2022-2024 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
 #include "smile/core/geometric/box.h"
+#include "smile/physics/physics_material.h"
 #include "smile/graphic/scene/mesh_factory.h"
 
 namespace smile::physics::ecs

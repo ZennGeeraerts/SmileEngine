@@ -1,5 +1,9 @@
 include(smile)
 
+if(COMMAND add_serializer)
+    add_serializer(scripting)
+endif()
+
 set(INCLUDE_DIRS
     ${THIRDPARTY_PATH}/mono/include
 )

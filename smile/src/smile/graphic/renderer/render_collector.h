@@ -4,10 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/resource/vertex_buffer.h"
-#include "smile/graphic/renderer/resource/index_buffer.h"
-#include "smile/graphic/renderer/shader/vertex_shader.h"
-#include "smile/graphic/renderer/shader/pixel_shader.h"
+#include "resource/vertex_buffer.h"
+#include "resource/index_buffer.h"
+#include "shader/vertex_shader.h"
+#include "shader/pixel_shader.h"
 
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"

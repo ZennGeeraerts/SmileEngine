@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/camera.h"
+#include "camera.h"
 #include "smile/graphic/scene/mesh.h"
 #include "smile/graphic/rhi/shader/shader.h"
 #include "smile/graphic/rhi/render_state.h"

@@ -6,6 +6,7 @@
 #include "wireframe_render_pass.h"
 
 #include "smile/graphic/renderer/wireframe_renderer.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 namespace smile::graphic::ecs
 {

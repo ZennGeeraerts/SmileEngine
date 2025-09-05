@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
@@ -7,19 +7,13 @@
 
 #include "asset_importer.h"
 #include "smile/core/project/project_manager.h"
-
-#include <yaml-cpp/yaml.h>
+#include "smile/core/yaml/yaml.h"
+#include "smile/core/yaml/string.h"
 
 #include <fstream>
 
 namespace smile::asset
 {
-    YAML::Emitter &operator<<( YAML::Emitter &out, const std::string_view &strView )
-    {
-        out << std::string{ strView.begin(), strView.end() };
-        return out;
-    }
-
     memory::Ref< Asset > EditorAssetManager::GetAsset( AssetHandle handle )
     {
         // 1. Check if handle is valid
@@ -152,7 +146,7 @@ namespace smile::asset
 
             AssetMetadata &metadata = m_AssetRegistry[handle];
             metadata.FilePath = node["FilePath"].as< std::string >();
-            metadata.Type = AssetType{ node["Type"].as< std::string >() };
+            metadata.Type = AssetType{ node["Type"].as< primitive::String >() };
         }
 
         return true;

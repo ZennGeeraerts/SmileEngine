@@ -5,13 +5,12 @@
 #pragma once
 #include "smile/common/foundation/meyers_singleton.h"
 
-#include "smile/graphic/renderer/resource/vertex_buffer.h"
-#include "smile/graphic/renderer/shader/vertex_shader.h"
-#include "smile/graphic/renderer/shader/pixel_shader.h"
+#include "camera.h"
+#include "resource/vertex_buffer.h"
+#include "shader/vertex_shader.h"
+#include "shader/pixel_shader.h"
 #include "smile/graphic/rhi/shader/shader.h"
 #include "smile/graphic/rhi/render_state.h"
-
-#include "smile/graphic/renderer/camera.h"
 
 namespace smile::graphic
 {

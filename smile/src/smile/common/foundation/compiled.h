@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -95,6 +95,91 @@ namespace smile
     using Count = Uint32;
     static constexpr Index s_InvalidIndex = std::numeric_limits< Index >::max();
     static constexpr Count s_InvalidCount = std::numeric_limits< Count >::max();
+
+    class BoolResult final
+    {
+      public:
+#if SM_C_DEBUG
+
+        BoolResult( bool result, const char *message = nullptr )
+            : m_Result{ result }, m_ValueHasBeenChecked{ false }, m_Message{ message }
+        {
+        }
+
+        BoolResult( const BoolResult &other )
+            : m_Result{ other.m_Result }, m_ValueHasBeenChecked{ false }, m_Message{ other.m_Message }
+        {
+        }
+
+        ~BoolResult() noexcept( false )
+        {
+            if ( !m_Result && !m_ValueHasBeenChecked )
+            {
+                ReportFailure();
+            }
+        }
+
+#else
+
+        BoolResult( bool result, const char *message ) : m_Result{ result }
+        {
+        }
+
+        BoolResult( const BoolResult &other ) = default;
+
+        ~BoolResult() = default;
+
+#endif
+
+        operator bool() const
+        {
+#if SM_C_DEBUG
+            m_ValueHasBeenChecked = true;
+#endif
+
+            return m_Result;
+        }
+
+        bool operator!() const
+        {
+#if SM_C_DEBUG
+            m_ValueHasBeenChecked = true;
+#endif
+
+            return !m_Result;
+        }
+
+        static inline BoolResult Succeed()
+        {
+            return { true };
+        }
+
+        static inline BoolResult Fail( const char *message )
+        {
+            return { false, message };
+        }
+
+        static inline BoolResult FailIf( const bool condition, const char *message )
+        {
+            return { !condition, message };
+        }
+
+        static inline BoolResult Create( const bool value, const char *message )
+        {
+            return { value, message };
+        }
+
+      private:
+        void ReportFailure();
+
+      private:
+        bool m_Result;
+
+#if SM_C_DEBUG
+        mutable bool m_ValueHasBeenChecked;
+        const char *m_Message;
+#endif
+    };
 }
 
 #include "smile/common/foundation/assert.h"

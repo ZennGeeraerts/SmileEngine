@@ -6,6 +6,8 @@
 
 #include "default_system_provider.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/collection/hash_map.h"
 
 namespace smile::ecs
 {
@@ -19,18 +21,18 @@ namespace smile::ecs
             SystemFactory() = default;
             ~SystemFactory() = default;
 
-            static memory::Ref< BaseSystem > Create( const std::string &systemName );
-            static void RegisterSystem( const std::string &systemName, SystemProvider *pSystemProvider );
+            static memory::Ref< BaseSystem > Create( const primitive::String &systemName );
+            static void RegisterSystem( const primitive::String &systemName, SystemProvider *pSystemProvider );
 
             template < typename SystemType, typename... Args >
             static void RegisterSystem( Args... args )
             {
-                SystemFactory::RegisterSystem( std::string{ SystemType::GetStaticName() },
+                SystemFactory::RegisterSystem( primitive::String{ SystemType::GetStaticName() },
                     new DefaultSystemProvider< SystemType, Args... >{ args... } );
             }
 
           private:
-            static std::unordered_map< std::string, SystemProvider * > s_SystemProviderMap;
+            static primitive::HashMap< primitive::String, SystemProvider * > s_SystemProviderMap;
         };
     }
 }

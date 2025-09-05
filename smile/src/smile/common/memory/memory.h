@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
+
 namespace smile::memory
 {
     class Header;
@@ -16,8 +18,8 @@ namespace smile::memory
 
 namespace smile::memory
 {
-    constexpr Uint32 g_AlignedSize = 8; // x64
-    constexpr Uint32 g_DefaultAllocatorAlignedSize = 8;
+    constexpr Count g_AlignedSize = 8; // x64
+    constexpr Count g_DefaultAllocatorAlignedSize = 8;
 
 	// Rounds up a given size to a multiple of the given alignment
     template < typename Type >
@@ -26,13 +28,13 @@ namespace smile::memory
         return ( size + alignment - 1 ) & ~( alignment - 1 );
 	}
 
-    constexpr Uint32 GetAlignedSize( const Uint32 size )
+    constexpr Count GetAlignedSize( const Count size )
     {
         return ( size + g_AlignedSize - 1 ) & ~( g_AlignedSize - 1 );
     }
 
     Allocator &GetAllocator();
-    Uint32 GetAllocatedSize( const Uint32 size, const bool addHeaderSize = true );
+    Count GetAllocatedSize( const Count size, const bool addHeaderSize = true );
     Header *GetHeader( const void *pObject );
 
 #if SM_C_DEBUG
@@ -57,9 +59,9 @@ namespace smile::memory
 #endif
 
     bool IsAllocatedByteArray( const void *pByteArray );
-    void *AllocateByteArray( const Uint32 size );
+    void *AllocateByteArray( const Count size );
     void DeallocateByteArray( void *pByteArray );
-    Uint32 GetSize( void *pData );
+    Count GetSize( void *pData );
 
     template < class Type >
     struct IsRawTypeTrait
@@ -137,7 +139,7 @@ namespace smile::memory
 
     template < typename ItemType >
     inline void MoveArrayItems( ItemType *pItems,
-        const int itemCount,
+        const Count itemCount,
         const ItemType *pOtherItems,
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
@@ -151,7 +153,7 @@ namespace smile::memory
 
     template < typename ItemType >
     inline void MoveArrayItems( ItemType *pItems,
-        const int itemCount,
+        const Count itemCount,
         const ItemType *pOtherItems,
         typename std::enable_if_t< IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
@@ -160,7 +162,7 @@ namespace smile::memory
 
     template < typename ItemType >
     inline void CopyArrayItems( ItemType *pItems,
-        const int itemCount,
+        const Count itemCount,
         const ItemType *pOtherItems,
         typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
@@ -174,7 +176,7 @@ namespace smile::memory
 
     template < typename ItemType >
     inline void CopyArrayItems( ItemType *pItems,
-        const int itemCount,
+        const Count itemCount,
         const ItemType *pOtherItemArray,
         typename std::enable_if_t< IsRawTypeTrait< ItemType >::value > * = nullptr )
     {

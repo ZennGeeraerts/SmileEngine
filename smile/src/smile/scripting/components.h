@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "ecs/transform_component.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 #include "smile/graphic/scene/ecs/mesh_renderer_component.h"
 #include "smile/graphic/scene/ecs/skinned_mesh_renderer_component.h"
@@ -20,14 +20,14 @@
 #include "smile/physics/ecs/capsule_collider_component.h"
 #include "smile/physics/ecs/character_controller_component.h"
 
-namespace smile::world
+namespace smile::scripting
 {
     template < typename... Component >
     struct ComponentGroup
     {
     };
 
-    using AllComponents = ComponentGroup< ecs::TransformComponent,
+    using AllComponents = ComponentGroup< world::ecs::TransformComponent,
         graphic::ecs::MeshRendererComponent,
         graphic::ecs::SkinnedMeshRendererComponent,
         graphic::ecs::SpriteRendererComponent,
