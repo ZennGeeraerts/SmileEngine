@@ -9,6 +9,9 @@
 
 #include <wrl/client.h>
 
+class ID3D11RenderTargetView;
+class ID3D11DepthStencilView;
+
 namespace smile::graphic::rhi
 {
     class DirectX11Device;

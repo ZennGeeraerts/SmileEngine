@@ -16,10 +16,10 @@ namespace smile::graphic::ecs
     {
         MeshRendererComponent()
         {
-            // TODO: Get shader from shader library in render engine
-            graphic::ResourceManager &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
-            auto pShader = resourceManager.CreateShader( "resources/shaders/PBR.fx" );
-            pMaterial = smile::CreateRef< graphic::Material >( pShader );
+            auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+            auto pVertexShader = shaderLibrary.GetShader( "resources/shaders/PBR.vs.hlsl" );
+            auto pPixelShader = shaderLibrary.GetShader( "resources/shaders/PBR.ps.hlsl" );
+            pMaterial = smile::CreateRef< graphic::Material >( pVertexShader, pPixelShader );
         }
 
         MeshRendererComponent( const MeshRendererComponent & ) = default;

@@ -5,33 +5,34 @@
 #include "smpch.h"
 #include "skybox_renderer.h"
 
-#include "render_engine.h"
-#include "smile/graphic/scene/mesh_factory.h"
+#include "smile/graphic/renderer/render_engine.h"
+#include "mesh_factory.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
     Ref< Mesh > SkyboxRenderer::s_pCubeMesh = nullptr;
-    memory::Ref< Shader > SkyboxRenderer::s_pSkyboxShader = nullptr;
-    RenderState SkyboxRenderer::s_State{};
+    Material::Ref SkyboxRenderer::s_pMaterial = nullptr;
+    rhi::RenderState SkyboxRenderer::s_State{};
 
     void SkyboxRenderer::Initialize()
     {
         auto &textureManager = TextureManager::GetInstance();
 
-        memory::Ref< Texture > pCubeTexture = textureManager.GetTexture( "resources/textures/SkyBox.dds" )->GetTexture();
+        memory::Ref< Texture > pCubeTexture =
+            textureManager.GetTexture( "resources/textures/SkyBox.dds" )->GetTexture();
         s_pSkyboxShader = RenderEngine::GetShaderLibrary().Get( "Skybox" );
 
-        s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture->Handle );
+        s_pSkyboxShader->UploadTexture( "CubeMap", pCubeTexture->GetHandle() );
 
         DirectX::XMFLOAT4X4 worldMatrix;
         DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
         s_pSkyboxShader->UploadMat4( "World", worldMatrix );
 
-        s_pCubeMesh = MeshFactory::CreateCube( { { Format::RGB32_FLOAT, "POSITION" } } );
+        s_pCubeMesh = MeshFactory::CreateCube( { { rhi::Format::RGB32_FLOAT, "POSITION" } } );
 
-        s_State.CullMode = CullMode::None;
-        s_State.DepthComparissonFunc = DepthComparissonFunc::LessEqual;
+        s_State.RasterizerState.CullMode = rhi::CullMode::None;
+        s_State.DepthStencilState.DepthComparissonFunc = rhi::DepthComparissonFunc::LessEqual;
     }
 
     void SkyboxRenderer::ShutDown()

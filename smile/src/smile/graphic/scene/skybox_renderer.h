@@ -4,10 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "camera.h"
-#include "smile/graphic/scene/mesh.h"
-#include "smile/graphic/rhi/shader/shader.h"
-#include "smile/graphic/rhi/render_state.h"
+#include "smile/graphic/renderer/camera.h"
+#include "mesh.h"
+#include "material.h"
 
 namespace smile::graphic
 {
@@ -23,7 +22,7 @@ namespace smile::graphic
 
       private:
         static Ref< Mesh > s_pCubeMesh;
-        static memory::Ref< Shader > s_pSkyboxShader;
-        static RenderState s_State;
+        static Material::Ref s_pMaterial;
+        static rhi::RenderState s_State;
     };
 }

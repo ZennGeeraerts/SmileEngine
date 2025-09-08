@@ -28,7 +28,7 @@ namespace smile::graphic
         return nullptr;
     }
 
-    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( const primitive::StringView shaderName )
+    memory::Ref< ShaderAsset > ShaderLibrary::GetShaderByName( const primitive::StringView shaderName )
     {
         if ( Exists( shaderName ) )
         {

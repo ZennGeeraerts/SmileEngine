@@ -13,7 +13,7 @@ namespace smile::graphic
     {
       public:
         memory::Ref< ShaderAsset > GetShader( asset::AssetHandle handle );
-        memory::Ref< ShaderAsset > GetShader( const primitive::StringView shaderName );
+        memory::Ref< ShaderAsset > GetShaderByName( const primitive::StringView shaderName );
         memory::Ref< ShaderAsset > GetShader( const std::filesystem::path &path );
 
         bool Exists( const primitive::StringView shaderName ) const;

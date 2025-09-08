@@ -15,7 +15,8 @@ namespace smile::graphic
     void DebugRenderer::Initialize()
     {
         auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-        BufferLayout vertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGBA32_FLOAT, "COLOR" } };
+        rhi::BufferLayout vertexLayout{
+            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
         m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
 
         m_State.Topology = PrimitiveTopology::LineList;
