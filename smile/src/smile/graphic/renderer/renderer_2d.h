@@ -1,5 +1,5 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
@@ -27,8 +27,7 @@ namespace smile::graphic
             const graphic::ecs::SpriteRendererComponent &spriteRendererComponent );
 
         static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color );
-        static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-            const memory::Ref< Texture > &pTexture,
-            const DirectX::XMFLOAT4 &color );
+        static void
+        DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, Texture::ConstRef pTexture, const DirectX::XMFLOAT4 &color );
     };
 }

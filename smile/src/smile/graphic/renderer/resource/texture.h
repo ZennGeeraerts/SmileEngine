@@ -15,6 +15,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< Texture >;
+        using ConstRef = memory::Ref< const Texture >;
 
         Texture( rhi::TextureHandle handle, const Uint32 width, const Uint32 height, const rhi::Format format )
             : m_Handle{ handle }, m_Width{ width }, m_Height{ height }, m_Format{ format }

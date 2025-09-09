@@ -34,6 +34,11 @@ namespace smile::graphic
             return m_pBuffer;
         }
 
+        rhi::GPUBufferHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
       private:
         void InitializeBuffer( const void *pBuffer, const Count size );
 

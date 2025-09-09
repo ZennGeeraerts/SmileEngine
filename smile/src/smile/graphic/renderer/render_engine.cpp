@@ -24,6 +24,14 @@ namespace smile::graphic
     {
         s_RenderSystem.Initialize( pWindow );
 
+        s_ShaderLibrary.LoadShader( "resources/shaders/PosColNorm.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/PosCol.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/PosColTex.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/Skybox.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/PBR.vs.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/PBR.ps.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/PBR_skinned.ps.smshader" );
+
         s_SceneManager.Initialize( pWindow );
         world::WorldManager::AddListener( &s_SceneManager );
 

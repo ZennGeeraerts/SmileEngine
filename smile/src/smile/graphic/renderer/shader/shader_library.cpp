@@ -19,7 +19,7 @@ namespace smile::graphic
 
         if ( pShaderAsset )
         {
-            m_Shaders.insert( std::make_pair( pShaderAsset->GetName(), pShaderAsset ) );
+            m_Shaders.Insert( pShaderAsset->GetName(), pShaderAsset );
             return pShaderAsset;
         }
 
@@ -28,7 +28,7 @@ namespace smile::graphic
         return nullptr;
     }
 
-    memory::Ref< ShaderAsset > ShaderLibrary::GetShaderByName( const primitive::StringView shaderName )
+    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( const primitive::StringView shaderName ) const
     {
         if ( Exists( shaderName ) )
         {
@@ -40,13 +40,13 @@ namespace smile::graphic
         return nullptr;
     }
 
-    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( const std::filesystem::path &path )
+    memory::Ref< ShaderAsset > ShaderLibrary::LoadShader( const std::filesystem::path &path )
     {
         memory::Ref< ShaderAsset > pShaderAsset = m_ShaderLoader.LoadShader( path );
 
         if ( pShaderAsset )
         {
-            m_Shaders.insert( std::make_pair( pShaderAsset->GetName(), pShaderAsset ) );
+            m_Shaders.Insert( pShaderAsset->GetName(), pShaderAsset );
             return pShaderAsset;
         }
 
@@ -57,6 +57,6 @@ namespace smile::graphic
 
     bool ShaderLibrary::Exists( const primitive::StringView shaderName ) const
     {
-        return m_Shaders.find( shaderName ) != m_Shaders.end();
+        return m_Shaders.HasItemAtKey( shaderName );
     }
 }

@@ -17,8 +17,8 @@ namespace smile::graphic::ecs
         MeshRendererComponent()
         {
             auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-            auto pVertexShader = shaderLibrary.GetShader( "resources/shaders/PBR.vs.hlsl" );
-            auto pPixelShader = shaderLibrary.GetShader( "resources/shaders/PBR.ps.hlsl" );
+            auto pVertexShader = shaderLibrary.GetShader( "PBR.vs.smshader" );
+            auto pPixelShader = shaderLibrary.GetShader( "PBR.ps.smshader" );
             pMaterial = smile::CreateRef< graphic::Material >( pVertexShader, pPixelShader );
         }
 
