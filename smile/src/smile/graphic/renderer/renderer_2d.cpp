@@ -30,7 +30,8 @@ namespace smile::graphic
 
     struct Renderer2DMaterial final
     {
-
+        DirectX::XMFLOAT4 Color;
+        bool UseTexture;
     };
 
     static Renderer2DStorage *s_pStorage;
@@ -180,6 +181,11 @@ namespace smile::graphic
         state.pBindings.PushBack( s_pStorage->pVertexShaderBindingSet );
         state.pBindings.PushBack( s_pStorage->pPixelShaderBindingSetNoTexture );
 
+        s_pStorage->pPerObjectCB->Initialize( &worldTransform );
+
+        const Renderer2DMaterial material{ color, false };
+        s_pStorage->pMaterialCB->Initialize( &material );
+
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
         renderSystem.SetGraphicsState( state );
         renderSystem.DrawIndexed( s_pStorage->pQuadIndexBuffer->GetIndexCount() );
@@ -224,6 +230,11 @@ namespace smile::graphic
         }();
 
         state.pBindings.PushBack( pPixelShaderBindingSet );
+
+        s_pStorage->pPerObjectCB->Initialize( &worldTransform );
+
+        const Renderer2DMaterial material{ color, true };
+        s_pStorage->pMaterialCB->Initialize( &material );
 
         renderSystem.SetGraphicsState( state );
         renderSystem.DrawIndexed( s_pStorage->pQuadIndexBuffer->GetIndexCount() );
