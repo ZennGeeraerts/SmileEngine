@@ -50,8 +50,8 @@ namespace smile::graphic
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
             psoDesc.InputLayout = inputLayout;
-            psoDesc.pVertexShader = shaderLibrary.GetShader( "PosColTex.vs" )->GetVertexShader();
-            psoDesc.pPixelShader = shaderLibrary.GetShader( "PosColTex.ps" )->GetPixelShader();
+            psoDesc.pVertexShader = shaderLibrary.GetShader( "pos_tex.vs" )->GetVertexShader();
+            psoDesc.pPixelShader = shaderLibrary.GetShader( "col_tex.ps" )->GetPixelShader();
 
             auto vertexShaderBindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
             vertexShaderBindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
