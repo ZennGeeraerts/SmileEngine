@@ -24,6 +24,8 @@ namespace smile::graphic
     {
         s_RenderSystem.Initialize( pWindow );
 
+        s_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
         s_ShaderLibrary.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
         s_ShaderLibrary.LoadShader( "resources/shaders/col_tex.ps.smshader" );
         s_ShaderLibrary.LoadShader( "resources/shaders/skybox.vs.smshader" );

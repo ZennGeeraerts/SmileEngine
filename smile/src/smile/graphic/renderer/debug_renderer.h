@@ -3,14 +3,15 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
 #include "smile/common/foundation/meyers_singleton.h"
+#include "smile/common/primitive/collection/vector.h"
 
 #include "camera.h"
+#include "resource/graphics_pipeline.h"
 #include "resource/vertex_buffer.h"
-#include "shader/vertex_shader.h"
-#include "shader/pixel_shader.h"
-#include "smile/graphic/rhi/shader/shader.h"
-#include "smile/graphic/rhi/render_state.h"
+#include "shader/constant_buffer.h"
+#include "shader/binding_set.h"
 
 namespace smile::graphic
 {
@@ -41,17 +42,12 @@ namespace smile::graphic
             DirectX::XMFLOAT4 color;
         };
 
-        std::vector< VertexPosCol > m_LineList{};
+        primitive::Vector< VertexPosCol > m_LineList{};
+        GraphicsPipeline::Ref m_pPipeline;
         VertexBuffer::Ref m_pVertexBuffer;
-        VertexShader::Ref m_pVertexShader;
-        PixelShader::Ref m_pPixelShaderShader;
+        ConstantBuffer::Ref m_pCameraCB;
+        BindingSet::Ref m_pBindingSet;
 
-        DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
-
-        Uint32 m_VertexCount{ 100 };
-        const rhi::BufferLayout m_VertexLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" },
-            { rhi::Format::RGBA32_FLOAT, "COLOR" } };
-
-        rhi::RenderState m_State{};
+        Count m_VertexCount{ 100 };
     };
 }
