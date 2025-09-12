@@ -76,6 +76,8 @@ namespace smile::graphic
 
         GraphicsPipeline::Ref CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
 
+        rhi::Object GetShaderResourceView( Texture::ConstRef pTexture );
+
       private:
         rhi::GraphicsDevice *m_pDevice = nullptr;
 

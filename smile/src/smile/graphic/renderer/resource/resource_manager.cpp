@@ -365,4 +365,13 @@ namespace smile::graphic
         m_pGraphicsPipelines.PushBack( pGraphicsPipeline );
         return pGraphicsPipeline;
     }
+
+    rhi::Object ResourceManager::GetShaderResourceView( Texture::ConstRef pTexture )
+    {
+        return m_pDevice->GetNativeView( pTexture->GetHandle(),
+            rhi::ObjectType::D3D11_ShaderResourceView,
+            pTexture->GetFormat(),
+            rhi::TextureSubresourceSet{},
+            rhi::TextureDimension::Texture2D );
+    }
 }

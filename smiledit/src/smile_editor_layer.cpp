@@ -10,12 +10,9 @@
 #include "smile/core/window/file_dialog.h"
 
 #include "smile/graphic/animation/ecs/animation_system.h"
-#include "smile/graphic/camera/ecs/camera_system.h"
 #include "smile/graphic/ecs/graphic_system.h"
+#include "smile/graphic/scene/ecs/camera_system.h"
 #include "smile/graphic/scene/ecs/forward_render_pass.h"
-#include "smile/graphic/scene/ecs/wireframe_render_pass.h"
-#include "smile/graphic/scene/ecs/debug_render_pass.h"
-#include "smile/graphic/scene/ecs/render_pass_2d.h"
 #include "smile/graphic/scene/ecs/physics_render_pass.h"
 #include "smile/graphic/renderer/ecs/wireframe_render_pass.h"
 #include "smile/graphic/renderer/ecs/debug_render_pass.h"
@@ -44,11 +41,6 @@ namespace smile
 
     void SmileEditorLayer::OnAttach()
     {
-        graphic::RenderEngine::GetRenderSystem().SetClearColor( { DirectX::Colors::DodgerBlue.f[0],
-            DirectX::Colors::DodgerBlue.f[1],
-            DirectX::Colors::DodgerBlue.f[2],
-            DirectX::Colors::DodgerBlue.f[3] } );
-
         m_EditorCamera = graphic::EditorCamera{ 30.f, 1.778f, 0.1f, 2500.f };
 
         // Icon
@@ -332,12 +324,13 @@ namespace smile
 
         const float iconSize{ ImGui::GetWindowHeight() - 4.f };
         {
-            memory::Ref< graphic::Texture > pStateIcon =
+            auto &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
+            graphic::Texture::Ref pStateIcon =
                 ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Simulate ) ? m_pIconPlay
                                                                                              : m_pIconStop;
+
             ImGui::SetCursorPosX( ( ImGui::GetContentRegionMax().x * 0.5f ) - ( iconSize * 0.5f ) );
-            if ( ImGui::ImageButton(
-                     static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pStateIcon ) ),
+            if ( ImGui::ImageButton( static_cast< ImTextureID >( resourceManager.GetShaderResourceView( pStateIcon ) ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
@@ -351,11 +344,12 @@ namespace smile
         }
         ImGui::SameLine();
         {
-            memory::Ref< graphic::Texture > pStateIcon =
-                ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play ) ? m_pIconSimulate
-                                                                                         : m_pIconStop;
-            if ( ImGui::ImageButton(
-                     static_cast< ImTextureID >( graphic::RenderEngine::GetRenderSystem().ReadTexture( pStateIcon ) ),
+            auto &resourceManager = graphic::RenderEngine::GetRenderSystem().GetResourceManager();
+            graphic::Texture::Ref pStateIcon = ( m_WorldState == WorldState::Edit || m_WorldState == WorldState::Play )
+                                                   ? m_pIconSimulate
+                                                   : m_pIconStop;
+
+            if ( ImGui::ImageButton( static_cast< ImTextureID >( resourceManager.GetShaderResourceView( pStateIcon ) ),
                      ImVec2{ iconSize, iconSize },
                      ImVec2{ 0, 0 },
                      ImVec2{ 1, 1 },
