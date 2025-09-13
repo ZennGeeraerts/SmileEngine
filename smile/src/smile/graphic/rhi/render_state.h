@@ -36,9 +36,14 @@ namespace smile::graphic::rhi
             return hash;
         }
 
-        bool operator()( const RasterizerState &lhs, const RasterizerState &rhs ) const
+        bool operator==( const RasterizerState &other ) const noexcept
         {
-            return lhs.GetHashCode() == rhs.GetHashCode();
+            return CullMode == other.CullMode && FillMode == other.FillMode && EnableDepthClip == other.EnableDepthClip;
+        }
+
+        bool operator!=( const RasterizerState &other ) const noexcept
+        {
+            return !( *this == other );
         }
     };
 
@@ -76,9 +81,15 @@ namespace smile::graphic::rhi
             return hash;
         }
 
-        bool operator()( const DepthStencilState &lhs, const DepthStencilState &rhs ) const
+        bool operator==( const DepthStencilState &other ) const noexcept
         {
-            return lhs.GetHashCode() == rhs.GetHashCode();
+            return DepthEnable == other.DepthEnable && DepthWriteMask == other.DepthWriteMask &&
+                   DepthComparissonFunc == other.DepthComparissonFunc;
+        }
+
+        bool operator!=( const DepthStencilState &other ) const noexcept
+        {
+            return !( *this == other );
         }
     };
 

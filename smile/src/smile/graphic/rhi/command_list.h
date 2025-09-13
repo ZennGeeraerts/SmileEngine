@@ -32,9 +32,6 @@ namespace smile::graphic::rhi
         virtual void Close() = 0;
         virtual void ClearState() = 0;
 
-        virtual void BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const = 0;
-        virtual void ClearBackBuffer( memory::Ref< SwapChain > pSwapChain, const math::Color &clearColor ) const = 0;
-
         virtual void SetGraphicsState( const GraphicsState &graphicsState ) = 0;
         virtual void Draw( const DrawParams &params ) = 0;
         virtual void DrawIndexed( const DrawIndexedParams &params ) = 0;

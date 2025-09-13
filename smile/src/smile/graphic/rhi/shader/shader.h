@@ -10,6 +10,8 @@ namespace smile::graphic::rhi
 {
     struct ShaderDescriptor final
     {
+        ShaderDescriptor() = default;
+
         ShaderDescriptor( ShaderStage stage ) : Stage{ stage }
         {
         }

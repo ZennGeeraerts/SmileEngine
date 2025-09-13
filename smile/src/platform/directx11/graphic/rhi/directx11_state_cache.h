@@ -11,7 +11,7 @@ namespace smile::graphic::rhi
     template < typename KeyType,
         typename StateType,
         typename Hasher = std::hash< KeyType >,
-        typename Comparer = std::equal_to< StateType > >
+        typename Comparer = std::equal_to< KeyType > >
     class DirectX11StateCache final
     {
       public:

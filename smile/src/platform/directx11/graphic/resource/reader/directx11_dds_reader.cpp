@@ -22,7 +22,7 @@ namespace smile::graphic
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DDSReader::Read > Loading from DDS file failed: {}, returning nullptr",
-                fmt::ptr( GetDirectX11ErrorMessage( result ) ) );
+                fmt::ptr( rhi::GetDirectX11ErrorMessage( result ) ) );
 
             return memory::CreateRef< Image >();
         }
@@ -30,10 +30,11 @@ namespace smile::graphic
         switch ( info.format )
         {
             case DXGI_FORMAT_R8G8B8A8_UNORM:
-                return memory::CreateRef< Image >( info.width, info.height, Format::RGBA8_UNORM, image.GetPixels() );
+                return memory::CreateRef< Image >(
+                    info.width, info.height, rhi::Format::RGBA8_UNORM, image.GetPixels() );
 
             case DXGI_FORMAT_BC1_UNORM:
-                return memory::CreateRef< Image >( info.width, info.height, Format::BC1_UNORM, image.GetPixels() );
+                return memory::CreateRef< Image >( info.width, info.height, rhi::Format::BC1_UNORM, image.GetPixels() );
 
             default:
                 SM_ASSERT_MSG( false, "DDSReader::Read > Unsupported image format" );

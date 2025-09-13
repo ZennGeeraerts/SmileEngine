@@ -31,6 +31,16 @@ namespace smile::graphic::rhi
             return hash;
         }
 
+        bool operator==( const BufferElement &other ) const noexcept
+        {
+            return Name == other.Name && FormatType == other.FormatType && Size == other.Size && Offset == other.Offset;
+        }
+
+        bool operator!=( const BufferElement &other ) const noexcept
+        {
+            return !( *this == other );
+        }
+
         std::string Name;
         Format FormatType;
         Uint8 Size;
@@ -92,9 +102,17 @@ namespace smile::graphic::rhi
             return hash;
         }
 
-        bool operator()( const BufferLayout &lhs, const BufferLayout &rhs ) const
+        bool operator==( const BufferLayout &other ) const
         {
-            return lhs.GetHashCode() == rhs.GetHashCode();
+            if ( m_Stride != other.m_Stride || m_Elements.size() != other.m_Elements.size() )
+                return false;
+
+            return std::equal( m_Elements.begin(), m_Elements.end(), other.m_Elements.begin() );
+        }
+
+        bool operator!=( const BufferLayout &other ) const
+        {
+            return !( *this == other );
         }
 
       private:

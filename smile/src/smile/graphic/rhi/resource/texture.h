@@ -132,7 +132,7 @@ namespace std
     template <>
     struct hash< smile::graphic::rhi::TextureBindingKey >
     {
-        smile::foundation::HashCode operator=( const smile::graphic::rhi::TextureBindingKey &textureBindingKey ) const
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::TextureBindingKey &textureBindingKey ) const
         {
             return textureBindingKey.GetHashCode();
         }
