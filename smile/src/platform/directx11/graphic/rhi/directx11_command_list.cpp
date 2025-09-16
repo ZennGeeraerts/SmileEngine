@@ -67,29 +67,6 @@ namespace smile::graphic::rhi
         m_CurrentIndexBuffer = GPUBufferHandle::NullHandle();
     }
 
-    void DirectX11CommandList::BindBackBuffer( memory::Ref< SwapChain > pSwapChain ) const
-    {
-        auto pDX11SwapChain = memory::Ref< DirectX11SwapChain >{ pSwapChain };
-
-        auto pRenderTargetView = pDX11SwapChain->GetRenderTargetView();
-        m_Context.pImmediateContext->OMSetRenderTargets( 1, &pRenderTargetView, pDX11SwapChain->GetDepthStencilView() );
-        m_Context.pImmediateContext->RSSetViewports( 1, &pDX11SwapChain->GetViewport() );
-    }
-
-    void DirectX11CommandList::ClearBackBuffer( memory::Ref< SwapChain > pSwapChain,
-        const math::Color &clearColor ) const
-    {
-        auto pDX11SwapChain = memory::Ref< DirectX11SwapChain >{ pSwapChain };
-
-        auto pRenderTargetView = pDX11SwapChain->GetRenderTargetView();
-        m_Context.pImmediateContext->OMSetRenderTargets( 1, &pRenderTargetView, pDX11SwapChain->GetDepthStencilView() );
-
-        const float *pClearColor = reinterpret_cast< const float * >( &clearColor );
-        m_Context.pImmediateContext->ClearRenderTargetView( pRenderTargetView, pClearColor );
-        m_Context.pImmediateContext->ClearDepthStencilView(
-            pDX11SwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0 );
-    }
-
     void DirectX11CommandList::SetGraphicsState( const GraphicsState &graphicsState )
     {
         const DirectX11Pipeline &pipeline = m_pDevice->m_Pipelines[graphicsState.Pipeline.GetIndex()];
