@@ -68,7 +68,7 @@ namespace smile::foundation
                 SM_ASSERT_MSG(
                     static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-                if ( ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) == 1 )
+                if ( ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) != 0 )
                     return true;
             }
 

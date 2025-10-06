@@ -23,6 +23,6 @@ namespace smile
 
     RHITest::RHITest( const application::ApplicationDescriptor &descriptor ) : application::Application{ descriptor }
     {
-        PushLayer( new RHITestLayer{} );
+        PushLayer( new graphic::RHITestLayer{} );
     }
 }

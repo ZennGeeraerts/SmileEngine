@@ -12,7 +12,10 @@ namespace smile::graphic::rhi
 {
     struct DirectX11Shader final
     {
-        DirectX11Shader() = default;
+        DirectX11Shader() : pPtr{ nullptr }
+        {
+        }
+
         ~DirectX11Shader();
 
         DirectX11Shader( const DirectX11Shader & ) = delete;

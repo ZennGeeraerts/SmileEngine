@@ -7,7 +7,9 @@
 #include "smile/core/application/layer.h"
 #include "smile/core/window/events/application_event.h"
 
-namespace smile
+#include "smile/graphic/rhi/graphics_device.h"
+
+namespace smile::graphic
 {
     class RHITestLayer final : public application::Layer
     {
@@ -22,5 +24,16 @@ namespace smile
 
       private:
         bool OnWindowResize( window::WindowResizeEvent &e );
+
+      private:
+        Scope< rhi::GraphicsDevice > m_pDevice;
+        rhi::CommandList *m_pImmediateCommandList;
+        Scope< rhi::SwapChain > m_pSwapChain;
+
+        rhi::TextureHandleManager m_TextureHandleManager;
+
+        rhi::FramebufferHandleManager m_FramebufferManager;
+        rhi::FramebufferHandle m_Framebuffer;
+        rhi::FramebufferDescriptor m_FramebufferDesc{};
     };
 }
