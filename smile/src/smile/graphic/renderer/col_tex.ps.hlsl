@@ -9,8 +9,8 @@ cbuffer Material : register( b0 )
     int UseTexture;
 };
 
-Texture Diffuse : register( t0 );
-Sampler SamLinear : register( s0 );
+Texture2D Diffuse : register( t0 );
+SamplerState SamLinear : register( s0 );
 
 struct VS_OUTPUT
 {
