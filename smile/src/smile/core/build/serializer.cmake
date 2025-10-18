@@ -1,3 +1,5 @@
+smile_option(SERIALIZER "Add serialization" ON)
+
 set_property(GLOBAL PROPERTY serializer_namespaces "")
 
 function( add_serializer namespace )
@@ -34,6 +36,8 @@ macro( generate_serializer_file target )
 
 endmacro()
 
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "serializer/*.cpp")
+if(SMILE_SERIALIZER)
+    file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "serializer/*.cpp")
 
-target_sources(smile PRIVATE ${SOURCE_FILES})
+    target_sources(smile PRIVATE ${SOURCE_FILES})
+endif()
