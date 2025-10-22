@@ -6,7 +6,7 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
-#include "constant_buffer_descriptor.h"
+#include "smile/graphic/shader/constant_buffer_descriptor.h"
 
 namespace smile::graphic
 {

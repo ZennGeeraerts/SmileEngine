@@ -23,5 +23,5 @@ set(LIB_LINKS
 target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(smile PRIVATE ${LIB_LINKS})
 
-include(build/compile_shaders.cmake)
+include(build/shader.cmake)
 include(build/rhi.cmake)
