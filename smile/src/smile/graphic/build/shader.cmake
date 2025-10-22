@@ -29,7 +29,7 @@ if(SMILE_SHADER)
         list(APPEND COMPILED_SHADERS ${SHADER_OUTPUT})
     endforeach()
 
-    get_files_recursively(SOURCE_FILES "renderer")
+    get_files_recursively(SOURCE_FILES "shader")
 	target_sources(smile PRIVATE ${SOURCE_FILES})
 endif()
 
