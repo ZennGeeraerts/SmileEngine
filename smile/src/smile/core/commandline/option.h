@@ -5,6 +5,7 @@
 #pragma once
 
 #include "option_base.h"
+#include "parser.h"
 
 namespace smile::commandline
 {
@@ -15,6 +16,7 @@ namespace smile::commandline
         template < typename... Args >
         Option( const char *name, Args &&...arguments ) : OptionBase{ name }
         {
+            AppendOption();
         }
 
         operator const ValueType &() const
@@ -34,6 +36,8 @@ namespace smile::commandline
 
         bool Parse( Arguments &arguments ) override
         {
+            const Parser< ValueType > parser;
+            parser.Parse( Name, Value, arguments );
         }
 
         ValueType Value;
