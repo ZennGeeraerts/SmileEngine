@@ -4,11 +4,18 @@
 /*=============================================================================*/
 #pragma once
 
+#include "modifier.h"
 #include "option_base.h"
 #include "parser.h"
 
 namespace smile::commandline
 {
+    template < typename OptionType, typename Modifier >
+    void ApplyModifier( OptionType &option, Modifier &&modifer )
+    {
+        std::forward< Modifier >( modifer ).Apply( option );
+    }
+
     template < typename ValueType >
     class Option final : public OptionBase
     {
@@ -16,6 +23,7 @@ namespace smile::commandline
         template < typename... Args >
         Option( const char *name, Args &&...arguments ) : OptionBase{ name }
         {
+            [[maybe_unused]] int _[] = { ( ApplyModifier( *this, std::forward< Args >( arguments ) ), 0 )... };
             AppendOption();
         }
 
@@ -37,7 +45,7 @@ namespace smile::commandline
         bool Parse( Arguments &arguments ) override
         {
             const Parser< ValueType > parser;
-            parser.Parse( Name, Value, arguments );
+            return parser.Parse( Name, Value, arguments );
         }
 
         ValueType Value;
