@@ -19,12 +19,20 @@ namespace smile::commandline
 
         bool IsValid() const
         {
-            return Name.GetCharCount() > 2 && Name[0] == '-' && Name[1] == '-';
+            return ( Name.GetCharCount() == 2 && Name[0] == '-' && std::isalpha( Name[1] ) ) ||
+                   ( Name.GetCharCount() > 2 && Name[0] == '-' && Name[1] == '-' );
         }
 
         primitive::StringView GetView() const
         {
-            return { Name.GetData() + 2 };
+            if ( Name.GetCharCount() == 2 )
+            {
+                return { Name.GetData() + 1 };
+            }
+            else
+            {
+                return { Name.GetData() + 2 };
+            }
         }
 
       private:
