@@ -82,6 +82,11 @@ namespace smile::commandline
             return Value.GetView();
         }
 
+        bool IsShortOption() const
+        {
+            return GetName().GetCharCount() == 1;
+        }
+
       private:
         ArgName Name;
         ArgValue Value;
