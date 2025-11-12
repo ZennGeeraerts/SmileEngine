@@ -6,6 +6,7 @@ include(build/serializer.cmake)
 set(DIRECTORIES
     application
     asset
+    commandline
     ecs
     geometric
     input
