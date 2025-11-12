@@ -16,6 +16,7 @@ target_include_directories(smile PUBLIC ${INCLUDE_DIRS})
 target_link_libraries(smile PRIVATE ${LIB_LINKS})
 
 include(build/shader.cmake)
+include(build/compile_shaders.cmake)
 include(build/rhi.cmake)
 include(build/resource.cmake)
 include(build/renderer.cmake)
