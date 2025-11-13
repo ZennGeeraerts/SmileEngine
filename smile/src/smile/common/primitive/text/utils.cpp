@@ -7,18 +7,6 @@
 
 namespace smile::primitive
 {
-    std::string WideStringToString( const std::wstring &wideString )
-    {
-        std::string str{ wideString.begin(), wideString.end() };
-        return str;
-    }
-
-    std::wstring StringToWideString( const std::string &str )
-    {
-        std::wstring wideString{ str.begin(), str.end() };
-        return wideString;
-    }
-
     std::optional< int > ToInt( StringView text )
     {
         if ( text.IsEmpty() )
@@ -135,5 +123,55 @@ namespace smile::primitive
         }
 
         return isNegative ? -result : result;
+    }
+
+    Index
+    FindText( const primitive::StringView text, const primitive::StringView textToFind, const Index firstCharIndex )
+    {
+        if ( textToFind.GetCharCount() == 0 )
+        {
+            return s_InvalidIndex;
+        }
+
+        if ( text.GetCharCount() < textToFind.GetCharCount() )
+        {
+            return s_InvalidIndex;
+        }
+
+        const Count lastCharToSearch = text.GetCharCount() - textToFind.GetCharCount();
+        for ( auto index = firstCharIndex; index <= lastCharToSearch; ++index )
+        {
+            if ( text[index] == textToFind[0] )
+            {
+                Index subindex{ 0 };
+                for ( ; subindex < textToFind.GetCharCount(); ++subindex )
+                {
+                    if ( text[index + subindex] != textToFind[subindex] )
+                    {
+                        break;
+                    }
+                }
+
+                if ( subindex == textToFind.GetCharCount() )
+                {
+                    return index;
+                }
+            }
+        }
+
+        return s_InvalidIndex;
+    }
+
+    Index FindCharacter( const primitive::StringView text, const char charToFind, const Index firstCharIndex )
+    {
+        for ( auto index = firstCharIndex, count = text.GetCharCount(); index < count; ++index )
+        {
+            if ( text[index] == charToFind )
+            {
+                return index;
+            }
+        }
+
+        return s_InvalidIndex;
     }
 }

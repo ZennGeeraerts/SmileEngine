@@ -5,6 +5,8 @@
 #include "smpch.h"
 #include "string.h"
 
+#include "utils.h"
+
 namespace smile::primitive
 {
     String::String( const char *text ) : String{ StringView{ text } }
@@ -72,5 +74,15 @@ namespace smile::primitive
         result += rightView;
 
         return result;
+    }
+
+    Index String::Find( const char charToFind, const Index firstCharIndex ) const
+    {
+        return FindCharacter( AsStringView(), charToFind, firstCharIndex );
+    }
+
+    Index String::Find( const StringView textToFind, const Index firstCharIndex ) const
+    {
+        return FindText( AsStringView(), textToFind, firstCharIndex );
     }
 }

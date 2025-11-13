@@ -2,7 +2,7 @@
 // Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
-#include "smile/common/primitive/utils.h"
+#include "smile/common/primitive/text/utils.h"
 
 #include <catch/catch.hpp>
 
@@ -68,6 +68,39 @@ namespace smile::primitive
             value = ToFloat( _55_55 );
             CHECK( value.has_value() );
             CHECK( value.value() == 55.55f );
+        }
+
+        SECTION( "FindText" )
+        {
+            String text{ "This contains some text" };
+
+            CHECK( FindText( text, "This" ) == 0 );
+            CHECK( FindText( text, "text" ) == 19 );
+            CHECK( FindText( text, "contains some" ) == 5 );
+
+            CHECK( FindText( text, "this" ) == s_InvalidIndex );
+            CHECK( FindText( text, "Text" ) == s_InvalidIndex );
+            CHECK( FindText( text, "Contains Some" ) == s_InvalidIndex );
+
+            String text2{ "This contains some text, precious text and unused text stuff" };
+
+            CHECK( FindText( text2, "text", 5 ) == 19 );
+            CHECK( FindText( text2, "text", 20 ) == 34 );
+            CHECK( FindText( text2, "text", 35 ) == 50 );
+
+            CHECK( FindText( text2, "This", 1 ) == s_InvalidIndex );
+            CHECK( FindText( text2, "text", 51 ) == s_InvalidIndex );
+        }
+
+        SECTION( "FindCharacter" )
+        {
+            String text{ "primitive::Text_" };
+
+            CHECK( 9 == FindCharacter( text, ':' ) );
+            CHECK( 0 == FindCharacter( text, 'p' ) );
+            CHECK( 15 == FindCharacter( text, '_' ) );
+
+            CHECK( s_InvalidIndex == FindCharacter( text, 'y' ) );
         }
     }
 }

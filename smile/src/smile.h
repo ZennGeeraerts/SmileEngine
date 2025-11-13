@@ -13,7 +13,7 @@
 
 #include "smile/common/primitive/timestep.h"
 
-#include "smile/common/primitive/utils.h"
+#include "smile/common/primitive/text/utils.h"
 #include "smile/core/math/math.h"
 
 #include "smile/core/input/input.h"
