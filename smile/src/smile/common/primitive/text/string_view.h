@@ -85,6 +85,9 @@ namespace smile::primitive
             return m_SubText + m_CharCount;
         }
 
+        Index Find( const char charToFind, const Index firstCharIndex = 0 ) const;
+        Index Find( const StringView textToFind, const Index firstCharIndex = 0 ) const;
+
       private:
         const char *m_SubText{ nullptr };
         Count m_CharCount{ 0 };

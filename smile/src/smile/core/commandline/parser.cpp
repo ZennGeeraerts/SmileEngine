@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "parser.h"
 
-#include "smile/common/primitive/utils.h"
+#include "smile/common/primitive/text/utils.h"
 #include "arguments.h"
 
 namespace smile::commandline

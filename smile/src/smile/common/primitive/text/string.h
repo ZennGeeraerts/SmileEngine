@@ -120,6 +120,9 @@ namespace smile::primitive
             return { GetData() + firstCharIndex, GetCharCount() - firstCharIndex };
         }
 
+        Index Find( const char charToFind, const Index firstCharIndex = 0 ) const;
+        Index Find( const StringView textToFind, const Index firstCharIndex = 0 ) const;
+
         String &operator=( String &&other ) noexcept
         {
             Vector< char >::operator=( std::move( other ) );
