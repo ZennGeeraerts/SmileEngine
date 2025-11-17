@@ -396,57 +396,57 @@ namespace smile
 
         SM_LOG_INFO( "Shader compiled and saved to compound .smshader format: {}", outputFile.string() );
     }
+}
 
-    int main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
+{
+    if ( argc < 4 )
     {
-        if ( argc < 4 )
-        {
-            SM_LOG_ERROR( "Usage: x-shader-c <input_file> -o <output_file>" );
-            return 1;
-        }
-
-        std::filesystem::path inputFile;
-        std::filesystem::path outputFile;
-
-        inputFile = argv[1];
-        if ( primitive::StringView{ argv[2] } != "-o" )
-        {
-            SM_LOG_ERROR( "Expected '-o' after input file" );
-            return 1;
-        }
-        outputFile = argv[3];
-
-        primitive::String entryPoint;
-        primitive::String targetProfile;
-
-        primitive::StdString fileName = inputFile.filename().string();
-
-        if ( fileName.Find( ".vs." ) != s_InvalidIndex )
-        {
-            entryPoint = "VSMain";
-            targetProfile = "vs_5_0";
-        }
-        else if ( fileName.Find( ".ps." ) != s_InvalidIndex )
-        {
-            entryPoint = "PSMain";
-            targetProfile = "ps_5_0";
-        }
-        else
-        {
-            SM_LOG_ERROR( "Could not detect whether a vertex shader or pixel shader was used" );
-            return 1;
-        }
-
-        Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob = CompileShader( inputFile, entryPoint, targetProfile );
-
-        if ( !pCompiledBlob )
-            return 2;
-
-        yaml::Node data = ReflectBlob( pCompiledBlob, entryPoint, targetProfile );
-
-        if ( !WriteFile( pCompiledBlob, data, outputFile ) )
-            return 3;
-
-        return 0;
+        SM_LOG_ERROR( "Usage: x-shader-c <input_file> -o <output_file>" );
+        return 1;
     }
+
+    std::filesystem::path inputFile;
+    std::filesystem::path outputFile;
+
+    inputFile = argv[1];
+    if ( smile::primitive::StringView{ argv[2] } != "-o" )
+    {
+        SM_LOG_ERROR( "Expected '-o' after input file" );
+        return 1;
+    }
+    outputFile = argv[3];
+
+    smile::primitive::String entryPoint;
+    smile::primitive::String targetProfile;
+
+    smile::primitive::StdString fileName = inputFile.filename().string();
+
+    if ( fileName.Find( ".vs." ) != smile::s_InvalidIndex )
+    {
+        entryPoint = "VSMain";
+        targetProfile = "vs_5_0";
+    }
+    else if ( fileName.Find( ".ps." ) != smile::s_InvalidIndex )
+    {
+        entryPoint = "PSMain";
+        targetProfile = "ps_5_0";
+    }
+    else
+    {
+        SM_LOG_ERROR( "Could not detect whether a vertex shader or pixel shader was used" );
+        return 1;
+    }
+
+    Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob = smile::CompileShader( inputFile, entryPoint, targetProfile );
+
+    if ( !pCompiledBlob )
+        return 2;
+
+    smile::yaml::Node data = smile::ReflectBlob( pCompiledBlob, entryPoint, targetProfile );
+
+    if ( !smile::WriteFile( pCompiledBlob, data, outputFile ) )
+        return 3;
+
+    return 0;
 }
