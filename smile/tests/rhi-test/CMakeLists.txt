@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION "3.25.0")
 project(rhi-test)
 
 set(SMILE_SERIALIZER OFF)
+set(SMILE_ANIMATION OFF)
+set(SMILE_IMGUI OFF)
+set(SMILE_RENDERER OFF)
+set(SMILE_GRAPHIC_RESOURCE OFF)
+set(SMILE_SCENE OFF)
+set(SMILE_SPRITE OFF)
 
 get_filename_component(SMILE_PATH "../../src" ABSOLUTE)
 get_filename_component(CMAKE_PATH "../../../cmake" ABSOLUTE)
@@ -15,13 +21,15 @@ set_compiler_flags()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
+set(APPLICATION_TARGET rhi-test)
+
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(rhi-test ${SOURCE_FILES})
 
 include(${SMILE_PATH}/smile.cmake)
 
-add_subdirectory(${SMILE_PATH} engine)
+add_subdirectory(${SMILE_PATH} smile)
 
 add_module(common)
 add_module(core)

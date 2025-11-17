@@ -33,5 +33,5 @@ if(SMILE_COMPILE_SHADERS)
         DEPENDS ${COMPILED_SHADERS}
     )
 
-    add_dependencies(smile compile-shaders)
+    add_dependencies(${APPLICATION_TARGET} compile-shaders)
 endif()

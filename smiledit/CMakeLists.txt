@@ -13,6 +13,8 @@ set_compiler_flags()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
+set(APPLICATION_TARGET smiledit)
+
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(smiledit ${SOURCE_FILES})
