@@ -7,6 +7,7 @@
 #include "smile/common/primitive/text/string.h"
 #include "smile/common/primitive/collection/hash_map.h"
 #include "shader_loader.h"
+#include "shader_asset.h"
 
 namespace smile::graphic
 {

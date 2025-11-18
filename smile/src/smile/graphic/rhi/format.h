@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/text/string_view.h"
 
 namespace smile::graphic::rhi
 {
@@ -96,7 +97,7 @@ namespace smile::graphic::rhi
     struct FormatInfo final
     {
         Format Format;
-        std::string_view Name;
+        primitive::StringView Name;
         Uint8 BytesPerBlock;
         Uint8 BlockSize;
         FormatType Type;
@@ -111,5 +112,5 @@ namespace smile::graphic::rhi
     };
 
     const FormatInfo &GetFormatInfo( Format format );
-    const FormatInfo &GetFormatInfo( std::string_view formatView );
+    const FormatInfo &GetFormatInfo( const primitive::StringView formatView );
 }

@@ -5,8 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
-
-#include <string>
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::graphic
 {
@@ -18,7 +17,7 @@ namespace smile::graphic
         SPIRV
     };
 
-    static ShaderBlobFormat ShaderBlobFormatFromString( const std::string &blobFormat )
+    static ShaderBlobFormat ShaderBlobFormatFromString( const primitive::StringView blobFormat )
     {
         if ( blobFormat == "dxbc" )
             return ShaderBlobFormat::DXBC;
@@ -28,5 +27,20 @@ namespace smile::graphic
             return ShaderBlobFormat::SPIRV;
 
         return ShaderBlobFormat::Unknown;
+    }
+
+    static primitive::String ShaderBlobFormatToString( ShaderBlobFormat blobFormat )
+    {
+        switch ( blobFormat )
+        {
+            case ShaderBlobFormat::DXBC:
+                return "dxbc";
+            case ShaderBlobFormat::DXIL:
+                return "dxil";
+            case ShaderBlobFormat::SPIRV:
+                return "spirv";
+        }
+
+        return "";
     }
 }

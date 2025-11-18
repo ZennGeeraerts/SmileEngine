@@ -872,7 +872,7 @@ namespace smile::graphic::rhi
         return info;
     }
 
-    const FormatInfo &GetFormatInfo( std::string_view formatView )
+    const FormatInfo &GetFormatInfo( const primitive::StringView formatView )
     {
         for ( const FormatInfo &info : s_FormatInfo )
         {
