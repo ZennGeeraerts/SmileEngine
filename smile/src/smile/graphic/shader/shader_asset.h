@@ -8,10 +8,6 @@
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/core/asset/asset.h"
 #include "shader_reflection_data.h"
-#include "vertex_shader.h"
-#include "pixel_shader.h"
-
-#include <variant>
 
 namespace smile::graphic
 {
@@ -43,31 +39,9 @@ namespace smile::graphic
             return m_ReflectionData;
         }
 
-        VertexShader::Ref GetVertexShader() const
-        {
-            if ( auto ppVertexShader = std::get_if< VertexShader::Ref >( &m_pShader ) )
-            {
-                return *ppVertexShader;
-            }
-
-            return nullptr;
-        }
-
-        PixelShader::Ref GetPixelShader() const
-        {
-            if ( auto ppPixelShader = std::get_if< PixelShader::Ref >( &m_pShader ) )
-            {
-                return *ppPixelShader;
-            }
-
-            return nullptr;
-        }
-
       private:
         primitive::String m_Name;
         primitive::Vector< Byte > m_ByteCode;
         ShaderReflectionData m_ReflectionData;
-
-        std::variant< VertexShader::Ref, PixelShader::Ref > m_pShader;
     };
 }

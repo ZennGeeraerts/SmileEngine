@@ -6,8 +6,6 @@
 #include "shader_library.h"
 
 #include "shader_asset.h"
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
 
 #include "smile/core/asset/asset_manager.h"
 
