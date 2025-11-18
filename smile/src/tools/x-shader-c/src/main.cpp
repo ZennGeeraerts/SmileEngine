@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2025 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        main.cpp
+ * @author      Zenn Geeraerts
+ * @created     18 November 2025
+ * @brief       Entry point for x-shader-c
+ */
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/text/std_string.h"
 #include "smile/common/logging/logger.h"
