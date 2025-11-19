@@ -30,8 +30,13 @@ namespace smile::graphic
     {
         Uint32 Magic;
         Uint32 Version;
+
+        Index NameOffset;
+        Count NameSize;
+
         Index BlobOffset;
         Count BlobSize;
+
         Index YamlOffset;
         Count YamlSize;
     };
@@ -215,18 +220,27 @@ namespace smile::graphic
             return;
         }
 
-        Index blobOffset = sizeof( Index ) * 6;
-        Count blobSize = m_pShaderAsset->GetByteCode().GetItemCount();
-        Index reflectionDataOffset = blobOffset + blobSize;
-        Count reflectionDataSize = static_cast< uint32_t >( reflectionDataOutput.size() );
+        const Index nameOffset = sizeof( ShaderHeader );
+        const Count nameSize = m_pShaderAsset->GetName().GetCharCount();
+
+        const Index blobOffset = nameOffset + nameSize;
+        const Count blobSize = m_pShaderAsset->GetByteCode().GetItemCount();
+
+        const Index reflectionDataOffset = blobOffset + blobSize;
+        const Count reflectionDataSize = static_cast< Count >( reflectionDataOutput.size() );
 
         // Header
         outStream.write( reinterpret_cast< const char * >( &g_ShaderFileMagic ), sizeof( Uint32 ) );
         outStream.write( reinterpret_cast< const char * >( &g_ShaderFileVersion ), sizeof( Uint32 ) );
+        outStream.write( reinterpret_cast< const char * >( &nameOffset ), sizeof( Index ) );
+        outStream.write( reinterpret_cast< const char * >( &nameSize ), sizeof( Count ) );
         outStream.write( reinterpret_cast< const char * >( &blobOffset ), sizeof( Index ) );
         outStream.write( reinterpret_cast< const char * >( &blobSize ), sizeof( Count ) );
-        outStream.write( reinterpret_cast< const char * >( &reflectionDataOffset ), sizeof( uint32_t ) );
-        outStream.write( reinterpret_cast< const char * >( &reflectionDataSize ), sizeof( uint32_t ) );
+        outStream.write( reinterpret_cast< const char * >( &reflectionDataOffset ), sizeof( Index ) );
+        outStream.write( reinterpret_cast< const char * >( &reflectionDataSize ), sizeof( Count ) );
+
+        // Name
+        outStream.write( m_pShaderAsset->GetName().GetData(), nameSize );
 
         // Blob
         outStream.write( reinterpret_cast< const char * >( m_pShaderAsset->GetByteCode().GetData() ), blobSize );
@@ -262,13 +276,17 @@ namespace smile::graphic
             return false;
         }
 
-        if ( header.BlobOffset + header.BlobSize > fileData.size() ||
+        if ( header.NameOffset + header.NameSize > fileData.size() ||
+             header.BlobOffset + header.BlobSize > fileData.size() ||
              header.YamlOffset + header.YamlSize > fileData.size() )
         {
             SM_LOG_WARNING( "ShaderSerializer::Deserialize > Failed to load shader: shader file blob or YAML section "
                             "out of bounds" );
             return false;
         }
+
+        m_pShaderAsset->m_Name = primitive::String{
+            reinterpret_cast< const char * >( fileData.data() + header.NameOffset ), header.NameSize };
 
         const Byte *pBlobStart = fileData.data() + header.BlobOffset;
         m_pShaderAsset->m_ByteCode = { pBlobStart, header.BlobSize };
