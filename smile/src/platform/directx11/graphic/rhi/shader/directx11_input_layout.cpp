@@ -7,7 +7,7 @@
 
 #include "directx11_shader.h"
 
-#include "platform/directx11/graphic/rhi/directx11_diagnostics.h"
+#include "platform/d3dcommon/graphic/d3d_diagnostics.h"
 #include "platform/directx11/graphic/rhi/dxgi_format.h"
 
 #include <d3d11.h>

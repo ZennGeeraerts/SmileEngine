@@ -4,9 +4,7 @@
 /*=============================================================================*/
 
 #include "smpch.h"
-#include "directx11_diagnostics.h"
-
-#include <d3d11.h>
+#include "d3d_diagnostics.h"
 
 namespace smile::graphic::rhi
 {

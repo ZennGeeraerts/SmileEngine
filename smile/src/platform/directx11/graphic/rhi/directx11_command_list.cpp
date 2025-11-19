@@ -10,8 +10,8 @@
 #include "smile/graphic/rhi/resource/frame_buffer.h"
 #include "smile/graphic/rhi/shader/shader.h"
 
+#include "platform/d3dcommon/graphic/d3d_diagnostics.h"
 #include "directx11_device.h"
-#include "directx11_diagnostics.h"
 #include "directx11_swap_chain.h"
 #include "dxgi_format.h"
 

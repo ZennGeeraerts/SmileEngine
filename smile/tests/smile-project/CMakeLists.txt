@@ -27,6 +27,7 @@ add_module(common)
 add_module(core)
 add_module(graphic)
 
+add_platform(d3dcommon)
 add_platform(directx11)
 
 set(LIB_DIRS
