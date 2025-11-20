@@ -9,33 +9,32 @@
 =======================================================================*/
 
 /**
- * @file        shader_compiler.cpp
+ * @file        shader_reflector.cpp
  * @author      Zenn Geeraerts
  * @created     20 November 2025
- * @brief       Shader compiler tool
+ * @brief       Shader reflection tool
  */
 #include "smpch.h"
-#include "shader_compiler.h"
+#include "shader_reflector.h"
 
-#include "platform/d3dcommon/graphic/tools/d3d_shader_compiler.h"
+#include "platform/directx11/graphic/tools/d3d11_shader_reflector.h"
 
 namespace smile::graphic
 {
-    bool ShaderCompiler::Compile( const primitive::StringView source,
-        const primitive::String &sourceName,
-        const ShaderCompileOptions &options,
-        primitive::Vector< Byte > &byteCode )
+    bool ShaderReflector::Reflect( ShaderBlobFormat blobFormat,
+        const primitive::Vector< Byte > &byteCode,
+        ShaderReflectionData &reflectionData )
     {
-        switch ( options.OutputFormat )
+        switch ( blobFormat )
         {
             case ShaderBlobFormat::DXBC:
-                return D3DShaderCompiler::Compile( source, sourceName, options, byteCode );
+                return D3D11ShaderReflector::Reflect( byteCode, reflectionData );
 
             default:
             {
                 SM_ASSERT_MSG( false,
-                    "ShaderCompiler::Compile > Compiler for output format: '{}' not implemented",
-                    ShaderBlobFormatToString( options.OutputFormat ) );
+                    "ShaderReflector::Reflect > Reflector for blob format: '{}' not implemented",
+                    ShaderBlobFormatToString( blobFormat ) );
                 return false;
             }
         }
