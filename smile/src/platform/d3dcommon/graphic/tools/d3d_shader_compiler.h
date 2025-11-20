@@ -20,12 +20,12 @@
 
 namespace smile::graphic
 {
-    class D3DShaderCompiler final : public ShaderCompiler
+    class D3DShaderCompiler final
     {
-      private:
-        bool CompileImpl( const primitive::StringView source,
+      public:
+        static bool Compile( const primitive::StringView source,
             const primitive::String &sourceName,
             const ShaderCompileOptions &options,
-            primitive::Vector< Byte > &byteCode ) const override;
+            primitive::Vector< Byte > &byteCode );
     };
 }

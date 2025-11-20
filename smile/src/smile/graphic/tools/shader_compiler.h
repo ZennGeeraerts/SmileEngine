@@ -32,21 +32,12 @@ namespace smile::graphic
         bool Optimize = true;
     };
 
-    class ShaderCompiler
+    class ShaderCompiler final
     {
       public:
-        ShaderCompiler() = default;
-        virtual ~ShaderCompiler() = default;
-
         static bool Compile( const primitive::StringView source,
             const primitive::String &sourceName,
             const ShaderCompileOptions &options,
             primitive::Vector< Byte > &byteCode );
-
-      private:
-        virtual bool CompileImpl( const primitive::StringView source,
-            const primitive::String &sourceName,
-            const ShaderCompileOptions &options,
-            primitive::Vector< Byte > &byteCode ) const = 0;
     };
 }

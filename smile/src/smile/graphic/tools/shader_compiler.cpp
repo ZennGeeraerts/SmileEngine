@@ -30,7 +30,7 @@ namespace smile::graphic
         {
             case ShaderBlobFormat::DXBC:
             {
-                D3DShaderCompiler compiler{};
+                static D3DShaderCompiler compiler{};
                 return compiler.Compile( source, sourceName, options, byteCode );
             }
 

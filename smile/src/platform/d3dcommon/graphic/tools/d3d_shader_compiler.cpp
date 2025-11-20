@@ -24,10 +24,10 @@
 
 namespace smile::graphic
 {
-    bool D3DShaderCompiler::CompileImpl( const primitive::StringView source,
+    bool D3DShaderCompiler::Compile( const primitive::StringView source,
         const primitive::String &sourceName,
         const ShaderCompileOptions &options,
-        primitive::Vector< Byte > &byteCode ) const
+        primitive::Vector< Byte > &byteCode )
     {
         Microsoft::WRL::ComPtr< ID3DBlob > pCompiledBlob;
         Microsoft::WRL::ComPtr< ID3DBlob > pErrorBlob;
