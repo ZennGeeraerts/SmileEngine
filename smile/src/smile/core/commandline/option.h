@@ -8,6 +8,8 @@
 #include "option_base.h"
 #include "parser.h"
 
+#include <filesystem>
+
 namespace smile::commandline
 {
     template < typename OptionType, typename Modifier >
@@ -15,6 +17,18 @@ namespace smile::commandline
     {
         std::forward< Modifier >( modifer ).Apply( option );
     }
+
+    template < typename ValueType >
+    struct OptionTraits final
+    {
+        using ParserType = Parser< ValueType >;
+    };
+
+    template <>
+    struct OptionTraits< std::filesystem::path > final
+    {
+        using ParserType = Parser< primitive::String >;
+    };
 
     template < typename ValueType >
     class Option final : public OptionBase
@@ -44,7 +58,9 @@ namespace smile::commandline
 
         bool Parse( Arguments &arguments ) override
         {
-            const Parser< ValueType > parser;
+            using ParserType = typename OptionTraits< ValueType >::ParserType;
+
+            const ParserType parser;
             return parser.Parse( Name, Value, arguments );
         }
 
