@@ -13,83 +13,104 @@ namespace smile::commandline
     class ArgName final
     {
       public:
-        ArgName( const primitive::StringView name ) : Name{ name }
+        ArgName( const primitive::StringView name ) : m_Name{ name }
         {
         }
 
         bool IsValid() const
         {
-            return ( Name.GetCharCount() == 2 && Name[0] == '-' && std::isalpha( Name[1] ) ) ||
-                   ( Name.GetCharCount() > 2 && Name[0] == '-' && Name[1] == '-' );
+            return ( m_Name.GetCharCount() == 2 && m_Name[0] == '-' && std::isalpha( m_Name[1] ) ) ||
+                   ( m_Name.GetCharCount() > 2 && m_Name[0] == '-' && m_Name[1] == '-' );
         }
 
         primitive::StringView GetView() const
         {
-            if ( Name.GetCharCount() == 2 )
+            if ( m_Name.GetCharCount() == 2 )
             {
-                return { Name.GetData() + 1 };
+                return { m_Name.GetData() + 1 };
             }
             else
             {
-                return { Name.GetData() + 2 };
+                return { m_Name.GetData() + 2 };
             }
         }
 
+        operator bool() const
+        {
+            return m_Name.GetCharCount() > 0;
+        }
+
       private:
-        primitive::StringView Name;
+        primitive::StringView m_Name;
     };
 
     class ArgValue final
     {
       public:
-        ArgValue( const primitive::StringView value ) : Value{ value }
+        ArgValue( const primitive::StringView value ) : m_Value{ value }
         {
         }
 
         bool IsValid() const
         {
-            return Value.GetCharCount() > 0 && Value[0] != '-';
+            return m_Value.GetCharCount() > 0 && m_Value[0] != '-';
         }
 
         primitive::StringView GetView() const
         {
-            return Value;
+            return m_Value;
         }
 
       private:
-        primitive::StringView Value;
+        primitive::StringView m_Value;
     };
 
     class Arg final
     {
       public:
-        Arg( const primitive::StringView name, const primitive::StringView value ) : Name{ name }, Value{ value }
+        Arg( const primitive::StringView name, const primitive::StringView value ) : m_Name{ name }, m_Value{ value }
+        {
+        }
+
+        Arg( const primitive::StringView value ) : m_Name{ nullptr }, m_Value{ value }
         {
         }
 
         bool IsValid() const
         {
-            return Name.IsValid() && Value.IsValid();
+            return ( IsPositional() || m_Name.IsValid() ) && m_Value.IsValid();
         }
 
         primitive::StringView GetName() const
         {
-            return Name.GetView();
+            if ( !IsPositional() )
+            {
+                return m_Name.GetView();
+            }
+            else
+            {
+                return nullptr;
+            }
         }
 
         primitive::StringView GetValue() const
         {
-            return Value.GetView();
+            return m_Value.GetView();
         }
 
         bool IsShortOption() const
         {
-            return GetName().GetCharCount() == 1;
+            return !IsPositional() && GetName().GetCharCount() == 1;
+        }
+
+        bool IsPositional() const
+        {
+            return !m_Name;
         }
 
       private:
-        ArgName Name;
-        ArgValue Value;
+        ArgName m_Name;
+        ArgValue m_Value;
     };
 
     class Arguments final
