@@ -6,6 +6,7 @@
 
 #include "smile/common/memory/counted.h"
 #include "opening_mode.h"
+#include "smile/common/primitive/text/string_view.h"
 
 namespace smile::stream
 {
@@ -20,13 +21,13 @@ namespace smile::stream
         BinaryStream &operator=( const BinaryStream & ) = delete;
         BinaryStream &operator=( BinaryStream && ) = delete;
 
-        Uint32 GetSize() const
+        Count GetSize() const
         {
             SM_ASSERT_MSG( IsOpen(), "Binary stream is not open" );
             return m_Size;
         }
 
-        Uint32 GetIndex() const
+        Index GetIndex() const
         {
             SM_ASSERT_MSG( IsOpen(), "Binary stream is not open" );
             return m_Index;
@@ -52,13 +53,13 @@ namespace smile::stream
             return m_IsOutput;
         }
 
-        virtual bool SetIndex( const Uint32 index ) = 0;
+        virtual bool SetIndex( const Index index ) = 0;
         virtual bool OpenInput() = 0;
         virtual bool OpenOutput( OpeningModeFlags openingModeFlags ) = 0;
         virtual bool OpenInputOutput( OpeningModeFlags openingModeFlags ) = 0;
 
-        virtual Uint32 ReadByteArray( void *pByteArray, Uint32 size ) = 0;
-        virtual Uint32 WriteByteArray( const void *pByteArray, const Uint32 size ) = 0;
+        virtual Count ReadByteArray( void *pByteArray, Count size ) = 0;
+        virtual Count WriteByteArray( const void *pByteArray, const Count size ) = 0;
 
         virtual bool Close() = 0;
 
@@ -74,9 +75,9 @@ namespace smile::stream
             WriteByteArray( &value, sizeof( value ) );
         }
 
-        void WriteText( std::string_view text )
+        void WriteText( primitive::StringView text )
         {
-            WriteByteArray( text.data(), text.size() );
+            WriteByteArray( text.GetData(), text.GetCharCount() );
         }
 
       protected:
@@ -95,25 +96,25 @@ namespace smile::stream
             m_IsOutput = isOutput;
         }
 
-        Uint32 GetInternalSize() const
+        Count GetInternalSize() const
         {
             return m_Size;
         }
 
-        void UpdateSize( const Uint32 size )
+        void UpdateSize( const Count size )
         {
             m_Size = size;
         }
 
-        void UpdateIndex( const Uint32 index )
+        void UpdateIndex( const Index index )
         {
             SM_ASSERT_MSG( index <= m_Size, "Index has to be smaller than size" );
             m_Index = index;
         }
 
       private:
-        Uint32 m_Size{ 0 };
-        Uint32 m_Index{ 0 };
+        Count m_Size{ 0 };
+        Index m_Index{ 0 };
         Uint32 m_IsOpen : 1, m_IsInput : 1, m_IsOutput : 1;
     };
 }

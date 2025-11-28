@@ -51,20 +51,19 @@ namespace smile
             stream::MemoryBinaryStream stream{};
             stream.OpenOutput( { stream::OpeningMode::Append } );
 
-            std::vector< Uint32 > dummyData{ 1, 2, 4, 8, 16 };
-            stream.WriteByteArray( dummyData.data(), static_cast< Uint32 >( dummyData.size() ) * sizeof( Uint32 ) );
+            primitive::Vector< Uint32 > dummyData{ 1, 2, 4, 8, 16 };
+            stream.WriteByteArray( dummyData.GetData(), dummyData.GetItemCount() * sizeof( Uint32 ) );
 
             stream.Close();
 
             const auto &byteArray = stream.GetByteArray();
 
-            const auto count = byteArray.size() / sizeof( Uint32 );
-            std::vector< Uint32 > result{ reinterpret_cast< const Uint32 * >( byteArray.data() ),
-                reinterpret_cast< const Uint32 * >( byteArray.data() ) + count };
+            const Count count = byteArray.GetItemCount() / sizeof( Count );
+            primitive::Vector< Uint32 > result{ reinterpret_cast< const Uint32 * >( byteArray.GetData() ), count };
 
-            REQUIRE( dummyData.size() == result.size() );
+            REQUIRE( dummyData.GetItemCount() == result.GetItemCount() );
 
-            for ( Uint32 i{}; i < dummyData.size(); ++i )
+            for ( Index i{}; i < dummyData.GetItemCount(); ++i )
             {
                 REQUIRE( dummyData[i] == result[i] );
             }
@@ -75,21 +74,21 @@ namespace smile
             stream::MemoryBinaryStream stream{};
             stream.OpenInputOutput( { stream::OpeningMode::Append } );
 
-            std::vector< Uint32 > dummyData{ 1, 2, 4, 8, 16 };
-            stream.WriteByteArray( dummyData.data(), static_cast< Uint32 >( dummyData.size() ) * sizeof( Uint32 ) );
+            primitive::Vector< Uint32 > dummyData{ 1, 2, 4, 8, 16 };
+            stream.WriteByteArray( dummyData.GetData(), dummyData.GetItemCount() * sizeof( Uint32 ) );
 
             stream.Close();
 
             stream.OpenInput();
 
-            std::vector< Uint32 > result( dummyData.size() );
-            stream.ReadByteArray( result.data(), result.size() * sizeof( Uint32 ) );
+            primitive::Vector< Uint32 > result( dummyData.GetItemCount() );
+            stream.ReadByteArray( result.GetData(), result.GetItemCount() * sizeof( Uint32 ) );
 
             stream.Close();
 
-            REQUIRE( dummyData.size() == result.size() );
+            REQUIRE( dummyData.GetItemCount() == result.GetItemCount() );
 
-            for ( Uint32 i{}; i < dummyData.size(); ++i )
+            for ( Index i{}; i < dummyData.GetItemCount(); ++i )
             {
                 REQUIRE( dummyData[i] == result[i] );
             }
