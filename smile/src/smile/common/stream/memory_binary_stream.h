@@ -6,6 +6,7 @@
 
 #include "binary_stream.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
 
 namespace smile::stream
 {
@@ -21,29 +22,29 @@ namespace smile::stream
         MemoryBinaryStream &operator=( const MemoryBinaryStream & ) = delete;
         MemoryBinaryStream &operator=( MemoryBinaryStream && ) = delete;
 
-        const std::vector< Byte > &GetByteArray() const
+        const primitive::Vector< Byte > &GetByteArray() const
         {
             SM_ASSERT_MSG( !IsOpen(), "Binary stream is open" );
             return m_ByteArray;
         }
 
-        std::vector< Byte > &GetByteArray()
+        primitive::Vector< Byte > &GetByteArray()
         {
             SM_ASSERT_MSG( !IsOpen(), "Binary stream is open" );
             return m_ByteArray;
         }
 
-        bool SetIndex( const Uint32 index ) override;
+        bool SetIndex( const Index index ) override;
         bool OpenInput() override;
         bool OpenOutput( OpeningModeFlags openingModeFlags ) override;
         bool OpenInputOutput( OpeningModeFlags openingModeFlags ) override;
 
-        Uint32 ReadByteArray( void *pByteArray, Uint32 size ) override;
-        Uint32 WriteByteArray( const void *pByteArray, const Uint32 size ) override;
+        Count ReadByteArray( void *pByteArray, Count size ) override;
+        Count WriteByteArray( const void *pByteArray, const Count size ) override;
 
         bool Close() override;
 
       private:
-        std::vector< Byte > m_ByteArray;
+        primitive::Vector< Byte > m_ByteArray;
     };
 }

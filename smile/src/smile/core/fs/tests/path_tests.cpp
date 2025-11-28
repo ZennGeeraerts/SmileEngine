@@ -14,11 +14,11 @@
  * @created     25 November 2025
  * @brief       File path unit tests
  */
-#include "smile/core/file/path.h"
+#include "smile/core/fs/path.h"
 
 #include <catch/catch.hpp>
 
-namespace smile::file
+namespace smile::fs
 {
     TEST_CASE( "Path tests", "[file]" )
     {

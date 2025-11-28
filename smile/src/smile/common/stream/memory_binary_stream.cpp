@@ -7,7 +7,7 @@
 
 namespace smile::stream
 {
-    bool MemoryBinaryStream::SetIndex( const Uint32 index )
+    bool MemoryBinaryStream::SetIndex( const Index index )
     {
         UpdateIndex( index );
         return true;
@@ -19,7 +19,7 @@ namespace smile::stream
         SetOpen( true );
 
         UpdateIndex( 0 );
-        UpdateSize( static_cast< Uint32 >( m_ByteArray.size() ) );
+        UpdateSize( m_ByteArray.GetItemCount() );
 
         return true;
     }
@@ -31,10 +31,10 @@ namespace smile::stream
 
         if ( openingModeFlags.Has( OpeningMode::Truncate ) )
         {
-            m_ByteArray.resize( 0 );
+            m_ByteArray.SetItemCount( 0 );
         }
 
-        Uint32 size = static_cast< Uint32 >( m_ByteArray.size() );
+        const Count size = m_ByteArray.GetItemCount();
         UpdateSize( size );
         UpdateIndex( openingModeFlags.Has( OpeningMode::Append ) ? size : 0 );
 
@@ -49,17 +49,17 @@ namespace smile::stream
 
         if ( openingModeFlags.Has( OpeningMode::Truncate ) )
         {
-            m_ByteArray.resize( 0 );
+            m_ByteArray.SetItemCount( 0 );
         }
 
-        Uint32 size = static_cast< Uint32 >( m_ByteArray.size() );
+        const Count size = m_ByteArray.GetItemCount();
         UpdateSize( size );
         UpdateIndex( openingModeFlags.Has( OpeningMode::Append ) ? size : 0 );
 
         return true;
     }
 
-    Uint32 MemoryBinaryStream::ReadByteArray( void *pByteArray, Uint32 size )
+    Count MemoryBinaryStream::ReadByteArray( void *pByteArray, Count size )
     {
         const auto index = GetIndex();
         const auto totalSize = GetSize();
@@ -69,25 +69,25 @@ namespace smile::stream
             size = totalSize - index;
         }
 
-        std::memcpy( pByteArray, m_ByteArray.data() + index, size );
+        std::memcpy( pByteArray, m_ByteArray.GetData() + index, size );
 
         UpdateIndex( index + size );
 
         return size;
     }
 
-    Uint32 MemoryBinaryStream::WriteByteArray( const void *pByteArray, const Uint32 size )
+    Count MemoryBinaryStream::WriteByteArray( const void *pByteArray, const Count size )
     {
         const auto index = GetIndex();
         const auto totalSize = GetSize();
 
         if ( index + size > totalSize )
         {
-            m_ByteArray.resize( index + size );
+            m_ByteArray.SetItemCount( index + size );
             UpdateSize( index + size );
         }
 
-        std::memcpy( m_ByteArray.data() + index, pByteArray, size );
+        std::memcpy( m_ByteArray.GetData() + index, pByteArray, size );
         UpdateIndex( index + size );
 
         return size;
