@@ -19,7 +19,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/text/string.h"
 
-namespace smile::file
+namespace smile::fs
 {
     class Path final : public primitive::String
     {

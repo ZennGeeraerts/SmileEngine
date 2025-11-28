@@ -19,7 +19,7 @@
 
 #include "smile/common/foundation/range_iterator.h"
 
-namespace smile::file
+namespace smile::fs
 {
     Count Path::GetDirectoryCharacterCount( const primitive::StringView filePath )
     {

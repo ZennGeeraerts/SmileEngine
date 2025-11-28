@@ -8,7 +8,7 @@ set(DIRECTORIES
     asset
     commandline
     ecs
-    file
+    fs
     geometric
     input
     math
