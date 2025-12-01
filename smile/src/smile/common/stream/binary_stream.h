@@ -13,7 +13,7 @@ namespace smile::stream
     class BinaryStream : public memory::Counted
     {
       public:
-        BinaryStream() = default;
+        BinaryStream();
         BinaryStream( const BinaryStream & ) = delete;
         BinaryStream( BinaryStream && ) = delete;
         virtual ~BinaryStream();
@@ -113,8 +113,10 @@ namespace smile::stream
         }
 
       private:
-        Count m_Size{ 0 };
-        Index m_Index{ 0 };
+        Count m_Size;
+        Index m_Index;
         Uint32 m_IsOpen : 1, m_IsInput : 1, m_IsOutput : 1;
     };
+
+    void GetTextContent( primitive::String &content, BinaryStream &stream );
 }
