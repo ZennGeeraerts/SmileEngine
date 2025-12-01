@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/memory/ref.h"
 #include "opening_mode.h"
 #include "smile/common/primitive/text/string_view.h"
 
@@ -13,6 +13,9 @@ namespace smile::stream
     class BinaryStream : public memory::Counted
     {
       public:
+        using Ref = memory::Ref< BinaryStream >;
+        using ConstRef = memory::Ref< const BinaryStream >;
+
         BinaryStream();
         BinaryStream( const BinaryStream & ) = delete;
         BinaryStream( BinaryStream && ) = delete;

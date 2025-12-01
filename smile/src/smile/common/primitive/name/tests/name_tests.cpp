@@ -25,8 +25,8 @@ namespace smile::primitive
         SECTION( "Names are unique" )
         {
             Name test{ "test" };
-            Name testString{ primitive::String{ "test" } };
-            Name testStringView{ primitive::StringView{ "test" } };
+            Name testString{ String{ "test" } };
+            Name testStringView{ StringView{ "test" } };
 
             CHECK( !test.IsEmpty() );
             CHECK( !testString.IsEmpty() );
@@ -41,7 +41,7 @@ namespace smile::primitive
 
         SECTION( "Clear" )
         {
-            primitive::Name test{ "test" };
+            Name test{ "test" };
 
             CHECK( !test.IsEmpty() );
 
@@ -49,7 +49,7 @@ namespace smile::primitive
 
             CHECK( test.IsEmpty() );
 
-            test = primitive::Name{ "test2" };
+            test = Name{ "test2" };
 
             CHECK( !test.IsEmpty() );
 

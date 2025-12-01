@@ -9,25 +9,33 @@
 =======================================================================*/
 
 /**
- * @file        physical_system.h
+ * @file        file_system.h
  * @author      Zenn Geeraerts
  * @created     1 December 2025
- * @brief       Physical file system functions
+ * @brief       Managing files
  */
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/foundation/singleton.h"
+#include "smile/common/memory/counted.h"
+#include "smile/common/primitive/text/string.h"
+#include "smile/common/stream/binary_stream.h"
 #include "path.h"
+
+#include <optional>
 
 namespace smile::fs
 {
-    class PhysicalSystem final
+    class FileSystem final : public memory::Counted, public foundation::Singleton< FileSystem >
     {
       public:
-        PhysicalSystem() = delete;
-        ~PhysicalSystem() = delete;
+        FileSystem() = default;
+        ~FileSystem() = default;
 
-        static bool DoesFileExist( const Path &path );
-        static bool DoesDirectoryExist( const Path &path );
-        static bool CreateDirectory( const Path &path );
+        std::optional< primitive::String > GetFileContent( const Path &filePath ) const;
+        bool GetFileBinaryContent( primitive::Vector< Byte > &content, const Path &filePath ) const;
+
+        stream::BinaryStream::Ref GetFile( const Path &filePath ) const;
     };
 }
