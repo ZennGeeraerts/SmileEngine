@@ -174,4 +174,54 @@ namespace smile::primitive
 
         return s_InvalidIndex;
     }
+
+    void ReplaceText( String &text, const StringView textToFind, const StringView textToReplace )
+    {
+        SM_ASSERT( !textToFind.IsEmpty() );
+
+        Index index;
+        Index nextSearchIndex{ 0 };
+
+        while ( ( index = FindText( text, textToFind, nextSearchIndex ) ) != s_InvalidIndex )
+        {
+            ReplaceTextInsideRange( text, index, textToFind.GetCharCount(), textToReplace );
+            nextSearchIndex = index + textToReplace.GetCharCount();
+        }
+    }
+
+    void
+    ReplaceTextInsideRange( String &text, const Index index, const Count charCount, const StringView textToReplace )
+    {
+        SM_ASSERT( text.IsValidRange( index, charCount ) );
+
+        const auto newCharCount = textToReplace.GetCharCount();
+
+        if ( charCount > newCharCount )
+        {
+            const auto offset{ charCount - newCharCount };
+            for ( auto moveIndex = index + newCharCount; moveIndex < ( text.GetCharCount() - offset ); ++moveIndex )
+            {
+                text[moveIndex] = text[moveIndex + offset];
+            }
+
+            text.SetCharCount( text.GetCharCount() - offset );
+        }
+        else if ( charCount < newCharCount )
+        {
+            const auto offset{ newCharCount - charCount };
+
+            const auto prevCharCount{ text.GetCharCount() };
+            text.SetCharCount( prevCharCount + offset );
+
+            for ( auto moveIndex = prevCharCount; moveIndex-- > index; )
+            {
+                text[moveIndex + offset] = text[moveIndex];
+            }
+        }
+
+        for ( auto textIndex : foundation::GetCountIterator( textToReplace.GetCharCount() ) )
+        {
+            text[index + textIndex] = textToReplace[textIndex];
+        }
+    }
 }

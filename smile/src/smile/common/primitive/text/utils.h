@@ -17,4 +17,9 @@ namespace smile::primitive
         const Index firstCharIndex = 0 );
 
     Index FindCharacter( const primitive::StringView text, const char charToFind, const Index firstCharIndex = 0 );
+
+    void ReplaceText( String &text, const StringView textToFind, const StringView textToReplace );
+
+    void
+    ReplaceTextInsideRange( String &text, const Index index, const Count charCount, const StringView textToReplace );
 }

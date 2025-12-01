@@ -102,5 +102,69 @@ namespace smile::primitive
 
             CHECK( s_InvalidIndex == FindCharacter( text, 'y' ) );
         }
+
+        SECTION( "ReplaceText" )
+        {
+            String reference{ "This is some text" };
+            String result;
+
+            result = reference;
+            ReplaceText( result, "This is", "That's" );
+            CHECK( result == "That's some text" );
+
+            result = reference;
+            ReplaceText( result, "text", "text." );
+            CHECK( result == "This is some text." );
+
+            result = reference;
+            ReplaceText( result, "texts", "anything" );
+            CHECK( result == reference );
+
+            result = "Some text text twice";
+            ReplaceText( result, "text", "both" );
+            CHECK( result == "Some both both twice" );
+
+            result = reference;
+            ReplaceText( result, "some ", "" );
+            CHECK( result == "This is text" );
+
+            result = reference;
+            CHECK_ASSERT( ReplaceText( result, "", "text" ) );
+        }
+
+        SECTION( "ReplaceTextInsideRange" )
+        {
+            String reference{ "This is some text" };
+            String result;
+
+            result = reference;
+            ReplaceTextInsideRange( result, 0, 7, "That's" );
+            CHECK( result == "That's some text" );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 13, 4, "text." );
+            CHECK( result == "This is some text." );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 10, 0, "" );
+            CHECK( result == reference );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 0, 0, "Insert:" );
+            CHECK( result == "Insert:This is some text" );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 4, 0, ":insert:" );
+            CHECK( result == "This:insert: is some text" );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 17, 0, ":insert:" );
+            CHECK( result == "This is some text:insert:" );
+
+            result = reference;
+            CHECK_ASSERT( ReplaceTextInsideRange( result, -1, 0, "text" ) );
+            CHECK_ASSERT( ReplaceTextInsideRange( result, 0, 18, "text" ) );
+            CHECK_ASSERT( ReplaceTextInsideRange( result, 17, 1, "text" ) );
+        }
     }
 }
