@@ -9,6 +9,39 @@
 
 namespace smile::primitive
 {
+    template < typename Type >
+    concept PureText = std::derived_from< Type, String >;
+
+    template < typename Type >
+    concept TextClass = PureText< Type > || std::same_as< Type, StringView >;
+
+    template < TextClass Text >
+    void Split( Vector< Text > &segments, const StringView text, const char seperator )
+    {
+        Index currentLineStartIndex{ 0 };
+        Index currentCharIndex;
+
+        for ( currentCharIndex = 0; currentCharIndex < text.GetCharCount(); ++currentCharIndex )
+        {
+            if ( text[currentCharIndex] == seperator )
+            {
+                if ( currentLineStartIndex != currentCharIndex )
+                {
+                    segments.PushBack(
+                        { text.GetSubText() + currentLineStartIndex, currentCharIndex - currentLineStartIndex } );
+                }
+
+                currentLineStartIndex = currentCharIndex + 1;
+            }
+        }
+
+        if ( currentLineStartIndex != text.GetCharCount() )
+        {
+            segments.PushBack(
+                { text.GetSubText() + currentLineStartIndex, currentCharIndex - currentLineStartIndex } );
+        }
+    }
+
     std::optional< int > ToInt( StringView text );
     std::optional< float > ToFloat( StringView text );
 

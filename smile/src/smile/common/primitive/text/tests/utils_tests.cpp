@@ -10,6 +10,28 @@ namespace smile::primitive
 {
     TEST_CASE( "primitive::String utilities", "[primitive][text]" )
     {
+        SECTION( "Split" )
+        {
+            Vector< String > segments;
+            Vector< StringView > subtextSegments;
+
+            Split( segments, "Test Hello  234   Ok", ' ' );
+            Split( subtextSegments, "Test Hello  234   Ok  ", ' ' );
+
+            CHECK( 4 == segments.GetItemCount() );
+            CHECK( 4 == subtextSegments.GetItemCount() );
+
+            CHECK( "Test" == segments[0] );
+            CHECK( "Hello" == segments[1] );
+            CHECK( "234" == segments[2] );
+            CHECK( "Ok" == segments[3] );
+
+            CHECK( "Test" == subtextSegments[0] );
+            CHECK( "Hello" == subtextSegments[1] );
+            CHECK( "234" == subtextSegments[2] );
+            CHECK( "Ok" == subtextSegments[3] );
+        }
+
         SECTION( "ToInt" )
         {
             String _5{ "5" };
