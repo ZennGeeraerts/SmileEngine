@@ -17,10 +17,22 @@
 #include "smpch.h"
 #include "physical_system.h"
 
+#include "file_system.h"
+
 #include <filesystem>
 
 namespace smile::fs
 {
+    Path PhysicalSystem::GetCurrentDirectory()
+    {
+        return Path::FromPlatformPath( std::filesystem::current_path().string().c_str() ) + "/";
+    }
+
+    void PhysicalSystem::SetCurrentDirectory( const Path &path )
+    {
+        std::filesystem::current_path( path.GetData() );
+    }
+
     bool PhysicalSystem::DoesFileExist( const Path &path )
     {
         std::error_code errorCode;

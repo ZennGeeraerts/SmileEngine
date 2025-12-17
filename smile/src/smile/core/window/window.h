@@ -6,17 +6,18 @@
 #include "smpch.h"
 #include "events/event.h"
 #include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::window
 {
     struct WindowSettings final
     {
-        WindowSettings( const std::string &title = "Smile Engine", Uint32 width = 1280, Uint32 height = 720 )
+        WindowSettings( const primitive::StringView title = "Smile Engine", Uint32 width = 1280, Uint32 height = 720 )
             : Title{ title }, Width{ width }, Height{ height }
         {
         }
 
-        std::string Title;
+        primitive::String Title;
         Uint32 Width;
         Uint32 Height;
     };

@@ -6,10 +6,8 @@
 #include "application.h"
 
 #include "smile/core/input/input.h"
-
 #include "timer.h"
-
-#include <filesystem>
+#include "smile/core/fs/physical_system.h"
 
 namespace smile::application
 {
@@ -17,12 +15,12 @@ namespace smile::application
 
     Application::Application( const ApplicationDescriptor &descriptor ) : m_Descriptor{ descriptor }
     {
-        SM_ASSERT_MSG(
-            !s_pInstance, "Application::Application > There is already an instance of SmileGame, there can only be 1" );
+        SM_ASSERT_MSG( !s_pInstance,
+            "Application::Application > There is already an instance of Application, there can only be 1" );
         s_pInstance = this;
 
-        if ( !descriptor.WorkingDirectory.empty() )
-            std::filesystem::current_path( descriptor.WorkingDirectory );
+        if ( !descriptor.WorkingDirectory.IsEmpty() )
+            fs::PhysicalSystem::SetCurrentDirectory( descriptor.WorkingDirectory );
 
         m_pWindowManager = std::unique_ptr< window::WindowManager >( window::WindowManager::Create() );
         window::Window *pMainWindow = m_pWindowManager->CreateNewWindow( window::WindowSettings{ descriptor.Name } );
