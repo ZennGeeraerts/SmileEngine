@@ -191,10 +191,10 @@ namespace smile::memory
     }
 
     template < class ItemType >
-    inline void reverseMoveArrayItems( ItemType *pItems,
+    inline void ReverseMoveArrayItems( ItemType *pItems,
         const Count itemCount,
         ItemType *pOtherItems,
-        typename std::enable_if< IsRawTypeTrait< ItemType >::value >::type * = nullptr )
+        typename std::enable_if_t< !IsRawTypeTrait< ItemType >::value > * = nullptr )
     {
         MoveByteArray( pItems, pOtherItems, sizeof( *pItems ) * itemCount );
     }
