@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::platform
 {
-    std::filesystem::path GetExecutablePath();
+    fs::Path GetExecutablePath();
 }
