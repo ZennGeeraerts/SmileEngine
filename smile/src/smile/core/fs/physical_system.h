@@ -26,6 +26,8 @@ namespace smile::fs
         PhysicalSystem() = delete;
         ~PhysicalSystem() = delete;
 
+        static void Initialize();
+
         static Path GetCurrentDirectory();
         static void SetCurrentDirectory( const Path &path );
 

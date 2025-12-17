@@ -19,9 +19,34 @@
 
 #include "file.h"
 #include "physical_system.h"
+#include "smile/common/primitive/collection/array_utils.h"
 
 namespace smile::fs
 {
+    void FileSystem::Initialize()
+    {
+        foundation::Singleton< FileSystem >::CreateInstance();
+
+        PhysicalSystem::Initialize();
+    }
+
+    void FileSystem::AddRootDirectory( const Path &rootDirectory )
+    {
+        SM_ASSERT( !primitive::array::HasItem( m_RootDirectories, rootDirectory ) );
+
+        m_RootDirectories.PushBack( rootDirectory );
+    }
+
+    void FileSystem::RemoveRootDirectory( const Path &rootDirectory )
+    {
+        primitive::array::EraseIfExists( m_RootDirectories, rootDirectory );
+    }
+
+    void FileSystem::ClearRootDirectories()
+    {
+        m_RootDirectories.Clear();
+    }
+
     std::optional< primitive::String > FileSystem::GetFileContent( const Path &filePath ) const
     {
         primitive::String content;

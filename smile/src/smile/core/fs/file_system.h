@@ -20,6 +20,7 @@
 #include "smile/common/foundation/singleton.h"
 #include "smile/common/memory/counted.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "smile/common/stream/binary_stream.h"
 #include "path.h"
 
@@ -33,9 +34,19 @@ namespace smile::fs
         FileSystem() = default;
         ~FileSystem() = default;
 
+        static void CreateInstance() = delete;
+        static void Initialize();
+
+        void AddRootDirectory( const Path &rootDirectory );
+        void RemoveRootDirectory( const Path &rootDirectory );
+        void ClearRootDirectories();
+
         std::optional< primitive::String > GetFileContent( const Path &filePath ) const;
         bool GetFileBinaryContent( primitive::Vector< Byte > &content, const Path &filePath ) const;
 
         stream::BinaryStream::Ref GetFile( const Path &filePath ) const;
+
+      private:
+        primitive::Vector< Path > m_RootDirectories;
     };
 }

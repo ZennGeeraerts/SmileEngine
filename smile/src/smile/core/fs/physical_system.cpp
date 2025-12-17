@@ -23,6 +23,11 @@
 
 namespace smile::fs
 {
+    void PhysicalSystem::Initialize()
+    {
+        FileSystem::GetInstance().AddRootDirectory( GetCurrentDirectory() );
+    }
+
     Path PhysicalSystem::GetCurrentDirectory()
     {
         return Path::FromPlatformPath( std::filesystem::current_path().string().c_str() ) + "/";
