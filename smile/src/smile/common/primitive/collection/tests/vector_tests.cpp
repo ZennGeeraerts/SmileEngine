@@ -53,6 +53,26 @@ namespace smile::primitive
             REQUIRE( values[2] == 3 );
         }
 
+        SECTION( "PushFront" )
+        {
+            Vector< int > values{};
+
+            values.PushFront( 1 );
+            values.PushFront( 2 );
+            values.PushFront( 3 );
+
+            values.PushFront( Vector< int >{ 4, 5, 6 } );
+
+            REQUIRE( values[0] == 4 );
+            REQUIRE( values[1] == 5 );
+            REQUIRE( values[2] == 6 );
+            REQUIRE( values[3] == 3 );
+            REQUIRE( values[4] == 2 );
+            REQUIRE( values[5] == 1 );
+
+            REQUIRE( values.GetItemCount() == 6 );
+        }
+
         SECTION( "PopBack" )
         {
             Vector< int > values{ 1, 2, 3 };
