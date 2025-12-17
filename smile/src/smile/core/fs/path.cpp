@@ -18,9 +18,68 @@
 #include "path.h"
 
 #include "smile/common/foundation/range_iterator.h"
+#include "smile/common/primitive/text/utils.h"
+#include "smile/common/stream/text_stream.h"
 
 namespace smile::fs
 {
+    void Path::CanonicalizePath()
+    {
+        if ( IsEmpty() )
+        {
+            return;
+        }
+
+        primitive::Vector< primitive::StringView > segments;
+        primitive::Split( segments, *this, '/' );
+
+        if ( GetData()[0] == '/' )
+        {
+            segments.PushFront( primitive::StringView{} );
+        }
+
+        bool isDirty = false;
+
+        for ( Index index{ 0 }; index < segments.GetItemCount(); ++index )
+        {
+            if ( segments[index] == ".." && index > 0 )
+            {
+                const auto first = segments.begin() + index - 1;
+                const auto last = first + 2;
+                segments.Erase( first, last );
+
+                isDirty = true;
+                index -= 2;
+            }
+            else if ( segments[index] == "." && index > 0 )
+            {
+                segments.EraseAtIndex( index );
+                isDirty = true;
+                --index;
+            }
+        }
+
+        if ( isDirty )
+        {
+            if ( !segments.IsEmpty() )
+            {
+                stream::TextStream stream;
+                stream << segments[0];
+
+                for ( Index index = 1; index <= segments.GetLastIndex(); ++index )
+                {
+                    stream << '/' << segments[index];
+                }
+
+                operator=( stream.GetText() );
+            }
+            else
+            {
+                Clear();
+            }
+        }
+    }
+
     Count Path::GetDirectoryCharacterCount( const primitive::StringView filePath )
     {
         for ( const auto charIndex : foundation::GetReverseCountIterator( filePath.GetCharCount() ) )
@@ -105,5 +164,16 @@ namespace smile::fs
         {
             return {};
         }
+    }
+
+    Path Path::FromPlatformPath( const primitive::StringView path )
+    {
+        Path result{ path };
+
+        primitive::ReplaceText( result, "\\", "/" );
+
+        result.CanonicalizePath();
+
+        return result;
     }
 }

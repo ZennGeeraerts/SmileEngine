@@ -91,6 +91,8 @@ namespace smile::fs
             return GetFileName( *this );
         }
 
+        void CanonicalizePath();
+
         static Count GetDirectoryCharacterCount( const primitive::StringView filePath );
         static Count GetExtensionCharacterCount( const primitive::StringView filePath );
 
@@ -98,6 +100,8 @@ namespace smile::fs
         static primitive::StringView GetExtension( const primitive::StringView filePath );
         static primitive::StringView GetDirectory( const primitive::StringView filePath );
         static primitive::StringView GetFileName( const primitive::StringView filePath );
+
+        static Path FromPlatformPath( const primitive::StringView path );
     };
 }
 

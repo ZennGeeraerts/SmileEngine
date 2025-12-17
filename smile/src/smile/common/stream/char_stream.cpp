@@ -46,7 +46,7 @@ namespace smile::stream
 
     CharStream &operator<<( CharStream &stream, const primitive::StringView value )
     {
-        stream.AddString( value.GetData(), value.GetCharCount() );
+        stream.AddString( value.GetSubText(), value.GetCharCount() );
 
         return stream;
     }
