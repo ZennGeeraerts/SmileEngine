@@ -30,7 +30,7 @@ namespace smile
     {
         application::ApplicationDescriptor descriptor{};
         descriptor.Name = "Smile Editor";
-        descriptor.WorkingDirectory = platform::GetExecutablePath().parent_path();
+        descriptor.WorkingDirectory = platform::GetExecutablePath().GetDirectory();
         descriptor.CommandLineArgs = commandLineArgs;
 
         // This application will get passed to the entry point of the engine

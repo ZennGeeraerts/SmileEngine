@@ -91,6 +91,8 @@ namespace smile::fs
             return GetFileName( *this );
         }
 
+        void CanonicalizePath();
+
         static Count GetDirectoryCharacterCount( const primitive::StringView filePath );
         static Count GetExtensionCharacterCount( const primitive::StringView filePath );
 
@@ -98,5 +100,27 @@ namespace smile::fs
         static primitive::StringView GetExtension( const primitive::StringView filePath );
         static primitive::StringView GetDirectory( const primitive::StringView filePath );
         static primitive::StringView GetFileName( const primitive::StringView filePath );
+
+        static Path FromPlatformPath( const primitive::StringView path );
+    };
+}
+
+namespace std
+{
+    template <>
+    struct formatter< smile::fs::Path >
+    {
+        formatter< basic_string_view< char > > Base;
+
+        constexpr auto parse( format_parse_context &ctx )
+        {
+            return Base.parse( ctx );
+        }
+
+        auto format( const smile::fs::Path &path, format_context &ctx ) const
+        {
+            basic_string_view< char > temp{ path.GetData(), static_cast< size_t >( path.GetCharCount() ) };
+            return Base.format( temp, ctx );
+        }
     };
 }

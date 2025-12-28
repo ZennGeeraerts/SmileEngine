@@ -312,6 +312,44 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
+        void PushFront( const Item &item )
+        {
+            PushFront( &item, 1 );
+        }
+
+        void PushFront( const Vector< Item > &items )
+        {
+            PushFront( items.GetData(), items.GetItemCount() );
+        }
+
+        void PushFront( const Item *pItems, const Count itemCount )
+        {
+            const auto oldItemCount{ m_ItemCount };
+
+            Reserve( m_ItemCount + itemCount );
+
+            if ( itemCount <= oldItemCount )
+            {
+                memory::ConstructMoveArrayItems(
+                    &m_pItems[oldItemCount], itemCount, &m_pItems[oldItemCount - itemCount] );
+
+                memory::ReverseMoveArrayItems( m_pItems + itemCount, oldItemCount - itemCount, m_pItems );
+
+                memory::CopyArrayItems( m_pItems, itemCount, pItems );
+            }
+            else
+            {
+                memory::ConstructMoveArrayItems( &m_pItems[itemCount], oldItemCount, m_pItems );
+
+                memory::ConstructCopiedArrayItems(
+                    &m_pItems[oldItemCount], itemCount - oldItemCount, pItems + oldItemCount );
+
+                memory::CopyArrayItems( m_pItems, oldItemCount, pItems );
+            }
+
+            m_ItemCount += itemCount;
+        }
+
         void Insert( const Item &item, const Index index )
         {
             Reserve( m_ItemCount + 1 );

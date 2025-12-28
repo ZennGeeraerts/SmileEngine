@@ -10,6 +10,28 @@ namespace smile::primitive
 {
     TEST_CASE( "primitive::String utilities", "[primitive][text]" )
     {
+        SECTION( "Split" )
+        {
+            Vector< String > segments;
+            Vector< StringView > subtextSegments;
+
+            Split( segments, "Test Hello  234   Ok", ' ' );
+            Split( subtextSegments, "Test Hello  234   Ok  ", ' ' );
+
+            CHECK( 4 == segments.GetItemCount() );
+            CHECK( 4 == subtextSegments.GetItemCount() );
+
+            CHECK( "Test" == segments[0] );
+            CHECK( "Hello" == segments[1] );
+            CHECK( "234" == segments[2] );
+            CHECK( "Ok" == segments[3] );
+
+            CHECK( "Test" == subtextSegments[0] );
+            CHECK( "Hello" == subtextSegments[1] );
+            CHECK( "234" == subtextSegments[2] );
+            CHECK( "Ok" == subtextSegments[3] );
+        }
+
         SECTION( "ToInt" )
         {
             String _5{ "5" };
@@ -101,6 +123,70 @@ namespace smile::primitive
             CHECK( 15 == FindCharacter( text, '_' ) );
 
             CHECK( s_InvalidIndex == FindCharacter( text, 'y' ) );
+        }
+
+        SECTION( "ReplaceText" )
+        {
+            String reference{ "This is some text" };
+            String result;
+
+            result = reference;
+            ReplaceText( result, "This is", "That's" );
+            CHECK( result == "That's some text" );
+
+            result = reference;
+            ReplaceText( result, "text", "text." );
+            CHECK( result == "This is some text." );
+
+            result = reference;
+            ReplaceText( result, "texts", "anything" );
+            CHECK( result == reference );
+
+            result = "Some text text twice";
+            ReplaceText( result, "text", "both" );
+            CHECK( result == "Some both both twice" );
+
+            result = reference;
+            ReplaceText( result, "some ", "" );
+            CHECK( result == "This is text" );
+
+            result = reference;
+            CHECK_ASSERT( ReplaceText( result, "", "text" ) );
+        }
+
+        SECTION( "ReplaceTextInsideRange" )
+        {
+            String reference{ "This is some text" };
+            String result;
+
+            result = reference;
+            ReplaceTextInsideRange( result, 0, 7, "That's" );
+            CHECK( result == "That's some text" );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 13, 4, "text." );
+            CHECK( result == "This is some text." );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 10, 0, "" );
+            CHECK( result == reference );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 0, 0, "Insert:" );
+            CHECK( result == "Insert:This is some text" );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 4, 0, ":insert:" );
+            CHECK( result == "This:insert: is some text" );
+
+            result = reference;
+            ReplaceTextInsideRange( result, 17, 0, ":insert:" );
+            CHECK( result == "This is some text:insert:" );
+
+            result = reference;
+            CHECK_ASSERT( ReplaceTextInsideRange( result, -1, 0, "text" ) );
+            CHECK_ASSERT( ReplaceTextInsideRange( result, 0, 18, "text" ) );
+            CHECK_ASSERT( ReplaceTextInsideRange( result, 17, 1, "text" ) );
         }
     }
 }

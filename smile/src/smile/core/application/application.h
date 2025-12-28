@@ -5,13 +5,13 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/text/string.h"
 
 #include "layer_stack.h"
 #include "smile/core/window/window_manager.h"
 #include "smile/core/window/events/event.h"
 #include "smile/core/window/events/application_event.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::application
 {
@@ -29,8 +29,8 @@ namespace smile::application
 
     struct ApplicationDescriptor final
     {
-        std::string Name = "Smile Game";
-        std::filesystem::path WorkingDirectory;
+        primitive::String Name = "Smile Game";
+        fs::Path WorkingDirectory;
         ApplicationCommandLineArgs CommandLineArgs;
     };
 

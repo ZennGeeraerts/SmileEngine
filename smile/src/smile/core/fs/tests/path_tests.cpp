@@ -79,5 +79,55 @@ namespace smile::fs
             CHECK( vector[2] == "third" );
             CHECK( vector[3] == "xxx" );
         }
+
+        SECTION( "CanonicalizePath" )
+        {
+            Path path;
+
+            path = "./HELLO/WORLD/test.path";
+            path.CanonicalizePath();
+
+            CHECK( "./HELLO/WORLD/test.path" == path );
+
+            path = "../HELLO/WORLD/test.path";
+            path.CanonicalizePath();
+
+            CHECK( "../HELLO/WORLD/test.path" == path );
+
+            path = "c:/HELLO/./WORLD/./test.path";
+            path.CanonicalizePath();
+
+            CHECK( "c:/HELLO/WORLD/test.path" == path );
+
+            path = "c:/HELLO/././WORLD/test.path";
+            path.CanonicalizePath();
+
+            CHECK( "c:/HELLO/WORLD/test.path" == path );
+
+            path = "/HELLO/./WORLD/./test.path";
+            path.CanonicalizePath();
+
+            CHECK( "/HELLO/WORLD/test.path" == path );
+
+            path = "c:/HELLO/../WORLD/test.path";
+            path.CanonicalizePath();
+
+            CHECK( "c:/WORLD/test.path" == path );
+
+            path = "/HELLO/../WORLD/test.path";
+            path.CanonicalizePath();
+
+            CHECK( "/WORLD/test.path" == path );
+
+            path = "HELLO/../../WORLD/test.path";
+            path.CanonicalizePath();
+
+            CHECK( "../WORLD/test.path" == path );
+
+            path = "/HELLO/WORLD/../../test.path";
+            path.CanonicalizePath();
+
+            CHECK( "/test.path" == path );
+        }
     }
 }
