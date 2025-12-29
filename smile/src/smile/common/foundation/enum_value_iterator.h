@@ -54,7 +54,7 @@ namespace smile::foundation
 
       private:
         EnumType m_Value;
-    }
+    };
 
     template < EnumWithCount EnumType >
     class EnumValues final
