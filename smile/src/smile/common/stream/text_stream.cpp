@@ -17,8 +17,12 @@
 #include "smpch.h"
 #include "text_stream.h"
 
+#include "smile/common/thread/instance_provider.h"
+
 namespace smile::stream
 {
+    thread::InstanceProvider< TextStreamHelper, TextStream > g_TextBuilderProvider;
+
     TextStream::TextStream() noexcept : CharStream{}
     {
     }
@@ -54,5 +58,10 @@ namespace smile::stream
         {
             SetCurrentCharIndex( charIndex - m_Text.GetCharCount() );
         }
+    }
+
+    TextStreamHelper GetTextBuilder()
+    {
+        return g_TextBuilderProvider.Get();
     }
 }
