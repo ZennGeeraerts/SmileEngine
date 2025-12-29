@@ -9,13 +9,13 @@
 =======================================================================*/
 
 /**
- * @file        instance_provider.cpp
+ * @file        instance_provider_base.cpp
  * @author      Zenn Geeraerts
  * @created     29 December 2025
- * @brief       Abstract base class for providing an instance of a resource
+ * @brief       Base class for providing an instance of a resource
  */
 #include "smpch.h"
-#include "instance_provider.h"
+#include "instance_provider_base.h"
 
 #include "smile/common/primitive/primitive.h"
 
@@ -23,7 +23,7 @@
 
 namespace smile::thread
 {
-    InstanceProviderHandle InstanceProvider::Get()
+    InstanceProviderHandle InstanceProviderBase::Get()
     {
 #ifdef SM_C_DEBUG
         Uint32 tryCount{ 32 };
@@ -42,7 +42,7 @@ namespace smile::thread
 #ifdef SM_C_DEBUG
                 if ( --tryCount < 0 )
                 {
-                    SM_ASSERT( false,
+                    SM_ASSERT_MSG( false,
                         "Unable to give an instance after several tries, probably a recursion calling "
                         "InstanceProvider" );
                 }
@@ -59,7 +59,7 @@ namespace smile::thread
         }
     }
 
-    void InstanceProvider::Release( const InstanceProviderHandle &handle )
+    void InstanceProviderBase::Release( const InstanceProviderHandle &handle )
     {
         m_Used &= ~( 1u << handle.Idx );
     }

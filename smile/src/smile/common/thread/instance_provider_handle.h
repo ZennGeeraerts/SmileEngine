@@ -20,12 +20,12 @@
 
 namespace smile::thread
 {
-    class InstanceProvider;
+    class InstanceProviderBase;
 
     class InstanceProviderHandle final
     {
       public:
-        InstanceProviderHandle( InstanceProvider *pProvider, const Index index ) noexcept
+        InstanceProviderHandle( InstanceProviderBase *pProvider, const Index index ) noexcept
             : m_pProvider{ pProvider }, Idx{ index }
         {
         }
@@ -46,6 +46,6 @@ namespace smile::thread
         const Index Idx;
 
       private:
-        InstanceProvider *m_pProvider;
+        InstanceProviderBase *m_pProvider;
     };
 }

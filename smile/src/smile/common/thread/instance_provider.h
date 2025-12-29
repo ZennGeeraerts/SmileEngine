@@ -9,23 +9,31 @@
 =======================================================================*/
 
 /**
- * @file        instance_provider_handle.cpp
+ * @file        instance_provider.h
  * @author      Zenn Geeraerts
  * @created     29 December 2025
- * @brief       Handle used for provided instances
+ * @brief       Concrete templated class for providing an instance of a resource
  */
-#include "smpch.h"
-#include "smile/common/thread/instance_provider_handle.h"
+#pragma once
 
-#include "instance_provider_base.h"
+#include "private/instance_provider_base.h"
+#include "smile/common/primitive/collection/array.h"
 
 namespace smile::thread
 {
-    InstanceProviderHandle::~InstanceProviderHandle() noexcept
+    template < typename HandleType, typename Type >
+    class InstanceProvider final : protected InstanceProviderBase
     {
-        if ( m_pProvider )
+      public:
+        template < typename... Args >
+        HandleType Get( Args &&...args )
         {
-            m_pProvider->Release( *this );
+            auto handle = InstanceProviderBase::Get();
+
+            return { m_Instances[handle.Idx], std::move( handle ), std::forward< Args && >( args )... };
         }
-    }
+
+      private:
+        primitive::Array< Type, 32 > m_Instances;
+    };
 }

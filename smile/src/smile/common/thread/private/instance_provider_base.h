@@ -9,10 +9,10 @@
 =======================================================================*/
 
 /**
- * @file        instance_provider.h
+ * @file        instance_provider_base.h
  * @author      Zenn Geeraerts
  * @created     29 December 2025
- * @brief       Abstract base class for providing an instance of a resource
+ * @brief       Base class for providing an instance of a resource
  */
 #pragma once
 
@@ -21,16 +21,16 @@
 
 namespace smile::thread
 {
-    class InstanceProvider
+    class InstanceProviderBase
     {
       public:
-        InstanceProvider() = default;
+        InstanceProviderBase() = default;
 
         InstanceProviderHandle Get();
         void Release( const InstanceProviderHandle &handle );
 
       protected:
-        ~InstanceProvider() = default;
+        ~InstanceProviderBase() = default;
 
       private:
         std::atomic< Uint32 > m_Used{ 0 };
