@@ -224,4 +224,20 @@ namespace smile::primitive
             text[index + textIndex] = textToReplace[textIndex];
         }
     }
+
+    void ToLowerCase( String &text )
+    {
+        for ( const auto index : foundation::GetCountIterator( text.GetCharCount() ) )
+        {
+            text[index] = static_cast< unsigned char >( foundation::NumericCast< char >( tolower( text[index] ) ) );
+        }
+    }
+
+    void ToUpperCase( String &text )
+    {
+        for ( const auto index : foundation::GetCountIterator( text.GetCharCount() ) )
+        {
+            text[index] = foundation::NumericCast< char >( toupper( text[index] ) );
+        }
+    }
 }
