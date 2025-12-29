@@ -37,7 +37,7 @@ namespace smile::foundation
 
         constexpr EnumValueIterator &operator++()
         {
-            Value = static_cast< EnumType >( static_cast< int >( Value ) + 1 );
+            m_Value = static_cast< EnumType >( static_cast< int >( m_Value ) + 1 );
 
             return *this;
         }
