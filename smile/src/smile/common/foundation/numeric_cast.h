@@ -87,7 +87,7 @@ namespace smile::foundation
         };
 
         template < typename Converted, typename Initial >
-        struct NumericConverter< Converted, Initial, NumericType::UnsignedInt, NumericType::SignedInt, false >
+        struct NumericConverter< Converted, Initial, NumericType::SignedInt, NumericType::SignedInt, false >
         {
             static bool HasValidConversion( const Initial value )
             {
