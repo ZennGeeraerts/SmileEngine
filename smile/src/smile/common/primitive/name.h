@@ -84,4 +84,6 @@ namespace smile::primitive
       private:
         const String *m_pText;
     };
+
+    stream::CharStream &operator<<( stream::CharStream &stream, const Name &name );
 }
