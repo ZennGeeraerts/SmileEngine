@@ -7,6 +7,8 @@
 #include "smile/core/application/application.h"
 
 #include "smile/graphic/rhi/swap_chain.h"
+#include "smile/graphic/shader/shader_loader.h"
+#include "smile/graphic/shader/shader_asset.h"
 
 #include <DirectXColors.h>
 
@@ -41,6 +43,31 @@ namespace smile::graphic
 
         m_Framebuffer = m_FramebufferManager.CreateHandle();
         m_pDevice->CreateFramebuffer( m_Framebuffer, m_FramebufferDesc );
+
+        graphic::ShaderLoader shaderLoader{};
+        {
+            auto pShaderAsset = shaderLoader.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
+            const auto &reflectionData = pShaderAsset->GetReflectionData();
+
+            m_VertexShaderHandle = m_ShaderHandleManager.CreateHandle();
+            rhi::ShaderDescriptor desc{};
+            desc.EntryPoint = reflectionData.EntryPoint;
+            desc.TargetProfile = reflectionData.TargetProfile;
+            desc.Stage = rhi::ShaderStage::Vertex;
+            m_pDevice->CreateShader( m_VertexShaderHandle, desc, pShaderAsset->GetByteCode() );
+        }
+
+        {
+            auto pShaderAsset = shaderLoader.LoadShader( "resources/shaders/col_tex.ps.smshader" );
+            const auto &reflectionData = pShaderAsset->GetReflectionData();
+
+            m_PixelShaderHandle = m_ShaderHandleManager.CreateHandle();
+            rhi::ShaderDescriptor desc{};
+            desc.EntryPoint = reflectionData.EntryPoint;
+            desc.TargetProfile = reflectionData.TargetProfile;
+            desc.Stage = rhi::ShaderStage::Pixel;
+            m_pDevice->CreateShader( m_PixelShaderHandle, desc, pShaderAsset->GetByteCode() );
+        }
     }
 
     void RHITestLayer::OnDetach()
