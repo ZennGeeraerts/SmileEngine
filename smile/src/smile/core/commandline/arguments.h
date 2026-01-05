@@ -127,6 +127,6 @@ namespace smile::commandline
 
       private:
         primitive::ArrayView< const char * > m_Arguments;
-        Index m_CurrentIndex{ 0 };
+        Index m_CurrentIndex{ 1 };
     };
 }

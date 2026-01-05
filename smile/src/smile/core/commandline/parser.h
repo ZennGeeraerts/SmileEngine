@@ -9,7 +9,7 @@
 
 namespace smile::commandline
 {
-    class Arguments;
+    class Arg;
 
     template < typename ValueType >
     class Parser final
@@ -18,6 +18,6 @@ namespace smile::commandline
         Parser() = default;
         ~Parser() = default;
 
-        bool Parse( primitive::StringView optionName, ValueType &value, Arguments &args ) const;
+        bool Parse( primitive::StringView optionName, ValueType &value, const Arg &arg ) const;
     };
 }

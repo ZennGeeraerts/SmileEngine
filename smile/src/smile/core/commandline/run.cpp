@@ -33,7 +33,7 @@ namespace smile::commandline
                     return false;
                 }
 
-                if ( !option.GetItem()->Parse( arguments ) )
+                if ( !option.GetItem()->Parse( arg ) )
                 {
                     return false;
                 }
@@ -47,7 +47,7 @@ namespace smile::commandline
                     return false;
                 }
 
-                if ( !shortOption.GetItem()->Parse( arguments ) )
+                if ( !shortOption.GetItem()->Parse( arg ) )
                 {
                     return false;
                 }
