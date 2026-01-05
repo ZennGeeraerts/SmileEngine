@@ -8,7 +8,7 @@
 #include "option_base.h"
 #include "parser.h"
 
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::commandline
 {
@@ -25,7 +25,7 @@ namespace smile::commandline
     };
 
     template <>
-    struct OptionTraits< std::filesystem::path > final
+    struct OptionTraits< fs::Path > final
     {
         using ParserType = Parser< primitive::String >;
     };
@@ -56,12 +56,12 @@ namespace smile::commandline
             Value = value;
         }
 
-        bool Parse( Arguments &arguments ) override
+        bool Parse( const Arg &arg ) override
         {
             using ParserType = typename OptionTraits< ValueType >::ParserType;
 
             const ParserType parser;
-            return parser.Parse( Name, Value, arguments );
+            return parser.Parse( Name, Value, arg );
         }
 
         ValueType Value;

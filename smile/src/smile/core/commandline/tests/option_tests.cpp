@@ -16,35 +16,35 @@ namespace smile::commandline
         {
             const char *optionName{ "integer-parser" };
             Option< int > parser{ optionName, Description{ "Parse a string to an integer" } };
-            const Count argCount{ 2 };
+            const Count argCount{ 3 };
 
-            const char *args[] = { "--value", "10000" };
+            const char *args[] = { "-", "--value", "10000" };
             Arguments arguments{ { args, argCount } };
 
-            CHECK( parser.Parse( arguments ) );
+            CHECK( parser.Parse( arguments.Pop() ) );
             CHECK( parser.Value == 10000 );
 
-            const char *args2[] = { "--value", "500" };
+            const char *args2[] = { "-", "--value", "500" };
             Arguments arguments2{ { args2, argCount } };
 
-            CHECK( parser.Parse( arguments2 ) );
+            CHECK( parser.Parse( arguments2.Pop() ) );
             CHECK( parser.Value == 500 );
 
-            const char *args3[] = { "--value", "this is not an integer" };
+            const char *args3[] = { "-", "--value", "this is not an integer" };
             Arguments arguments3{ { args3, argCount } };
 
-            CHECK( !parser.Parse( arguments3 ) );
+            CHECK( !parser.Parse( arguments3.Pop() ) );
 
-            const char *args4[] = { "--value", "365" };
+            const char *args4[] = { "-", "--value", "365" };
             Arguments arguments4{ { args4, argCount } };
 
-            CHECK( parser.Parse( arguments4 ) );
+            CHECK( parser.Parse( arguments4.Pop() ) );
             CHECK( parser.Value == 365 );
 
-            const char *args5[]{ "--value", "0" };
+            const char *args5[]{ "-", "--value", "0" };
             Arguments arguments5{ { args5, argCount } };
 
-            CHECK( parser.Parse( arguments5 ) );
+            CHECK( parser.Parse( arguments5.Pop() ) );
             CHECK( parser.Value == 0 );
         }
 
@@ -52,12 +52,12 @@ namespace smile::commandline
         {
             const char *optionName{ "string-parser" };
             Option< primitive::String > parser{ optionName, Description{ "Parse a string to a string" } };
-            const Count argCount{ 4 };
+            const Count argCount{ 3 };
 
-            const char *args[] = { "-t", "this is a test string" };
+            const char *args[] = { "-", "-t", "this is a test string" };
             Arguments arguments{ { args, argCount } };
 
-            CHECK( parser.Parse( arguments ) );
+            CHECK( parser.Parse( arguments.Pop() ) );
             CHECK( parser.Value == "this is a test string" );
         }
     }
