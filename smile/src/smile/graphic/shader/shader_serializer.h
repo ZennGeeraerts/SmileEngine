@@ -17,8 +17,7 @@
 #pragma once
 
 #include "shader_asset.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::graphic
 {
@@ -27,8 +26,8 @@ namespace smile::graphic
       public:
         ShaderSerializer( ShaderAsset::Ref pShaderAsset );
 
-        void Serialize( const std::filesystem::path &filePath ) const;
-        bool Deserialize( const std::filesystem::path &filePath );
+        void Serialize( const fs::Path &filePath ) const;
+        bool Deserialize( const fs::Path &filePath );
 
       private:
         ShaderAsset::Ref m_pShaderAsset;

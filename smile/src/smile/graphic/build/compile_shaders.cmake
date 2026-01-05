@@ -20,7 +20,7 @@ if(SMILE_COMPILE_SHADERS)
 
         add_custom_command(
             OUTPUT ${SHADER_OUTPUT}
-            COMMAND $<TARGET_FILE:x-shader-c> ${SHADER} -o ${SHADER_OUTPUT}
+            COMMAND $<TARGET_FILE:x-shader-c> -i ${SHADER} -o ${SHADER_OUTPUT}
             DEPENDS ${SHADER} x-shader-c
             COMMENT "Compiling shader ${SHADER_FILENAME}"
             VERBATIM

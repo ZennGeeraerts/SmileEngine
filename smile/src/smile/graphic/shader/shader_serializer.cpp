@@ -18,8 +18,7 @@
 #include "shader_serializer.h"
 
 #include "smile/core/yaml/string.h"
-
-#include <fstream>
+#include "smile/core/fs/file.h"
 
 namespace smile::graphic
 {
@@ -109,12 +108,12 @@ namespace smile::graphic
         return yaml;
     }
 
-    static bool DeserializeReflectionData( const std::string &yamlContent, ShaderReflectionData &reflectionData )
+    static bool DeserializeReflectionData( const primitive::String &yamlContent, ShaderReflectionData &reflectionData )
     {
         yaml::Node data;
         try
         {
-            data = YAML::Load( yamlContent );
+            data = YAML::Load( yamlContent.GetData() );
         }
         catch ( YAML::ParserException e )
         {
@@ -208,15 +207,15 @@ namespace smile::graphic
     {
     }
 
-    void ShaderSerializer::Serialize( const std::filesystem::path &filePath ) const
+    void ShaderSerializer::Serialize( const fs::Path &filePath ) const
     {
         yaml::Emitter reflectionDataOutput{};
         reflectionDataOutput << SerializeReflectionData( m_pShaderAsset->m_ReflectionData );
 
-        std::ofstream outStream{ filePath, std::ios::binary };
-        if ( !outStream )
+        fs::File outputFile{ filePath };
+        if ( !outputFile.OpenOutput( stream::OpeningModeFlags{} ) )
         {
-            SM_LOG_ERROR( "Failed to open output file: {}", filePath.string() );
+            SM_LOG_ERROR( "Failed to open output file: {}", filePath );
             return;
         }
 
@@ -230,76 +229,92 @@ namespace smile::graphic
         const Count reflectionDataSize = static_cast< Count >( reflectionDataOutput.size() );
 
         // Header
-        outStream.write( reinterpret_cast< const char * >( &g_ShaderFileMagic ), sizeof( Uint32 ) );
-        outStream.write( reinterpret_cast< const char * >( &g_ShaderFileVersion ), sizeof( Uint32 ) );
-        outStream.write( reinterpret_cast< const char * >( &nameOffset ), sizeof( Index ) );
-        outStream.write( reinterpret_cast< const char * >( &nameSize ), sizeof( Count ) );
-        outStream.write( reinterpret_cast< const char * >( &blobOffset ), sizeof( Index ) );
-        outStream.write( reinterpret_cast< const char * >( &blobSize ), sizeof( Count ) );
-        outStream.write( reinterpret_cast< const char * >( &reflectionDataOffset ), sizeof( Index ) );
-        outStream.write( reinterpret_cast< const char * >( &reflectionDataSize ), sizeof( Count ) );
+        outputFile.WriteScalar< Uint32 >( g_ShaderFileMagic );
+        outputFile.WriteScalar< Uint32 >( g_ShaderFileVersion );
+        outputFile.WriteScalar< Index >( nameOffset );
+        outputFile.WriteScalar< Count >( nameSize );
+        outputFile.WriteScalar< Index >( blobOffset );
+        outputFile.WriteScalar< Count >( blobSize );
+        outputFile.WriteScalar< Index >( reflectionDataOffset );
+        outputFile.WriteScalar< Count >( reflectionDataSize );
 
         // Name
-        outStream.write( m_pShaderAsset->GetName().GetData(), nameSize );
+        outputFile.WriteText( m_pShaderAsset->GetName() );
 
         // Blob
-        outStream.write( reinterpret_cast< const char * >( m_pShaderAsset->GetByteCode().GetData() ), blobSize );
+        outputFile.WriteByteArray( m_pShaderAsset->GetByteCode().GetData(), blobSize );
 
         // ReflectionData
-        outStream.write( reflectionDataOutput.c_str(), reflectionDataSize );
+        outputFile.WriteText( { reflectionDataOutput.c_str(), reflectionDataSize } );
+
+        outputFile.Close();
     }
 
-    bool ShaderSerializer::Deserialize( const std::filesystem::path &filePath )
+    bool ShaderSerializer::Deserialize( const fs::Path &filePath )
     {
-        std::ifstream file{ filePath, std::ios::binary };
-        if ( !file )
+        fs::File file{ filePath };
+        if ( !file.OpenInput() )
         {
-            SM_LOG_WARNING( "ShaderSerializer::Deserialize > Failed to load shader: cannot open shader file: {}",
-                filePath.string() );
+            SM_LOG_WARNING(
+                "ShaderSerializer::Deserialize > Failed to load shader: cannot open shader file: {}", filePath );
+
             return false;
         }
 
-        std::vector< Byte > fileData{ ( std::istreambuf_iterator< char >{ file } ), {} };
         ShaderHeader header{};
-        // TODO: Use binary stream class when we have it
-        std::memcpy( &header, fileData.data(), sizeof( ShaderHeader ) );
+        file.ReadByteArray( &header, sizeof( ShaderHeader ) );
 
         if ( header.Magic != g_ShaderFileMagic )
         {
             SM_LOG_WARNING( "ShaderSerializer::Deserialize > Failed to load shader: invalid shader file magic" );
+            
+            file.Close();
+            
             return false;
         }
 
         if ( header.Version != g_ShaderFileVersion )
         {
             SM_LOG_WARNING( "ShaderSerializer::Deserialize > Failed to load shader: unexpected version" );
+
+            file.Close();
+
             return false;
         }
 
-        if ( header.NameOffset + header.NameSize > fileData.size() ||
-             header.BlobOffset + header.BlobSize > fileData.size() ||
-             header.YamlOffset + header.YamlSize > fileData.size() )
+        if ( header.NameOffset + header.NameSize > file.GetSize() ||
+             header.BlobOffset + header.BlobSize > file.GetSize() ||
+             header.YamlOffset + header.YamlSize > file.GetSize() )
         {
             SM_LOG_WARNING( "ShaderSerializer::Deserialize > Failed to load shader: shader file blob or YAML section "
                             "out of bounds" );
+
+            file.Close();
+
             return false;
         }
 
-        m_pShaderAsset->m_Name = primitive::String{
-            reinterpret_cast< const char * >( fileData.data() + header.NameOffset ), header.NameSize };
+        file.SetIndex( header.NameOffset );
+        file.ReadByteArray( m_pShaderAsset->m_Name.GetData(), header.NameSize );
 
-        const Byte *pBlobStart = fileData.data() + header.BlobOffset;
-        m_pShaderAsset->m_ByteCode = { pBlobStart, header.BlobSize };
+        file.SetIndex( header.BlobOffset );
+        file.ReadByteArray( m_pShaderAsset->m_ByteCode.GetData(), header.BlobSize );
 
-        std::string yamlContent{
-            reinterpret_cast< const char * >( fileData.data() + header.YamlOffset ), header.YamlSize };
+        primitive::String yamlContent{};
+        file.SetIndex( header.YamlOffset );
+        file.ReadByteArray( yamlContent.GetData(), header.YamlSize );
 
         if ( !DeserializeReflectionData( yamlContent, m_pShaderAsset->m_ReflectionData ) )
         {
             SM_LOG_WARNING(
                 "ShaderSerializer::Deserialize > Failed to load shader: cannot deserialize reflection data" );
+
+            file.Close();
+
             return false;
         }
+
+        file.Close();
 
         return true;
     }

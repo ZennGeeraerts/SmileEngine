@@ -50,7 +50,7 @@ namespace smile::graphic
         auto pShaderAsset = memory::CreateRef< ShaderAsset >();
 
         ShaderSerializer serializer{ pShaderAsset };
-        if ( !serializer.Deserialize( path ) )
+        if ( !serializer.Deserialize( fs::Path{ path.string().c_str() } ) )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Deserialization failed" );
             return nullptr;
