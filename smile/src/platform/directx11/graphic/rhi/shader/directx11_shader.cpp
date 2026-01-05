@@ -15,8 +15,9 @@ namespace smile::graphic::rhi
         Destroy();
     }
 
-    void
-    DirectX11Shader::Create( ID3D11Device *pDevice, const ShaderDescriptor &desc, const std::vector< Byte > &byteCode )
+    void DirectX11Shader::Create( ID3D11Device *pDevice,
+        const ShaderDescriptor &desc,
+        const primitive::Vector< Byte > &byteCode )
     {
         Descriptor = desc;
         ByteCode = byteCode;
@@ -25,8 +26,8 @@ namespace smile::graphic::rhi
         {
             case ShaderStage::Vertex:
             {
-                const HRESULT result =
-                    pDevice->CreateVertexShader( byteCode.data(), byteCode.size(), nullptr, &pVertexShader );
+                const HRESULT result = pDevice->CreateVertexShader(
+                    byteCode.GetData(), static_cast< SIZE_T >( byteCode.GetItemCount() ), nullptr, &pVertexShader );
 
                 if ( FAILED( result ) )
                 {
@@ -38,8 +39,8 @@ namespace smile::graphic::rhi
             }
             case ShaderStage::Pixel:
             {
-                const HRESULT result =
-                    pDevice->CreatePixelShader( byteCode.data(), byteCode.size(), nullptr, &pPixelShader );
+                const HRESULT result = pDevice->CreatePixelShader(
+                    byteCode.GetData(), static_cast< SIZE_T >( byteCode.GetItemCount() ), nullptr, &pPixelShader );
 
                 if ( FAILED( result ) )
                 {

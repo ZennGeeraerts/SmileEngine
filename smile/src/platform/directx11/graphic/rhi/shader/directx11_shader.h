@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/shader/shader.h"
 
 #include <d3d11.h>
@@ -23,7 +25,7 @@ namespace smile::graphic::rhi
         DirectX11Shader &operator=( const DirectX11Shader & ) = delete;
         DirectX11Shader &operator=( DirectX11Shader && ) = delete;
 
-        void Create( ID3D11Device *pDevice, const ShaderDescriptor &desc, const std::vector< Byte > &byteCode );
+        void Create( ID3D11Device *pDevice, const ShaderDescriptor &desc, const primitive::Vector< Byte > &byteCode );
         void Destroy();
 
         union
@@ -33,7 +35,7 @@ namespace smile::graphic::rhi
             ID3D11DeviceChild *pPtr;
         };
 
-        std::vector< Byte > ByteCode;
+        primitive::Vector< Byte > ByteCode;
         ShaderDescriptor Descriptor;
     };
 }

@@ -117,7 +117,7 @@ namespace smile::graphic::rhi
 
     void DirectX11Device::CreateShader( ShaderHandle handle,
         const ShaderDescriptor &shaderDesc,
-        const std::vector< Byte > &byteCode )
+        const primitive::Vector< Byte > &byteCode )
     {
         m_Shaders[handle.GetIndex()].Create( m_Context.pDevice, shaderDesc, byteCode );
     }

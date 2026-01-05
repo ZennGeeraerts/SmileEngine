@@ -5,6 +5,7 @@
 #pragma once
 
 #include "shader_stage.h"
+#include "smile/common/primitive/text/string.h"
 
 namespace smile::graphic::rhi
 {
@@ -17,7 +18,7 @@ namespace smile::graphic::rhi
         }
 
         ShaderStage Stage = ShaderStage::Unknown;
-        std::string EntryPoint = "main";
-        std::string TargetProfile;
+        primitive::String EntryPoint = "main";
+        primitive::String TargetProfile;
     };
 }

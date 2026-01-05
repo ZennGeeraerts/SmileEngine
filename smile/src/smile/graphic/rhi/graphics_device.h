@@ -4,7 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "command_list.h"
 #include "render_handle.h"
 #include "object.h"
@@ -27,9 +29,7 @@ namespace smile::graphic::rhi
 
     template < typename CollectionType >
     concept HasIsValidIndex = requires( const CollectionType &collection, const Index index ) {
-        {
-            collection.IsValidIndex( index )
-        } -> std::convertible_to< bool >;
+        { collection.IsValidIndex( index ) } -> std::convertible_to< bool >;
     };
 
     class GraphicsDevice
@@ -55,7 +55,7 @@ namespace smile::graphic::rhi
 
         virtual void CreateShader( ShaderHandle handle,
             const ShaderDescriptor &shaderDesc,
-            const std::vector< Byte > &byteCode ) = 0;
+            const primitive::Vector< Byte > &byteCode ) = 0;
         virtual void DestroyShader( ShaderHandle handle ) = 0;
 
         virtual void CreateGraphicsPipeline( GraphicsPipelineHandle handle,

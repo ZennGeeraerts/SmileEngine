@@ -71,7 +71,7 @@ namespace smile::graphic::rhi
 
         void CreateShader( ShaderHandle handle,
             const ShaderDescriptor &shaderDesc,
-            const std::vector< Byte > &byteCode ) override;
+            const primitive::Vector< Byte > &byteCode ) override;
         void DestroyShader( ShaderHandle handle ) override;
 
         void CreateGraphicsPipeline( GraphicsPipelineHandle handle,

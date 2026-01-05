@@ -43,8 +43,11 @@ namespace smile::graphic::rhi
 
         Uint32 count{ static_cast< Uint32 >( inputDescs.size() ) };
 
-        HRESULT result = pDevice->CreateInputLayout(
-            inputDescs.data(), count, vertexShader.ByteCode.data(), vertexShader.ByteCode.size(), &pInternal );
+        HRESULT result = pDevice->CreateInputLayout( inputDescs.data(),
+            count,
+            vertexShader.ByteCode.GetData(),
+            static_cast< SIZE_T >( vertexShader.ByteCode.GetItemCount() ),
+            &pInternal );
 
         if ( FAILED( result ) )
         {
