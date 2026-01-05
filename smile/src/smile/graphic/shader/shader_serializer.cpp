@@ -295,13 +295,16 @@ namespace smile::graphic
         }
 
         file.SetIndex( header.NameOffset );
+        m_pShaderAsset->m_Name.SetCharCount( header.NameSize );
         file.ReadByteArray( m_pShaderAsset->m_Name.GetData(), header.NameSize );
 
         file.SetIndex( header.BlobOffset );
+        m_pShaderAsset->m_ByteCode.SetItemCount( header.BlobSize );
         file.ReadByteArray( m_pShaderAsset->m_ByteCode.GetData(), header.BlobSize );
 
-        primitive::String yamlContent{};
         file.SetIndex( header.YamlOffset );
+        primitive::String yamlContent{};
+        yamlContent.SetCharCount( header.YamlSize );
         file.ReadByteArray( yamlContent.GetData(), header.YamlSize );
 
         if ( !DeserializeReflectionData( yamlContent, m_pShaderAsset->m_ReflectionData ) )
