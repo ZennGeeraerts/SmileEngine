@@ -18,6 +18,7 @@
 
 #include "char_stream.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/thread/instance_provider_handle.h"
 
 namespace smile::stream
 {
@@ -60,4 +61,37 @@ namespace smile::stream
 
         return charStream;
     }
+
+    struct TextStreamHelper final
+    {
+        TextStreamHelper( TextStream &stream, thread::InstanceProviderHandle &&handle ) noexcept
+            : Stream{ stream }, Handle{ std::move( handle ) }
+        {
+        }
+
+        ~TextStreamHelper() = default;
+
+        operator primitive::String() const
+        {
+            return Stream.GetText();
+        }
+
+        primitive::String GetText() const
+        {
+            return Stream.GetText();
+        }
+
+        template < typename Type >
+        TextStreamHelper &operator<<( Type &&value )
+        {
+            Stream << value;
+
+            return *this;
+        }
+
+        TextStream &Stream;
+        thread::InstanceProviderHandle Handle;
+    };
+
+    TextStreamHelper GetTextBuilder();
 }

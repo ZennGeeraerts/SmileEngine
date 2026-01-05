@@ -18,6 +18,7 @@
 #include "smile/common/primitive/name.h"
 
 #include "smile/common/primitive/name/name_manager.h"
+#include "smile/common/stream/char_stream.h"
 
 namespace smile::primitive
 {
@@ -59,5 +60,10 @@ namespace smile::primitive
     const char *Name::GetData() const
     {
         return m_pText ? m_pText->GetData() : "";
+    }
+
+    stream::CharStream &operator<<( stream::CharStream &stream, const Name &name )
+    {
+        return stream << name.GetText();
     }
 }

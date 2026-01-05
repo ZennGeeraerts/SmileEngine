@@ -17,17 +17,13 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
+#include "smile/common/foundation/enum_concepts.h"
 #include "smile/common/memory/memory.h"
 #include "array_iterator.h"
 
-#include <type_traits>
-
 namespace smile::primitive
 {
-    template < typename Type >
-    concept EnumWithCount = std::is_enum_v< Type > && requires { Type::Count; };
-
-    template < EnumWithCount EnumType, typename ItemType >
+    template < foundation::EnumWithCount EnumType, typename ItemType >
     class EnumArray final
     {
         static_assert( std::is_enum_v< EnumType > );
@@ -43,9 +39,11 @@ namespace smile::primitive
         {
             SM_ASSERT( items.size() == s_ItemCount );
 
-            for ( auto i{ 0 }; i < items.size(); ++i )
+            Index index{ 0 };
+            for ( auto it{ items.begin() }; it != items.end(); ++it )
             {
-                m_Items[i] = items[i];
+                m_Items[index] = *it;
+                ++index;
             }
         }
 

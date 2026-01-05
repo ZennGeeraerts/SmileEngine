@@ -55,4 +55,7 @@ namespace smile::primitive
 
     void
     ReplaceTextInsideRange( String &text, const Index index, const Count charCount, const StringView textToReplace );
+
+    void ToLowerCase( String &text );
+    void ToUpperCase( String &text );
 }

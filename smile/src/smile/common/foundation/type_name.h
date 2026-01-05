@@ -14,7 +14,7 @@ namespace smile::foundation
     {
 #if defined SM_COMPILER_MSVC
         return __FUNCSIG__;
-#elif defined SM_COMPILER_CLANG || SM_COMPILER_GNU || SM_COMPILER_GNUC
+#elif ( defined SM_COMPILER_CLANG ) || ( defined SM_COMPILER_GNU ) || ( defined SM_COMPILER_GNUC )
         return __PRETTY_FUNCTION__;
 #else
 #    error "Unsupported compiler"
