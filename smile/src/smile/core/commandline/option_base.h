@@ -6,7 +6,7 @@
 
 namespace smile::commandline
 {
-    class Arguments;
+    class Arg;
     struct OptionMap;
 
     class OptionBase
@@ -17,7 +17,7 @@ namespace smile::commandline
 
         bool IsPositional() const;
 
-        virtual bool Parse( Arguments &arguments ) = 0;
+        virtual bool Parse( const Arg &arg ) = 0;
 
         static OptionMap &GetOptionMap();
 
