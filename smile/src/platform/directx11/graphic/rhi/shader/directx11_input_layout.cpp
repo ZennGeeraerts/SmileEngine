@@ -29,10 +29,10 @@ namespace smile::graphic::rhi
             return;
         }
 
-        std::vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
+        primitive::Vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
         for ( const auto &element : layout )
         {
-            inputDescs.emplace_back( D3D11_INPUT_ELEMENT_DESC{ element.Name.c_str(),
+            inputDescs.PushBack( D3D11_INPUT_ELEMENT_DESC{ element.Name.c_str(),
                 0,
                 GetDXGIFormatMapping( element.FormatType ).SRVFormat,
                 0,
@@ -41,9 +41,9 @@ namespace smile::graphic::rhi
                 0 } );
         }
 
-        Uint32 count{ static_cast< Uint32 >( inputDescs.size() ) };
+        UINT count{ static_cast< UINT >( inputDescs.GetItemCount() ) };
 
-        HRESULT result = pDevice->CreateInputLayout( inputDescs.data(),
+        HRESULT result = pDevice->CreateInputLayout( inputDescs.GetData(),
             count,
             vertexShader.ByteCode.GetData(),
             static_cast< SIZE_T >( vertexShader.ByteCode.GetItemCount() ),

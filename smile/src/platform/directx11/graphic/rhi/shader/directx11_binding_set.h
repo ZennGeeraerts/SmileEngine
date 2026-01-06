@@ -40,7 +40,7 @@ namespace smile::graphic::rhi
         Uint32 MinSamplerSlot = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
         Uint32 MaxSamplerSlot = 0;
 
-        primitive::Array< ID3D11Buffer *, D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT > pConstantBuffers;
+        primitive::Array< ID3D11Buffer *, D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT > pConstantBuffers{};
         primitive::Array< UINT, D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT > ConstantBufferOffsets;
         primitive::Array< UINT, D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT > ConstantBufferCounts;
         Uint32 MinConstantBufferSlot = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;

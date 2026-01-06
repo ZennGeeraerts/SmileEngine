@@ -70,14 +70,15 @@ namespace smile::graphic
         }
 
         rhi::BufferLayout vertexLayout{
-            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
+            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RG32_FLOAT, "TEXCOORD" } };
 
         rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
         bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+        bindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
 
         {
             rhi::GraphicsPipelineDescriptor psoDesc{};
-            psoDesc.Topology = rhi::PrimitiveTopology::LineList;
+            psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
             psoDesc.InputLayout = vertexLayout;
             psoDesc.VertexShaderHandle = m_VertexShaderHandle;
             psoDesc.PixelShaderHandle = m_PixelShaderHandle;
@@ -102,8 +103,20 @@ namespace smile::graphic
         }
 
         {
+            rhi::GPUBufferDescriptor bufferDesc{};
+            bufferDesc.Size = GetConstantTypeInfo( ConstantType::Mat4 ).Size;
+            bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+            bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+            bufferDesc.BindFlags = { rhi::BufferBindFlags::ConstantBuffer };
+
+            m_PerObjectBufferHandle = m_GPUBufferHandleManager.CreateHandle();
+            m_pDevice->CreateGPUBuffer( m_PerObjectBufferHandle, bufferDesc );
+        }
+
+        {
             rhi::BindingSetDescriptor bindingSetDesc{
-                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraConstantBufferHandle ) } };
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraConstantBufferHandle ),
+                    rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectBufferHandle ) } };
 
             m_BindingSetHandle = m_BindingSetHandleManager.CreateHandle();
             m_pDevice->CreateBindingSet( m_BindingSetHandle, bindingSetDesc, bindingLayout );
@@ -111,7 +124,10 @@ namespace smile::graphic
 
         {
             const Uint32 vertexCount = 3;
-            float vertices[]{ -0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.5f };
+            float vertices[]{
+                -0.5f, 0.0f, 0.5f, 0.0f, 0.0f,
+                0.0f, 0.5f, 0.5f, 1.0f, 0.0f,
+                0.5f, 0.0f, 0.5f, 0.5f, 1.0f };
 
             rhi::GPUBufferDescriptor bufferDesc{};
             bufferDesc.Size = vertexCount * vertexLayout.GetStride();
@@ -152,6 +168,12 @@ namespace smile::graphic
                     DirectX::Colors::CornflowerBlue.f[2],
                     DirectX::Colors::CornflowerBlue.f[3] } );
         }
+
+        DirectX::XMFLOAT4X4 viewProjection;
+        DirectX::XMStoreFloat4x4( &viewProjection, DirectX::XMMatrixIdentity() );
+        m_pImmediateCommandList->FillBuffer(
+            m_CameraConstantBufferHandle, &viewProjection, sizeof( DirectX::XMFLOAT4X4 ) );
+        m_pImmediateCommandList->FillBuffer( m_PerObjectBufferHandle, &viewProjection, sizeof( DirectX::XMFLOAT4X4 ) );
 
         rhi::GraphicsState state{};
         state.Pipeline = m_PipelineHandle;
