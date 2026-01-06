@@ -39,5 +39,17 @@ namespace smile::graphic
         rhi::ShaderHandleManager m_ShaderHandleManager;
         rhi::ShaderHandle m_VertexShaderHandle;
         rhi::ShaderHandle m_PixelShaderHandle;
+
+        rhi::GraphicsPipelineHandleManager m_PipelineHandleManager;
+        rhi::GraphicsPipelineHandle m_PipelineHandle;
+
+        rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
+        rhi::GPUBufferHandle m_CameraConstantBufferHandle;
+
+        rhi::BindingSetHandleManager m_BindingSetHandleManager;
+        rhi::BindingSetHandle m_BindingSetHandle;
+
+        rhi::GPUBufferHandle m_VertexBufferHandle;
+        rhi::GPUBufferHandle m_IndexBufferHandle;
     };
 }

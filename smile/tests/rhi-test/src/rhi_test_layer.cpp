@@ -68,6 +68,73 @@ namespace smile::graphic
             desc.Stage = rhi::ShaderStage::Pixel;
             m_pDevice->CreateShader( m_PixelShaderHandle, desc, pShaderAsset->GetByteCode() );
         }
+
+        rhi::BufferLayout vertexLayout{
+            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
+
+        rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
+        bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+
+        {
+            rhi::GraphicsPipelineDescriptor psoDesc{};
+            psoDesc.Topology = rhi::PrimitiveTopology::LineList;
+            psoDesc.InputLayout = vertexLayout;
+            psoDesc.VertexShaderHandle = m_VertexShaderHandle;
+            psoDesc.PixelShaderHandle = m_PixelShaderHandle;
+
+            psoDesc.BindingLayouts.PushBack( bindingLayout );
+
+            psoDesc.State.RasterizerState.CullMode = rhi::CullMode::None;
+
+            m_PipelineHandle = m_PipelineHandleManager.CreateHandle();
+            m_pDevice->CreateGraphicsPipeline( m_PipelineHandle, psoDesc );
+        }
+
+        {
+            rhi::GPUBufferDescriptor bufferDesc{};
+            bufferDesc.Size = GetConstantTypeInfo( ConstantType::Mat4 ).Size;
+            bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+            bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+            bufferDesc.BindFlags = { rhi::BufferBindFlags::ConstantBuffer };
+
+            m_CameraConstantBufferHandle = m_GPUBufferHandleManager.CreateHandle();
+            m_pDevice->CreateGPUBuffer( m_CameraConstantBufferHandle, bufferDesc );
+        }
+
+        {
+            rhi::BindingSetDescriptor bindingSetDesc{
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraConstantBufferHandle ) } };
+
+            m_BindingSetHandle = m_BindingSetHandleManager.CreateHandle();
+            m_pDevice->CreateBindingSet( m_BindingSetHandle, bindingSetDesc, bindingLayout );
+        }
+
+        {
+            const Uint32 vertexCount = 3;
+            float vertices[]{ -0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 0.0f, 0.5f };
+
+            rhi::GPUBufferDescriptor bufferDesc{};
+            bufferDesc.Size = vertexCount * vertexLayout.GetStride();
+            bufferDesc.Usage = rhi::BufferUsage::Immutable;
+            bufferDesc.CPUAccess = rhi::CPUAccessMode::None;
+            bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
+
+            m_VertexBufferHandle = m_GPUBufferHandleManager.CreateHandle();
+            m_pDevice->CreateGPUBuffer( m_VertexBufferHandle, bufferDesc, vertices );
+        }
+
+        {
+            Uint32 indices[]{ 0, 1, 2 };
+
+            rhi::GPUBufferDescriptor bufferDesc{};
+            bufferDesc.Size = 3 * sizeof( Uint32 );
+            bufferDesc.Usage = rhi::BufferUsage::Immutable;
+            bufferDesc.CPUAccess = rhi::CPUAccessMode::None;
+            bufferDesc.BindFlags = { rhi::BufferBindFlags::IndexBuffer };
+
+            m_IndexBufferHandle = m_GPUBufferHandleManager.CreateHandle();
+            m_pDevice->CreateGPUBuffer( m_IndexBufferHandle, bufferDesc, indices );
+        }
     }
 
     void RHITestLayer::OnDetach()
@@ -85,6 +152,18 @@ namespace smile::graphic
                     DirectX::Colors::CornflowerBlue.f[2],
                     DirectX::Colors::CornflowerBlue.f[3] } );
         }
+
+        rhi::GraphicsState state{};
+        state.Pipeline = m_PipelineHandle;
+        state.Framebuffer = m_Framebuffer;
+        state.Bindings.PushBack( m_BindingSetHandle );
+        state.VertexBuffers.PushBack( rhi::VertexBufferBinding{ m_VertexBufferHandle, 0, 0 } );
+        state.IndexBuffer = rhi::IndexBufferBinding{ m_IndexBufferHandle, rhi::Format::R32_UINT, 0 };
+
+        m_pImmediateCommandList->Open();
+        m_pImmediateCommandList->SetGraphicsState( state );
+        m_pImmediateCommandList->Draw( { 3, 0 } );
+        m_pImmediateCommandList->Close();
 
         m_pSwapChain->Present();
     }
