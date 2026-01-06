@@ -143,8 +143,10 @@ namespace smile::graphic
             {
                 rhi::BufferElement element;
                 element.Name = entry["SemanticName"].as< std::string >();
-                auto val = entry["Format"].as< std::string >();
-                element.FormatType = rhi::GetFormatInfo( entry["Format"].as< primitive::String >() ).Format;
+
+                const rhi::FormatInfo &formatInfo = rhi::GetFormatInfo( entry["Format"].as< primitive::String >() );
+                element.FormatType = formatInfo.Format;
+                element.Size = formatInfo.BytesPerBlock * formatInfo.BlockSize;
 
                 signature.AddElement( element );
             }

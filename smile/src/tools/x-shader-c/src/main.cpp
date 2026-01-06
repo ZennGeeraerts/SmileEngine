@@ -82,6 +82,10 @@ int main( int argc, const char **argv )
         return 2;
 
     graphic::ShaderReflectionData reflectionData;
+    reflectionData.EntryPoint = options.EntryPoint;
+    reflectionData.TargetProfile = options.TargetProfile;
+    reflectionData.BlobFormat = options.OutputFormat;
+
     if ( !graphic::ShaderReflector::Reflect( options.OutputFormat, byteCode, reflectionData ) )
         return 2;
 
