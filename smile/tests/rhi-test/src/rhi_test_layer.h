@@ -23,9 +23,6 @@ namespace smile::graphic
         void OnImGuiRender() override;
 
       private:
-        bool OnWindowResize( window::WindowResizeEvent &e );
-
-      private:
         Scope< rhi::GraphicsDevice > m_pDevice;
         rhi::CommandList *m_pImmediateCommandList;
         Scope< rhi::SwapChain > m_pSwapChain;
@@ -47,11 +44,16 @@ namespace smile::graphic
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::GPUBufferHandle m_CameraConstantBufferHandle;
         rhi::GPUBufferHandle m_PerObjectBufferHandle;
+        rhi::GPUBufferHandle m_MaterialBufferHandle;
 
         rhi::BindingSetHandleManager m_BindingSetHandleManager;
-        rhi::BindingSetHandle m_BindingSetHandle;
+        rhi::BindingSetHandle m_VSBindingSetHandle;
+        rhi::BindingSetHandle m_PSBindingSetHandle;
 
         rhi::GPUBufferHandle m_VertexBufferHandle;
         rhi::GPUBufferHandle m_IndexBufferHandle;
+
+        rhi::SamplerHandlerManager m_SamplerHandleManager;
+        rhi::SamplerHandle m_SamplerHandle;
     };
 }

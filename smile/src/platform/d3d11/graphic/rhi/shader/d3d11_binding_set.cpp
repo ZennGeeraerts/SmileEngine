@@ -60,7 +60,7 @@ namespace smile::graphic::rhi
                 case ResourceType::StructuredBuffer_SRV:
                 case ResourceType::RawBuffer_SRV:
                 {
-                    D3D11Buffer &buffer = device.m_GPUBuffers[binding.Slot];
+                    D3D11Buffer &buffer = device.m_GPUBuffers[binding.Buffer.GetIndex()];
 
                     SM_ASSERT( pShaderResourceViews[binding.Slot] == nullptr,
                         "D3D11BindingSet::Create > Shader resource view slot is not nullptr" );
@@ -77,7 +77,7 @@ namespace smile::graphic::rhi
                 case ResourceType::StructuredBuffer_UAV:
                 case ResourceType::RawBuffer_UAV:
                 {
-                    D3D11Buffer &buffer = device.m_GPUBuffers[binding.Slot];
+                    D3D11Buffer &buffer = device.m_GPUBuffers[binding.Buffer.GetIndex()];
 
                     SM_ASSERT( pUnorderedAccessViews[binding.Slot] == nullptr,
                         "D3D11BindingSet::Create > Unordered access view slot is not nullptr" );
@@ -93,7 +93,7 @@ namespace smile::graphic::rhi
                 case ResourceType::ConstantBuffer:
                 case ResourceType::VolatileConstantBuffer:
                 {
-                    D3D11Buffer &buffer = device.m_GPUBuffers[binding.Slot];
+                    D3D11Buffer &buffer = device.m_GPUBuffers[binding.Buffer.GetIndex()];
 
                     SM_ASSERT( pConstantBuffers[binding.Slot] == nullptr,
                         "D3D11BindingSet::Create > Constant buffer slot is not nullptr" );

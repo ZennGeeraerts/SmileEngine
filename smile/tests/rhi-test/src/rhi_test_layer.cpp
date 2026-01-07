@@ -14,6 +14,12 @@
 
 namespace smile::graphic
 {
+    struct Material final
+    {
+        DirectX::XMFLOAT3 Color{ 0.8f, 0.5f, 0.0f };
+        int UseTexture{ 0 };
+    };
+
     RHITestLayer::RHITestLayer()
     {
         rhi::RendererBackendType api = rhi::RendererBackendType::D3D11;
@@ -74,9 +80,14 @@ namespace smile::graphic
         rhi::BufferLayout vertexLayout{
             { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RG32_FLOAT, "TEXCOORD" } };
 
-        rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
-        bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
-        bindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
+        rhi::BindingLayout vsBindingLayout{ { rhi::ShaderStage::Vertex } };
+        vsBindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+        vsBindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
+
+        rhi::BindingLayout psBindingLayout{ { rhi::ShaderStage::Pixel } };
+        psBindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+        psBindingLayout.AddElement( { 0, rhi::ResourceType::Texture_SRV } );
+        psBindingLayout.AddElement( { 0, rhi::ResourceType::Sampler } );
 
         {
             rhi::GraphicsPipelineDescriptor psoDesc{};
@@ -85,7 +96,8 @@ namespace smile::graphic
             psoDesc.VertexShaderHandle = m_VertexShaderHandle;
             psoDesc.PixelShaderHandle = m_PixelShaderHandle;
 
-            psoDesc.BindingLayouts.PushBack( bindingLayout );
+            psoDesc.BindingLayouts.PushBack( vsBindingLayout );
+            psoDesc.BindingLayouts.PushBack( psBindingLayout );
 
             psoDesc.State.RasterizerState.CullMode = rhi::CullMode::None;
             psoDesc.State.DepthStencilState.DepthEnable = false;
@@ -117,20 +129,42 @@ namespace smile::graphic
         }
 
         {
-            rhi::BindingSetDescriptor bindingSetDesc{
+            rhi::GPUBufferDescriptor bufferDesc{};
+            bufferDesc.Size = sizeof( Material );
+            bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+            bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+            bufferDesc.BindFlags = { rhi::BufferBindFlags::ConstantBuffer };
+
+            m_MaterialBufferHandle = m_GPUBufferHandleManager.CreateHandle();
+            m_pDevice->CreateGPUBuffer( m_MaterialBufferHandle, bufferDesc );
+        }
+
+        {
+            rhi::SamplerDescriptor desc{};
+            m_SamplerHandle = m_SamplerHandleManager.CreateHandle();
+            m_pDevice->CreateSampler( m_SamplerHandle, desc );
+        }
+
+        {
+            rhi::BindingSetDescriptor vsBindingSetDesc{
                 { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraConstantBufferHandle ),
                     rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectBufferHandle ) } };
 
-            m_BindingSetHandle = m_BindingSetHandleManager.CreateHandle();
-            m_pDevice->CreateBindingSet( m_BindingSetHandle, bindingSetDesc, bindingLayout );
+            rhi::BindingSetDescriptor psBindingSetDesc{
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_MaterialBufferHandle ),
+                    rhi::BindingSetElement::CreateSampler( 0, m_SamplerHandle ) } };
+
+            m_VSBindingSetHandle = m_BindingSetHandleManager.CreateHandle();
+            m_pDevice->CreateBindingSet( m_VSBindingSetHandle, vsBindingSetDesc, vsBindingLayout );
+
+            m_PSBindingSetHandle = m_BindingSetHandleManager.CreateHandle();
+            m_pDevice->CreateBindingSet( m_PSBindingSetHandle, psBindingSetDesc, psBindingLayout );
         }
 
         {
             const Count vertexCount = 3;
             float vertices[]{
-                -0.5f, 0.0f, 0.5f, 0.0f, 0.0f,
-                0.0f, 0.5f, 0.5f, 1.0f, 0.0f,
-                0.5f, 0.0f, 0.5f, 0.5f, 1.0f };
+                -0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 1.0f };
 
             rhi::GPUBufferDescriptor bufferDesc{};
             bufferDesc.Size = vertexCount * vertexLayout.GetStride();
@@ -180,11 +214,15 @@ namespace smile::graphic
             m_CameraConstantBufferHandle, &viewProjection, sizeof( DirectX::XMFLOAT4X4 ) );
         m_pImmediateCommandList->FillBuffer( m_PerObjectBufferHandle, &viewProjection, sizeof( DirectX::XMFLOAT4X4 ) );
 
+        Material material{};
+        m_pImmediateCommandList->FillBuffer( m_MaterialBufferHandle, &material, sizeof( Material ) );
+
         rhi::GraphicsState state{};
         state.Pipeline = m_PipelineHandle;
         state.Framebuffer = m_Framebuffer;
         state.Viewport.Viewports.PushBack( m_FramebufferInfo.GetViewport() );
-        state.Bindings.PushBack( m_BindingSetHandle );
+        state.Bindings.PushBack( m_VSBindingSetHandle );
+        state.Bindings.PushBack( m_PSBindingSetHandle );
         state.VertexBuffers.PushBack( rhi::VertexBufferBinding{ m_VertexBufferHandle, 0, 0 } );
         state.IndexBuffer = rhi::IndexBufferBinding{ m_IndexBufferHandle, rhi::Format::R32_UINT, 0 };
 

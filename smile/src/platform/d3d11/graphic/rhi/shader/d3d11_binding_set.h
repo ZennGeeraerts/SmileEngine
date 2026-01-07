@@ -32,11 +32,11 @@ namespace smile::graphic::rhi
         foundation::Flags< ShaderStage > Visibility{ ShaderStage::Unknown };
 
         primitive::Array< ID3D11ShaderResourceView *, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT >
-            pShaderResourceViews;
+            pShaderResourceViews{};
         Uint32 MinSRVSlot = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
         Uint32 MaxSRVSlot = 0;
 
-        primitive::Array< ID3D11SamplerState *, D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT > pSamplers;
+        primitive::Array< ID3D11SamplerState *, D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT > pSamplers{};
         Uint32 MinSamplerSlot = D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT;
         Uint32 MaxSamplerSlot = 0;
 
@@ -46,7 +46,7 @@ namespace smile::graphic::rhi
         Uint32 MinConstantBufferSlot = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
         Uint32 MaxConstantBufferSlot = 0;
 
-        primitive::Array< ID3D11UnorderedAccessView *, D3D11_1_UAV_SLOT_COUNT > pUnorderedAccessViews;
+        primitive::Array< ID3D11UnorderedAccessView *, D3D11_1_UAV_SLOT_COUNT > pUnorderedAccessViews{};
         Uint32 MinUAVSlot = D3D11_1_UAV_SLOT_COUNT;
         Uint32 MaxUAVSlot = 0;
     };
