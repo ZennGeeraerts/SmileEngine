@@ -101,7 +101,7 @@ namespace smile::graphic::rhi
 
                     const BufferRange range = binding.Range.Resolve( buffer.Descriptor );
 
-                    pConstantBuffers[binding.Slot] = buffer.pInternal;
+                    pConstantBuffers[binding.Slot] = buffer.pInternal.Get();
 
                     ConstantBufferOffsets[binding.Slot] = range.Offset / constantSize;
                     ConstantBufferCounts[binding.Slot] =

@@ -213,7 +213,7 @@ namespace smile::graphic::rhi
                 SM_ASSERT( binding.VertexBuffer.IsValid() );
                 SM_ASSERT( m_pDevice->m_GPUBuffers.IsValidIndex( binding.VertexBuffer.GetIndex() ) );
 
-                pVertexBuffers[binding.Slot] = m_pDevice->m_GPUBuffers[binding.VertexBuffer.GetIndex()].pInternal;
+                pVertexBuffers[binding.Slot] = m_pDevice->m_GPUBuffers[binding.VertexBuffer.GetIndex()].pInternal.Get();
                 vertexBufferStrides[binding.Slot] = static_cast< UINT >( pipeline.Layout.GetStride() );
                 vertexBufferOffsets[binding.Slot] = static_cast< UINT >( binding.Offset );
                 maxVertexBufferIndex = std::max( maxVertexBufferIndex, binding.Slot );
@@ -242,7 +242,7 @@ namespace smile::graphic::rhi
                 SM_ASSERT( m_pDevice->m_GPUBuffers.IsValidIndex( graphicsState.IndexBuffer.IndexBuffer.GetIndex() ) );
 
                 m_Context.pImmediateContext->IASetIndexBuffer(
-                    m_pDevice->m_GPUBuffers[graphicsState.IndexBuffer.IndexBuffer.GetIndex()].pInternal,
+                    m_pDevice->m_GPUBuffers[graphicsState.IndexBuffer.IndexBuffer.GetIndex()].pInternal.Get(),
                     GetDXGIFormatMapping( graphicsState.IndexBuffer.BufferFormat ).SRVFormat,
                     graphicsState.IndexBuffer.Offset );
             }
@@ -375,9 +375,10 @@ namespace smile::graphic::rhi
         const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
 
         D3D11_MAPPED_SUBRESOURCE mappedResource{};
-        m_Context.pImmediateContext->Map( gpuBuffer.pInternal, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
+        m_Context.pImmediateContext->Map(
+            gpuBuffer.pInternal.Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
         memcpy( mappedResource.pData, pData, size );
-        m_Context.pImmediateContext->Unmap( gpuBuffer.pInternal, 0 );
+        m_Context.pImmediateContext->Unmap( gpuBuffer.pInternal.Get(), 0 );
     }
 
     void DirectX11CommandList::PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,

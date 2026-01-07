@@ -158,7 +158,7 @@ namespace smile::graphic::rhi
         }
 
         ComPtr< ID3D11ShaderResourceView > pShaderResourceView;
-        const HRESULT result = pDevice->CreateShaderResourceView( pInternal, &desc11, &pShaderResourceView );
+        const HRESULT result = pDevice->CreateShaderResourceView( pInternal.Get(), &desc11, &pShaderResourceView );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11Buffer::GetOrCreateShaderResourceView > Failed to create shader resource view" );
@@ -230,7 +230,7 @@ namespace smile::graphic::rhi
         }
 
         ComPtr< ID3D11UnorderedAccessView > pUnorderedAccessView;
-        const HRESULT result = pDevice->CreateUnorderedAccessView( pInternal, &desc11, &pUnorderedAccessView );
+        const HRESULT result = pDevice->CreateUnorderedAccessView( pInternal.Get(), &desc11, &pUnorderedAccessView );
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DirectX11Buffer::GetOrCreateUnorderedAccessView > Failed to create unordered access view" );

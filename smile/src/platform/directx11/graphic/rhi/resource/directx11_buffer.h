@@ -30,7 +30,7 @@ namespace smile::graphic::rhi
             BufferRange bufferRange,
             ResourceType type );
 
-        ID3D11Buffer *pInternal = nullptr;
+        Microsoft::WRL::ComPtr< ID3D11Buffer > pInternal = nullptr;
         GPUBufferDescriptor Descriptor;
 
       private:
