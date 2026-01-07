@@ -8,8 +8,8 @@
 #include "d3d11_command_list.h"
 
 #include "platform/d3dcommon/graphic/d3d_diagnostics.h"
+#include "platform/d3dcommon/graphic/rhi/dxgi_format.h"
 #include "d3d11_swap_chain.h"
-#include "dxgi_format.h"
 
 #include "smile/core/window/window.h"
 

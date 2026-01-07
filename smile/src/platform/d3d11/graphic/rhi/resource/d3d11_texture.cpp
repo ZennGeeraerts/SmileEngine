@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "d3d11_texture.h"
 
-#include "platform/d3d11/graphic/rhi/dxgi_format.h"
+#include "platform/d3dcommon/graphic/rhi/dxgi_format.h"
 #include "platform/d3dcommon/graphic/d3d_diagnostics.h"
 #include "platform/d3d11/graphic/rhi/d3d11_cpu_access.h"
 
