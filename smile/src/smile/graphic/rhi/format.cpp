@@ -865,7 +865,7 @@ namespace smile::graphic::rhi
         if ( static_cast< Uint32 >( format ) >= static_cast< Uint32 >( Format::COUNT ) )
             return s_FormatInfo[0]; // Unknown format
 
-        const FormatInfo &info = s_FormatInfo[static_cast< uint32_t >( format )];
+        const FormatInfo &info = s_FormatInfo[static_cast< Uint32 >( format )];
 
         SM_ASSERT_MSG( info.Format == format, "Format mismatch" );
 

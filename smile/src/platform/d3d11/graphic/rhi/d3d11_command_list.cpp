@@ -11,9 +11,9 @@
 #include "smile/graphic/rhi/shader/shader.h"
 
 #include "platform/d3dcommon/graphic/d3d_diagnostics.h"
+#include "platform/d3dcommon/graphic/rhi/dxgi_format.h"
 #include "d3d11_device.h"
 #include "d3d11_swap_chain.h"
-#include "dxgi_format.h"
 #include "d3d11_viewport_state.h"
 
 #include "resource/d3d11_frame_buffer.h"
