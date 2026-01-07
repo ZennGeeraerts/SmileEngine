@@ -12,7 +12,7 @@ namespace smile::graphic
 {
     RenderSystem::RenderSystem()
     {
-        m_API = rhi::RendererBackendType::DirectX11;
+        m_API = rhi::RendererBackendType::D3D11;
         m_pDevice = rhi::GraphicsDevice::Create( m_API );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
     }
@@ -31,7 +31,7 @@ namespace smile::graphic
         {
             switch ( m_API )
             {
-                case rhi::RendererBackendType::DirectX11:
+                case rhi::RendererBackendType::D3D11:
                     return rhi::ObjectType::D3D11_Resource;
                 default:
                     SM_ASSERT( false );

@@ -17,7 +17,7 @@
 #include "smpch.h"
 #include "shader_reflector.h"
 
-#include "platform/directx11/graphic/tools/d3d11_shader_reflector.h"
+#include "platform/d3d11/graphic/tools/d3d11_shader_reflector.h"
 
 namespace smile::graphic
 {

@@ -36,7 +36,7 @@ add_module(core)
 add_module(graphic)
 
 add_platform(d3dcommon)
-add_platform(directx11)
+add_platform(d3d11)
 
 set(LIB_DIRS
     smile

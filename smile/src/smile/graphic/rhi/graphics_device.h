@@ -24,7 +24,7 @@ namespace smile::graphic::rhi
     enum class RendererBackendType
     {
         None = 0,
-        DirectX11 = 1
+        D3D11 = 1
     };
 
     template < typename CollectionType >

@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "graphics_device.h"
 
-#include "platform/directx11/graphic/rhi/directx11_device.h"
+#include "platform/d3d11/graphic/rhi/d3d11_device.h"
 
 namespace smile::graphic::rhi
 {
@@ -13,8 +13,8 @@ namespace smile::graphic::rhi
     {
         switch ( backendType )
         {
-            case RendererBackendType::DirectX11:
-                return CreateScope< DirectX11Device >();
+            case RendererBackendType::D3D11:
+                return CreateScope< D3D11Device >();
 
             default:
                 SM_ASSERT_MSG( false,

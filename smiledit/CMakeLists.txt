@@ -31,7 +31,7 @@ add_module(scripting)
 add_module(blueprint)
 
 add_platform(d3dcommon)
-add_platform(directx11)
+add_platform(d3d11)
 add_platform(physx)
 
 set(LIB_DIRS

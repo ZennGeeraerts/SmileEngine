@@ -43,7 +43,7 @@ add_module(physics)
 add_module(scripting)
 
 add_platform(d3dcommon)
-add_platform(directx11)
+add_platform(d3d11)
 add_platform(physx)
 
 add_custom_command(

@@ -22,7 +22,7 @@ namespace smile::graphic
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "DDSReader::Read > Loading from DDS file failed: {}, returning nullptr",
-                fmt::ptr( rhi::GetDirectX11ErrorMessage( result ) ) );
+                fmt::ptr( rhi::GetD3DErrorMessage( result ) ) );
 
             return memory::CreateRef< Image >();
         }

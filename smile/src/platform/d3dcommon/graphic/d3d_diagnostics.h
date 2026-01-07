@@ -8,5 +8,5 @@
 
 namespace smile::graphic::rhi
 {
-    LPTSTR GetDirectX11ErrorMessage( HRESULT result );
+    LPTSTR GetD3DErrorMessage( HRESULT result );
 }

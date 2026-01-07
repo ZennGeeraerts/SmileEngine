@@ -8,7 +8,7 @@
 
 namespace smile::graphic::rhi
 {
-    LPTSTR GetDirectX11ErrorMessage( HRESULT result )
+    LPTSTR GetD3DErrorMessage( HRESULT result )
     {
         // This works only with windows 8 or higher
         // FormatMessage are since then including DirectX

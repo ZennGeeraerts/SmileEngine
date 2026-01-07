@@ -16,7 +16,7 @@ namespace smile::graphic
 {
     RHITestLayer::RHITestLayer()
     {
-        rhi::RendererBackendType api = rhi::RendererBackendType::DirectX11;
+        rhi::RendererBackendType api = rhi::RendererBackendType::D3D11;
         m_pDevice = rhi::GraphicsDevice::Create( api );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
     }
