@@ -44,6 +44,8 @@ namespace smile::graphic
         m_Framebuffer = m_FramebufferManager.CreateHandle();
         m_pDevice->CreateFramebuffer( m_Framebuffer, m_FramebufferDesc );
 
+        m_FramebufferInfo = rhi::FramebufferInfoExtented{ m_FramebufferDesc };
+
         graphic::ShaderLoader shaderLoader{};
         {
             auto pShaderAsset = shaderLoader.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
@@ -86,6 +88,7 @@ namespace smile::graphic
             psoDesc.BindingLayouts.PushBack( bindingLayout );
 
             psoDesc.State.RasterizerState.CullMode = rhi::CullMode::None;
+            psoDesc.State.DepthStencilState.DepthEnable = false;
 
             m_PipelineHandle = m_PipelineHandleManager.CreateHandle();
             m_pDevice->CreateGraphicsPipeline( m_PipelineHandle, psoDesc );
@@ -123,7 +126,7 @@ namespace smile::graphic
         }
 
         {
-            const Uint32 vertexCount = 3;
+            const Count vertexCount = 3;
             float vertices[]{
                 -0.5f, 0.0f, 0.5f, 0.0f, 0.0f,
                 0.0f, 0.5f, 0.5f, 1.0f, 0.0f,
@@ -159,6 +162,8 @@ namespace smile::graphic
 
     void RHITestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
+        m_pImmediateCommandList->Open();
+
         for ( const auto &colorAttachment : m_FramebufferDesc.ColorAttachments )
         {
             m_pImmediateCommandList->ClearTexture( colorAttachment.Texture,
@@ -178,16 +183,17 @@ namespace smile::graphic
         rhi::GraphicsState state{};
         state.Pipeline = m_PipelineHandle;
         state.Framebuffer = m_Framebuffer;
+        state.Viewport.Viewports.PushBack( m_FramebufferInfo.GetViewport() );
         state.Bindings.PushBack( m_BindingSetHandle );
         state.VertexBuffers.PushBack( rhi::VertexBufferBinding{ m_VertexBufferHandle, 0, 0 } );
         state.IndexBuffer = rhi::IndexBufferBinding{ m_IndexBufferHandle, rhi::Format::R32_UINT, 0 };
 
-        m_pImmediateCommandList->Open();
         m_pImmediateCommandList->SetGraphicsState( state );
-        m_pImmediateCommandList->Draw( { 3, 0 } );
-        m_pImmediateCommandList->Close();
+        m_pImmediateCommandList->DrawIndexed( { 3, 0, 0 } );
 
         m_pSwapChain->Present();
+
+        m_pImmediateCommandList->Close();
     }
 
     void RHITestLayer::OnEvent( window::Event &event )

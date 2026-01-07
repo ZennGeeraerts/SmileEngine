@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/core/geometric/rectangle.h"
+
 namespace smile::graphic::rhi
 {
     struct Viewport final
@@ -24,6 +26,16 @@ namespace smile::graphic::rhi
             const float minZ,
             const float maxZ )
             : MinX{ minX }, MaxX{ maxX }, MinY{ minY }, MaxY{ maxY }, MinZ{ minZ }, MaxZ{ maxZ }
+        {
+        }
+
+        Viewport( const geometric::Rectangle &rect )
+            : MinX{ rect.x },
+              MaxX{ rect.x + rect.Width },
+              MinY{ rect.y },
+              MaxY{ rect.y + rect.Height },
+              MinZ{ 0.0f },
+              MaxZ{ 0.0f }
         {
         }
 

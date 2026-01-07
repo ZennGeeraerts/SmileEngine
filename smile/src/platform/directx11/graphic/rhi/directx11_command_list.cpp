@@ -14,6 +14,7 @@
 #include "directx11_device.h"
 #include "directx11_swap_chain.h"
 #include "dxgi_format.h"
+#include "directx11_viewport_state.h"
 
 #include "resource/directx11_frame_buffer.h"
 
@@ -80,6 +81,8 @@ namespace smile::graphic::rhi
         const bool updatePipeline =
             !m_IsCurrentGraphicsStateValid || m_CurrentGraphicsPipeline != graphicsState.Pipeline;
         const bool updateBindings = updateFramebuffer || m_CurrentBindings != graphicsState.Bindings;
+
+        const bool updateViewports = !m_IsCurrentGraphicsStateValid || m_CurrentViewport != graphicsState.Viewport;
 
         const bool updateIndexBuffer =
             !m_IsCurrentGraphicsStateValid || m_CurrentIndexBufferBinding != graphicsState.IndexBuffer;
@@ -170,6 +173,22 @@ namespace smile::graphic::rhi
                     maxUAVSlot - minUAVSlot + 1,
                     pUnorderedAccessViews.GetData() + minUAVSlot,
                     initialCounts.GetData() );
+            }
+        }
+
+        if ( updateViewports )
+        {
+            DirectX11ViewportState vpState{ graphicsState.Viewport };
+
+            if ( vpState.ViewportCount )
+            {
+                m_Context.pImmediateContext->RSSetViewports( vpState.ViewportCount, vpState.Viewports.GetData() );
+            }
+
+            if ( vpState.ScissorRectCount )
+            {
+                m_Context.pImmediateContext->RSSetScissorRects(
+                    vpState.ScissorRectCount, vpState.ScissorRects.GetData() );
             }
         }
 

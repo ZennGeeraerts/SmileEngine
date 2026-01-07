@@ -35,6 +35,7 @@ namespace smile::graphic
         rhi::FramebufferHandleManager m_FramebufferManager;
         rhi::FramebufferHandle m_Framebuffer;
         rhi::FramebufferDescriptor m_FramebufferDesc{};
+        rhi::FramebufferInfoExtented m_FramebufferInfo{};
 
         rhi::ShaderHandleManager m_ShaderHandleManager;
         rhi::ShaderHandle m_VertexShaderHandle;
