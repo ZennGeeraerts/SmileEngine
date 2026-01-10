@@ -16,7 +16,8 @@ namespace smile::primitive
       public:
         StringView() = default;
 
-        StringView( foundation::ConstantText text ) : m_SubText{ text.GetText() }, m_CharCount{ text.GetCharCount() }
+        constexpr StringView( foundation::ConstantText text ) noexcept
+            : m_SubText{ text.GetText() }, m_CharCount{ text.GetCharCount() }
         {
         }
 
@@ -26,61 +27,62 @@ namespace smile::primitive
         }
 
         template < int Size >
-        StringView( const char ( &text )[Size] ) : StringView{ text, Size - 1 }
+        constexpr StringView( const char ( &text )[Size] ) noexcept : StringView{ text, Size - 1 }
         {
         }
 
-        StringView( const char *text, const Count charCount ) : m_SubText{ text }, m_CharCount{ charCount }
+        constexpr StringView( const char *text, const Count charCount ) noexcept
+            : m_SubText{ text }, m_CharCount{ charCount }
         {
         }
 
         ~StringView() = default;
 
-        inline char operator[]( const Index index ) const
+        constexpr char operator[]( const Index index ) const noexcept
         {
             SM_ASSERT( index < m_CharCount );
 
             return m_SubText[index];
         }
 
-        Count GetCharCount() const
+        constexpr Count GetCharCount() const noexcept
         {
             return m_CharCount;
         }
 
-        const char *GetData() const
+        constexpr const char *GetData() const noexcept
         {
             SM_ASSERT( IsNullTerminated() );
 
             return m_SubText;
         }
 
-        const char *GetSubText() const
+        constexpr const char *GetSubText() const noexcept
         {
             return m_SubText;
         }
 
-        inline bool IsEmpty() const
+        constexpr bool IsEmpty() const noexcept
         {
             return m_CharCount == 0;
         }
 
-        bool IsNullTerminated() const
+        constexpr bool IsNullTerminated() const
         {
             return m_SubText[m_CharCount] == 0;
         }
 
-        bool IsValidRange( const Index firstIndex, const Count charCount ) const
+        constexpr bool IsValidRange( const Index firstIndex, const Count charCount ) const noexcept
         {
             return ( firstIndex + charCount ) <= m_CharCount;
         }
 
-        inline const char *begin()
+        constexpr const char *begin() const noexcept
         {
             return m_SubText;
         }
 
-        inline const char *end()
+        constexpr const char *end() const noexcept
         {
             return m_SubText + m_CharCount;
         }
@@ -126,12 +128,12 @@ namespace smile::primitive
         return Compare( first, second ) >= 0;
     }
 
-    inline const char *begin( StringView view )
+    constexpr const char *begin( StringView view ) noexcept
     {
         return view.GetSubText();
     }
 
-    inline const char *end( StringView view )
+    constexpr const char *end( StringView view ) noexcept
     {
         return view.GetSubText() + view.GetCharCount();
     }
