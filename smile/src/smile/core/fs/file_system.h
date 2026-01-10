@@ -23,6 +23,7 @@
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/stream/binary_stream.h"
 #include "path.h"
+#include "file_descriptor_list.h"
 
 #include <optional>
 
@@ -47,6 +48,7 @@ namespace smile::fs
         stream::BinaryStream::Ref GetFile( const Path &filePath ) const;
 
       private:
+        FileDescriptorList m_FileDescriptorList;
         primitive::Vector< Path > m_RootDirectories;
     };
 }
