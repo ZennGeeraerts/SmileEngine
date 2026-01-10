@@ -13,7 +13,7 @@ namespace smile
     {
         SECTION( "Pop with valid args" )
         {
-            primitive::Array< const char *, 4 > array{ "--test-arg", "sample text", "--another-arg", "more text" };
+            primitive::Array< const char *, 5 > array{ "-", "--test-arg", "sample text", "--another-arg", "more text" };
             commandline::Arguments args{ array.AsView() };
 
             auto arg1 = args.Pop();
@@ -31,7 +31,7 @@ namespace smile
 
         SECTION( "Pop with invalid args" )
         {
-            primitive::Array< const char *, 4 > array{ "--valid", "sample text", "%%invalid", "more text" };
+            primitive::Array< const char *, 5 > array{ "-", "--valid", "sample text", "%%invalid", "more text" };
 
             commandline::Arguments args{ array.AsView() };
 
@@ -41,7 +41,7 @@ namespace smile
 
         SECTION( "IsFinished" )
         {
-            primitive::Array< const char *, 4 > array{ "--test-arg", "sample text", "--another-arg", "more text" };
+            primitive::Array< const char *, 5 > array{ "-", "--test-arg", "sample text", "--another-arg", "more text" };
             commandline::Arguments args{ array.AsView() };
 
             REQUIRE_FALSE( args.IsFinished() );
@@ -55,7 +55,7 @@ namespace smile
 
         SECTION( "HasArgument returns false with invalid argument" )
         {
-            primitive::Array< const char *, 4 > array{ "--valid", "sample text", "%%invalid", "more text" };
+            primitive::Array< const char *, 5 > array{ "-", "--valid", "sample text", "%%invalid", "more text" };
             commandline::Arguments args{ array.AsView() };
 
             REQUIRE( args.HasArgument() );
@@ -66,7 +66,7 @@ namespace smile
 
         SECTION( "HasArgument returns false when finished" )
         {
-            primitive::Array< const char *, 4 > array{ "--test-arg", "sample text", "--another-arg", "more text" };
+            primitive::Array< const char *, 5 > array{ "-", "--test-arg", "sample text", "--another-arg", "more text" };
             commandline::Arguments args{ array.AsView() };
 
             REQUIRE( args.HasArgument() );
