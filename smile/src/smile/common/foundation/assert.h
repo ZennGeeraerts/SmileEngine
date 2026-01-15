@@ -41,7 +41,7 @@ namespace smile::foundation
 #ifdef SM_ENABLE_ASSERTS
 #    define SM_ASSERT( condition )                                                                                     \
         {                                                                                                              \
-            if ( !( condition ) )                                                                                      \
+            if ( !std::is_constant_evaluated() && !( condition ) )                                                     \
             {                                                                                                          \
                 ( smile::foundation::HandleAssert( #condition, nullptr, __FILE__, __LINE__, __FUNCTION__ )             \
                         ? ( void )( SM_DEBUGBREAK() )                                                                  \
@@ -50,7 +50,7 @@ namespace smile::foundation
         }
 #    define SM_ASSERT_MSG( condition, message )                                                                        \
         {                                                                                                              \
-            if ( !( condition ) )                                                                                      \
+            if ( !std::is_constant_evaluated() && !( condition ) )                                                     \
             {                                                                                                          \
                 ( smile::foundation::HandleAssert( #condition, message, __FILE__, __LINE__, __FUNCTION__ )             \
                         ? ( void )( SM_DEBUGBREAK() )                                                                  \
