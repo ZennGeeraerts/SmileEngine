@@ -9,7 +9,7 @@
 
 namespace smile::graphic
 {
-    Material::Material( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader )
+    Material::Material( const VertexShader::ConstRef &pVertexShader, const PixelShader::ConstRef &pPixelShader )
     {
         SetShaders( pVertexShader, pPixelShader );
     }
@@ -18,7 +18,7 @@ namespace smile::graphic
     {
     }
 
-    void Material::SetShaders( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader )
+    void Material::SetShaders( const VertexShader::ConstRef &pVertexShader, const PixelShader::ConstRef &pPixelShader )
     {
         m_Bindings.Clear();
         m_ConstantBufferDescs.Clear();
@@ -29,8 +29,8 @@ namespace smile::graphic
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
         psoDesc.InputLayout = GetBufferLayout();
-        psoDesc.pVertexShader = pVertexShader->GetVertexShader();
-        psoDesc.pPixelShader = pPixelShader->GetPixelShader();
+        psoDesc.pVertexShader = pVertexShader;
+        psoDesc.pPixelShader = pPixelShader;
 
         rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } };
         psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
