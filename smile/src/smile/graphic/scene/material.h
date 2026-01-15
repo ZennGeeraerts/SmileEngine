@@ -4,8 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/shader/shader_asset.h"
+#include "smile/graphic/renderer/shader/vertex_shader.h"
+#include "smile/graphic/renderer/shader/pixel_shader.h"
 #include "smile/graphic/renderer/resource/graphics_pipeline.h"
+#include "smile/graphic/shader/constant_buffer_descriptor.h"
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/hash_map.h"
 
@@ -17,24 +19,26 @@ namespace smile::graphic
         using Ref = memory::Ref< Material >;
         using ConstRef = memory::Ref< const Material >;
 
-        Material( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader ) noexcept;
+        Material( const VertexShader::ConstRef &pVertexShader,
+            const PixelShader::ConstRef &pPixelShader,
+            const rhi::BufferLayout &layout ) noexcept;
         ~Material() noexcept;
 
-        void SetShaders( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader );
+        void SetShaders( const VertexShader::ConstRef &pVertexShader, const PixelShader::ConstRef &pPixelShader );
 
         inline const rhi::BufferLayout &GetBufferLayout() const
         {
-            return m_pVertexShader->GetReflectionData().InputSignature;
+            m_pVertexShader->return m_pVertexShader->GetReflectionData().InputSignature;
         }
 
         inline VertexShader::ConstRef GetVertexShader() const
         {
-            return m_pVertexShader->GetVertexShader();
+            return m_pVertexShader;
         }
 
         inline PixelShader::ConstRef GetPixelShader() const
         {
-            return m_pPixelShader->GetPixelShader();
+            return m_pPixelShader;
         }
 
         inline GraphicsPipeline::Ref GetGraphicsPipeline() const
@@ -58,8 +62,8 @@ namespace smile::graphic
         }
 
       private:
-        ShaderAsset::ConstRef m_pVertexShader;
-        ShaderAsset::ConstRef m_pPixelShader;
+        VertexShader::ConstRef m_pVertexShader;
+        PixelShader::ConstRef m_pPixelShader;
 
         GraphicsPipeline::Ref m_pGraphicsPipeline;
 
