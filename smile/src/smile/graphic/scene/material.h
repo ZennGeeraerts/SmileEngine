@@ -4,9 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
+#include "material_instance.h"
 #include "smile/graphic/renderer/shader/vertex_shader.h"
 #include "smile/graphic/renderer/shader/pixel_shader.h"
-#include "smile/graphic/renderer/resource/graphics_pipeline.h"
 #include "smile/graphic/shader/constant_buffer_descriptor.h"
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/hash_map.h"
@@ -19,17 +19,8 @@ namespace smile::graphic
         using Ref = memory::Ref< Material >;
         using ConstRef = memory::Ref< const Material >;
 
-        Material( const VertexShader::ConstRef &pVertexShader,
-            const PixelShader::ConstRef &pPixelShader,
-            const rhi::BufferLayout &layout ) noexcept;
+        Material( MaterialInstance::ConstRef pMaterialInstance );
         ~Material() noexcept;
-
-        void SetShaders( const VertexShader::ConstRef &pVertexShader, const PixelShader::ConstRef &pPixelShader );
-
-        inline const rhi::BufferLayout &GetBufferLayout() const
-        {
-            m_pVertexShader->return m_pVertexShader->GetReflectionData().InputSignature;
-        }
 
         inline VertexShader::ConstRef GetVertexShader() const
         {
@@ -41,33 +32,7 @@ namespace smile::graphic
             return m_pPixelShader;
         }
 
-        inline GraphicsPipeline::Ref GetGraphicsPipeline() const
-        {
-            return m_pGraphicsPipeline;
-        }
-
-        inline const primitive::HashMap< primitive::String, rhi::BindingLayoutElement > &GetBindings() const
-        {
-            return m_Bindings;
-        }
-
-        inline const ConstantBufferDescriptor &GetConstantBufferDesc( const primitive::StringView name ) const
-        {
-            return m_ConstantBufferDescs.GetItemAtKey( name );
-        }
-
-        inline const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &GetConstantBufferDescs() const
-        {
-            return m_ConstantBufferDescs;
-        }
-
       private:
-        VertexShader::ConstRef m_pVertexShader;
-        PixelShader::ConstRef m_pPixelShader;
-
-        GraphicsPipeline::Ref m_pGraphicsPipeline;
-
-        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > m_Bindings;
-        primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;
+        MaterialInstance::ConstRef m_pMaterialInstance;
     };
 }

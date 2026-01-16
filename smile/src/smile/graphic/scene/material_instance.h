@@ -4,9 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
-#include "material.h"
+#include "material_asset.h"
 #include "smile/graphic/renderer/resource/texture.h"
 #include "smile/graphic/renderer/resource/sampler.h"
+#include "smile/core/asset/asset.h"
+#include "smile/common/memory/ref.h"
 
 #include <variant>
 
@@ -37,12 +39,20 @@ namespace smile::graphic
         MaterialParamValue Data;
     };
 
-    class MaterialInstance final
+    class MaterialInstance final : public asset::Asset
     {
       public:
+        using Ref = memory::Ref< MaterialInstance >;
+        using ConstRef = memory::Ref< const MaterialInstance >;
+
         using ConstantBufferData = primitive::Vector< Byte >;
 
-        MaterialInstance( const Material::ConstRef &pMaterial ) noexcept;
+        MaterialInstance( MaterialAsset::ConstRef pMaterial ) noexcept;
+
+        asset::AssetType GetType() const override
+        {
+            return asset::AssetType{ foundation::TypeNameOf< MaterialInstance >() };
+        }
 
         void Clear();
 
@@ -59,8 +69,7 @@ namespace smile::graphic
         void SetParam( const primitive::StringView name, const MaterialParamValue &data );
 
       private:
-        Material::ConstRef m_pMaterial;
-
+        MaterialAsset::ConstRef m_pMaterial;
         primitive::HashMap< primitive::String, MaterialParam > m_Params;
         primitive::HashMap< primitive::String, ConstantBufferData > m_ConstantBufferData;
     };

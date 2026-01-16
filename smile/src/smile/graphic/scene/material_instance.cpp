@@ -46,7 +46,7 @@ namespace smile::graphic
         }
     }
 
-    MaterialInstance::MaterialInstance( const Material::ConstRef &pMaterial ) noexcept : m_pMaterial{ pMaterial }
+    MaterialInstance::MaterialInstance( MaterialAsset::ConstRef pMaterial ) noexcept : m_pMaterial{ pMaterial }
     {
         for ( const auto &binding : m_pMaterial->GetBindings() )
         {

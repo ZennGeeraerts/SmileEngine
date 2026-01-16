@@ -17,28 +17,48 @@
 #pragma once
 
 #include "smile/core/asset/asset.h"
-#include "material.h"
+#include "smile/graphic/shader/shader_asset.h"
+#include "smile/graphic/shader/constant_buffer_descriptor.h"
+#include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/hash_map.h"
 
 namespace smile::graphic
 {
     class MaterialAsset final : public asset::Asset
     {
       public:
-        MaterialAsset( Material::Ref pMaterial ) noexcept : m_pMaterial{ pMaterial }
-        {
-        }
+        using Ref = memory::Ref< MaterialAsset >;
+        using ConstRef = memory::Ref< const MaterialAsset >;
+
+        MaterialAsset( ShaderAsset::ConstRef pVertexShader, ShaderAsset::ConstRef pPixelShader ) noexcept;
 
         asset::AssetType GetType() const override
         {
             return asset::AssetType{ foundation::TypeNameOf< MaterialAsset >() };
         }
 
-        Material::Ref GetMaterial() const
+        void SetShaders( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader );
+
+        inline const primitive::HashMap< primitive::String, rhi::BindingLayoutElement > &GetBindings() const
         {
-            return m_pMaterial;
+            return m_Bindings;
+        }
+
+        inline const ConstantBufferDescriptor &GetConstantBufferDesc( const primitive::StringView name ) const
+        {
+            return m_ConstantBufferDescs.GetItemAtKey( name );
+        }
+
+        inline const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &GetConstantBufferDescs() const
+        {
+            return m_ConstantBufferDescs;
         }
 
       private:
-        Material::Ref m_pMaterial;
+        ShaderAsset::ConstRef m_pVertexShader;
+        ShaderAsset::ConstRef m_pPixelShader;
+
+        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > m_Bindings;
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;
     };
 }
