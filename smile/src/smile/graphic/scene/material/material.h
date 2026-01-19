@@ -24,7 +24,7 @@ namespace smile::graphic
 
         inline VertexShader::ConstRef GetVertexShader() const
         {
-            return m_pVertexShader;
+            return m_pMaterialInstance->GetSh;
         }
 
         inline PixelShader::ConstRef GetPixelShader() const

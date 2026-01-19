@@ -54,6 +54,16 @@ namespace smile::graphic
             return m_ConstantBufferDescs;
         }
 
+        ShaderAsset::ConstRef GetVertexShader() const
+        {
+            return m_pVertexShader;
+        }
+
+        ShaderAsset::ConstRef GetPixelShader() const
+        {
+            return m_pPixelShader;
+        }
+
       private:
         ShaderAsset::ConstRef m_pVertexShader;
         ShaderAsset::ConstRef m_pPixelShader;

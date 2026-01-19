@@ -48,7 +48,7 @@ namespace smile::graphic
                 {
                     SM_ASSERT_MSG( !m_ConstantBufferDescs.HasItemAtKey( binding.Key ),
                         "Constant buffer descriptors already contain a descriptor with the name: {}",
-                        binding.Key )
+                        binding.Key );
 
                     const auto &constantBufferDesc = reflectionData.ConstantBufferDescs.GetItemAtKey( binding.Key );
                     m_ConstantBufferDescs.Insert( binding.Key, constantBufferDesc );
