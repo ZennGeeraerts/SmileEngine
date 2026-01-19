@@ -20,7 +20,7 @@ namespace smile::graphic
             return asset::AssetType{ foundation::TypeNameOf< TextureAsset >() };
         }
 
-        const std::vector< std::filesystem::path > &GetExtensions() const override
+        const primitive::Vector< fs::Path > &GetExtensions() const override
         {
             return m_Extensions;
         }
@@ -28,9 +28,9 @@ namespace smile::graphic
         memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        memory::Ref< TextureAsset > LoadTexture( const std::filesystem::path &path ) const;
+        memory::Ref< TextureAsset > LoadTexture( const fs::Path &path ) const;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".png", ".jpg", ".dds" };
+        const primitive::Vector< fs::Path > m_Extensions{ ".png", ".jpg", ".dds" };
     };
 }

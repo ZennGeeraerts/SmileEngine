@@ -7,6 +7,7 @@
 #include "smile/common/foundation/singleton.h"
 #include "texture_loader.h"
 #include "texture_asset.h"
+#include "smile/core/fs/path.h"
 
 namespace smile::graphic
 {
@@ -17,7 +18,7 @@ namespace smile::graphic
         ~TextureManager() = default;
 
         memory::Ref< TextureAsset > GetTexture( asset::AssetHandle handle );
-        memory::Ref< TextureAsset > GetTexture( const std::filesystem::path &path );
+        memory::Ref< TextureAsset > GetTexture( const fs::Path &path );
         memory::Ref< TextureAsset > GetTexture( memory::Ref< Texture > pTexture ) const;
 
       private:

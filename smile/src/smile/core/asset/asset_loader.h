@@ -15,7 +15,7 @@ namespace smile::asset
         virtual ~AssetLoader() = default;
 
         virtual AssetType GetType() const = 0;
-        virtual const std::vector< std::filesystem::path > &GetExtensions() const = 0;
+        virtual const primitive::Vector< fs::Path > &GetExtensions() const = 0;
 
         virtual memory::Ref< Asset > Load( AssetHandle handle, const AssetMetadata &metadata ) const = 0;
     };

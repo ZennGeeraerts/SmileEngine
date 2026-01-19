@@ -20,7 +20,7 @@ namespace smile::world
             return asset::AssetType{ foundation::TypeNameOf< World >() };
         }
 
-        const std::vector< std::filesystem::path > &GetExtensions() const override
+        const primitive::Vector< fs::Path > &GetExtensions() const override
         {
             return m_Extensions;
         }
@@ -28,10 +28,10 @@ namespace smile::world
         memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        memory::Ref< World > LoadWorld( const std::filesystem::path &path ) const;
-        void SaveWorld( memory::Ref< World > pWorld, const std::filesystem::path &path ) const;
+        memory::Ref< World > LoadWorld( const fs::Path &path ) const;
+        void SaveWorld( memory::Ref< World > pWorld, const fs::Path &path ) const;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".smile" };
+        const primitive::Vector< fs::Path > m_Extensions{ ".smile" };
     };
 }

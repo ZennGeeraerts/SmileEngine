@@ -15,20 +15,20 @@ namespace smile::project
         return s_pActiveProject;
     }
 
-    Ref< Project > ProjectManager::Load( const std::filesystem::path &path )
+    Ref< Project > ProjectManager::Load( const fs::Path &path )
     {
         Ref< Project > pProject = CreateRef< Project >();
         ProjectSerializer serializer{ pProject };
 
         if ( serializer.Deserialize( path ) )
         {
-            pProject->m_ProjectDirectory = path.parent_path();
+            pProject->m_ProjectDirectory = path.GetDirectory();
             s_pActiveProject = pProject;
 
             auto pEditorAssetManager = std::make_shared< asset::EditorAssetManager >();
             s_pActiveProject->m_AssetManager = pEditorAssetManager;
             pEditorAssetManager->DeserializeAssetRegistry();
-            
+
             return s_pActiveProject;
         }
         else
@@ -37,12 +37,12 @@ namespace smile::project
         }
     }
 
-    bool ProjectManager::SaveActive( const std::filesystem::path &path )
+    bool ProjectManager::SaveActive( const fs::Path &path )
     {
         ProjectSerializer serializer{ s_pActiveProject };
         if ( serializer.Serialize( path ) )
         {
-            s_pActiveProject->m_ProjectDirectory = path.parent_path();
+            s_pActiveProject->m_ProjectDirectory = path.GetDirectory();
             return true;
         }
         else

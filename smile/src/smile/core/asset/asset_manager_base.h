@@ -6,12 +6,11 @@
 
 #include "asset.h"
 #include "smile/common/memory/ref.h"
-
-#include <map>
+#include "smile/common/primitive/collection/dictionary.h"
 
 namespace smile::asset
 {
-    using AssetMap = std::map< AssetHandle, memory::Ref< Asset > >;
+    using AssetMap = primitive::Dictionary< AssetHandle, memory::Ref< Asset > >;
 
     class AssetManagerBase
     {

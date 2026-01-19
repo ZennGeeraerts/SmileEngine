@@ -6,8 +6,7 @@
 
 #include "world.h"
 #include "world_loader.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::world
 {
@@ -28,11 +27,11 @@ namespace smile::world
         }
 
         static memory::Ref< World > New();
-        static memory::Ref< World > Load( const std::filesystem::path &path );
+        static memory::Ref< World > Load( const fs::Path &path );
         static memory::Ref< World > Load( asset::AssetHandle handle );
         static void UnloadActive();
         static void Open( memory::Ref< World > pWorld );
-        static void SaveActive( const std::filesystem::path &path );
+        static void SaveActive( const fs::Path &path );
         static memory::Ref< World > CopyActive();
 
         static void AddListener( Listener *pListener );

@@ -23,15 +23,15 @@ namespace smile::world
         return LoadWorld( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    memory::Ref< World > WorldLoader::LoadWorld( const std::filesystem::path &path ) const
+    memory::Ref< World > WorldLoader::LoadWorld( const fs::Path &path ) const
     {
-        if ( path.empty() )
+        if ( path.IsEmpty() )
         {
             SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: the path was empty" );
             return nullptr;
         }
 
-        if ( path.extension() != ".smile" )
+        if ( path.GetExtension() != ".smile" )
         {
             SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: wrong file extension" );
             return nullptr;
@@ -46,7 +46,7 @@ namespace smile::world
         return pWorld;
     }
 
-    void WorldLoader::SaveWorld( memory::Ref< World > pWorld, const std::filesystem::path &path ) const
+    void WorldLoader::SaveWorld( memory::Ref< World > pWorld, const fs::Path &path ) const
     {
         WorldSerializer worldSerializer{ pWorld };
         worldSerializer.Serialize( project::ProjectManager::GetAssetFileSystemPath( path ) );

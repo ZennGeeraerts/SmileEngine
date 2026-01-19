@@ -13,8 +13,8 @@ namespace smile::project
       public:
         ProjectSerializer( Ref< Project > pProject );
 
-        bool Serialize( const std::filesystem::path &filePath );
-        bool Deserialize( const std::filesystem::path &filePath );
+        bool Serialize( const fs::Path &filePath );
+        bool Deserialize( const fs::Path &filePath );
 
       private:
         Ref< Project > m_pContext;

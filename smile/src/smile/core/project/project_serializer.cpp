@@ -5,8 +5,9 @@
 #include "smpch.h"
 #include "project_serializer.h"
 
-#include <fstream>
-#include <yaml-cpp/yaml.h>
+#include "smile/core/yaml/yaml.h"
+#include "smile/core/yaml/string.h"
+#include "smile/core/fs/file.h"
 
 namespace smile::project
 {
@@ -14,11 +15,11 @@ namespace smile::project
     {
     }
 
-    bool ProjectSerializer::Serialize( const std::filesystem::path &filePath )
+    bool ProjectSerializer::Serialize( const fs::Path &filePath )
     {
         const auto &config = m_pContext->GetConfig();
 
-        YAML::Emitter output{};
+        yaml::Emitter output{};
         {
             output << YAML::BeginMap;
             output << YAML::Key << "Project" << YAML::Value;
@@ -27,33 +28,38 @@ namespace smile::project
                 output << YAML::BeginMap;
                 output << YAML::Key << "Name" << YAML::Value << config.Name;
                 output << YAML::Key << "StartWorld" << YAML::Value << static_cast< Uint64 >( config.StartWorld );
-                output << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory.string();
-                output << YAML::Key << "AssetRegistryPath" << YAML::Value << config.AssetRegistryPath.string();
-                output << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
+                output << YAML::Key << "AssetDirectory" << YAML::Value << config.AssetDirectory;
+                output << YAML::Key << "AssetRegistryPath" << YAML::Value << config.AssetRegistryPath;
+                output << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath;
                 output << YAML::EndMap;
             }
 
             output << YAML::EndMap;
         }
 
-        std::ofstream fileOutput{ filePath };
-        fileOutput << output.c_str();
+        fs::File fileOutput{ filePath };
+        
+        fileOutput.OpenOutput( {} );
+
+        fileOutput.WriteText( output.c_str() );
+        
+        fileOutput.Close();
 
         return true;
     }
 
-    bool ProjectSerializer::Deserialize( const std::filesystem::path &filePath )
+    bool ProjectSerializer::Deserialize( const fs::Path &filePath )
     {
         auto &config = m_pContext->GetConfig();
 
         YAML::Node data;
         try
         {
-            data = YAML::LoadFile( filePath.string() );
+            data = YAML::LoadFile( filePath.GetData() );
         }
         catch ( YAML::ParserException e )
         {
-            SM_LOG_CRITICALERROR( "Failed to load project file: {0}\n {1}", filePath.string(), e.what() );
+            SM_LOG_CRITICALERROR( "Failed to load project file: {0}\n {1}", filePath, e.what() );
             return false;
         }
 
@@ -61,12 +67,12 @@ namespace smile::project
         if ( !projectNode )
             return false;
 
-        config.Name = projectNode["Name"].as< std::string >();
+        config.Name = projectNode["Name"].as< primitive::String >();
         config.StartWorld = projectNode["StartWorld"].as< Uint64 >();
-        config.AssetDirectory = projectNode["AssetDirectory"].as< std::string >();
+        config.AssetDirectory = projectNode["AssetDirectory"].as< fs::Path >();
         if ( projectNode["AssetRegistryPath"] )
-            config.AssetRegistryPath = projectNode["AssetRegistryPath"].as< std::string >();
-        config.ScriptModulePath = projectNode["ScriptModulePath"].as< std::string >();
+            config.AssetRegistryPath = projectNode["AssetRegistryPath"].as< fs::Path >();
+        config.ScriptModulePath = projectNode["ScriptModulePath"].as< fs::Path >();
 
         return true;
     }

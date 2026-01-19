@@ -13,19 +13,20 @@ namespace smile::asset
     {
         const AssetType assetType = pLoader->GetType();
 
-        SM_ASSERT_MSG( m_AssetLoaderMap.find( assetType ) == m_AssetLoaderMap.end(), "Asset type collision" );
-        m_AssetLoaderMap.insert( std::make_pair( assetType, pLoader ) );
+        SM_ASSERT_MSG( m_AssetLoaderMap.FindItem( assetType ) == m_AssetLoaderMap.end(), "Asset type collision" );
+        m_AssetLoaderMap.Add( assetType, pLoader );
 
-        for ( const std::filesystem::path &extension : pLoader->GetExtensions() )
+        for ( const fs::Path &extension : pLoader->GetExtensions() )
         {
-            SM_ASSERT_MSG( m_AssetExtensionMap.find( extension ) == m_AssetExtensionMap.end(), "Extension collision" );
-            m_AssetExtensionMap.insert( std::make_pair( extension, assetType ) );
+            SM_ASSERT_MSG(
+                m_AssetExtensionMap.FindItem( extension ) == m_AssetExtensionMap.end(), "Extension collision" );
+            m_AssetExtensionMap.Add( extension, assetType );
         }
     }
 
     memory::Ref< Asset > AssetImporter::ImportAsset( AssetHandle handle, const AssetMetadata &metadata )
     {
-        if ( m_AssetLoaderMap.find( metadata.Type ) == m_AssetLoaderMap.end() )
+        if ( m_AssetLoaderMap.FindItem( metadata.Type ) == m_AssetLoaderMap.end() )
         {
             SM_LOG_ERROR(
                 "AssetImporter::ImportAsset > No loader registered for asset type: {}", metadata.Type.GetName() );
@@ -36,11 +37,11 @@ namespace smile::asset
         return m_AssetLoaderMap[metadata.Type]->Load( handle, metadata );
     }
 
-    AssetType AssetImporter::GetAssetTypeFromFileExtension( const std::filesystem::path &extension )
+    AssetType AssetImporter::GetAssetTypeFromFileExtension( const fs::Path &extension )
     {
-        if ( m_AssetExtensionMap.find( extension ) == m_AssetExtensionMap.end() )
+        if ( m_AssetExtensionMap.FindItem( extension ) == m_AssetExtensionMap.end() )
         {
-            SM_LOG_WARNING( "GetAssetTypeFromFileExtension > Could not find AssetType for {}", extension.string() );
+            SM_LOG_WARNING( "GetAssetTypeFromFileExtension > Could not find AssetType for {}", extension );
             return AssetType::NullType();
         }
 

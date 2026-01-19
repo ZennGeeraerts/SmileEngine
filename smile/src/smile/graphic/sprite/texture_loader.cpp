@@ -24,15 +24,15 @@ namespace smile::graphic
         return LoadTexture( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    memory::Ref< TextureAsset > TextureLoader::LoadTexture( const std::filesystem::path &path ) const
+    memory::Ref< TextureAsset > TextureLoader::LoadTexture( const fs::Path &path ) const
     {
-        if ( path.empty() )
+        if ( path.IsEmpty() )
         {
             SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load texture: the path was empty" );
             return nullptr;
         }
 
-        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
+        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
             SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load texture: wrong file extension" );
             return nullptr;

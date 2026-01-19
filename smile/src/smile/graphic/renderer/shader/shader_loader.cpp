@@ -37,15 +37,15 @@ namespace smile::graphic
         return LoadShader( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    memory::Ref< ShaderAsset > ShaderLoader::LoadShader( const std::filesystem::path &path ) const
+    memory::Ref< ShaderAsset > ShaderLoader::LoadShader( const fs::Path &path ) const
     {
-        if ( path.empty() )
+        if ( path.IsEmpty() )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: the path was empty" );
             return nullptr;
         }
 
-        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
+        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: wrong file extension" );
             return nullptr;
@@ -54,11 +54,11 @@ namespace smile::graphic
         constexpr Uint32 expectedMagic = 0x53484452; // 'SHDR'
         constexpr Uint32 expectedVersion = 1;
 
-        std::ifstream file{ path, std::ios::binary };
+        std::ifstream file{ path.GetData(), std::ios::binary };
         if ( !file )
         {
             SM_LOG_WARNING(
-                "ShaderLoader::LoadShader > Failed to load shader: cannot open shader file: {}", path.string() );
+                "ShaderLoader::LoadShader > Failed to load shader: cannot open shader file: {}", path );
             return nullptr;
         }
 

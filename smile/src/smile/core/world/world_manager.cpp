@@ -16,7 +16,7 @@ namespace smile::world
         return pNewWorld;
     }
 
-    memory::Ref< World > WorldManager::Load( const std::filesystem::path &path )
+    memory::Ref< World > WorldManager::Load( const fs::Path &path )
     {
         memory::Ref< World > pWorld = s_WorldLoader.LoadWorld( path );
         if ( pWorld )
@@ -63,7 +63,7 @@ namespace smile::world
             pListener->OnWorldOpened( pWorld->m_ECSEngine );
     }
 
-    void WorldManager::SaveActive( const std::filesystem::path &path )
+    void WorldManager::SaveActive( const fs::Path &path )
     {
         s_WorldLoader.SaveWorld( s_pActiveWorld, path );
     }
