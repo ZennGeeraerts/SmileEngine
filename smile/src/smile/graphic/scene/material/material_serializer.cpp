@@ -30,8 +30,6 @@ namespace smile::graphic
 
     void MaterialSerializer::Serialize( const fs::Path &filePath ) const
     {
-        yaml::Emitter yamlOutput{};
-
         fs::File outputFile{ filePath };
         if ( !outputFile.OpenOutput( stream::OpeningModeFlags{} ) )
         {
@@ -39,12 +37,13 @@ namespace smile::graphic
             return;
         }
 
-        yaml::Node node;
-
-        node["VertexShader"] = m_pMaterialAsset->GetVertexShader()->m_Handle;
-        node["PixelShader"] = m_pMaterialAsset->GetPixelShader()->m_Handle;
-
-        yamlOutput << node;
+        yaml::Emitter yamlOutput{};
+        yamlOutput << YAML::BeginMap;
+        {
+            yamlOutput << YAML::Key << "VertexShader" << YAML::Value << m_pMaterialAsset->GetVertexShader()->m_Handle;
+            yamlOutput << YAML::Key << "PixelShader" << YAML::Value << m_pMaterialAsset->GetPixelShader()->m_Handle;
+        }
+        yamlOutput << YAML::EndMap;
 
         outputFile.WriteText( yamlOutput.c_str() );
 

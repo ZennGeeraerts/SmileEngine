@@ -13,6 +13,9 @@ namespace smile::graphic
     class TextureAsset final : public asset::Asset
     {
       public:
+        using Ref = memory::Ref< TextureAsset >;
+        using ConstRef = memory::Ref< const TextureAsset >;
+
         TextureAsset( memory::Ref< Texture > pTexture ) : m_pTexture{ pTexture }
         {
         }
