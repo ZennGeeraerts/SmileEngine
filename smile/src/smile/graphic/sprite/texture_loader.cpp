@@ -38,7 +38,7 @@ namespace smile::graphic
             return nullptr;
         }
 
-        memory::Ref< Texture > pTexture = RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture( path );
+        memory::Ref< Texture > pTexture = RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D( path );
         memory::Ref< TextureAsset > pTextureAsset = memory::CreateRef< TextureAsset >( pTexture );
 
         return pTextureAsset;

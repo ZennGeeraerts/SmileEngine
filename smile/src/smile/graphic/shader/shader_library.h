@@ -23,6 +23,5 @@ namespace smile::graphic
       private:
         ShaderLoader m_ShaderLoader;
         primitive::HashMap< primitive::String, memory::Ref< ShaderAsset > > m_Shaders;
-        primitive::HashMap< memory::Ref< ShaderAsset >, primitive::String > m_ShadersToNameMap;
     };
 }

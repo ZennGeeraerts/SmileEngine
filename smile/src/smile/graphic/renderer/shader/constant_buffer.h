@@ -34,9 +34,19 @@ namespace smile::graphic
             return m_pBuffer;
         }
 
+        void *GetBuffer()
+        {
+            return m_pBuffer;
+        }
+
         rhi::GPUBufferHandle GetHandle() const
         {
             return m_Handle;
+        }
+
+        const ConstantBufferDescriptor &GetDescriptor() const
+        {
+            return m_Descriptor;
         }
 
       private:
@@ -44,7 +54,7 @@ namespace smile::graphic
 
       private:
         rhi::GPUBufferHandle m_Handle;
-        const void *m_pBuffer;
+        void *m_pBuffer;
         ConstantBufferDescriptor m_Descriptor;
 
         friend class ResourceManager;
