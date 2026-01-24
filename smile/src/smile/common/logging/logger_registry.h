@@ -6,8 +6,7 @@
 
 #include "logger.h"
 #include "smile/common/foundation/meyers_singleton.h"
-
-#include <unordered_map>
+#include "smile/common/primitive/collection/hash_map.h"
 
 namespace smile::logging
 {
@@ -23,7 +22,7 @@ namespace smile::logging
         }
 
       private:
-        std::unordered_map< std::string, Ref< Logger > > m_LoggerMap;
+        primitive::HashMap< primitive::String, Ref< Logger > > m_LoggerMap;
         Ref< Logger > m_pDefaultLogger;
     };
 }

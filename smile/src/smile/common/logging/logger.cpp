@@ -7,9 +7,9 @@
 
 namespace smile::logging
 {
-    void Logger::AddSink( Ref< LogSink > pSink )
+    void Logger::AddSink( const Ref< LogSink > &pSink )
     {
-        m_pSinks.emplace_back( pSink );
+        m_pSinks.PushBack( pSink );
     }
 
     void Logger::SetFormatter( Scope< Formatter > pFormatter )

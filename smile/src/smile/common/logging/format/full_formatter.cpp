@@ -13,7 +13,7 @@ namespace smile::logging
     {
         buffer.push_back( '[' );
 
-        std::string_view level;
+        primitive::StringView level;
         switch ( message.Level )
         {
             case LogLevel::Trace:

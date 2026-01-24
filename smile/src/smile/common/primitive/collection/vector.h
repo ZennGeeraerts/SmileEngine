@@ -10,6 +10,7 @@
 #include "smile/common/memory/memory.h"
 
 #include <initializer_list>
+#include <optional>
 
 namespace smile::primitive
 {
