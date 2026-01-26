@@ -15,7 +15,7 @@ namespace smile::window
     class WindowsWindow final : public Window
     {
      public:
-        WindowsWindow( const WindowSettings &settings, const std::string &className );
+        WindowsWindow( const WindowSettings &settings );
         virtual ~WindowsWindow();
 
         WindowsWindow( const WindowsWindow & ) = delete;
@@ -31,7 +31,7 @@ namespace smile::window
         LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept;
 
       private:
-        void Initialize( const WindowSettings &settings, const std::string &className );
+        void Initialize( const std::string &className );
         void ShutDown();
 
       private:

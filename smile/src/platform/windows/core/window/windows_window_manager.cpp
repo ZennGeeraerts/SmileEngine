@@ -70,7 +70,7 @@ namespace smile::window
         std::string className{ classNameWStr.begin(), classNameWStr.end() };
 
         auto pWindow = new WindowsWindow{ windowSettings, className };
-        m_pWindows.push_back( pWindow );
+        m_pWindows.PushBack( pWindow );
         return pWindow;
     }
 

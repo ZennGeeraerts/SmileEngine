@@ -24,14 +24,13 @@
 
 namespace smile::window
 {
-    WindowsWindow::WindowsWindow( const WindowSettings &settings, const std::string &className )
+    WindowsWindow::WindowsWindow( const WindowSettings &settings )
     {
-        Initialize( settings, className );
+        m_Data.Settings = settings;
     }
 
     WindowsWindow::~WindowsWindow()
     {
-        ShutDown();
     }
 
     void WindowsWindow::ShutDown()
@@ -39,10 +38,8 @@ namespace smile::window
         DestroyWindow( m_WindowHandle );
     }
 
-    void WindowsWindow::Initialize( const WindowSettings &settings, const std::string &className )
+    void WindowsWindow::Initialize( const std::string &className )
     {
-        m_Data.Settings = settings;
-
         SM_LOG_INFO( "WindowsWindow::Initialize > Creating window: {0} ({1}, {2})",
             settings.Title,
             settings.Width,
@@ -90,9 +87,6 @@ namespace smile::window
     {
         if ( !m_IsInitialized )
             return DefWindowProc( hWnd, msg, wParam, lParam );
-
-        /*if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-            return true;*/
 
         switch ( msg )
         {
