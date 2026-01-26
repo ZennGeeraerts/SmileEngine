@@ -17,7 +17,6 @@ namespace smile::window
     WindowsWindowManager::WindowsWindowManager()
     {
         // Create window class
-        const wchar_t *className = L"SmileWindowClass";
         m_WindowClass = {};
         m_WindowClass.cbSize = sizeof( WNDCLASSEX );
         m_WindowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -49,7 +48,7 @@ namespace smile::window
             MessageBox( m_WindowHandle, strErrorMessage, L"Error", MB_OK );
         }*/
 
-        m_WindowClass.lpszClassName = className;
+        m_WindowClass.lpszClassName = WindowsWindow::ClassName;
         m_WindowClass.lpszMenuName = nullptr;
 
         m_WindowClass.hInstance = HINSTANCE();
@@ -66,11 +65,10 @@ namespace smile::window
 
     Window *WindowsWindowManager::CreateNewWindow( const WindowSettings &windowSettings )
     {
-        std::wstring classNameWStr{ m_WindowClass.lpszClassName };
-        std::string className{ classNameWStr.begin(), classNameWStr.end() };
-
-        auto pWindow = new WindowsWindow{ windowSettings, className };
+        auto pWindow = new WindowsWindow{ windowSettings };
         m_pWindows.PushBack( pWindow );
+        pWindow->Initialize();
+
         return pWindow;
     }
 
