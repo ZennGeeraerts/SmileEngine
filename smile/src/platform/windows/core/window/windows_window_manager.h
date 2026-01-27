@@ -15,7 +15,7 @@ namespace smile::window
         WindowsWindowManager();
         virtual ~WindowsWindowManager();
 
-        Window::Ref CreateNewWindow( const WindowSettings &windowSettings ) override;
+        Window::Ref CreateAppWindow( const WindowSettings &windowSettings ) override;
         void PollEvents() override;
 
       private:

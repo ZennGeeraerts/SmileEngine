@@ -14,7 +14,7 @@ namespace smile::window
       public:
         virtual ~WindowManager() = default;
 
-        virtual Window::Ref CreateNewWindow( const WindowSettings &windowSettings ) = 0;
+        virtual Window::Ref CreateAppWindow( const WindowSettings &windowSettings ) = 0;
         virtual void PollEvents() = 0;
 
         Window::Ref GetWindow( const Index index ) const

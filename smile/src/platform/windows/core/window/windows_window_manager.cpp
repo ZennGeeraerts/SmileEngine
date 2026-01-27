@@ -52,7 +52,7 @@ namespace smile::window
         UnregisterClass( m_WindowClass.lpszClassName, m_WindowClass.hInstance );
     }
 
-    Window::Ref WindowsWindowManager::CreateNewWindow( const WindowSettings &windowSettings )
+    Window::Ref WindowsWindowManager::CreateAppWindow( const WindowSettings &windowSettings )
     {
         auto pWindow = memory::CreateRef< WindowsWindow >( windowSettings );
 

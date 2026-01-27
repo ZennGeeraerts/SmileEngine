@@ -25,7 +25,7 @@ namespace smile::application
         m_pWindowManager = window::WindowManager::Create();
 
         window::Window::Ref pMainWindow =
-            m_pWindowManager->CreateNewWindow( window::WindowSettings{ descriptor.Name } );
+            m_pWindowManager->CreateAppWindow( window::WindowSettings{ descriptor.Name } );
 
         pMainWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
         pMainWindow->SetVSync( false );
