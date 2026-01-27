@@ -9,19 +9,20 @@
 
 namespace smile::window
 {
-	class WindowsWindowManager final : public WindowManager
+    class WindowsWindowManager final : public WindowManager
     {
       public:
         WindowsWindowManager();
         virtual ~WindowsWindowManager();
 
-        Window *CreateNewWindow( const WindowSettings &windowSettings ) override;
+        Window::Ref CreateAppWindow( const WindowSettings &windowSettings ) override;
         void PollEvents() override;
 
       private:
         static LRESULT CALLBACK WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+        LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
       private:
         WNDCLASSEX m_WindowClass;
-	};
+    };
 }

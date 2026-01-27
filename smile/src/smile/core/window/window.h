@@ -3,10 +3,11 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smpch.h"
-#include "events/event.h"
+
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/memory/ref.h"
+#include "events/event.h"
 
 namespace smile::window
 {
@@ -23,15 +24,17 @@ namespace smile::window
     };
 
     // Window interface for desktop platforms
-    class Window
+    class Window : public memory::Counted
     {
       public:
+        using Ref = memory::Ref< Window >;
+        using ConstRef = memory::Ref< const Window >;
+
         using EventCallbackFunction = std::function< void( Event & ) >;
 
         Window() = default;
-        virtual ~Window()
-        {
-        }
+        virtual ~Window() = default;
+
         Window( const Window & ) = delete;
         Window( Window && ) = delete;
         Window &operator=( const Window & ) = delete;
@@ -41,24 +44,30 @@ namespace smile::window
         {
             return m_Data.Settings.Width;
         }
+
         Uint32 GetHeight() const
         {
             return m_Data.Settings.Height;
         }
 
         // Window attributes
-        void SetEventCallback(const EventCallbackFunction& callback)
+        void SetEventCallback( const EventCallbackFunction &callback )
         {
             m_Data.EventCallback = callback;
         }
-        void SetVSync(bool isEnabled)
+
+        void SetVSync( bool isEnabled )
         {
             m_Data.IsVSync = isEnabled;
         }
-        bool IsVSync() const 
+
+        bool IsVSync() const
         {
             return m_Data.IsVSync;
         }
+
+        virtual void Initialize() = 0;
+        virtual void ShutDown() = 0;
 
         // Returns the child window
         virtual void *GetNativeWindow() const = 0;

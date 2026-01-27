@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/vector.h"
 #include "window.h"
 
 namespace smile::window
@@ -11,30 +12,23 @@ namespace smile::window
     class WindowManager
     {
       public:
-        virtual ~WindowManager()
-        {
-            for ( auto pWindow : m_pWindows )
-                delete pWindow;
-        }
+        virtual ~WindowManager() = default;
 
-        virtual Window *CreateNewWindow( const WindowSettings &windowSettings ) = 0;
+        virtual Window::Ref CreateAppWindow( const WindowSettings &windowSettings ) = 0;
         virtual void PollEvents() = 0;
 
-        Window *GetWindow( Uint32 index )
+        Window::Ref GetWindow( const Index index ) const
         {
-            SM_ASSERT( index < m_pWindows.size() && index >= 0 );
-            return m_pWindows[index];
-        }
+            SM_ASSERT( index < m_pWindows.GetItemCount() );
 
-        const Window *GetWindow( Uint32 index ) const
-        {
-            SM_ASSERT( index < m_pWindows.size() && index >= 0 );
             return m_pWindows[index];
         }
 
         static WindowManager *Create();
 
       protected:
-        std::vector< Window * > m_pWindows{};
+        WindowManager() = default;
+
+        primitive::Vector< Window::Ref > m_pWindows{};
     };
 }
