@@ -18,6 +18,8 @@
 
 namespace smile::window
 {
+    HINSTANCE WindowsWindow::InstanceHandle{ GetModuleHandle( NULL ) };
+
     WindowsWindow::WindowsWindow( const WindowSettings &settings ) : m_WindowHandle{ nullptr }
     {
         m_Data.Settings = settings;
@@ -39,7 +41,8 @@ namespace smile::window
             &windowRect, WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, FALSE );
 
         // Create and display the window
-        const int size = MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, m_Data.Settings.Title.GetData(), -1, nullptr, 0 );
+        const int size =
+            MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, m_Data.Settings.Title.GetData(), -1, nullptr, 0 );
         SM_ASSERT( size != 0 );
         std::wstring windowTitle;
         windowTitle.resize( size );
@@ -55,7 +58,7 @@ namespace smile::window
             windowRect.bottom - windowRect.top,
             nullptr,
             nullptr,
-            HINSTANCE(),
+            InstanceHandle,
             this );
 
         SM_ASSERT_MSG( m_WindowHandle, "WindowsWindow::Initialize > Could not create window!" );

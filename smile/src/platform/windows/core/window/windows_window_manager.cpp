@@ -40,7 +40,7 @@ namespace smile::window
         m_WindowClass.lpszClassName = WindowsWindow::ClassName;
         m_WindowClass.lpszMenuName = nullptr;
 
-        m_WindowClass.hInstance = HINSTANCE();
+        m_WindowClass.hInstance = WindowsWindow::InstanceHandle;
         m_WindowClass.lpfnWndProc = WindowsProcedureStatic;
 
         int success = RegisterClassEx( &m_WindowClass );
@@ -85,9 +85,10 @@ namespace smile::window
             const CREATESTRUCTW *const pCreate = reinterpret_cast< CREATESTRUCTW * >( lParam );
             SetWindowLongPtr( hWnd, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( pCreate->lpCreateParams ) );
 
-            return 0;
+            return TRUE;
         }
-        else if ( msg == WM_DESTROY )
+
+        if ( msg == WM_DESTROY )
         {
             WindowsWindow *const pWindow =
                 reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( hWnd, GWLP_USERDATA ) );

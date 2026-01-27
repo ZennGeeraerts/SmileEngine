@@ -32,6 +32,7 @@ namespace smile::window
         LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept;
 
         static constexpr const wchar_t *ClassName{ L"SmileWindowClass" };
+        static HINSTANCE InstanceHandle;
 
       private:
         HWND m_WindowHandle;
