@@ -12,10 +12,9 @@ namespace smile::window
     class WindowManager
     {
       public:
-        WindowManager() = default;
         virtual ~WindowManager() = default;
 
-        virtual Window *CreateNewWindow( const WindowSettings &windowSettings ) = 0;
+        virtual Window::Ref CreateNewWindow( const WindowSettings &windowSettings ) = 0;
         virtual void PollEvents() = 0;
 
         Window::Ref GetWindow( const Index index ) const
@@ -28,6 +27,8 @@ namespace smile::window
         static WindowManager *Create();
 
       protected:
+        WindowManager() = default;
+
         primitive::Vector< Window::Ref > m_pWindows{};
     };
 }

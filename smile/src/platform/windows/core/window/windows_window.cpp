@@ -93,12 +93,6 @@ namespace smile::window
                 break;
             }
 
-            case WM_DESTROY:
-            {
-                PostQuitMessage( 0 );
-                break;
-            }
-
             case WM_SIZE:
             {
                 Uint32 width = LOWORD( lParam );
