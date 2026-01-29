@@ -219,9 +219,9 @@ namespace smile::graphic
         return pConstantBuffer;
     }
 
-    VertexShader::Ref ResourceManager::CreateVertexShader( const std::vector< Byte > &byteCode,
-        const std::string &entryPoint,
-        const std::string &targetProfile )
+    VertexShader::Ref ResourceManager::CreateVertexShader( const primitive::Vector< Byte > &byteCode,
+        const primitive::String &entryPoint,
+        const primitive::String &targetProfile )
     {
         rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Vertex };
         shaderDesc.EntryPoint = entryPoint;
@@ -235,9 +235,9 @@ namespace smile::graphic
         return pVertexShader;
     }
 
-    PixelShader::Ref ResourceManager::CreatePixelShader( const std::vector< Byte > &byteCode,
-        const std::string &entryPoint,
-        const std::string &targetProfile )
+    PixelShader::Ref ResourceManager::CreatePixelShader( const primitive::Vector< Byte > &byteCode,
+        const primitive::String &entryPoint,
+        const primitive::String &targetProfile )
     {
         rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Pixel };
         shaderDesc.EntryPoint = entryPoint;

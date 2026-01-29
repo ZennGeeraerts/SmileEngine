@@ -40,32 +40,37 @@ namespace smile::graphic
 
         VertexBuffer::Ref
         CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
+
         VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
 
         IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
         Texture::Ref CreateTexture2D( Image::ConstRef pImage, bool updateable );
+
         Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
+
         Texture::Ref
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
 
         Sampler::Ref CreateSampler( const rhi::SamplerDescriptor &descriptor );
 
         FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
+
         FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
         ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
 
-        VertexShader::Ref CreateVertexShader( const std::vector< Byte > &byteCode,
-            const std::string &entryPoint,
-            const std::string &targetProfile );
+        VertexShader::Ref CreateVertexShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
 
-        PixelShader::Ref CreatePixelShader( const std::vector< Byte > &byteCode,
-            const std::string &entryPoint,
-            const std::string &targetProfile );
+        PixelShader::Ref CreatePixelShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
 
         Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );
+
         Framebuffer::Ref CreateFramebuffer( const primitive::Vector< FramebufferAttachment > &colorAttachments,
             const FramebufferAttachment &depthAttachment );
 
