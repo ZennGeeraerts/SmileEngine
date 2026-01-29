@@ -6,6 +6,9 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/shader/shader_reflection_data.h"
+
+#include <optional>
 
 namespace smile::graphic
 {
@@ -15,7 +18,8 @@ namespace smile::graphic
         using Ref = memory::Ref< VertexShader >;
         using ConstRef = memory::Ref< const VertexShader >;
 
-        VertexShader( rhi::ShaderHandle handle ) : m_Handle{ handle }
+        VertexShader( rhi::ShaderHandle handle, std::optional< ShaderReflectionData > reflectionData = std::nullopt )
+            : m_Handle{ handle }, m_ReflectionData{ std::move( reflectionData ) }
         {
         }
 
@@ -26,8 +30,14 @@ namespace smile::graphic
             return m_Handle.IsValid();
         }
 
+        const ShaderReflectionData *GetReflectionData() const
+        {
+            return m_ReflectionData.has_value() ? &m_ReflectionData.value() : nullptr;
+        }
+
       private:
         rhi::ShaderHandle m_Handle;
+        std::optional< ShaderReflectionData > m_ReflectionData;
 
         friend class ResourceManager;
     };

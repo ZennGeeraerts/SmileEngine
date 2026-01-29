@@ -10,6 +10,8 @@
 
 #include "smile/graphic/resource/image.h"
 
+#include "smile/graphic/shader/shader_asset.h"
+
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "texture.h"
@@ -64,9 +66,13 @@ namespace smile::graphic
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
+        VertexShader::Ref CreateVertexShader( ShaderAsset::Ref shaderAsset );
+
         PixelShader::Ref CreatePixelShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
+
+        PixelShader::Ref CreatePixelShader( ShaderAsset::Ref shaderAsset );
 
         Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );

@@ -235,6 +235,22 @@ namespace smile::graphic
         return pVertexShader;
     }
 
+    VertexShader::Ref ResourceManager::CreateVertexShader( ShaderAsset::Ref shaderAsset )
+    {
+        const auto &reflectionData = shaderAsset->GetReflectionData();
+
+        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Vertex };
+        shaderDesc.EntryPoint = reflectionData.EntryPoint;
+        shaderDesc.TargetProfile = reflectionData.TargetProfile;
+
+        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        m_pDevice->CreateShader( handle, shaderDesc, shaderAsset->GetByteCode() );
+
+        auto pVertexShader = memory::CreateRef< VertexShader >( handle, reflectionData );
+        m_pVertexShaders.PushBack( pVertexShader );
+        return pVertexShader;
+    }
+
     PixelShader::Ref ResourceManager::CreatePixelShader( const primitive::Vector< Byte > &byteCode,
         const primitive::String &entryPoint,
         const primitive::String &targetProfile )
@@ -247,6 +263,22 @@ namespace smile::graphic
         m_pDevice->CreateShader( handle, shaderDesc, byteCode );
 
         auto pPixelShader = memory::CreateRef< PixelShader >( handle );
+        m_pPixelShaders.PushBack( pPixelShader );
+        return pPixelShader;
+    }
+
+    PixelShader::Ref ResourceManager::CreatePixelShader( ShaderAsset::Ref shaderAsset )
+    {
+        const auto &reflectionData = shaderAsset->GetReflectionData();
+
+        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Pixel };
+        shaderDesc.EntryPoint = reflectionData.EntryPoint;
+        shaderDesc.TargetProfile = reflectionData.TargetProfile;
+
+        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        m_pDevice->CreateShader( handle, shaderDesc, shaderAsset->GetByteCode() );
+
+        auto pPixelShader = memory::CreateRef< PixelShader >( handle, reflectionData );
         m_pPixelShaders.PushBack( pPixelShader );
         return pPixelShader;
     }
