@@ -142,7 +142,7 @@ namespace smile::graphic
             for ( const auto &entry : node )
             {
                 rhi::BufferElement element;
-                element.Name = entry["SemanticName"].as< std::string >();
+                element.Name = entry["SemanticName"].as< primitive::String >();
 
                 const rhi::FormatInfo &formatInfo = rhi::GetFormatInfo( entry["Format"].as< primitive::String >() );
                 element.FormatType = formatInfo.Format;

@@ -7,6 +7,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/foundation/hash_code.h"
 #include "smile/common/foundation/flags.h"
+#include "smile/common/primitive/text/string.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/format.h"
 #include "smile/graphic/rhi/cpu_access_mode.h"
@@ -17,31 +18,32 @@ namespace smile::graphic::rhi
     struct BufferElement final
     {
         BufferElement() = default;
-        BufferElement( Format format, const std::string &name )
+
+        BufferElement( Format format, const primitive::String &name )
             : Name{ name }, FormatType{ format }, Size{ GetFormatInfo( format ).BytesPerBlock }, Offset{ 0 }
         {
         }
 
         foundation::HashCode GetHashCode() const
         {
-            foundation::HashCode hash = std::hash< std::string >{}( Name );
+            foundation::HashCode hash = std::hash< primitive::String >{}( Name );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( FormatType ) ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Size ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Offset ) );
             return hash;
         }
 
-        bool operator==( const BufferElement &other ) const noexcept
+        inline bool operator==( const BufferElement &other ) const noexcept
         {
             return Name == other.Name && FormatType == other.FormatType && Size == other.Size && Offset == other.Offset;
         }
 
-        bool operator!=( const BufferElement &other ) const noexcept
+        inline bool operator!=( const BufferElement &other ) const noexcept
         {
             return !( *this == other );
         }
 
-        std::string Name;
+        primitive::String Name;
         Format FormatType;
         Uint8 Size;
         Uint8 Offset;
@@ -50,43 +52,46 @@ namespace smile::graphic::rhi
     class BufferLayout final
     {
       public:
-        BufferLayout()
-        {
-        }
-        BufferLayout( const std::initializer_list< BufferElement > &elements ) : m_Elements{ elements }
+        BufferLayout() = default;
+
+        BufferLayout( std::initializer_list< BufferElement > elements ) : m_Elements{ elements }
         {
             CalculateOffsetAndStride();
         }
 
-        inline const std::vector< BufferElement > &GetElements() const
+        const primitive::Vector< BufferElement > &GetElements() const
         {
             return m_Elements;
         }
-        inline Uint32 GetStride() const
+
+        Uint32 GetStride() const
         {
             return m_Stride;
         }
 
-        std::vector< BufferElement >::iterator begin()
+        primitive::Vector< BufferElement >::Iterator begin()
         {
             return m_Elements.begin();
         }
-        std::vector< BufferElement >::iterator end()
+        
+        primitive::Vector< BufferElement >::Iterator end()
         {
             return m_Elements.end();
         }
-        std::vector< BufferElement >::const_iterator begin() const
+
+        primitive::Vector< BufferElement >::ConstIterator begin() const
         {
-            return m_Elements.cbegin();
+            return m_Elements.begin();
         }
-        std::vector< BufferElement >::const_iterator end() const
+
+        primitive::Vector< BufferElement >::ConstIterator end() const
         {
-            return m_Elements.cend();
+            return m_Elements.end();
         }
 
         void AddElement( const BufferElement &element )
         {
-            m_Elements.push_back( element );
+            m_Elements.PushBack( element );
             CalculateOffsetAndStride();
         }
 
@@ -102,15 +107,15 @@ namespace smile::graphic::rhi
             return hash;
         }
 
-        bool operator==( const BufferLayout &other ) const
+        inline bool operator==( const BufferLayout &other ) const
         {
-            if ( m_Stride != other.m_Stride || m_Elements.size() != other.m_Elements.size() )
+            if ( m_Stride != other.m_Stride || m_Elements.GetItemCount() != other.m_Elements.GetItemCount() )
                 return false;
 
             return std::equal( m_Elements.begin(), m_Elements.end(), other.m_Elements.begin() );
         }
 
-        bool operator!=( const BufferLayout &other ) const
+        inline bool operator!=( const BufferLayout &other ) const
         {
             return !( *this == other );
         }
@@ -118,7 +123,7 @@ namespace smile::graphic::rhi
       private:
         void CalculateOffsetAndStride()
         {
-            Uint32 offset{ 0 };
+            Uint8 offset{ 0 };
             m_Stride = 0;
             for ( auto &element : m_Elements )
             {
@@ -129,7 +134,7 @@ namespace smile::graphic::rhi
         }
 
       private:
-        std::vector< BufferElement > m_Elements;
+        primitive::Vector< BufferElement > m_Elements;
         Uint32 m_Stride = 0;
     };
 
@@ -167,7 +172,7 @@ namespace smile::graphic::rhi
     {
         BufferRange() = default;
 
-        constexpr BufferRange( Uint32 offset, Uint32 size ) : Offset{ offset }, Size{ size }
+        constexpr BufferRange( Uint32 offset, Uint32 size ) noexcept : Offset{ offset }, Size{ size }
         {
         }
 
@@ -181,9 +186,7 @@ namespace smile::graphic::rhi
 
     struct BufferBindingKey final : public BufferRange
     {
-        BufferBindingKey()
-        {
-        }
+        BufferBindingKey() = default;
 
         BufferBindingKey( const BufferRange &range, Format format, ResourceType type )
             : BufferRange{ range }, Format{ format }, Type{ type }
@@ -199,7 +202,7 @@ namespace smile::graphic::rhi
             return hash;
         }
 
-        bool operator==( const BufferBindingKey &other ) const
+        inline bool operator==( const BufferBindingKey &other ) const
         {
             return Format == other.Format && Type == other.Type && Offset == other.Offset && Size == other.Size;
         }
@@ -214,12 +217,12 @@ namespace smile::graphic::rhi
         Uint32 Slot;
         Uint64 Offset;
 
-        bool operator==( const VertexBufferBinding &other ) const
+        inline bool operator==( const VertexBufferBinding &other ) const
         {
             return VertexBuffer == other.VertexBuffer && Slot == other.Slot && Offset == other.Offset;
         }
 
-        bool operator!=( const VertexBufferBinding &other ) const
+        inline bool operator!=( const VertexBufferBinding &other ) const
         {
             return !( *this == other );
         }
@@ -231,12 +234,12 @@ namespace smile::graphic::rhi
         Format BufferFormat;
         Uint32 Offset;
 
-        bool operator==( const IndexBufferBinding &other ) const
+        inline bool operator==( const IndexBufferBinding &other ) const
         {
             return IndexBuffer == other.IndexBuffer && BufferFormat == other.BufferFormat && Offset == other.Offset;
         }
 
-        bool operator!=( const IndexBufferBinding &other ) const
+        inline bool operator!=( const IndexBufferBinding &other ) const
         {
             return !( *this == other );
         }

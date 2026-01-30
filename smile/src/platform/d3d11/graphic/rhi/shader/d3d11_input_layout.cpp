@@ -30,7 +30,7 @@ namespace smile::graphic::rhi
         primitive::Vector< D3D11_INPUT_ELEMENT_DESC > inputDescs{};
         for ( const auto &element : layout )
         {
-            inputDescs.PushBack( D3D11_INPUT_ELEMENT_DESC{ element.Name.c_str(),
+            inputDescs.PushBack( D3D11_INPUT_ELEMENT_DESC{ element.Name.GetData(),
                 0,
                 GetDXGIFormatMapping( element.FormatType ).SRVFormat,
                 0,
