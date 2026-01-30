@@ -5,19 +5,25 @@
 #include "smpch.h"
 #include "windows_window_manager.h"
 
+#include "smile/common/memory/scope.h"
 #include "windows_window.h"
 
 namespace smile::window
 {
+    static memory::Scope<WindowsWindowManager> s_WindowManager{ nullptr };
+
     WindowManager *WindowManager::Create()
     {
-        return new WindowsWindowManager{};
+        SM_ASSERT( !s_WindowManager );
+
+        s_WindowManager = memory::CreateScope< WindowsWindowManager >();
+
+        return s_WindowManager.GetPointer();
     }
 
     WindowsWindowManager::WindowsWindowManager()
     {
         // Create window class
-        const wchar_t *className = L"SmileWindowClass";
         m_WindowClass = {};
         m_WindowClass.cbSize = sizeof( WNDCLASSEX );
         m_WindowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -31,28 +37,10 @@ namespace smile::window
             NULL, L"resources/icons/logo.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED ) );
         m_WindowClass.hIconSm = m_WindowClass.hIcon;
 
-        /*if ( !m_WindowClass.hIcon )
-        {
-            DWORD dLastError = GetLastError();
-
-            LPCTSTR strErrorMessage = NULL;
-
-            FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ARGUMENT_ARRAY |
-                               FORMAT_MESSAGE_ALLOCATE_BUFFER,
-                NULL,
-                dLastError,
-                0,
-                ( LPWSTR )&strErrorMessage,
-                0,
-                NULL );
-
-            MessageBox( m_WindowHandle, strErrorMessage, L"Error", MB_OK );
-        }*/
-
-        m_WindowClass.lpszClassName = className;
+        m_WindowClass.lpszClassName = WindowsWindow::ClassName;
         m_WindowClass.lpszMenuName = nullptr;
 
-        m_WindowClass.hInstance = HINSTANCE();
+        m_WindowClass.hInstance = WindowsWindow::InstanceHandle;
         m_WindowClass.lpfnWndProc = WindowsProcedureStatic;
 
         int success = RegisterClassEx( &m_WindowClass );
@@ -64,13 +52,13 @@ namespace smile::window
         UnregisterClass( m_WindowClass.lpszClassName, m_WindowClass.hInstance );
     }
 
-    Window *WindowsWindowManager::CreateNewWindow( const WindowSettings &windowSettings )
+    Window::Ref WindowsWindowManager::CreateAppWindow( const WindowSettings &windowSettings )
     {
-        std::wstring classNameWStr{ m_WindowClass.lpszClassName };
-        std::string className{ classNameWStr.begin(), classNameWStr.end() };
+        auto pWindow = memory::CreateRef< WindowsWindow >( windowSettings );
 
-        auto pWindow = new WindowsWindow{ windowSettings, className };
-        m_pWindows.push_back( pWindow );
+        m_pWindows.PushBack( pWindow );
+        pWindow->Initialize();
+
         return pWindow;
     }
 
@@ -87,18 +75,41 @@ namespace smile::window
 
     LRESULT CALLBACK WindowsWindowManager::WindowsProcedureStatic( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
     {
+        return s_WindowManager->WindowsProcedure( hWnd, msg, wParam, lParam );
+    }
+
+    LRESULT WindowsWindowManager::WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+    {
         if ( msg == WM_NCCREATE )
         {
             const CREATESTRUCTW *const pCreate = reinterpret_cast< CREATESTRUCTW * >( lParam );
             SetWindowLongPtr( hWnd, GWLP_USERDATA, reinterpret_cast< LONG_PTR >( pCreate->lpCreateParams ) );
+
+            return TRUE;
         }
-        else
+
+        if ( msg == WM_DESTROY )
         {
             WindowsWindow *const pWindow =
                 reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( hWnd, GWLP_USERDATA ) );
+
             if ( pWindow )
-                return pWindow->WindowsProcedure( hWnd, msg, wParam, lParam );
+            {
+                s_WindowManager->m_pWindows.Erase( pWindow );
+            }
+
+            PostQuitMessage( 0 );
+            
+            return 0;
         }
+
+        WindowsWindow *const pWindow = reinterpret_cast< WindowsWindow * >( GetWindowLongPtr( hWnd, GWLP_USERDATA ) );
+
+        if ( pWindow )
+        {
+            return pWindow->WindowsProcedure( hWnd, msg, wParam, lParam );
+        }
+
         return DefWindowProc( hWnd, msg, wParam, lParam );
     }
 }

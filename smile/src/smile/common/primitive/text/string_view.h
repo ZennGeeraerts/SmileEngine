@@ -9,6 +9,8 @@
 #include "smile/common/foundation/numeric_cast.h"
 #include "smile/common/memory/memory.h"
 
+#include <format>
+
 namespace smile::primitive
 {
     class StringView final

@@ -103,6 +103,21 @@ namespace smile::fs
 
         static Path FromPlatformPath( const primitive::StringView path );
     };
+
+    inline Path operator/( const Path &path, const primitive::StringView subdirectory )
+    {
+        Path result;
+        result.Reserve( path.GetCharCount() + subdirectory.GetCharCount() + 2 );
+
+        result = path;
+        if ( path.GetLastChar() != '/' )
+        {
+            result += "/";
+        }
+        result += subdirectory;
+
+        return result;
+    }
 }
 
 namespace std

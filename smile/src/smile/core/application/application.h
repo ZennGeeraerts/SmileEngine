@@ -73,7 +73,7 @@ namespace smile::application
         ApplicationDescriptor m_Descriptor;
 
       protected:
-        std::unique_ptr< window::WindowManager > m_pWindowManager;
+        window::WindowManager *m_pWindowManager;
         bool m_IsRunning = true;
         bool m_IsMinimized = false;
         LayerStack m_LayerStack;

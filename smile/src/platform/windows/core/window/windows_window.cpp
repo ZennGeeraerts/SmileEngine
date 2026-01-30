@@ -16,55 +16,40 @@
 
 #include <windowsx.h>
 
-//#include "SmileEngine/../../resource.h"
-
-//#include "SmileEngine/ImGui/imgui_impl_win32.h"
-//
-// extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 namespace smile::window
 {
-    WindowsWindow::WindowsWindow( const WindowSettings &settings, const std::string &className )
-    {
-        Initialize( settings, className );
-    }
+    HINSTANCE WindowsWindow::InstanceHandle{ GetModuleHandle( NULL ) };
 
-    WindowsWindow::~WindowsWindow()
-    {
-        ShutDown();
-    }
-
-    void WindowsWindow::ShutDown()
-    {
-        DestroyWindow( m_WindowHandle );
-    }
-
-    void WindowsWindow::Initialize( const WindowSettings &settings, const std::string &className )
+    WindowsWindow::WindowsWindow( const WindowSettings &settings ) : m_WindowHandle{ nullptr }
     {
         m_Data.Settings = settings;
+    }
 
+    void WindowsWindow::Initialize()
+    {
         SM_LOG_INFO( "WindowsWindow::Initialize > Creating window: {0} ({1}, {2})",
-            settings.Title,
-            settings.Width,
-            settings.Height );
+            m_Data.Settings.Title,
+            m_Data.Settings.Width,
+            m_Data.Settings.Height );
 
         RECT windowRect{};
         windowRect.left = 0;
-        windowRect.right = settings.Width + windowRect.left;
+        windowRect.right = m_Data.Settings.Width + windowRect.left;
         windowRect.top = 0;
-        windowRect.bottom = settings.Height + windowRect.top;
+        windowRect.bottom = m_Data.Settings.Height + windowRect.top;
         AdjustWindowRect(
             &windowRect, WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX, FALSE );
 
         // Create and display the window
-        const int size = MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, settings.Title.GetData(), -1, nullptr, 0 );
+        const int size =
+            MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, m_Data.Settings.Title.GetData(), -1, nullptr, 0 );
         SM_ASSERT( size != 0 );
         std::wstring windowTitle;
         windowTitle.resize( size );
-        MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, settings.Title.GetData(), -1, windowTitle.data(), size );
+        MultiByteToWideChar(
+            CP_UTF8, MB_ERR_INVALID_CHARS, m_Data.Settings.Title.GetData(), -1, windowTitle.data(), size );
 
-        auto classNameWStr = std::wstring{ className.begin(), className.end() };
-        m_WindowHandle = CreateWindow( classNameWStr.c_str(),
+        m_WindowHandle = CreateWindow( ClassName,
             windowTitle.c_str(),
             WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
             CW_USEDEFAULT,
@@ -73,26 +58,28 @@ namespace smile::window
             windowRect.bottom - windowRect.top,
             nullptr,
             nullptr,
-            HINSTANCE(),
+            InstanceHandle,
             this );
 
         SM_ASSERT_MSG( m_WindowHandle, "WindowsWindow::Initialize > Could not create window!" );
 
         ShowWindow( m_WindowHandle, SW_SHOW );
         UpdateWindow( m_WindowHandle );
-        SM_LOG_INFO( "WindowsWindow::Initialize > Window '{}' created", settings.Title );
+        SM_LOG_INFO( "WindowsWindow::Initialize > Window '{}' created", m_Data.Settings.Title );
 
         SetVSync( true );
         m_IsInitialized = true;
+    }
+
+    void WindowsWindow::ShutDown()
+    {
+        DestroyWindow( m_WindowHandle );
     }
 
     LRESULT WindowsWindow::WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept
     {
         if ( !m_IsInitialized )
             return DefWindowProc( hWnd, msg, wParam, lParam );
-
-        /*if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-            return true;*/
 
         switch ( msg )
         {
@@ -105,13 +92,7 @@ namespace smile::window
             {
                 WindowCloseEvent event{};
                 m_Data.EventCallback( event );
-                DestroyWindow( m_WindowHandle );
-                break;
-            }
-
-            case WM_DESTROY:
-            {
-                PostQuitMessage( 0 );
+                ShutDown();
                 break;
             }
 

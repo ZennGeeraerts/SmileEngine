@@ -22,8 +22,11 @@ namespace smile::application
         if ( !descriptor.WorkingDirectory.IsEmpty() )
             fs::PhysicalSystem::SetCurrentDirectory( descriptor.WorkingDirectory );
 
-        m_pWindowManager = std::unique_ptr< window::WindowManager >( window::WindowManager::Create() );
-        window::Window *pMainWindow = m_pWindowManager->CreateNewWindow( window::WindowSettings{ descriptor.Name } );
+        m_pWindowManager = window::WindowManager::Create();
+
+        window::Window::Ref pMainWindow =
+            m_pWindowManager->CreateAppWindow( window::WindowSettings{ descriptor.Name } );
+
         pMainWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
         pMainWindow->SetVSync( false );
     }

@@ -6,25 +6,25 @@
 
 #include "log_level.h"
 #include "log_source.h"
+#include "smile/common/primitive/text/string_view.h"
 
-#include <string_view>
 #include <chrono>
 
 namespace smile::logging
 {
     struct LogMessage final
     {
-        LogMessage( std::string_view loggerName,
+        LogMessage( primitive::StringView loggerName,
             LogLevel level,
-            std::string_view message,
+            primitive::StringView message,
             LogSource source,
             std::chrono::system_clock::time_point time );
 
-        LogMessage( std::string_view loggerName, LogLevel level, std::string_view message, LogSource source );
+        LogMessage( primitive::StringView loggerName, LogLevel level, primitive::StringView message, LogSource source );
 
-        std::string_view LoggerName;
+        primitive::StringView LoggerName;
         LogLevel Level;
-        std::string_view Payload;
+        primitive::StringView Payload;
         LogSource Source;
         std::chrono::system_clock::time_point Time;
     };

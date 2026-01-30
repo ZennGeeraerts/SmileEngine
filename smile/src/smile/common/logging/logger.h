@@ -6,6 +6,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/logging/sink/log_sink.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "memory_buffer.h"
 
 #include <format>
@@ -21,7 +22,7 @@ namespace smile::logging
     class Logger final : public BaseLogger
     {
       public:
-        Logger( const std::string &name ) : BaseLogger{ LogLevel::Info }, m_Name{ name }
+        Logger( const primitive::String &name ) : BaseLogger{ LogLevel::Info }, m_Name{ name }
         {
         }
 
@@ -97,7 +98,7 @@ namespace smile::logging
             Log( LogLevel::CriticalError, message );
         }
 
-        void AddSink( Ref< LogSink > pSink );
+        void AddSink( const Ref< LogSink > &pSink );
 
         void SetFormatter( Scope< Formatter > pFormatter ) override;
 
@@ -108,7 +109,10 @@ namespace smile::logging
             MemoryBuffer buffer;
             std::format_to( std::back_inserter( buffer ), message, std::forward< Args >( args )... );
 
-            LogMessage logMessage{ m_Name, level, std::string_view{ buffer.data(), buffer.size() }, source };
+            LogMessage logMessage{ m_Name,
+                level,
+                primitive::StringView{ buffer.data(), foundation::NumericCast< Count >( buffer.size() ) },
+                source };
 
             if ( ShouldLog( level ) )
                 BroadcastToSinks( logMessage );
@@ -135,7 +139,7 @@ namespace smile::logging
         void BroadcastToSinks( const LogMessage &message );
 
       private:
-        std::string m_Name;
-        std::vector< Ref< LogSink > > m_pSinks;
+        primitive::String m_Name;
+        primitive::Vector< Ref< LogSink > > m_pSinks;
     };
 }

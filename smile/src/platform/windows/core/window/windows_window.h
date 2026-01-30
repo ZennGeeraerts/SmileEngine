@@ -8,20 +8,21 @@
 
 #include <Windows.h>
 
-#define HINSTANCE() GetModuleHandle( NULL ) // this function returns the hInstance
-
 namespace smile::window
 {
     class WindowsWindow final : public Window
     {
-     public:
-        WindowsWindow( const WindowSettings &settings, const std::string &className );
-        virtual ~WindowsWindow();
+      public:
+        WindowsWindow( const WindowSettings &settings );
+        ~WindowsWindow() = default;
 
         WindowsWindow( const WindowsWindow & ) = delete;
         WindowsWindow( WindowsWindow && ) = delete;
         WindowsWindow &operator=( const WindowsWindow & ) = delete;
         WindowsWindow &operator=( WindowsWindow && ) = delete;
+
+        void Initialize() override;
+        void ShutDown() override;
 
         inline virtual void *GetNativeWindow() const override
         {
@@ -30,9 +31,8 @@ namespace smile::window
 
         LRESULT WindowsProcedure( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) noexcept;
 
-      private:
-        void Initialize( const WindowSettings &settings, const std::string &className );
-        void ShutDown();
+        static constexpr const wchar_t *ClassName{ L"SmileWindowClass" };
+        static HINSTANCE InstanceHandle;
 
       private:
         HWND m_WindowHandle;

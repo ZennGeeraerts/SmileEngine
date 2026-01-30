@@ -7,16 +7,19 @@
 
 namespace smile::logging
 {
-    LogMessage::LogMessage( std::string_view loggerName,
+    LogMessage::LogMessage( primitive::StringView loggerName,
         LogLevel level,
-        std::string_view message,
+        primitive::StringView message,
         LogSource source,
         std::chrono::system_clock::time_point time )
         : LoggerName{ loggerName }, Level{ level }, Time{ time }, Source{ source }, Payload{ message }
     {
     }
 
-    LogMessage::LogMessage( std::string_view loggerName, LogLevel level, std::string_view message, LogSource source )
+    LogMessage::LogMessage( primitive::StringView loggerName,
+        LogLevel level,
+        primitive::StringView message,
+        LogSource source )
         : LogMessage{ loggerName, level, message, source, std::chrono::system_clock::now() }
     {
     }

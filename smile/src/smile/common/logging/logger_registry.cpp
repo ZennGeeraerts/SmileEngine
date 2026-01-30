@@ -11,10 +11,10 @@ namespace smile::logging
 {
     LoggerRegistry::LoggerRegistry()
     {
-        std::string defaultLoggerName = "";
+        primitive::String defaultLoggerName = "";
         m_pDefaultLogger = CreateRef< Logger >( defaultLoggerName );
         auto pStdoutColorSink = CreateRef< StdoutColorSink >();
-        m_pDefaultLogger->AddSink( std::move( pStdoutColorSink ) );
+        m_pDefaultLogger->AddSink( pStdoutColorSink );
 
         m_LoggerMap[defaultLoggerName] = m_pDefaultLogger;
     }
