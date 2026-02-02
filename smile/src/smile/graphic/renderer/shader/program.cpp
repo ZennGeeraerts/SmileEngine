@@ -29,10 +29,10 @@ namespace smile::graphic
                 auto it = psReflection.ShaderResourceBindings.FindItemAtKey( kv.Key );
                 if ( it != psReflection.ShaderResourceBindings.end() )
                 {
-                    const auto &vsElemnt = kv.Value;
+                    const auto &vsElement = kv.Value;
                     const auto &psElement = it.GetItem();
 
-                    return vsElemnt == psElement;
+                    return vsElement == psElement;
                 }
 
                 return true;
@@ -72,16 +72,27 @@ namespace smile::graphic
 
         merged.VertexLayout = vsReflection.InputSignature;
 
-        primitive::HashMap< primitive::String, ConstantBufferDescriptor > allConstantBuffers{
-            vsReflection.ConstantBufferDescs };
-        allConstantBuffers.InsertItems( psReflection.ConstantBufferDescs );
-
         primitive::HashMap< primitive::String, rhi::BindingLayoutElement > allBindings{
             vsReflection.ShaderResourceBindings };
         allBindings.InsertItems( psReflection.ShaderResourceBindings );
 
+        for ( const auto &[key, value] : allBindings )
+        {
+            if ( merged.Bindings.TryAddElement( value ) )
+            {
+                merged.NameToBindingMap.Insert( key, value );
+            }
+            else
+            {
+                SM_ASSERT( false );
+            }
+        }
+
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > allConstantBuffers{
+            vsReflection.ConstantBufferDescs };
+        allConstantBuffers.InsertItems( psReflection.ConstantBufferDescs );
+
         MergeData( merged.ConstantBufferDescs, allConstantBuffers );
-        MergeData( merged.ShaderResourceBindings, allBindings );
 
         return merged;
     }

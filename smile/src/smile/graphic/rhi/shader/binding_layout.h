@@ -19,12 +19,12 @@ namespace smile::graphic::rhi
         {
         }
 
-        inline bool operator==(const BindingLayoutElement& other) const
+        inline bool operator==( const BindingLayoutElement &other ) const
         {
             return Slot == other.Slot && Type == other.Type && Size == other.Size;
         }
 
-        inline bool operator!=(const BindingLayoutElement& other) const
+        inline bool operator!=( const BindingLayoutElement &other ) const
         {
             return !( *this == other );
         }
@@ -34,7 +34,7 @@ namespace smile::graphic::rhi
         Uint16 Size;
     };
 
-    class BindingLayout final
+    class BindingLayout
     {
       public:
         BindingLayout() = default;
@@ -44,12 +44,12 @@ namespace smile::graphic::rhi
         }
 
         BindingLayout( foundation::Flags< ShaderStage > visibility,
-            const std::initializer_list< BindingLayoutElement > &elements )
+            std::initializer_list< BindingLayoutElement > elements )
             : m_Visibility{ visibility }, m_Elements{ elements }
         {
         }
 
-        inline const std::vector< BindingLayoutElement > &GetElements() const
+        inline const primitive::Vector< BindingLayoutElement > &GetElements() const
         {
             return m_Elements;
         }
@@ -59,43 +59,48 @@ namespace smile::graphic::rhi
             return m_Visibility;
         }
 
-        std::vector< BindingLayoutElement >::iterator begin()
+        primitive::Vector< BindingLayoutElement >::Iterator begin()
         {
             return m_Elements.begin();
         }
 
-        std::vector< BindingLayoutElement >::iterator end()
+        primitive::Vector< BindingLayoutElement >::Iterator end()
         {
             return m_Elements.end();
         }
 
-        std::vector< BindingLayoutElement >::const_iterator begin() const
+        primitive::Vector< BindingLayoutElement >::ConstIterator begin() const
         {
-            return m_Elements.cbegin();
+            return m_Elements.begin();
         }
 
-        std::vector< BindingLayoutElement >::const_iterator end() const
+        primitive::Vector< BindingLayoutElement >::ConstIterator end() const
         {
-            return m_Elements.cend();
+            return m_Elements.end();
         }
 
         void AddElement( const BindingLayoutElement &element )
         {
-            m_Elements.push_back( element );
+            m_Elements.PushBack( element );
         }
 
         void AddElement( BindingLayoutElement &&element )
         {
-            m_Elements.emplace_back( std::move( element ) );
+            m_Elements.EmplaceBack( std::move( element ) );
+        }
+
+        bool HasElement( const BindingLayoutElement &element ) const
+        {
+            return primitive::array::HasItem( m_Elements, element );
         }
 
         void Clear()
         {
-            m_Elements.clear();
+            m_Elements.Clear();
         }
 
       private:
-        std::vector< BindingLayoutElement > m_Elements;
+        primitive::Vector< BindingLayoutElement > m_Elements;
         foundation::Flags< ShaderStage > m_Visibility;
     };
 }

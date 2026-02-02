@@ -8,11 +8,32 @@ namespace smile::graphic
     class Program final
     {
       public:
+        class BindingLayout final : public rhi::BindingLayout
+        {
+          public:
+            BindingLayout() : rhi::BindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } }
+            {
+            }
+
+            bool TryAddElement( const rhi::BindingLayoutElement &element )
+            {
+                if ( !HasElement( element ) )
+                {
+                    AddElement( element );
+                    return true;
+                }
+
+                return false;
+            }
+        };
+
         struct ReflectionData final
         {
             rhi::BufferLayout VertexLayout;
+
+            BindingLayout Bindings;
+            primitive::HashMap< primitive::String, rhi::BindingLayoutElement > NameToBindingMap;
             primitive::HashMap< primitive::String, ConstantBufferDescriptor > ConstantBufferDescs;
-            primitive::HashMap< primitive::String, rhi::BindingLayoutElement > ShaderResourceBindings;
         };
 
         static Program Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader );
