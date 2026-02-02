@@ -8,6 +8,7 @@
 #include "smile/common/foundation/hash_code.h"
 #include "smile/common/foundation/flags.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/collection/array_utils.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/format.h"
 #include "smile/graphic/rhi/cpu_access_mode.h"
@@ -93,6 +94,11 @@ namespace smile::graphic::rhi
         {
             m_Elements.PushBack( element );
             CalculateOffsetAndStride();
+        }
+
+        bool ContainsElement( const BufferElement &element ) const
+        {
+            return primitive::array::HasItem( m_Elements, element );
         }
 
         foundation::HashCode GetHashCode() const

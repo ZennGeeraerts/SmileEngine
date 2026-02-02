@@ -19,6 +19,16 @@ namespace smile::graphic::rhi
         {
         }
 
+        inline bool operator==(const BindingLayoutElement& other) const
+        {
+            return Slot == other.Slot && Type == other.Type && Size == other.Size;
+        }
+
+        inline bool operator!=(const BindingLayoutElement& other) const
+        {
+            return !( *this == other );
+        }
+
         Uint32 Slot;
         ResourceType Type;
         Uint16 Size;
