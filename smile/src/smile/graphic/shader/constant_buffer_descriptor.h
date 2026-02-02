@@ -9,6 +9,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/collection/array_utils.h"
 
 namespace smile::graphic
 {
@@ -17,6 +18,17 @@ namespace smile::graphic
         Count GetStride() const
         {
             return Size * ItemCount;
+        }
+
+        inline bool operator==( const ConstantBufferItem &other ) const
+        {
+            return Name == other.Name && Type == other.Type && Size == other.Size && Offset == other.Offset &&
+                   ItemCount == other.ItemCount;
+        }
+
+        inline bool operator!=( const ConstantBufferItem &other ) const
+        {
+            return !( *this == other );
         }
 
         primitive::String Name;
@@ -61,6 +73,16 @@ namespace smile::graphic
         auto end() const
         {
             return m_Items.end();
+        }
+
+        inline bool operator==( const ConstantBufferDescriptor &other ) const
+        {
+            return primitive::array::IsEqual( m_Items, other.m_Items ) && m_Size == other.m_Size;
+        }
+
+        inline bool operator!=( const ConstantBufferDescriptor &other ) const
+        {
+            return !( *this == other );
         }
 
       private:
