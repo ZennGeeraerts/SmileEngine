@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        program.cpp
+ * @author      Zenn Geeraerts
+ * @created     2 February 2026
+ * @brief       Unified shader program interface
+ */
 #include "smpch.h"
 #include "program.h"
 
@@ -97,7 +113,7 @@ namespace smile::graphic
         return merged;
     }
 
-    Program Program::Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader )
+    Program::Ref Program::Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader )
     {
         SM_ASSERT( vertexShader->GetReflectionData() );
         SM_ASSERT( pixelShader->GetReflectionData() );
@@ -109,6 +125,6 @@ namespace smile::graphic
 
         const ReflectionData reflectionData = MergeReflectionData( vsReflection, psReflection );
 
-        return Program{ vertexShader, pixelShader, reflectionData };
+        return memory::CreateRef< Program >( vertexShader, pixelShader, reflectionData );
     }
 }

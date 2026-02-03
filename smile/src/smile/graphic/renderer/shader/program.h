@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        program.h
+ * @author      Zenn Geeraerts
+ * @created     2 February 2026
+ * @brief       Unified shader program interface
+ */
 #pragma once
 
 #include "vertex_shader.h"
@@ -5,9 +21,12 @@
 
 namespace smile::graphic
 {
-    class Program final
+    class Program final : memory::Counted
     {
       public:
+        using Ref = memory::Ref< Program >;
+        using ConstRef = memory::Ref< const Program >;
+
         class BindingLayout final : public rhi::BindingLayout
         {
           public:
@@ -36,7 +55,7 @@ namespace smile::graphic
             primitive::HashMap< primitive::String, ConstantBufferDescriptor > ConstantBufferDescs;
         };
 
-        static Program Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader );
+        static Program::Ref Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader );
 
       private:
         Program( VertexShader::ConstRef vertexShader,
