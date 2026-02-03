@@ -5,7 +5,6 @@
 #pragma once
 
 #include "vector.h"
-#include "math_utilities.h"
 
 namespace smile::math
 {
