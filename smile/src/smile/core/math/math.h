@@ -11,9 +11,14 @@
 #include "vector3.h"
 #include "vector4.h"
 
+#include "matrix.h"
+#include "matrix2.h"
+
 namespace smile::math
 {
     using Vector2 = Vector< 2, float >;
     using Vector3 = Vector< 3, float >;
     using Vector4 = Vector< 4, float >;
+
+    using Matrix2 = Matrix< 2, 2, float >;
 }
