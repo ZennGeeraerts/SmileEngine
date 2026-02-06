@@ -22,5 +22,15 @@ namespace smile::geometric
                 float x, y, Width, Height;
             };
         };
+
+        inline bool operator==( const Rectangle &other ) const
+        {
+            return x == other.x && y == other.y && Width == other.Width && Height == other.Height;
+        }
+
+        inline bool operator!=( const Rectangle &other ) const
+        {
+            return !( *this == other );
+        }
     };
 }

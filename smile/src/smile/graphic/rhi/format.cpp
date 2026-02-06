@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "format.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     static const FormatInfo s_FormatInfo[] = {
         { Format::UNKNOWN,
@@ -865,14 +865,14 @@ namespace smile::graphic
         if ( static_cast< Uint32 >( format ) >= static_cast< Uint32 >( Format::COUNT ) )
             return s_FormatInfo[0]; // Unknown format
 
-        const FormatInfo &info = s_FormatInfo[static_cast< uint32_t >( format )];
+        const FormatInfo &info = s_FormatInfo[static_cast< Uint32 >( format )];
 
         SM_ASSERT_MSG( info.Format == format, "Format mismatch" );
 
         return info;
     }
 
-    const FormatInfo &GetFormatInfo( std::string_view formatView )
+    const FormatInfo &GetFormatInfo( const primitive::StringView formatView )
     {
         for ( const FormatInfo &info : s_FormatInfo )
         {

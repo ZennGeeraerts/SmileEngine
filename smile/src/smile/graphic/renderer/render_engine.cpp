@@ -5,11 +5,11 @@
 #include "smpch.h"
 #include "render_engine.h"
 
-#include "forward_renderer.h"
+#include "smile/graphic/scene/forward_renderer.h"
 #include "wireframe_renderer.h"
 #include "debug_renderer.h"
 #include "renderer_2d.h"
-#include "skybox_renderer.h"
+#include "smile/graphic/scene/skybox_renderer.h"
 
 #include "smile/core/window/window.h"
 #include "smile/core/world/world_manager.h"
@@ -24,12 +24,15 @@ namespace smile::graphic
     {
         s_RenderSystem.Initialize( pWindow );
 
-        BufferLayout vertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGB32_FLOAT, "NORMAL" } };
-        s_ShaderLibrary.Load( "resources/shaders/PosColNorm.fx", vertexLayout );
-        s_ShaderLibrary.Load( "resources/shaders/PosCol.fx", { { Format::RGB32_FLOAT, "POSITION" } } );
-        s_ShaderLibrary.Load( "resources/shaders/PosColTex.fx",
-            { { Format::RGB32_FLOAT, "POSITION" }, { Format::RG32_FLOAT, "TEXCOORD" } } );
-        s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { Format::RGB32_FLOAT, "POSITION" } } );
+        s_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/col_tex.ps.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/skybox.vs.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/skybox.ps.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/pbr.vs.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/pbr.ps.smshader" );
+        s_ShaderLibrary.LoadShader( "resources/shaders/pbr_skinned.ps.smshader" );
 
         s_SceneManager.Initialize( pWindow );
         world::WorldManager::AddListener( &s_SceneManager );

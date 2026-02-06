@@ -15,11 +15,13 @@ namespace smile::primitive
     template < typename IndexType = Uint32, Uint32 IndexBits = 16, Uint32 GenerationBits = 16 >
     class Handle final
     {
+        static_assert( IndexBits + GenerationBits == sizeof( IndexType ) * 8 );
+
       public:
         static constexpr Uint32 s_IndexBits = IndexBits;
         static constexpr Uint32 s_GenerationBits = GenerationBits;
-        static constexpr IndexType s_MaxIndex = ( 1 << s_IndexBits ) - 1;
-        static constexpr IndexType s_MaxGeneration = ( 1 << s_GenerationBits ) - 1;
+        static constexpr IndexType s_MaxIndex = ( IndexType( 1 ) << s_IndexBits ) - 1;
+        static constexpr IndexType s_MaxGeneration = ( IndexType( 1 ) << s_GenerationBits ) - 1;
 
       public:
         Handle()

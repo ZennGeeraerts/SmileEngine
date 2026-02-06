@@ -34,6 +34,6 @@ namespace smile::graphic
 
       private:
         RenderCollector m_RenderCollector{};
-        RenderState m_State;
+        rhi::RenderState m_State;
     };
 }

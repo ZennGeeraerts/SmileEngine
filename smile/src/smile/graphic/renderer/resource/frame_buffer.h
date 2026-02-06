@@ -4,23 +4,52 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "frame_buffer_attachment.h"
 
 namespace smile::graphic
 {
-    struct Framebuffer final : public memory::Counted
+    class Framebuffer final : public memory::Counted
     {
       public:
-        Framebuffer( FramebufferHandle handle ) : Handle{ handle }
+        using Ref = memory::Ref< Framebuffer >;
+
+        Framebuffer( rhi::FramebufferHandle handle,
+            const primitive::Vector< FramebufferAttachment > &colorAttachments,
+            const FramebufferAttachment &depthAttachment )
+            : m_Handle{ handle }, m_ColorAttachments{ colorAttachments }, m_DepthAttachment{ depthAttachment }
         {
         }
+
         ~Framebuffer() = default;
 
-        FramebufferHandle Handle;
-        Uint32 Width{};
-        Uint32 Height{};
+        bool IsValid() const
+        {
+            return m_Handle.IsValid();
+        }
 
-        static constexpr Uint32 MaxFramebufferSize{ 8192 };
+        rhi::FramebufferHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
+        const primitive::Vector< FramebufferAttachment > &GetColorAttachments() const
+        {
+            return m_ColorAttachments;
+        }
+
+        const FramebufferAttachment &GetDepthAttachment() const
+        {
+            return m_DepthAttachment;
+        }
+
+      private:
+        rhi::FramebufferHandle m_Handle;
+        primitive::Vector< FramebufferAttachment > m_ColorAttachments;
+        FramebufferAttachment m_DepthAttachment;
+
+        friend class ResourceManager;
     };
 }

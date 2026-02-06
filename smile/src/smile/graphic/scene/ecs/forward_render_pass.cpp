@@ -5,9 +5,11 @@
 #include "smpch.h"
 #include "forward_render_pass.h"
 
-#include "smile/graphic/renderer/forward_renderer.h"
+#include "smile/graphic/scene/forward_renderer.h"
 #include "smile/graphic/animation/ecs/animator_component.h"
 #include "smile/core/world/ecs/transform_component.h"
+#include "mesh_renderer_component.h"
+#include "skinned_mesh_renderer_component.h"
 
 namespace smile::graphic::ecs
 {

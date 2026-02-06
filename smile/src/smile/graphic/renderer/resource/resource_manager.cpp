@@ -12,146 +12,366 @@ namespace smile::graphic
     ResourceManager::~ResourceManager()
     {
         for ( auto pVertexBuffer : m_pVertexBuffers )
-            m_pDevice->DestroyGPUBuffer( pVertexBuffer->Handle );
+            m_pDevice->DestroyGPUBuffer( pVertexBuffer->m_Handle );
 
         for ( auto pIndexBuffer : m_pIndexBuffers )
-            m_pDevice->DestroyGPUBuffer( pIndexBuffer->Handle );
+            m_pDevice->DestroyGPUBuffer( pIndexBuffer->m_Handle );
 
-        for ( auto pUniformBuffer : m_pUniformBuffers )
-            m_pDevice->DestroyGPUBuffer( pUniformBuffer->Handle );
+        for ( auto pConstantBuffer : m_pConstantBuffers )
+            m_pDevice->DestroyGPUBuffer( pConstantBuffer->m_Handle );
+
+        for ( auto pVertexShader : m_pVertexShaders )
+            m_pDevice->DestroyShader( pVertexShader->m_Handle );
+
+        for ( auto pPixelShader : m_pPixelShaders )
+            m_pDevice->DestroyShader( pPixelShader->m_Handle );
 
         for ( auto pTexture : m_pTextures )
-            m_pDevice->DestroyTexture( pTexture->Handle );
+            m_pDevice->DestroyTexture( pTexture->m_Handle );
+
+        for ( auto pSampler : m_pSamplers )
+            m_pDevice->DestroySampler( pSampler->m_Handle );
 
         for ( auto pFramebuffer : m_pFramebuffers )
-            m_pDevice->DestroyFramebuffer( pFramebuffer->Handle );
+            m_pDevice->DestroyFramebuffer( pFramebuffer->m_Handle );
+
+        for ( auto pBindingSet : m_pBindingSets )
+            m_pDevice->DestroyBindingSet( pBindingSet->m_Handle );
+
+        for ( auto pGraphicsPipeline : m_pGraphicsPipelines )
+            m_pDevice->DestroyGraphicsPipeline( pGraphicsPipeline->m_Handle );
     }
 
-    void ResourceManager::Initialize( GraphicsDevice *pDevice )
+    void ResourceManager::Initialize( rhi::GraphicsDevice *pDevice )
     {
         m_pDevice = pDevice;
     }
 
-    memory::Ref< VertexBuffer >
-    ResourceManager::CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout )
+    VertexBuffer::Ref
+    ResourceManager::CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout )
     {
-        GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = pVertices;
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = vertexCount * layout.GetStride();
-        bufferDesc.Usage = BufferUsage::Immutable;
-        bufferDesc.CPUAccess = BufferCPUAccess::None;
-        bufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+        bufferDesc.Usage = rhi::BufferUsage::Immutable;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::None;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pVertices );
 
-        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
-        m_pVertexBuffers.push_back( pVertexBuffer );
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout, vertexCount );
+        m_pVertexBuffers.PushBack( pVertexBuffer );
         return pVertexBuffer;
     }
 
-    memory::Ref< VertexBuffer > ResourceManager::CreateDynamicVertexBuffer( Uint32 vertexCount,
-        const BufferLayout &layout )
+    VertexBuffer::Ref ResourceManager::CreateDynamicVertexBuffer( const Count vertexCount,
+        const rhi::BufferLayout &layout )
     {
-        GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = nullptr;
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = vertexCount * layout.GetStride();
-        bufferDesc.Usage = BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = BufferCPUAccess::Write;
-        bufferDesc.BindFlags = BufferBindFlags::VertexBuffer;
+        bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
         m_pDevice->CreateGPUBuffer( handle, bufferDesc );
 
-        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout );
-        m_pVertexBuffers.push_back( pVertexBuffer );
+        auto pVertexBuffer = memory::CreateRef< VertexBuffer >( handle, layout, vertexCount );
+        m_pVertexBuffers.PushBack( pVertexBuffer );
         return pVertexBuffer;
     }
 
-    memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount )
+    memory::Ref< IndexBuffer > ResourceManager::CreateIndexBuffer( Uint32 *pIndices, const Count indexCount )
     {
-        GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = pIndices;
+        rhi::GPUBufferDescriptor bufferDesc{};
         bufferDesc.Size = indexCount * sizeof( Uint32 );
-        bufferDesc.Usage = BufferUsage::Immutable;
-        bufferDesc.CPUAccess = BufferCPUAccess::None;
-        bufferDesc.BindFlags = BufferBindFlags::IndexBuffer;
+        bufferDesc.Usage = rhi::BufferUsage::Immutable;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::None;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::IndexBuffer };
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pIndices );
 
         auto pIndexBuffer = memory::CreateRef< IndexBuffer >( handle, indexCount );
-        m_pIndexBuffers.push_back( pIndexBuffer );
+        m_pIndexBuffers.PushBack( pIndexBuffer );
         return pIndexBuffer;
     }
 
-    memory::Ref< UniformBuffer >
-    ResourceManager::CreateUniformBuffer( const std::string &name, void *pData, Uint32 size )
+    Texture::Ref ResourceManager::CreateTexture2D( Image::ConstRef pImage, bool updateable )
     {
-        GPUBufferDescriptor bufferDesc{};
-        bufferDesc.pData = pData;
-        bufferDesc.Size = size;
-        bufferDesc.Usage = BufferUsage::Dynamic;
-        bufferDesc.CPUAccess = BufferCPUAccess::Write;
-        bufferDesc.BindFlags = BufferBindFlags::UniformBuffer;
+        rhi::TextureDescriptor textureDesc{};
+        textureDesc.Width = pImage->GetWidth();
+        textureDesc.Height = pImage->GetHeight();
+        textureDesc.TextureFormat = pImage->GetFormat();
+        textureDesc.Dimension = rhi::TextureDimension::Texture2D;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
 
-        GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
-        auto pUniformBuffer = memory::CreateRef< UniformBuffer >( handle, name, bufferDesc.Size );
-        m_pUniformBuffers.push_back( pUniformBuffer );
-        return pUniformBuffer;
-    }
+        auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
+        m_pDevice->CreateTexture( handle, textureDesc, buffer );
 
-    memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
-        const BufferLayout &layout,
-        const std::string &techniqueName )
-    {
-        auto pShader = m_pDevice->CreateShader( assetFile, layout, techniqueName );
-        m_pShaders.push_back( pShader );
-        return pShader;
-    }
-
-    memory::Ref< Shader > ResourceManager::CreateShader( const std::string &assetFile,
-        const std::string &techniqueName )
-    {
-        auto pShader = m_pDevice->CreateShader( assetFile, techniqueName );
-        m_pShaders.push_back( pShader );
-        return pShader;
-    }
-
-    memory::Ref< Texture > ResourceManager::CreateTexture( const std::filesystem::path &path )
-    {
-        TextureHandle handle = m_TextureHandleManager.CreateHandle();
-        m_pDevice->CreateTexture( handle, path );
-
-        auto pTexture = memory::CreateRef< Texture >( handle );
-        m_pTextures.push_back( pTexture );
+        auto pTexture =
+            memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight(), pImage->GetFormat() );
+        m_pTextures.PushBack( pTexture );
         return pTexture;
     }
 
-    memory::Ref< Framebuffer > ResourceManager::CreateFramebuffer( const FramebufferDescriptor &descriptor )
+    Texture::Ref ResourceManager::CreateTextureCube( Image::ConstRef pImage, bool updateable )
     {
-        FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
-        m_pDevice->CreateFramebuffer( handle, descriptor );
+        rhi::TextureDescriptor textureDesc{};
+        textureDesc.Width = pImage->GetWidth();
+        textureDesc.Height = pImage->GetHeight();
+        textureDesc.TextureFormat = pImage->GetFormat();
+        textureDesc.Dimension = rhi::TextureDimension::TextureCube;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
 
-        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle );
-        m_pFramebuffers.push_back( pFramebuffer );
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
+        m_pDevice->CreateTexture( handle, textureDesc, buffer );
+
+        auto pTexture =
+            memory::CreateRef< Texture >( handle, pImage->GetWidth(), pImage->GetHeight(), pImage->GetFormat() );
+        m_pTextures.PushBack( pTexture );
+        return pTexture;
+    }
+
+    Texture::Ref ResourceManager::CreateTextureFromNative( rhi::Object nativeTexture,
+        rhi::ObjectType type,
+        const rhi::TextureDescriptor &desc )
+    {
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        m_pDevice->CreateHandleForNativeTexture( handle, nativeTexture, type, desc );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, desc.Width, desc.Height, desc.TextureFormat );
+        m_pTextures.PushBack( pTexture );
+        return pTexture;
+    }
+
+    Sampler::Ref ResourceManager::CreateSampler( const rhi::SamplerDescriptor &descriptor )
+    {
+        rhi::SamplerHandle handle = m_SamplerHandleManager.CreateHandle();
+
+        m_pDevice->CreateSampler( handle, descriptor );
+
+        auto pSampler = memory::CreateRef< Sampler >( handle, descriptor );
+        m_pSamplers.PushBack( pSampler );
+        return pSampler;
+    }
+
+    FramebufferAttachment ResourceManager::CreateColorAttachment( const Uint32 width, const Uint32 height )
+    {
+        rhi::TextureDescriptor textureDesc{};
+        textureDesc.Width = width;
+        textureDesc.Height = height;
+        textureDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
+        textureDesc.Dimension = rhi::TextureDimension::Texture2D;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+        textureDesc.CPUAccess = rhi::CPUAccessMode::Read;
+
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        m_pDevice->CreateTexture( handle, textureDesc );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, width, height, textureDesc.TextureFormat );
+        m_pTextures.PushBack( pTexture );
+
+        return FramebufferAttachment{ pTexture, textureDesc.TextureFormat, true };
+    }
+
+    FramebufferAttachment ResourceManager::CreateDepthAttachment( const Uint32 width, const Uint32 height )
+    {
+        rhi::TextureDescriptor textureDesc{};
+        textureDesc.Width = width;
+        textureDesc.Height = height;
+        textureDesc.TextureFormat = rhi::Format::D24S8;
+        textureDesc.Dimension = rhi::TextureDimension::Texture2D;
+        textureDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+        textureDesc.CPUAccess = rhi::CPUAccessMode::Read;
+
+        rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
+
+        m_pDevice->CreateTexture( handle, textureDesc );
+
+        auto pTexture = memory::CreateRef< Texture >( handle, width, height, textureDesc.TextureFormat );
+        m_pTextures.PushBack( pTexture );
+
+        return FramebufferAttachment{ pTexture, textureDesc.TextureFormat, true };
+    }
+
+    ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
+    {
+        rhi::GPUBufferDescriptor bufferDesc{};
+        bufferDesc.Size = descriptor.GetSize();
+        bufferDesc.Usage = rhi::BufferUsage::Dynamic;
+        bufferDesc.CPUAccess = rhi::CPUAccessMode::Write;
+        bufferDesc.BindFlags = { rhi::BufferBindFlags::ConstantBuffer };
+
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+
+        auto pConstantBuffer = memory::CreateRef< ConstantBuffer >( handle, descriptor );
+        m_pConstantBuffers.PushBack( pConstantBuffer );
+        return pConstantBuffer;
+    }
+
+    VertexShader::Ref ResourceManager::CreateVertexShader( const std::vector< Byte > &byteCode,
+        const std::string &entryPoint,
+        const std::string &targetProfile )
+    {
+        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Vertex };
+        shaderDesc.EntryPoint = entryPoint;
+        shaderDesc.TargetProfile = targetProfile;
+
+        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        m_pDevice->CreateShader( handle, shaderDesc, byteCode );
+
+        auto pVertexShader = memory::CreateRef< VertexShader >( handle );
+        m_pVertexShaders.PushBack( pVertexShader );
+        return pVertexShader;
+    }
+
+    PixelShader::Ref ResourceManager::CreatePixelShader( const std::vector< Byte > &byteCode,
+        const std::string &entryPoint,
+        const std::string &targetProfile )
+    {
+        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Pixel };
+        shaderDesc.EntryPoint = entryPoint;
+        shaderDesc.TargetProfile = targetProfile;
+
+        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
+        m_pDevice->CreateShader( handle, shaderDesc, byteCode );
+
+        auto pPixelShader = memory::CreateRef< PixelShader >( handle );
+        m_pPixelShaders.PushBack( pPixelShader );
+        return pPixelShader;
+    }
+
+    Framebuffer::Ref ResourceManager::CreateFramebuffer(
+        std::initializer_list< FramebufferAttachment > colorAttachments,
+        const FramebufferAttachment &depthAttachment )
+    {
+        return CreateFramebuffer( primitive::Vector< FramebufferAttachment >{ colorAttachments }, depthAttachment );
+    }
+
+    Framebuffer::Ref ResourceManager::CreateFramebuffer(
+        const primitive::Vector< FramebufferAttachment > &colorAttachments,
+        const FramebufferAttachment &depthAttachment )
+    {
+        rhi::FramebufferDescriptor desc{};
+
+        for ( const auto &attachment : colorAttachments )
+        {
+            rhi::TextureDescriptor colorDesc;
+            colorDesc.TextureFormat = attachment.TextureFormat;
+            colorDesc.CPUAccess = attachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+
+            desc.ColorAttachments.PushBack( rhi::FramebufferAttachment{ attachment.pTexture->GetHandle(), colorDesc } );
+        }
+
+        {
+            rhi::TextureDescriptor depthDesc;
+            depthDesc.TextureFormat = depthAttachment.TextureFormat;
+            depthDesc.CPUAccess = depthAttachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+
+            desc.DepthAttachment = rhi::FramebufferAttachment{ depthAttachment.pTexture->GetHandle(), depthDesc };
+        }
+
+        rhi::FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
+        m_pDevice->CreateFramebuffer( handle, desc );
+
+        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle, colorAttachments, depthAttachment );
+        m_pFramebuffers.PushBack( pFramebuffer );
         return pFramebuffer;
     }
 
-    void ResourceManager::ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height )
+    void ResourceManager::ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height )
     {
-        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > pFramebuffer->MaxFramebufferSize ) ||
-             ( height > pFramebuffer->MaxFramebufferSize ) )
+        if ( ( width <= 0 ) || ( height <= 0 ) || ( width > rhi::s_MaxFramebufferSize ) ||
+             ( height > rhi::s_MaxFramebufferSize ) )
         {
             SM_LOG_WARNING( "ResourceManager::ResizeFramebuffer > Invalid framebuffer size: {0}, {1}", width, height );
             return;
         }
 
-        pFramebuffer->Width = width;
-        pFramebuffer->Height = height;
+        m_pDevice->DestroyFramebuffer( pFramebuffer->GetHandle() );
 
-        m_pDevice->InvalidateFramebuffer( pFramebuffer->Handle );
+        primitive::Vector< FramebufferAttachment > newColorAttachments{};
+        for ( auto &colorAttachment : pFramebuffer->GetColorAttachments() )
+        {
+            m_pDevice->DestroyTexture( colorAttachment.pTexture->GetHandle() );
+
+            FramebufferAttachment newColorAttachment = CreateColorAttachment( width, height );
+            newColorAttachments.EmplaceBack( std::move( newColorAttachment ) );
+        }
+
+        const FramebufferAttachment &depthAttachment = pFramebuffer->GetDepthAttachment();
+        m_pDevice->DestroyTexture( depthAttachment.pTexture->GetHandle() );
+
+        FramebufferAttachment newDepthAttachment = CreateDepthAttachment( width, height );
+
+        pFramebuffer = CreateFramebuffer( newColorAttachments, newDepthAttachment );
+    }
+
+    BindingSet::Ref ResourceManager::CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+        foundation::Flags< rhi::ShaderStage > shaderStage )
+    {
+        auto convertSetToLayout = []( const rhi::BindingSetDescriptor &desc, rhi::BindingLayout &layout )
+        {
+            for ( const rhi::BindingSetElement &element : desc )
+            {
+                const Uint16 size = [&]()
+                {
+                    if ( element.Type == rhi::ResourceType::PushConstants )
+                        return element.Range.Size;
+                    else
+                        return 0u;
+                }();
+
+                rhi::BindingLayoutElement layoutElement{ element.Slot, element.Type, size };
+                layout.AddElement( std::move( layoutElement ) );
+            }
+        };
+
+        rhi::BindingLayout bindingLayout{ shaderStage };
+        convertSetToLayout( descriptor, bindingLayout );
+
+        rhi::BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
+        m_pDevice->CreateBindingSet( handle, descriptor, bindingLayout );
+
+        auto pBindingSet = memory::CreateRef< BindingSet >( handle, descriptor, bindingLayout );
+        m_pBindingSets.PushBack( pBindingSet );
+        return pBindingSet;
+    }
+
+    GraphicsPipeline::Ref ResourceManager::CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor )
+    {
+        rhi::GraphicsPipelineDescriptor desc;
+        desc.Topology = descriptor.Topology;
+        desc.InputLayout = descriptor.InputLayout;
+        desc.State = descriptor.RenderState;
+        desc.VertexShaderHandle = descriptor.pVertexShader->m_Handle;
+        desc.PixelShaderHandle = descriptor.pPixelShader->m_Handle;
+        desc.BindingLayouts = descriptor.BindingLayouts;
+
+        rhi::GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
+        m_pDevice->CreateGraphicsPipeline( handle, desc );
+
+        auto pGraphicsPipeline = memory::CreateRef< GraphicsPipeline >( handle, descriptor );
+        m_pGraphicsPipelines.PushBack( pGraphicsPipeline );
+        return pGraphicsPipeline;
+    }
+
+    rhi::Object ResourceManager::GetShaderResourceView( Texture::ConstRef pTexture )
+    {
+        return m_pDevice->GetNativeView( pTexture->GetHandle(),
+            rhi::ObjectType::D3D11_ShaderResourceView,
+            pTexture->GetFormat(),
+            rhi::TextureSubresourceSet{},
+            rhi::TextureDimension::Texture2D );
     }
 }

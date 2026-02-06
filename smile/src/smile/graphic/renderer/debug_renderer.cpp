@@ -5,8 +5,10 @@
 #include "smpch.h"
 #include "debug_renderer.h"
 
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
+#include "render_engine.h"
+#include "resource/resource_manager.h"
+#include "shader/shader_library.h"
+#include "shader/shader_asset.h"
 
 #include <DirectXColors.h>
 
@@ -14,19 +16,48 @@ namespace smile::graphic
 {
     void DebugRenderer::Initialize()
     {
-        auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-        BufferLayout vertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGBA32_FLOAT, "COLOR" } };
-        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        const auto &shaderLibrary = RenderEngine::GetShaderLibrary();
 
-        m_State.Topology = PrimitiveTopology::LineList;
-        m_State.CullMode = CullMode::None;
+        rhi::BufferLayout vertexLayout{
+            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
+
+        {
+            GraphicsPipelineDescriptor psoDesc{};
+            psoDesc.Topology = rhi::PrimitiveTopology::LineList;
+            psoDesc.InputLayout = vertexLayout;
+            psoDesc.pVertexShader = shaderLibrary.GetShader( "debug_renderer.vs" )->GetVertexShader();
+            psoDesc.pPixelShader = shaderLibrary.GetShader( "col_tex.ps" )->GetPixelShader();
+
+            auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
+            bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+            psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
+
+            psoDesc.RenderState.RasterizerState.CullMode = rhi::CullMode::None;
+
+            m_pPipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
+        }
+
+        {
+            ConstantBufferDescriptor cameraCBDesc{};
+            cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
+
+            m_pCameraCB = resourceManager.CreateConstantBuffer( cameraCBDesc );
+        }
+
+        {
+            rhi::BindingSetDescriptor bindingSetDesc{
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_pCameraCB->GetHandle() ) } };
+
+            m_pBindingSet = resourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+        }
 
         CreateVertexBuffer();
     }
 
     void DebugRenderer::ShutDown()
     {
-        m_LineList.clear();
+        m_LineList.Clear();
     }
 
     void DebugRenderer::CreateFixedLineList()
@@ -43,36 +74,38 @@ namespace smile::graphic
             // Vertical
             const float lineOffset = startOffset + gridSpacing * i;
             auto vertStart = DirectX::XMFLOAT3( startOffset, 0, lineOffset );
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
+            m_LineList.PushBack( VertexPosCol{ vertStart, gridColor } );
             vertStart.x += size;
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
+            m_LineList.PushBack( VertexPosCol{ vertStart, gridColor } );
 
             // Horizontal
             vertStart = DirectX::XMFLOAT3( lineOffset, 0, startOffset );
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
+            m_LineList.PushBack( VertexPosCol{ vertStart, gridColor } );
             vertStart.z += size;
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
+            m_LineList.PushBack( VertexPosCol{ vertStart, gridColor } );
         }
 
         // Axis
-        m_LineList.emplace_back( VertexPosCol{
+        m_LineList.PushBack( VertexPosCol{
             DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) } );
-        m_LineList.emplace_back( VertexPosCol{
+        m_LineList.PushBack( VertexPosCol{
             DirectX::XMFLOAT3( 30, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) } );
-        m_LineList.emplace_back( VertexPosCol{
+        m_LineList.PushBack( VertexPosCol{
             DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) } );
-        m_LineList.emplace_back( VertexPosCol{
+        m_LineList.PushBack( VertexPosCol{
             DirectX::XMFLOAT3( 0, 30, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) } );
-        m_LineList.emplace_back( VertexPosCol{
+        m_LineList.PushBack( VertexPosCol{
             DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) } );
-        m_LineList.emplace_back( VertexPosCol{
+        m_LineList.PushBack( VertexPosCol{
             DirectX::XMFLOAT3( 0, 0, 30 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) } );
     }
 
     void DebugRenderer::CreateVertexBuffer()
     {
+        const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
+
         m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer(
-            m_VertexCount, m_VertexLayout );
+            m_VertexCount, vertexLayout );
     }
 
     void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
@@ -82,12 +115,15 @@ namespace smile::graphic
         auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
         auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
 
-        DirectX::XMStoreFloat4x4( &m_ViewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMFLOAT4X4 viewProjectionMatrix;
+        DirectX::XMStoreFloat4x4( &viewProjectionMatrix, viewProjectionMatrixMat );
+
+        m_pCameraCB->Initialize( &viewProjectionMatrix );
     }
 
     void DebugRenderer::OnRender()
     {
-        const Uint32 vertexCount = m_LineList.size();
+        const Count vertexCount = m_LineList.GetItemCount();
 
         if ( vertexCount <= 0 )
             return;
@@ -100,33 +136,28 @@ namespace smile::graphic
 
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
-        renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
+        renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
 
-        renderSystem.SetState( m_State );
+        GraphicsState state{};
+        state.pPipeline = m_pPipeline;
+        state.VertexBuffers.PushBack( VertexBufferBinding{ m_pVertexBuffer, 0, 0 } );
+        state.pBindings.PushBack( m_pBindingSet );
 
-        renderSystem.BindVertexBuffer( m_pVertexBuffer );
-        renderSystem.BindShader( m_pShader );
-
-        m_pShader->UploadMat4( "ViewProjection", m_ViewProjectionMatrix );
-
-        DirectX::XMFLOAT4X4 worldMatrix{};
-        DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
-        m_pShader->UploadMat4( "World", worldMatrix );
-
+        renderSystem.SetGraphicsState( state );
         renderSystem.Draw( vertexCount );
     }
 
     void DebugRenderer::EndScene()
     {
-        m_LineList.clear();
+        m_LineList.Clear();
     }
 
     void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
         const DirectX::XMFLOAT3 &end,
         const DirectX::XMFLOAT4 &color )
     {
-        m_LineList.emplace_back( VertexPosCol{ start, color } );
-        m_LineList.emplace_back( VertexPosCol{ end, color } );
+        m_LineList.PushBack( VertexPosCol{ start, color } );
+        m_LineList.PushBack( VertexPosCol{ end, color } );
     }
 
     void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
@@ -134,7 +165,7 @@ namespace smile::graphic
         const DirectX::XMFLOAT4 &colorStart,
         const DirectX::XMFLOAT4 &colorEnd )
     {
-        m_LineList.emplace_back( VertexPosCol{ start, colorStart } );
-        m_LineList.emplace_back( VertexPosCol{ end, colorEnd } );
+        m_LineList.PushBack( VertexPosCol{ start, colorStart } );
+        m_LineList.PushBack( VertexPosCol{ end, colorEnd } );
     }
 }

@@ -5,13 +5,14 @@
 #pragma once
 
 #include "smile/common/memory/counted.h"
+#include "object.h"
 
 namespace smile::window
 {
     class Window;
 }
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     class SwapChain : public memory::Counted
     {
@@ -24,6 +25,8 @@ namespace smile::graphic
 
         virtual void Present() = 0;
         virtual void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
+
+        virtual Object GetNativeRenderTarget() const = 0;
 
       protected:
         const window::Window *m_pWindow;

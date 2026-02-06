@@ -9,14 +9,37 @@
 
 namespace smile::graphic
 {
-    struct IndexBuffer : public memory::Counted
+    class IndexBuffer : public memory::Counted
     {
-        IndexBuffer( GPUBufferHandle handle, Uint32 count ) : Handle{ handle }, Count{ count }
+      public:
+        using Ref = memory::Ref< IndexBuffer >;
+
+        IndexBuffer( rhi::GPUBufferHandle handle, const Count indexCount )
+            : m_Handle{ handle }, m_IndexCount{ indexCount }
         {
         }
+
         ~IndexBuffer() = default;
 
-        GPUBufferHandle Handle;
-        Uint32 Count;
+        rhi::GPUBufferHandle GetHandle() const
+        {
+            return m_Handle;
+        }
+
+        Count GetIndexCount() const
+        {
+            return m_IndexCount;
+        }
+
+        bool IsValid() const
+        {
+            return m_Handle.IsValid();
+        }
+
+      private:
+        rhi::GPUBufferHandle m_Handle;
+        Count m_IndexCount;
+
+        friend class ResourceManager;
     };
 }

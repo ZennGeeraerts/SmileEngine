@@ -14,7 +14,7 @@ namespace smile::physics::ecs
     {
         BoxColliderComponent()
         {
-            graphic::BufferLayout vertexLayout{ { graphic::Format::RGB32_FLOAT, "POSITION" } };
+            graphic::rhi::BufferLayout vertexLayout{ { graphic::rhi::Format::RGB32_FLOAT, "POSITION" } };
             pWireframeMesh = graphic::MeshFactory::CreateCube( vertexLayout );
         }
 

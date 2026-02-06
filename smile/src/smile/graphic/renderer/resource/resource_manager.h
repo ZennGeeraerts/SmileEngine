@@ -6,23 +6,29 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
+
+#include "smile/graphic/resource/image.h"
 
 #include "vertex_buffer.h"
 #include "index_buffer.h"
-#include "uniform_buffer.h"
 #include "texture.h"
+#include "sampler.h"
 #include "frame_buffer.h"
+#include "graphics_pipeline.h"
+#include "smile/graphic/renderer/shader/constant_buffer.h"
+#include "smile/graphic/renderer/shader/vertex_shader.h"
+#include "smile/graphic/renderer/shader/pixel_shader.h"
+#include "smile/graphic/renderer/shader/binding_set.h"
 
-#include "smile/graphic/rhi/resource/buffer.h"
-#include "smile/graphic/rhi/resource/frame_buffer.h"
-#include "smile/graphic/rhi/shader/shader.h"
-
-#include <vector>
-#include <filesystem>
+#include "smile/graphic/rhi/object.h"
 
 namespace smile::graphic
 {
-    class GraphicsDevice;
+    namespace rhi
+    {
+        class GraphicsDevice;
+    }
 
     class ResourceManager final
     {
@@ -30,35 +36,68 @@ namespace smile::graphic
         ResourceManager() = default;
         ~ResourceManager();
 
-        void Initialize( GraphicsDevice *pDevice );
+        void Initialize( rhi::GraphicsDevice *pDevice );
 
-        memory::Ref< VertexBuffer >
-        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout );
-        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const BufferLayout &layout );
+        VertexBuffer::Ref
+        CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
+        VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
 
-        memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
+        IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
-        memory::Ref< UniformBuffer > CreateUniformBuffer( const std::string &name, void *pData, Uint32 size );
+        Texture::Ref CreateTexture2D( Image::ConstRef pImage, bool updateable );
+        Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
+        Texture::Ref
+        CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
 
-        memory::Ref< Shader >
-        CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
-        memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
-        memory::Ref< Texture > CreateTexture( const std::filesystem::path &path );
-        memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
+        Sampler::Ref CreateSampler( const rhi::SamplerDescriptor &descriptor );
 
-        void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
+        FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
+        FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
+
+        ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
+
+        VertexShader::Ref CreateVertexShader( const std::vector< Byte > &byteCode,
+            const std::string &entryPoint,
+            const std::string &targetProfile );
+
+        PixelShader::Ref CreatePixelShader( const std::vector< Byte > &byteCode,
+            const std::string &entryPoint,
+            const std::string &targetProfile );
+
+        Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
+            const FramebufferAttachment &depthAttachment );
+        Framebuffer::Ref CreateFramebuffer( const primitive::Vector< FramebufferAttachment > &colorAttachments,
+            const FramebufferAttachment &depthAttachment );
+
+        void ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height );
+
+        BindingSet::Ref CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+            foundation::Flags< rhi::ShaderStage > shaderStage );
+
+        GraphicsPipeline::Ref CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
+
+        rhi::Object GetShaderResourceView( Texture::ConstRef pTexture );
 
       private:
-        GraphicsDevice *m_pDevice = nullptr;
-        std::vector< memory::Ref< VertexBuffer > > m_pVertexBuffers;
-        std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
-        std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
-        std::vector< memory::Ref< Shader > > m_pShaders;
-        std::vector< memory::Ref< Texture > > m_pTextures;
-        std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
+        rhi::GraphicsDevice *m_pDevice = nullptr;
 
-        GPUBufferHandleManager m_GPUBufferHandleManager;
-        TextureHandleManager m_TextureHandleManager;
-        FramebufferHandleManager m_FramebufferHandleManager;
+        primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
+        primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
+        primitive::Vector< Texture::Ref > m_pTextures;
+        primitive::Vector< Sampler::Ref > m_pSamplers;
+        primitive::Vector< ConstantBuffer::Ref > m_pConstantBuffers;
+        primitive::Vector< VertexShader::Ref > m_pVertexShaders;
+        primitive::Vector< PixelShader::Ref > m_pPixelShaders;
+        primitive::Vector< Framebuffer::Ref > m_pFramebuffers;
+        primitive::Vector< BindingSet::Ref > m_pBindingSets;
+        primitive::Vector< GraphicsPipeline::Ref > m_pGraphicsPipelines;
+
+        rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
+        rhi::TextureHandleManager m_TextureHandleManager;
+        rhi::SamplerHandlerManager m_SamplerHandleManager;
+        rhi::FramebufferHandleManager m_FramebufferHandleManager;
+        rhi::ShaderHandleManager m_ShaderHandleManager;
+        rhi::BindingSetHandleManager m_BindingSetHandleManager;
+        rhi::GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
     };
 }

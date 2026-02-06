@@ -1,0 +1,104 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+#include "smpch.h"
+#include "forward_renderer.h"
+
+#include "smile/graphic/renderer/render_engine.h"
+
+namespace smile::graphic
+{
+    RenderCollector ForwardRenderer::s_RenderCollector{};
+    rhi::RenderState ForwardRenderer::s_State;
+
+    void ForwardRenderer::Initialize()
+    {
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+
+        s_State.RasterizerState.CullMode = rhi::CullMode::Front;
+    }
+
+    void ForwardRenderer::ShutDown()
+    {
+        ClearDrawList();
+    }
+
+    void ForwardRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    {
+        auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
+        auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
+        auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
+        auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
+
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &s_RenderCollector.ViewInverseMatrix, cameraTransformMat );
+    }
+
+    void ForwardRenderer::Submit( const VertexBuffer::Ref &pVertexBuffer,
+        const IndexBuffer::Ref &pIndexBuffer,
+        const VertexShader::Ref &pVertexShader,
+        const PixelShader::Ref &pPixelShader,
+        const DirectX::XMFLOAT4X4 &worldTransform )
+    {
+        DrawCommand drawCommand{ pVertexBuffer, pIndexBuffer, pVertexShader, pPixelShader, worldTransform };
+        s_RenderCollector.DrawList.EmplaceBack( std::move( drawCommand ) );
+    }
+
+    void ForwardRenderer::Submit( const ecs::MeshRendererComponent &meshRendererComponent,
+        const DirectX::XMFLOAT4X4 &worldTransform )
+    {
+        if ( !meshRendererComponent.pMesh || !meshRendererComponent.pMaterial )
+            return;
+
+        Submit( meshRendererComponent.pMesh->pVertexBuffer,
+            meshRendererComponent.pMesh->pIndexBuffer,
+            meshRendererComponent.pMaterial->GetVertexShader(),
+            meshRendererComponent.pMaterial->GetPixelShader(),
+            worldTransform );
+    }
+
+    void ForwardRenderer::Submit( const ecs::SkinnedMeshRendererComponent &skinnedMeshRendererComponent,
+        const DirectX::XMFLOAT4X4 &worldTransform )
+    {
+        if ( !skinnedMeshRendererComponent.pSkinnedMesh || !skinnedMeshRendererComponent.pMaterial )
+            return;
+
+        Submit( skinnedMeshRendererComponent.pSkinnedMesh->pVertexBuffer,
+            skinnedMeshRendererComponent.pSkinnedMesh->pIndexBuffer,
+            skinnedMeshRendererComponent.pMaterial->GetVertexShader(),
+            skinnedMeshRendererComponent.pMaterial->GetPixelShader(),
+            worldTransform );
+    }
+
+    void ForwardRenderer::OnRender()
+    {
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
+        
+        renderSystem.SetState( s_State );
+
+        for ( const DrawCommand &drawCommand : s_RenderCollector.DrawList )
+        {
+            renderSystem.BindVertexBuffer( drawCommand.pVertexBuffer );
+            renderSystem.BindIndexBuffer( drawCommand.pIndexBuffer );
+            renderSystem.BindShader( drawCommand.pShader );
+
+            drawCommand.pShader->UploadMat4( "ViewProjection", s_RenderCollector.ViewProjectionMatrix );
+            drawCommand.pShader->UploadMat4( "World", drawCommand.WorldTransform );
+            drawCommand.pShader->UploadMat4( "ViewInverse", s_RenderCollector.ViewInverseMatrix );
+
+            RenderEngine::GetRenderSystem().DrawIndexed( drawCommand.pIndexBuffer->GetIndexCount() );
+        }
+    }
+
+    void ForwardRenderer::EndScene()
+    {
+        ClearDrawList();
+    }
+
+    void ForwardRenderer::ClearDrawList()
+    {
+        s_RenderCollector.DrawList.Clear();
+    }
+}

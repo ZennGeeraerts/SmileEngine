@@ -6,6 +6,14 @@ set(BUILD_UNIT_TESTS
     ON
     CACHE BOOL "Force unit tests" FORCE)
 
+set(SMILE_COMPILE_SHADERS
+    OFF
+    CACHE BOOL "Force compile shaders off" FORCE)
+
+set(SMILE_BUILD_TOOLS
+    OFF
+    CACHE BOOL "Force build tools off" FORCE)
+
 get_filename_component(SMILE_PATH "../../src" ABSOLUTE)
 get_filename_component(CMAKE_PATH "../../../cmake" ABSOLUTE)
 
@@ -17,6 +25,8 @@ set_compiler_flags()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
+set(APPLICATION_TARGET smile)
+
 file(GLOB_RECURSE SOURCE_FILES main.cpp)
 
 add_executable(smile ${SOURCE_FILES})
@@ -24,7 +34,7 @@ set_target_properties(smile PROPERTIES OUTPUT_NAME unit-tests)
 
 include(${SMILE_PATH}/smile.cmake)
 
-add_subdirectory(${SMILE_PATH} engine)
+add_subdirectory(${SMILE_PATH} smile)
 
 add_module(common)
 add_module(core)
@@ -32,7 +42,8 @@ add_module(graphic)
 add_module(physics)
 add_module(scripting)
 
-add_platform(directx11)
+add_platform(d3dcommon)
+add_platform(d3d11)
 add_platform(physx)
 
 add_custom_command(

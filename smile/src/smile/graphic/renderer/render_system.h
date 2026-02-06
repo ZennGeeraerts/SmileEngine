@@ -7,12 +7,13 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
 
-#include "resource/resource_manager.h"
-#include "smile/graphic/rhi/graphics_device.h"
-#include "smile/graphic/rhi/render_state.h"
-#include "smile/graphic/rhi/swap_chain.h"
+#include "smile/core/math/color.h"
 
-#include <DirectXMath.h>
+#include "graphics_state.h"
+#include "resource/resource_manager.h"
+#include "smile/graphic/rhi/command_list.h"
+#include "smile/graphic/rhi/graphics_device.h"
+#include "smile/graphic/rhi/swap_chain.h"
 
 namespace smile::window
 {
@@ -31,68 +32,53 @@ namespace smile::graphic
 
         void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
 
-        void SetClearColor( const DirectX::XMFLOAT4 &color )
-        {
-            m_ClearColor = color;
-        }
+        void Clear( Framebuffer::Ref pFramebuffer,
+            const std::optional< math::Color > &color,
+            std::optional< float > depth,
+            std::optional< Uint8 > stencil );
 
-        void Clear();
+        void BeginFrame();
+        void EndFrame();
 
-        void BindVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer ) const;
-        void UnbindVertexBuffer() const;
-        void FillVertexBuffer( memory::Ref< VertexBuffer > pVertexBuffer, void *pData, Uint32 vertexCount ) const;
-
-        void BindIndexBuffer( memory::Ref< IndexBuffer > pIndexBuffer ) const;
-        void UnbindIndexBuffer() const;
-
-        void BindUniformBuffer( const memory::Ref< UniformBuffer > &pUniformBuffer ) const;
-        void UnbindUniformBuffer() const;
-
-        void BindShader( memory::Ref< Shader > pShader );
-        void UnbindShader();
-
-        void BindFramebuffer( memory::Ref< Framebuffer > pFramebuffer );
-        void BindBackBuffer();
-
-        void SetState( const RenderState &state ) const;
-
-        void *ReadTexture( memory::Ref< Texture > pTexture ) const;
-        void *ReadTexture( memory::Ref< Framebuffer > pFramebuffer, Uint32 index ) const;
-
+        void SetGraphicsState( const GraphicsState &state );
         void DrawIndexed( Uint32 indexCount );
         void Draw( Uint32 vertexCount );
         void Present();
+
+        void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
 
         ResourceManager &GetResourceManager()
         {
             return m_ResourceManager;
         }
 
-        RendererBackendType GetRendererAPI() const
+        rhi::RendererBackendType GetRendererAPI() const
         {
             return m_API;
         }
 
-        GraphicsDevice *GetGraphicsDevice() const
+        rhi::GraphicsDevice *GetGraphicsDevice() const
         {
             return m_pDevice.get();
         }
 
-        CommandList *GetImmediateCommandList() const
+        rhi::CommandList *GetImmediateCommandList() const
         {
             return m_pImmediateCommandList;
         }
 
       private:
-        RendererBackendType m_API;
-        Scope< GraphicsDevice > m_pDevice;
-        CommandList *m_pImmediateCommandList;
+        rhi::RendererBackendType m_API;
+        Scope< rhi::GraphicsDevice > m_pDevice;
+        rhi::CommandList *m_pImmediateCommandList;
         ResourceManager m_ResourceManager{};
 
-        DirectX::XMFLOAT4 m_ClearColor{};
+        Scope< rhi::SwapChain > m_pSwapChain = nullptr;
+        Framebuffer::Ref m_pBackBuffer = nullptr;
 
-        memory::Ref< SwapChain > m_pSwapChain = nullptr;
-        memory::Ref< Shader > m_pBoundShader = nullptr;
-        memory::Ref< Framebuffer > m_pBoundFramebuffer = nullptr;
+        Index m_CurrentFrameIndex{ 0 };
+        Index m_RenderedFrameIndex{ 0 };
+
+        GraphicsState m_GraphicsState;
     };
 }

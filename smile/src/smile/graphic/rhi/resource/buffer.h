@@ -1,12 +1,18 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/foundation/hash_code.h"
+#include "smile/common/foundation/flags.h"
+#include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/format.h"
+#include "smile/graphic/rhi/cpu_access_mode.h"
+#include "smile/graphic/rhi/shader/resource_type.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     struct BufferElement final
     {
@@ -14,6 +20,25 @@ namespace smile::graphic
         BufferElement( Format format, const std::string &name )
             : Name{ name }, FormatType{ format }, Size{ GetFormatInfo( format ).BytesPerBlock }, Offset{ 0 }
         {
+        }
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = std::hash< std::string >{}( Name );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( FormatType ) ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Size ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Offset ) );
+            return hash;
+        }
+
+        bool operator==( const BufferElement &other ) const noexcept
+        {
+            return Name == other.Name && FormatType == other.FormatType && Size == other.Size && Offset == other.Offset;
+        }
+
+        bool operator!=( const BufferElement &other ) const noexcept
+        {
+            return !( *this == other );
         }
 
         std::string Name;
@@ -65,6 +90,31 @@ namespace smile::graphic
             CalculateOffsetAndStride();
         }
 
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+
+            for ( const BufferElement &elem : m_Elements )
+                hash = foundation::HashCombine( hash, elem.GetHashCode() );
+
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( m_Stride ) );
+
+            return hash;
+        }
+
+        bool operator==( const BufferLayout &other ) const
+        {
+            if ( m_Stride != other.m_Stride || m_Elements.size() != other.m_Elements.size() )
+                return false;
+
+            return std::equal( m_Elements.begin(), m_Elements.end(), other.m_Elements.begin() );
+        }
+
+        bool operator!=( const BufferLayout &other ) const
+        {
+            return !( *this == other );
+        }
+
       private:
         void CalculateOffsetAndStride()
         {
@@ -91,18 +141,126 @@ namespace smile::graphic
         Staging
     };
 
-    enum class BufferCPUAccess : Uint8
-    {
-        None,
-        Read,
-        Write
-    };
-
     enum class BufferBindFlags : Uint8
     {
-        None = BIT( 0 ),
-        VertexBuffer = BIT( 1 ),
-        IndexBuffer = BIT( 2 ),
-        UniformBuffer = BIT( 3 )
+        None,
+        VertexBuffer,
+        IndexBuffer,
+        ConstantBuffer,
+        ShaderResource,
+        UnorderedAccess
+    };
+
+    struct GPUBufferDescriptor final
+    {
+        Uint32 Size;
+        BufferUsage Usage = BufferUsage::Default;
+        CPUAccessMode CPUAccess = CPUAccessMode::None;
+        foundation::Flags< BufferBindFlags > BindFlags{ BufferBindFlags::None };
+        Uint32 StructStride = 0;               // If non zero, it is structured
+        Format BufferFormat = Format::UNKNOWN; // For typed buffer views
+        bool AllowTypedViews = false;
+        bool AllowRawViews = false;
+    };
+
+    struct BufferRange
+    {
+        BufferRange() = default;
+
+        constexpr BufferRange( Uint32 offset, Uint32 size ) : Offset{ offset }, Size{ size }
+        {
+        }
+
+        BufferRange Resolve( const GPUBufferDescriptor &bufferDesc ) const;
+
+        Uint32 Offset;
+        Uint32 Size;
+    };
+
+    constexpr static BufferRange s_EntireBuffer{ 0, std::numeric_limits< Uint32 >::max() };
+
+    struct BufferBindingKey final : public BufferRange
+    {
+        BufferBindingKey()
+        {
+        }
+
+        BufferBindingKey( const BufferRange &range, Format format, ResourceType type )
+            : BufferRange{ range }, Format{ format }, Type{ type }
+        {
+        }
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, std::hash< smile::graphic::rhi::Format >{}( Format ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Offset ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Size ) );
+            return hash;
+        }
+
+        bool operator==( const BufferBindingKey &other ) const
+        {
+            return Format == other.Format && Type == other.Type && Offset == other.Offset && Size == other.Size;
+        }
+
+        Format Format;
+        ResourceType Type;
+    };
+
+    struct VertexBufferBinding final
+    {
+        GPUBufferHandle VertexBuffer;
+        Uint32 Slot;
+        Uint64 Offset;
+
+        bool operator==( const VertexBufferBinding &other ) const
+        {
+            return VertexBuffer == other.VertexBuffer && Slot == other.Slot && Offset == other.Offset;
+        }
+
+        bool operator!=( const VertexBufferBinding &other ) const
+        {
+            return !( *this == other );
+        }
+    };
+
+    struct IndexBufferBinding final
+    {
+        GPUBufferHandle IndexBuffer;
+        Format BufferFormat;
+        Uint32 Offset;
+
+        bool operator==( const IndexBufferBinding &other ) const
+        {
+            return IndexBuffer == other.IndexBuffer && BufferFormat == other.BufferFormat && Offset == other.Offset;
+        }
+
+        bool operator!=( const IndexBufferBinding &other ) const
+        {
+            return !( *this == other );
+        }
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::rhi::BufferLayout >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::BufferLayout &bufferLayout ) const noexcept
+        {
+            return bufferLayout.GetHashCode();
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::rhi::BufferBindingKey >
+    {
+        smile::foundation::HashCode operator()(
+            const smile::graphic::rhi::BufferBindingKey &bufferBindingKey ) const noexcept
+        {
+            return bufferBindingKey.GetHashCode();
+        }
     };
 }

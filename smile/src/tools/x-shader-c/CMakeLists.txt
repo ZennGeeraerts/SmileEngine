@@ -1,21 +1,21 @@
 cmake_minimum_required(VERSION "3.25.0")
 
-project(x-shader-c)
+get_filename_component(SMILE_PATH "../" ABSOLUTE)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(x-shader-c ${SOURCE_FILES})
 
-find_package(yaml-cpp REQUIRED)
-
 set(INCLUDE_DIRS
     thirdparty/dxc/include
+    ${SMILE_PATH}
+    ${THIRDPARTY_PATH}
 )
 
 set(LIB_DIRS
+    smile
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dxc/lib/x64/dxcompiler.lib
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dxc/lib/x64/dxil.lib
-    yaml-cpp
     d3dcompiler
 )
 

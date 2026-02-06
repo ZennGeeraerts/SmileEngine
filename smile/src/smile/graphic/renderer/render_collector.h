@@ -4,22 +4,24 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/resource/vertex_buffer.h"
-#include "smile/graphic/renderer/resource/index_buffer.h"
-#include "smile/graphic/rhi/shader/shader.h"
+#include "resource/vertex_buffer.h"
+#include "resource/index_buffer.h"
+#include "shader/vertex_shader.h"
+#include "shader/pixel_shader.h"
 
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
 
-#include <vector>
 #include <DirectXMath.h>
 
 namespace smile::graphic
 {
     struct DrawCommand final
     {
-        memory::Ref< VertexBuffer > pVertexBuffer;
-        memory::Ref< IndexBuffer > pIndexBuffer;
-        memory::Ref< Shader > pShader;
+        VertexBuffer::Ref pVertexBuffer;
+        IndexBuffer::Ref pIndexBuffer;
+        VertexShader::Ref pVertexShader;
+        PixelShader::Ref pPixelShader;
         DirectX::XMFLOAT4X4 WorldTransform;
     };
 
@@ -28,6 +30,6 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 ViewInverseMatrix;
         DirectX::XMFLOAT4X4 ViewProjectionMatrix;
 
-        std::vector< DrawCommand > DrawList;
+        primitive::Vector< DrawCommand > DrawList;
     };
 }

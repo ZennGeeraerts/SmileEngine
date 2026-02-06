@@ -49,8 +49,8 @@ namespace smile::graphic
             return it->second;
         }
 
-        SM_LOG_WARNING(
-            "TextureManager::GetTexture > Could not find texture in texture map: {}", pTexture->Handle.GetIndex() );
+        SM_LOG_WARNING( "TextureManager::GetTexture > Could not find texture in texture map: {}",
+            pTexture->GetHandle().GetIndex() );
 
         return m_pFallBackTexture;
     }

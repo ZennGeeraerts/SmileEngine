@@ -1,81 +1,69 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/shader/shader.h"
-#include "smile/graphic/rhi/shader/shader_reflection.h"
-#include "smile/graphic/renderer/resource/texture.h"
+#include "smile/graphic/renderer/shader/shader_asset.h"
+#include "smile/graphic/renderer/resource/graphics_pipeline.h"
 #include "smile/common/memory/ref.h"
-
-#include <DirectXMath.h>
+#include "smile/common/primitive/collection/hash_map.h"
 
 namespace smile::graphic
 {
-    class Material final
+    class Material final : public memory::Counted
     {
       public:
-        Material( const memory::Ref< Shader > &pShader );
-        ~Material();
+        using Ref = memory::Ref< Material >;
+        using ConstRef = memory::Ref< const Material >;
 
-        void SetShader( const memory::Ref< Shader > &pShader );
+        Material( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader ) noexcept;
+        ~Material() noexcept;
 
-        const BufferLayout &GetBufferLayout() const
+        void SetShaders( const ShaderAsset::ConstRef &pVertexShader, const ShaderAsset::ConstRef &pPixelShader );
+
+        inline const rhi::BufferLayout &GetBufferLayout() const
         {
-            return m_pShader->BufferLayout;
-        }
-        const memory::Ref< Shader > &GetShader() const
-        {
-            return m_pShader;
+            return m_pVertexShader->GetReflectionData().InputSignature;
         }
 
-        void SetFloatValue( const std::string &semantic, float value );
-        void SetIntValue( const std::string &semantic, int value );
-        void SetBoolValue( const std::string &semantic, bool value );
-        void SetFloat2Value( const std::string &semantic, const DirectX::XMFLOAT2 &value );
-        void SetFloat3Value( const std::string &semantic, const DirectX::XMFLOAT3 &value );
-        void SetTexture2D( const std::string &semantic, const memory::Ref< Texture > &pValue );
+        inline VertexShader::ConstRef GetVertexShader() const
+        {
+            return m_pVertexShader->GetVertexShader();
+        }
 
-        float GetFloatValue( const std::string &semantic ) const;
-        int GetIntValue( const std::string &semantic ) const;
-        bool GetBoolValue( const std::string &semantic ) const;
-        const DirectX::XMFLOAT2 &GetFloat2Value( const std::string &semantic ) const;
-        const DirectX::XMFLOAT3 &GetFloat3Value( const std::string &semantic ) const;
+        inline PixelShader::ConstRef GetPixelShader() const
+        {
+            return m_pPixelShader->GetPixelShader();
+        }
 
-        const std::unordered_map< std::string, float > &GetFloatValues() const
+        inline GraphicsPipeline::Ref GetGraphicsPipeline() const
         {
-            return m_FloatValues;
+            return m_pGraphicsPipeline;
         }
-        const std::unordered_map< std::string, int > &GetIntValues() const
+
+        inline const primitive::HashMap< primitive::String, rhi::BindingLayoutElement > &GetBindings() const
         {
-            return m_IntValues;
+            return m_Bindings;
         }
-        const std::unordered_map< std::string, bool > &GetBoolValues() const
+
+        inline const ConstantBufferDescriptor &GetConstantBufferDesc( const primitive::StringView name ) const
         {
-            return m_BoolValues;
+            return m_ConstantBufferDescs.GetItemAtKey( name );
         }
-        const std::unordered_map< std::string, DirectX::XMFLOAT2 > &GetFloat2Values() const
+
+        inline const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &GetConstantBufferDescs() const
         {
-            return m_Float2Values;
-        }
-        const std::unordered_map< std::string, DirectX::XMFLOAT3 > &GetFloat3Values() const
-        {
-            return m_Float3Values;
-        }
-        const std::unordered_map< std::string, memory::Ref< Texture > > &GetTexture2DValues() const
-        {
-            return m_Texture2DValues;
+            return m_ConstantBufferDescs;
         }
 
       private:
-        std::unordered_map< std::string, float > m_FloatValues{};
-        std::unordered_map< std::string, int > m_IntValues{};
-        std::unordered_map< std::string, bool > m_BoolValues{};
-        std::unordered_map< std::string, DirectX::XMFLOAT2 > m_Float2Values{};
-        std::unordered_map< std::string, DirectX::XMFLOAT3 > m_Float3Values{};
-        std::unordered_map< std::string, memory::Ref< Texture > > m_Texture2DValues{};
+        ShaderAsset::ConstRef m_pVertexShader;
+        ShaderAsset::ConstRef m_pPixelShader;
 
-        memory::Ref< Shader > m_pShader = nullptr;
+        GraphicsPipeline::Ref m_pGraphicsPipeline;
+
+        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > m_Bindings;
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;
     };
 }

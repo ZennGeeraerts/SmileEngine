@@ -14,7 +14,7 @@ namespace smile::physics::ecs
     {
         SphereColliderComponent()
         {
-            graphic::BufferLayout vertexLayout{ { graphic::Format::RGB32_FLOAT, "POSITION" } };
+            graphic::rhi::BufferLayout vertexLayout{ { graphic::rhi::Format::RGB32_FLOAT, "POSITION" } };
             // TODO: Update wireframe mesh when Radius gets updated
             pWireframeMesh = graphic::MeshFactory::CreateSphere( vertexLayout, 0.5f, 10 );
         }

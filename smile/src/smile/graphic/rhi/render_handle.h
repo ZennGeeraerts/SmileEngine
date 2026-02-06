@@ -6,7 +6,7 @@
 
 #include "smile/common/primitive/handle_manager.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
     using GPUBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using GPUBufferHandle = GPUBufferHandleManager::HandleType;
@@ -14,6 +14,21 @@ namespace smile::graphic
     using TextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using TextureHandle = TextureHandleManager::HandleType;
 
+    using StagingTextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using StagingTextureHandle = StagingTextureHandleManager::HandleType;
+
+    using SamplerHandlerManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using SamplerHandle = SamplerHandlerManager::HandleType;
+
     using FramebufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using FramebufferHandle = FramebufferHandleManager::HandleType;
+
+    using BindingSetHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using BindingSetHandle = BindingSetHandleManager::HandleType;
+
+    using ShaderHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using ShaderHandle = FramebufferHandleManager::HandleType;
+
+    using GraphicsPipelineHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using GraphicsPipelineHandle = FramebufferHandleManager::HandleType;
 }
