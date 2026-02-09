@@ -14,6 +14,52 @@
 
 namespace smile::graphic
 {
+    enum class ResourceBindingType
+    {
+        Unknown,
+        Buffer,
+        Texture,
+        Sampler
+    };
+
+    ResourceBindingType ResourceTypeToBindingType( rhi::ResourceType resType );
+
+    struct ResourceBindingKey final
+    {
+        ResourceBindingKey() = default;
+
+        ResourceBindingKey( Uint32 slot, ResourceBindingType type ) : Slot{ slot }, Type{ type }
+        {
+        }
+
+        foundation::HashCode GetHashCode() const
+        {
+            foundation::HashCode hash = 0;
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( Slot ) );
+            hash = foundation::HashCombine( hash, std::hash< ResourceBindingType >{}( Type ) );
+            return hash;
+        }
+
+        inline bool operator==( const ResourceBindingKey &other ) const
+        {
+            return Slot == other.Slot && Type == other.Type;
+        }
+
+        Uint32 Slot;
+        ResourceBindingType Type;
+    };
+
+    struct NamedBindingLayoutElement final
+    {
+        NamedBindingLayoutElement( const rhi::BindingLayoutElement &element, const primitive::String &name )
+            : Element{ element }, Name{ name }
+        {
+        }
+
+        rhi::BindingLayoutElement Element;
+        primitive::String Name;
+    };
+
     struct ShaderReflectionData final
     {
         primitive::String EntryPoint;
@@ -21,7 +67,20 @@ namespace smile::graphic
         ShaderBlobFormat BlobFormat;
         rhi::BufferLayout InputSignature;
         rhi::BufferLayout OutputSignature;
+        primitive::HashMap< ResourceBindingKey, NamedBindingLayoutElement > ShaderResourceBindings;
         primitive::HashMap< primitive::String, ConstantBufferDescriptor > ConstantBufferDescs;
-        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > ShaderResourceBindings;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::ResourceBindingKey >
+    {
+        smile::foundation::HashCode operator()(
+            const smile::graphic::ResourceBindingKey &bufferBindingKey ) const noexcept
+        {
+            return bufferBindingKey.GetHashCode();
+        }
     };
 }

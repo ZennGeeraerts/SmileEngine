@@ -94,12 +94,12 @@ namespace smile::graphic
         yaml["ConstantBuffers"] = cbuffers;
 
         yaml::Node resources;
-        for ( const auto &[name, binding] : reflectionData.ShaderResourceBindings )
+        for ( const auto &[key, binding] : reflectionData.ShaderResourceBindings )
         {
             YAML::Node resNode;
-            resNode["Name"] = name;
-            resNode["Type"] = rhi::GetResourceTypeInfo( binding.Type ).Name;
-            resNode["Slot"] = binding.Slot;
+            resNode["Name"] = binding.Name;
+            resNode["Type"] = rhi::GetResourceTypeInfo( binding.Element.Type ).Name;
+            resNode["Slot"] = binding.Element.Slot;
             resources.push_back( resNode );
         }
 
@@ -196,9 +196,12 @@ namespace smile::graphic
                     rhi::GetResourceTypeInfo( resourceNode["Type"].as< primitive::String >() ).Type;
                 const Uint32 slot = resourceNode["Slot"].as< Uint32 >();
 
-                rhi::BindingLayoutElement element{ slot, type };
+                const rhi::BindingLayoutElement element{ slot, type };
 
-                reflectionData.ShaderResourceBindings.Insert( name, std::move( element ) );
+                const ResourceBindingKey key{ slot, ResourceTypeToBindingType( type ) };
+                NamedBindingLayoutElement namedElement{ element, name };
+
+                reflectionData.ShaderResourceBindings.Insert( key, std::move( namedElement ) );
             }
         }
 
