@@ -40,15 +40,22 @@ namespace smile::graphic
 
         const bool validResourceBindings = std::all_of( vsReflection.ShaderResourceBindings.begin(),
             vsReflection.ShaderResourceBindings.end(),
-            [&psReflection]( const auto &kv )
+            [&]( const auto &vsKv )
             {
-                auto it = psReflection.ShaderResourceBindings.FindItemAtKey( kv.Key );
+                const auto &vsElem = vsKv.Value;
+
+                auto it = psReflection.ShaderResourceBindings.FindItemAtKey( vsKv.Key );
                 if ( it != psReflection.ShaderResourceBindings.end() )
                 {
-                    const auto &vsElement = kv.Value;
-                    const auto &psElement = it.GetItem();
+                    const auto &psElem = it.GetItem();
 
-                    return vsElement == psElement;
+                    if ( vsElem.Element.Type == rhi::ResourceType::ConstantBuffer )
+                    {
+                        const auto &vsCB = vsReflection.ConstantBufferDescs[vsElem.Name];
+                        const auto &psCB = psReflection.ConstantBufferDescs[psElem.Name];
+
+                        return vsCB == psCB;
+                    }
                 }
 
                 return true;
@@ -62,55 +69,48 @@ namespace smile::graphic
         return true;
     }
 
-    template < typename Type >
-    static void MergeData( primitive::HashMap< primitive::String, Type > &merged,
-        const primitive::HashMap< primitive::String, Type > &toBeMerged )
+    static void MergeReflectionData( const ShaderReflectionData &vsReflection,
+        const ShaderReflectionData &psReflection,
+        primitive::Vector< Program::Resource > &resources,
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > &constantBufferDescs )
     {
-        for ( const auto &[key, value] : toBeMerged )
+        primitive::HashMap< ResourceBindingKey, Program::Resource > merged;
+
+        auto mergeShader = [&]( const ShaderReflectionData &reflectionData, rhi::ShaderStage stage )
         {
-            if ( !merged.HasItemAtKey( key ) )
+            for ( const auto &kv : reflectionData.ShaderResourceBindings )
             {
-                merged.Insert( key, value );
+                const ResourceBindingKey &key = kv.Key;
+                const NamedBindingLayoutElement &elem = kv.Value;
+
+                auto it = merged.FindItemAtKey( key );
+                if ( it != merged.end() )
+                {
+                    it.GetItem().Visibility.Set( stage );
+                }
+                else
+                {
+                    Program::Resource resource{ elem.Element, elem.Name, { stage } };
+                    merged.Insert( key, std::move( resource ) );
+
+                    if ( elem.Element.Type == rhi::ResourceType::ConstantBuffer )
+                    {
+                        const auto &cbDesc = reflectionData.ConstantBufferDescs.GetItemAtKey( elem.Name );
+                        constantBufferDescs.Insert( elem.Name, cbDesc );
+                    }
+                }
             }
-            else
-            {
-                [[maybe_unused]] const auto &existing = merged.GetItemAtKey( key );
+        };
 
-                SM_ASSERT( existing == value );
-            }
-        }
-    }
+        mergeShader( vsReflection, rhi::ShaderStage::Vertex );
+        mergeShader( psReflection, rhi::ShaderStage::Pixel );
 
-    static Program::ReflectionData MergeReflectionData( const ShaderReflectionData &vsReflection,
-        const ShaderReflectionData &psReflection )
-    {
-        Program::ReflectionData merged{};
-
-        merged.VertexLayout = vsReflection.InputSignature;
-
-        primitive::HashMap< primitive::String, rhi::BindingLayoutElement > allBindings{
-            vsReflection.ShaderResourceBindings };
-        allBindings.InsertItems( psReflection.ShaderResourceBindings );
-
-        for ( const auto &[key, value] : allBindings )
+        resources.Clear();
+        resources.SetItemCount( merged.GetItemCount() );
+        for ( const auto &kv : merged )
         {
-            if ( merged.Bindings.TryAddElement( value ) )
-            {
-                merged.NameToBindingMap.Insert( key, value );
-            }
-            else
-            {
-                SM_ASSERT( false );
-            }
+            resources.PushBack( kv.Value );
         }
-
-        primitive::HashMap< primitive::String, ConstantBufferDescriptor > allConstantBuffers{
-            vsReflection.ConstantBufferDescs };
-        allConstantBuffers.InsertItems( psReflection.ConstantBufferDescs );
-
-        MergeData( merged.ConstantBufferDescs, allConstantBuffers );
-
-        return merged;
     }
 
     Program::Ref Program::Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader )
@@ -123,8 +123,10 @@ namespace smile::graphic
 
         SM_ASSERT( ValidateReflectionData( vsReflection, psReflection ) );
 
-        const ReflectionData reflectionData = MergeReflectionData( vsReflection, psReflection );
+        primitive::Vector< Program::Resource > resources;
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > cbDescs;
+        MergeReflectionData( vsReflection, psReflection, resources, cbDescs );
 
-        return memory::CreateRef< Program >( vertexShader, pixelShader, reflectionData );
+        return memory::CreateRef< Program >( vertexShader, pixelShader, resources, cbDescs );
     }
 }

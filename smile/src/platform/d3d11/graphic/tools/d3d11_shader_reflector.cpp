@@ -274,10 +274,14 @@ namespace smile::graphic
             D3D11_SHADER_INPUT_BIND_DESC resDesc;
             pReflector->GetResourceBindingDesc( i, &resDesc );
 
-            rhi::BindingLayoutElement bindingLayoutElement{
+            const rhi::ResourceType resType{ GetResourceTypeFromD3D11ShaderInput( resDesc ) };
+            const rhi::BindingLayoutElement bindingLayoutElement{
                 resDesc.BindPoint, GetResourceTypeFromD3D11ShaderInput( resDesc ) };
 
-            reflectionData.ShaderResourceBindings.Insert( resDesc.Name, std::move( bindingLayoutElement ) );
+            const ResourceBindingKey key{ resDesc.BindPoint, ResourceTypeToBindingType( resType ) };
+            NamedBindingLayoutElement namedBindingLayoutElement{ bindingLayoutElement, resDesc.Name };
+
+            reflectionData.ShaderResourceBindings.Insert( key, std::move( namedBindingLayoutElement ) );
         }
 
         return true;

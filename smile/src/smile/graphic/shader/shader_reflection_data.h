@@ -78,9 +78,9 @@ namespace std
     struct hash< smile::graphic::ResourceBindingKey >
     {
         smile::foundation::HashCode operator()(
-            const smile::graphic::ResourceBindingKey &bufferBindingKey ) const noexcept
+            const smile::graphic::ResourceBindingKey &resourceBindingKey ) const noexcept
         {
-            return bufferBindingKey.GetHashCode();
+            return resourceBindingKey.GetHashCode();
         }
     };
 }

@@ -27,46 +27,52 @@ namespace smile::graphic
         using Ref = memory::Ref< Program >;
         using ConstRef = memory::Ref< const Program >;
 
-        class BindingLayout final : public rhi::BindingLayout
+        struct Resource final
         {
-          public:
-            BindingLayout() : rhi::BindingLayout{ { rhi::ShaderStage::Vertex, rhi::ShaderStage::Pixel } }
+            Resource( const NamedBindingLayoutElement &namedElement, foundation::Flags< rhi::ShaderStage > visibility )
+                : NamedElement{ namedElement }, Visibility{ visibility }
             {
             }
 
-            bool TryAddElement( const rhi::BindingLayoutElement &element )
+            Resource( const rhi::BindingLayoutElement &element,
+                const primitive::String &name,
+                foundation::Flags< rhi::ShaderStage > visibility )
+                : NamedElement{ element, name }, Visibility{ visibility }
             {
-                if ( !HasElement( element ) )
-                {
-                    AddElement( element );
-                    return true;
-                }
-
-                return false;
             }
+
+            NamedBindingLayoutElement NamedElement;
+            foundation::Flags< rhi::ShaderStage > Visibility;
         };
 
-        struct ReflectionData final
+        VertexShader::ConstRef GetVertexShader() const
         {
-            rhi::BufferLayout VertexLayout;
+            return m_VertexShader;
+        }
 
-            BindingLayout Bindings;
-            primitive::HashMap< primitive::String, rhi::BindingLayoutElement > NameToBindingMap;
-            primitive::HashMap< primitive::String, ConstantBufferDescriptor > ConstantBufferDescs;
-        };
+        PixelShader::ConstRef GetPixelShader() const
+        {
+            return m_PixelShader;
+        }
 
         static Program::Ref Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader );
 
       private:
         Program( VertexShader::ConstRef vertexShader,
             PixelShader::ConstRef pixelShader,
-            const ReflectionData &reflectionData )
-            : m_VertexShader{ vertexShader }, m_PixelShader{ pixelShader }, m_ReflectionData{ reflectionData }
+            const primitive::Vector< Program::Resource > &resources,
+            const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &cbDescs )
+            : m_VertexShader{ vertexShader },
+              m_PixelShader{ pixelShader },
+              m_ResourceBindings{ resources },
+              m_ConstantBufferDescs{ cbDescs }
         {
         }
 
         VertexShader::ConstRef m_VertexShader;
         PixelShader::ConstRef m_PixelShader;
-        ReflectionData m_ReflectionData;
+
+        primitive::Vector< Resource > m_ResourceBindings;
+        primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;
     };
 }
