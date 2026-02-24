@@ -4,8 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/shader/vertex_shader.h"
-#include "smile/graphic/renderer/shader/pixel_shader.h"
+#include "smile/graphic/renderer/shader/program.h"
 #include "smile/graphic/renderer/resource/texture.h"
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/handle.h"
@@ -18,53 +17,61 @@
 
 namespace smile::graphic
 {
-    struct MaterialParameter final
+    enum class MaterialParameterType
     {
-        using Value = std::variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, Texture::Ref >;
+        Float,
+        Int,
+        Bool,
+        Float2,
+        Float3,
+    };
 
-        enum class Type
+    struct MaterialLayout final
+    {
+        struct Parameter final
         {
-            Texture,
-            Sampler,
-            Float,
-            Int,
-            Bool,
-            Float2,
-            Float3,
+            Parameter( const primitive::String &name, MaterialParameterType type, Uint32 offset, Count size )
+                : Name{ name }, Type{ type }, Offset{ offset }, Size{ size }
+            {
+            }
+
+            primitive::String Name;
+            MaterialParameterType Type;
+            Uint32 Offset;
+            Count Size;
+
+            inline bool operator==( const Parameter &other ) const
+            {
+                return Name == other.Name && Type == other.Type && Offset == other.Offset && Size == other.Size;
+            }
         };
 
-        MaterialParameter( const primitive::String &name, Type type, const Value &value )
-            : Name{ name }, ParamType{ type }, Data{ value }
+        struct Texture final
         {
-        }
+            primitive::String Name;
+            Uint32 Slot;
 
-        primitive::String Name;
-        Type ParamType;
-        Value Data;
+            inline bool operator==( const Texture &other )
+            {
+                return Name == other.Name && Slot == other.Slot;
+            }
+        };
 
-        inline bool operator==( const MaterialParameter &other ) const
-        {
-            return Name == other.Name && ParamType == other.ParamType && Data == other.Data;
-        }
+        primitive::Vector< Parameter > Parameters;
+        primitive::Vector< Texture > Textures;
+        Uint32 CbSlot;
+        Count CbSize;
+        foundation::Flags< rhi::ShaderStage > Visibility;
     };
 
-    struct TextureBinding final
-    {
-        primitive::String Name;
-        Texture::Ref Texture;
-
-        inline bool operator==( const TextureBinding &other )
-        {
-            return Name == other.Name && Texture == other.Texture;
-        }
-    };
+    using MaterialParameterValue =
+        std::variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, primitive::Vector< Byte > >;
 
     struct MaterialDescriptor final
     {
-        VertexShader::Ref VertexShader;
-        PixelShader::Ref PixelShader;
-        primitive::HashMap< primitive::String, MaterialParameter > Parameters;
-        primitive::HashMap< primitive::String, TextureBinding > TextureBindings;
+        Program::ConstRef ShaderProgram;
+        primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
+        primitive::HashMap< primitive::String, Texture::Ref > TextureBindings;
     };
 
     class Material final : public memory::Counted
@@ -75,34 +82,45 @@ namespace smile::graphic
 
         using ID = primitive::Handle< Uint32, 24, 8 >;
 
-        Material( const MaterialDescriptor &desc );
-        ~Material() = default;
-
-        void Clear();
-
-        VertexShader::ConstRef GetVertexShader() const
-        {
-            return m_Descriptor.VertexShader;
-        }
-
-        PixelShader::ConstRef GetPixelShader() const
-        {
-            return m_Descriptor.PixelShader;
-        }
-
-        void SetParameter( const primitive::StringView name, const MaterialParameter::Value &value );
-        MaterialParameter::Value GetParameter( const primitive::StringView name ) const;
-
-        void SetTextureBinding( const primitive::StringView name, Texture::Ref texture );
-        Texture::Ref GetTextureBinding( const primitive::StringView name ) const;
-
-      private:
         enum class DirtyFlags
         {
             Parameter,
             Texture,
         };
 
+        Material( ID id, const MaterialLayout &layout, const MaterialDescriptor &desc );
+        ~Material() = default;
+
+        void Clear();
+
+        void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
+        MaterialParameterValue GetParameter( const primitive::StringView name ) const;
+
+        void SetTextureBinding( const primitive::StringView name, Texture::Ref texture );
+        Texture::Ref GetTextureBinding( const primitive::StringView name ) const;
+
+        const MaterialLayout &GetLayout() const
+        {
+            return m_Layout;
+        }
+
+        const MaterialDescriptor &GetDescriptor() const
+        {
+            return m_Descriptor;
+        }
+
+        ID GetID() const
+        {
+            return m_ID;
+        }
+
+        foundation::Flags< DirtyFlags > GetDirtyFlags() const
+        {
+            return m_DirtyFlags;
+        }
+
+      private:
+        MaterialLayout m_Layout;
         MaterialDescriptor m_Descriptor;
         ID m_ID;
 

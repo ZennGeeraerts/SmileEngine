@@ -7,7 +7,11 @@
 
 namespace smile::graphic
 {
-    Material::Material( const MaterialDescriptor &desc ) : m_Descriptor{ desc }
+    Material::Material( ID id, const MaterialLayout &layout, const MaterialDescriptor &desc )
+        : m_ID{ id },
+          m_Layout{ layout },
+          m_Descriptor{ desc },
+          m_DirtyFlags{ { DirtyFlags::Parameter, DirtyFlags::Texture } }
     {
     }
 
@@ -16,7 +20,7 @@ namespace smile::graphic
         // m_Params.Clear();
     }
 
-    void Material::SetParameter( const primitive::StringView name, const MaterialParameter::Value &data )
+    void Material::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
     {
         if ( !m_Descriptor.Parameters.HasItemAtKey( name ) )
         {
@@ -24,15 +28,13 @@ namespace smile::graphic
             return;
         }
 
-        auto &param = m_Descriptor.Parameters.GetItemAtKey( name );
-        param.Data = data;
-
+        m_Descriptor.Parameters[name] = data;
         m_DirtyFlags.Set( DirtyFlags::Parameter );
     }
 
-    MaterialParameter::Value Material::GetParameter( const primitive::StringView name ) const
+    MaterialParameterValue Material::GetParameter( const primitive::StringView name ) const
     {
-        return m_Descriptor.Parameters.GetItemAtKey( name ).Data;
+        return m_Descriptor.Parameters.GetItemAtKey( name );
     }
 
     void Material::SetTextureBinding( const primitive::StringView name, Texture::Ref texture )
@@ -43,14 +45,12 @@ namespace smile::graphic
             return;
         }
 
-        auto &textureBinding = m_Descriptor.TextureBindings.GetItemAtKey( name );
-        textureBinding.Texture = texture;
-
+        m_Descriptor.TextureBindings[name] = texture;
         m_DirtyFlags.Set( DirtyFlags::Texture );
     }
 
     Texture::Ref Material::GetTextureBinding( const primitive::StringView name ) const
     {
-        return m_Descriptor.TextureBindings.GetItemAtKey( name ).Texture;
+        return m_Descriptor.TextureBindings.GetItemAtKey( name );
     }
 }

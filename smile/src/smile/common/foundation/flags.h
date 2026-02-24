@@ -89,6 +89,11 @@ namespace smile::foundation
                 Clear( value );
         }
 
+        constexpr inline void ClearAll()
+        {
+            m_Flags = 0;
+        }
+
         constexpr inline void Toggle( EnumType value )
         {
             SM_ASSERT_MSG(

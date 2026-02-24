@@ -55,6 +55,16 @@ namespace smile::graphic
             return m_PixelShader;
         }
 
+        const primitive::Vector< Resource > &GetResources() const
+        {
+            return m_ResourceBindings;
+        }
+
+        const ConstantBufferDescriptor &GetConstantBufferDescriptor( const primitive::StringView descName ) const
+        {
+            return m_ConstantBufferDescs[descName];
+        }
+
         static Program::Ref Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader );
 
       private:
