@@ -44,6 +44,7 @@ namespace smile::graphic
         ~MaterialManager() = default;
 
         Material::Ref CreateMaterial( const MaterialLayout &layout, const MaterialDescriptor &desc );
+        Material::Ref CreateMaterial( Program::ConstRef program );
 
         void Update();
 
