@@ -41,6 +41,6 @@ namespace smile::graphic
         MaterialAsset::Ref LoadMaterial( const std::filesystem::path &path ) const;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".png", ".jpg", ".dds" };
+        const std::vector< std::filesystem::path > m_Extensions{ ".smmat" };
     };
 }

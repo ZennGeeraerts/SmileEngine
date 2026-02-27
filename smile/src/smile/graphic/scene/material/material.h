@@ -4,76 +4,13 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/shader/program.h"
-#include "smile/graphic/renderer/resource/texture.h"
-#include "smile/common/memory/ref.h"
+#include "material_asset.h"
 #include "smile/common/primitive/handle.h"
-#include "smile/common/primitive/collection/hash_map.h"
 #include "smile/common/foundation/flags.h"
-
-#include <DirectXMath.h>
-
-#include <variant>
+#include "smile/common/memory/counted.h"
 
 namespace smile::graphic
 {
-    enum class MaterialParameterType
-    {
-        Float,
-        Int,
-        Bool,
-        Float2,
-        Float3,
-    };
-
-    struct MaterialLayout final
-    {
-        struct Parameter final
-        {
-            Parameter( const primitive::String &name, MaterialParameterType type, Uint32 offset, Count size )
-                : Name{ name }, Type{ type }, Offset{ offset }, Size{ size }
-            {
-            }
-
-            primitive::String Name;
-            MaterialParameterType Type;
-            Uint32 Offset;
-            Count Size;
-
-            inline bool operator==( const Parameter &other ) const
-            {
-                return Name == other.Name && Type == other.Type && Offset == other.Offset && Size == other.Size;
-            }
-        };
-
-        struct Texture final
-        {
-            primitive::String Name;
-            Uint32 Slot;
-
-            inline bool operator==( const Texture &other )
-            {
-                return Name == other.Name && Slot == other.Slot;
-            }
-        };
-
-        primitive::Vector< Parameter > Parameters;
-        primitive::Vector< Texture > Textures;
-        Uint32 CbSlot;
-        Count CbSize;
-        foundation::Flags< rhi::ShaderStage > Visibility;
-    };
-
-    using MaterialParameterValue =
-        std::variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, primitive::Vector< Byte > >;
-
-    struct MaterialDescriptor final
-    {
-        Program::ConstRef ShaderProgram;
-        primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
-        primitive::HashMap< primitive::String, Texture::Ref > TextureBindings;
-    };
-
     class Material final : public memory::Counted
     {
       public:

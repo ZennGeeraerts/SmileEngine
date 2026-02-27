@@ -11,14 +11,14 @@
 /**
  * @file        material_manager.cpp
  * @author      Zenn Geeraerts
- * @created     29 Januari 2026
- * @brief       Manages gpu resources and updates of material
+ * @created     27 February 2026
+ * @brief       Manages material assets
  */
 #include "smpch.h"
 #include "material_manager.h"
 
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/common/memory/memory.h"
+#include "smile/core/asset/asset_manager.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
@@ -42,23 +42,18 @@ namespace smile::graphic
         }
     }
 
-    Material::Ref MaterialManager::CreateMaterial( const MaterialLayout &layout, const MaterialDescriptor &desc )
+    MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name,
+        const MaterialLayout &layout,
+        const MaterialDescriptor &desc )
     {
-        Material::ID id = m_IDManager.CreateHandle();
-        Material::Ref material = memory::CreateRef< Material >( id, desc );
+        SM_ASSERT( !m_Materials.HasItemAtKey( name ) );
 
-        MaterialData data;
-        data.ShaderProgram = desc.ShaderProgram;
-
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-
-        const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
-        data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
-
+        MaterialAsset::Ref material = memory::CreateRef< MaterialAsset >( name, layout, desc );
+        m_Materials.Insert( name, material );
         return material;
     }
 
-    Material::Ref MaterialManager::CreateMaterial( Program::ConstRef program )
+    MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name, Program::ConstRef program )
     {
         MaterialLayout layout{};
         MaterialDescriptor desc{};
@@ -82,7 +77,9 @@ namespace smile::graphic
                 MaterialLayout::Texture textureBinding{ res.NamedElement.Name, res.NamedElement.Element.Slot };
 
                 layout.Textures.PushBack( std::move( textureBinding ) );
-                desc.TextureBindings.Insert( res.NamedElement.Name, {} ); // TODO: Get default texture
+
+                desc.TextureBindings.Insert(
+                    res.NamedElement.Name, TextureManager::GetInstance().GetFallBackTexture() );
             }
             else if ( res.NamedElement.Name == "Material" )
             {
@@ -93,75 +90,56 @@ namespace smile::graphic
         layout.CbSize = cbDesc.GetSize();
         desc.ShaderProgram = program;
 
-        return CreateMaterial( layout, desc );
+        return CreateMaterial( name, layout, desc );
     }
 
-    void MaterialManager::Update()
+    MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name,
+        ShaderAsset::ConstRef vertexShader,
+        ShaderAsset::ConstRef pixelShader )
     {
-        for ( const auto &material : m_Materials )
-        {
-            if ( !m_IDManager.IsHandleActive( material->GetID() ) )
-                continue;
-
-            auto dirtyFlags = material->GetDirtyFlags();
-            if ( dirtyFlags.Has( Material::DirtyFlags::Parameter ) )
-            {
-                UpdateConstantBuffer( material );
-            }
-
-            if ( dirtyFlags.Has( Material::DirtyFlags::Texture ) )
-            {
-                UpdateBindingSet( material );
-            }
-
-            if ( dirtyFlags.HasAny( { Material::DirtyFlags::Parameter, Material::DirtyFlags::Texture } ) )
-            {
-                dirtyFlags.ClearAll();
-            }
-        }
+        auto program = Program::Create( vertexShader, pixelShader );
+        return CreateMaterial( name, program );
     }
 
-    void MaterialManager::UpdateConstantBuffer( Material::Ref material )
+    MaterialAsset::Ref MaterialManager::GetMaterial( asset::AssetHandle handle )
     {
-        const auto &layout = material->GetLayout();
-        const auto &desc = material->GetDescriptor();
-        auto &data = m_MaterialData[material->GetID().GetIndex()];
+        MaterialAsset::Ref pMaterialAsset = asset::AssetManager::GetAsset< MaterialAsset >( handle );
 
-        for ( const auto &param : layout.Parameters )
+        if ( pMaterialAsset )
         {
-            const auto &value = desc.Parameters.GetItemAtKey( param.Name );
-            const auto &valueData = std::get< primitive::Vector< Byte > >( value );
-
-            SM_ASSERT( param.Size == valueData.GetItemCount() );
-
-            memory::CopyArrayItems( reinterpret_cast< Byte * >( data.ConstantBuffer->GetBuffer() ) + param.Offset,
-                param.Size,
-                valueData.GetData() );
+            m_Materials.Insert( pMaterialAsset->GetName(), pMaterialAsset );
+            return pMaterialAsset;
         }
 
-        // TODO: Upload data to GPU
+        SM_LOG_WARNING( "MaterialManager::GetMaterial > Could not find material: {}", static_cast< Uint64 >( handle ) );
+
+        return nullptr;
     }
 
-    void MaterialManager::UpdateBindingSet( Material::Ref material )
+    MaterialAsset::Ref MaterialManager::GetMaterial( const primitive::StringView name ) const
     {
-        const auto &layout = material->GetLayout();
-        const auto &desc = material->GetDescriptor();
-
-        auto &data = m_MaterialData[material->GetID().GetIndex()];
-
-        rhi::BindingSetDescriptor bindingSetDesc{
-            { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer->GetHandle() ) } };
-
-        for ( const auto &textureBinding : layout.Textures )
+        if ( m_Materials.HasItemAtKey( name ) )
         {
-            Texture::Ref texture = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
-
-            bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
-                textureBinding.Slot, texture->GetHandle(), texture->GetFormat() ) );
+            return m_Materials[name];
         }
 
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        SM_LOG_WARNING( "MaterialManager::GetMaterial > Could not find material with name: {}", name );
 
-        data.Bindings = resourceManager.CreateBindingSet( bindingSetDesc, layout.Visibility );
+        return nullptr;
+    }
+
+    MaterialAsset::Ref MaterialManager::LoadMaterial( const std::filesystem::path &path )
+    {
+        MaterialAsset::Ref pMaterialAsset = m_MaterialLoader.LoadMaterial( path );
+
+        if ( pMaterialAsset )
+        {
+            m_Materials.Insert( pMaterialAsset->GetName(), pMaterialAsset );
+            return pMaterialAsset;
+        }
+
+        SM_LOG_WARNING( "MaterialManager::LoadMaterial > Could not load material: {}", path.string() );
+
+        return nullptr;
     }
 }

@@ -113,13 +113,10 @@ namespace smile::graphic
         }
     }
 
-    Program::Ref Program::Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader )
+    Program::Ref Program::Create( ShaderAsset::ConstRef vertexShader, ShaderAsset::ConstRef pixelShader )
     {
-        SM_ASSERT( vertexShader->GetReflectionData() );
-        SM_ASSERT( pixelShader->GetReflectionData() );
-
-        const ShaderReflectionData &vsReflection = *vertexShader->GetReflectionData();
-        const ShaderReflectionData &psReflection = *pixelShader->GetReflectionData();
+        const ShaderReflectionData &vsReflection = vertexShader->GetReflectionData();
+        const ShaderReflectionData &psReflection = pixelShader->GetReflectionData();
 
         SM_ASSERT( ValidateReflectionData( vsReflection, psReflection ) );
 

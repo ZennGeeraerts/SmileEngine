@@ -16,8 +16,7 @@
  */
 #pragma once
 
-#include "vertex_shader.h"
-#include "pixel_shader.h"
+#include "smile/graphic/shader/shader_asset.h"
 
 namespace smile::graphic
 {
@@ -45,12 +44,12 @@ namespace smile::graphic
             foundation::Flags< rhi::ShaderStage > Visibility;
         };
 
-        VertexShader::ConstRef GetVertexShader() const
+        ShaderAsset::ConstRef GetVertexShader() const
         {
             return m_VertexShader;
         }
 
-        PixelShader::ConstRef GetPixelShader() const
+        ShaderAsset::ConstRef GetPixelShader() const
         {
             return m_PixelShader;
         }
@@ -65,11 +64,16 @@ namespace smile::graphic
             return m_ConstantBufferDescs[descName];
         }
 
-        static Program::Ref Create( VertexShader::ConstRef vertexShader, PixelShader::ConstRef pixelShader );
+        const rhi::BufferLayout &GetVertexLayout() const
+        {
+            return m_VertexShader->GetReflectionData().InputSignature;
+        }
+
+        static Program::Ref Create( ShaderAsset::ConstRef vertexShader, ShaderAsset::ConstRef pixelShader );
 
       private:
-        Program( VertexShader::ConstRef vertexShader,
-            PixelShader::ConstRef pixelShader,
+        Program( ShaderAsset::ConstRef vertexShader,
+            ShaderAsset::ConstRef pixelShader,
             const primitive::Vector< Program::Resource > &resources,
             const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &cbDescs )
             : m_VertexShader{ vertexShader },
@@ -79,8 +83,8 @@ namespace smile::graphic
         {
         }
 
-        VertexShader::ConstRef m_VertexShader;
-        PixelShader::ConstRef m_PixelShader;
+        ShaderAsset::ConstRef m_VertexShader;
+        ShaderAsset::ConstRef m_PixelShader;
 
         primitive::Vector< Resource > m_ResourceBindings;
         primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;

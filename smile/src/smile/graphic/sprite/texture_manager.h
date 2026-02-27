@@ -20,6 +20,11 @@ namespace smile::graphic
         memory::Ref< TextureAsset > GetTexture( const std::filesystem::path &path );
         memory::Ref< TextureAsset > GetTexture( memory::Ref< Texture > pTexture ) const;
 
+        TextureAsset::Ref GetFallBackTexture() const
+        {
+            return m_pFallBackTexture;
+        }
+
       private:
         std::unordered_map< memory::Ref< Texture >, memory::Ref< TextureAsset > > m_Textures;
         TextureLoader m_TextureLoader;

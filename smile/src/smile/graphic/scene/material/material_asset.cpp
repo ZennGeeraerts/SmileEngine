@@ -17,46 +17,40 @@
 #include "smpch.h"
 #include "material_asset.h"
 
+#include "smile/graphic/sprite/texture_manager.h"
+
 namespace smile::graphic
 {
-    MaterialAsset::MaterialAsset( ShaderAsset::ConstRef pVertexShader, ShaderAsset::ConstRef pPixelShader ) noexcept
-        : m_pVertexShader{ pVertexShader }, m_pPixelShader{ pPixelShader }
+    void MaterialAsset::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
     {
-        SetShaders( pVertexShader, pPixelShader );
+        if ( !m_Descriptor.Parameters.HasItemAtKey( name ) )
+        {
+            SM_LOG_WARNING( "MaterialAsset::SetParameter > Could not find material parameter with name: {}", name );
+            return;
+        }
+
+        m_Descriptor.Parameters[name] = data;
     }
 
-    void MaterialAsset::SetShaders( const ShaderAsset::ConstRef &pVertexShader,
-        const ShaderAsset::ConstRef &pPixelShader )
+    MaterialParameterValue MaterialAsset::GetParameter( const primitive::StringView name ) const
     {
-        m_Bindings.Clear();
-        m_ConstantBufferDescs.Clear();
+        return m_Descriptor.Parameters.GetItemAtKey( name );
+    }
 
-        m_pVertexShader = pVertexShader;
-        m_pPixelShader = pPixelShader;
-
-        auto addBindingLayoutElements = [&]( const ShaderReflectionData &reflectionData )
+    void MaterialAsset::SetTextureBinding( const primitive::StringView name, TextureAsset::Ref texture )
+    {
+        if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
         {
-            for ( const auto &binding : reflectionData.ShaderResourceBindings )
-            {
-                SM_ASSERT_MSG( !m_Bindings.HasItemAtKey( binding.Key ),
-                    "Bindings already contain an element with the name: {}",
-                    binding.Key );
+            SM_LOG_WARNING( "MaterialAsset::SetTextureBinding > Could not find texture binding with name: {}", name );
+            return;
+        }
 
-                m_Bindings.Insert( binding.Key, binding.Value );
+        m_Descriptor.TextureBindings[name] = texture->GetTexture();
+    }
 
-                if ( binding.Value.Type == rhi::ResourceType::ConstantBuffer )
-                {
-                    SM_ASSERT_MSG( !m_ConstantBufferDescs.HasItemAtKey( binding.Key ),
-                        "Constant buffer descriptors already contain a descriptor with the name: {}",
-                        binding.Key );
-
-                    const auto &constantBufferDesc = reflectionData.ConstantBufferDescs.GetItemAtKey( binding.Key );
-                    m_ConstantBufferDescs.Insert( binding.Key, constantBufferDesc );
-                }
-            }
-        };
-
-        addBindingLayoutElements( pVertexShader->GetReflectionData() );
-        addBindingLayoutElements( pPixelShader->GetReflectionData() );
+    TextureAsset::Ref MaterialAsset::GetTextureBinding( const primitive::StringView name ) const
+    {
+        auto texture = m_Descriptor.TextureBindings.GetItemAtKey( name );
+        return TextureManager::GetInstance().GetTexture( texture );
     }
 }
