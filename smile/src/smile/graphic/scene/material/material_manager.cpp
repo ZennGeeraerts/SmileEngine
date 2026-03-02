@@ -22,26 +22,6 @@
 
 namespace smile::graphic
 {
-    static MaterialParameterType ConstantTypeToMaterialParamType( ConstantType constantType )
-    {
-        switch ( constantType )
-        {
-            case ConstantType::Float:
-                return MaterialParameterType::Float;
-            case ConstantType::Float2:
-                return MaterialParameterType::Float2;
-            case ConstantType::Float3:
-                return MaterialParameterType::Float3;
-            case ConstantType::Int:
-                return MaterialParameterType::Int;
-            case ConstantType::Bool:
-                return MaterialParameterType::Bool;
-
-            default:
-                SM_ASSERT( false, "Not supported" );
-        }
-    }
-
     MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name,
         const MaterialLayout &layout,
         const MaterialDescriptor &desc )
@@ -58,37 +38,7 @@ namespace smile::graphic
         MaterialLayout layout{};
         MaterialDescriptor desc{};
 
-        const auto &cbDesc = program->GetConstantBufferDescriptor( "Material" );
-        for ( const auto &cbItem : cbDesc )
-        {
-            MaterialLayout::Parameter parameter{
-                cbItem.Name, ConstantTypeToMaterialParamType( cbItem.Type ), cbItem.Offset, cbItem.Size };
-
-            layout.Parameters.PushBack( std::move( parameter ) );
-            desc.Parameters.Insert( cbItem.Name, {} );
-        }
-
-        const auto &resources = program->GetResources();
-        for ( const auto &res : resources )
-        {
-            if ( res.NamedElement.Element.Type == rhi::ResourceType::Texture_SRV ||
-                 res.NamedElement.Element.Type == rhi::ResourceType::Texture_UAV )
-            {
-                MaterialLayout::Texture textureBinding{ res.NamedElement.Name, res.NamedElement.Element.Slot };
-
-                layout.Textures.PushBack( std::move( textureBinding ) );
-
-                desc.TextureBindings.Insert(
-                    res.NamedElement.Name, TextureManager::GetInstance().GetFallBackTexture() );
-            }
-            else if ( res.NamedElement.Name == "Material" )
-            {
-                layout.CbSlot = res.NamedElement.Element.Slot;
-            }
-        }
-
-        layout.CbSize = cbDesc.GetSize();
-        desc.ShaderProgram = program;
+        BuildMaterialLayoutAndDescriptor( program, layout, desc );
 
         return CreateMaterial( name, layout, desc );
     }

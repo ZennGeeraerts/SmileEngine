@@ -124,5 +124,10 @@ namespace smile::graphic
         primitive::String m_Name;
         MaterialLayout m_Layout;
         MaterialDescriptor m_Descriptor;
+
+        friend class MaterialSerializer;
     };
+
+    void
+    BuildMaterialLayoutAndDescriptor( Program::ConstRef program, MaterialLayout &layout, MaterialDescriptor &desc );
 }
