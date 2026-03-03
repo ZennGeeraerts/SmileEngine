@@ -21,7 +21,7 @@ namespace smile::graphic
             return m_FilePath;
         }
 
-        Ref< MeshFilter > GetMeshFilter( Uint32 index ) const
+        Ref< MeshSource > GetMeshFilter( Uint32 index ) const
         {
             SM_ASSERT_MSG( index >= 0 && index < m_pMeshes.size(), "Model::GetMeshFilter > Index out of range" );
             return m_pMeshes[index];
@@ -32,7 +32,7 @@ namespace smile::graphic
             return m_pMeshes.size();
         }
 
-        Ref< SkinnedMeshFilter > GetSkinnedMeshFilter( Uint32 index ) const
+        Ref< SkinnedMeshSource > GetSkinnedMeshFilter( Uint32 index ) const
         {
             SM_ASSERT_MSG(
                 index >= 0 && index < m_pSkinnedMeshes.size(), "Model::GetSkinnedMeshFilter > Index out of range" );
@@ -51,8 +51,8 @@ namespace smile::graphic
 
       private:
         std::string m_FilePath;
-        std::vector< Ref< MeshFilter > > m_pMeshes{};
-        std::vector< Ref< SkinnedMeshFilter > > m_pSkinnedMeshes{};
+        std::vector< Ref< MeshSource > > m_pMeshes{};
+        std::vector< Ref< SkinnedMeshSource > > m_pSkinnedMeshes{};
         std::vector< Ref< AnimationClip > > m_pAnimationClips{};
 
         friend class ModelLoader;

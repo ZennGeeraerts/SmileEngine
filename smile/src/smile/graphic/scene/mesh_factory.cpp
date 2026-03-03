@@ -146,7 +146,7 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f } };
 
-    Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshFilter > &pMeshFilter, const BufferLayout &layout )
+    Ref< Mesh > MeshFactory::CreateMesh( const Ref< MeshSource > &pMeshFilter, const BufferLayout &layout )
     {
         pMeshFilter->m_pDataLocation =
             malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( pMeshFilter->m_VertexCount ) );
@@ -203,7 +203,7 @@ namespace smile::graphic
         return pMesh;
     }
 
-    Ref< SkinnedMesh > MeshFactory::CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
+    Ref< SkinnedMesh > MeshFactory::CreateSkinnedMesh( const Ref< SkinnedMeshSource > &pSkinnedMeshFilter,
         const BufferLayout &layout )
     {
         pSkinnedMeshFilter->m_pDataLocation = malloc(
@@ -284,7 +284,7 @@ namespace smile::graphic
 
     Ref< Mesh > MeshFactory::CreatePlane( const BufferLayout &vertexLayout )
     {
-        Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
+        Ref< MeshSource > pMeshFilter = CreateRef< MeshSource >();
 
         for ( const auto &element : vertexLayout )
         {
@@ -308,7 +308,7 @@ namespace smile::graphic
 
     Ref< Mesh > MeshFactory::CreateCube( const BufferLayout &vertexLayout )
     {
-        Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
+        Ref< MeshSource > pMeshFilter = CreateRef< MeshSource >();
 
         for ( const auto &element : vertexLayout )
         {
@@ -425,7 +425,7 @@ namespace smile::graphic
             indices.push_back( vertCount - 1 );
         }
 
-        Ref< MeshFilter > pMeshFilter = CreateRef< MeshFilter >();
+        Ref< MeshSource > pMeshFilter = CreateRef< MeshSource >();
 
         for ( const auto &element : vertexLayout )
         {

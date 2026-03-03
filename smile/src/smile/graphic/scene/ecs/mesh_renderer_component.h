@@ -30,7 +30,7 @@ namespace smile::graphic::ecs
             : pMaterial{ pMaterial }, MeshIndex{ meshIndex }
         {
             pModel = graphic::ModelLoader::LoadModel( assetFile );
-            Ref< graphic::MeshFilter > pMeshFilter = pModel->GetMeshFilter( meshIndex );
+            Ref< graphic::MeshSource > pMeshFilter = pModel->GetMeshFilter( meshIndex );
             pMesh = graphic::MeshFactory::CreateMesh( pMeshFilter, pMaterial->GetBufferLayout() );
         }
 

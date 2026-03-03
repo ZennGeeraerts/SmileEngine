@@ -13,9 +13,9 @@ namespace smile::graphic
 {
     struct SkinnedMesh final
     {
-        memory::Ref< VertexBuffer > pVertexBuffer = nullptr;
-        memory::Ref< IndexBuffer > pIndexBuffer = nullptr;
-        std::unordered_map< std::string, BoneInfo > SkeletonMap{};
-        Uint32 BoneCount = 0;
+        VertexBuffer::Ref pVertexBuffer = nullptr;
+        IndexBuffer::Ref pIndexBuffer = nullptr;
+        primitive::HashMap< primitive::String, BoneInfo > SkeletonMap{};
+        Count BoneCount = 0;
     };
 }

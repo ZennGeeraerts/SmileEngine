@@ -16,8 +16,8 @@ namespace smile::graphic
     class MeshFactory final
     {
       public:
-        static Ref< Mesh > CreateMesh( const Ref< MeshFilter > &pMeshFilter, const rhi::BufferLayout &layout );
-        static Ref< SkinnedMesh > CreateSkinnedMesh( const Ref< SkinnedMeshFilter > &pSkinnedMeshFilter,
+        static Ref< Mesh > CreateMesh( const Ref< MeshSource > &pMeshFilter, const rhi::BufferLayout &layout );
+        static Ref< SkinnedMesh > CreateSkinnedMesh( const Ref< SkinnedMeshSource > &pSkinnedMeshFilter,
             const rhi::BufferLayout &layout );
 
         static Ref< Mesh > CreatePlane( const rhi::BufferLayout &vertexLayout );

@@ -12,7 +12,7 @@ namespace smile::graphic
 {
     struct Mesh final
     {
-        memory::Ref< VertexBuffer > pVertexBuffer = nullptr;
-        memory::Ref< IndexBuffer > pIndexBuffer = nullptr;
+        VertexBuffer::Ref pVertexBuffer = nullptr;
+        IndexBuffer::Ref pIndexBuffer = nullptr;
     };
 }

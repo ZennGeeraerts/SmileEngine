@@ -7,7 +7,7 @@
 
 namespace smile::graphic
 {
-    Bone::Bone( const std::string &name, Uint32 id ) : m_Name{ name }, m_ID{ id }
+    Bone::Bone( const primitive::String &name, Index id ) : m_Name{ name }, m_ID{ id }
     {
         DirectX::XMStoreFloat4x4( &m_LocalTransform, DirectX::XMMatrixIdentity() );
     }
@@ -46,8 +46,8 @@ namespace smile::graphic
             return;
         }
 
-        Uint32 p0Index = GetTranslationIndex( animationTime );
-        Uint32 p1Index = p0Index + 1;
+        Index p0Index = GetTranslationIndex( animationTime );
+        Index p1Index = p0Index + 1;
         float scaleFactor = GetScaleFactor( m_Translations[p0Index].Tick, m_Translations[p1Index].Tick, animationTime );
 
         DirectX::XMVECTOR finalTranslationVec =
@@ -57,11 +57,11 @@ namespace smile::graphic
         DirectX::XMStoreFloat3( &translation, finalTranslationVec );
     }
 
-    Uint32 Bone::GetTranslationIndex( float animationTime )
+    Index Bone::GetTranslationIndex( float animationTime )
     {
-        for ( Uint32 i{}; i < ( m_TranslationCount - 1 ); ++i )
+        for ( Index i{}; i < ( m_TranslationCount - 1 ); ++i )
         {
-            if ( animationTime <= m_Translations[static_cast< size_t >( i ) + 1].Tick )
+            if ( animationTime <= m_Translations[i + 1].Tick )
                 return i;
         }
 
@@ -85,8 +85,8 @@ namespace smile::graphic
             return;
         }
 
-        Uint32 p0Index = GetRotationIndex( animationTime );
-        Uint32 p1Index = p0Index + 1;
+        Index p0Index = GetRotationIndex( animationTime );
+        Index p1Index = p0Index + 1;
         float scaleFactor = GetScaleFactor( m_Rotations[p0Index].Tick, m_Rotations[p1Index].Tick, animationTime );
 
         DirectX::XMVECTOR finalRotationVec =
@@ -97,11 +97,11 @@ namespace smile::graphic
         DirectX::XMStoreFloat4( &rotation, finalRotationVec );
     }
 
-    Uint32 Bone::GetRotationIndex( float animationTime )
+    Index Bone::GetRotationIndex( float animationTime )
     {
-        for ( Uint32 i{}; i < ( m_RotationCount - 1 ); ++i )
+        for ( Index i{}; i < ( m_RotationCount - 1 ); ++i )
         {
-            if ( animationTime <= m_Rotations[static_cast< size_t >( i ) + 1].Tick )
+            if ( animationTime <= m_Rotations[i + 1].Tick )
                 return i;
         }
 
@@ -123,8 +123,8 @@ namespace smile::graphic
             return;
         }
 
-        Uint32 p0Index = GetScaleIndex( animationTime );
-        Uint32 p1Index = p0Index + 1;
+        Index p0Index = GetScaleIndex( animationTime );
+        Index p1Index = p0Index + 1;
         float scaleFactor = GetScaleFactor( m_Scales[p0Index].Tick, m_Scales[p1Index].Tick, animationTime );
         DirectX::XMVECTOR finalScaleVec = DirectX::XMVectorLerp( DirectX::XMLoadFloat3( &m_Scales[p0Index].Scale ),
             DirectX::XMLoadFloat3( &m_Scales[p1Index].Scale ),
@@ -132,11 +132,11 @@ namespace smile::graphic
         DirectX::XMStoreFloat3( &scale, finalScaleVec );
     }
 
-    Uint32 Bone::GetScaleIndex( float animationTime )
+    Index Bone::GetScaleIndex( float animationTime )
     {
-        for ( Uint32 i{}; i < ( m_ScaleCount - 1 ); ++i )
+        for ( Index i{}; i < ( m_ScaleCount - 1 ); ++i )
         {
-            if ( animationTime <= m_Scales[static_cast< size_t >( i ) + 1].Tick )
+            if ( animationTime <= m_Scales[i + 1].Tick )
                 return i;
         }
 

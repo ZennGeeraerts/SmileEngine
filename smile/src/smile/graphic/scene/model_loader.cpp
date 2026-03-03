@@ -72,9 +72,9 @@ namespace smile::graphic
         return pModel;
     }
 
-    Ref< graphic::MeshFilter > ModelLoader::LoadMesh( aiMesh *pAiMesh )
+    Ref< graphic::MeshSource > ModelLoader::LoadMesh( aiMesh *pAiMesh )
     {
-        Ref< graphic::MeshFilter > pMeshFilter = CreateRef< graphic::MeshFilter >();
+        Ref< graphic::MeshSource > pMeshFilter = CreateRef< graphic::MeshSource >();
         pMeshFilter->m_Name = pAiMesh->mName.C_Str();
 
         LoadVertices( pMeshFilter, pAiMesh );
@@ -82,15 +82,15 @@ namespace smile::graphic
         return pMeshFilter;
     }
 
-    Ref< graphic::SkinnedMeshFilter > ModelLoader::LoadSkinnedMesh( aiMesh *pAiMesh )
+    Ref< graphic::SkinnedMeshSource > ModelLoader::LoadSkinnedMesh( aiMesh *pAiMesh )
     {
-        Ref< graphic::SkinnedMeshFilter > pSkinnedMeshFilter = CreateRef< graphic::SkinnedMeshFilter >();
+        Ref< graphic::SkinnedMeshSource > pSkinnedMeshFilter = CreateRef< graphic::SkinnedMeshSource >();
         pSkinnedMeshFilter->m_Name = pAiMesh->mName.C_Str();
-        pSkinnedMeshFilter->m_Semantics |= static_cast< Uint32 >( graphic::Semantic::BlendIndices );
-        pSkinnedMeshFilter->m_Semantics |= static_cast< Uint32 >( graphic::Semantic::BlendWeights );
+        pSkinnedMeshFilter->m_Semantics.Set( graphic::Semantic::BlendIndices );
+        pSkinnedMeshFilter->m_Semantics.Set( graphic::Semantic::BlendWeights );
 
-        pSkinnedMeshFilter->m_BlendIndices.resize( pAiMesh->mNumVertices );
-        pSkinnedMeshFilter->m_BlendWeights.resize( pAiMesh->mNumVertices );
+        pSkinnedMeshFilter->m_BlendIndices.SetItemCount( pAiMesh->mNumVertices );
+        pSkinnedMeshFilter->m_BlendWeights.SetItemCount( pAiMesh->mNumVertices );
         std::fill( pSkinnedMeshFilter->m_BlendIndices.begin(),
             pSkinnedMeshFilter->m_BlendIndices.end(),
             DirectX::XMFLOAT4{ -1, -1, -1, -1 } );
@@ -101,7 +101,7 @@ namespace smile::graphic
         return pSkinnedMeshFilter;
     }
 
-    void ModelLoader::LoadVertices( const Ref< graphic::MeshFilter > &pMesh, aiMesh *pAiMesh )
+    void ModelLoader::LoadVertices( const Ref< graphic::MeshSource > &pMesh, aiMesh *pAiMesh )
     {
         pMesh->SetVertexCount( pAiMesh->mNumVertices );
 
@@ -151,7 +151,7 @@ namespace smile::graphic
         }
     }
 
-    void ModelLoader::LoadBones( const Ref< graphic::SkinnedMeshFilter > &pMesh, aiMesh *pAiMesh )
+    void ModelLoader::LoadBones( const Ref< graphic::SkinnedMeshSource > &pMesh, aiMesh *pAiMesh )
     {
         for ( Uint32 i{}; i < pAiMesh->mNumBones; ++i )
         {
@@ -159,9 +159,9 @@ namespace smile::graphic
             if ( pBone )
             {
                 Uint32 boneID = -1;
-                std::string boneName = pBone->mName.C_Str();
+                primitive::String boneName{ pBone->mName.C_Str() };
 
-                if ( pMesh->m_SkeletonMap.find( boneName ) == pMesh->m_SkeletonMap.end() )
+                if ( pMesh->m_SkeletonMap.HasItemAtKey( boneName ) )
                 {
                     graphic::BoneInfo boneInfo{};
                     boneInfo.ID = pMesh->m_BoneCount;
@@ -243,14 +243,14 @@ namespace smile::graphic
             aiNodeAnim *pChannel = pAiAnim->mChannels[j];
             if ( pChannel )
             {
-                std::string boneName = pChannel->mNodeName.C_Str();
+                primitive::String boneName{ pChannel->mNodeName.C_Str() };
 
                 for ( auto pSkinnedMesh : pModel->m_pSkinnedMeshes )
                 {
-                    auto boneInfoMapIt = pSkinnedMesh->m_SkeletonMap.find( boneName );
+                    auto boneInfoMapIt = pSkinnedMesh->m_SkeletonMap.FindItemAtKey( boneName );
                     if ( boneInfoMapIt != pSkinnedMesh->m_SkeletonMap.end() )
                     {
-                        graphic::BoneInfo &boneInfo = ( *boneInfoMapIt ).second;
+                        graphic::BoneInfo &boneInfo = ( *boneInfoMapIt ).Value;
                         graphic::Bone bone{ boneName, boneInfo.ID };
 
                         bone.m_TranslationCount = pChannel->mNumPositionKeys;

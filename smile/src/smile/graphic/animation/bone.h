@@ -4,6 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/compiled.h"
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/text/string.h"
+
 #include <DirectXMath.h>
 
 namespace smile::graphic
@@ -29,41 +33,43 @@ namespace smile::graphic
     class Bone final
     {
       public:
-        Bone( const std::string &name, Uint32 id );
+        Bone( const primitive::String &name, Index id );
+
         void OnUpdate( float animationTime );
 
         const DirectX::XMFLOAT4X4 &GetLocalTransform() const
         {
             return m_LocalTransform;
         }
-        const std::string &GetName() const
+
+        primitive::StringView GetName() const
         {
-            return m_Name;
+            return m_Name.AsStringView();
         }
 
       private:
         void InterpolateTranslation( DirectX::XMFLOAT3 &position, float animationTime );
-        Uint32 GetTranslationIndex( float animationTime );
+        Index GetTranslationIndex( float animationTime );
 
         void InterpolateRotation( DirectX::XMFLOAT4 &rotation, float animationTime );
-        Uint32 GetRotationIndex( float animationTime );
+        Index GetRotationIndex( float animationTime );
 
         void InterpolateScale( DirectX::XMFLOAT3 &scale, float animationTime );
-        Uint32 GetScaleIndex( float animationTime );
+        Index GetScaleIndex( float animationTime );
 
         float GetScaleFactor( float lastTick, float nextTick, float animationTime );
 
       private:
-        std::vector< KeyTranslation > m_Translations{};
-        std::vector< KeyRotation > m_Rotations{};
-        std::vector< KeyScale > m_Scales{};
-        Uint32 m_TranslationCount{};
-        Uint32 m_RotationCount{};
-        Uint32 m_ScaleCount{};
+        primitive::Vector< KeyTranslation > m_Translations{};
+        primitive::Vector< KeyRotation > m_Rotations{};
+        primitive::Vector< KeyScale > m_Scales{};
+        Count m_TranslationCount{};
+        Count m_RotationCount{};
+        Count m_ScaleCount{};
 
         DirectX::XMFLOAT4X4 m_LocalTransform{};
-        std::string m_Name;
-        Uint32 m_ID;
+        primitive::String m_Name;
+        Index m_ID;
 
         friend class ModelLoader;
     };
