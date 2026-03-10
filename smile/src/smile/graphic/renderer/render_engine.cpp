@@ -34,8 +34,8 @@ namespace smile::graphic
         s_ShaderLibrary.LoadShader( "resources/shaders/pbr.ps.smshader" );
         s_ShaderLibrary.LoadShader( "resources/shaders/pbr_skinned.ps.smshader" );
 
-        s_SceneManager.Initialize( pWindow );
-        world::WorldManager::AddListener( &s_SceneManager );
+        //s_SceneManager.Initialize( pWindow );
+        //world::WorldManager::AddListener( &s_SceneManager );
 
         // ForwardRenderer::Initialize();
         //  WireframeRenderer::GetInstance().Initialize();

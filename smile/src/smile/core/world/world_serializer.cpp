@@ -31,7 +31,7 @@ namespace smile::world
                 Entity entity{ entityID, m_pWorld.GetPointer() };
                 if ( !entity )
                     return;
-               
+
                 serializer::Serialize( output, entity );
             } );
 
@@ -82,7 +82,7 @@ namespace smile::world
 
                 Entity deserializedEntity = m_pWorld->CreateEntity( uuid, name );
 
-                serializer::Deserialize( entity, deserializedEntity ); 
+                serializer::Deserialize( entity, deserializedEntity );
             }
         }
 

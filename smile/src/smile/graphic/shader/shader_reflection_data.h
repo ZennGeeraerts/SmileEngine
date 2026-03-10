@@ -51,6 +51,8 @@ namespace smile::graphic
 
     struct NamedBindingLayoutElement final
     {
+        NamedBindingLayoutElement() = default;
+
         NamedBindingLayoutElement( const rhi::BindingLayoutElement &element, const primitive::String &name )
             : Element{ element }, Name{ name }
         {

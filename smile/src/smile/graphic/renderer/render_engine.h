@@ -5,7 +5,7 @@
 #pragma once
 
 #include "render_system.h"
-#include "smile/graphic/scene/scene_manager.h"
+//#include "smile/graphic/scene/scene_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 
 namespace smile::window
@@ -28,10 +28,10 @@ namespace smile::graphic
             return s_RenderSystem;
         }
 
-        static SceneManager &GetSceneManager()
+        /*static SceneManager &GetSceneManager()
         {
             return s_SceneManager;
-        }
+        }*/
 
         static ShaderLibrary &GetShaderLibrary()
         {
@@ -40,7 +40,7 @@ namespace smile::graphic
 
       private:
         static RenderSystem s_RenderSystem;
-        static SceneManager s_SceneManager;
+        //static SceneManager s_SceneManager;
         static ShaderLibrary s_ShaderLibrary;
     };
 }
