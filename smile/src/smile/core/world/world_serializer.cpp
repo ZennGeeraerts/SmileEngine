@@ -25,15 +25,17 @@ namespace smile::world
         output << YAML::Key << "World" << YAML::Value << "Untitled";
         output << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
+#ifdef SM_WITH_SERIALIZER
         m_pWorld->m_ECSEngine.Each(
             [&]( auto entityID )
             {
                 Entity entity{ entityID, m_pWorld.GetPointer() };
                 if ( !entity )
                     return;
-               
+
                 serializer::Serialize( output, entity );
             } );
+#endif
 
         output << YAML::EndSeq;
         output << YAML::EndMap;
@@ -82,7 +84,9 @@ namespace smile::world
 
                 Entity deserializedEntity = m_pWorld->CreateEntity( uuid, name );
 
-                serializer::Deserialize( entity, deserializedEntity ); 
+#ifdef SM_WITH_SERIALIZER
+                serializer::Deserialize( entity, deserializedEntity );
+#endif
             }
         }
 
