@@ -67,6 +67,11 @@ namespace smile::graphic
             return m_pImmediateCommandList;
         }
 
+        Framebuffer::Ref GetBackBuffer() const
+        {
+            return m_pBackBuffer;
+        }
+
       private:
         rhi::RendererBackendType m_API;
         Scope< rhi::GraphicsDevice > m_pDevice;

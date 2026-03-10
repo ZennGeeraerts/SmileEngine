@@ -246,7 +246,7 @@ namespace smile::graphic
         rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
         m_pDevice->CreateShader( handle, shaderDesc, shaderAsset->GetByteCode() );
 
-        auto pVertexShader = memory::CreateRef< VertexShader >( handle, reflectionData );
+        auto pVertexShader = memory::CreateRef< VertexShader >( handle );
         m_pVertexShaders.PushBack( pVertexShader );
         return pVertexShader;
     }

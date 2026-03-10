@@ -22,7 +22,7 @@ namespace smile::graphic
         void ShutDown();
 
         void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
-        void OnRender();
+        void OnRender( Framebuffer::Ref framebuffer );
         void EndScene();
 
         void SubmitLine( const DirectX::XMFLOAT3 &start, const DirectX::XMFLOAT3 &end, const DirectX::XMFLOAT4 &color );

@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/shader/binding_set.h"
 #include "smile/graphic/rhi/shader/binding_layout.h"
@@ -15,6 +15,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< BindingSet >;
+        using ConstRef = memory::Ref< const BindingSet >;
 
         BindingSet( rhi::BindingSetHandle handle,
             const rhi::BindingSetDescriptor &descriptor,

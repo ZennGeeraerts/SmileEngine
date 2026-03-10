@@ -20,7 +20,7 @@ namespace smile::graphic::ecs
         void OnAdd( smile::ecs::ECSEngine &ecsEngine );
         void OnRemove( smile::ecs::ECSEngine &ecsEngine );
 
-        void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
+        void OnRender( Framebuffer::Ref framebuffer, const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
 
         void Add( memory::Ref< RenderPass > pRenderPass );
 

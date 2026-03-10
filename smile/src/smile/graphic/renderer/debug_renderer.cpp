@@ -7,8 +7,8 @@
 
 #include "render_engine.h"
 #include "resource/resource_manager.h"
-#include "shader/shader_library.h"
-#include "shader/shader_asset.h"
+#include "smile/graphic/shader/shader_library.h"
+#include "smile/graphic/shader/shader_asset.h"
 
 #include <DirectXColors.h>
 
@@ -23,11 +23,14 @@ namespace smile::graphic
             { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
         {
+            auto vertexShaderAsset = shaderLibrary.GetShader( "debug_renderer.vs" );
+            auto pixelShaderAsset = shaderLibrary.GetShader( "col_tex.ps" );
+
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::LineList;
             psoDesc.InputLayout = vertexLayout;
-            psoDesc.pVertexShader = shaderLibrary.GetShader( "debug_renderer.vs" )->GetVertexShader();
-            psoDesc.pPixelShader = shaderLibrary.GetShader( "col_tex.ps" )->GetPixelShader();
+            psoDesc.pVertexShader = resourceManager.CreateVertexShader( vertexShaderAsset );
+            psoDesc.pPixelShader = resourceManager.CreatePixelShader( pixelShaderAsset );
 
             auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
             bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
@@ -121,7 +124,7 @@ namespace smile::graphic
         m_pCameraCB->Initialize( &viewProjectionMatrix );
     }
 
-    void DebugRenderer::OnRender()
+    void DebugRenderer::OnRender( Framebuffer::Ref framebuffer )
     {
         const Count vertexCount = m_LineList.GetItemCount();
 
@@ -139,6 +142,7 @@ namespace smile::graphic
         renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
 
         GraphicsState state{};
+        state.pFramebuffer = framebuffer;
         state.pPipeline = m_pPipeline;
         state.VertexBuffers.PushBack( VertexBufferBinding{ m_pVertexBuffer, 0, 0 } );
         state.pBindings.PushBack( m_pBindingSet );

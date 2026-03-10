@@ -23,7 +23,9 @@ namespace smile::graphic::ecs
         m_pECSEngine = nullptr;
     }
 
-    void RenderPassList::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    void RenderPassList::OnRender( Framebuffer::Ref framebuffer,
+        const Camera &camera,
+        const DirectX::XMFLOAT4X4 &cameraTransform )
     {
         for ( auto &pRenderPass : m_pRenderPasses )
             pRenderPass->OnRender( camera, cameraTransform );

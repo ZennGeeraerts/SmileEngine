@@ -7,7 +7,7 @@
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
-#include "smile/graphic/renderer/skybox_renderer.h"
+#include "smile/graphic/scene/skybox_renderer.h"
 #include "ecs/camera_component.h"
 
 #include "smile/core/window/window.h"
@@ -18,20 +18,16 @@ namespace smile::graphic
 {
     Scene::Scene( const window::Window *pWindow )
     {
-        FramebufferDescriptor frameBufferDesc{};
-        frameBufferDesc.Attachments = { { FramebufferTextureFormat::RGBA8, true },
-            FramebufferTextureFormat::Depth,
-            { FramebufferTextureFormat::RGBA8, true } };
-        frameBufferDesc.Width = pWindow->GetWidth();
-        frameBufferDesc.Height = pWindow->GetHeight();
-        frameBufferDesc.IsSwapChainTarget = false;
-        frameBufferDesc.ClearColor = { DirectX::Colors::DodgerBlue.f[0],
-            DirectX::Colors::DodgerBlue.f[1],
-            DirectX::Colors::DodgerBlue.f[2],
-            DirectX::Colors::DodgerBlue.f[3] };
-
         auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        m_pFramebuffer = resourceManager.CreateFramebuffer( frameBufferDesc );
+
+        auto width = pWindow->GetWidth();
+        auto height = pWindow->GetHeight();
+
+        FramebufferAttachment colorAttachment = resourceManager.CreateColorAttachment( width, height );
+        FramebufferAttachment depthAttachment = resourceManager.CreateDepthAttachment( width, height );
+        FramebufferAttachment colorAttachment2 = resourceManager.CreateColorAttachment( width, height );
+
+        m_pFramebuffer = resourceManager.CreateFramebuffer( { colorAttachment, colorAttachment2 }, depthAttachment );
     }
 
     void Scene::OnAdd( smile::ecs::ECSEngine &ecsEngine )
@@ -48,40 +44,42 @@ namespace smile::graphic
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();
 
-        if ( !m_RenderToSwapChain ) // TODO: Blit framebuffer texture to swapchain texture
-            renderSystem.BindFramebuffer( m_pFramebuffer );
+        auto currentFramebuffer = m_RenderToSwapChain ? renderSystem.GetBackBuffer() : m_pFramebuffer;
 
-        renderSystem.Clear();
+        renderSystem.Clear( currentFramebuffer, std::nullopt, std::nullopt, std::nullopt );
 
         if ( m_PrimaryCameraEntity )
         {
             const Camera &camera = m_PrimaryCameraEntity.GetComponent< ecs::CameraComponent >().Camera;
             auto transform = m_PrimaryCameraEntity.GetComponent< world::ecs::TransformComponent >().GetTransform();
 
-            m_RenderPassList.OnRender( camera, transform );
+            m_RenderPassList.OnRender( currentFramebuffer,
+                camera,
+                transform ); // TODO: Blit framebuffer texture to swapchain texture
 
             // TODO: Add scene graph
             SkyboxRenderer::BeginScene( camera, transform );
-            SkyboxRenderer::OnRender();
+            SkyboxRenderer::OnRender( currentFramebuffer );
             SkyboxRenderer::EndScene();
         }
         else if ( m_FallbackCameraData.pCamera )
         {
-            m_RenderPassList.OnRender( *m_FallbackCameraData.pCamera, m_FallbackCameraData.CameraTransform );
+            m_RenderPassList.OnRender(
+                currentFramebuffer, *m_FallbackCameraData.pCamera, m_FallbackCameraData.CameraTransform );
 
             // TODO: Add scene graph
             SkyboxRenderer::BeginScene( *m_FallbackCameraData.pCamera, m_FallbackCameraData.CameraTransform );
-            SkyboxRenderer::OnRender();
+            SkyboxRenderer::OnRender( currentFramebuffer );
             SkyboxRenderer::EndScene();
         }
-
-        if ( !m_RenderToSwapChain )
-            renderSystem.BindBackBuffer();
     }
 
     void *Scene::GetFinalColor() const
     {
-        return RenderEngine::GetRenderSystem().ReadTexture( m_pFramebuffer, 0 );
+        const auto &colorAttachments = m_pFramebuffer->GetColorAttachments();
+
+        return RenderEngine::GetRenderSystem().GetResourceManager().GetShaderResourceView(
+            colorAttachments[0].pTexture );
     }
 
     void Scene::OnViewportResize( Uint32 width, Uint32 height )
