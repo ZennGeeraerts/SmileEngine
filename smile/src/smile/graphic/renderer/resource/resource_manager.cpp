@@ -278,7 +278,7 @@ namespace smile::graphic
         rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
         m_pDevice->CreateShader( handle, shaderDesc, shaderAsset->GetByteCode() );
 
-        auto pPixelShader = memory::CreateRef< PixelShader >( handle, reflectionData );
+        auto pPixelShader = memory::CreateRef< PixelShader >( handle );
         m_pPixelShaders.PushBack( pPixelShader );
         return pPixelShader;
     }

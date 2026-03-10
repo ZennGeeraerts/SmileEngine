@@ -9,12 +9,14 @@
 
 namespace smile::graphic::ecs
 {
-    void DebugRenderPass::OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    void DebugRenderPass::OnRender( Framebuffer::Ref framebuffer,
+        const Camera &camera,
+        const DirectX::XMFLOAT4X4 &cameraTransform )
     {
         auto &debugRenderer = DebugRenderer::GetInstance();
         debugRenderer.BeginScene( camera, cameraTransform );
 
-        debugRenderer.OnRender();
+        debugRenderer.OnRender( framebuffer );
 
         debugRenderer.EndScene();
     }

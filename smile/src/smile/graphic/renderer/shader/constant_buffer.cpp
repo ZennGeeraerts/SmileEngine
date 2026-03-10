@@ -12,7 +12,7 @@ namespace smile::graphic
     {
     }
 
-    void ConstantBuffer::InitializeBuffer( const void *pBuffer, const Count size )
+    void ConstantBuffer::InitializeBuffer( void *pBuffer, const Count size )
     {
         SM_ASSERT( size <= m_Descriptor.GetSize() );
         m_pBuffer = pBuffer;

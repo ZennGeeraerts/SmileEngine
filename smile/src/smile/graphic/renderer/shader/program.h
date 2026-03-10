@@ -20,7 +20,7 @@
 
 namespace smile::graphic
 {
-    class Program final : memory::Counted
+    class Program final : public memory::Counted
     {
       public:
         using Ref = memory::Ref< Program >;
@@ -28,6 +28,8 @@ namespace smile::graphic
 
         struct Resource final
         {
+            Resource() = default;
+
             Resource( const NamedBindingLayoutElement &namedElement, foundation::Flags< rhi::ShaderStage > visibility )
                 : NamedElement{ namedElement }, Visibility{ visibility }
             {
@@ -43,6 +45,17 @@ namespace smile::graphic
             NamedBindingLayoutElement NamedElement;
             foundation::Flags< rhi::ShaderStage > Visibility;
         };
+
+        Program( ShaderAsset::ConstRef vertexShader,
+            ShaderAsset::ConstRef pixelShader,
+            const primitive::Vector< Program::Resource > &resources,
+            const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &cbDescs )
+            : m_VertexShader{ vertexShader },
+              m_PixelShader{ pixelShader },
+              m_ResourceBindings{ resources },
+              m_ConstantBufferDescs{ cbDescs }
+        {
+        }
 
         ShaderAsset::ConstRef GetVertexShader() const
         {
@@ -72,17 +85,6 @@ namespace smile::graphic
         static Program::Ref Create( ShaderAsset::ConstRef vertexShader, ShaderAsset::ConstRef pixelShader );
 
       private:
-        Program( ShaderAsset::ConstRef vertexShader,
-            ShaderAsset::ConstRef pixelShader,
-            const primitive::Vector< Program::Resource > &resources,
-            const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &cbDescs )
-            : m_VertexShader{ vertexShader },
-              m_PixelShader{ pixelShader },
-              m_ResourceBindings{ resources },
-              m_ConstantBufferDescs{ cbDescs }
-        {
-        }
-
         ShaderAsset::ConstRef m_VertexShader;
         ShaderAsset::ConstRef m_PixelShader;
 

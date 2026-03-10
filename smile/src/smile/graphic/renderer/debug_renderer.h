@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "resource/graphics_pipeline.h"
 #include "resource/vertex_buffer.h"
+#include "resource/frame_buffer.h"
 #include "shader/constant_buffer.h"
 #include "shader/binding_set.h"
 

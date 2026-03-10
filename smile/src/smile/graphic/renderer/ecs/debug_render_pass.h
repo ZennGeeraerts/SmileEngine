@@ -17,6 +17,8 @@ namespace smile::graphic::ecs
         DebugRenderPass &operator=( const DebugRenderPass & ) = delete;
         DebugRenderPass &operator=( DebugRenderPass && ) = delete;
 
-        void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) override;
+        void OnRender( Framebuffer::Ref framebuffer,
+            const Camera &camera,
+            const DirectX::XMFLOAT4X4 &cameraTransform ) override;
     };
 }

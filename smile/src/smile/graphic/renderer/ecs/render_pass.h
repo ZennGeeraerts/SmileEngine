@@ -7,6 +7,7 @@
 #include "smile/common/memory/counted.h"
 #include "smile/core/ecs/ecs_engine.h"
 #include "smile/graphic/renderer/camera.h"
+#include "smile/graphic/renderer/resource/frame_buffer.h"
 
 namespace smile::graphic::ecs
 {
@@ -32,7 +33,8 @@ namespace smile::graphic::ecs
             m_pECSEngine = nullptr;
         };
 
-        virtual void OnRender( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) = 0;
+        virtual void
+        OnRender( Framebuffer::Ref framebuffer, const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform ) = 0;
 
       protected:
         smile::ecs::ECSEngine *m_pECSEngine;

@@ -50,7 +50,7 @@ namespace smile::graphic
         }
 
       private:
-        void InitializeBuffer( const void *pBuffer, const Count size );
+        void InitializeBuffer( void *pBuffer, const Count size );
 
       private:
         rhi::GPUBufferHandle m_Handle;

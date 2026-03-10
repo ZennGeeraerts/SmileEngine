@@ -11,6 +11,8 @@ namespace smile::graphic::rhi
 {
     struct BindingLayoutElement final
     {
+        BindingLayoutElement() = default;
+
         BindingLayoutElement( Uint32 slot, ResourceType type ) : Slot{ slot }, Type{ type }, Size{ 0 }
         {
         }

@@ -28,7 +28,7 @@ namespace smile::graphic::ecs
         const DirectX::XMFLOAT4X4 &cameraTransform )
     {
         for ( auto &pRenderPass : m_pRenderPasses )
-            pRenderPass->OnRender( camera, cameraTransform );
+            pRenderPass->OnRender( framebuffer, camera, cameraTransform );
     }
 
     void RenderPassList::Add( memory::Ref< RenderPass > pRenderPass )
