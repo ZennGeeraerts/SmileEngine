@@ -16,6 +16,7 @@
  */
 #include "renderer_test.h"
 
+#include "smile/common/platform/executable_path.h"
 #include "smile/core/application/entry_point.h"
 #include "renderer_test_layer.h"
 
@@ -25,7 +26,7 @@ namespace smile
     {
         smile::application::ApplicationDescriptor descriptor{};
         descriptor.Name = "RHI Test";
-        descriptor.WorkingDirectory = ".";
+        descriptor.WorkingDirectory = platform::GetExecutablePath().GetDirectory();
         descriptor.CommandLineArgs = commandLineArgs;
 
         // This application will get passed to the entry point of the engine

@@ -52,6 +52,14 @@ target_link_libraries(renderer-test PRIVATE ${LIB_DIRS})
 
 make_directory(${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
 
+add_custom_command(
+    TARGET renderer-test
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${SMILE_PATH}/../resources"
+        "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/resources"
+    )
+
 include(${CMAKE_PATH}/group_sources_by_folder.cmake)
 group_sources_by_folder(renderer-test)
 

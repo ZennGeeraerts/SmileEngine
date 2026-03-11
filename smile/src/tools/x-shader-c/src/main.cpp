@@ -89,7 +89,7 @@ int main( int argc, const char **argv )
     if ( !graphic::ShaderReflector::Reflect( options.OutputFormat, byteCode, reflectionData ) )
         return 2;
 
-    const auto pShaderAsset = memory::CreateRef< graphic::ShaderAsset >( fileName, byteCode, reflectionData );
+    const auto pShaderAsset = memory::CreateRef< graphic::ShaderAsset >( stem, byteCode, reflectionData );
     graphic::ShaderSerializer serializer{ pShaderAsset };
     serializer.Serialize( ( *g_OutputFilePath ) );
 
