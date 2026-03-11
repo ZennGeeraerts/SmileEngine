@@ -121,7 +121,7 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 viewProjectionMatrix;
         DirectX::XMStoreFloat4x4( &viewProjectionMatrix, viewProjectionMatrixMat );
 
-        m_pCameraCB->Initialize( &viewProjectionMatrix );
+        m_pCameraCB->Update( &viewProjectionMatrix );
     }
 
     void DebugRenderer::OnRender( Framebuffer::Ref framebuffer )
@@ -140,6 +140,7 @@ namespace smile::graphic
         RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
 
         renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
+        renderSystem.FillConstantBuffer( m_pCameraCB );
 
         GraphicsState state{};
         state.pFramebuffer = framebuffer;

@@ -142,4 +142,10 @@ namespace smile::graphic
         m_pImmediateCommandList->FillBuffer(
             pVertexBuffer->GetHandle(), pData, vertexCount * pVertexBuffer->GetBufferLayout().GetStride() );
     }
+
+    void RenderSystem::FillConstantBuffer( ConstantBuffer::Ref constantBuffer ) const
+    {
+        m_pImmediateCommandList->FillBuffer(
+            constantBuffer->GetHandle(), constantBuffer->GetBuffer(), constantBuffer->GetDescriptor().GetSize() );
+    }
 }

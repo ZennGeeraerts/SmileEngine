@@ -20,7 +20,7 @@ namespace smile::graphic
     void ConstantBufferDescriptor::Add( primitive::String name, ConstantType type, const Count itemCount )
     {
         const Count size = graphic::GetConstantTypeInfo( type ).Size;
-        m_Items.EmplaceBack( std::move( name ), type, size, itemCount );
+        m_Items.EmplaceBack( std::move( name ), type, size, 0u, itemCount );
         CalculateOffsetAndSize();
     }
 

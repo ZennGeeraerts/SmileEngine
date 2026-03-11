@@ -19,9 +19,9 @@ namespace smile::graphic
         ~ConstantBuffer() = default;
 
         template < typename ConstantBufferType >
-        void Initialize( ConstantBufferType *pBuffer )
+        void Update( ConstantBufferType *pBuffer )
         {
-            InitializeBuffer( pBuffer, sizeof( ConstantBufferType ) );
+            UpdateBuffer( pBuffer, sizeof( ConstantBufferType ) );
         }
 
         bool IsValid() const
@@ -50,7 +50,7 @@ namespace smile::graphic
         }
 
       private:
-        void InitializeBuffer( void *pBuffer, const Count size );
+        void UpdateBuffer( void *pBuffer, const Count size );
 
       private:
         rhi::GPUBufferHandle m_Handle;

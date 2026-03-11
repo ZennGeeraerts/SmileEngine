@@ -46,6 +46,7 @@ namespace smile::graphic
         void Present();
 
         void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
+        void FillConstantBuffer( ConstantBuffer::Ref constantBuffer ) const;
 
         ResourceManager &GetResourceManager()
         {
