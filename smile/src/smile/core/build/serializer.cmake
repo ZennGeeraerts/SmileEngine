@@ -40,4 +40,5 @@ if(SMILE_SERIALIZER)
     file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "serializer/*.cpp")
 
     target_sources(smile PRIVATE ${SOURCE_FILES})
+    target_compile_definitions(smile PRIVATE SM_WITH_SERIALIZER)
 endif()

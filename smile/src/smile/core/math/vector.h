@@ -4,9 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
+#include "math_utilities.h"
+
 namespace smile::math
 {
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     struct Vector final
     {
         inline Type operator[]( Uint8 index ) const
@@ -24,19 +26,19 @@ namespace smile::math
         Type Data[Size];
     };
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Type MagnitudeSqr( const Vector< Size, Type > &vector )
     {
         return DotProduct( vector, vector );
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Type Magnitude( const Vector< Size, Type > &vector )
     {
         return static_cast< Type >( SquareRoot( MagnitudeSqr( vector ) ) );
     }
 
-    template < int Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Type Normalize( Vector< Size, Type > &vector )
     {
         SM_ASSERT_MSG( !IsZeroVector( vector ), "Normalize > Vector is zero vector" );
@@ -47,7 +49,7 @@ namespace smile::math
         return magnitude;
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Vector< Size, Type > GetNormalized( const Vector< Size, Type > &vector )
     {
         SM_ASSERT_MSG( !IsZeroVector( vector ), "GetNormalized > Vector is zero vector" );
@@ -56,7 +58,7 @@ namespace smile::math
         return Vector{ vector / magnitude };
     }
 
-    template < Uint8 Size, typename Type >
+    template < Uint8 Size, Numeric Type >
     inline Vector< Size, Type >
     Lerp( const Vector< Size, Type > &v1, const Vector< Size, Type > &v2, const float percentage )
     {
