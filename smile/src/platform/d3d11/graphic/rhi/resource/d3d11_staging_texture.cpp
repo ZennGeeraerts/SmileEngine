@@ -11,6 +11,11 @@
 
 namespace smile::graphic::rhi
 {
+    D3D11StagingTexture::~D3D11StagingTexture()
+    {
+        Destroy();
+    }
+
     void D3D11StagingTexture::Create( D3D11Context &context, const TextureDescriptor &desc )
     {
         SM_ASSERT( desc.CPUAccess != CPUAccessMode::None );

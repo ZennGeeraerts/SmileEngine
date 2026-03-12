@@ -15,7 +15,7 @@ namespace smile::graphic::rhi
     {
       public:
         D3D11Texture() = default;
-        ~D3D11Texture() = default;
+        ~D3D11Texture();
 
         D3D11Texture( const D3D11Texture & ) = delete;
         D3D11Texture( D3D11Texture && ) = delete;

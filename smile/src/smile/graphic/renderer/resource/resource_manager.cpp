@@ -171,7 +171,6 @@ namespace smile::graphic
         textureDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
         textureDesc.Dimension = rhi::TextureDimension::Texture2D;
         textureDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
-        textureDesc.CPUAccess = rhi::CPUAccessMode::Read;
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
@@ -191,7 +190,6 @@ namespace smile::graphic
         textureDesc.TextureFormat = rhi::Format::D24S8;
         textureDesc.Dimension = rhi::TextureDimension::Texture2D;
         textureDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
-        textureDesc.CPUAccess = rhi::CPUAccessMode::Read;
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 

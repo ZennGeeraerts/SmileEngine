@@ -52,6 +52,6 @@ namespace smile::graphic::rhi
 
     void D3D11Sampler::Destroy()
     {
-        SAFE_RELEASE( pInternal );
+        pInternal.Reset();
     }
 }

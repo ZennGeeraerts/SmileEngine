@@ -60,6 +60,6 @@ namespace smile::graphic::rhi
 
     void D3D11RasterizerState::Destroy()
     {
-        SAFE_RELEASE( pInternal );
+        pInternal.Reset();
     }
 }

@@ -15,7 +15,7 @@ namespace smile::graphic::rhi
     {
       public:
         D3D11Buffer() = default;
-        ~D3D11Buffer() = default;
+        ~D3D11Buffer();
 
         void Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, void *pData );
         void Destroy();

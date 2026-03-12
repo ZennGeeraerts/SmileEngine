@@ -7,6 +7,8 @@
 #include "smile/graphic/rhi/resource/buffer.h"
 #include "smile/graphic/rhi/render_handle.h"
 
+#include <wrl/client.h>
+
 class ID3D11Device;
 class ID3D11InputLayout;
 
@@ -22,6 +24,6 @@ namespace smile::graphic::rhi
         void Create( ID3D11Device *pDevice, const BufferLayout &layout, const D3D11Shader &vertexShader );
         void Destroy();
 
-        ID3D11InputLayout *pInternal = nullptr;
+        Microsoft::WRL::ComPtr< ID3D11InputLayout > pInternal = nullptr;
     };
 }

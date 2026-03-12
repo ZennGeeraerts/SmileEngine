@@ -56,6 +56,6 @@ namespace smile::graphic::rhi
 
     void D3D11InputLayout::Destroy()
     {
-        SAFE_RELEASE( pInternal );
+        pInternal.Reset();
     }
 }

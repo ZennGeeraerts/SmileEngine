@@ -13,6 +13,11 @@ using Microsoft::WRL::ComPtr;
 
 namespace smile::graphic::rhi
 {
+    D3D11Texture::~D3D11Texture()
+    {
+        Destroy();
+    }
+
     void D3D11Texture::Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const std::vector< Byte > &buffer )
     {
         Descriptor = desc;

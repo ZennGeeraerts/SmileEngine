@@ -13,7 +13,7 @@ namespace smile::graphic::rhi
     struct D3D11StagingTexture final
     {
         D3D11StagingTexture() = default;
-        ~D3D11StagingTexture() = default;
+        ~D3D11StagingTexture();
 
         D3D11StagingTexture( const D3D11StagingTexture & ) = delete;
         D3D11StagingTexture( D3D11StagingTexture && ) = delete;

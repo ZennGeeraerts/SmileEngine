@@ -7,6 +7,7 @@
 #include "smile/graphic/rhi/resource/sampler.h"
 
 #include <d3d11.h>
+#include <wrl/client.h>
 
 namespace smile::graphic::rhi
 {
@@ -23,6 +24,6 @@ namespace smile::graphic::rhi
         void Create( ID3D11Device *pDevice, const SamplerDescriptor &samplerDesc );
         void Destroy();
 
-        ID3D11SamplerState *pInternal = nullptr;
+        Microsoft::WRL::ComPtr< ID3D11SamplerState > pInternal = nullptr;
     };
 }

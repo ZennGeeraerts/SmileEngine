@@ -20,7 +20,7 @@ namespace smile::graphic::rhi
     {
       public:
         D3D11Framebuffer() = default;
-        ~D3D11Framebuffer() = default;
+        ~D3D11Framebuffer();
 
         D3D11Framebuffer( const D3D11Framebuffer & ) = delete;
         D3D11Framebuffer( D3D11Framebuffer && ) = delete;

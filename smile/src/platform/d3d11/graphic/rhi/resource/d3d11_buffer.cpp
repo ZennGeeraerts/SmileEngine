@@ -53,6 +53,11 @@ namespace smile::graphic::rhi
         return static_cast< D3D11_BIND_FLAG >( targetFlags );
     }
 
+    D3D11Buffer::~D3D11Buffer()
+    {
+        Destroy();
+    }
+
     void D3D11Buffer::Create( ID3D11Device *pDevice, const GPUBufferDescriptor &desc, void *pData )
     {
         Descriptor = desc;
@@ -96,7 +101,7 @@ namespace smile::graphic::rhi
 
     void D3D11Buffer::Destroy()
     {
-        SAFE_RELEASE( pInternal );
+        pInternal.Reset();
     }
 
     ID3D11ShaderResourceView *D3D11Buffer::GetOrCreateShaderResourceView( ID3D11Device *pDevice,

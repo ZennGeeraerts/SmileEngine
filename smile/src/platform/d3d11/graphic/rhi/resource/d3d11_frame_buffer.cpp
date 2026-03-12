@@ -11,6 +11,11 @@
 
 namespace smile::graphic::rhi
 {
+    D3D11Framebuffer::~D3D11Framebuffer()
+    {
+        Destroy();
+    }
+
     void D3D11Framebuffer::Create( D3D11Device &device, const FramebufferDescriptor &desc )
     {
         Descriptor = desc;
