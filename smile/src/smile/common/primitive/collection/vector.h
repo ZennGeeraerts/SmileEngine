@@ -353,6 +353,8 @@ namespace smile::primitive
 
         void Insert( const Item &item, const Index index )
         {
+            SM_ASSERT( index <= m_ItemCount );
+
             Reserve( m_ItemCount + 1 );
 
             if ( index == m_ItemCount )
@@ -363,9 +365,9 @@ namespace smile::primitive
             {
                 memory::ConstructMoveArrayItems( &m_pItems[m_ItemCount], 1, &m_pItems[m_ItemCount - 1] );
 
-                for ( Index i = m_ItemCount - 2; i >= index; --i )
+                for ( Index i = m_ItemCount - 1; i > index; --i )
                 {
-                    m_pItems[i + 1] = std::move( m_pItems[i] );
+                    m_pItems[i] = std::move( m_pItems[i - 1] );
                 }
 
                 m_pItems[index] = item;
@@ -376,6 +378,8 @@ namespace smile::primitive
 
         void Insert( Item &&item, const Index index )
         {
+            SM_ASSERT( index <= m_ItemCount );
+
             Reserve( m_ItemCount + 1 );
 
             if ( index == m_ItemCount )
@@ -386,9 +390,9 @@ namespace smile::primitive
             {
                 memory::ConstructMoveArrayItems( &m_pItems[m_ItemCount], 1, &m_pItems[m_ItemCount - 1] );
 
-                for ( Index i = m_ItemCount - 2; i >= index; --i )
+                for ( Index i = m_ItemCount - 1; i > index; --i )
                 {
-                    m_pItems[i + 1] = std::move( m_pItems[i] );
+                    m_pItems[i] = std::move( m_pItems[i - 1] );
                 }
 
                 m_pItems[index] = std::move( item );
@@ -399,6 +403,8 @@ namespace smile::primitive
 
         void Insert( const Index index )
         {
+            SM_ASSERT( index <= m_ItemCount );
+
             Reserve( m_ItemCount + 1 );
 
             if ( index == m_ItemCount )
@@ -409,9 +415,9 @@ namespace smile::primitive
             {
                 memory::ConstructMoveArrayItems( &m_pItems[m_ItemCount], 1, &m_pItems[m_ItemCount - 1] );
 
-                for ( Index i = m_ItemCount - 2; i >= index; --i )
+                for ( Index i = m_ItemCount - 1; i > index; --i )
                 {
-                    m_pItems[i + 1] = std::move( m_pItems[i] );
+                    m_pItems[i] = std::move( m_pItems[i - 1] );
                 }
             }
 

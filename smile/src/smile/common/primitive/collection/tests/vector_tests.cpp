@@ -169,6 +169,25 @@ namespace smile::primitive
 
             REQUIRE( values.GetItemCount() == 5 );
             REQUIRE( values.GetItemAtIndex( 1 ) == 10 );
+
+            // Insert at front
+            values.Insert( 99, 0 );
+
+            REQUIRE( values.GetItemCount() == 6 );
+            REQUIRE( values.GetFirstItem() == 99 );
+
+            // Insert at back
+            values.Insert( 77, values.GetItemCount() );
+
+            REQUIRE( values.GetItemCount() == 7 );
+            REQUIRE( values.GetLastItem() == 77 );
+
+            // Insert into a single element vector
+            Vector< int > singleElementVector{ 5 };
+            singleElementVector.Insert( 10, 0 );
+
+            REQUIRE( singleElementVector.GetItemCount() == 2 );
+            REQUIRE( singleElementVector.GetFirstItem() == 10 );
         }
 
         SECTION( "Insert range" )
@@ -186,7 +205,7 @@ namespace smile::primitive
             REQUIRE( first[2] == 20 );
             REQUIRE( first[3] == 2 );
             REQUIRE( first[4] == 3 );
-            
+
             REQUIRE( *iterator == 10 );
 
             first.Insert( first.end(), second.begin(), second.end() );
@@ -203,7 +222,7 @@ namespace smile::primitive
             first.Insert( first.end(), second.end() - 1, second.end() );
 
             REQUIRE( first.GetLastItem() == 30 );
-            
+
             first.Insert( first.end(), empty.begin(), empty.end() );
 
             REQUIRE( first.GetLastItem() == 30 );
