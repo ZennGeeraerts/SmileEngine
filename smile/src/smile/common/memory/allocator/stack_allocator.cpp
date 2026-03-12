@@ -23,6 +23,10 @@ namespace smile::memory
 
         AreaAllocator::Initialize( pAllocatedByteArray, allocatedSize, ownsMemory );
 
+#if SM_C_DEBUG
+        FillByteArray( pAllocatedByteArray, 0xDE, allocatedSize );
+#endif
+
         m_AvailableSize = allocatedSize;
         m_pCurrentByteArray = reinterpret_cast< Byte * >( pAllocatedByteArray );
         m_InternalAllocatedSize = 0;
