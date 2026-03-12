@@ -90,7 +90,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
-                "D3D11Buffer::Create > Failed to create vertex buffer: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+                "D3D11Buffer::Create > Failed to create vertex buffer: {}", GetD3DErrorMessageString( result ) );
         }
     }
 

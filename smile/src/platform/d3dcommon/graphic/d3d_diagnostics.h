@@ -9,4 +9,5 @@
 namespace smile::graphic::rhi
 {
     LPTSTR GetD3DErrorMessage( HRESULT result );
+    primitive::String GetD3DErrorMessageString( HRESULT result );
 }

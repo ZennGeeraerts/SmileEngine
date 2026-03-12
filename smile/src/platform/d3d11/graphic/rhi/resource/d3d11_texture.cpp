@@ -72,8 +72,8 @@ namespace smile::graphic::rhi
 
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "D3D11Texture::Create > Failed to create texture: {}",
-                        fmt::ptr( GetD3DErrorMessage( result ) ) );
+                    SM_LOG_ERROR(
+                        "D3D11Texture::Create > Failed to create texture: {}", GetD3DErrorMessageString( result ) );
                     return;
                 }
 
@@ -127,8 +127,8 @@ namespace smile::graphic::rhi
 
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "D3D11Texture::Create > Failed to create texture: {}",
-                        fmt::ptr( GetD3DErrorMessage( result ) ) );
+                    SM_LOG_ERROR(
+                        "D3D11Texture::Create > Failed to create texture: {}", GetD3DErrorMessageString( result ) );
                     return;
                 }
 
@@ -168,8 +168,8 @@ namespace smile::graphic::rhi
 
                 if ( FAILED( result ) )
                 {
-                    SM_LOG_ERROR( "D3D11Texture::Create > Failed to create texture: {}",
-                        fmt::ptr( GetD3DErrorMessage( result ) ) );
+                    SM_LOG_ERROR(
+                        "D3D11Texture::Create > Failed to create texture: {}", GetD3DErrorMessageString( result ) );
                     return;
                 }
 
@@ -277,7 +277,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11Texture::GetOrCreateShaderResourceView > Failed to create shader resource view: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return nullptr;
         }
 
@@ -343,7 +343,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11Texture::GetOrCreateShaderResourceView > Failed to create render target view: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return nullptr;
         }
 
@@ -412,7 +412,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11Texture::GetOrCreateDepthStencilView > Failed to create depth stencil view: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return nullptr;
         }
 
@@ -482,7 +482,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11Texture::GetOrCreateUnorderedAccessView > Failed to create unordered access view: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return nullptr;
         }
 

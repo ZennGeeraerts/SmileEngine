@@ -22,8 +22,7 @@ namespace smile::graphic::rhi
             CreateDXGIFactory( __uuidof( IDXGIFactory ), reinterpret_cast< void ** >( &m_Context.pDXGIFactory ) );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "D3D11Device > Failed to create DXGIFactory: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+            SM_LOG_ERROR( "D3D11Device > Failed to create DXGIFactory: {}", GetD3DErrorMessageString( result ) );
             return;
         }
 
@@ -47,8 +46,7 @@ namespace smile::graphic::rhi
 
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "D3D11Device > Failed to create D3D11Device: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+            SM_LOG_ERROR( "D3D11Device > Failed to create D3D11Device: {}", GetD3DErrorMessageString( result ) );
             return;
         }
 

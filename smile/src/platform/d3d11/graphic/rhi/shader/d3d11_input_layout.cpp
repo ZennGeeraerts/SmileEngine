@@ -49,8 +49,8 @@ namespace smile::graphic::rhi
 
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR( "D3D11InputLayout::Create > Failed to create input layout: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+            SM_LOG_ERROR(
+                "D3D11InputLayout::Create > Failed to create input layout: {}", GetD3DErrorMessageString( result ) );
         }
     }
 

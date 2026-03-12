@@ -52,7 +52,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR(
-                "D3D11SwapChain::Create > Failed to create swap chain: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+                "D3D11SwapChain::Create > Failed to create swap chain: {}", GetD3DErrorMessageString( result ) );
             return;
         }
 
@@ -63,7 +63,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11SwapChain::Create > Failed to get buffer from swap chain: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return;
         }
 
@@ -71,7 +71,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11SwapChain::Create > Failed to create render target view: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return;
         }
 
@@ -108,8 +108,7 @@ namespace smile::graphic::rhi
         HRESULT result = m_pSwapChain->ResizeBuffers( 0, width, height, DXGI_FORMAT_UNKNOWN, 0 );
         if ( FAILED( result ) )
         {
-            SM_LOG_ERROR(
-                "D3D11SwapChain::Resize > Failed to resize buffers: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+            SM_LOG_ERROR( "D3D11SwapChain::Resize > Failed to resize buffers: {}", GetD3DErrorMessageString( result ) );
             return;
         }
 
@@ -119,7 +118,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11SwapChain::Resize > Failed to get buffer from swap chain: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return;
         }
 
@@ -127,7 +126,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11SwapChain::Resize > Failed to create render target view: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
             return;
         }
 

@@ -54,7 +54,7 @@ namespace smile::graphic::rhi
         if ( FAILED( result ) )
         {
             SM_LOG_ERROR( "D3D11RasterizerState::Create > Failed to create rasterizer state: {}",
-                fmt::ptr( GetD3DErrorMessage( result ) ) );
+                GetD3DErrorMessageString( result ) );
         }
     }
 

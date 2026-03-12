@@ -6,6 +6,8 @@
 #include "smpch.h"
 #include "d3d_diagnostics.h"
 
+#include "platform/windows/common/platform/utils.h"
+
 namespace smile::graphic::rhi
 {
     LPTSTR GetD3DErrorMessage( HRESULT result )
@@ -25,5 +27,12 @@ namespace smile::graphic::rhi
             NULL );
 
         return errorText;
+    }
+
+    primitive::String GetD3DErrorMessageString( HRESULT result )
+    {
+        LPTSTR lpstr = GetD3DErrorMessage( result );
+        const char *cstr = platform::LPTSTRToCString( lpstr );
+        return primitive::String{ cstr };
     }
 }

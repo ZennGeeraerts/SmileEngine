@@ -32,7 +32,7 @@ namespace smile::graphic::rhi
                 if ( FAILED( result ) )
                 {
                     SM_LOG_ERROR(
-                        "D3D11Shader::Create > Failed to create shader: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+                        "D3D11Shader::Create > Failed to create shader: {}", GetD3DErrorMessageString( result ) );
                 }
 
                 break;
@@ -45,7 +45,7 @@ namespace smile::graphic::rhi
                 if ( FAILED( result ) )
                 {
                     SM_LOG_ERROR(
-                        "D3D11Shader::Create > Failed to create shader: {}", fmt::ptr( GetD3DErrorMessage( result ) ) );
+                        "D3D11Shader::Create > Failed to create shader: {}", GetD3DErrorMessageString( result ) );
                 }
 
                 break;
