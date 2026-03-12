@@ -73,6 +73,6 @@ namespace smile::graphic::rhi
 
     void D3D11DepthStencilState::Destroy()
     {
-        SAFE_RELEASE( pInternal );
+        pInternal.Reset();
     }
 }

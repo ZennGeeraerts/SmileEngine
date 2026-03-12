@@ -117,7 +117,7 @@ namespace smile::graphic::rhi
                         pSamplers[binding.Slot] == nullptr, "D3D11BindingSet::Create > Sampler slot is not nullptr" );
 
                     const D3D11Sampler &sampler = device.m_Samplers[binding.Sampler.GetIndex()];
-                    pSamplers[binding.Slot] = sampler.pInternal;
+                    pSamplers[binding.Slot] = sampler.pInternal.Get();
 
                     MinSamplerSlot = std::min( MinSamplerSlot, binding.Slot );
                     MaxSamplerSlot = std::max( MaxSamplerSlot, binding.Slot );

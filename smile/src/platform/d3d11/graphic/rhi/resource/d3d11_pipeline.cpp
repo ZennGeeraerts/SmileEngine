@@ -12,12 +12,12 @@ namespace smile::graphic::rhi
 {
     void D3D11Pipeline::Create( D3D11Device &device, const GraphicsPipelineDescriptor &desc )
     {
-        pInputLayout = device.GetOrCreateInputLayout( desc )->pInternal;
+        pInputLayout = device.GetOrCreateInputLayout( desc )->pInternal.Get();
         Layout = desc.InputLayout;
 
         PrimitiveTopology = ConvertToD3D11PrimitiveTopology( desc.Topology );
-        pRasterizerState = device.GetOrCreateRasterizerState( desc.State.RasterizerState )->pInternal;
-        pDepthStencilState = device.GetOrCreateDepthStencilState( desc.State.DepthStencilState )->pInternal;
+        pRasterizerState = device.GetOrCreateRasterizerState( desc.State.RasterizerState )->pInternal.Get();
+        pDepthStencilState = device.GetOrCreateDepthStencilState( desc.State.DepthStencilState )->pInternal.Get();
 
         ShaderMask = { ShaderStage::Unknown };
 
