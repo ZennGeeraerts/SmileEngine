@@ -13,6 +13,7 @@ set(DIRECTORIES
     input
     math
     project
+    signal
     window
     world
 )
