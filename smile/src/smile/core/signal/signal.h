@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        signal.h
+ * @author      Zenn Geeraerts
+ * @created     13 March 2026
+ * @brief       Send and receive messages
+ */
 #pragma once
 
 #include "smile/common/primitive/collection/vector.h"
@@ -44,6 +60,16 @@ namespace smile::signal
                     func( m_Calls[i - 1]( args... ) );
                 }
             }
+        }
+
+        [[nodiscard]] Count GetItemCount() const noexcept
+        {
+            return m_Calls.GetItemCount();
+        }
+
+        [[nodiscard]] bool IsEmpty() const noexcept
+        {
+            return m_Calls.IsEmpty();
         }
 
       private:
@@ -111,6 +137,11 @@ namespace smile::signal
         void Disconnect()
         {
             AssureSignal().m_Calls.Clear();
+        }
+
+        [[nodiscard]] bool IsEmpty() const noexcept
+        {
+            return m_Signal->m_Calls.IsEmpty();
         }
 
       private:
