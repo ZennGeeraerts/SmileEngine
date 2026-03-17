@@ -22,9 +22,12 @@ namespace smile::graphic
     static bool ValidateReflectionData( const ShaderReflectionData &vsReflection,
         const ShaderReflectionData &psReflection )
     {
-        if ( vsReflection.TargetProfile != psReflection.TargetProfile ||
-             vsReflection.BlobFormat != psReflection.BlobFormat )
+        if ( vsReflection.BlobFormat != psReflection.BlobFormat )
         {
+            SM_LOG_ERROR( "Program blob format mismatch: {0} and {1}",
+                ShaderBlobFormatToString( vsReflection.BlobFormat ),
+                ShaderBlobFormatToString( psReflection.BlobFormat ) );
+
             return false;
         }
 
@@ -35,6 +38,8 @@ namespace smile::graphic
 
         if ( !validSignature )
         {
+            SM_LOG_ERROR( "Program invalid signature: input signature of pixel shader is not compatible with output "
+                          "signature of vertex shader" );
             return false;
         }
 
@@ -63,6 +68,7 @@ namespace smile::graphic
 
         if ( !validResourceBindings )
         {
+            SM_LOG_ERROR( "Program resource binding slots do not match" );
             return false;
         }
 
@@ -118,7 +124,8 @@ namespace smile::graphic
         const ShaderReflectionData &vsReflection = vertexShader->GetReflectionData();
         const ShaderReflectionData &psReflection = pixelShader->GetReflectionData();
 
-        SM_ASSERT( ValidateReflectionData( vsReflection, psReflection ) );
+        if ( !ValidateReflectionData( vsReflection, psReflection ) )
+            return nullptr;
 
         primitive::Vector< Program::Resource > resources;
         primitive::HashMap< primitive::String, ConstantBufferDescriptor > cbDescs;

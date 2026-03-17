@@ -31,12 +31,12 @@ namespace smile::graphic
 
         const void *GetBuffer() const
         {
-            return m_pBuffer;
+            return m_Buffer.GetData();
         }
 
         void *GetBuffer()
         {
-            return m_pBuffer;
+            return m_Buffer.GetData();
         }
 
         rhi::GPUBufferHandle GetHandle() const
@@ -54,7 +54,7 @@ namespace smile::graphic
 
       private:
         rhi::GPUBufferHandle m_Handle;
-        void *m_pBuffer;
+        primitive::Vector< Byte > m_Buffer;
         ConstantBufferDescriptor m_Descriptor;
 
         friend class ResourceManager;

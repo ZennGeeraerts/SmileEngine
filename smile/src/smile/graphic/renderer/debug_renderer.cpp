@@ -9,6 +9,7 @@
 #include "resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "smile/graphic/shader/shader_asset.h"
+#include "shader/program.h"
 
 #include <DirectXColors.h>
 
@@ -24,7 +25,9 @@ namespace smile::graphic
 
         {
             auto vertexShaderAsset = shaderLibrary.GetShader( "debug_renderer.vs" );
-            auto pixelShaderAsset = shaderLibrary.GetShader( "col_tex.ps" );
+            auto pixelShaderAsset = shaderLibrary.GetShader( "pos_col.ps" );
+
+            auto program = Program::Create( vertexShaderAsset, pixelShaderAsset );
 
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::LineList;
@@ -122,6 +125,8 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &viewProjectionMatrix, viewProjectionMatrixMat );
 
         m_pCameraCB->Update( &viewProjectionMatrix );
+
+        CreateFixedLineList();
     }
 
     void DebugRenderer::OnRender( Framebuffer::Ref framebuffer )

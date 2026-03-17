@@ -32,9 +32,6 @@ namespace smile::graphic
         memory::Ref< ShaderAsset > LoadShader( const std::filesystem::path &path ) const;
 
       private:
-        bool DeserializeReflectionData( const std::string &yamlContent, ShaderReflectionData &reflectionData ) const;
-
-      private:
         const std::vector< std::filesystem::path > m_Extensions{ ".smshader" };
     };
 }

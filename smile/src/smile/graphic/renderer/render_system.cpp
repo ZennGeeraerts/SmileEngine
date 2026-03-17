@@ -114,8 +114,11 @@ namespace smile::graphic
             graphicsState.VertexBuffers.PushBack( std::move( vertexBufferBinding ) );
         }
 
-        graphicsState.IndexBuffer = rhi::IndexBufferBinding{
-            state.IndexBuffer.pIndexBuffer->GetHandle(), state.IndexBuffer.BufferFormat, state.IndexBuffer.Offset };
+        if ( state.IndexBuffer.pIndexBuffer )
+        {
+            graphicsState.IndexBuffer = rhi::IndexBufferBinding{
+                state.IndexBuffer.pIndexBuffer->GetHandle(), state.IndexBuffer.BufferFormat, state.IndexBuffer.Offset };
+        }
 
         m_pImmediateCommandList->SetGraphicsState( graphicsState );
     }

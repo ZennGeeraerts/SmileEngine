@@ -8,13 +8,14 @@
 namespace smile::graphic
 {
     ConstantBuffer::ConstantBuffer( rhi::GPUBufferHandle handle, const ConstantBufferDescriptor &desc )
-        : m_Handle{ handle }, m_pBuffer{ nullptr }, m_Descriptor{ desc }
+        : m_Handle{ handle }, m_Descriptor{ desc }
     {
+        m_Buffer.SetItemCount( m_Descriptor.GetSize() );
     }
 
     void ConstantBuffer::UpdateBuffer( void *pBuffer, const Count size )
     {
         SM_ASSERT( size <= m_Descriptor.GetSize() );
-        m_pBuffer = pBuffer;
+        std::memcpy( m_Buffer.GetData(), pBuffer, size );
     }
 }
