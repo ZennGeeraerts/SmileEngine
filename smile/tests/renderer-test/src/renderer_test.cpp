@@ -14,29 +14,32 @@
  * @created     10 March 2026
  * @brief       Renderer test application
  */
-#include "renderer_test.h"
 
 #include "smile/common/platform/executable_path.h"
 #include "smile/core/application/entry_point.h"
+#include "smile/core/application/application.h"
 #include "renderer_test_layer.h"
 
 namespace smile
 {
+    class RendererTest final : public application::Application
+    {
+      public:
+        RendererTest( const application::ApplicationDescriptor &descriptor ) : application::Application{ descriptor }
+        {
+            PushLayer( new graphic::RendererTestLayer{} );
+        }
+    };
+
     application::Application *application::CreateApplication( application::ApplicationCommandLineArgs commandLineArgs )
     {
         smile::application::ApplicationDescriptor descriptor{};
-        descriptor.Name = "RHI Test";
+        descriptor.Name = "Renderer Test";
         descriptor.WorkingDirectory = platform::GetExecutablePath().GetDirectory();
         descriptor.CommandLineArgs = commandLineArgs;
 
         // This application will get passed to the entry point of the engine
         // and will be deleted once the engine closes
         return new RendererTest{ descriptor };
-    }
-
-    RendererTest::RendererTest( const application::ApplicationDescriptor &descriptor )
-        : application::Application{ descriptor }
-    {
-        PushLayer( new graphic::RendererTestLayer{} );
     }
 }
