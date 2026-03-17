@@ -65,7 +65,7 @@ namespace smile::graphic::rhi
         FramebufferInfoExtented() = default;
         FramebufferInfoExtented( const FramebufferDescriptor &desc );
 
-        [[nodiscard]] Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f )
+        [[nodiscard]] Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const
         {
             return Viewport{ 0.0f, static_cast< float >( Width ), 0.0f, static_cast< float >( Height ), minZ, maxZ };
         }

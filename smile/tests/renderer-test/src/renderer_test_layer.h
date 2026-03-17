@@ -36,5 +36,6 @@ namespace smile::graphic
 
       private:
         Camera m_Camera;
+        DirectX::XMFLOAT4X4 m_CameraTransform;
     };
 }

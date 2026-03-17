@@ -7,6 +7,7 @@
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/rhi/resource/frame_buffer.h"
 #include "frame_buffer_attachment.h"
 
 namespace smile::graphic
@@ -18,8 +19,12 @@ namespace smile::graphic
 
         Framebuffer( rhi::FramebufferHandle handle,
             const primitive::Vector< FramebufferAttachment > &colorAttachments,
-            const FramebufferAttachment &depthAttachment )
-            : m_Handle{ handle }, m_ColorAttachments{ colorAttachments }, m_DepthAttachment{ depthAttachment }
+            const FramebufferAttachment &depthAttachment,
+            const rhi::FramebufferInfoExtented &info )
+            : m_Handle{ handle },
+              m_ColorAttachments{ colorAttachments },
+              m_DepthAttachment{ depthAttachment },
+              m_Info{ info }
         {
         }
 
@@ -45,10 +50,16 @@ namespace smile::graphic
             return m_DepthAttachment;
         }
 
+        [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const
+        {
+            return m_Info.GetViewport( minZ, maxZ );
+        }
+
       private:
         rhi::FramebufferHandle m_Handle;
         primitive::Vector< FramebufferAttachment > m_ColorAttachments;
         FramebufferAttachment m_DepthAttachment;
+        rhi::FramebufferInfoExtented m_Info;
 
         friend class ResourceManager;
     };

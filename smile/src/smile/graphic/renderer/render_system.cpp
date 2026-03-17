@@ -86,11 +86,13 @@ namespace smile::graphic
     void RenderSystem::BeginFrame()
     {
         m_CurrentFrameIndex = AssignFrameData();
+        m_pImmediateCommandList->Open();
     }
 
     void RenderSystem::EndFrame()
     {
         Present();
+        m_pImmediateCommandList->Close();
         ReleaseFrameData( m_RenderedFrameIndex );
         m_RenderedFrameIndex = m_CurrentFrameIndex;
     }
@@ -100,6 +102,7 @@ namespace smile::graphic
         rhi::GraphicsState graphicsState{};
         graphicsState.Pipeline = state.pPipeline->GetHandle();
         graphicsState.Framebuffer = state.pFramebuffer->GetHandle();
+        graphicsState.Viewport.Viewports.PushBack( state.pFramebuffer->GetViewport( 0.0f, 1.0f ) );
 
         for ( const auto &pBinding : state.pBindings )
         {

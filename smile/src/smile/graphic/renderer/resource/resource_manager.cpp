@@ -198,7 +198,7 @@ namespace smile::graphic
         auto pTexture = memory::CreateRef< Texture >( handle, width, height, textureDesc.TextureFormat );
         m_pTextures.PushBack( pTexture );
 
-        return FramebufferAttachment{ pTexture, textureDesc.TextureFormat, true };
+        return FramebufferAttachment{ pTexture, textureDesc.TextureFormat, false };
     }
 
     ConstantBuffer::Ref ResourceManager::CreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
@@ -299,6 +299,8 @@ namespace smile::graphic
             rhi::TextureDescriptor colorDesc;
             colorDesc.TextureFormat = attachment.TextureFormat;
             colorDesc.CPUAccess = attachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+            colorDesc.Width = attachment.pTexture->GetWidth();
+            colorDesc.Height = attachment.pTexture->GetHeight();
 
             desc.ColorAttachments.PushBack( rhi::FramebufferAttachment{ attachment.pTexture->GetHandle(), colorDesc } );
         }
@@ -307,14 +309,18 @@ namespace smile::graphic
             rhi::TextureDescriptor depthDesc;
             depthDesc.TextureFormat = depthAttachment.TextureFormat;
             depthDesc.CPUAccess = depthAttachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+            depthDesc.Width = depthAttachment.pTexture->GetWidth();
+            depthDesc.Height = depthAttachment.pTexture->GetHeight();
 
             desc.DepthAttachment = rhi::FramebufferAttachment{ depthAttachment.pTexture->GetHandle(), depthDesc };
         }
 
+        rhi::FramebufferInfoExtented info{ desc }; // TODO: Maybe query device for this?
+
         rhi::FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
         m_pDevice->CreateFramebuffer( handle, desc );
 
-        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle, colorAttachments, depthAttachment );
+        auto pFramebuffer = memory::CreateRef< Framebuffer >( handle, colorAttachments, depthAttachment, info );
         m_pFramebuffers.PushBack( pFramebuffer );
         return pFramebuffer;
     }
