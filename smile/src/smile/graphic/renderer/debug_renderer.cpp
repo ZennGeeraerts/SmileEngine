@@ -80,9 +80,9 @@ namespace smile::graphic
             // Vertical
             const float lineOffset = startOffset + gridSpacing * i;
             auto vertStart = DirectX::XMFLOAT3( startOffset, 0, lineOffset );
-            m_LineList.PushBack( VertexPosCol{ vertStart, gridColor } );
+            m_LineList.EmplaceBack( vertStart, gridColor );
             vertStart.x += size;
-            m_LineList.PushBack( VertexPosCol{ vertStart, gridColor } );
+            m_LineList.EmplaceBack( vertStart, gridColor );
 
             // Horizontal
             vertStart = DirectX::XMFLOAT3( lineOffset, 0, startOffset );
@@ -92,18 +92,18 @@ namespace smile::graphic
         }
 
         // Axis
-        m_LineList.PushBack( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) } );
-        m_LineList.PushBack( VertexPosCol{
-            DirectX::XMFLOAT3( 30, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) } );
-        m_LineList.PushBack( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) } );
-        m_LineList.PushBack( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 30, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) } );
-        m_LineList.PushBack( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) } );
-        m_LineList.PushBack( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 30 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) } );
+        m_LineList.EmplaceBack(
+            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) );
+        m_LineList.EmplaceBack(
+            DirectX::XMFLOAT3( 30, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) );
+        m_LineList.EmplaceBack(
+            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) );
+        m_LineList.EmplaceBack(
+            DirectX::XMFLOAT3( 0, 30, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) );
+        m_LineList.EmplaceBack(
+            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) );
+        m_LineList.EmplaceBack(
+            DirectX::XMFLOAT3( 0, 0, 30 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) );
     }
 
     void DebugRenderer::CreateVertexBuffer()
@@ -150,7 +150,7 @@ namespace smile::graphic
         GraphicsState state{};
         state.pFramebuffer = framebuffer;
         state.pPipeline = m_pPipeline;
-        state.VertexBuffers.PushBack( VertexBufferBinding{ m_pVertexBuffer, 0, 0 } );
+        state.VertexBuffers.EmplaceBack( m_pVertexBuffer, 0u, 0u );
         state.pBindings.PushBack( m_pBindingSet );
 
         renderSystem.SetGraphicsState( state );
@@ -166,8 +166,8 @@ namespace smile::graphic
         const DirectX::XMFLOAT3 &end,
         const DirectX::XMFLOAT4 &color )
     {
-        m_LineList.PushBack( VertexPosCol{ start, color } );
-        m_LineList.PushBack( VertexPosCol{ end, color } );
+        m_LineList.EmplaceBack( start, color );
+        m_LineList.EmplaceBack( end, color );
     }
 
     void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
@@ -175,7 +175,7 @@ namespace smile::graphic
         const DirectX::XMFLOAT4 &colorStart,
         const DirectX::XMFLOAT4 &colorEnd )
     {
-        m_LineList.PushBack( VertexPosCol{ start, colorStart } );
-        m_LineList.PushBack( VertexPosCol{ end, colorEnd } );
+        m_LineList.EmplaceBack( start, colorStart );
+        m_LineList.EmplaceBack( end, colorEnd );
     }
 }

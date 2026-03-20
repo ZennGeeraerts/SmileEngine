@@ -9,7 +9,7 @@
 namespace smile::graphic
 {
     class ShaderAsset;
-    class ShaderReflectionData;
+    struct ShaderReflectionData;
 
     class ShaderLoader final : public asset::AssetLoader
     {
