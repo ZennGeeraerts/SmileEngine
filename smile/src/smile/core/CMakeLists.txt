@@ -10,6 +10,7 @@ set(DIRECTORIES
     ecs
     fs
     geometric
+    graph
     input
     math
     project
