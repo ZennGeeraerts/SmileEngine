@@ -5,12 +5,13 @@
 #pragma once
 #include "render_pass.h"
 
-namespace smile::graphic::ecs
+namespace smile::graphic
 {
     class DebugRenderPass final : public RenderPass
     {
       public:
-        DebugRenderPass() = default;
+        DebugRenderPass();
+        ~DebugRenderPass();
 
         DebugRenderPass( const DebugRenderPass & ) = delete;
         DebugRenderPass( DebugRenderPass && ) = delete;

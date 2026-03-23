@@ -7,17 +7,24 @@
 
 #include "smile/graphic/renderer/debug_renderer.h"
 
-namespace smile::graphic::ecs
+namespace smile::graphic
 {
+    DebugRenderPass::DebugRenderPass()
+    {
+        DebugRenderer::CreateInstance();
+        DebugRenderer::GetInstance().Initialize();
+    }
+
+    DebugRenderPass::~DebugRenderPass()
+    {
+        DebugRenderer::GetInstance().ShutDown();
+        DebugRenderer::RemoveInstance();
+    }
+
     void DebugRenderPass::OnRender( Framebuffer::Ref framebuffer,
         const Camera &camera,
         const DirectX::XMFLOAT4X4 &cameraTransform )
     {
-        auto &debugRenderer = DebugRenderer::GetInstance();
-        debugRenderer.BeginScene( camera, cameraTransform );
-
-        debugRenderer.OnRender( framebuffer );
-
-        debugRenderer.EndScene();
+        DebugRenderer::GetInstance().OnRender( framebuffer, camera, cameraTransform );
     }
 }

@@ -18,15 +18,16 @@
 
 #include "smile/core/application/application.h"
 
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/debug_renderer.h"
+#include "smile/graphic/renderer/renderer.h"
+#include "smile/graphic/renderer/debug_render_pass.h"
 
 namespace smile::graphic
 {
     void RendererTestLayer::OnAttach()
     {
         auto &window = application::Application::GetInstance().GetMainWindow();
-        RenderEngine::Initialize( &window );
+        Renderer::Initialize( &window );
+        Renderer::GetRenderPassList().PushBack( memory::CreateRef< DebugRenderPass >() );
 
         m_Camera = { DirectX::XMMatrixPerspectiveFovLH( DirectX::XMConvertToRadians( 30.f ), 1.778f, 0.1f, 2500.f ) };
 
@@ -38,24 +39,12 @@ namespace smile::graphic
 
     void RendererTestLayer::OnDetach()
     {
-        RenderEngine::ShutDown();
+        Renderer::ShutDown();
     }
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &renderSystem = RenderEngine::GetRenderSystem();
-        auto &debugRenderer = DebugRenderer::GetInstance();
-
-        renderSystem.Clear(
-            renderSystem.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
-
-        renderSystem.BeginFrame();
-
-        debugRenderer.BeginScene( m_Camera, m_CameraTransform );
-        debugRenderer.OnRender( renderSystem.GetBackBuffer() );
-        debugRenderer.EndScene();
-
-        renderSystem.EndFrame();
+        Renderer::OnRender( m_Camera, m_CameraTransform );
     }
 
     void RendererTestLayer::OnEvent( window::Event &event )

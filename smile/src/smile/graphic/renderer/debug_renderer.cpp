@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "debug_renderer.h"
 
-#include "render_engine.h"
+#include "renderer.h"
 #include "resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "smile/graphic/shader/shader_asset.h"
@@ -17,8 +17,8 @@ namespace smile::graphic
 {
     void DebugRenderer::Initialize()
     {
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
-        const auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+        auto &resourceManager = Renderer::GetRenderSystem().GetResourceManager();
+        const auto &shaderLibrary = Renderer::GetShaderLibrary();
 
         rhi::BufferLayout vertexLayout{
             { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
@@ -110,11 +110,13 @@ namespace smile::graphic
     {
         const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
 
-        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer(
-            m_VertexCount, vertexLayout );
+        m_pVertexBuffer =
+            Renderer::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
     }
 
-    void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    void DebugRenderer::OnRender( Framebuffer::Ref framebuffer,
+        const Camera &camera,
+        const DirectX::XMFLOAT4X4 &cameraTransform )
     {
         auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
         auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
@@ -127,10 +129,7 @@ namespace smile::graphic
         m_pCameraCB->Update( &viewProjectionMatrix );
 
         CreateFixedLineList();
-    }
 
-    void DebugRenderer::OnRender( Framebuffer::Ref framebuffer )
-    {
         const Count vertexCount = m_LineList.GetItemCount();
 
         if ( vertexCount <= 0 )
@@ -142,7 +141,7 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
+        RenderSystem &renderSystem = Renderer::GetRenderSystem();
 
         renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
         renderSystem.FillConstantBuffer( m_pCameraCB );
@@ -155,10 +154,7 @@ namespace smile::graphic
 
         renderSystem.SetGraphicsState( state );
         renderSystem.Draw( vertexCount );
-    }
 
-    void DebugRenderer::EndScene()
-    {
         m_LineList.Clear();
     }
 
