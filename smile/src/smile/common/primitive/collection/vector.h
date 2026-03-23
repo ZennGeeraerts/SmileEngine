@@ -49,6 +49,17 @@ namespace smile::primitive
             m_ItemCount = itemCount;
         }
 
+        explicit Vector( const Count itemCount, const Item &defaultValue ) : m_pItems{ nullptr }, m_ItemCount{ 0 }
+        {
+            Reserve( itemCount );
+            m_ItemCount = itemCount;
+
+            for ( Index index{ 0 }; index < itemCount; ++index )
+            {
+                new ( m_pItems + index, memory::g_pInPlace ) Item{ defaultValue };
+            }
+        }
+
         Vector( const Item *pOther, const Count itemCount ) : m_pItems{ nullptr }, m_ItemCount{ 0 }
         {
             Reserve( itemCount );
