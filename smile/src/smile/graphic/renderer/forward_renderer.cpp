@@ -1,0 +1,119 @@
+/*=============================================================================*/
+// Copyright 2022-2023 Smile Engine
+// Authors: Zenn Geeraerts
+/*=============================================================================*/
+#include "smpch.h"
+#include "forward_renderer.h"
+
+#include "render_engine.h"
+#include "material/material_system.h"
+
+namespace smile::graphic
+{
+    void ForwardRenderer::Initialize()
+    {
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+    }
+
+    void ForwardRenderer::SetupMaterial( Material::ConstRef material,
+        const rhi::RenderState &renderState,
+        GraphicsState &graphicsState )
+    {
+        PipelineKey key{ material, renderState };
+
+        auto it = m_Pipelines.FindItemAtKey( key );
+        if ( it == m_Pipelines.end() )
+        {
+            it = CreatePipeline( material, renderState );
+        }
+
+        graphicsState.pPipeline = it.GetItem();
+
+        const auto &materialData = MaterialSystem::GetInstance().GetMaterialData( material );
+        graphicsState.pBindings.PushBack( materialData.Bindings );
+    }
+
+    primitive::HashMap< ForwardRenderer::PipelineKey, GraphicsPipeline::Ref >::Iterator
+    ForwardRenderer::CreatePipeline( Material::ConstRef material, const rhi::RenderState &renderState )
+    {
+        const auto &materialData = MaterialSystem::GetInstance().GetMaterialData( material );
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+
+        GraphicsPipelineDescriptor psoDesc{};
+        psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
+        psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
+        psoDesc.pVertexShader =
+            resourceManager.CreateVertexShader( materialData.ShaderProgram->GetVertexShader() ); // TODO: Get or create
+        psoDesc.pPixelShader =
+            resourceManager.CreatePixelShader( materialData.ShaderProgram->GetPixelShader() ); // TODO: Get or create
+
+        auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
+        bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+        psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
+        psoDesc.BindingLayouts.PushBack( materialData.Bindings->GetLayout() );
+
+        psoDesc.RenderState.RasterizerState.CullMode = rhi::CullMode::Front;
+
+        auto pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
+        return m_Pipelines.Insert( PipelineKey{ material, renderState }, std::move( pipeline ) );
+    }
+
+    void ForwardRenderer::ShutDown()
+    {
+        ClearDrawList();
+    }
+
+    void ForwardRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    {
+        auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
+        auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
+        auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
+        auto viewProjectionMatrixMat = DirectX::XMMatrixTranspose( viewMatrixMat * projectionMatrixMat );
+
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewInverseMatrix, cameraTransformMat );
+
+        m_pCameraCB->Update( &m_RenderCollector.View );
+    }
+
+    void ForwardRenderer::Submit( const DrawCommand &drawItem )
+    {
+        m_RenderCollector.DrawList.PushBack( drawItem );
+    }
+
+    void ForwardRenderer::Submit( DrawCommand &&drawItem )
+    {
+        m_RenderCollector.DrawList.EmplaceBack( std::move( drawItem ) );
+    }
+
+    void ForwardRenderer::OnRender( Framebuffer::Ref framebuffer )
+    {
+        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
+
+        renderSystem.FillConstantBuffer( m_pCameraCB );
+
+        for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
+        {
+            GraphicsState state{};
+            state.pFramebuffer = framebuffer;
+            state.VertexBuffers.PushBack( { drawCommand.pVertexBuffer, 0u, 0u } );
+            state.IndexBuffer = IndexBufferBinding{ drawCommand.pIndexBuffer, rhi::Format::R32_UINT, 0u };
+
+            SetupMaterial( drawCommand.Material, drawCommand.RenderState, state );
+
+            renderSystem.SetGraphicsState( state );
+            renderSystem.DrawIndexed( drawCommand.pIndexBuffer->GetIndexCount() );
+        }
+    }
+
+    void ForwardRenderer::EndScene()
+    {
+        ClearDrawList();
+    }
+
+    void ForwardRenderer::ClearDrawList()
+    {
+        m_RenderCollector.DrawList.Clear();
+    }
+}

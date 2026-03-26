@@ -66,13 +66,13 @@ namespace smile::graphic
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        VertexShader::Ref CreateVertexShader( ShaderAsset::Ref shaderAsset );
+        VertexShader::Ref CreateVertexShader( ShaderAsset::ConstRef shaderAsset );
 
         PixelShader::Ref CreatePixelShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        PixelShader::Ref CreatePixelShader( ShaderAsset::Ref shaderAsset );
+        PixelShader::Ref CreatePixelShader( ShaderAsset::ConstRef shaderAsset );
 
         Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );

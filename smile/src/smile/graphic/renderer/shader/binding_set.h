@@ -29,6 +29,11 @@ namespace smile::graphic
             return m_Handle;
         }
 
+        const rhi::BindingLayout &GetLayout() const
+        {
+            return m_Layout;
+        }
+
         bool IsValid() const
         {
             return m_Handle.IsValid();

@@ -233,7 +233,7 @@ namespace smile::graphic
         return pVertexShader;
     }
 
-    VertexShader::Ref ResourceManager::CreateVertexShader( ShaderAsset::Ref shaderAsset )
+    VertexShader::Ref ResourceManager::CreateVertexShader( ShaderAsset::ConstRef shaderAsset )
     {
         const auto &reflectionData = shaderAsset->GetReflectionData();
 
@@ -265,7 +265,7 @@ namespace smile::graphic
         return pPixelShader;
     }
 
-    PixelShader::Ref ResourceManager::CreatePixelShader( ShaderAsset::Ref shaderAsset )
+    PixelShader::Ref ResourceManager::CreatePixelShader( ShaderAsset::ConstRef shaderAsset )
     {
         const auto &reflectionData = shaderAsset->GetReflectionData();
 

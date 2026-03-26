@@ -6,30 +6,33 @@
 
 #include "resource/vertex_buffer.h"
 #include "resource/index_buffer.h"
-#include "shader/vertex_shader.h"
-#include "shader/pixel_shader.h"
+#include "material/material.h"
 
-#include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
+#include "smile/graphic/rhi/render_state.h"
 
 #include <DirectXMath.h>
 
 namespace smile::graphic
 {
+    struct View final
+    {
+        DirectX::XMFLOAT4X4 ViewInverseMatrix;
+        DirectX::XMFLOAT4X4 ViewProjectionMatrix;
+    };
+
     struct DrawCommand final
     {
         VertexBuffer::Ref pVertexBuffer;
         IndexBuffer::Ref pIndexBuffer;
-        VertexShader::Ref pVertexShader;
-        PixelShader::Ref pPixelShader;
+        Material::ConstRef Material;
         DirectX::XMFLOAT4X4 WorldTransform;
+        rhi::RenderState RenderState;
     };
 
     struct RenderCollector final
     {
-        DirectX::XMFLOAT4X4 ViewInverseMatrix;
-        DirectX::XMFLOAT4X4 ViewProjectionMatrix;
-
+        View View;
         primitive::Vector< DrawCommand > DrawList;
     };
 }
