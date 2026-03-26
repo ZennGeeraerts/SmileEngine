@@ -110,6 +110,16 @@ namespace smile::graphic::rhi
         {
             return lhs.GetHashCode() == rhs.GetHashCode();
         }
+
+        bool operator==( const RenderState &other ) const noexcept
+        {
+            return RasterizerState == other.RasterizerState && DepthStencilState == other.DepthStencilState;
+        }
+
+        bool operator!=( const RenderState &other ) const noexcept
+        {
+            return !( *this == other );
+        }
     };
 }
 

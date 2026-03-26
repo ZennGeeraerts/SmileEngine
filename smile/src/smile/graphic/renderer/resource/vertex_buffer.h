@@ -14,6 +14,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< VertexBuffer >;
+        using ConstRef = memory::Ref< const VertexBuffer >;
 
         VertexBuffer( rhi::GPUBufferHandle handle, const rhi::BufferLayout &layout, const Count vertexCount )
             : m_Handle{ handle }, m_BufferLayout{ layout }, m_VertexCount{ vertexCount }

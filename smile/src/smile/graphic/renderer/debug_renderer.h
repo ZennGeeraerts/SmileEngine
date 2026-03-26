@@ -4,9 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/singleton.h"
+#include "smile/common/foundation/meyers_singleton.h"
 #include "smile/common/primitive/collection/vector.h"
-#include "smile/common/memory/counted.h"
 
 #include "camera.h"
 #include "resource/graphics_pipeline.h"
@@ -17,13 +16,15 @@
 
 namespace smile::graphic
 {
-    class DebugRenderer final : public foundation::Singleton< DebugRenderer >, public memory::Counted
+    class DebugRenderer final : public foundation::MeyersSingleton< DebugRenderer >
     {
       public:
         void Initialize();
         void ShutDown();
 
-        void OnRender( Framebuffer::Ref framebuffer, const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
+        void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
+        void OnRender( Framebuffer::Ref framebuffer );
+        void EndScene();
 
         void SubmitLine( const DirectX::XMFLOAT3 &start, const DirectX::XMFLOAT3 &end, const DirectX::XMFLOAT4 &color );
         void SubmitLine( const DirectX::XMFLOAT3 &start,

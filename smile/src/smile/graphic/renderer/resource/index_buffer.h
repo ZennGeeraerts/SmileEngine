@@ -13,6 +13,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< IndexBuffer >;
+        using ConstRef = memory::Ref< const IndexBuffer >;
 
         IndexBuffer( rhi::GPUBufferHandle handle, const Count indexCount )
             : m_Handle{ handle }, m_IndexCount{ indexCount }
