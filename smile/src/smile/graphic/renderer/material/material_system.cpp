@@ -36,6 +36,9 @@ namespace smile::graphic
         const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
         data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
 
+        m_Materials[id.GetIndex()] = material;
+        m_MaterialData[id.GetIndex()] = std::move( data );
+
         return material;
     }
 
@@ -46,10 +49,12 @@ namespace smile::graphic
 
     void MaterialSystem::Update()
     {
-        for ( const auto &material : m_Materials )
+        for ( const auto &materialID : m_IDManager )
         {
-            if ( !m_IDManager.IsHandleActive( material->GetID() ) )
+            if ( !m_IDManager.IsHandleActive( materialID ) )
                 continue;
+
+            Material::Ref material = m_Materials[materialID.GetIndex()];
 
             auto dirtyFlags = material->GetDirtyFlags();
             if ( dirtyFlags.Has( Material::DirtyFlags::Parameter ) )
@@ -78,13 +83,33 @@ namespace smile::graphic
         for ( const auto &param : layout.Parameters )
         {
             const auto &value = desc.Parameters.GetItemAtKey( param.Name );
-            const auto &valueData = std::get< primitive::Vector< Byte > >( value );
 
-            SM_ASSERT( param.Size == valueData.GetItemCount() );
+            std::visit(
+                [&]( const auto &val )
+                {
+                    using ValueType = std::decay_t< decltype( val ) >;
 
-            memory::CopyArrayItems( reinterpret_cast< Byte * >( data.ConstantBuffer->GetBuffer() ) + param.Offset,
-                param.Size,
-                valueData.GetData() );
+                    if constexpr ( std::is_same_v< ValueType, primitive::Vector< Byte > > )
+                    {
+                        SM_ASSERT( param.Size == val.GetItemCount() );
+
+                        memory::CopyArrayItems(
+                            reinterpret_cast< Byte * >( data.ConstantBuffer->GetBuffer() ) + param.Offset,
+                            param.Size,
+                            val.GetData() );
+                    }
+                    else if constexpr ( std::is_trivially_copyable_v< ValueType > )
+                    {
+                        std::memcpy( reinterpret_cast< Byte * >( data.ConstantBuffer->GetBuffer() ) + param.Offset,
+                            &val,
+                            param.Size );
+                    }
+                    else
+                    {
+                        static_assert( false, "Type not supported" );
+                    }
+                },
+                value );
         }
 
         RenderEngine::GetRenderSystem().FillConstantBuffer( data.ConstantBuffer );
@@ -103,9 +128,12 @@ namespace smile::graphic
         for ( const auto &textureBinding : layout.Textures )
         {
             Texture::Ref texture = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
-
-            bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
-                textureBinding.Slot, texture->GetHandle(), texture->GetFormat() ) );
+            
+            if ( texture )
+            {
+                bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
+                    textureBinding.Slot, texture->GetHandle(), texture->GetFormat() ) );
+            }
         }
 
         auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();

@@ -20,6 +20,7 @@
 #include "smile/core/window/events/application_event.h"
 
 #include "smile/graphic/renderer/camera.h"
+#include "smile/graphic/renderer/material/material.h"
 
 namespace smile::graphic
 {
@@ -36,6 +37,8 @@ namespace smile::graphic
 
       private:
         Camera m_Camera;
-        DirectX::XMFLOAT4X4 m_CameraTransform;
+        DirectX::XMFLOAT4X4 m_CameraTransform{};
+
+        Material::Ref m_Material;
     };
 }

@@ -3,7 +3,7 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 
-cbuffer Material : register( b0 )
+cbuffer Material : register( b2 )
 {
     float3 Color;
     int UseTexture;

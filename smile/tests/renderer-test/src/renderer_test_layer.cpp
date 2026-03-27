@@ -20,6 +20,8 @@
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/debug_renderer.h"
+#include "smile/graphic/renderer/forward_renderer.h"
+#include "smile/graphic/renderer/material/material_system.h"
 
 namespace smile::graphic
 {
@@ -34,6 +36,28 @@ namespace smile::graphic
                                          DirectX::XMMatrixRotationRollPitchYaw( 0.0f, 0.0f, 0.0f ) *
                                          DirectX::XMMatrixTranslation( 0.0f, 2.0f, -10.0f );
         DirectX::XMStoreFloat4x4( &m_CameraTransform, transformMat );
+
+        {
+            MaterialLayout layout{};
+            layout.Parameters.EmplaceBack( "Color", MaterialParameterType::Float3, 0u, 12u );
+            layout.Parameters.EmplaceBack( "UseTexture", MaterialParameterType::Int, 12u, 4u );
+
+            layout.Textures.EmplaceBack( "Diffuse", 0u );
+
+            auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+            auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
+            auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
+
+            auto program = Program::Create( vertexShader, pixelShader );
+
+            MaterialDescriptor desc{};
+            desc.ShaderProgram = program;
+            desc.Parameters["Color"] = DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f };
+            desc.Parameters["UseTexture"] = 0;
+            desc.TextureBindings["Diffuse"] = nullptr;
+
+            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( layout, desc );
+        }
     }
 
     void RendererTestLayer::OnDetach()
@@ -45,6 +69,9 @@ namespace smile::graphic
     {
         auto &renderSystem = RenderEngine::GetRenderSystem();
         auto &debugRenderer = DebugRenderer::GetInstance();
+        auto &forwardRenderer = ForwardRenderer::GetInstance();
+
+        RenderEngine::GetMaterialSystem().Update();
 
         renderSystem.Clear(
             renderSystem.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
@@ -54,6 +81,10 @@ namespace smile::graphic
         debugRenderer.BeginScene( m_Camera, m_CameraTransform );
         debugRenderer.OnRender( renderSystem.GetBackBuffer() );
         debugRenderer.EndScene();
+
+        forwardRenderer.BeginScene( m_Camera, m_CameraTransform );
+        forwardRenderer.OnRender( renderSystem.GetBackBuffer() );
+        forwardRenderer.EndScene();
 
         renderSystem.EndFrame();
     }

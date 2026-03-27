@@ -29,7 +29,7 @@ namespace smile::graphic
     {
         struct Parameter final
         {
-            Parameter( const primitive::String &name, MaterialParameterType type, Uint32 offset, Count size )
+            Parameter( const primitive::String &name, MaterialParameterType type, Uint32 offset, Count size ) noexcept
                 : Name{ name }, Type{ type }, Offset{ offset }, Size{ size }
             {
             }
@@ -47,6 +47,10 @@ namespace smile::graphic
 
         struct Texture final
         {
+            Texture( const primitive::String &name, Uint32 slot ) noexcept : Name{ name }, Slot{ slot }
+            {
+            }
+
             primitive::String Name;
             Uint32 Slot;
 

@@ -16,7 +16,6 @@
  */
 #pragma once
 
-#include "smile/common/foundation/singleton.h"
 #include "smile/common/primitive/handle_manager.h"
 #include "smile/common/primitive/collection/array.h"
 
@@ -36,7 +35,7 @@ namespace smile::graphic
         BindingSet::Ref Bindings;
     };
 
-    class MaterialSystem final : public memory::Counted, public foundation::Singleton< MaterialSystem >
+    class MaterialSystem final
     {
       public:
         using IDManager = primitive::HandleManager< Uint32, 24, 8 >;

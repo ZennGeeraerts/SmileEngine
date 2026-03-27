@@ -14,6 +14,14 @@ namespace smile::graphic
     {
         DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
+
+        {
+            ConstantBufferDescriptor cameraCBDesc{};
+            cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
+            cameraCBDesc.Add( "ViewInverse", ConstantType::Mat4 );
+
+            m_pCameraCB = RenderEngine::GetRenderSystem().GetResourceManager().CreateConstantBuffer( cameraCBDesc );
+        }
     }
 
     void ForwardRenderer::SetupMaterial( Material::ConstRef material,
@@ -30,14 +38,14 @@ namespace smile::graphic
 
         graphicsState.pPipeline = it.GetItem();
 
-        const auto &materialData = MaterialSystem::GetInstance().GetMaterialData( material );
+        const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( material );
         graphicsState.pBindings.PushBack( materialData.Bindings );
     }
 
     primitive::HashMap< ForwardRenderer::PipelineKey, GraphicsPipeline::Ref >::Iterator
     ForwardRenderer::CreatePipeline( Material::ConstRef material, const rhi::RenderState &renderState )
     {
-        const auto &materialData = MaterialSystem::GetInstance().GetMaterialData( material );
+        const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( material );
         auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
 
         GraphicsPipelineDescriptor psoDesc{};

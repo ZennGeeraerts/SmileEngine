@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "render_engine.h"
 
-// #include "smile/graphic/scene/forward_renderer.h"
+#include "forward_renderer.h"
 // #include "wireframe_renderer.h"
 #include "debug_renderer.h"
 // #include "renderer_2d.h"
@@ -18,6 +18,7 @@ namespace smile::graphic
 {
     RenderSystem RenderEngine::s_RenderSystem{};
     ShaderLibrary RenderEngine::s_ShaderLibrary{};
+    MaterialSystem RenderEngine::s_MaterialSystem{};
 
     void RenderEngine::Initialize( const window::Window *pWindow )
     {
@@ -34,10 +35,12 @@ namespace smile::graphic
         s_ShaderLibrary.LoadShader( "resources/shaders/pbr_skinned.vs.smshader" );
 
         DebugRenderer::GetInstance().Initialize();
+        ForwardRenderer::GetInstance().Initialize();
     }
 
     void RenderEngine::ShutDown()
     {
         DebugRenderer::GetInstance().ShutDown();
+        ForwardRenderer::GetInstance().ShutDown();
     }
 }
