@@ -72,7 +72,7 @@ namespace smile::primitive
             return *this;
         }
 
-        ArrayIterator &operator++( int )
+        ArrayIterator operator++( int )
         {
             SM_ASSERT( m_Index < m_pCollection->GetItemCount() );
 
@@ -91,7 +91,7 @@ namespace smile::primitive
             return *this;
         }
 
-        ArrayIterator &operator--( int )
+        ArrayIterator operator--( int )
         {
             SM_ASSERT( m_Index > 0 );
 
@@ -141,6 +141,13 @@ namespace smile::primitive
             SM_ASSERT( m_pCollection->IsValidIndex( m_Index + offset ) );
 
             return ( *m_pCollection )[m_Index + offset];
+        }
+
+        typename std::conditional_t< IsConst, const ItemType, ItemType > *operator->() const
+        {
+            SM_ASSERT( m_pCollection->IsValidIndex( m_Index ) );
+
+            return &( ( *m_pCollection )[m_Index] );
         }
 
         Index GetIndex() const
