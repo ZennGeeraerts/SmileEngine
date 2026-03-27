@@ -15,12 +15,28 @@ namespace smile::graphic
         DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
         DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
 
+        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
             cameraCBDesc.Add( "ViewInverse", ConstantType::Mat4 );
 
-            m_pCameraCB = RenderEngine::GetRenderSystem().GetResourceManager().CreateConstantBuffer( cameraCBDesc );
+            m_pCameraCB = resourceManager.CreateConstantBuffer( cameraCBDesc );
+        }
+
+        {
+            ConstantBufferDescriptor perObjectCBDesc{};
+            perObjectCBDesc.Add( "World", ConstantType::Mat4 );
+
+            m_PerObjectCB = resourceManager.CreateConstantBuffer( perObjectCBDesc );
+        }
+
+        {
+            rhi::BindingSetDescriptor bindingSetDesc{
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_pCameraCB->GetHandle() ) },
+                { rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectCB->GetHandle() ) } };
+
+            m_pBindingSet = resourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
         }
     }
 
@@ -28,7 +44,7 @@ namespace smile::graphic
         const rhi::RenderState &renderState,
         GraphicsState &graphicsState )
     {
-        PipelineKey key{ material, renderState };
+        const PipelineKey key{ material, renderState };
 
         auto it = m_Pipelines.FindItemAtKey( key );
         if ( it == m_Pipelines.end() )
@@ -57,12 +73,14 @@ namespace smile::graphic
 
         psoDesc.pPixelShader = resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
 
-        auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
+        rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
         bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+        bindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
+
         psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
         psoDesc.BindingLayouts.PushBack( materialData.Bindings->GetLayout() );
 
-        psoDesc.RenderState.RasterizerState.CullMode = rhi::CullMode::Front;
+        psoDesc.RenderState = renderState;
 
         auto pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
         return m_Pipelines.Insert( PipelineKey{ material, renderState }, std::move( pipeline ) );
@@ -93,7 +111,7 @@ namespace smile::graphic
 
     void ForwardRenderer::Submit( DrawCommand &&drawItem )
     {
-        m_RenderCollector.DrawList.EmplaceBack( std::move( drawItem ) );
+        m_RenderCollector.DrawList.PushBack( std::move( drawItem ) );
     }
 
     void ForwardRenderer::OnRender( Framebuffer::Ref framebuffer )
@@ -104,10 +122,14 @@ namespace smile::graphic
 
         for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
         {
+            m_PerObjectCB->Update( &drawCommand.WorldTransform );
+            renderSystem.FillConstantBuffer( m_PerObjectCB );
+
             GraphicsState state{};
             state.pFramebuffer = framebuffer;
             state.VertexBuffers.PushBack( { drawCommand.pVertexBuffer, 0u, 0u } );
             state.IndexBuffer = IndexBufferBinding{ drawCommand.pIndexBuffer, rhi::Format::R32_UINT, 0u };
+            state.pBindings.PushBack( m_pBindingSet );
 
             SetupMaterial( drawCommand.Material, drawCommand.RenderState, state );
 

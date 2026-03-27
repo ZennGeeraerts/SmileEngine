@@ -122,6 +122,11 @@ namespace smile::graphic
             return m_DirtyFlags;
         }
 
+        void ClearDirtyFlags()
+        {
+            m_DirtyFlags.ClearAll();
+        }
+
       private:
         MaterialLayout m_Layout;
         MaterialDescriptor m_Descriptor;

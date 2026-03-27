@@ -71,6 +71,8 @@ namespace smile::graphic
         RenderCollector m_RenderCollector;
         primitive::HashMap< PipelineKey, GraphicsPipeline::Ref > m_Pipelines;
         ConstantBuffer::Ref m_pCameraCB;
+        ConstantBuffer::Ref m_PerObjectCB;
+        BindingSet::Ref m_pBindingSet;
     };
 }
 

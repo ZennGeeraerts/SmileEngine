@@ -69,7 +69,7 @@ namespace smile::graphic
 
             if ( dirtyFlags.HasAny( { Material::DirtyFlags::Parameter, Material::DirtyFlags::Texture } ) )
             {
-                dirtyFlags.ClearAll();
+                material->ClearDirtyFlags();
             }
         }
     }

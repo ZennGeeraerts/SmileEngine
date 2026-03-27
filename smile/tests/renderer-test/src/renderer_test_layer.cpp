@@ -44,6 +44,10 @@ namespace smile::graphic
 
             layout.Textures.EmplaceBack( "Diffuse", 0u );
 
+            layout.CbSlot = 2;
+            layout.CbSize = 16u;
+            layout.Visibility = { rhi::ShaderStage::Pixel };
+
             auto &shaderLibrary = RenderEngine::GetShaderLibrary();
             auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
             auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
@@ -57,6 +61,41 @@ namespace smile::graphic
             desc.TextureBindings["Diffuse"] = nullptr;
 
             m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( layout, desc );
+        }
+
+        {
+            const Count quadVerticesCount = 12;
+            float quadVertices[] = { -0.5f,
+                -0.5f,
+                0.0f,
+                -1,
+                -1,
+                /*1*/ -0.5f,
+                0.5f,
+                0.0f,
+                -1,
+                1,
+                /*2*/ 0.5f,
+                -0.5f,
+                0.0f,
+                1,
+                -1 /*3*/,
+                0.5f,
+                0.5f,
+                0.0f,
+                1,
+                1 /*4*/ };
+
+            auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+
+            m_VertexBuffer = resourceManager.CreateVertexBuffer( quadVertices,
+                quadVerticesCount,
+                { { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RG32_FLOAT, "TEXCOORD" } } );
+
+            const Count quadIndexCount = 6;
+            Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
+
+            m_IndexBuffer = resourceManager.CreateIndexBuffer( quadIndices, quadIndexCount );
         }
     }
 
@@ -72,6 +111,13 @@ namespace smile::graphic
         auto &forwardRenderer = ForwardRenderer::GetInstance();
 
         RenderEngine::GetMaterialSystem().Update();
+
+        DirectX::XMFLOAT4X4 worldTransform;
+        DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
+
+        rhi::RenderState renderState{};
+
+        forwardRenderer.Submit( { m_VertexBuffer, m_IndexBuffer, m_Material, worldTransform, renderState } );
 
         renderSystem.Clear(
             renderSystem.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );

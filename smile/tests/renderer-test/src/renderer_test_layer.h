@@ -20,6 +20,8 @@
 #include "smile/core/window/events/application_event.h"
 
 #include "smile/graphic/renderer/camera.h"
+#include "smile/graphic/renderer/resource/vertex_buffer.h"
+#include "smile/graphic/renderer/resource/index_buffer.h"
 #include "smile/graphic/renderer/material/material.h"
 
 namespace smile::graphic
@@ -39,6 +41,8 @@ namespace smile::graphic
         Camera m_Camera;
         DirectX::XMFLOAT4X4 m_CameraTransform{};
 
+        VertexBuffer::Ref m_VertexBuffer;
+        IndexBuffer::Ref m_IndexBuffer;
         Material::Ref m_Material;
     };
 }
