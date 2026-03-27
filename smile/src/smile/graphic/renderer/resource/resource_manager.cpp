@@ -221,6 +221,15 @@ namespace smile::graphic
         const primitive::String &entryPoint,
         const primitive::String &targetProfile )
     {
+        const ShaderKey key{ byteCode, entryPoint, targetProfile };
+
+        if ( m_VertexShaderCache.HasItemAtKey( key ) )
+        {
+            SM_LOG_ERROR( "ResourceManager::CreateVertexShader > Vertex shader with the same bytecode already exists "
+                          "in the cache" );
+            return nullptr;
+        }
+
         rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Vertex };
         shaderDesc.EntryPoint = entryPoint;
         shaderDesc.TargetProfile = targetProfile;
@@ -230,6 +239,8 @@ namespace smile::graphic
 
         auto pVertexShader = memory::CreateRef< VertexShader >( handle );
         m_pVertexShaders.PushBack( pVertexShader );
+        m_VertexShaderCache[key] = pVertexShader;
+
         return pVertexShader;
     }
 
@@ -237,22 +248,46 @@ namespace smile::graphic
     {
         const auto &reflectionData = shaderAsset->GetReflectionData();
 
-        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Vertex };
-        shaderDesc.EntryPoint = reflectionData.EntryPoint;
-        shaderDesc.TargetProfile = reflectionData.TargetProfile;
+        return CreateVertexShader(
+            shaderAsset->GetByteCode(), reflectionData.EntryPoint, reflectionData.TargetProfile );
+    }
 
-        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
-        m_pDevice->CreateShader( handle, shaderDesc, shaderAsset->GetByteCode() );
+    VertexShader::Ref ResourceManager::GetOrCreateVertexShader( const primitive::Vector< Byte > &byteCode,
+        const primitive::String &entryPoint,
+        const primitive::String &targetProfile )
+    {
+        const ShaderKey key{ byteCode, entryPoint, targetProfile };
+        auto it = m_VertexShaderCache.FindItemAtKey( key );
 
-        auto pVertexShader = memory::CreateRef< VertexShader >( handle );
-        m_pVertexShaders.PushBack( pVertexShader );
-        return pVertexShader;
+        if ( it != m_VertexShaderCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreateVertexShader( byteCode, entryPoint, targetProfile );
+    }
+
+    VertexShader::Ref ResourceManager::GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset )
+    {
+        const auto &reflectionData = shaderAsset->GetReflectionData();
+
+        return GetOrCreateVertexShader(
+            shaderAsset->GetByteCode(), reflectionData.EntryPoint, reflectionData.TargetProfile );
     }
 
     PixelShader::Ref ResourceManager::CreatePixelShader( const primitive::Vector< Byte > &byteCode,
         const primitive::String &entryPoint,
         const primitive::String &targetProfile )
     {
+        const ShaderKey key{ byteCode, entryPoint, targetProfile };
+
+        if ( m_PixelShaderCache.HasItemAtKey( key ) )
+        {
+            SM_LOG_ERROR( "ResourceManager::CreatePixelShader > Pixel shader with the same bytecode already exists in "
+                          "the cache" );
+            return nullptr;
+        }
+
         rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Pixel };
         shaderDesc.EntryPoint = entryPoint;
         shaderDesc.TargetProfile = targetProfile;
@@ -262,6 +297,8 @@ namespace smile::graphic
 
         auto pPixelShader = memory::CreateRef< PixelShader >( handle );
         m_pPixelShaders.PushBack( pPixelShader );
+        m_PixelShaderCache[key] = pPixelShader;
+
         return pPixelShader;
     }
 
@@ -269,16 +306,30 @@ namespace smile::graphic
     {
         const auto &reflectionData = shaderAsset->GetReflectionData();
 
-        rhi::ShaderDescriptor shaderDesc{ rhi::ShaderStage::Pixel };
-        shaderDesc.EntryPoint = reflectionData.EntryPoint;
-        shaderDesc.TargetProfile = reflectionData.TargetProfile;
+        return CreatePixelShader( shaderAsset->GetByteCode(), reflectionData.EntryPoint, reflectionData.TargetProfile );
+    }
 
-        rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
-        m_pDevice->CreateShader( handle, shaderDesc, shaderAsset->GetByteCode() );
+    PixelShader::Ref ResourceManager::GetOrCreatePixelShader( const primitive::Vector< Byte > &byteCode,
+        const primitive::String &entryPoint,
+        const primitive::String &targetProfile )
+    {
+        const ShaderKey key{ byteCode, entryPoint, targetProfile };
+        auto it = m_PixelShaderCache.FindItemAtKey( key );
 
-        auto pPixelShader = memory::CreateRef< PixelShader >( handle );
-        m_pPixelShaders.PushBack( pPixelShader );
-        return pPixelShader;
+        if ( it != m_PixelShaderCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreatePixelShader( byteCode, entryPoint, targetProfile );
+    }
+
+    PixelShader::Ref ResourceManager::GetOrCreatePixelShader( ShaderAsset::ConstRef shaderAsset )
+    {
+        const auto &reflectionData = shaderAsset->GetReflectionData();
+
+        return GetOrCreatePixelShader(
+            shaderAsset->GetByteCode(), reflectionData.EntryPoint, reflectionData.TargetProfile );
     }
 
     Framebuffer::Ref ResourceManager::CreateFramebuffer(

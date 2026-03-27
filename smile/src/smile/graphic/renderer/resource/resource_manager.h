@@ -68,11 +68,23 @@ namespace smile::graphic
 
         VertexShader::Ref CreateVertexShader( ShaderAsset::ConstRef shaderAsset );
 
+        VertexShader::Ref GetOrCreateVertexShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
+
+        VertexShader::Ref GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset );
+
         PixelShader::Ref CreatePixelShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
         PixelShader::Ref CreatePixelShader( ShaderAsset::ConstRef shaderAsset );
+
+        PixelShader::Ref GetOrCreatePixelShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
+
+        PixelShader::Ref GetOrCreatePixelShader( ShaderAsset::ConstRef shaderAsset );
 
         Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );
@@ -89,6 +101,39 @@ namespace smile::graphic
 
         rhi::Object GetShaderResourceView( Texture::ConstRef pTexture );
 
+        struct ShaderKey final
+        {
+            ShaderKey( const primitive::Vector< Byte > &byteCode,
+                const primitive::String &EntryPoint,
+                const primitive::String &targetProfile )
+                : ByteCode{ byteCode }, EntryPoint{ EntryPoint }, TargetProfile{ targetProfile }
+            {
+            }
+
+            bool operator==( const ShaderKey &other ) const
+            {
+                return primitive::array::IsEqual( ByteCode, other.ByteCode ) && EntryPoint == other.EntryPoint &&
+                       TargetProfile == other.TargetProfile;
+            }
+
+            bool operator!=( const ShaderKey &other ) const
+            {
+                return !( *this == other );
+            }
+
+            foundation::HashCode GetHashCode() const
+            {
+                foundation::HashCode hash = std::hash< primitive::Vector< Byte > >{}( ByteCode );
+                hash = foundation::HashCombine( hash, std::hash< primitive::String >{}( EntryPoint ) );
+                hash = foundation::HashCombine( hash, std::hash< primitive::String >{}( TargetProfile ) );
+                return hash;
+            }
+
+            primitive::Vector< Byte > ByteCode;
+            primitive::String EntryPoint;
+            primitive::String TargetProfile;
+        };
+
       private:
         rhi::GraphicsDevice *m_pDevice = nullptr;
 
@@ -103,6 +148,9 @@ namespace smile::graphic
         primitive::Vector< BindingSet::Ref > m_pBindingSets;
         primitive::Vector< GraphicsPipeline::Ref > m_pGraphicsPipelines;
 
+        primitive::HashMap< ShaderKey, VertexShader::Ref > m_VertexShaderCache;
+        primitive::HashMap< ShaderKey, PixelShader::Ref > m_PixelShaderCache;
+
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;
         rhi::SamplerHandlerManager m_SamplerHandleManager;
@@ -110,5 +158,17 @@ namespace smile::graphic
         rhi::ShaderHandleManager m_ShaderHandleManager;
         rhi::BindingSetHandleManager m_BindingSetHandleManager;
         rhi::GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::ResourceManager::ShaderKey >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::ResourceManager::ShaderKey &key ) const
+        {
+            return key.GetHashCode();
+        }
     };
 }

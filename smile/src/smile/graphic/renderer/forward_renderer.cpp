@@ -43,10 +43,11 @@ namespace smile::graphic
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
         psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
+
         psoDesc.pVertexShader =
-            resourceManager.CreateVertexShader( materialData.ShaderProgram->GetVertexShader() ); // TODO: Get or create
-        psoDesc.pPixelShader =
-            resourceManager.CreatePixelShader( materialData.ShaderProgram->GetPixelShader() ); // TODO: Get or create
+            resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
+
+        psoDesc.pPixelShader = resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
 
         auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
         bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
