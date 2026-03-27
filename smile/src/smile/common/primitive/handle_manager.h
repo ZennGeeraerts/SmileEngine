@@ -5,8 +5,8 @@
 #pragma once
 
 #include "handle.h"
+#include "collection/vector.h"
 
-#include <vector>
 #include <limits>
 
 namespace smile::primitive
@@ -19,20 +19,23 @@ namespace smile::primitive
 
         struct Iterator final
         {
-            Iterator( const std::vector< HandleType > &handles, typename std::vector< HandleType >::const_iterator it )
+            Iterator( const primitive::Vector< HandleType > &handles,
+                typename primitive::Vector< HandleType >::ConstIterator it ) noexcept
                 : Handles{ handles }, It{ it }
             {
             }
 
-            HandleType operator*() const
+            [[nodiscard]] const HandleType &operator*() const noexcept
             {
                 return *It;
             }
-            bool operator==( const Iterator &other ) const
+
+            bool operator==( const Iterator &other ) const noexcept
             {
                 return It == other.It;
             }
-            bool operator!=( const Iterator &other ) const
+
+            bool operator!=( const Iterator &other ) const noexcept
             {
                 return It != other.It;
             }
@@ -42,20 +45,20 @@ namespace smile::primitive
                 do
                 {
                     ++It;
-                } while ( It != Handles.end() &&
-                          ( It->GetIndex() > Handles.size() || Handles[It->GetIndex()].GetIndex() != It->GetIndex() ) );
+                } while ( It != Handles.end() && ( It->GetIndex() > Handles.GetItemCount() ||
+                                                     Handles[It->GetIndex()].GetIndex() != It->GetIndex() ) );
 
                 return *this;
             }
 
-            const std::vector< HandleType > &Handles;
-            typename std::vector< HandleType >::const_iterator It;
+            const primitive::Vector< HandleType > &Handles;
+            typename primitive::Vector< HandleType >::ConstIterator It;
         };
 
       public:
         HandleManager() = default;
 
-        HandleType CreateHandle()
+        HandleType CreateHandle() noexcept
         {
             if ( m_AvailableHandles > 0 )
             {
@@ -73,13 +76,13 @@ namespace smile::primitive
             else
             {
                 // Create new handle
-                HandleType handle{ static_cast< IndexType >( m_Handles.size() ), 0 };
-                m_Handles.push_back( handle );
+                HandleType handle{ static_cast< IndexType >( m_Handles.GetItemCount() ), 0 };
+                m_Handles.PushBack( handle );
                 return handle;
             }
         }
 
-        void DestroyHandle( HandleType handle )
+        void DestroyHandle( HandleType handle ) noexcept
         {
             auto &managedHandle = m_Handles[handle.m_Index];
 
@@ -95,7 +98,7 @@ namespace smile::primitive
             ++m_AvailableHandles;
         }
 
-        bool IsHandleActive( HandleType handle ) const
+        [[nodiscard]] bool IsHandleActive( HandleType handle ) const noexcept
         {
             if ( !handle.IsValid() )
                 return false;
@@ -103,36 +106,37 @@ namespace smile::primitive
             return handle == m_Handles[handle.m_Index];
         }
 
-        HandleType GetHandle( IndexType index ) const
+        [[nodiscard]] HandleType GetHandle( IndexType index ) const noexcept
         {
-            SM_ASSERT_MSG( index < m_Handles.size(), "HandleManager::GetHandle > Index out of range" );
+            SM_ASSERT_MSG( index < m_Handles.GetItemCount(), "HandleManager::GetHandle > Index out of range" );
             return m_Handles[index];
         }
 
-        Uint32 GetHandleCount() const
+        [[nodiscard]] Count GetHandleCount() const noexcept
         {
-            return static_cast< Uint32 >( m_Handles.size() );
+            return m_Handles.GetItemCount();
         }
 
         Iterator begin() const
         {
             auto it = m_Handles.begin();
-            while ( it != m_Handles.end() &&
-                    ( it->GetIndex() > m_Handles.size() || m_Handles[it->GetIndex()].GetIndex() != it->GetIndex() ) )
+            while ( it != m_Handles.end() && ( it->GetIndex() > m_Handles.GetItemCount() ||
+                                                 m_Handles[it->GetIndex()].GetIndex() != it->GetIndex() ) )
             {
                 ++it;
             }
 
-            return Iterator{ m_Handles, it };
+            return { m_Handles, it };
         }
+
         Iterator end() const
         {
-            return Iterator{ m_Handles, m_Handles.end() };
+            return { m_Handles, m_Handles.end() };
         }
 
       private:
-        std::vector< HandleType > m_Handles{};
-        Uint32 m_AvailableHandles{ 0 };
+        primitive::Vector< HandleType > m_Handles{};
+        Count m_AvailableHandles{ 0 };
         IndexType m_NextFreeIndex{ std::numeric_limits< IndexType >::max() }; // Used for implicit list
     };
 }
