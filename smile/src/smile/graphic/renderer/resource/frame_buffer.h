@@ -16,6 +16,7 @@ namespace smile::graphic
     {
       public:
         using Ref = memory::Ref< Framebuffer >;
+        using ConstRef = memory::Ref< const Framebuffer >;
 
         Framebuffer( rhi::FramebufferHandle handle,
             const primitive::Vector< FramebufferAttachment > &colorAttachments,

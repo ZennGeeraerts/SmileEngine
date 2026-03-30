@@ -7,7 +7,7 @@
 #include "smile/common/foundation/meyers_singleton.h"
 #include "smile/common/primitive/collection/vector.h"
 
-#include "camera.h"
+#include "view.h"
 #include "resource/graphics_pipeline.h"
 #include "resource/vertex_buffer.h"
 #include "resource/frame_buffer.h"
@@ -22,7 +22,7 @@ namespace smile::graphic
         void Initialize();
         void ShutDown();
 
-        void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
+        void BeginScene( const View &view );
         void OnRender( Framebuffer::Ref framebuffer );
         void EndScene();
 
@@ -48,8 +48,6 @@ namespace smile::graphic
         VertexBuffer::Ref m_pVertexBuffer;
         ConstantBuffer::Ref m_pCameraCB;
         BindingSet::Ref m_pBindingSet;
-
-        DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
 
         Count m_VertexCount{ 100 };
     };

@@ -84,7 +84,5 @@ namespace smile::graphic
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };
-
-        GraphicsState m_GraphicsState;
     };
 }

@@ -12,9 +12,6 @@ namespace smile::graphic
 {
     void ForwardRenderer::Initialize()
     {
-        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewInverseMatrix, DirectX::XMMatrixIdentity() );
-        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewProjectionMatrix, DirectX::XMMatrixIdentity() );
-
         auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
         {
             ConstantBufferDescriptor cameraCBDesc{};
@@ -91,17 +88,11 @@ namespace smile::graphic
         ClearDrawList();
     }
 
-    void ForwardRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    void ForwardRenderer::BeginScene( const View &view )
     {
-        auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
-        auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
-        auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
-        auto viewProjectionMatrixMat = DirectX::XMMatrixTranspose( viewMatrixMat * projectionMatrixMat );
+        view.FillConstants( m_ViewConstants );
 
-        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewProjectionMatrix, viewProjectionMatrixMat );
-        DirectX::XMStoreFloat4x4( &m_RenderCollector.View.ViewInverseMatrix, cameraTransformMat );
-
-        m_pCameraCB->Update( &m_RenderCollector.View );
+        m_pCameraCB->Update( &m_ViewConstants );
     }
 
     void ForwardRenderer::Submit( const DrawItem &drawItem )

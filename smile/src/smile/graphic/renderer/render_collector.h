@@ -15,12 +15,6 @@
 
 namespace smile::graphic
 {
-    struct View final
-    {
-        DirectX::XMFLOAT4X4 ViewInverseMatrix;
-        DirectX::XMFLOAT4X4 ViewProjectionMatrix;
-    };
-
     struct DrawItem final
     {
         VertexBuffer::Ref pVertexBuffer;
@@ -32,7 +26,6 @@ namespace smile::graphic
 
     struct RenderCollector final
     {
-        View View;
         primitive::Vector< DrawItem > DrawList;
     };
 }

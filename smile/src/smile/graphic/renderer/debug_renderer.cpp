@@ -114,17 +114,9 @@ namespace smile::graphic
             RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
     }
 
-    void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
+    void DebugRenderer::BeginScene( const View &view )
     {
-        auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
-        auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
-        auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
-        auto viewProjectionMatrixMat = DirectX::XMMatrixTranspose( viewMatrixMat * projectionMatrixMat );
-
-        DirectX::XMFLOAT4X4 viewProjectionMatrix;
-        DirectX::XMStoreFloat4x4( &m_ViewProjectionMatrix, viewProjectionMatrixMat );
-
-        m_pCameraCB->Update( &m_ViewProjectionMatrix );
+        m_pCameraCB->Update( &view.GetViewProjectionMatrix() );
 
         CreateFixedLineList();
     }

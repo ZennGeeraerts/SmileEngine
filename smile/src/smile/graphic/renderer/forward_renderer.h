@@ -7,7 +7,7 @@
 #include "smile/common/foundation/meyers_singleton.h"
 
 #include "render_collector.h"
-#include "camera.h"
+#include "view.h"
 #include "graphics_state.h"
 #include "material/material.h"
 #include "resource/graphics_pipeline.h"
@@ -51,7 +51,7 @@ namespace smile::graphic
         void Initialize();
         void ShutDown();
 
-        void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
+        void BeginScene( const View &view );
         void EndScene();
         void OnRender( Framebuffer::Ref framebuffer );
 
@@ -73,6 +73,8 @@ namespace smile::graphic
         ConstantBuffer::Ref m_pCameraCB;
         ConstantBuffer::Ref m_PerObjectCB;
         BindingSet::Ref m_pBindingSet;
+
+        ViewConstants m_ViewConstants{};
     };
 }
 
