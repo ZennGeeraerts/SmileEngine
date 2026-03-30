@@ -527,19 +527,21 @@ namespace smile::graphic::rhi
                 {
                     m_Context.pImmediateContext->VSSetConstantBuffers( set.MinConstantBufferSlot,
                         set.MaxConstantBufferSlot - set.MinConstantBufferSlot + 1,
-                        set.pConstantBuffers.GetData() );
+                        &set.pConstantBuffers.GetData()[set.MinConstantBufferSlot] );
                 }
 
                 if ( set.MaxSRVSlot >= set.MinSRVSlot )
                 {
-                    m_Context.pImmediateContext->VSSetShaderResources(
-                        set.MinSRVSlot, set.MaxSRVSlot - set.MinSRVSlot + 1, set.pShaderResourceViews.GetData() );
+                    m_Context.pImmediateContext->VSSetShaderResources( set.MinSRVSlot,
+                        set.MaxSRVSlot - set.MinSRVSlot + 1,
+                        &set.pShaderResourceViews.GetData()[set.MinSRVSlot] );
                 }
 
                 if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
                 {
-                    m_Context.pImmediateContext->VSSetSamplers(
-                        set.MinSamplerSlot, set.MaxSamplerSlot - set.MinSamplerSlot + 1, set.pSamplers.GetData() );
+                    m_Context.pImmediateContext->VSSetSamplers( set.MinSamplerSlot,
+                        set.MaxSamplerSlot - set.MinSamplerSlot + 1,
+                        &set.pSamplers.GetData()[set.MinSamplerSlot] );
                 }
             }
 
@@ -549,19 +551,21 @@ namespace smile::graphic::rhi
                 {
                     m_Context.pImmediateContext->PSSetConstantBuffers( set.MinConstantBufferSlot,
                         set.MaxConstantBufferSlot - set.MinConstantBufferSlot + 1,
-                        set.pConstantBuffers.GetData() );
+                        &set.pConstantBuffers.GetData()[set.MinConstantBufferSlot] );
                 }
 
                 if ( set.MaxSRVSlot >= set.MinSRVSlot )
                 {
-                    m_Context.pImmediateContext->PSSetShaderResources(
-                        set.MinSRVSlot, set.MaxSRVSlot - set.MinSRVSlot + 1, set.pShaderResourceViews.GetData() );
+                    m_Context.pImmediateContext->PSSetShaderResources( set.MinSRVSlot,
+                        set.MaxSRVSlot - set.MinSRVSlot + 1,
+                        &set.pShaderResourceViews.GetData()[set.MinSRVSlot] );
                 }
 
                 if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
                 {
-                    m_Context.pImmediateContext->PSSetSamplers(
-                        set.MinSamplerSlot, set.MaxSamplerSlot - set.MinSamplerSlot + 1, set.pSamplers.GetData() );
+                    m_Context.pImmediateContext->PSSetSamplers( set.MinSamplerSlot,
+                        set.MaxSamplerSlot - set.MinSamplerSlot + 1,
+                        &set.pSamplers.GetData()[set.MinSamplerSlot] );
                 }
             }
         }
