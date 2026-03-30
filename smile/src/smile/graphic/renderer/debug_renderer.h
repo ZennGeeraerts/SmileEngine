@@ -49,6 +49,8 @@ namespace smile::graphic
         ConstantBuffer::Ref m_pCameraCB;
         BindingSet::Ref m_pBindingSet;
 
+        DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
+
         Count m_VertexCount{ 100 };
     };
 }

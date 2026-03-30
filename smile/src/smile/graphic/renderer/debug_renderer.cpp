@@ -122,9 +122,9 @@ namespace smile::graphic
         auto viewProjectionMatrixMat = DirectX::XMMatrixTranspose( viewMatrixMat * projectionMatrixMat );
 
         DirectX::XMFLOAT4X4 viewProjectionMatrix;
-        DirectX::XMStoreFloat4x4( &viewProjectionMatrix, viewProjectionMatrixMat );
+        DirectX::XMStoreFloat4x4( &m_ViewProjectionMatrix, viewProjectionMatrixMat );
 
-        m_pCameraCB->Update( &viewProjectionMatrix );
+        m_pCameraCB->Update( &m_ViewProjectionMatrix );
 
         CreateFixedLineList();
     }

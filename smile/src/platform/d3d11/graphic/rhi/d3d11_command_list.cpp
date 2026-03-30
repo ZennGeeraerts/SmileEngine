@@ -370,7 +370,7 @@ namespace smile::graphic::rhi
         m_Context.pImmediateContext->DrawIndexed( params.IndexCount, params.IndexOffset, params.VertexOffset );
     }
 
-    void D3D11CommandList::FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const
+    void D3D11CommandList::FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size ) const
     {
         const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
 

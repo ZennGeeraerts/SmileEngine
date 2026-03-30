@@ -55,8 +55,8 @@ namespace smile::graphic
         void EndScene();
         void OnRender( Framebuffer::Ref framebuffer );
 
-        void Submit( const DrawCommand &drawItem );
-        void Submit( DrawCommand &&drawItem );
+        void Submit( const DrawItem &drawItem );
+        void Submit( DrawItem &&drawItem );
 
       private:
         void

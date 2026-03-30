@@ -24,6 +24,8 @@ namespace smile::graphic
             UpdateBuffer( pBuffer, sizeof( ConstantBufferType ) );
         }
 
+        void UpdateBuffer( const void *pBuffer, const Count size );
+
         bool IsValid() const
         {
             return m_Handle.IsValid();
@@ -31,12 +33,7 @@ namespace smile::graphic
 
         const void *GetBuffer() const
         {
-            return m_Buffer.GetData();
-        }
-
-        void *GetBuffer()
-        {
-            return m_Buffer.GetData();
+            return m_Buffer;
         }
 
         rhi::GPUBufferHandle GetHandle() const
@@ -50,11 +47,8 @@ namespace smile::graphic
         }
 
       private:
-        void UpdateBuffer( const void *pBuffer, const Count size );
-
-      private:
         rhi::GPUBufferHandle m_Handle;
-        primitive::Vector< Byte > m_Buffer;
+        const void *m_Buffer = nullptr;
         ConstantBufferDescriptor m_Descriptor;
 
         friend class ResourceManager;

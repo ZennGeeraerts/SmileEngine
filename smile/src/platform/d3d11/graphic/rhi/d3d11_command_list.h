@@ -34,7 +34,7 @@ namespace smile::graphic::rhi
         void Draw( const DrawParams &params ) override;
         void DrawIndexed( const DrawIndexedParams &params ) override;
 
-        void FillBuffer( GPUBufferHandle handle, void *pData, Uint32 size ) const override;
+        void FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size ) const override;
 
         void ClearTexture( TextureHandle handle,
             TextureSubresourceSet subresources,

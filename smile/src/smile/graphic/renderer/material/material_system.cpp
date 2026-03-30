@@ -80,6 +80,8 @@ namespace smile::graphic
         const auto &desc = material->GetDescriptor();
         auto &data = m_MaterialData[material->GetID().GetIndex()];
 
+        primitive::Vector< Byte > bufferData( layout.CbSize );
+
         for ( const auto &param : layout.Parameters )
         {
             const auto &value = desc.Parameters.GetItemAtKey( param.Name );
@@ -93,16 +95,11 @@ namespace smile::graphic
                     {
                         SM_ASSERT( param.Size == val.GetItemCount() );
 
-                        memory::CopyArrayItems(
-                            reinterpret_cast< Byte * >( data.ConstantBuffer->GetBuffer() ) + param.Offset,
-                            param.Size,
-                            val.GetData() );
+                        memory::CopyArrayItems( bufferData.GetData() + param.Offset, param.Size, val.GetData() );
                     }
                     else if constexpr ( std::is_trivially_copyable_v< ValueType > )
                     {
-                        std::memcpy( reinterpret_cast< Byte * >( data.ConstantBuffer->GetBuffer() ) + param.Offset,
-                            &val,
-                            param.Size );
+                        std::memcpy( bufferData.GetData() + param.Offset, &val, param.Size );
                     }
                     else
                     {
@@ -111,6 +108,8 @@ namespace smile::graphic
                 },
                 value );
         }
+
+        data.ConstantBuffer->UpdateBuffer( bufferData.GetData(), bufferData.GetItemCount() );
 
         RenderEngine::GetRenderSystem().FillConstantBuffer( data.ConstantBuffer );
     }
