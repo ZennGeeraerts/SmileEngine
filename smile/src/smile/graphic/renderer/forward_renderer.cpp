@@ -104,12 +104,12 @@ namespace smile::graphic
         m_pCameraCB->Update( &m_RenderCollector.View );
     }
 
-    void ForwardRenderer::Submit( const DrawCommand &drawItem )
+    void ForwardRenderer::Submit( const DrawItem &drawItem )
     {
         m_RenderCollector.DrawList.PushBack( drawItem );
     }
 
-    void ForwardRenderer::Submit( DrawCommand &&drawItem )
+    void ForwardRenderer::Submit( DrawItem &&drawItem )
     {
         m_RenderCollector.DrawList.PushBack( std::move( drawItem ) );
     }
@@ -120,21 +120,21 @@ namespace smile::graphic
 
         renderSystem.FillConstantBuffer( m_pCameraCB );
 
-        for ( const DrawCommand &drawCommand : m_RenderCollector.DrawList )
+        for ( const DrawItem &drawItem : m_RenderCollector.DrawList )
         {
-            m_PerObjectCB->Update( &drawCommand.WorldTransform );
+            m_PerObjectCB->Update( &drawItem.WorldTransform );
             renderSystem.FillConstantBuffer( m_PerObjectCB );
 
             GraphicsState state{};
             state.pFramebuffer = framebuffer;
-            state.VertexBuffers.PushBack( { drawCommand.pVertexBuffer, 0u, 0u } );
-            state.IndexBuffer = IndexBufferBinding{ drawCommand.pIndexBuffer, rhi::Format::R32_UINT, 0u };
+            state.VertexBuffers.PushBack( { drawItem.pVertexBuffer, 0u, 0u } );
+            state.IndexBuffer = IndexBufferBinding{ drawItem.pIndexBuffer, rhi::Format::R32_UINT, 0u };
             state.pBindings.PushBack( m_pBindingSet );
 
-            SetupMaterial( drawCommand.Material, drawCommand.RenderState, state );
+            SetupMaterial( drawItem.Material, drawItem.RenderState, state );
 
             renderSystem.SetGraphicsState( state );
-            renderSystem.DrawIndexed( drawCommand.pIndexBuffer->GetIndexCount() );
+            renderSystem.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );
         }
     }
 

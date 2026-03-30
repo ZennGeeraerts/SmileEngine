@@ -110,6 +110,7 @@ namespace smile::graphic
         auto &debugRenderer = DebugRenderer::GetInstance();
         auto &forwardRenderer = ForwardRenderer::GetInstance();
 
+        m_Material->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
         RenderEngine::GetMaterialSystem().Update();
 
         DirectX::XMFLOAT4X4 worldTransform;
