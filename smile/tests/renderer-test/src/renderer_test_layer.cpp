@@ -30,7 +30,6 @@ namespace smile::graphic
         auto &window = application::Application::GetInstance().GetMainWindow();
         RenderEngine::Initialize( &window );
 
-
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
             DirectX::XMMATRIX transformMat = DirectX::XMMatrixScaling( 1.0f, 1.0f, 1.0f ) *
@@ -99,7 +98,7 @@ namespace smile::graphic
                 1,
                 1 /*4*/ };
 
-            auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+            auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
             m_VertexBuffer = resourceManager.CreateVertexBuffer( quadVertices,
                 quadVerticesCount,
@@ -119,7 +118,7 @@ namespace smile::graphic
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &renderSystem = RenderEngine::GetRenderSystem();
+        auto &renderContext = RenderEngine::GetRenderContext();
         auto &debugRenderer = DebugRenderer::GetInstance();
         auto &forwardRenderer = ForwardRenderer::GetInstance();
 
@@ -135,20 +134,20 @@ namespace smile::graphic
 
         m_View.OnUpdate();
 
-        renderSystem.Clear(
-            renderSystem.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
+        renderContext.Clear(
+            renderContext.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
 
-        renderSystem.BeginFrame();
+        renderContext.BeginFrame();
 
         debugRenderer.BeginScene( m_View );
-        debugRenderer.OnRender( renderSystem.GetBackBuffer() );
+        debugRenderer.OnRender( renderContext.GetBackBuffer() );
         debugRenderer.EndScene();
 
         forwardRenderer.BeginScene( m_View );
-        forwardRenderer.OnRender( renderSystem.GetBackBuffer() );
+        forwardRenderer.OnRender( renderContext.GetBackBuffer() );
         forwardRenderer.EndScene();
 
-        renderSystem.EndFrame();
+        renderContext.EndFrame();
     }
 
     void RendererTestLayer::OnEvent( window::Event &event )

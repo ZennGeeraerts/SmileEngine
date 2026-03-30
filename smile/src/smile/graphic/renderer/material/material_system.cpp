@@ -20,6 +20,7 @@
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/sprite/texture_manager.h"
 #include "smile/common/memory/memory.h"
+#include "smile/common/foundation/traits/type_traits.h"
 
 namespace smile::graphic
 {
@@ -103,7 +104,7 @@ namespace smile::graphic
                     }
                     else
                     {
-                        static_assert( false, "Type not supported" );
+                        static_assert( foundation::AlwaysFalseV< ValueType >, "Type not supported" );
                     }
                 },
                 value );
