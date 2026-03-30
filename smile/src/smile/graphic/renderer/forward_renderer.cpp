@@ -12,7 +12,7 @@ namespace smile::graphic
 {
     void ForwardRenderer::Initialize()
     {
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
@@ -59,7 +59,7 @@ namespace smile::graphic
     ForwardRenderer::CreatePipeline( Material::ConstRef material, const rhi::RenderState &renderState )
     {
         const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( material );
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
@@ -107,14 +107,14 @@ namespace smile::graphic
 
     void ForwardRenderer::OnRender( Framebuffer::Ref framebuffer )
     {
-        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
+        RenderContext &renderContext = RenderEngine::GetRenderContext();
 
-        renderSystem.FillConstantBuffer( m_pCameraCB );
+        renderContext.FillConstantBuffer( m_pCameraCB );
 
         for ( const DrawItem &drawItem : m_RenderCollector.DrawList )
         {
             m_PerObjectCB->Update( &drawItem.WorldTransform );
-            renderSystem.FillConstantBuffer( m_PerObjectCB );
+            renderContext.FillConstantBuffer( m_PerObjectCB );
 
             GraphicsState state{};
             state.pFramebuffer = framebuffer;
@@ -124,8 +124,8 @@ namespace smile::graphic
 
             SetupMaterial( drawItem.Material, drawItem.RenderState, state );
 
-            renderSystem.SetGraphicsState( state );
-            renderSystem.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );
+            renderContext.SetGraphicsState( state );
+            renderContext.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );
         }
     }
 

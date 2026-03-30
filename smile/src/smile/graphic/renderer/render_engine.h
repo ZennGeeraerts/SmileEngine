@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "render_system.h"
+#include "render_context.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "material/material_system.h"
 
@@ -21,9 +21,9 @@ namespace smile::graphic
         static void Initialize( const window::Window *pWindow );
         static void ShutDown();
 
-        static RenderSystem &GetRenderSystem()
+        static RenderContext &GetRenderContext()
         {
-            return s_RenderSystem;
+            return s_RenderContext;
         }
 
         static ShaderLibrary &GetShaderLibrary()
@@ -37,7 +37,7 @@ namespace smile::graphic
         }
 
       private:
-        static RenderSystem s_RenderSystem;
+        static RenderContext s_RenderContext;
         static ShaderLibrary s_ShaderLibrary;
         static MaterialSystem s_MaterialSystem;
     };

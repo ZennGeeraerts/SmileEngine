@@ -22,11 +22,11 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class RenderSystem final
+    class RenderContext final
     {
       public:
-        RenderSystem();
-        ~RenderSystem();
+        RenderContext();
+        ~RenderContext();
 
         void Initialize( const window::Window *pWindow );
 

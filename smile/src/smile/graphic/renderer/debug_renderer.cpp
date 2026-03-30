@@ -17,7 +17,7 @@ namespace smile::graphic
 {
     void DebugRenderer::Initialize()
     {
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
         const auto &shaderLibrary = RenderEngine::GetShaderLibrary();
 
         rhi::BufferLayout vertexLayout{
@@ -111,7 +111,7 @@ namespace smile::graphic
         const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
 
         m_pVertexBuffer =
-            RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
+            RenderEngine::GetRenderContext().GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
     }
 
     void DebugRenderer::BeginScene( const View &view )
@@ -134,10 +134,10 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
+        RenderContext &renderContext = RenderEngine::GetRenderContext();
 
-        renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
-        renderSystem.FillConstantBuffer( m_pCameraCB );
+        renderContext.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
+        renderContext.FillConstantBuffer( m_pCameraCB );
 
         GraphicsState state{};
         state.pFramebuffer = framebuffer;
@@ -145,8 +145,8 @@ namespace smile::graphic
         state.VertexBuffers.EmplaceBack( m_pVertexBuffer, 0u, 0u );
         state.pBindings.PushBack( m_pBindingSet );
 
-        renderSystem.SetGraphicsState( state );
-        renderSystem.Draw( vertexCount );
+        renderContext.SetGraphicsState( state );
+        renderContext.Draw( vertexCount );
     }
 
     void DebugRenderer::EndScene()

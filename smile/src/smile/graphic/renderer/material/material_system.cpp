@@ -31,7 +31,7 @@ namespace smile::graphic
         MaterialData data;
         data.ShaderProgram = desc.ShaderProgram;
 
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
         const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
         data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
@@ -111,7 +111,7 @@ namespace smile::graphic
 
         data.ConstantBuffer->UpdateBuffer( bufferData.GetData(), bufferData.GetItemCount() );
 
-        RenderEngine::GetRenderSystem().FillConstantBuffer( data.ConstantBuffer );
+        RenderEngine::GetRenderContext().FillConstantBuffer( data.ConstantBuffer );
     }
 
     void MaterialSystem::UpdateBindingSet( Material::Ref material )
@@ -135,7 +135,7 @@ namespace smile::graphic
             }
         }
 
-        auto &resourceManager = RenderEngine::GetRenderSystem().GetResourceManager();
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
         data.Bindings = resourceManager.CreateBindingSet( bindingSetDesc, layout.Visibility );
     }

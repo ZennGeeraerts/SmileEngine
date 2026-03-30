@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        view.cpp
+ * @author      Zenn Geeraerts
+ * @created     30 March 2026
+ * @brief       Data that is used to render a scene from a specific point of view, such as a camera
+ */
 #include "smpch.h"
 #include "view.h"
 

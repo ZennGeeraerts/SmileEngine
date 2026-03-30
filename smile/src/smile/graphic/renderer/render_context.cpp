@@ -3,23 +3,23 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "render_system.h"
+#include "render_context.h"
 
 #include "frame.h"
 #include "smile/core/window/window.h"
 
 namespace smile::graphic
 {
-    RenderSystem::RenderSystem()
+    RenderContext::RenderContext()
     {
         m_API = rhi::RendererBackendType::D3D11;
         m_pDevice = rhi::GraphicsDevice::Create( m_API );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
     }
 
-    RenderSystem::~RenderSystem() = default;
+    RenderContext::~RenderContext() = default;
 
-    void RenderSystem::Initialize( const window::Window *pWindow )
+    void RenderContext::Initialize( const window::Window *pWindow )
     {
         m_ResourceManager.Initialize( m_pDevice.get() );
 
@@ -55,12 +55,12 @@ namespace smile::graphic
             { FramebufferAttachment{ pColorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
     }
 
-    void RenderSystem::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
+    void RenderContext::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
     {
         m_pSwapChain->Resize( x, y, width, height );
     }
 
-    void RenderSystem::Clear( Framebuffer::Ref pFramebuffer,
+    void RenderContext::Clear( Framebuffer::Ref pFramebuffer,
         const std::optional< math::Color > &color,
         std::optional< float > depth,
         std::optional< Uint8 > stencil )
@@ -83,13 +83,13 @@ namespace smile::graphic
         }
     }
 
-    void RenderSystem::BeginFrame()
+    void RenderContext::BeginFrame()
     {
         m_CurrentFrameIndex = AssignFrameData();
         m_pImmediateCommandList->Open();
     }
 
-    void RenderSystem::EndFrame()
+    void RenderContext::EndFrame()
     {
         Present();
         m_pImmediateCommandList->Close();
@@ -97,7 +97,7 @@ namespace smile::graphic
         m_RenderedFrameIndex = m_CurrentFrameIndex;
     }
 
-    void RenderSystem::SetGraphicsState( const GraphicsState &state )
+    void RenderContext::SetGraphicsState( const GraphicsState &state )
     {
         rhi::GraphicsState graphicsState{};
         graphicsState.Pipeline = state.pPipeline->GetHandle();
@@ -126,30 +126,30 @@ namespace smile::graphic
         m_pImmediateCommandList->SetGraphicsState( graphicsState );
     }
 
-    void RenderSystem::DrawIndexed( Uint32 indexCount )
+    void RenderContext::DrawIndexed( Uint32 indexCount )
     {
         rhi::DrawIndexedParams params{ indexCount, 0, 0 };
         m_pImmediateCommandList->DrawIndexed( params );
     }
 
-    void RenderSystem::Draw( Uint32 vertexCount )
+    void RenderContext::Draw( Uint32 vertexCount )
     {
         rhi::DrawParams params{ vertexCount, 0 };
         m_pImmediateCommandList->Draw( params );
     }
 
-    void RenderSystem::Present()
+    void RenderContext::Present()
     {
         m_pSwapChain->Present();
     }
 
-    void RenderSystem::FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const
+    void RenderContext::FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const
     {
         m_pImmediateCommandList->FillBuffer(
             pVertexBuffer->GetHandle(), pData, vertexCount * pVertexBuffer->GetBufferLayout().GetStride() );
     }
 
-    void RenderSystem::FillConstantBuffer( ConstantBuffer::Ref constantBuffer ) const
+    void RenderContext::FillConstantBuffer( ConstantBuffer::Ref constantBuffer ) const
     {
         m_pImmediateCommandList->FillBuffer(
             constantBuffer->GetHandle(), constantBuffer->GetBuffer(), constantBuffer->GetDescriptor().GetSize() );
