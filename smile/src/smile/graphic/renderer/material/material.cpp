@@ -37,7 +37,7 @@ namespace smile::graphic
         return m_Descriptor.Parameters.GetItemAtKey( name );
     }
 
-    void Material::SetTextureBinding( const primitive::StringView name, Texture::Ref texture )
+    void Material::SetTextureBinding( const primitive::StringView name, Texture::ConstRef texture )
     {
         if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
         {
@@ -49,7 +49,7 @@ namespace smile::graphic
         m_DirtyFlags.Set( DirtyFlags::Texture );
     }
 
-    Texture::Ref Material::GetTextureBinding( const primitive::StringView name ) const
+    Texture::ConstRef Material::GetTextureBinding( const primitive::StringView name ) const
     {
         return m_Descriptor.TextureBindings.GetItemAtKey( name );
     }

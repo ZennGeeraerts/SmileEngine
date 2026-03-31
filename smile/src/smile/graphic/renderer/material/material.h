@@ -23,6 +23,7 @@ namespace smile::graphic
         Bool,
         Float2,
         Float3,
+        Float4,
     };
 
     struct MaterialLayout final
@@ -67,14 +68,14 @@ namespace smile::graphic
         foundation::Flags< rhi::ShaderStage > Visibility;
     };
 
-    using MaterialParameterValue =
-        std::variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, primitive::Vector< Byte > >;
+    using MaterialParameterValue = std::
+        variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, DirectX::XMFLOAT4, primitive::Vector< Byte > >;
 
     struct MaterialDescriptor final
     {
         Program::ConstRef ShaderProgram;
         primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
-        primitive::HashMap< primitive::String, Texture::Ref > TextureBindings;
+        primitive::HashMap< primitive::String, Texture::ConstRef > TextureBindings;
     };
 
     class Material final : public memory::Counted
@@ -99,8 +100,8 @@ namespace smile::graphic
         void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
         MaterialParameterValue GetParameter( const primitive::StringView name ) const;
 
-        void SetTextureBinding( const primitive::StringView name, Texture::Ref texture );
-        Texture::Ref GetTextureBinding( const primitive::StringView name ) const;
+        void SetTextureBinding( const primitive::StringView name, Texture::ConstRef texture );
+        Texture::ConstRef GetTextureBinding( const primitive::StringView name ) const;
 
         const MaterialLayout &GetLayout() const
         {

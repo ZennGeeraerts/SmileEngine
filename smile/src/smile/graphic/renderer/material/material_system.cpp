@@ -127,8 +127,8 @@ namespace smile::graphic
 
         for ( const auto &textureBinding : layout.Textures )
         {
-            Texture::Ref texture = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
-            
+            Texture::ConstRef texture = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
+
             if ( texture )
             {
                 bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
