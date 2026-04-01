@@ -10,13 +10,13 @@
 
 namespace smile::graphic
 {
-    memory::Ref< TextureAsset > TextureManager::GetTexture( asset::AssetHandle handle )
+    TextureAsset::Ref TextureManager::GetTexture( asset::AssetHandle handle )
     {
-        memory::Ref< TextureAsset > pTextureAsset = asset::AssetManager::GetAsset< TextureAsset >( handle );
+        TextureAsset::Ref pTextureAsset = asset::AssetManager::GetAsset< TextureAsset >( handle );
 
         if ( pTextureAsset )
         {
-            m_Textures.insert( std::make_pair( pTextureAsset->GetTexture(), pTextureAsset ) );
+            m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
             return pTextureAsset;
         }
 
@@ -25,13 +25,13 @@ namespace smile::graphic
         return m_pFallBackTexture;
     }
 
-    memory::Ref< TextureAsset > TextureManager::GetTexture( const std::filesystem::path &path )
+    TextureAsset::Ref TextureManager::GetTexture( const std::filesystem::path &path )
     {
-        memory::Ref< TextureAsset > pTextureAsset = m_TextureLoader.LoadTexture( path );
+        TextureAsset::Ref pTextureAsset = m_TextureLoader.LoadTexture( path );
 
         if ( pTextureAsset )
         {
-            m_Textures.insert( std::make_pair( pTextureAsset->GetTexture(), pTextureAsset ) );
+            m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
             return pTextureAsset;
         }
 
@@ -40,13 +40,13 @@ namespace smile::graphic
         return m_pFallBackTexture;
     }
 
-    memory::Ref< TextureAsset > TextureManager::GetTexture( memory::Ref< Texture > pTexture ) const
+    TextureAsset::Ref TextureManager::GetTexture( Texture::Ref pTexture ) const
     {
-        auto it = m_Textures.find( pTexture );
+        auto it = m_Textures.FindItemAtKey( pTexture );
 
         if ( it != m_Textures.end() )
         {
-            return it->second;
+            return it.GetItem();
         }
 
         SM_LOG_WARNING( "TextureManager::GetTexture > Could not find texture in texture map: {}",

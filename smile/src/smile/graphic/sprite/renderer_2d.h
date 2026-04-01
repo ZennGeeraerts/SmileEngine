@@ -3,31 +3,30 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/graphic/sprite/ecs/sprite_renderer_component.h"
-#include "camera.h"
+
+#include "smile/common/foundation/meyers_singleton.h"
+
+#include "smile/graphic/renderer/view.h"
+#include "smile/graphic/renderer/resource/frame_buffer.h"
 
 namespace smile::graphic
 {
-    class Renderer2D final
+    class Renderer2D final : public foundation::MeyersSingleton< Renderer2D >
     {
       public:
-        static void Initialize();
-        static void ShutDown();
+        void Initialize();
+        void ShutDown();
 
-        static void BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform );
-        static void EndScene();
-        static void OnRender();
+        void BeginScene( const View &view );
+        void EndScene();
+        void OnRender( Framebuffer::Ref framebuffer );
 
-        static void DrawQuad( const DirectX::XMFLOAT2 &position,
+        void DrawQuad( const DirectX::XMFLOAT2 &position,
             float rotation,
             const DirectX::XMFLOAT2 &size,
-            const DirectX::XMFLOAT4 &color );
+            const DirectX::XMFLOAT3 &color );
 
-        static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform,
-            const graphic::ecs::SpriteRendererComponent &spriteRendererComponent );
-
-        static void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT4 &color );
-        static void
-        DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, Texture::ConstRef pTexture, const DirectX::XMFLOAT4 &color );
+        void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT3 &color );
+        void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, Texture::ConstRef pTexture );
     };
 }

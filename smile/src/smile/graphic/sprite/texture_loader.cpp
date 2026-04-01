@@ -10,6 +10,7 @@
 #include "smile/core/asset/asset_importer.h"
 #include "smile/core/project/project_manager.h"
 #include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/resource/reader/image_reader.h"
 
 namespace smile::graphic
 {
@@ -38,9 +39,10 @@ namespace smile::graphic
             return nullptr;
         }
 
-        memory::Ref< Texture > pTexture = RenderEngine::GetRenderSystem().GetResourceManager().CreateTexture2D( path );
-        memory::Ref< TextureAsset > pTextureAsset = memory::CreateRef< TextureAsset >( pTexture );
+        Image::Ref image = ImageReader::Read( path );
+        Texture::Ref texture = RenderEngine::GetRenderContext().GetResourceManager().CreateTexture2D( image, false );
+        TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( texture );
 
-        return pTextureAsset;
+        return textureAsset;
     }
 }

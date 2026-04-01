@@ -1,0 +1,57 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "toolset": "v143",
+      "description": "Target Windows with the Visual Studio development environment.",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [
+            "Windows"
+          ]
+        }
+      }
+    },
+    {
+      "name": "x64-Debug",
+      "displayName": "Windows x64 Debug",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "../../../conan/Debug/conan_toolchain.cmake"
+      }
+    },
+    {
+      "name": "x64-Release",
+      "displayName": "Windows x64 Release",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "../../../conan/Release/conan_toolchain.cmake"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Release",
+      "configurePreset": "x64-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "Debug",
+      "configurePreset": "x64-Debug",
+      "configuration": "Debug"
+    }
+  ]
+}

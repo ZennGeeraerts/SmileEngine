@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/singleton.h"
+#include "smile/common/primitive/collection/hash_map.h"
 #include "texture_loader.h"
 #include "texture_asset.h"
 
@@ -16,9 +17,9 @@ namespace smile::graphic
         TextureManager() = default;
         ~TextureManager() = default;
 
-        memory::Ref< TextureAsset > GetTexture( asset::AssetHandle handle );
-        memory::Ref< TextureAsset > GetTexture( const std::filesystem::path &path );
-        memory::Ref< TextureAsset > GetTexture( memory::Ref< Texture > pTexture ) const;
+        TextureAsset::Ref GetTexture( asset::AssetHandle handle );
+        TextureAsset::Ref GetTexture( const std::filesystem::path &path );
+        TextureAsset::Ref GetTexture( Texture::Ref pTexture ) const;
 
         TextureAsset::Ref GetFallBackTexture() const
         {
@@ -26,8 +27,8 @@ namespace smile::graphic
         }
 
       private:
-        std::unordered_map< memory::Ref< Texture >, memory::Ref< TextureAsset > > m_Textures;
+        primitive::HashMap< Texture::Ref, TextureAsset::Ref > m_Textures;
         TextureLoader m_TextureLoader;
-        memory::Ref< TextureAsset > m_pFallBackTexture;
+        TextureAsset::Ref m_pFallBackTexture;
     };
 }
