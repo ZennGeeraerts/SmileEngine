@@ -6,8 +6,8 @@
 
 #include "smile/common/foundation/meyers_singleton.h"
 
-#include "smile/graphic/renderer/view.h"
 #include "smile/graphic/renderer/resource/frame_buffer.h"
+#include "smile/graphic/renderer/material/material.h"
 
 namespace smile::graphic
 {
@@ -17,16 +17,11 @@ namespace smile::graphic
         void Initialize();
         void ShutDown();
 
-        void BeginScene( const View &view );
-        void EndScene();
-        void OnRender( Framebuffer::Ref framebuffer );
-
-        void DrawQuad( const DirectX::XMFLOAT2 &position,
+        void DrawSprite( const DirectX::XMFLOAT2 &position,
             float rotation,
             const DirectX::XMFLOAT2 &size,
-            const DirectX::XMFLOAT3 &color );
+            Material::ConstRef material );
 
-        void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT3 &color );
-        void DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, Texture::ConstRef pTexture );
+        void DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, Material::ConstRef material );
     };
 }

@@ -5,41 +5,17 @@
 #include "smpch.h"
 #include "renderer_2d.h"
 
-#include "smile/common/primitive/collection/hash_map.h"
 #include "smile/common/memory/scope.h"
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/forward_renderer.h"
-#include "smile/graphic/shader/shader_asset.h"
 
 namespace smile::graphic
 {
-    /*struct DrawItem2D final
-    {
-        DrawItem2D( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT3 &color ) noexcept
-            : WorldTransform{ worldTransform }, Color{ color }, UseTexture{ false }
-        {
-        }
-
-        DrawItem2D( const DirectX::XMFLOAT4X4 &worldTransform, Texture::ConstRef pTexture ) noexcept
-            : WorldTransform{ worldTransform }, UseTexture{ true }, pTexture{ pTexture }
-        {
-        }
-
-        DirectX::XMFLOAT4X4 WorldTransform;
-        DirectX::XMFLOAT3 Color{ 0.0f, 0.0f, 0.0f };
-        bool UseTexture;
-        Texture::ConstRef pTexture = nullptr;
-    };*/
-
     struct Renderer2DStorage final
     {
         VertexBuffer::Ref pQuadVertexBuffer;
         IndexBuffer::Ref pQuadIndexBuffer;
-
-        Material::Ref pColorMaterial = nullptr;
-        Material::Ref pTextureMaterial = nullptr;
-        Sampler::Ref pSampler;
     };
 
     static memory::Scope< Renderer2DStorage > s_pStorage;
@@ -94,10 +70,10 @@ namespace smile::graphic
         s_pStorage.Reset();
     }
 
-    void Renderer2D::DrawQuad( const DirectX::XMFLOAT2 &position,
+    void Renderer2D::DrawSprite( const DirectX::XMFLOAT2 &position,
         float rotation,
         const DirectX::XMFLOAT2 &size,
-        const DirectX::XMFLOAT3 &color )
+        Material::ConstRef material )
     {
         DirectX::XMMATRIX worldTransformMat = DirectX::XMMatrixScaling( size.x, size.y, 1 ) *
                                               DirectX::XMMatrixRotationRollPitchYaw( 0, 0, rotation ) *
@@ -105,23 +81,14 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 worldTransform{};
         DirectX::XMStoreFloat4x4( &worldTransform, worldTransformMat );
 
-        DrawQuad( worldTransform, color );
+        DrawSprite( worldTransform, material );
     }
 
-    void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, const DirectX::XMFLOAT3 &color )
+    void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, Material::ConstRef material )
     {
         ForwardRenderer::GetInstance().Submit( DrawItem{ s_pStorage->pQuadVertexBuffer,
             s_pStorage->pQuadIndexBuffer,
-            s_pStorage->pColorMaterial,
-            worldTransform,
-            rhi::RenderState{} } );
-    }
-
-    void Renderer2D::DrawQuad( const DirectX::XMFLOAT4X4 &worldTransform, Texture::ConstRef pTexture )
-    {
-        ForwardRenderer::GetInstance().Submit( DrawItem{ s_pStorage->pQuadVertexBuffer,
-            s_pStorage->pQuadIndexBuffer,
-            s_pStorage->pTextureMaterial,
+            material,
             worldTransform,
             rhi::RenderState{} } );
     }

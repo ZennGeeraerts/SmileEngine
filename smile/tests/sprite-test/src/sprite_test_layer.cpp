@@ -19,6 +19,7 @@
 #include "smile/core/application/application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/renderer/forward_renderer.h"
 #include "smile/graphic/sprite/renderer_2d.h"
 
 namespace smile::graphic
@@ -47,6 +48,32 @@ namespace smile::graphic
         }
 
         m_View.SetViewProjectionMatrix( viewMatrix, projectionMatrix );
+
+        {
+            MaterialLayout layout{};
+            layout.Parameters.EmplaceBack( "Color", MaterialParameterType::Float3, 0u, 12u );
+            layout.Parameters.EmplaceBack( "UseTexture", MaterialParameterType::Int, 12u, 4u );
+
+            layout.Textures.EmplaceBack( "Diffuse", 0u );
+
+            layout.CbSlot = 2;
+            layout.CbSize = 16u;
+            layout.Visibility = { rhi::ShaderStage::Pixel };
+
+            auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+            auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
+            auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
+
+            auto program = Program::Create( vertexShader, pixelShader );
+
+            MaterialDescriptor desc{};
+            desc.ShaderProgram = program;
+            desc.Parameters["Color"] = DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f };
+            desc.Parameters["UseTexture"] = 0;
+            desc.TextureBindings["Diffuse"] = nullptr;
+
+            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( layout, desc );
+        }
     }
 
     void SpriteTestLayer::OnDetach()
@@ -60,12 +87,12 @@ namespace smile::graphic
         auto &renderContext = RenderEngine::GetRenderContext();
         auto &renderer2D = Renderer2D::GetInstance();
         
-        //RenderEngine::GetMaterialSystem().Update();
+        RenderEngine::GetMaterialSystem().Update();
 
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
-        renderer2D.DrawQuad( worldTransform, DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f } );
+        renderer2D.DrawSprite( worldTransform, m_Material );
 
         m_View.OnUpdate();
 
@@ -74,10 +101,11 @@ namespace smile::graphic
 
         renderContext.BeginFrame();
 
+        auto &forwardRenderer = ForwardRenderer::GetInstance();
         {
-            renderer2D.BeginScene( m_View );
-            renderer2D.OnRender( renderContext.GetBackBuffer() );
-            renderer2D.EndScene();
+            forwardRenderer.BeginScene( m_View );
+            forwardRenderer.OnRender( renderContext.GetBackBuffer() );
+            forwardRenderer.EndScene();
         }
 
         renderContext.EndFrame();

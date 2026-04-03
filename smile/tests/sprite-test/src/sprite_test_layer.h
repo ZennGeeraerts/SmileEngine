@@ -20,6 +20,7 @@
 #include "smile/core/window/events/application_event.h"
 
 #include "smile/graphic/renderer/view.h"
+#include "smile/graphic/renderer/material/material.h"
 
 namespace smile::graphic
 {
@@ -36,5 +37,6 @@ namespace smile::graphic
 
       private:
         View m_View;
+        Material::Ref m_Material;
     };
 }
