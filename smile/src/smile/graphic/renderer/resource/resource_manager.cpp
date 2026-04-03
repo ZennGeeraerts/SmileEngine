@@ -105,7 +105,7 @@ namespace smile::graphic
         textureDesc.TextureFormat = pImage->GetFormat();
         textureDesc.Dimension = rhi::TextureDimension::Texture2D;
         textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
-        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::None;
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
@@ -161,6 +161,18 @@ namespace smile::graphic
         auto pSampler = memory::CreateRef< Sampler >( handle, descriptor );
         m_pSamplers.PushBack( pSampler );
         return pSampler;
+    }
+
+    Sampler::Ref ResourceManager::GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor )
+    {
+        auto it = m_SamplerCache.FindItemAtKey( descriptor );
+
+        if ( it != m_SamplerCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreateSampler( descriptor );
     }
 
     FramebufferAttachment ResourceManager::CreateColorAttachment( const Uint32 width, const Uint32 height )

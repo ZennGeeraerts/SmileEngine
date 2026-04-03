@@ -21,6 +21,7 @@
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/forward_renderer.h"
 #include "smile/graphic/sprite/renderer_2d.h"
+#include "smile/graphic/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
@@ -49,6 +50,18 @@ namespace smile::graphic
 
         m_View.SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
+        TextureManager::CreateInstance();
+        TextureAsset::Ref textureAsset = TextureManager::GetInstance().GetTexture( "resources/textures/uv_grid.png" );
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+
+        rhi::SamplerDescriptor samplerDesc{};
+        samplerDesc.Filtering = rhi::SamplerFiltering::MinMagMipLinear;
+        samplerDesc.AddressingU = rhi::SamplerAddressing::Wrap;
+        samplerDesc.AddressingV = rhi::SamplerAddressing::Wrap;
+        samplerDesc.AddressingW = rhi::SamplerAddressing::Wrap;
+
+        auto sampler = resourceManager.GetOrCreateSampler( samplerDesc );
+
         {
             MaterialLayout layout{};
             layout.Parameters.EmplaceBack( "Color", MaterialParameterType::Float3, 0u, 12u );
@@ -69,8 +82,8 @@ namespace smile::graphic
             MaterialDescriptor desc{};
             desc.ShaderProgram = program;
             desc.Parameters["Color"] = DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f };
-            desc.Parameters["UseTexture"] = 0;
-            desc.TextureBindings["Diffuse"] = nullptr;
+            desc.Parameters["UseTexture"] = 1;
+            desc.TextureBindings["Diffuse"] = { textureAsset->GetTexture(), sampler };
 
             m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( layout, desc );
         }

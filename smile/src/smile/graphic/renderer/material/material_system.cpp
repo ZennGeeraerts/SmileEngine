@@ -127,12 +127,15 @@ namespace smile::graphic
 
         for ( const auto &textureBinding : layout.Textures )
         {
-            Texture::ConstRef texture = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
+            const MaterialTextureBinding textureParam = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
 
-            if ( texture )
+            if ( textureParam.Texture && textureParam.Sampler )
             {
                 bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
-                    textureBinding.Slot, texture->GetHandle(), texture->GetFormat() ) );
+                    textureBinding.Slot, textureParam.Texture->GetHandle(), textureParam.Texture->GetFormat() ) );
+
+                bindingSetDesc.AddItem(
+                    rhi::BindingSetElement::CreateSampler( textureBinding.Slot, textureParam.Sampler->GetHandle() ) );
             }
         }
 

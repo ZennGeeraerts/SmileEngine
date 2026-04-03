@@ -55,6 +55,7 @@ namespace smile::graphic
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
 
         Sampler::Ref CreateSampler( const rhi::SamplerDescriptor &descriptor );
+        Sampler::Ref GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor );
 
         FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
 
@@ -150,6 +151,7 @@ namespace smile::graphic
 
         primitive::HashMap< ShaderKey, VertexShader::Ref > m_VertexShaderCache;
         primitive::HashMap< ShaderKey, PixelShader::Ref > m_PixelShaderCache;
+        primitive::HashMap< rhi::SamplerDescriptor, Sampler::Ref > m_SamplerCache;
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;

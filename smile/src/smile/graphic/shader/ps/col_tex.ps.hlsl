@@ -10,7 +10,7 @@ cbuffer Material : register( b2 )
 };
 
 Texture2D Diffuse : register( t0 );
-SamplerState SamLinear : register( s0 );
+SamplerState DiffuseSampler : register( s0 );
 
 struct VS_OUTPUT
 {
@@ -23,7 +23,7 @@ float4 PSMain( VS_OUTPUT input ) : SV_TARGET
     float3 color;
 
     if ( UseTexture != 0 )
-        color = Diffuse.Sample( SamLinear, input.TexCoord ).rgb;
+        color = Diffuse.Sample( DiffuseSampler, input.TexCoord ).rgb;
     else
         color = Color;
 

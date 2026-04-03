@@ -28,16 +28,22 @@ namespace smile::graphic
             return;
         }
 
+        // TODO: Once we have our own vector class that supports operator==
+        /*if ( m_Descriptor.Parameters[name] == data )
+            return;*/
+
         m_Descriptor.Parameters[name] = data;
         m_DirtyFlags.Set( DirtyFlags::Parameter );
     }
 
-    MaterialParameterValue Material::GetParameter( const primitive::StringView name ) const
+    const MaterialParameterValue &Material::GetParameter( const primitive::StringView name ) const
     {
         return m_Descriptor.Parameters.GetItemAtKey( name );
     }
 
-    void Material::SetTextureBinding( const primitive::StringView name, Texture::ConstRef texture )
+    void Material::SetTextureBinding( const primitive::StringView name,
+        Texture::ConstRef texture,
+        Sampler::ConstRef sampler )
     {
         if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
         {
@@ -45,11 +51,16 @@ namespace smile::graphic
             return;
         }
 
-        m_Descriptor.TextureBindings[name] = texture;
+        MaterialTextureBinding textureBinding{ texture, sampler };
+
+        if ( m_Descriptor.TextureBindings[name] == textureBinding )
+            return;
+
+        m_Descriptor.TextureBindings[name] = std::move( textureBinding );
         m_DirtyFlags.Set( DirtyFlags::Texture );
     }
 
-    Texture::ConstRef Material::GetTextureBinding( const primitive::StringView name ) const
+    const MaterialTextureBinding &Material::GetTextureBinding( const primitive::StringView name ) const
     {
         return m_Descriptor.TextureBindings.GetItemAtKey( name );
     }

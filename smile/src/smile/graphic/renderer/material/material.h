@@ -9,6 +9,7 @@
 #include "smile/common/memory/counted.h"
 #include "smile/graphic/renderer/shader/program.h"
 #include "smile/graphic/renderer/resource/texture.h"
+#include "smile/graphic/renderer/resource/sampler.h"
 
 #include <DirectXMath.h>
 
@@ -40,7 +41,7 @@ namespace smile::graphic
             Uint32 Offset;
             Count Size;
 
-            inline bool operator==( const Parameter &other ) const
+            inline bool operator==( const Parameter &other ) const noexcept
             {
                 return Name == other.Name && Type == other.Type && Offset == other.Offset && Size == other.Size;
             }
@@ -55,7 +56,7 @@ namespace smile::graphic
             primitive::String Name;
             Uint32 Slot;
 
-            inline bool operator==( const Texture &other )
+            inline bool operator==( const Texture &other ) const noexcept
             {
                 return Name == other.Name && Slot == other.Slot;
             }
@@ -71,11 +72,34 @@ namespace smile::graphic
     using MaterialParameterValue = std::
         variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, DirectX::XMFLOAT4, primitive::Vector< Byte > >;
 
+    struct MaterialTextureBinding final
+    {
+        MaterialTextureBinding() = default;
+
+        MaterialTextureBinding( Texture::ConstRef texture, Sampler::ConstRef sampler ) noexcept
+            : Texture{ texture }, Sampler{ sampler }
+        {
+        }
+
+        bool operator==( const MaterialTextureBinding &other ) const noexcept
+        {
+            return Texture == other.Texture && Sampler == other.Sampler;
+        }
+
+        bool operator!=( const MaterialTextureBinding &other ) const noexcept
+        {
+            return !( *this == other );
+        }
+
+        Texture::ConstRef Texture;
+        Sampler::ConstRef Sampler;
+    };
+
     struct MaterialDescriptor final
     {
         Program::ConstRef ShaderProgram;
         primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
-        primitive::HashMap< primitive::String, Texture::ConstRef > TextureBindings;
+        primitive::HashMap< primitive::String, MaterialTextureBinding > TextureBindings;
     };
 
     class Material final : public memory::Counted
@@ -98,10 +122,11 @@ namespace smile::graphic
         void Clear();
 
         void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
-        MaterialParameterValue GetParameter( const primitive::StringView name ) const;
+        const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
 
-        void SetTextureBinding( const primitive::StringView name, Texture::ConstRef texture );
-        Texture::ConstRef GetTextureBinding( const primitive::StringView name ) const;
+        void
+        SetTextureBinding( const primitive::StringView name, Texture::ConstRef texture, Sampler::ConstRef sampler );
+        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
         const MaterialLayout &GetLayout() const
         {
