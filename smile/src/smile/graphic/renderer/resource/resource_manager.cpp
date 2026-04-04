@@ -105,11 +105,11 @@ namespace smile::graphic
         textureDesc.TextureFormat = pImage->GetFormat();
         textureDesc.Dimension = rhi::TextureDimension::Texture2D;
         textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
-        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::None;
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
-        auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
+        auto buffer = primitive::Vector< Byte >{ pImage->GetData(), pImage->GetDataSize() };
         m_pDevice->CreateTexture( handle, textureDesc, buffer );
 
         auto pTexture =
@@ -130,7 +130,7 @@ namespace smile::graphic
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
-        auto buffer = std::vector< Byte >{ pImage->GetData(), pImage->GetData() + pImage->GetDataSize() };
+        auto buffer = primitive::Vector< Byte >{ pImage->GetData(), pImage->GetDataSize() };
         m_pDevice->CreateTexture( handle, textureDesc, buffer );
 
         auto pTexture =

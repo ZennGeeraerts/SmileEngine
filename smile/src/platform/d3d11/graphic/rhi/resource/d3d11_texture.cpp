@@ -18,7 +18,9 @@ namespace smile::graphic::rhi
         Destroy();
     }
 
-    void D3D11Texture::Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const std::vector< Byte > &buffer )
+    void D3D11Texture::Create( ID3D11Device *pDevice,
+        const TextureDescriptor &desc,
+        const primitive::Vector< Byte > &buffer )
     {
         Descriptor = desc;
 
@@ -61,11 +63,11 @@ namespace smile::graphic::rhi
                 ComPtr< ID3D11Texture1D > pTexture1D;
                 const HRESULT result = [&]()
                 {
-                    if ( !buffer.empty() )
+                    if ( !buffer.IsEmpty() )
                     {
                         D3D11_SUBRESOURCE_DATA subResourceData{};
-                        subResourceData.pSysMem = buffer.data();
-                        subResourceData.SysMemPitch = static_cast< UINT >( buffer.size() );
+                        subResourceData.pSysMem = buffer.GetData();
+                        subResourceData.SysMemPitch = formatInfo.BytesPerBlock * desc11.Width;
 
                         return pDevice->CreateTexture1D( &desc11, &subResourceData, &pTexture1D );
                     }
@@ -116,11 +118,11 @@ namespace smile::graphic::rhi
                 ComPtr< ID3D11Texture2D > pTexture2D;
                 const HRESULT result = [&]()
                 {
-                    if ( !buffer.empty() )
+                    if ( !buffer.IsEmpty() )
                     {
                         D3D11_SUBRESOURCE_DATA subResourceData{};
-                        subResourceData.pSysMem = buffer.data();
-                        subResourceData.SysMemPitch = static_cast< UINT >( buffer.size() );
+                        subResourceData.pSysMem = buffer.GetData();
+                        subResourceData.SysMemPitch = formatInfo.BytesPerBlock * desc11.Width;
 
                         return pDevice->CreateTexture2D( &desc11, &subResourceData, &pTexture2D );
                     }
@@ -157,11 +159,11 @@ namespace smile::graphic::rhi
                 ComPtr< ID3D11Texture3D > pTexture3D;
                 const HRESULT result = [&]()
                 {
-                    if ( !buffer.empty() )
+                    if ( !buffer.IsEmpty() )
                     {
                         D3D11_SUBRESOURCE_DATA subResourceData{};
-                        subResourceData.pSysMem = buffer.data();
-                        subResourceData.SysMemPitch = static_cast< UINT >( buffer.size() );
+                        subResourceData.pSysMem = buffer.GetData();
+                        subResourceData.SysMemPitch = formatInfo.BytesPerBlock * desc11.Width;
 
                         return pDevice->CreateTexture3D( &desc11, &subResourceData, &pTexture3D );
                     }

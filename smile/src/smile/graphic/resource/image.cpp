@@ -7,7 +7,8 @@
 
 namespace smile::graphic
 {
-    Image::Image() : m_Width{ 0 }, m_Height{ 0 }, m_Format{ rhi::Format::UNKNOWN }, m_Buffer{}, m_Stride{ 0 }
+    Image::Image() noexcept
+        : m_Width{ 0 }, m_Height{ 0 }, m_Format{ rhi::Format::UNKNOWN }, m_Buffer{}, m_BytesPerPixel{ 0 }
     {
     }
 
@@ -15,14 +16,14 @@ namespace smile::graphic
         : m_Width{ width }, m_Height{ height }, m_Format{ format }
     {
         const auto &formatInfo = GetFormatInfo( format );
-        m_Stride = formatInfo.BytesPerBlock;
+        m_BytesPerPixel = formatInfo.BytesPerBlock;
 
         const Count size = [&]()
         {
-            if ( m_Stride == 0 )
+            if ( m_BytesPerPixel == 0 )
                 return m_Width * m_Height / 2;
             else
-                return m_Stride * m_Width * m_Height;
+                return m_BytesPerPixel * m_Width * m_Height;
         }();
 
         m_Buffer.SetItemCount( size );

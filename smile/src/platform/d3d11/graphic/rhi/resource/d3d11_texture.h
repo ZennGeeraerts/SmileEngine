@@ -22,7 +22,7 @@ namespace smile::graphic::rhi
         D3D11Texture &operator=( const D3D11Texture & ) = delete;
         D3D11Texture &operator=( D3D11Texture && ) = delete;
 
-        void Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const std::vector< Byte > &buffer );
+        void Create( ID3D11Device *pDevice, const TextureDescriptor &desc, const primitive::Vector< Byte > &buffer );
         void Destroy();
 
         ID3D11ShaderResourceView *GetOrCreateShaderResourceView( ID3D11Device *pDevice,

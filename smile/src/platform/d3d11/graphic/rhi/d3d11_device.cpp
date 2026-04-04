@@ -135,8 +135,9 @@ namespace smile::graphic::rhi
     {
     }
 
-    void
-    D3D11Device::CreateTexture( TextureHandle handle, const TextureDescriptor &desc, const std::vector< Byte > &buffer )
+    void D3D11Device::CreateTexture( TextureHandle handle,
+        const TextureDescriptor &desc,
+        const primitive::Vector< Byte > &buffer )
     {
         m_Textures[handle.GetIndex()].Create( m_Context.pDevice, desc, buffer );
     }

@@ -64,7 +64,7 @@ namespace smile::graphic::rhi
 
         virtual void CreateTexture( TextureHandle handle,
             const TextureDescriptor &desc,
-            const std::vector< Byte > &buffer = {} ) = 0;
+            const primitive::Vector< Byte > &buffer = {} ) = 0;
         virtual void DestroyTexture( TextureHandle handle ) = 0;
 
         virtual void CreateStagingTexture( StagingTextureHandle handle, const TextureDescriptor &desc ) = 0;

@@ -16,37 +16,47 @@ namespace smile::graphic
         using Ref = memory::Ref< Image >;
         using ConstRef = memory::Ref< const Image >;
 
-        Image();
+        Image() noexcept;
         Image( const Uint32 width, const Uint32 height, const rhi::Format format, const Byte *pData );
 
-        Uint32 GetWidth() const
+        [[nodiscard]] Uint32 GetWidth() const noexcept
         {
             return m_Width;
         }
 
-        Uint32 GetHeight() const
+        [[nodiscard]] Uint32 GetHeight() const noexcept
         {
             return m_Height;
         }
 
-        rhi::Format GetFormat() const
+        [[nodiscard]] rhi::Format GetFormat() const noexcept
         {
             return m_Format;
         }
 
-        const Byte *GetData() const
+        [[nodiscard]] const Byte *GetData() const noexcept
         {
             return m_Buffer.GetData();
         }
 
-        Count GetDataSize() const
+        [[nodiscard]] Count GetDataSize() const noexcept
         {
             return m_Buffer.GetItemCount();
         }
 
-        Uint32 GetStride() const
+        [[nodiscard]] Count GetBytesPerPixel() const noexcept
         {
-            return m_Stride;
+            return m_BytesPerPixel;
+        }
+
+        [[nodiscard]] Count GetRowStride() const noexcept
+        {
+            return m_BytesPerPixel * m_Width;
+        }
+
+        [[nodiscard]] bool IsEmpty() const noexcept
+        {
+            return m_Buffer.IsEmpty();
         }
 
       private:
@@ -54,6 +64,6 @@ namespace smile::graphic
         Uint32 m_Height;
         rhi::Format m_Format;
         primitive::Vector< Byte > m_Buffer;
-        Uint32 m_Stride;
+        Count m_BytesPerPixel;
     };
 }

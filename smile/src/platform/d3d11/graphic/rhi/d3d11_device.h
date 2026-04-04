@@ -79,7 +79,7 @@ namespace smile::graphic::rhi
 
         void CreateTexture( TextureHandle handle,
             const TextureDescriptor &desc,
-            const std::vector< Byte > &buffer = {} ) override;
+            const primitive::Vector< Byte > &buffer = {} ) override;
         void DestroyTexture( TextureHandle handle ) override;
 
         void CreateStagingTexture( StagingTextureHandle handle, const TextureDescriptor &desc ) override;
