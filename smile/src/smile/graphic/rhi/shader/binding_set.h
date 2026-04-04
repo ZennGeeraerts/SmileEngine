@@ -34,32 +34,49 @@ namespace smile::graphic::rhi
             Uint32 RawData[2];
         };
 
-        static BindingSetElement CreateUnknown( Uint32 slot )
+        static BindingSetElement CreateUnknown( Uint32 slot = 0 )
         {
             BindingSetElement result;
             result.Type = ResourceType::Unknown;
+            result.Texture = TextureHandle::NullHandle();
             result.Slot = slot;
             result.BindingFormat = Format::UNKNOWN;
+            result.Dimension = TextureDimension::Unknown;
+            result.RawData[0] = 0;
+            result.RawData[1] = 0;
             return result;
         }
 
-        static BindingSetElement CreateTextureSRV( Uint32 slot, TextureHandle texture, Format format = Format::UNKNOWN )
+        static BindingSetElement CreateTextureSRV( Uint32 slot,
+            TextureHandle texture,
+            Format format = Format::UNKNOWN,
+            const TextureSubresourceSet &subresources = s_AllSubresources,
+            TextureDimension dimension = TextureDimension::Unknown )
         {
             BindingSetElement result;
             result.Type = ResourceType::Texture_SRV;
             result.Texture = texture;
             result.Slot = slot;
             result.BindingFormat = format;
+            result.Dimension = dimension;
+            result.Subresources = subresources;
             return result;
         }
 
-        static BindingSetElement CreateTextureUAV( Uint32 slot, TextureHandle texture, Format format = Format::UNKNOWN )
+        static BindingSetElement CreateTextureUAV( Uint32 slot,
+            TextureHandle texture,
+            Format format = Format::UNKNOWN,
+            const TextureSubresourceSet &subresources =
+                TextureSubresourceSet{ 0, 1, 0, TextureSubresourceSet::s_AllSlices },
+            TextureDimension dimension = TextureDimension::Unknown )
         {
             BindingSetElement result;
             result.Type = ResourceType::Texture_UAV;
             result.Texture = texture;
             result.Slot = slot;
             result.BindingFormat = format;
+            result.Dimension = dimension;
+            result.Subresources = subresources;
             return result;
         }
 

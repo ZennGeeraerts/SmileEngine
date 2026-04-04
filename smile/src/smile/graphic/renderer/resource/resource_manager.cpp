@@ -105,7 +105,7 @@ namespace smile::graphic
         textureDesc.TextureFormat = pImage->GetFormat();
         textureDesc.Dimension = rhi::TextureDimension::Texture2D;
         textureDesc.BindFlags = { rhi::TextureBindFlags::ShaderResource };
-        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::Read;
+        textureDesc.CPUAccess = updateable ? rhi::CPUAccessMode::Write : rhi::CPUAccessMode::None;
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 

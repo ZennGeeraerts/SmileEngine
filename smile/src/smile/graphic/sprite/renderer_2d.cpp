@@ -36,23 +36,23 @@ namespace smile::graphic
             float quadVertices[] = { -0.5f,
                 -0.5f,
                 0.0f,
-                -1,
-                -1,
+                0.0f,
+                1.0f,
                 /*1*/ -0.5f,
                 0.5f,
                 0.0f,
-                -1,
-                1,
+                0.0f,
+                0.0f,
                 /*2*/ 0.5f,
                 -0.5f,
                 0.0f,
-                1,
-                -1 /*3*/,
+                1.0f,
+                1.0f /*3*/,
                 0.5f,
                 0.5f,
                 0.0f,
-                1,
-                1 /*4*/ };
+                1.0f,
+                0.0f /*4*/ };
 
             s_pStorage->pQuadVertexBuffer =
                 resourceManager.CreateVertexBuffer( quadVertices, quadVerticesCount, program->GetVertexLayout() );

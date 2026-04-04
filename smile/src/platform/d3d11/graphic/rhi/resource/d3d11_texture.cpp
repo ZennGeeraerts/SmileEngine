@@ -232,7 +232,7 @@ namespace smile::graphic::rhi
                 viewDesc.Texture1DArray.FirstArraySlice = subresources.BaseArraySlice;
                 viewDesc.Texture1DArray.ArraySize = subresources.ArraySliceCount;
                 viewDesc.Texture1DArray.MostDetailedMip = subresources.BaseMipLevel;
-                viewDesc.Texture1DArray.MipLevels = subresources.BaseMipLevel;
+                viewDesc.Texture1DArray.MipLevels = subresources.MipLevelCount;
                 break;
             }
             case TextureDimension::Texture2D:

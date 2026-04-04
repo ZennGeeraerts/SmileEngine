@@ -91,7 +91,15 @@ namespace smile::graphic::rhi
         MipmapLevel MipLevelCount = 1;
         ArraySlice BaseArraySlice = 0;
         ArraySlice ArraySliceCount = 1;
+
+        static constexpr MipmapLevel s_AllMipMapLevels = std::numeric_limits< MipmapLevel >::max();
+        static constexpr ArraySlice s_AllSlices = std::numeric_limits< ArraySlice >::max();
     };
+
+    static const TextureSubresourceSet s_AllSubresources{ 0,
+        TextureSubresourceSet::s_AllMipMapLevels,
+        0,
+        TextureSubresourceSet::s_AllSlices };
 
     struct TextureBindingKey final : public TextureSubresourceSet
     {
