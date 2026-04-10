@@ -20,6 +20,8 @@ namespace smile::graphic::rhi
 
     struct SamplerDescriptor final
     {
+        SamplerDescriptor() = default;
+
         SamplerFiltering Filtering;
         SamplerAddressing AddressingU;
         SamplerAddressing AddressingV;

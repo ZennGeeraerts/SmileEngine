@@ -37,28 +37,31 @@ namespace smile::graphic
         }
     }
 
-    void ForwardRenderer::SetupMaterial( Material::ConstRef material,
+    void ForwardRenderer::SetupMaterial( MaterialInstance::Ref materialInstance,
         const rhi::RenderState &renderState,
         GraphicsState &graphicsState )
     {
-        const PipelineKey key{ material, renderState };
+        auto &materialSystem = RenderEngine::GetMaterialSystem();
+        materialSystem.UpdateMaterialInstance( materialInstance );
+
+        const PipelineKey key{ materialInstance, renderState };
 
         auto it = m_Pipelines.FindItemAtKey( key );
         if ( it == m_Pipelines.end() )
         {
-            it = CreatePipeline( material, renderState );
+            it = CreatePipeline( materialInstance, renderState );
         }
 
         graphicsState.pPipeline = it.GetItem();
 
-        const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( material );
+        const auto &materialData = materialSystem.GetMaterialData( materialInstance );
         graphicsState.pBindings.PushBack( materialData.Bindings );
     }
 
     primitive::HashMap< ForwardRenderer::PipelineKey, GraphicsPipeline::Ref >::Iterator
-    ForwardRenderer::CreatePipeline( Material::ConstRef material, const rhi::RenderState &renderState )
+    ForwardRenderer::CreatePipeline( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState )
     {
-        const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( material );
+        const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( materialInstance );
         auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
         GraphicsPipelineDescriptor psoDesc{};
@@ -80,7 +83,7 @@ namespace smile::graphic
         psoDesc.RenderState = renderState;
 
         auto pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
-        return m_Pipelines.Insert( PipelineKey{ material, renderState }, std::move( pipeline ) );
+        return m_Pipelines.Insert( PipelineKey{ materialInstance, renderState }, std::move( pipeline ) );
     }
 
     void ForwardRenderer::ShutDown()
@@ -122,7 +125,7 @@ namespace smile::graphic
             state.IndexBuffer = IndexBufferBinding{ drawItem.pIndexBuffer, rhi::Format::R32_UINT, 0u };
             state.pBindings.PushBack( m_pBindingSet );
 
-            SetupMaterial( drawItem.Material, drawItem.RenderState, state );
+            SetupMaterial( drawItem.MaterialInstance, drawItem.RenderState, state );
 
             renderContext.SetGraphicsState( state );
             renderContext.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );

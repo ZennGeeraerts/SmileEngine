@@ -7,7 +7,7 @@
 #include "smile/common/foundation/meyers_singleton.h"
 
 #include "smile/graphic/renderer/resource/frame_buffer.h"
-#include "smile/graphic/renderer/material/material.h"
+#include "smile/graphic/renderer/material/material_instance.h"
 
 namespace smile::graphic
 {
@@ -20,8 +20,8 @@ namespace smile::graphic
         void DrawSprite( const DirectX::XMFLOAT2 &position,
             float rotation,
             const DirectX::XMFLOAT2 &size,
-            Material::ConstRef material );
+            MaterialInstance::Ref materialInstance );
 
-        void DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, Material::ConstRef material );
+        void DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance::Ref materialInstance );
     };
 }

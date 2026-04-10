@@ -1,15 +1,25 @@
-/*=============================================================================*/
-// Copyright 2022-2025 Smile Engine
-// Authors: Zenn Geeraerts
-/*=============================================================================*/
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        material_asset.h
+ * @author      Zenn Geeraerts
+ * @created     9 Januari 2026
+ * @brief       Asset for material
+ */
 #pragma once
 
-#include "smile/common/primitive/handle.h"
-#include "smile/common/foundation/flags.h"
-#include "smile/common/memory/counted.h"
+#include "smile/core/asset/asset.h"
 #include "smile/graphic/renderer/shader/program.h"
-#include "smile/graphic/renderer/resource/texture.h"
-#include "smile/graphic/renderer/resource/sampler.h"
+#include "smile/graphic/sprite/texture_asset.h"
+#include "material_instance.h"
 
 #include <DirectXMath.h>
 
@@ -24,7 +34,6 @@ namespace smile::graphic
         Bool,
         Float2,
         Float3,
-        Float4,
     };
 
     struct MaterialLayout final
@@ -49,10 +58,6 @@ namespace smile::graphic
 
         struct Texture final
         {
-            Texture( const primitive::String &name, Uint32 slot ) noexcept : Name{ name }, Slot{ slot }
-            {
-            }
-
             primitive::String Name;
             Uint32 Slot;
 
@@ -69,95 +74,51 @@ namespace smile::graphic
         foundation::Flags< rhi::ShaderStage > Visibility;
     };
 
-    using MaterialParameterValue = std::
-        variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, DirectX::XMFLOAT4, primitive::Vector< Byte > >;
-
-    struct MaterialTextureBinding final
-    {
-        MaterialTextureBinding() = default;
-
-        MaterialTextureBinding( Texture::ConstRef texture, Sampler::ConstRef sampler ) noexcept
-            : Texture{ texture }, Sampler{ sampler }
-        {
-        }
-
-        bool operator==( const MaterialTextureBinding &other ) const noexcept
-        {
-            return Texture == other.Texture && Sampler == other.Sampler;
-        }
-
-        bool operator!=( const MaterialTextureBinding &other ) const noexcept
-        {
-            return !( *this == other );
-        }
-
-        Texture::ConstRef Texture;
-        Sampler::ConstRef Sampler;
-    };
-
-    struct MaterialDescriptor final
-    {
-        Program::ConstRef ShaderProgram;
-        primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
-        primitive::HashMap< primitive::String, MaterialTextureBinding > TextureBindings;
-    };
-
-    class Material final : public memory::Counted
+    class Material final : public asset::Asset
     {
       public:
         using Ref = memory::Ref< Material >;
         using ConstRef = memory::Ref< const Material >;
 
-        using ID = primitive::Handle< Uint32, 24, 8 >;
+        Material( const primitive::String &name, const MaterialLayout &layout );
 
-        enum class DirtyFlags
+        asset::AssetType GetType() const override
         {
-            Parameter,
-            Texture,
-        };
+            return asset::AssetType{ foundation::TypeNameOf< Material >() };
+        }
 
-        Material( ID id, const MaterialLayout &layout, const MaterialDescriptor &desc );
-        ~Material() = default;
-
-        void Clear();
-
-        void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
-        const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
-
-        void
-        SetTextureBinding( const primitive::StringView name, Texture::ConstRef texture, Sampler::ConstRef sampler );
-        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
+        primitive::StringView GetName() const
+        {
+            return m_Name.AsStringView();
+        }
 
         const MaterialLayout &GetLayout() const
         {
             return m_Layout;
         }
 
-        const MaterialDescriptor &GetDescriptor() const
+        MaterialInstance::Ref GetDefaultInstance() const
         {
-            return m_Descriptor;
+            return m_DefaultInstance;
         }
 
-        ID GetID() const
-        {
-            return m_ID;
-        }
+        void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
+        MaterialParameterValue GetParameter( const primitive::StringView name ) const;
 
-        foundation::Flags< DirtyFlags > GetDirtyFlags() const
-        {
-            return m_DirtyFlags;
-        }
+        void SetTextureBinding( const primitive::StringView name,
+            Texture::ConstRef texture,
+            const rhi::SamplerDescriptor &samplerDesc );
 
-        void ClearDirtyFlags()
-        {
-            m_DirtyFlags.ClearAll();
-        }
+        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
       private:
+        primitive::String m_Name;
         MaterialLayout m_Layout;
-        MaterialDescriptor m_Descriptor;
-        ID m_ID;
+        MaterialInstance::Ref m_DefaultInstance = nullptr;
 
-        foundation::Flags< DirtyFlags > m_DirtyFlags;
+        friend class MaterialSystem;
     };
+
+    void
+    BuildMaterialLayoutAndDescriptor( Program::ConstRef program, MaterialLayout &layout, MaterialDescriptor &desc );
 }

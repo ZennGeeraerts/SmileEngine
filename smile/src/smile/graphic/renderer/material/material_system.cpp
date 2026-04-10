@@ -24,21 +24,11 @@
 
 namespace smile::graphic
 {
-    Material::Ref MaterialSystem::CreateMaterial( const MaterialLayout &layout, const MaterialDescriptor &desc )
+    Material::Ref MaterialSystem::CreateMaterial( const primitive::String &name, const MaterialLayout &layout,
+        const MaterialDescriptor &desc )
     {
-        Material::ID id = m_IDManager.CreateHandle();
-        Material::Ref material = memory::CreateRef< Material >( id, layout, desc );
-
-        MaterialData data;
-        data.ShaderProgram = desc.ShaderProgram;
-
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
-
-        const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
-        data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
-
-        m_Materials[id.GetIndex()] = material;
-        m_MaterialData[id.GetIndex()] = std::move( data );
+        Material::Ref material = memory::CreateRef< Material >( name, layout );
+        material->m_DefaultInstance = CreateMaterialInstance( material, desc );
 
         return material;
     }
@@ -48,38 +38,51 @@ namespace smile::graphic
         return CreateMaterial( asset->GetLayout(), asset->GetDescriptor() );
     }*/
 
-    void MaterialSystem::Update()
+    MaterialInstance::Ref MaterialSystem::CreateMaterialInstance( Material::ConstRef material,
+        const MaterialDescriptor &desc )
     {
-        for ( const auto &materialID : m_IDManager )
+        MaterialInstance::ID id = m_IDManager.CreateHandle();
+
+        MaterialInstance::Ref materialInstance = memory::CreateRef< MaterialInstance >( id, desc, *material );
+
+        MaterialData data;
+        data.ShaderProgram = desc.ShaderProgram;
+
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+
+        const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
+        data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
+
+        m_MaterialInstances[id.GetIndex()] = materialInstance;
+        m_MaterialData[id.GetIndex()] = std::move( data );
+
+        return materialInstance;
+    }
+
+    void MaterialSystem::UpdateMaterialInstance( MaterialInstance::Ref materialInstance )
+    {
+        auto dirtyFlags = materialInstance->GetDirtyFlags();
+        if ( dirtyFlags.Has( MaterialInstance::DirtyFlags::Parameter ) )
         {
-            if ( !m_IDManager.IsHandleActive( materialID ) )
-                continue;
+            UpdateConstantBuffer( materialInstance );
+        }
 
-            Material::Ref material = m_Materials[materialID.GetIndex()];
+        if ( dirtyFlags.Has( MaterialInstance::DirtyFlags::Texture ) )
+        {
+            UpdateBindingSet( materialInstance );
+        }
 
-            auto dirtyFlags = material->GetDirtyFlags();
-            if ( dirtyFlags.Has( Material::DirtyFlags::Parameter ) )
-            {
-                UpdateConstantBuffer( material );
-            }
-
-            if ( dirtyFlags.Has( Material::DirtyFlags::Texture ) )
-            {
-                UpdateBindingSet( material );
-            }
-
-            if ( dirtyFlags.HasAny( { Material::DirtyFlags::Parameter, Material::DirtyFlags::Texture } ) )
-            {
-                material->ClearDirtyFlags();
-            }
+        if ( dirtyFlags.HasAny( { MaterialInstance::DirtyFlags::Parameter, MaterialInstance::DirtyFlags::Texture } ) )
+        {
+            materialInstance->ClearDirtyFlags();
         }
     }
 
-    void MaterialSystem::UpdateConstantBuffer( Material::Ref material )
+    void MaterialSystem::UpdateConstantBuffer( MaterialInstance::Ref materialInstance )
     {
-        const auto &layout = material->GetLayout();
-        const auto &desc = material->GetDescriptor();
-        auto &data = m_MaterialData[material->GetID().GetIndex()];
+        const auto &layout = materialInstance->GetMaterial().GetLayout();
+        const auto &desc = materialInstance->GetDescriptor();
+        auto &data = m_MaterialData[materialInstance->GetID().GetIndex()];
 
         primitive::Vector< Byte > bufferData( layout.CbSize );
 
@@ -115,38 +118,40 @@ namespace smile::graphic
         RenderEngine::GetRenderContext().FillConstantBuffer( data.ConstantBuffer );
     }
 
-    void MaterialSystem::UpdateBindingSet( Material::Ref material )
+    void MaterialSystem::UpdateBindingSet( MaterialInstance::Ref materialInstance )
     {
-        const auto &layout = material->GetLayout();
-        const auto &desc = material->GetDescriptor();
+        const auto &layout = materialInstance->GetMaterial().GetLayout();
+        const auto &desc = materialInstance->GetDescriptor();
 
-        auto &data = m_MaterialData[material->GetID().GetIndex()];
+        auto &data = m_MaterialData[materialInstance->GetID().GetIndex()];
 
         rhi::BindingSetDescriptor bindingSetDesc{
             { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer->GetHandle() ) } };
+
+        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
         for ( const auto &textureBinding : layout.Textures )
         {
             const MaterialTextureBinding textureParam = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
 
-            if ( textureParam.Texture && textureParam.Sampler )
+            if ( textureParam.Texture )
             {
                 bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
                     textureBinding.Slot, textureParam.Texture->GetHandle(), textureParam.Texture->GetFormat() ) );
 
+                Sampler::Ref sampler = resourceManager.GetOrCreateSampler( textureParam.SamplerDescriptor );
+
                 bindingSetDesc.AddItem(
-                    rhi::BindingSetElement::CreateSampler( textureBinding.Slot, textureParam.Sampler->GetHandle() ) );
+                    rhi::BindingSetElement::CreateSampler( textureBinding.Slot, sampler->GetHandle() ) );
             }
         }
-
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
         data.Bindings = resourceManager.CreateBindingSet( bindingSetDesc, layout.Visibility );
     }
 
-    const MaterialData &MaterialSystem::GetMaterialData( Material::ConstRef material ) const
+    const MaterialData &MaterialSystem::GetMaterialData( MaterialInstance::ConstRef materialInstance ) const
     {
-        const auto id = material->GetID();
+        const auto id = materialInstance->GetID();
 
         SM_ASSERT( m_IDManager.IsHandleActive( id ) );
 

@@ -70,9 +70,9 @@ namespace smile::graphic
             desc.ShaderProgram = program;
             desc.Parameters["Color"] = DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f };
             desc.Parameters["UseTexture"] = 0;
-            desc.TextureBindings["Diffuse"] = nullptr;
+            desc.TextureBindings["Diffuse"] = {};
 
-            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( layout, desc );
+            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( "Mat", layout, desc );
         }
 
         {
@@ -123,14 +123,14 @@ namespace smile::graphic
         auto &forwardRenderer = ForwardRenderer::GetInstance();
 
         m_Material->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
-        RenderEngine::GetMaterialSystem().Update();
 
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
         rhi::RenderState renderState{};
 
-        forwardRenderer.Submit( { m_VertexBuffer, m_IndexBuffer, m_Material, worldTransform, renderState } );
+        forwardRenderer.Submit(
+            { m_VertexBuffer, m_IndexBuffer, m_Material->GetDefaultInstance(), worldTransform, renderState } );
 
         m_View.OnUpdate();
 

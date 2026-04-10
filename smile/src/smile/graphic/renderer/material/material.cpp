@@ -1,67 +1,107 @@
-/*=============================================================================*/
-// Copyright 2022-2025 Smile Engine
-// Authors: Zenn Geeraerts
-/*=============================================================================*/
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        material_asset.h
+ * @author      Zenn Geeraerts
+ * @created     16 Januari 2026
+ * @brief       Asset for material
+ */
 #include "smpch.h"
 #include "material.h"
 
+#include "smile/graphic/sprite/texture_manager.h"
+
 namespace smile::graphic
 {
-    Material::Material( ID id, const MaterialLayout &layout, const MaterialDescriptor &desc )
-        : m_ID{ id },
-          m_Layout{ layout },
-          m_Descriptor{ desc },
-          m_DirtyFlags{ { DirtyFlags::Parameter, DirtyFlags::Texture } }
+    Material::Material( const primitive::String &name, const MaterialLayout &layout )
+        : m_Name{ name }, m_Layout{ layout }
     {
-    }
-
-    void Material::Clear()
-    {
-        // m_Params.Clear();
     }
 
     void Material::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
     {
-        if ( !m_Descriptor.Parameters.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetParameter > Could not find material parameter with name: {}", name );
-            return;
-        }
-
-        // TODO: Once we have our own vector class that supports operator==
-        /*if ( m_Descriptor.Parameters[name] == data )
-            return;*/
-
-        m_Descriptor.Parameters[name] = data;
-        m_DirtyFlags.Set( DirtyFlags::Parameter );
+        m_DefaultInstance->SetParameter( name, data );
     }
 
-    const MaterialParameterValue &Material::GetParameter( const primitive::StringView name ) const
+    MaterialParameterValue Material::GetParameter( const primitive::StringView name ) const
     {
-        return m_Descriptor.Parameters.GetItemAtKey( name );
+        return m_DefaultInstance->GetParameter( name );
     }
 
     void Material::SetTextureBinding( const primitive::StringView name,
         Texture::ConstRef texture,
-        Sampler::ConstRef sampler )
+        const rhi::SamplerDescriptor &samplerDesc )
     {
-        if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetTextureBinding > Could not find texture binding with name: {}", name );
-            return;
-        }
-
-        MaterialTextureBinding textureBinding{ texture, sampler };
-
-        if ( m_Descriptor.TextureBindings[name] == textureBinding )
-            return;
-
-        m_Descriptor.TextureBindings[name] = std::move( textureBinding );
-        m_DirtyFlags.Set( DirtyFlags::Texture );
+        m_DefaultInstance->SetTextureBinding( name, texture, samplerDesc );
     }
 
     const MaterialTextureBinding &Material::GetTextureBinding( const primitive::StringView name ) const
     {
-        return m_Descriptor.TextureBindings.GetItemAtKey( name );
+        return m_DefaultInstance->GetTextureBinding( name );
+    }
+
+    static MaterialParameterType ConstantTypeToMaterialParamType( ConstantType constantType )
+    {
+        switch ( constantType )
+        {
+            case ConstantType::Float:
+                return MaterialParameterType::Float;
+            case ConstantType::Float2:
+                return MaterialParameterType::Float2;
+            case ConstantType::Float3:
+                return MaterialParameterType::Float3;
+            case ConstantType::Int:
+                return MaterialParameterType::Int;
+            case ConstantType::Bool:
+                return MaterialParameterType::Bool;
+
+            default:
+                SM_ASSERT( false, "Not supported" );
+        }
+    }
+
+    void BuildMaterialLayoutAndDescriptor( Program::ConstRef program, MaterialLayout &layout, MaterialDescriptor &desc )
+    {
+        const auto &cbDesc = program->GetConstantBufferDescriptor( "Material" );
+        for ( const auto &cbItem : cbDesc )
+        {
+            MaterialLayout::Parameter parameter{
+                cbItem.Name, ConstantTypeToMaterialParamType( cbItem.Type ), cbItem.Offset, cbItem.Size };
+
+            layout.Parameters.PushBack( std::move( parameter ) );
+            desc.Parameters.Insert( cbItem.Name, {} );
+        }
+
+        const auto &resources = program->GetResources();
+        for ( const auto &res : resources )
+        {
+            if ( res.NamedElement.Element.Type == rhi::ResourceType::Texture_SRV ||
+                 res.NamedElement.Element.Type == rhi::ResourceType::Texture_UAV )
+            {
+                MaterialLayout::Texture textureBinding{ res.NamedElement.Name, res.NamedElement.Element.Slot };
+
+                layout.Textures.PushBack( std::move( textureBinding ) );
+
+                auto fallbackTexture = TextureManager::GetInstance().GetFallBackTexture()->GetTexture();
+                rhi::SamplerDescriptor fallbackSampler{};
+
+                desc.TextureBindings.Insert( res.NamedElement.Name, { fallbackTexture, fallbackSampler } );
+            }
+            else if ( res.NamedElement.Name == "Material" )
+            {
+                layout.CbSlot = res.NamedElement.Element.Slot;
+            }
+        }
+
+        layout.CbSize = cbDesc.GetSize();
+        desc.ShaderProgram = program;
     }
 }

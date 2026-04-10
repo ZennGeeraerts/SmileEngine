@@ -6,7 +6,7 @@
 
 #include "resource/vertex_buffer.h"
 #include "resource/index_buffer.h"
-#include "material/material.h"
+#include "material/material_instance.h"
 
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_state.h"
@@ -19,7 +19,7 @@ namespace smile::graphic
     {
         VertexBuffer::Ref pVertexBuffer;
         IndexBuffer::Ref pIndexBuffer;
-        Material::ConstRef Material;
+        MaterialInstance::Ref MaterialInstance;
         DirectX::XMFLOAT4X4 WorldTransform;
         rhi::RenderState RenderState;
     };

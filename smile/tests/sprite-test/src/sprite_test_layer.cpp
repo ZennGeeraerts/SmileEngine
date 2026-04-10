@@ -54,14 +54,6 @@ namespace smile::graphic
         TextureAsset::Ref textureAsset = TextureManager::GetInstance().GetTexture( "resources/textures/uv_grid.png" );
         auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
 
-        rhi::SamplerDescriptor samplerDesc{};
-        samplerDesc.Filtering = rhi::SamplerFiltering::MinMagMipLinear;
-        samplerDesc.AddressingU = rhi::SamplerAddressing::Wrap;
-        samplerDesc.AddressingV = rhi::SamplerAddressing::Wrap;
-        samplerDesc.AddressingW = rhi::SamplerAddressing::Wrap;
-
-        auto sampler = resourceManager.GetOrCreateSampler( samplerDesc );
-
         {
             MaterialLayout layout{};
             layout.Parameters.EmplaceBack( "Color", MaterialParameterType::Float3, 0u, 12u );
@@ -79,13 +71,19 @@ namespace smile::graphic
 
             auto program = Program::Create( vertexShader, pixelShader );
 
+            rhi::SamplerDescriptor samplerDesc{};
+            samplerDesc.Filtering = rhi::SamplerFiltering::MinMagMipLinear;
+            samplerDesc.AddressingU = rhi::SamplerAddressing::Wrap;
+            samplerDesc.AddressingV = rhi::SamplerAddressing::Wrap;
+            samplerDesc.AddressingW = rhi::SamplerAddressing::Wrap;
+
             MaterialDescriptor desc{};
             desc.ShaderProgram = program;
             desc.Parameters["Color"] = DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f };
             desc.Parameters["UseTexture"] = 1;
-            desc.TextureBindings["Diffuse"] = { textureAsset->GetTexture(), sampler };
+            desc.TextureBindings["Diffuse"] = { textureAsset->GetTexture(), samplerDesc };
 
-            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( layout, desc );
+            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( "DefaultSprite", layout, desc );
         }
     }
 
@@ -99,13 +97,11 @@ namespace smile::graphic
     {
         auto &renderContext = RenderEngine::GetRenderContext();
         auto &renderer2D = Renderer2D::GetInstance();
-        
-        RenderEngine::GetMaterialSystem().Update();
 
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
-        renderer2D.DrawSprite( worldTransform, m_Material );
+        renderer2D.DrawSprite( worldTransform, m_Material->GetDefaultInstance() );
 
         m_View.OnUpdate();
 

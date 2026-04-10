@@ -23,7 +23,7 @@
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 
 #include "material.h"
-//#include "material_asset.h"
+// #include "material_asset.h"
 
 namespace smile::graphic
 {
@@ -43,19 +43,22 @@ namespace smile::graphic
         MaterialSystem() = default;
         ~MaterialSystem() = default;
 
-        Material::Ref CreateMaterial( const MaterialLayout &layout, const MaterialDescriptor &desc );
-        //Material::Ref CreateMaterial( MaterialAsset::ConstRef asset );
+        Material::Ref
+        CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc );
+        // Material::Ref CreateMaterial( MaterialAsset::ConstRef asset );
 
-        void Update();
+        MaterialInstance::Ref CreateMaterialInstance( Material::ConstRef material, const MaterialDescriptor &desc );
 
-        const MaterialData &GetMaterialData( Material::ConstRef material ) const;
+        void UpdateMaterialInstance( MaterialInstance::Ref materialInstance );
+
+        const MaterialData &GetMaterialData( MaterialInstance::ConstRef materialInstance ) const;
 
       private:
-        void UpdateConstantBuffer( Material::Ref material );
-        void UpdateBindingSet( Material::Ref material );
+        void UpdateConstantBuffer( MaterialInstance::Ref materialInstance );
+        void UpdateBindingSet( MaterialInstance::Ref materialInstance );
 
         static constexpr Uint16 s_MaxMaterialCount = ( 4 << 10 );
-        primitive::Array< Material::Ref, s_MaxMaterialCount > m_Materials;
+        primitive::Array< MaterialInstance::Ref, s_MaxMaterialCount > m_MaterialInstances;
         primitive::Array< MaterialData, s_MaxMaterialCount > m_MaterialData;
         IDManager m_IDManager;
     };

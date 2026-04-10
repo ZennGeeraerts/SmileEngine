@@ -9,7 +9,7 @@
 #include "render_collector.h"
 #include "view.h"
 #include "graphics_state.h"
-#include "material/material.h"
+#include "material/material_instance.h"
 #include "resource/graphics_pipeline.h"
 #include "resource/frame_buffer.h"
 #include "shader/constant_buffer.h"
@@ -22,14 +22,14 @@ namespace smile::graphic
       public:
         struct PipelineKey final
         {
-            PipelineKey( Material::ConstRef material, const rhi::RenderState &renderState )
-                : Material{ material }, RenderState{ renderState }
+            PipelineKey( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState )
+                : MaterialInstance{ materialInstance }, RenderState{ renderState }
             {
             }
 
             bool operator==( const PipelineKey &other ) const
             {
-                return Material->GetID() == other.Material->GetID() && RenderState == other.RenderState;
+                return MaterialInstance->GetID() == other.MaterialInstance->GetID() && RenderState == other.RenderState;
             }
 
             bool operator!=( const PipelineKey &other ) const
@@ -39,12 +39,12 @@ namespace smile::graphic
 
             foundation::HashCode GetHashCode() const
             {
-                foundation::HashCode hash = Material->GetID().Hash();
+                foundation::HashCode hash = MaterialInstance->GetID().Hash();
                 hash = foundation::HashCombine( hash, std::hash< rhi::RenderState >{}( RenderState ) );
                 return hash;
             }
 
-            Material::ConstRef Material;
+            MaterialInstance::ConstRef MaterialInstance;
             rhi::RenderState RenderState;
         };
 
@@ -59,11 +59,12 @@ namespace smile::graphic
         void Submit( DrawItem &&drawItem );
 
       private:
-        void
-        SetupMaterial( Material::ConstRef material, const rhi::RenderState &renderState, GraphicsState &graphicsState );
+        void SetupMaterial( MaterialInstance::Ref materialInstance,
+            const rhi::RenderState &renderState,
+            GraphicsState &graphicsState );
 
-        primitive::HashMap< PipelineKey, GraphicsPipeline::Ref >::Iterator CreatePipeline( Material::ConstRef material,
-            const rhi::RenderState &renderState );
+        primitive::HashMap< PipelineKey, GraphicsPipeline::Ref >::Iterator
+        CreatePipeline( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState );
 
         void ClearDrawList();
 
