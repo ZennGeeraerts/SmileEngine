@@ -9,10 +9,10 @@
 =======================================================================*/
 
 /**
- * @file        material_asset.h
+ * @file        material.cpp
  * @author      Zenn Geeraerts
- * @created     16 Januari 2026
- * @brief       Asset for material
+ * @created     9 Januari 2026
+ * @brief       Holds the data of a material and its default instance
  */
 #include "smpch.h"
 #include "material.h"

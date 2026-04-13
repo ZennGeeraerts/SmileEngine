@@ -4,53 +4,14 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/primitive/handle.h"
+#include "material_descriptor.h"
+
 #include "smile/common/foundation/flags.h"
 #include "smile/common/memory/counted.h"
-#include "smile/graphic/renderer/shader/program.h"
-#include "smile/graphic/renderer/resource/texture.h"
-#include "smile/graphic/rhi/resource/sampler.h"
-
-#include <DirectXMath.h>
-
-#include <variant>
 
 namespace smile::graphic
 {
     class Material;
-
-    using MaterialParameterValue = std::
-        variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, DirectX::XMFLOAT4, primitive::Vector< Byte > >;
-
-    struct MaterialTextureBinding final
-    {
-        MaterialTextureBinding() = default;
-
-        MaterialTextureBinding( Texture::ConstRef texture, const rhi::SamplerDescriptor &samplerDesc ) noexcept
-            : Texture{ texture }, SamplerDescriptor{ samplerDesc }
-        {
-        }
-
-        bool operator==( const MaterialTextureBinding &other ) const noexcept
-        {
-            return Texture == other.Texture && SamplerDescriptor == other.SamplerDescriptor;
-        }
-
-        bool operator!=( const MaterialTextureBinding &other ) const noexcept
-        {
-            return !( *this == other );
-        }
-
-        Texture::ConstRef Texture;
-        rhi::SamplerDescriptor SamplerDescriptor;
-    };
-
-    struct MaterialDescriptor final
-    {
-        Program::ConstRef ShaderProgram;
-        primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
-        primitive::HashMap< primitive::String, MaterialTextureBinding > TextureBindings;
-    };
 
     class MaterialInstance final : public memory::Counted
     {

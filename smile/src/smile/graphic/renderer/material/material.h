@@ -9,83 +9,26 @@
 =======================================================================*/
 
 /**
- * @file        material_asset.h
+ * @file        material.h
  * @author      Zenn Geeraerts
  * @created     9 Januari 2026
- * @brief       Asset for material
+ * @brief       Holds the data of a material and its default instance
  */
 #pragma once
 
-#include "smile/core/asset/asset.h"
-#include "smile/graphic/renderer/shader/program.h"
-#include "smile/graphic/sprite/texture_asset.h"
+#include "material_layout.h"
 #include "material_instance.h"
-
-#include <DirectXMath.h>
-
-#include <variant>
 
 namespace smile::graphic
 {
-    enum class MaterialParameterType
-    {
-        Float,
-        Int,
-        Bool,
-        Float2,
-        Float3,
-    };
-
-    struct MaterialLayout final
-    {
-        struct Parameter final
-        {
-            Parameter( const primitive::String &name, MaterialParameterType type, Uint32 offset, Count size ) noexcept
-                : Name{ name }, Type{ type }, Offset{ offset }, Size{ size }
-            {
-            }
-
-            primitive::String Name;
-            MaterialParameterType Type;
-            Uint32 Offset;
-            Count Size;
-
-            inline bool operator==( const Parameter &other ) const noexcept
-            {
-                return Name == other.Name && Type == other.Type && Offset == other.Offset && Size == other.Size;
-            }
-        };
-
-        struct Texture final
-        {
-            primitive::String Name;
-            Uint32 Slot;
-
-            inline bool operator==( const Texture &other ) const noexcept
-            {
-                return Name == other.Name && Slot == other.Slot;
-            }
-        };
-
-        primitive::Vector< Parameter > Parameters;
-        primitive::Vector< Texture > Textures;
-        Uint32 CbSlot;
-        Count CbSize;
-        foundation::Flags< rhi::ShaderStage > Visibility;
-    };
-
-    class Material final : public asset::Asset
+    class Material final : public memory::Counted
     {
       public:
         using Ref = memory::Ref< Material >;
         using ConstRef = memory::Ref< const Material >;
 
         Material( const primitive::String &name, const MaterialLayout &layout );
-
-        asset::AssetType GetType() const override
-        {
-            return asset::AssetType{ foundation::TypeNameOf< Material >() };
-        }
+        ~Material() = default;
 
         primitive::StringView GetName() const
         {
