@@ -19,7 +19,7 @@
 #include "smile/core/application/application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/forward_renderer.h"
+#include "smile/graphic/renderer/render_pass/forward_render_pass.h"
 #include "smile/graphic/sprite/renderer_2d.h"
 #include "smile/graphic/sprite/texture_manager.h"
 
@@ -29,6 +29,7 @@ namespace smile::graphic
     {
         auto &window = application::Application::GetInstance().GetMainWindow();
         RenderEngine::Initialize( &window );
+        RenderEngine::GetRenderer().GetRenderPassList().PushBack< ForwardRenderPass >();
         Renderer2D::GetInstance().Initialize();
 
         DirectX::XMFLOAT4X4 viewMatrix{};
@@ -95,7 +96,7 @@ namespace smile::graphic
 
     void SpriteTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &renderContext = RenderEngine::GetRenderContext();
+        auto &renderer = RenderEngine::GetRenderer();
         auto &renderer2D = Renderer2D::GetInstance();
 
         DirectX::XMFLOAT4X4 worldTransform;
@@ -105,19 +106,9 @@ namespace smile::graphic
 
         m_View.OnUpdate();
 
-        renderContext.Clear(
-            renderContext.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
-
-        renderContext.BeginFrame();
-
-        auto &forwardRenderer = ForwardRenderer::GetInstance();
-        {
-            forwardRenderer.BeginScene( m_View );
-            forwardRenderer.OnRender( renderContext.GetBackBuffer() );
-            forwardRenderer.EndScene();
-        }
-
-        renderContext.EndFrame();
+        renderer.BeginFrame();
+        renderer.OnRender( m_View, nullptr );
+        renderer.EndFrame();
     }
 
     void SpriteTestLayer::OnEvent( window::Event &event )

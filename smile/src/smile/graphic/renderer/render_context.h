@@ -37,8 +37,8 @@ namespace smile::graphic
             std::optional< float > depth,
             std::optional< Uint8 > stencil );
 
-        void BeginFrame();
-        void EndFrame();
+        void Open();
+        void Close();
 
         void SetGraphicsState( const GraphicsState &state );
         void DrawIndexed( Uint32 indexCount );
@@ -81,8 +81,5 @@ namespace smile::graphic
 
         Scope< rhi::SwapChain > m_pSwapChain = nullptr;
         Framebuffer::Ref m_pBackBuffer = nullptr;
-
-        Index m_CurrentFrameIndex{ 0 };
-        Index m_RenderedFrameIndex{ 0 };
     };
 }

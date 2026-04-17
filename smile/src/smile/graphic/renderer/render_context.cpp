@@ -83,18 +83,14 @@ namespace smile::graphic
         }
     }
 
-    void RenderContext::BeginFrame()
+    void RenderContext::Open()
     {
-        m_CurrentFrameIndex = AssignFrameData();
         m_pImmediateCommandList->Open();
     }
 
-    void RenderContext::EndFrame()
+    void RenderContext::Close()
     {
-        Present();
         m_pImmediateCommandList->Close();
-        ReleaseFrameData( m_RenderedFrameIndex );
-        m_RenderedFrameIndex = m_CurrentFrameIndex;
     }
 
     void RenderContext::SetGraphicsState( const GraphicsState &state )

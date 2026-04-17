@@ -7,6 +7,7 @@
 #include "render_context.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "material/material_system.h"
+#include "renderer.h"
 
 namespace smile::window
 {
@@ -36,9 +37,15 @@ namespace smile::graphic
             return s_MaterialSystem;
         }
 
+        static Renderer &GetRenderer()
+        {
+            return s_Renderer;
+        }
+
       private:
         static RenderContext s_RenderContext;
         static ShaderLibrary s_ShaderLibrary;
         static MaterialSystem s_MaterialSystem;
+        static Renderer s_Renderer;
     };
 }

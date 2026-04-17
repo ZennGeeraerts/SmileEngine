@@ -4,30 +4,28 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/meyers_singleton.h"
 #include "smile/common/primitive/collection/vector.h"
 
-#include "view.h"
-#include "resource/graphics_pipeline.h"
-#include "resource/vertex_buffer.h"
-#include "resource/frame_buffer.h"
-#include "shader/constant_buffer.h"
-#include "shader/binding_set.h"
+#include "render_pass.h"
+#include "smile/graphic/renderer/resource/graphics_pipeline.h"
+#include "smile/graphic/renderer/resource/vertex_buffer.h"
+#include "smile/graphic/renderer/shader/constant_buffer.h"
+#include "smile/graphic/renderer/shader/binding_set.h"
 
 namespace smile::graphic
 {
-    class DebugRenderer final : public foundation::MeyersSingleton< DebugRenderer >
+    class DebugRenderPass final : public RenderPass
     {
       public:
-        void Initialize();
-        void ShutDown();
+        void Initialize() override;
+        void ShutDown() override;
 
-        void BeginScene( const View &view );
-        void OnRender( Framebuffer::Ref framebuffer );
-        void EndScene();
+        void BeginPass( const View &view ) override;
+        void Execute( Framebuffer::Ref framebuffer ) override;
+        void EndPass() override;
 
-        void SubmitLine( const DirectX::XMFLOAT3 &start, const DirectX::XMFLOAT3 &end, const DirectX::XMFLOAT4 &color );
-        void SubmitLine( const DirectX::XMFLOAT3 &start,
+        void DrawLine( const DirectX::XMFLOAT3 &start, const DirectX::XMFLOAT3 &end, const DirectX::XMFLOAT4 &color );
+        void DrawLine( const DirectX::XMFLOAT3 &start,
             const DirectX::XMFLOAT3 &end,
             const DirectX::XMFLOAT4 &colorStart,
             const DirectX::XMFLOAT4 &colorEnd );

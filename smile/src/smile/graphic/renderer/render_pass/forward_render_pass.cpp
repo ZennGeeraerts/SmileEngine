@@ -3,14 +3,14 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "forward_renderer.h"
+#include "forward_render_pass.h"
 
-#include "render_engine.h"
-#include "material/material_system.h"
+#include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/renderer/material/material_system.h"
 
 namespace smile::graphic
 {
-    void ForwardRenderer::Initialize()
+    void ForwardRenderPass::Initialize()
     {
         auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
         {
@@ -37,7 +37,7 @@ namespace smile::graphic
         }
     }
 
-    void ForwardRenderer::SetupMaterial( MaterialInstance::Ref materialInstance,
+    void ForwardRenderPass::SetupMaterial( MaterialInstance::Ref materialInstance,
         const rhi::RenderState &renderState,
         GraphicsState &graphicsState )
     {
@@ -58,8 +58,9 @@ namespace smile::graphic
         graphicsState.pBindings.PushBack( materialData.Bindings );
     }
 
-    primitive::HashMap< ForwardRenderer::PipelineKey, GraphicsPipeline::Ref >::Iterator
-    ForwardRenderer::CreatePipeline( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState )
+    primitive::HashMap< ForwardRenderPass::PipelineKey, GraphicsPipeline::Ref >::Iterator
+    ForwardRenderPass::CreatePipeline( MaterialInstance::ConstRef materialInstance,
+        const rhi::RenderState &renderState )
     {
         const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( materialInstance );
         auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
@@ -86,29 +87,29 @@ namespace smile::graphic
         return m_Pipelines.Insert( PipelineKey{ materialInstance, renderState }, std::move( pipeline ) );
     }
 
-    void ForwardRenderer::ShutDown()
+    void ForwardRenderPass::ShutDown()
     {
         ClearDrawList();
     }
 
-    void ForwardRenderer::BeginScene( const View &view )
+    void ForwardRenderPass::BeginPass( const View &view )
     {
         view.FillConstants( m_ViewConstants );
 
         m_pCameraCB->Update( &m_ViewConstants );
     }
 
-    void ForwardRenderer::Submit( const DrawItem &drawItem )
+    void ForwardRenderPass::Submit( const DrawItem &drawItem )
     {
         m_RenderCollector.DrawList.PushBack( drawItem );
     }
 
-    void ForwardRenderer::Submit( DrawItem &&drawItem )
+    void ForwardRenderPass::Submit( DrawItem &&drawItem )
     {
         m_RenderCollector.DrawList.PushBack( std::move( drawItem ) );
     }
 
-    void ForwardRenderer::OnRender( Framebuffer::Ref framebuffer )
+    void ForwardRenderPass::Execute( Framebuffer::Ref framebuffer )
     {
         RenderContext &renderContext = RenderEngine::GetRenderContext();
 
@@ -132,12 +133,12 @@ namespace smile::graphic
         }
     }
 
-    void ForwardRenderer::EndScene()
+    void ForwardRenderPass::EndPass()
     {
         ClearDrawList();
     }
 
-    void ForwardRenderer::ClearDrawList()
+    void ForwardRenderPass::ClearDrawList()
     {
         m_RenderCollector.DrawList.Clear();
     }

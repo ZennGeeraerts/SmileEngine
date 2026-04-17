@@ -4,20 +4,17 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/meyers_singleton.h"
-
-#include "render_collector.h"
-#include "view.h"
-#include "graphics_state.h"
-#include "material/material_instance.h"
-#include "resource/graphics_pipeline.h"
-#include "resource/frame_buffer.h"
-#include "shader/constant_buffer.h"
-#include "shader/binding_set.h"
+#include "render_pass.h"
+#include "smile/graphic/renderer/render_collector.h"
+#include "smile/graphic/renderer/graphics_state.h"
+#include "smile/graphic/renderer/material/material_instance.h"
+#include "smile/graphic/renderer/resource/graphics_pipeline.h"
+#include "smile/graphic/renderer/shader/constant_buffer.h"
+#include "smile/graphic/renderer/shader/binding_set.h"
 
 namespace smile::graphic
 {
-    class ForwardRenderer final : public foundation::MeyersSingleton< ForwardRenderer >
+    class ForwardRenderPass final : public RenderPass
     {
       public:
         struct PipelineKey final
@@ -48,12 +45,12 @@ namespace smile::graphic
             rhi::RenderState RenderState;
         };
 
-        void Initialize();
-        void ShutDown();
+        void Initialize() override;
+        void ShutDown() override;
 
-        void BeginScene( const View &view );
-        void EndScene();
-        void OnRender( Framebuffer::Ref framebuffer );
+        void BeginPass( const View &view ) override;
+        void Execute( Framebuffer::Ref framebuffer ) override;
+        void EndPass() override;
 
         void Submit( const DrawItem &drawItem );
         void Submit( DrawItem &&drawItem );
@@ -82,9 +79,9 @@ namespace smile::graphic
 namespace std
 {
     template <>
-    struct hash< smile::graphic::ForwardRenderer::PipelineKey >
+    struct hash< smile::graphic::ForwardRenderPass::PipelineKey >
     {
-        smile::foundation::HashCode operator()( const smile::graphic::ForwardRenderer::PipelineKey &key ) const
+        smile::foundation::HashCode operator()( const smile::graphic::ForwardRenderPass::PipelineKey &key ) const
         {
             return key.GetHashCode();
         }

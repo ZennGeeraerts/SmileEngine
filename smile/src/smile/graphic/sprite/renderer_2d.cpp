@@ -8,7 +8,7 @@
 #include "smile/common/memory/scope.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/forward_renderer.h"
+#include "smile/graphic/renderer/render_pass/forward_render_pass.h"
 
 namespace smile::graphic
 {
@@ -86,7 +86,9 @@ namespace smile::graphic
 
     void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance::Ref materialInstance )
     {
-        ForwardRenderer::GetInstance().Submit( DrawItem{ s_pStorage->pQuadVertexBuffer,
+        auto &pass = RenderEngine::GetRenderer().GetRenderPassList().Get< ForwardRenderPass >();
+
+        pass.Submit( DrawItem{ s_pStorage->pQuadVertexBuffer,
             s_pStorage->pQuadIndexBuffer,
             materialInstance,
             worldTransform,

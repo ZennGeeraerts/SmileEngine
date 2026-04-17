@@ -3,19 +3,19 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #include "smpch.h"
-#include "debug_renderer.h"
+#include "debug_render_pass.h"
 
-#include "render_engine.h"
-#include "resource/resource_manager.h"
+#include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "smile/graphic/shader/shader_asset.h"
-#include "shader/program.h"
+#include "smile/graphic/renderer/shader/program.h"
 
 #include <DirectXColors.h>
 
 namespace smile::graphic
 {
-    void DebugRenderer::Initialize()
+    void DebugRenderPass::Initialize()
     {
         auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
         const auto &shaderLibrary = RenderEngine::GetShaderLibrary();
@@ -61,12 +61,12 @@ namespace smile::graphic
         CreateVertexBuffer();
     }
 
-    void DebugRenderer::ShutDown()
+    void DebugRenderPass::ShutDown()
     {
         m_LineList.Clear();
     }
 
-    void DebugRenderer::CreateFixedLineList()
+    void DebugRenderPass::CreateFixedLineList()
     {
         // Grid
         const Uint32 numGridLines = 20;
@@ -106,22 +106,22 @@ namespace smile::graphic
             DirectX::XMFLOAT3( 0, 0, 30 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) );
     }
 
-    void DebugRenderer::CreateVertexBuffer()
+    void DebugRenderPass::CreateVertexBuffer()
     {
         const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
 
-        m_pVertexBuffer =
-            RenderEngine::GetRenderContext().GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
+        m_pVertexBuffer = RenderEngine::GetRenderContext().GetResourceManager().CreateDynamicVertexBuffer(
+            m_VertexCount, vertexLayout );
     }
 
-    void DebugRenderer::BeginScene( const View &view )
+    void DebugRenderPass::BeginPass( const View &view )
     {
         m_pCameraCB->Update( &view.GetViewProjectionMatrix() );
 
         CreateFixedLineList();
     }
 
-    void DebugRenderer::OnRender( Framebuffer::Ref framebuffer )
+    void DebugRenderPass::Execute( Framebuffer::Ref framebuffer )
     {
         const Count vertexCount = m_LineList.GetItemCount();
 
@@ -149,12 +149,12 @@ namespace smile::graphic
         renderContext.Draw( vertexCount );
     }
 
-    void DebugRenderer::EndScene()
+    void DebugRenderPass::EndPass()
     {
         m_LineList.Clear();
     }
 
-    void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
+    void DebugRenderPass::DrawLine( const DirectX::XMFLOAT3 &start,
         const DirectX::XMFLOAT3 &end,
         const DirectX::XMFLOAT4 &color )
     {
@@ -162,7 +162,7 @@ namespace smile::graphic
         m_LineList.EmplaceBack( end, color );
     }
 
-    void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
+    void DebugRenderPass::DrawLine( const DirectX::XMFLOAT3 &start,
         const DirectX::XMFLOAT3 &end,
         const DirectX::XMFLOAT4 &colorStart,
         const DirectX::XMFLOAT4 &colorEnd )

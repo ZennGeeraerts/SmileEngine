@@ -19,9 +19,8 @@
 #include "smile/core/application/application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/debug_renderer.h"
-#include "smile/graphic/renderer/forward_renderer.h"
-#include "smile/graphic/renderer/material/material_system.h"
+#include "smile/graphic/renderer/render_pass/forward_render_pass.h"
+#include "smile/graphic/renderer/render_pass/debug_render_pass.h"
 
 namespace smile::graphic
 {
@@ -29,6 +28,10 @@ namespace smile::graphic
     {
         auto &window = application::Application::GetInstance().GetMainWindow();
         RenderEngine::Initialize( &window );
+
+        auto &renderPassList = RenderEngine::GetRenderer().GetRenderPassList();
+        renderPassList.PushBack< ForwardRenderPass >();
+        renderPassList.PushBack< DebugRenderPass >();
 
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
@@ -118,9 +121,8 @@ namespace smile::graphic
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &renderContext = RenderEngine::GetRenderContext();
-        auto &debugRenderer = DebugRenderer::GetInstance();
-        auto &forwardRenderer = ForwardRenderer::GetInstance();
+        auto &renderer = RenderEngine::GetRenderer();
+        auto &forwardRenderPass = RenderEngine::GetRenderer().GetRenderPassList().Get< ForwardRenderPass >();
 
         m_Material->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
 
@@ -129,25 +131,14 @@ namespace smile::graphic
 
         rhi::RenderState renderState{};
 
-        forwardRenderer.Submit(
+        forwardRenderPass.Submit(
             { m_VertexBuffer, m_IndexBuffer, m_Material->GetDefaultInstance(), worldTransform, renderState } );
 
         m_View.OnUpdate();
 
-        renderContext.Clear(
-            renderContext.GetBackBuffer(), math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
-
-        renderContext.BeginFrame();
-
-        debugRenderer.BeginScene( m_View );
-        debugRenderer.OnRender( renderContext.GetBackBuffer() );
-        debugRenderer.EndScene();
-
-        forwardRenderer.BeginScene( m_View );
-        forwardRenderer.OnRender( renderContext.GetBackBuffer() );
-        forwardRenderer.EndScene();
-
-        renderContext.EndFrame();
+        renderer.BeginFrame();
+        renderer.OnRender( m_View );
+        renderer.EndFrame();
     }
 
     void RendererTestLayer::OnEvent( window::Event &event )
