@@ -28,8 +28,7 @@ namespace smile::graphic::rhi
     static ID3D11ShaderResourceView *s_NullSRVs[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT]{ nullptr };
     static ID3D11SamplerState *s_NullSamplers[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT]{ nullptr };
 
-    D3D11CommandList::D3D11CommandList( D3D11Device *pDevice,
-        std::reference_wrapper< const D3D11Context > context )
+    D3D11CommandList::D3D11CommandList( D3D11Device *pDevice, std::reference_wrapper< const D3D11Context > context )
         : m_pDevice{ pDevice }, m_Context{ context.get() }
     {
     }
@@ -72,8 +71,8 @@ namespace smile::graphic::rhi
     {
         const D3D11Pipeline &pipeline = m_pDevice->m_Pipelines[graphicsState.Pipeline.GetIndex()];
         const D3D11Pipeline *pCurrentPipeline = m_CurrentGraphicsPipeline != GraphicsPipelineHandle::NullHandle()
-                                                        ? &m_pDevice->m_Pipelines[m_CurrentGraphicsPipeline.GetIndex()]
-                                                        : nullptr;
+                                                    ? &m_pDevice->m_Pipelines[m_CurrentGraphicsPipeline.GetIndex()]
+                                                    : nullptr;
         const D3D11Framebuffer &framebuffer = m_pDevice->m_Framebuffers[graphicsState.Framebuffer.GetIndex()];
 
         const bool updateFramebuffer =
@@ -457,20 +456,20 @@ namespace smile::graphic::rhi
                 if ( set.MaxConstantBufferSlot >= set.MinConstantBufferSlot )
                 {
                     m_Context.pImmediateContext->VSSetConstantBuffers( set.MinConstantBufferSlot,
-                        set.MaxConstantBufferSlot - ( set.MinConstantBufferSlot + 1 ),
+                        set.MaxConstantBufferSlot - set.MinConstantBufferSlot + 1,
                         s_NullConstantBuffers );
                 }
 
                 if ( set.MaxSRVSlot >= set.MinSRVSlot )
                 {
                     m_Context.pImmediateContext->VSSetShaderResources(
-                        set.MinSRVSlot, set.MaxSRVSlot - ( set.MinSRVSlot + 1 ), s_NullSRVs );
+                        set.MinSRVSlot, set.MaxSRVSlot - set.MinSRVSlot + 1, s_NullSRVs );
                 }
 
                 if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
                 {
                     m_Context.pImmediateContext->VSSetSamplers(
-                        set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), s_NullSamplers );
+                        set.MinSamplerSlot, set.MaxSamplerSlot - set.MinSamplerSlot + 1, s_NullSamplers );
                 }
             }
 
@@ -479,20 +478,20 @@ namespace smile::graphic::rhi
                 if ( set.MaxConstantBufferSlot >= set.MinConstantBufferSlot )
                 {
                     m_Context.pImmediateContext->PSSetConstantBuffers( set.MinConstantBufferSlot,
-                        set.MaxConstantBufferSlot - ( set.MinConstantBufferSlot + 1 ),
+                        set.MaxConstantBufferSlot - set.MinConstantBufferSlot + 1,
                         s_NullConstantBuffers );
                 }
 
                 if ( set.MaxSRVSlot >= set.MinSRVSlot )
                 {
                     m_Context.pImmediateContext->PSSetShaderResources(
-                        set.MinSRVSlot, set.MaxSRVSlot - ( set.MinSRVSlot + 1 ), s_NullSRVs );
+                        set.MinSRVSlot, set.MaxSRVSlot - set.MinSRVSlot + 1, s_NullSRVs );
                 }
 
                 if ( set.MaxSamplerSlot >= set.MinSamplerSlot )
                 {
                     m_Context.pImmediateContext->PSSetSamplers(
-                        set.MinSamplerSlot, set.MaxSamplerSlot - ( set.MinSamplerSlot + 1 ), s_NullSamplers );
+                        set.MinSamplerSlot, set.MaxSamplerSlot - set.MinSamplerSlot + 1, s_NullSamplers );
                 }
             }
         }
