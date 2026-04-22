@@ -23,6 +23,7 @@
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer/resource/index_buffer.h"
 #include "smile/graphic/renderer/material/material.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
@@ -38,8 +39,11 @@ namespace smile::graphic
         void OnImGuiRender() override;
 
       private:
-        View m_View;
+        memory::Scope< RenderEngine > m_RenderEngine;
+        Renderer *m_Renderer;
+        rhi::SwapChain *m_SwapChain;
 
+        View m_View;
         VertexBuffer::Ref m_VertexBuffer;
         IndexBuffer::Ref m_IndexBuffer;
         Material::Ref m_Material;

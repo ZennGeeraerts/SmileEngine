@@ -21,6 +21,8 @@
 
 namespace smile::graphic
 {
+    class TextureManager;
+
     class Material final : public memory::Counted
     {
       public:
@@ -62,6 +64,8 @@ namespace smile::graphic
         friend class MaterialSystem;
     };
 
-    void
-    BuildMaterialLayoutAndDescriptor( Program::ConstRef program, MaterialLayout &layout, MaterialDescriptor &desc );
+    void BuildMaterialLayoutAndDescriptor( const TextureManager &textureManager,
+        Program::ConstRef program,
+        MaterialLayout &layout,
+        MaterialDescriptor &desc );
 }

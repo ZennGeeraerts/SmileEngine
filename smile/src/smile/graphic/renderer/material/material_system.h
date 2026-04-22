@@ -35,6 +35,8 @@ namespace smile::graphic
         BindingSet::Ref Bindings;
     };
 
+    class RenderContext;
+
     class MaterialSystem final
     {
       public:
@@ -42,6 +44,8 @@ namespace smile::graphic
 
         MaterialSystem() = default;
         ~MaterialSystem() = default;
+
+        void Initialize( RenderContext *context ) noexcept;
 
         Material::Ref
         CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc );
@@ -61,5 +65,7 @@ namespace smile::graphic
         primitive::Array< MaterialInstance::Ref, s_MaxMaterialCount > m_MaterialInstances;
         primitive::Array< MaterialData, s_MaxMaterialCount > m_MaterialData;
         IDManager m_IDManager;
+
+        RenderContext *m_Context;
     };
 }

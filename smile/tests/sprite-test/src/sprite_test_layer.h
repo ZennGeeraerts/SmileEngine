@@ -21,6 +21,7 @@
 
 #include "smile/graphic/renderer/view.h"
 #include "smile/graphic/renderer/material/material.h"
+#include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
 {
@@ -36,6 +37,10 @@ namespace smile::graphic
         void OnImGuiRender() override;
 
       private:
+        memory::Scope< RenderEngine > m_RenderEngine;
+        Renderer *m_Renderer;
+        rhi::SwapChain *m_SwapChain;
+
         View m_View;
         Material::Ref m_Material;
     };

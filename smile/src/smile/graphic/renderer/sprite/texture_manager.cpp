@@ -10,6 +10,11 @@
 
 namespace smile::graphic
 {
+    void TextureManager::Initialize( RenderContext *renderContext ) noexcept
+    {
+        m_TextureLoader.Initialize( renderContext );
+    }
+
     TextureAsset::Ref TextureManager::GetTexture( asset::AssetHandle handle )
     {
         TextureAsset::Ref pTextureAsset = asset::AssetManager::GetAsset< TextureAsset >( handle );

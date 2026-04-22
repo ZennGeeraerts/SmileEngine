@@ -20,17 +20,26 @@
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/render_pass/forward_render_pass.h"
-#include "smile/graphic/sprite/renderer_2d.h"
-#include "smile/graphic/sprite/texture_manager.h"
+#include "smile/graphic/renderer/sprite/renderer_2d.h"
 
 namespace smile::graphic
 {
     void SpriteTestLayer::OnAttach()
     {
         auto &window = application::Application::GetInstance().GetMainWindow();
-        RenderEngine::Initialize( &window );
-        RenderEngine::GetRenderer().GetRenderPassList().PushBack< ForwardRenderPass >();
-        Renderer2D::GetInstance().Initialize();
+
+        m_RenderEngine = RenderEngine::Create( rhi::RendererBackendType::D3D11 );
+        m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
+        m_Renderer = m_RenderEngine->CreateRenderer();
+
+        auto &renderContext = m_RenderEngine->GetRenderContext();
+        auto &materialSystem = m_RenderEngine->GetMaterialSystem();
+
+        m_Renderer->GetRenderPassList().PushBack< ForwardRenderPass >( renderContext, materialSystem );
+
+        Renderer2D::GetInstance().Initialize( renderContext,
+            m_RenderEngine->GetShaderLibrary(),
+            &m_Renderer->GetRenderPassList().Get< ForwardRenderPass >() );
 
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
@@ -51,9 +60,10 @@ namespace smile::graphic
 
         m_View.SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
-        TextureManager::CreateInstance();
-        TextureAsset::Ref textureAsset = TextureManager::GetInstance().GetTexture( "resources/textures/uv_grid.png" );
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+        TextureAsset::Ref textureAsset =
+            m_RenderEngine->GetTextureManager().GetTexture( "resources/textures/uv_grid.png" );
+
+        auto &resourceManager = renderContext.GetResourceManager();
 
         {
             MaterialLayout layout{};
@@ -66,7 +76,7 @@ namespace smile::graphic
             layout.CbSize = 16u;
             layout.Visibility = { rhi::ShaderStage::Pixel };
 
-            auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+            auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
             auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
             auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
 
@@ -84,19 +94,18 @@ namespace smile::graphic
             desc.Parameters["UseTexture"] = 1;
             desc.TextureBindings["Diffuse"] = { textureAsset->GetTexture(), samplerDesc };
 
-            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( "DefaultSprite", layout, desc );
+            m_Material = materialSystem.CreateMaterial( "DefaultSprite", layout, desc );
         }
     }
 
     void SpriteTestLayer::OnDetach()
     {
         Renderer2D::GetInstance().ShutDown();
-        RenderEngine::ShutDown();
+        m_RenderEngine->ShutDown();
     }
 
     void SpriteTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &renderer = RenderEngine::GetRenderer();
         auto &renderer2D = Renderer2D::GetInstance();
 
         DirectX::XMFLOAT4X4 worldTransform;
@@ -106,9 +115,9 @@ namespace smile::graphic
 
         m_View.OnUpdate();
 
-        renderer.BeginFrame();
-        renderer.OnRender( m_View, nullptr );
-        renderer.EndFrame();
+        m_Renderer->BeginFrame( m_SwapChain );
+        m_Renderer->OnRender( m_View );
+        m_Renderer->EndFrame();
     }
 
     void SpriteTestLayer::OnEvent( window::Event &event )

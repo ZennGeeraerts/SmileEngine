@@ -22,32 +22,44 @@
 
 namespace smile::graphic
 {
-    void Renderer::BeginFrame()
+    Renderer::Renderer( RenderEngine &engine, RenderContext &context ) noexcept
+        : m_Engine{ engine }, m_Context{ context }, m_RenderPassList{ engine }
     {
+    }
+
+    void Renderer::BeginFrame( rhi::SwapChain *swapChain )
+    {
+        SM_ASSERT( swapChain );
+
+        m_SwapChain = swapChain;
+
         m_CurrentFrameIndex = AssignFrameData();
-        RenderEngine::GetRenderContext().Open();
+        m_Context.Open();
     }
 
     void Renderer::OnRender( const View &view, Framebuffer::Ref framebuffer )
     {
+        SM_ASSERT( m_SwapChain );
+
         if ( !framebuffer )
         {
-            framebuffer = RenderEngine::GetRenderContext().GetBackBuffer();
+            framebuffer = m_Engine.GetRenderTarget( m_SwapChain );
         }
 
-        RenderEngine::GetRenderContext().Clear(
-            framebuffer, math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
+        m_Context.Clear( framebuffer, math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
 
         m_RenderPassList.Execute( framebuffer, view );
     }
 
     void Renderer::EndFrame()
     {
-        auto &context = RenderEngine::GetRenderContext();
+        SM_ASSERT( m_SwapChain );
 
-        context.Present();
-        context.Close();
+        m_SwapChain->Present();
+        m_Context.Close();
         ReleaseFrameData( m_RenderedFrameIndex );
         m_RenderedFrameIndex = m_CurrentFrameIndex;
+
+        m_SwapChain = nullptr;
     }
 }

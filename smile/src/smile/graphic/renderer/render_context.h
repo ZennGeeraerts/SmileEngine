@@ -28,9 +28,7 @@ namespace smile::graphic
         RenderContext();
         ~RenderContext();
 
-        void Initialize( const window::Window *pWindow );
-
-        void ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height );
+        void Initialize( rhi::RendererBackendType api );
 
         void Clear( Framebuffer::Ref pFramebuffer,
             const std::optional< math::Color > &color,
@@ -53,11 +51,6 @@ namespace smile::graphic
             return m_ResourceManager;
         }
 
-        rhi::RendererBackendType GetRendererAPI() const
-        {
-            return m_API;
-        }
-
         rhi::GraphicsDevice *GetGraphicsDevice() const
         {
             return m_pDevice.get();
@@ -68,18 +61,9 @@ namespace smile::graphic
             return m_pImmediateCommandList;
         }
 
-        Framebuffer::Ref GetBackBuffer() const
-        {
-            return m_pBackBuffer;
-        }
-
       private:
-        rhi::RendererBackendType m_API;
         Scope< rhi::GraphicsDevice > m_pDevice;
         rhi::CommandList *m_pImmediateCommandList;
         ResourceManager m_ResourceManager{};
-
-        Scope< rhi::SwapChain > m_pSwapChain = nullptr;
-        Framebuffer::Ref m_pBackBuffer = nullptr;
     };
 }

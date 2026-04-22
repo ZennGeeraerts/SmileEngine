@@ -11,10 +11,14 @@
 
 namespace smile::graphic
 {
+    class RenderContext;
+    class ShaderLibrary;
+    class ForwardRenderPass;
+
     class Renderer2D final : public foundation::MeyersSingleton< Renderer2D >
     {
       public:
-        void Initialize();
+        void Initialize( RenderContext &context, const ShaderLibrary &shaderLib, ForwardRenderPass *forwardRenderPass );
         void ShutDown();
 
         void DrawSprite( const DirectX::XMFLOAT2 &position,

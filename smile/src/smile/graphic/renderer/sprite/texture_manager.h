@@ -4,18 +4,21 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/singleton.h"
 #include "smile/common/primitive/collection/hash_map.h"
 #include "texture_loader.h"
 #include "texture_asset.h"
 
 namespace smile::graphic
 {
-    class TextureManager final : public memory::Counted, public foundation::Singleton< TextureManager >
+    class RenderContext;
+
+    class TextureManager final
     {
       public:
         TextureManager() = default;
         ~TextureManager() = default;
+
+        void Initialize( RenderContext *renderContext ) noexcept;
 
         TextureAsset::Ref GetTexture( asset::AssetHandle handle );
         TextureAsset::Ref GetTexture( const std::filesystem::path &path );

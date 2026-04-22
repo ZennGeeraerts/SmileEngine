@@ -4,8 +4,11 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/memory/scope.h"
+
 #include "render_context.h"
 #include "smile/graphic/shader/shader_library.h"
+#include "sprite/texture_manager.h"
 #include "material/material_system.h"
 #include "renderer.h"
 
@@ -19,33 +22,49 @@ namespace smile::graphic
     class RenderEngine final
     {
       public:
-        static void Initialize( const window::Window *pWindow );
-        static void ShutDown();
+        static memory::Scope< RenderEngine > Create( rhi::RendererBackendType api );
 
-        static RenderContext &GetRenderContext()
+        void Initialize() noexcept;
+        void ShutDown() noexcept;
+
+        [[nodiscard]] rhi::SwapChain *CreateSwapChain( const window::Window *window ) noexcept;
+        [[nodiscard]] Renderer *CreateRenderer() noexcept;
+
+        [[nodiscard]] RenderContext &GetRenderContext() noexcept
         {
-            return s_RenderContext;
+            return m_RenderContext;
         }
 
-        static ShaderLibrary &GetShaderLibrary()
+        [[nodiscard]] ShaderLibrary &GetShaderLibrary() noexcept
         {
-            return s_ShaderLibrary;
+            return m_ShaderLibrary;
         }
 
-        static MaterialSystem &GetMaterialSystem()
+        [[nodiscard]] TextureManager &GetTextureManager() noexcept
         {
-            return s_MaterialSystem;
+            return m_TextureManager;
         }
 
-        static Renderer &GetRenderer()
+        [[nodiscard]] MaterialSystem &GetMaterialSystem() noexcept
         {
-            return s_Renderer;
+            return m_MaterialSystem;
         }
+
+        [[nodiscard]] Framebuffer::Ref GetRenderTarget( rhi::SwapChain *const swapChain ) const noexcept;
+
+      public:
+        RenderEngine( rhi::RendererBackendType api ) noexcept;
 
       private:
-        static RenderContext s_RenderContext;
-        static ShaderLibrary s_ShaderLibrary;
-        static MaterialSystem s_MaterialSystem;
-        static Renderer s_Renderer;
+        rhi::RendererBackendType m_API;
+        RenderContext m_RenderContext;
+        ShaderLibrary m_ShaderLibrary;
+        TextureManager m_TextureManager;
+        MaterialSystem m_MaterialSystem;
+
+        primitive::Vector< Scope< rhi::SwapChain > > m_SwapChains;
+        primitive::Vector< memory::Scope< Renderer > > m_Renderers;
+
+        primitive::HashMap< rhi::SwapChain *, Framebuffer::Ref > m_RenderTargets;
     };
 }

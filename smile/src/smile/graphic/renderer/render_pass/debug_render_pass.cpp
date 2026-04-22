@@ -15,17 +15,21 @@
 
 namespace smile::graphic
 {
+    DebugRenderPass::DebugRenderPass( RenderContext &context, const ShaderLibrary &shaderLib ) noexcept
+        : m_Context{ context }, m_ShaderLib{ shaderLib }
+    {
+    }
+
     void DebugRenderPass::Initialize()
     {
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
-        const auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+        auto &resourceManager = m_Context.GetResourceManager();
 
         rhi::BufferLayout vertexLayout{
             { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
         {
-            auto vertexShaderAsset = shaderLibrary.GetShader( "debug_renderer.vs" );
-            auto pixelShaderAsset = shaderLibrary.GetShader( "pos_col.ps" );
+            auto vertexShaderAsset = m_ShaderLib.GetShader( "debug_renderer.vs" );
+            auto pixelShaderAsset = m_ShaderLib.GetShader( "pos_col.ps" );
 
             auto program = Program::Create( vertexShaderAsset, pixelShaderAsset );
 
@@ -110,8 +114,7 @@ namespace smile::graphic
     {
         const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
 
-        m_pVertexBuffer = RenderEngine::GetRenderContext().GetResourceManager().CreateDynamicVertexBuffer(
-            m_VertexCount, vertexLayout );
+        m_pVertexBuffer = m_Context.GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
     }
 
     void DebugRenderPass::BeginPass( const View &view )
@@ -134,10 +137,8 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        RenderContext &renderContext = RenderEngine::GetRenderContext();
-
-        renderContext.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
-        renderContext.FillConstantBuffer( m_pCameraCB );
+        m_Context.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
+        m_Context.FillConstantBuffer( m_pCameraCB );
 
         GraphicsState state{};
         state.pFramebuffer = framebuffer;
@@ -145,8 +146,8 @@ namespace smile::graphic
         state.VertexBuffers.EmplaceBack( m_pVertexBuffer, 0u, 0u );
         state.pBindings.PushBack( m_pBindingSet );
 
-        renderContext.SetGraphicsState( state );
-        renderContext.Draw( vertexCount );
+        m_Context.SetGraphicsState( state );
+        m_Context.Draw( vertexCount );
     }
 
     void DebugRenderPass::EndPass()

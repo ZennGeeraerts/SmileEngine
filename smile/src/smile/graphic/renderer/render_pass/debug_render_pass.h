@@ -14,9 +14,14 @@
 
 namespace smile::graphic
 {
+    class RenderContext;
+    class ShaderLibrary;
+
     class DebugRenderPass final : public RenderPass
     {
       public:
+        DebugRenderPass( RenderContext &context, const ShaderLibrary &shaderLib ) noexcept;
+
         void Initialize() override;
         void ShutDown() override;
 
@@ -48,5 +53,8 @@ namespace smile::graphic
         BindingSet::Ref m_pBindingSet;
 
         Count m_VertexCount{ 100 };
+
+        RenderContext &m_Context;
+        const ShaderLibrary &m_ShaderLib;
     };
 }

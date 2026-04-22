@@ -9,11 +9,14 @@
 namespace smile::graphic
 {
     class TextureAsset;
+    class RenderContext;
 
     class TextureLoader : public asset::AssetLoader
     {
       public:
-        TextureLoader();
+        TextureLoader() noexcept;
+
+        void Initialize( RenderContext *renderContext ) noexcept;
 
         asset::AssetType GetType() const override
         {
@@ -32,5 +35,6 @@ namespace smile::graphic
 
       private:
         const std::vector< std::filesystem::path > m_Extensions{ ".png", ".jpg", ".dds" };
+        RenderContext *m_RenderContext;
     };
 }

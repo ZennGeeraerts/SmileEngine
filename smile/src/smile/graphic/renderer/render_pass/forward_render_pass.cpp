@@ -10,9 +10,14 @@
 
 namespace smile::graphic
 {
+    ForwardRenderPass::ForwardRenderPass( RenderContext &context, MaterialSystem &materialSystem ) noexcept
+        : m_Context{ context }, m_MaterialSystem{ materialSystem }
+    {
+    }
+
     void ForwardRenderPass::Initialize()
     {
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+        auto &resourceManager = m_Context.GetResourceManager();
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
@@ -41,8 +46,7 @@ namespace smile::graphic
         const rhi::RenderState &renderState,
         GraphicsState &graphicsState )
     {
-        auto &materialSystem = RenderEngine::GetMaterialSystem();
-        materialSystem.UpdateMaterialInstance( materialInstance );
+        m_MaterialSystem.UpdateMaterialInstance( materialInstance );
 
         const PipelineKey key{ materialInstance, renderState };
 
@@ -54,7 +58,7 @@ namespace smile::graphic
 
         graphicsState.pPipeline = it.GetItem();
 
-        const auto &materialData = materialSystem.GetMaterialData( materialInstance );
+        const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
         graphicsState.pBindings.PushBack( materialData.Bindings );
     }
 
@@ -62,8 +66,8 @@ namespace smile::graphic
     ForwardRenderPass::CreatePipeline( MaterialInstance::ConstRef materialInstance,
         const rhi::RenderState &renderState )
     {
-        const auto &materialData = RenderEngine::GetMaterialSystem().GetMaterialData( materialInstance );
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+        const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
+        auto &resourceManager = m_Context.GetResourceManager();
 
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
@@ -111,14 +115,12 @@ namespace smile::graphic
 
     void ForwardRenderPass::Execute( Framebuffer::Ref framebuffer )
     {
-        RenderContext &renderContext = RenderEngine::GetRenderContext();
-
-        renderContext.FillConstantBuffer( m_pCameraCB );
+        m_Context.FillConstantBuffer( m_pCameraCB );
 
         for ( const DrawItem &drawItem : m_RenderCollector.DrawList )
         {
             m_PerObjectCB->Update( &drawItem.WorldTransform );
-            renderContext.FillConstantBuffer( m_PerObjectCB );
+            m_Context.FillConstantBuffer( m_PerObjectCB );
 
             GraphicsState state{};
             state.pFramebuffer = framebuffer;
@@ -128,8 +130,8 @@ namespace smile::graphic
 
             SetupMaterial( drawItem.MaterialInstance, drawItem.RenderState, state );
 
-            renderContext.SetGraphicsState( state );
-            renderContext.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );
+            m_Context.SetGraphicsState( state );
+            m_Context.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );
         }
     }
 

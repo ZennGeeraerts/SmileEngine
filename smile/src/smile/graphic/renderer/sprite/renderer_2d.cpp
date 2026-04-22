@@ -16,19 +16,22 @@ namespace smile::graphic
     {
         VertexBuffer::Ref pQuadVertexBuffer;
         IndexBuffer::Ref pQuadIndexBuffer;
+        ForwardRenderPass *ForwardPass{ nullptr };
     };
 
     static memory::Scope< Renderer2DStorage > s_pStorage;
 
-    void Renderer2D::Initialize()
+    void Renderer2D::Initialize( RenderContext &context,
+        const ShaderLibrary &shaderLib,
+        ForwardRenderPass *forwardRenderPass )
     {
         s_pStorage = memory::CreateScope< Renderer2DStorage >();
+        s_pStorage->ForwardPass = forwardRenderPass;
 
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
-        const auto &shaderLibrary = RenderEngine::GetShaderLibrary();
+        auto &resourceManager = context.GetResourceManager();
 
-        auto vertexShaderAsset = shaderLibrary.GetShader( "pos_tex.vs" );
-        auto pixelShaderAsset = shaderLibrary.GetShader( "col_tex.ps" );
+        auto vertexShaderAsset = shaderLib.GetShader( "pos_tex.vs" );
+        auto pixelShaderAsset = shaderLib.GetShader( "col_tex.ps" );
 
         auto program = Program::Create( vertexShaderAsset, pixelShaderAsset );
         {
@@ -86,12 +89,12 @@ namespace smile::graphic
 
     void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance::Ref materialInstance )
     {
-        auto &pass = RenderEngine::GetRenderer().GetRenderPassList().Get< ForwardRenderPass >();
-
-        pass.Submit( DrawItem{ s_pStorage->pQuadVertexBuffer,
+        DrawItem drawItem{ s_pStorage->pQuadVertexBuffer,
             s_pStorage->pQuadIndexBuffer,
             materialInstance,
             worldTransform,
-            rhi::RenderState{} } );
+            rhi::RenderState{} };
+
+        s_pStorage->ForwardPass->Submit( std::move( drawItem ) );
     }
 }

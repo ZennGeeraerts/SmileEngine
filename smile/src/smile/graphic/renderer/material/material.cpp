@@ -17,7 +17,7 @@
 #include "smpch.h"
 #include "material.h"
 
-#include "smile/graphic/sprite/texture_manager.h"
+#include "smile/graphic/renderer/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
@@ -68,7 +68,10 @@ namespace smile::graphic
         }
     }
 
-    void BuildMaterialLayoutAndDescriptor( Program::ConstRef program, MaterialLayout &layout, MaterialDescriptor &desc )
+    void BuildMaterialLayoutAndDescriptor( const TextureManager &textureManager,
+        Program::ConstRef program,
+        MaterialLayout &layout,
+        MaterialDescriptor &desc )
     {
         const auto &cbDesc = program->GetConstantBufferDescriptor( "Material" );
         for ( const auto &cbItem : cbDesc )
@@ -90,7 +93,7 @@ namespace smile::graphic
 
                 layout.Textures.PushBack( std::move( textureBinding ) );
 
-                auto fallbackTexture = TextureManager::GetInstance().GetFallBackTexture()->GetTexture();
+                auto fallbackTexture = textureManager.GetFallBackTexture()->GetTexture();
                 rhi::SamplerDescriptor fallbackSampler{};
 
                 desc.TextureBindings.Insert( res.NamedElement.Name, { fallbackTexture, fallbackSampler } );

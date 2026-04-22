@@ -27,11 +27,18 @@ namespace smile::graphic
     void RendererTestLayer::OnAttach()
     {
         auto &window = application::Application::GetInstance().GetMainWindow();
-        RenderEngine::Initialize( &window );
 
-        auto &renderPassList = RenderEngine::GetRenderer().GetRenderPassList();
-        renderPassList.PushBack< ForwardRenderPass >();
-        renderPassList.PushBack< DebugRenderPass >();
+        m_RenderEngine = RenderEngine::Create( rhi::RendererBackendType::D3D11 );
+        m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
+        m_Renderer = m_RenderEngine->CreateRenderer();
+
+        auto &renderPassList = m_Renderer->GetRenderPassList();
+        auto &renderContext = m_RenderEngine->GetRenderContext();
+        auto &materialSystem = m_RenderEngine->GetMaterialSystem();
+        const auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
+
+        renderPassList.PushBack< ForwardRenderPass >( renderContext, materialSystem );
+        renderPassList.PushBack< DebugRenderPass >( renderContext, shaderLibrary );
 
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
@@ -63,7 +70,6 @@ namespace smile::graphic
             layout.CbSize = 16u;
             layout.Visibility = { rhi::ShaderStage::Pixel };
 
-            auto &shaderLibrary = RenderEngine::GetShaderLibrary();
             auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
             auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
 
@@ -75,7 +81,7 @@ namespace smile::graphic
             desc.Parameters["UseTexture"] = 0;
             desc.TextureBindings["Diffuse"] = {};
 
-            m_Material = RenderEngine::GetMaterialSystem().CreateMaterial( "Mat", layout, desc );
+            m_Material = materialSystem.CreateMaterial( "Mat", layout, desc );
         }
 
         {
@@ -101,7 +107,7 @@ namespace smile::graphic
                 1,
                 1 /*4*/ };
 
-            auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+            auto &resourceManager = renderContext.GetResourceManager();
 
             m_VertexBuffer = resourceManager.CreateVertexBuffer( quadVertices,
                 quadVerticesCount,
@@ -116,13 +122,12 @@ namespace smile::graphic
 
     void RendererTestLayer::OnDetach()
     {
-        RenderEngine::ShutDown();
+        m_RenderEngine->ShutDown();
     }
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &renderer = RenderEngine::GetRenderer();
-        auto &forwardRenderPass = RenderEngine::GetRenderer().GetRenderPassList().Get< ForwardRenderPass >();
+        auto &forwardRenderPass = m_Renderer->GetRenderPassList().Get< ForwardRenderPass >();
 
         m_Material->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
 
@@ -136,9 +141,9 @@ namespace smile::graphic
 
         m_View.OnUpdate();
 
-        renderer.BeginFrame();
-        renderer.OnRender( m_View );
-        renderer.EndFrame();
+        m_Renderer->BeginFrame( m_SwapChain );
+        m_Renderer->OnRender( m_View );
+        m_Renderer->EndFrame();
     }
 
     void RendererTestLayer::OnEvent( window::Event &event )

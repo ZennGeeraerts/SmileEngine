@@ -9,27 +9,94 @@
 
 namespace smile::graphic
 {
-    RenderContext RenderEngine::s_RenderContext{};
-    ShaderLibrary RenderEngine::s_ShaderLibrary{};
-    MaterialSystem RenderEngine::s_MaterialSystem{};
-    Renderer RenderEngine::s_Renderer{};
-
-    void RenderEngine::Initialize( const window::Window *pWindow )
+    memory::Scope< RenderEngine > RenderEngine::Create( rhi::RendererBackendType api )
     {
-        s_RenderContext.Initialize( pWindow );
+        auto engine = memory::CreateScope< RenderEngine >( api );
 
-        s_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/col_tex.ps.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/skybox.vs.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/skybox.ps.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/pbr.vs.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/pbr.ps.smshader" );
-        s_ShaderLibrary.LoadShader( "resources/shaders/pbr_skinned.vs.smshader" );
+        engine->Initialize();
+
+        return engine;
     }
 
-    void RenderEngine::ShutDown()
+    RenderEngine::RenderEngine( rhi::RendererBackendType api ) noexcept : m_API{ api }
     {
+    }
+
+    void RenderEngine::Initialize() noexcept
+    {
+        m_RenderContext.Initialize( m_API );
+        m_TextureManager.Initialize( &m_RenderContext );
+        m_MaterialSystem.Initialize( &m_RenderContext );
+
+        m_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/col_tex.ps.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/skybox.vs.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/skybox.ps.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/pbr.vs.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/pbr.ps.smshader" );
+        m_ShaderLibrary.LoadShader( "resources/shaders/pbr_skinned.vs.smshader" );
+    }
+
+    void RenderEngine::ShutDown() noexcept
+    {
+    }
+
+    rhi::SwapChain *RenderEngine::CreateSwapChain( const window::Window *window ) noexcept
+    {
+        auto device = m_RenderContext.GetGraphicsDevice();
+        auto swapChain = device->CreateSwapChain( window );
+
+        rhi::Object nativeRenderTarget = swapChain->GetNativeRenderTarget();
+
+        const rhi::ObjectType objectType = [&]()
+        {
+            switch ( m_API )
+            {
+                case rhi::RendererBackendType::D3D11:
+                    return rhi::ObjectType::D3D11_Resource;
+                default:
+                    SM_ASSERT( false );
+            }
+        }();
+
+        rhi::TextureDescriptor colorDesc;
+        colorDesc.Dimension = rhi::TextureDimension::Texture2D;
+        colorDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
+        colorDesc.Width = window->GetWidth();
+        colorDesc.Height = window->GetHeight();
+        colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+
+        auto &resourceManager = m_RenderContext.GetResourceManager();
+
+        Texture::Ref pColorTexture =
+            resourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
+
+        FramebufferAttachment depthAttachment =
+            resourceManager.CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
+
+        auto renderTarget = resourceManager.CreateFramebuffer(
+            { FramebufferAttachment{ pColorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
+
+        auto swapChainPtr = swapChain.get();
+
+        m_SwapChains.PushBack( std::move( swapChain ) );
+        m_RenderTargets.Insert( swapChainPtr, std::move( renderTarget ) );
+
+        return swapChainPtr;
+    }
+
+    Renderer *RenderEngine::CreateRenderer() noexcept
+    {
+        auto renderer = memory::CreateScope< Renderer >( *this, m_RenderContext );
+        m_Renderers.PushBack( std::move( renderer ) );
+
+        return m_Renderers.GetLastItem().GetPointer();
+    }
+
+    Framebuffer::Ref RenderEngine::GetRenderTarget( rhi::SwapChain *const swapChain ) const noexcept
+    {
+        return m_RenderTargets.GetItemAtKey( swapChain );
     }
 }

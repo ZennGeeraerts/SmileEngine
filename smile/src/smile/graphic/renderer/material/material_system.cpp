@@ -17,14 +17,19 @@
 #include "smpch.h"
 #include "material_system.h"
 
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/sprite/texture_manager.h"
+#include "smile/graphic/renderer/render_context.h"
 #include "smile/common/memory/memory.h"
 #include "smile/common/foundation/traits/type_traits.h"
 
 namespace smile::graphic
 {
-    Material::Ref MaterialSystem::CreateMaterial( const primitive::String &name, const MaterialLayout &layout,
+    void MaterialSystem::Initialize( RenderContext *context ) noexcept
+    {
+        m_Context = context;
+    }
+
+    Material::Ref MaterialSystem::CreateMaterial( const primitive::String &name,
+        const MaterialLayout &layout,
         const MaterialDescriptor &desc )
     {
         Material::Ref material = memory::CreateRef< Material >( name, layout );
@@ -48,7 +53,7 @@ namespace smile::graphic
         MaterialData data;
         data.ShaderProgram = desc.ShaderProgram;
 
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+        auto &resourceManager = m_Context->GetResourceManager();
 
         const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
         data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
@@ -115,7 +120,7 @@ namespace smile::graphic
 
         data.ConstantBuffer->UpdateBuffer( bufferData.GetData(), bufferData.GetItemCount() );
 
-        RenderEngine::GetRenderContext().FillConstantBuffer( data.ConstantBuffer );
+        m_Context->FillConstantBuffer( data.ConstantBuffer );
     }
 
     void MaterialSystem::UpdateBindingSet( MaterialInstance::Ref materialInstance )
@@ -128,7 +133,7 @@ namespace smile::graphic
         rhi::BindingSetDescriptor bindingSetDesc{
             { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer->GetHandle() ) } };
 
-        auto &resourceManager = RenderEngine::GetRenderContext().GetResourceManager();
+        auto &resourceManager = m_Context->GetResourceManager();
 
         for ( const auto &textureBinding : layout.Textures )
         {

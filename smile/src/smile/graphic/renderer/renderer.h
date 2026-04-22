@@ -18,16 +18,20 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "render_pass/render_pass_list.h"
+#include "smile/graphic/rhi/swap_chain.h"
 
 namespace smile::graphic
 {
+    class RenderEngine;
+    class RenderContext;
+
     class Renderer final
     {
       public:
-        Renderer() = default;
+        Renderer( RenderEngine &engine, RenderContext &context ) noexcept;
         ~Renderer() = default;
 
-        void BeginFrame();
+        void BeginFrame( rhi::SwapChain *swapChain );
         void OnRender( const View &view, Framebuffer::Ref framebuffer = nullptr );
         void EndFrame();
 
@@ -37,7 +41,12 @@ namespace smile::graphic
         }
 
       private:
+        RenderEngine &m_Engine;
+        RenderContext &m_Context;
+
         RenderPassList m_RenderPassList;
+
+        rhi::SwapChain *m_SwapChain{ nullptr };
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

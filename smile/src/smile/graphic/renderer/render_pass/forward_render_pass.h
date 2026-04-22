@@ -14,6 +14,9 @@
 
 namespace smile::graphic
 {
+    class RenderContext;
+    class MaterialSystem;
+
     class ForwardRenderPass final : public RenderPass
     {
       public:
@@ -45,6 +48,8 @@ namespace smile::graphic
             rhi::RenderState RenderState;
         };
 
+        ForwardRenderPass( RenderContext &context, MaterialSystem &materialSystem ) noexcept;
+
         void Initialize() override;
         void ShutDown() override;
 
@@ -73,6 +78,9 @@ namespace smile::graphic
         BindingSet::Ref m_pBindingSet;
 
         ViewConstants m_ViewConstants{};
+
+        RenderContext &m_Context;
+        MaterialSystem &m_MaterialSystem;
     };
 }
 

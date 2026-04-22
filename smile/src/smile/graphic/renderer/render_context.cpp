@@ -10,54 +10,15 @@
 
 namespace smile::graphic
 {
-    RenderContext::RenderContext()
-    {
-        m_API = rhi::RendererBackendType::D3D11;
-        m_pDevice = rhi::GraphicsDevice::Create( m_API );
-        m_pImmediateCommandList = m_pDevice->CreateCommandList();
-    }
-
+    RenderContext::RenderContext() = default;
     RenderContext::~RenderContext() = default;
 
-    void RenderContext::Initialize( const window::Window *pWindow )
+    void RenderContext::Initialize( rhi::RendererBackendType api )
     {
+        m_pDevice = rhi::GraphicsDevice::Create( api );
+        m_pImmediateCommandList = m_pDevice->CreateCommandList();
+
         m_ResourceManager.Initialize( m_pDevice.get() );
-
-        m_pSwapChain = m_pDevice->CreateSwapChain( pWindow );
-
-        rhi::Object nativeRenderTarget = m_pSwapChain->GetNativeRenderTarget();
-
-        const rhi::ObjectType objectType = [&]()
-        {
-            switch ( m_API )
-            {
-                case rhi::RendererBackendType::D3D11:
-                    return rhi::ObjectType::D3D11_Resource;
-                default:
-                    SM_ASSERT( false );
-            }
-        }();
-
-        rhi::TextureDescriptor colorDesc;
-        colorDesc.Dimension = rhi::TextureDimension::Texture2D;
-        colorDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
-        colorDesc.Width = pWindow->GetWidth();
-        colorDesc.Height = pWindow->GetHeight();
-        colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
-
-        Texture::Ref pColorTexture =
-            m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
-
-        FramebufferAttachment depthAttachment =
-            m_ResourceManager.CreateDepthAttachment( pWindow->GetWidth(), pWindow->GetHeight() );
-
-        m_pBackBuffer = m_ResourceManager.CreateFramebuffer(
-            { FramebufferAttachment{ pColorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
-    }
-
-    void RenderContext::ResizeWindow( Uint32 x, Uint32 y, Uint32 width, Uint32 height )
-    {
-        m_pSwapChain->Resize( x, y, width, height );
     }
 
     void RenderContext::Clear( Framebuffer::Ref pFramebuffer,
@@ -132,11 +93,6 @@ namespace smile::graphic
     {
         rhi::DrawParams params{ vertexCount, 0 };
         m_pImmediateCommandList->Draw( params );
-    }
-
-    void RenderContext::Present()
-    {
-        m_pSwapChain->Present();
     }
 
     void RenderContext::FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const
