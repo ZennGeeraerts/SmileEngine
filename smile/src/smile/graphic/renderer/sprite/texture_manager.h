@@ -10,7 +10,7 @@
 
 namespace smile::graphic
 {
-    class RenderContext;
+    class ResourceManager;
 
     class TextureManager final
     {
@@ -18,7 +18,7 @@ namespace smile::graphic
         TextureManager() = default;
         ~TextureManager() = default;
 
-        void Initialize( RenderContext *renderContext ) noexcept;
+        void Initialize( ResourceManager *resourceManager ) noexcept;
 
         TextureAsset::Ref GetTexture( asset::AssetHandle handle );
         TextureAsset::Ref GetTexture( const std::filesystem::path &path );

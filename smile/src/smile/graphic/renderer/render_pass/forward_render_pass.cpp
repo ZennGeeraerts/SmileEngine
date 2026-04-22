@@ -5,32 +5,34 @@
 #include "smpch.h"
 #include "forward_render_pass.h"
 
-#include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/renderer/render_context.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/material/material_system.h"
 
 namespace smile::graphic
 {
-    ForwardRenderPass::ForwardRenderPass( RenderContext &context, MaterialSystem &materialSystem ) noexcept
-        : m_Context{ context }, m_MaterialSystem{ materialSystem }
+    ForwardRenderPass::ForwardRenderPass( RenderContext &context,
+        ResourceManager &resourceManager,
+        MaterialSystem &materialSystem ) noexcept
+        : m_Context{ context }, m_ResourceManager{ resourceManager }, m_MaterialSystem{ materialSystem }
     {
     }
 
     void ForwardRenderPass::Initialize()
     {
-        auto &resourceManager = m_Context.GetResourceManager();
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
             cameraCBDesc.Add( "ViewInverse", ConstantType::Mat4 );
 
-            m_pCameraCB = resourceManager.CreateConstantBuffer( cameraCBDesc );
+            m_pCameraCB = m_ResourceManager.CreateConstantBuffer( cameraCBDesc );
         }
 
         {
             ConstantBufferDescriptor perObjectCBDesc{};
             perObjectCBDesc.Add( "World", ConstantType::Mat4 );
 
-            m_PerObjectCB = resourceManager.CreateConstantBuffer( perObjectCBDesc );
+            m_PerObjectCB = m_ResourceManager.CreateConstantBuffer( perObjectCBDesc );
         }
 
         {
@@ -38,7 +40,7 @@ namespace smile::graphic
                 { rhi::BindingSetElement::CreateConstantBuffer( 0, m_pCameraCB->GetHandle() ) },
                 { rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectCB->GetHandle() ) } };
 
-            m_pBindingSet = resourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+            m_pBindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
         }
     }
 
@@ -67,16 +69,15 @@ namespace smile::graphic
         const rhi::RenderState &renderState )
     {
         const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
-        auto &resourceManager = m_Context.GetResourceManager();
 
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
         psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
 
         psoDesc.pVertexShader =
-            resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
+            m_ResourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
 
-        psoDesc.pPixelShader = resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
+        psoDesc.pPixelShader = m_ResourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
 
         rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
         bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
@@ -87,7 +88,7 @@ namespace smile::graphic
 
         psoDesc.RenderState = renderState;
 
-        auto pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
+        auto pipeline = m_ResourceManager.CreateGraphicsPipeline( psoDesc );
         return m_Pipelines.Insert( PipelineKey{ materialInstance, renderState }, std::move( pipeline ) );
     }
 

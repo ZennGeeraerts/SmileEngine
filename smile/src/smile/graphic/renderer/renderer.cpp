@@ -23,7 +23,7 @@
 namespace smile::graphic
 {
     Renderer::Renderer( RenderEngine &engine, RenderContext &context ) noexcept
-        : m_Engine{ engine }, m_Context{ context }, m_RenderPassList{ engine }
+        : m_Engine{ engine }, m_Context{ context }
     {
     }
 

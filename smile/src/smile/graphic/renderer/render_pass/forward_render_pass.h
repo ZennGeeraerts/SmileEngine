@@ -15,6 +15,7 @@
 namespace smile::graphic
 {
     class RenderContext;
+    class ResourceManager;
     class MaterialSystem;
 
     class ForwardRenderPass final : public RenderPass
@@ -48,7 +49,9 @@ namespace smile::graphic
             rhi::RenderState RenderState;
         };
 
-        ForwardRenderPass( RenderContext &context, MaterialSystem &materialSystem ) noexcept;
+        ForwardRenderPass( RenderContext &context,
+            ResourceManager &resourceManager,
+            MaterialSystem &materialSystem ) noexcept;
 
         void Initialize() override;
         void ShutDown() override;
@@ -80,6 +83,7 @@ namespace smile::graphic
         ViewConstants m_ViewConstants{};
 
         RenderContext &m_Context;
+        ResourceManager &m_ResourceManager;
         MaterialSystem &m_MaterialSystem;
     };
 }

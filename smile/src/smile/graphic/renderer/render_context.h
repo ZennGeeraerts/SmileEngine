@@ -10,10 +10,12 @@
 #include "smile/core/math/color.h"
 
 #include "graphics_state.h"
-#include "resource/resource_manager.h"
 #include "smile/graphic/rhi/command_list.h"
 #include "smile/graphic/rhi/graphics_device.h"
 #include "smile/graphic/rhi/swap_chain.h"
+
+#include "resource/vertex_buffer.h"
+#include "shader/constant_buffer.h"
 
 namespace smile::window
 {
@@ -46,11 +48,6 @@ namespace smile::graphic
         void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
         void FillConstantBuffer( ConstantBuffer::Ref constantBuffer ) const;
 
-        ResourceManager &GetResourceManager()
-        {
-            return m_ResourceManager;
-        }
-
         rhi::GraphicsDevice *GetGraphicsDevice() const
         {
             return m_pDevice.get();
@@ -64,6 +61,5 @@ namespace smile::graphic
       private:
         Scope< rhi::GraphicsDevice > m_pDevice;
         rhi::CommandList *m_pImmediateCommandList;
-        ResourceManager m_ResourceManager{};
     };
 }

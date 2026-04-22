@@ -7,6 +7,7 @@
 #include "smile/common/memory/scope.h"
 
 #include "render_context.h"
+#include "resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "sprite/texture_manager.h"
 #include "material/material_system.h"
@@ -35,6 +36,11 @@ namespace smile::graphic
             return m_RenderContext;
         }
 
+        [[nodiscard]] ResourceManager &GetResourceManager() noexcept
+        {
+            return m_ResourceManager;
+        }
+
         [[nodiscard]] ShaderLibrary &GetShaderLibrary() noexcept
         {
             return m_ShaderLibrary;
@@ -58,6 +64,8 @@ namespace smile::graphic
       private:
         rhi::RendererBackendType m_API;
         RenderContext m_RenderContext;
+        ResourceManager m_ResourceManager;
+
         ShaderLibrary m_ShaderLibrary;
         TextureManager m_TextureManager;
         MaterialSystem m_MaterialSystem;

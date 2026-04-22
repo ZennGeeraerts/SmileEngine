@@ -45,7 +45,7 @@ namespace smile::graphic
         MaterialSystem() = default;
         ~MaterialSystem() = default;
 
-        void Initialize( RenderContext *context ) noexcept;
+        void Initialize( RenderContext *context, ResourceManager *resourceManager ) noexcept;
 
         Material::Ref
         CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc );
@@ -67,5 +67,6 @@ namespace smile::graphic
         IDManager m_IDManager;
 
         RenderContext *m_Context;
+        ResourceManager *m_ResourceManager;
     };
 }

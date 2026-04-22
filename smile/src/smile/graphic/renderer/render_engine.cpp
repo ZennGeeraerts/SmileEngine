@@ -25,8 +25,10 @@ namespace smile::graphic
     void RenderEngine::Initialize() noexcept
     {
         m_RenderContext.Initialize( m_API );
-        m_TextureManager.Initialize( &m_RenderContext );
-        m_MaterialSystem.Initialize( &m_RenderContext );
+        m_ResourceManager.Initialize( m_RenderContext.GetGraphicsDevice() );
+
+        m_TextureManager.Initialize( &m_ResourceManager );
+        m_MaterialSystem.Initialize( &m_RenderContext, &m_ResourceManager );
 
         m_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
         m_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
@@ -68,15 +70,13 @@ namespace smile::graphic
         colorDesc.Height = window->GetHeight();
         colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
 
-        auto &resourceManager = m_RenderContext.GetResourceManager();
-
         Texture::Ref pColorTexture =
-            resourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
+            m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
 
         FramebufferAttachment depthAttachment =
-            resourceManager.CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
+            m_ResourceManager.CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
 
-        auto renderTarget = resourceManager.CreateFramebuffer(
+        auto renderTarget = m_ResourceManager.CreateFramebuffer(
             { FramebufferAttachment{ pColorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
 
         auto swapChainPtr = swapChain.get();

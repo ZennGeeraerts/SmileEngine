@@ -33,11 +33,12 @@ namespace smile::graphic
         m_Renderer = m_RenderEngine->CreateRenderer();
 
         auto &renderContext = m_RenderEngine->GetRenderContext();
+        auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
 
-        m_Renderer->GetRenderPassList().PushBack< ForwardRenderPass >( renderContext, materialSystem );
+        m_Renderer->GetRenderPassList().PushBack< ForwardRenderPass >( renderContext, resourceManager, materialSystem );
 
-        Renderer2D::GetInstance().Initialize( renderContext,
+        Renderer2D::GetInstance().Initialize( resourceManager,
             m_RenderEngine->GetShaderLibrary(),
             &m_Renderer->GetRenderPassList().Get< ForwardRenderPass >() );
 
@@ -62,8 +63,6 @@ namespace smile::graphic
 
         TextureAsset::Ref textureAsset =
             m_RenderEngine->GetTextureManager().GetTexture( "resources/textures/uv_grid.png" );
-
-        auto &resourceManager = renderContext.GetResourceManager();
 
         {
             MaterialLayout layout{};

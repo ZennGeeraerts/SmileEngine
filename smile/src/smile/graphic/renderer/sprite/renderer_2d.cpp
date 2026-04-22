@@ -7,8 +7,9 @@
 
 #include "smile/common/memory/scope.h"
 
-#include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/render_pass/forward_render_pass.h"
+#include "smile/graphic/shader/shader_library.h"
 
 namespace smile::graphic
 {
@@ -21,14 +22,12 @@ namespace smile::graphic
 
     static memory::Scope< Renderer2DStorage > s_pStorage;
 
-    void Renderer2D::Initialize( RenderContext &context,
+    void Renderer2D::Initialize( ResourceManager &resourceManager,
         const ShaderLibrary &shaderLib,
         ForwardRenderPass *forwardRenderPass )
     {
         s_pStorage = memory::CreateScope< Renderer2DStorage >();
         s_pStorage->ForwardPass = forwardRenderPass;
-
-        auto &resourceManager = context.GetResourceManager();
 
         auto vertexShaderAsset = shaderLib.GetShader( "pos_tex.vs" );
         auto pixelShaderAsset = shaderLib.GetShader( "col_tex.ps" );

@@ -18,14 +18,16 @@
 #include "material_system.h"
 
 #include "smile/graphic/renderer/render_context.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/common/memory/memory.h"
 #include "smile/common/foundation/traits/type_traits.h"
 
 namespace smile::graphic
 {
-    void MaterialSystem::Initialize( RenderContext *context ) noexcept
+    void MaterialSystem::Initialize( RenderContext *context, ResourceManager *resourceManager ) noexcept
     {
         m_Context = context;
+        m_ResourceManager = resourceManager;
     }
 
     Material::Ref MaterialSystem::CreateMaterial( const primitive::String &name,
@@ -53,10 +55,8 @@ namespace smile::graphic
         MaterialData data;
         data.ShaderProgram = desc.ShaderProgram;
 
-        auto &resourceManager = m_Context->GetResourceManager();
-
         const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
-        data.ConstantBuffer = resourceManager.CreateConstantBuffer( cbDesc );
+        data.ConstantBuffer = m_ResourceManager->CreateConstantBuffer( cbDesc );
 
         m_MaterialInstances[id.GetIndex()] = materialInstance;
         m_MaterialData[id.GetIndex()] = std::move( data );
@@ -133,8 +133,6 @@ namespace smile::graphic
         rhi::BindingSetDescriptor bindingSetDesc{
             { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer->GetHandle() ) } };
 
-        auto &resourceManager = m_Context->GetResourceManager();
-
         for ( const auto &textureBinding : layout.Textures )
         {
             const MaterialTextureBinding textureParam = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
@@ -144,14 +142,14 @@ namespace smile::graphic
                 bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
                     textureBinding.Slot, textureParam.Texture->GetHandle(), textureParam.Texture->GetFormat() ) );
 
-                Sampler::Ref sampler = resourceManager.GetOrCreateSampler( textureParam.SamplerDescriptor );
+                Sampler::Ref sampler = m_ResourceManager->GetOrCreateSampler( textureParam.SamplerDescriptor );
 
                 bindingSetDesc.AddItem(
                     rhi::BindingSetElement::CreateSampler( textureBinding.Slot, sampler->GetHandle() ) );
             }
         }
 
-        data.Bindings = resourceManager.CreateBindingSet( bindingSetDesc, layout.Visibility );
+        data.Bindings = m_ResourceManager->CreateBindingSet( bindingSetDesc, layout.Visibility );
     }
 
     const MaterialData &MaterialSystem::GetMaterialData( MaterialInstance::ConstRef materialInstance ) const

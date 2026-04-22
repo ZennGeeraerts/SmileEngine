@@ -17,8 +17,6 @@ namespace smile::graphic
     {
         m_pDevice = rhi::GraphicsDevice::Create( api );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
-
-        m_ResourceManager.Initialize( m_pDevice.get() );
     }
 
     void RenderContext::Clear( Framebuffer::Ref pFramebuffer,

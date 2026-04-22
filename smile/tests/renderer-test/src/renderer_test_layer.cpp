@@ -34,11 +34,12 @@ namespace smile::graphic
 
         auto &renderPassList = m_Renderer->GetRenderPassList();
         auto &renderContext = m_RenderEngine->GetRenderContext();
+        auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
         const auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
 
-        renderPassList.PushBack< ForwardRenderPass >( renderContext, materialSystem );
-        renderPassList.PushBack< DebugRenderPass >( renderContext, shaderLibrary );
+        renderPassList.PushBack< ForwardRenderPass >( renderContext, resourceManager, materialSystem );
+        renderPassList.PushBack< DebugRenderPass >( renderContext, resourceManager, shaderLibrary );
 
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
@@ -106,8 +107,6 @@ namespace smile::graphic
                 0.0f,
                 1,
                 1 /*4*/ };
-
-            auto &resourceManager = renderContext.GetResourceManager();
 
             m_VertexBuffer = resourceManager.CreateVertexBuffer( quadVertices,
                 quadVerticesCount,

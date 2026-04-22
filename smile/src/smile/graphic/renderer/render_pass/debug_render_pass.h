@@ -20,7 +20,9 @@ namespace smile::graphic
     class DebugRenderPass final : public RenderPass
     {
       public:
-        DebugRenderPass( RenderContext &context, const ShaderLibrary &shaderLib ) noexcept;
+        DebugRenderPass( RenderContext &context,
+            ResourceManager &resourceManager,
+            const ShaderLibrary &shaderLib ) noexcept;
 
         void Initialize() override;
         void ShutDown() override;
@@ -55,6 +57,7 @@ namespace smile::graphic
         Count m_VertexCount{ 100 };
 
         RenderContext &m_Context;
+        ResourceManager &m_ResourceManager;
         const ShaderLibrary &m_ShaderLib;
     };
 }

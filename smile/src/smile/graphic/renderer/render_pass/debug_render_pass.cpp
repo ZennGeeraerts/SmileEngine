@@ -5,7 +5,7 @@
 #include "smpch.h"
 #include "debug_render_pass.h"
 
-#include "smile/graphic/renderer/render_engine.h"
+#include "smile/graphic/renderer/render_context.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "smile/graphic/shader/shader_asset.h"
@@ -15,15 +15,15 @@
 
 namespace smile::graphic
 {
-    DebugRenderPass::DebugRenderPass( RenderContext &context, const ShaderLibrary &shaderLib ) noexcept
-        : m_Context{ context }, m_ShaderLib{ shaderLib }
+    DebugRenderPass::DebugRenderPass( RenderContext &context,
+        ResourceManager &resourceManager,
+        const ShaderLibrary &shaderLib ) noexcept
+        : m_Context{ context }, m_ResourceManager{ resourceManager }, m_ShaderLib{ shaderLib }
     {
     }
 
     void DebugRenderPass::Initialize()
     {
-        auto &resourceManager = m_Context.GetResourceManager();
-
         rhi::BufferLayout vertexLayout{
             { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
@@ -36,8 +36,8 @@ namespace smile::graphic
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::LineList;
             psoDesc.InputLayout = vertexLayout;
-            psoDesc.pVertexShader = resourceManager.CreateVertexShader( vertexShaderAsset );
-            psoDesc.pPixelShader = resourceManager.CreatePixelShader( pixelShaderAsset );
+            psoDesc.pVertexShader = m_ResourceManager.CreateVertexShader( vertexShaderAsset );
+            psoDesc.pPixelShader = m_ResourceManager.CreatePixelShader( pixelShaderAsset );
 
             auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
             bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
@@ -45,21 +45,21 @@ namespace smile::graphic
 
             psoDesc.RenderState.RasterizerState.CullMode = rhi::CullMode::None;
 
-            m_pPipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
+            m_pPipeline = m_ResourceManager.CreateGraphicsPipeline( psoDesc );
         }
 
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
 
-            m_pCameraCB = resourceManager.CreateConstantBuffer( cameraCBDesc );
+            m_pCameraCB = m_ResourceManager.CreateConstantBuffer( cameraCBDesc );
         }
 
         {
             rhi::BindingSetDescriptor bindingSetDesc{
                 { rhi::BindingSetElement::CreateConstantBuffer( 0, m_pCameraCB->GetHandle() ) } };
 
-            m_pBindingSet = resourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+            m_pBindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
         }
 
         CreateVertexBuffer();
@@ -114,7 +114,7 @@ namespace smile::graphic
     {
         const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
 
-        m_pVertexBuffer = m_Context.GetResourceManager().CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
+        m_pVertexBuffer = m_ResourceManager.CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
     }
 
     void DebugRenderPass::BeginPass( const View &view )
