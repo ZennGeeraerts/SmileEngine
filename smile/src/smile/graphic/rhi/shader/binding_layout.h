@@ -36,7 +36,7 @@ namespace smile::graphic::rhi
         Uint16 Size;
     };
 
-    class BindingLayout
+    class BindingLayout final
     {
       public:
         BindingLayout() = default;

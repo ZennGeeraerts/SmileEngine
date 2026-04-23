@@ -48,6 +48,9 @@ namespace smile::graphic::rhi
         CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc, void *pData = nullptr ) = 0;
         virtual void DestroyGPUBuffer( GPUBufferHandle handle ) = 0;
 
+        virtual void CreateBindingLayout( BindingLayoutHandle handle, const BindingLayout &layout ) = 0;
+        virtual void DestroyBindingLayout( BindingLayoutHandle handle ) = 0;
+
         virtual void CreateBindingSet( BindingSetHandle handle,
             const BindingSetDescriptor &bindingSetDesc,
             const BindingLayout &layout ) = 0;

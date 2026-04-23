@@ -19,6 +19,7 @@
 #include "shader/d3d11_shader.h"
 #include "shader/d3d11_input_layout.h"
 #include "shader/d3d11_binding_set.h"
+#include "shader/d3d11_binding_layout.h"
 
 #include "d3d11_context.h"
 #include "d3d11_state_cache.h"
@@ -62,6 +63,9 @@ namespace smile::graphic::rhi
             const GPUBufferDescriptor &bufferDesc,
             void *pData = nullptr ) override;
         void DestroyGPUBuffer( GPUBufferHandle handle ) override;
+
+        void CreateBindingLayout( BindingLayoutHandle handle, const BindingLayout &layout ) override;
+        void DestroyBindingLayout( BindingLayoutHandle handle ) override;
 
         void CreateBindingSet( BindingSetHandle handle,
             const BindingSetDescriptor &bindingSetDesc,
@@ -124,6 +128,7 @@ namespace smile::graphic::rhi
         primitive::Array< D3D11Sampler, s_MaxSamplerCount > m_Samplers;
         primitive::Array< D3D11Framebuffer, s_MaxFramebufferCount > m_Framebuffers;
         primitive::Array< D3D11BindingSet, s_MaxBindingSetCount > m_BindingSets;
+        primitive::Array< D3D11BindingLayout, s_MaxBindingSetCount > m_BindingLayouts;
         primitive::Array< D3D11Shader, s_MaxShaderCount > m_Shaders;
         primitive::Array< D3D11Pipeline, s_MaxGraphicsPipelineCount > m_Pipelines;
 

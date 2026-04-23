@@ -23,6 +23,9 @@ namespace smile::graphic::rhi
     using FramebufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using FramebufferHandle = FramebufferHandleManager::HandleType;
 
+    using BindingLayoutHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using BindingLayoutHandle = BindingLayoutHandleManager::HandleType;
+
     using BindingSetHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using BindingSetHandle = BindingSetHandleManager::HandleType;
 

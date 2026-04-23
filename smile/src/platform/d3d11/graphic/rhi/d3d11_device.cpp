@@ -101,6 +101,15 @@ namespace smile::graphic::rhi
         m_GPUBuffers[handle.GetIndex()].Destroy();
     }
 
+    void D3D11Device::CreateBindingLayout( BindingLayoutHandle handle, const BindingLayout &layout )
+    {
+        m_BindingLayouts[handle.GetIndex()].Create( layout );
+    }
+
+    void D3D11Device::DestroyBindingLayout( BindingLayoutHandle handle )
+    {
+    }
+
     void D3D11Device::CreateBindingSet( BindingSetHandle handle,
         const BindingSetDescriptor &bindingSetDesc,
         const BindingLayout &layout )
