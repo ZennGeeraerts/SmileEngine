@@ -17,10 +17,10 @@ namespace smile::graphic
 {
     struct GraphicsState final
     {
-        GraphicsPipeline::Ref pPipeline;
-        Framebuffer::Ref pFramebuffer;
+        GraphicsPipeline Pipeline;
+        Framebuffer Framebuffer;
 
-        primitive::FixedVector< BindingSet::Ref, rhi::s_MaxBindingLayoutCount > pBindings;
+        primitive::FixedVector< BindingSet, rhi::s_MaxBindingLayoutCount > Bindings;
 
         primitive::FixedVector< VertexBufferBinding, rhi::s_MaxVertexAttributeCount > VertexBuffers;
         IndexBufferBinding IndexBuffer;

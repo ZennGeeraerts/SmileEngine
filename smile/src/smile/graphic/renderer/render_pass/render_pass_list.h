@@ -28,7 +28,7 @@ namespace smile::graphic
         RenderPassList &operator=( const RenderPassList & ) = delete;
         RenderPassList &operator=( RenderPassList && ) = delete;
 
-        void Execute( Framebuffer::Ref framebuffer, const View &view ) noexcept;
+        void Execute( const Framebuffer &framebuffer, const View &view ) noexcept;
 
         template < RenderPassType PassType, typename... Args >
         auto PushBack( Args &&...args ) -> typename PassType::Ref

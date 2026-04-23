@@ -28,35 +28,35 @@ namespace smile::graphic
         void Initialize() noexcept;
         void ShutDown() noexcept;
 
-        [[nodiscard]] rhi::SwapChain *CreateSwapChain( const window::Window *window ) noexcept;
-        [[nodiscard]] Renderer *CreateRenderer() noexcept;
+        rhi::SwapChain *CreateSwapChain( const window::Window *window );
+        Renderer *CreateRenderer();
 
-        [[nodiscard]] RenderContext &GetRenderContext() noexcept
+        RenderContext &GetRenderContext() noexcept
         {
             return m_RenderContext;
         }
 
-        [[nodiscard]] ResourceManager &GetResourceManager() noexcept
+        ResourceManager &GetResourceManager() noexcept
         {
             return m_ResourceManager;
         }
 
-        [[nodiscard]] ShaderLibrary &GetShaderLibrary() noexcept
+        ShaderLibrary &GetShaderLibrary() noexcept
         {
             return m_ShaderLibrary;
         }
 
-        [[nodiscard]] TextureManager &GetTextureManager() noexcept
+        TextureManager &GetTextureManager() noexcept
         {
             return m_TextureManager;
         }
 
-        [[nodiscard]] MaterialSystem &GetMaterialSystem() noexcept
+        MaterialSystem &GetMaterialSystem() noexcept
         {
             return m_MaterialSystem;
         }
 
-        [[nodiscard]] Framebuffer::Ref GetRenderTarget( rhi::SwapChain *const swapChain ) const noexcept;
+        Framebuffer GetRenderTarget( rhi::SwapChain *const swapChain ) const;
 
       public:
         RenderEngine( rhi::RendererBackendType api ) noexcept;
@@ -73,6 +73,6 @@ namespace smile::graphic
         primitive::Vector< Scope< rhi::SwapChain > > m_SwapChains;
         primitive::Vector< memory::Scope< Renderer > > m_Renderers;
 
-        primitive::HashMap< rhi::SwapChain *, Framebuffer::Ref > m_RenderTargets;
+        primitive::HashMap< rhi::SwapChain *, Framebuffer > m_RenderTargets;
     };
 }

@@ -33,7 +33,7 @@ namespace smile::graphic
     {
         MaterialTextureBinding() = default;
 
-        MaterialTextureBinding( Texture::ConstRef texture, const rhi::SamplerDescriptor &samplerDesc ) noexcept
+        MaterialTextureBinding( const Texture &texture, const rhi::SamplerDescriptor &samplerDesc ) noexcept
             : Texture{ texture }, SamplerDescriptor{ samplerDesc }
         {
         }
@@ -48,7 +48,7 @@ namespace smile::graphic
             return !( *this == other );
         }
 
-        Texture::ConstRef Texture;
+        Texture Texture;
         rhi::SamplerDescriptor SamplerDescriptor;
     };
 

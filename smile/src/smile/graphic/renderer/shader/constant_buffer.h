@@ -4,19 +4,23 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/shader/constant_buffer_descriptor.h"
 
 namespace smile::graphic
 {
-    class ConstantBuffer final : public memory::Counted
+    class ConstantBuffer final
     {
       public:
-        using Ref = memory::Ref< ConstantBuffer >;
+        ConstantBuffer() = default;
+        ConstantBuffer( rhi::GPUBufferHandle handle, const ConstantBufferDescriptor &desc ) noexcept;
 
-        ConstantBuffer( rhi::GPUBufferHandle handle, const ConstantBufferDescriptor &desc );
+        ConstantBuffer( const ConstantBuffer & ) = default;
+        ConstantBuffer( ConstantBuffer && ) noexcept = default;
         ~ConstantBuffer() = default;
+
+        ConstantBuffer &operator=( const ConstantBuffer & ) = default;
+        ConstantBuffer &operator=( ConstantBuffer && ) noexcept = default;
 
         template < typename ConstantBufferType >
         void Update( const ConstantBufferType *pBuffer )
@@ -26,22 +30,22 @@ namespace smile::graphic
 
         void UpdateBuffer( const void *pBuffer, const Count size );
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }
 
-        const void *GetBuffer() const
+        const void *GetBuffer() const noexcept
         {
             return m_Buffer;
         }
 
-        rhi::GPUBufferHandle GetHandle() const
+        rhi::GPUBufferHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        const ConstantBufferDescriptor &GetDescriptor() const
+        const ConstantBufferDescriptor &GetDescriptor() const noexcept
         {
             return m_Descriptor;
         }

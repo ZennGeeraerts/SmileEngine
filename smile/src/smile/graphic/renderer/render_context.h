@@ -12,10 +12,6 @@
 #include "graphics_state.h"
 #include "smile/graphic/rhi/command_list.h"
 #include "smile/graphic/rhi/graphics_device.h"
-#include "smile/graphic/rhi/swap_chain.h"
-
-#include "resource/vertex_buffer.h"
-#include "shader/constant_buffer.h"
 
 namespace smile::window
 {
@@ -24,6 +20,9 @@ namespace smile::window
 
 namespace smile::graphic
 {
+    class VertexBuffer;
+    class ConstantBuffer;
+
     class RenderContext final
     {
       public:
@@ -32,7 +31,7 @@ namespace smile::graphic
 
         void Initialize( rhi::RendererBackendType api );
 
-        void Clear( Framebuffer::Ref pFramebuffer,
+        void Clear( const Framebuffer &framebuffer,
             const std::optional< math::Color > &color,
             std::optional< float > depth,
             std::optional< Uint8 > stencil );
@@ -45,8 +44,8 @@ namespace smile::graphic
         void Draw( Uint32 vertexCount );
         void Present();
 
-        void FillVertexBuffer( VertexBuffer::Ref pVertexBuffer, void *pData, const Count vertexCount ) const;
-        void FillConstantBuffer( ConstantBuffer::Ref constantBuffer ) const;
+        void FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const;
+        void FillConstantBuffer( const ConstantBuffer &constantBuffer ) const;
 
         rhi::GraphicsDevice *GetGraphicsDevice() const
         {
@@ -60,6 +59,6 @@ namespace smile::graphic
 
       private:
         Scope< rhi::GraphicsDevice > m_pDevice;
-        rhi::CommandList *m_pImmediateCommandList;
+        rhi::CommandList *m_pImmediateCommandList{ nullptr };
     };
 }

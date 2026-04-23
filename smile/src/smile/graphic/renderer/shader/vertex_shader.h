@@ -4,26 +4,34 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 
 namespace smile::graphic
 {
-    class VertexShader final : public memory::Counted
+    class VertexShader final
     {
       public:
-        using Ref = memory::Ref< VertexShader >;
-        using ConstRef = memory::Ref< const VertexShader >;
+        VertexShader() = default;
 
-        VertexShader( rhi::ShaderHandle handle ) : m_Handle{ handle }
+        VertexShader( rhi::ShaderHandle handle ) noexcept : m_Handle{ handle }
         {
         }
 
+        VertexShader( const VertexShader & ) = default;
+        VertexShader( VertexShader && ) noexcept = default;
         ~VertexShader() = default;
 
-        bool IsValid() const
+        VertexShader &operator=( const VertexShader & ) = default;
+        VertexShader &operator=( VertexShader && ) noexcept = default;
+
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
+        }
+
+        rhi::ShaderHandle GetHandle() const noexcept
+        {
+            return m_Handle;
         }
 
       private:

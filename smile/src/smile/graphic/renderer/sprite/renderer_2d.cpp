@@ -15,8 +15,8 @@ namespace smile::graphic
 {
     struct Renderer2DStorage final
     {
-        VertexBuffer::Ref pQuadVertexBuffer;
-        IndexBuffer::Ref pQuadIndexBuffer;
+        VertexBuffer QuadVertexBuffer;
+        IndexBuffer QuadIndexBuffer;
         ForwardRenderPass *ForwardPass{ nullptr };
     };
 
@@ -56,14 +56,14 @@ namespace smile::graphic
                 1.0f,
                 0.0f /*4*/ };
 
-            s_pStorage->pQuadVertexBuffer =
+            s_pStorage->QuadVertexBuffer =
                 resourceManager.CreateVertexBuffer( quadVertices, quadVerticesCount, program->GetVertexLayout() );
         }
 
         {
             const Count quadIndicesCount = 6;
             Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
-            s_pStorage->pQuadIndexBuffer = resourceManager.CreateIndexBuffer( quadIndices, quadIndicesCount );
+            s_pStorage->QuadIndexBuffer = resourceManager.CreateIndexBuffer( quadIndices, quadIndicesCount );
         }
     }
 
@@ -88,8 +88,8 @@ namespace smile::graphic
 
     void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance::Ref materialInstance )
     {
-        DrawItem drawItem{ s_pStorage->pQuadVertexBuffer,
-            s_pStorage->pQuadIndexBuffer,
+        DrawItem drawItem{ s_pStorage->QuadVertexBuffer,
+            s_pStorage->QuadIndexBuffer,
             materialInstance,
             worldTransform,
             rhi::RenderState{} };

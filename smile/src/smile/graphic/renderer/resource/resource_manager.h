@@ -40,67 +40,66 @@ namespace smile::graphic
 
         void Initialize( rhi::GraphicsDevice *pDevice );
 
-        VertexBuffer::Ref
-        CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
+        VertexBuffer CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
 
-        VertexBuffer::Ref CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
+        VertexBuffer CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
 
-        IndexBuffer::Ref CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
+        IndexBuffer CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
 
-        Texture::Ref CreateTexture2D( Image::ConstRef pImage, bool updateable );
+        Texture CreateTexture2D( Image::ConstRef pImage, bool updateable );
 
-        Texture::Ref CreateTextureCube( Image::ConstRef pImage, bool updateable );
+        Texture CreateTextureCube( Image::ConstRef pImage, bool updateable );
 
-        Texture::Ref
+        Texture
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
 
-        Sampler::Ref CreateSampler( const rhi::SamplerDescriptor &descriptor );
-        Sampler::Ref GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor );
+        Sampler CreateSampler( const rhi::SamplerDescriptor &descriptor );
+        Sampler GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor );
 
         FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
 
         FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
-        ConstantBuffer::Ref CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
+        ConstantBuffer CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
 
-        VertexShader::Ref CreateVertexShader( const primitive::Vector< Byte > &byteCode,
+        VertexShader CreateVertexShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        VertexShader::Ref CreateVertexShader( ShaderAsset::ConstRef shaderAsset );
+        VertexShader CreateVertexShader( ShaderAsset::ConstRef shaderAsset );
 
-        VertexShader::Ref GetOrCreateVertexShader( const primitive::Vector< Byte > &byteCode,
+        VertexShader GetOrCreateVertexShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        VertexShader::Ref GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset );
+        VertexShader GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset );
 
-        PixelShader::Ref CreatePixelShader( const primitive::Vector< Byte > &byteCode,
+        PixelShader CreatePixelShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        PixelShader::Ref CreatePixelShader( ShaderAsset::ConstRef shaderAsset );
+        PixelShader CreatePixelShader( ShaderAsset::ConstRef shaderAsset );
 
-        PixelShader::Ref GetOrCreatePixelShader( const primitive::Vector< Byte > &byteCode,
+        PixelShader GetOrCreatePixelShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        PixelShader::Ref GetOrCreatePixelShader( ShaderAsset::ConstRef shaderAsset );
+        PixelShader GetOrCreatePixelShader( ShaderAsset::ConstRef shaderAsset );
 
-        Framebuffer::Ref CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
+        Framebuffer CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );
 
-        Framebuffer::Ref CreateFramebuffer( const primitive::Vector< FramebufferAttachment > &colorAttachments,
+        Framebuffer CreateFramebuffer( const primitive::Vector< FramebufferAttachment > &colorAttachments,
             const FramebufferAttachment &depthAttachment );
 
-        void ResizeFramebuffer( Framebuffer::Ref pFramebuffer, const Uint32 width, const Uint32 height );
+        void ResizeFramebuffer( Framebuffer &framebuffer, const Uint32 width, const Uint32 height );
 
-        BindingSet::Ref CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+        BindingSet CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
             foundation::Flags< rhi::ShaderStage > shaderStage );
 
-        GraphicsPipeline::Ref CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
+        GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
 
-        rhi::Object GetShaderResourceView( Texture::ConstRef pTexture );
+        rhi::Object GetShaderResourceView( const Texture &texture );
 
         struct ShaderKey final
         {
@@ -138,20 +137,20 @@ namespace smile::graphic
       private:
         rhi::GraphicsDevice *m_pDevice = nullptr;
 
-        primitive::Vector< VertexBuffer::Ref > m_pVertexBuffers;
-        primitive::Vector< IndexBuffer::Ref > m_pIndexBuffers;
-        primitive::Vector< Texture::Ref > m_pTextures;
-        primitive::Vector< Sampler::Ref > m_pSamplers;
-        primitive::Vector< ConstantBuffer::Ref > m_pConstantBuffers;
-        primitive::Vector< VertexShader::Ref > m_pVertexShaders;
-        primitive::Vector< PixelShader::Ref > m_pPixelShaders;
-        primitive::Vector< Framebuffer::Ref > m_pFramebuffers;
-        primitive::Vector< BindingSet::Ref > m_pBindingSets;
-        primitive::Vector< GraphicsPipeline::Ref > m_pGraphicsPipelines;
+        primitive::Vector< VertexBuffer > m_VertexBuffers;
+        primitive::Vector< IndexBuffer > m_IndexBuffers;
+        primitive::Vector< Texture > m_Textures;
+        primitive::Vector< Sampler > m_Samplers;
+        primitive::Vector< ConstantBuffer > m_ConstantBuffers;
+        primitive::Vector< VertexShader > m_VertexShaders;
+        primitive::Vector< PixelShader > m_PixelShaders;
+        primitive::Vector< Framebuffer > m_Framebuffers;
+        primitive::Vector< BindingSet > m_BindingSets;
+        primitive::Vector< GraphicsPipeline > m_GraphicsPipelines;
 
-        primitive::HashMap< ShaderKey, VertexShader::Ref > m_VertexShaderCache;
-        primitive::HashMap< ShaderKey, PixelShader::Ref > m_PixelShaderCache;
-        primitive::HashMap< rhi::SamplerDescriptor, Sampler::Ref > m_SamplerCache;
+        primitive::HashMap< ShaderKey, VertexShader > m_VertexShaderCache;
+        primitive::HashMap< ShaderKey, PixelShader > m_PixelShaderCache;
+        primitive::HashMap< rhi::SamplerDescriptor, Sampler > m_SamplerCache;
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;

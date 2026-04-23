@@ -36,8 +36,8 @@ namespace smile::graphic
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::LineList;
             psoDesc.InputLayout = vertexLayout;
-            psoDesc.pVertexShader = m_ResourceManager.CreateVertexShader( vertexShaderAsset );
-            psoDesc.pPixelShader = m_ResourceManager.CreatePixelShader( pixelShaderAsset );
+            psoDesc.VertexShader = m_ResourceManager.CreateVertexShader( vertexShaderAsset );
+            psoDesc.PixelShader = m_ResourceManager.CreatePixelShader( pixelShaderAsset );
 
             auto bindingLayout = rhi::BindingLayout{ { rhi::ShaderStage::Vertex } };
             bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
@@ -45,21 +45,21 @@ namespace smile::graphic
 
             psoDesc.RenderState.RasterizerState.CullMode = rhi::CullMode::None;
 
-            m_pPipeline = m_ResourceManager.CreateGraphicsPipeline( psoDesc );
+            m_Pipeline = m_ResourceManager.CreateGraphicsPipeline( psoDesc );
         }
 
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
 
-            m_pCameraCB = m_ResourceManager.CreateConstantBuffer( cameraCBDesc );
+            m_CameraCB = m_ResourceManager.CreateConstantBuffer( cameraCBDesc );
         }
 
         {
             rhi::BindingSetDescriptor bindingSetDesc{
-                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_pCameraCB->GetHandle() ) } };
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraCB.GetHandle() ) } };
 
-            m_pBindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+            m_BindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
         }
 
         CreateVertexBuffer();
@@ -112,19 +112,19 @@ namespace smile::graphic
 
     void DebugRenderPass::CreateVertexBuffer()
     {
-        const auto &vertexLayout = m_pPipeline->GetDescriptor().InputLayout;
+        const auto &vertexLayout = m_Pipeline.GetDescriptor().InputLayout;
 
-        m_pVertexBuffer = m_ResourceManager.CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
+        m_VertexBuffer = m_ResourceManager.CreateDynamicVertexBuffer( m_VertexCount, vertexLayout );
     }
 
     void DebugRenderPass::BeginPass( const View &view )
     {
-        m_pCameraCB->Update( &view.GetViewProjectionMatrix() );
+        m_CameraCB.Update( &view.GetViewProjectionMatrix() );
 
         CreateFixedLineList();
     }
 
-    void DebugRenderPass::Execute( Framebuffer::Ref framebuffer )
+    void DebugRenderPass::Execute( const Framebuffer &framebuffer )
     {
         const Count vertexCount = m_LineList.GetItemCount();
 
@@ -137,14 +137,14 @@ namespace smile::graphic
             CreateVertexBuffer();
         }
 
-        m_Context.FillVertexBuffer( m_pVertexBuffer, m_LineList.GetData(), vertexCount );
-        m_Context.FillConstantBuffer( m_pCameraCB );
+        m_Context.FillVertexBuffer( m_VertexBuffer, m_LineList.GetData(), vertexCount );
+        m_Context.FillConstantBuffer( m_CameraCB );
 
         GraphicsState state{};
-        state.pFramebuffer = framebuffer;
-        state.pPipeline = m_pPipeline;
-        state.VertexBuffers.EmplaceBack( m_pVertexBuffer, 0u, 0u );
-        state.pBindings.PushBack( m_pBindingSet );
+        state.Framebuffer = framebuffer;
+        state.Pipeline = m_Pipeline;
+        state.VertexBuffers.EmplaceBack( m_VertexBuffer, 0u, 0u );
+        state.Bindings.PushBack( m_BindingSet );
 
         m_Context.SetGraphicsState( state );
         m_Context.Draw( vertexCount );

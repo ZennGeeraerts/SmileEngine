@@ -5,7 +5,6 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
-#include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/primitive_topology.h"
@@ -23,34 +22,41 @@ namespace smile::graphic
         rhi::BufferLayout InputLayout;
         rhi::RenderState RenderState;
 
-        VertexShader::ConstRef pVertexShader;
-        PixelShader::ConstRef pPixelShader;
+        VertexShader VertexShader;
+        PixelShader PixelShader;
 
         primitive::Vector< rhi::BindingLayout > BindingLayouts;
     };
 
-    class GraphicsPipeline final : public memory::Counted
+    class GraphicsPipeline final
     {
       public:
-        using Ref = memory::Ref< GraphicsPipeline >;
-        using ConstRef = memory::Ref< const GraphicsPipeline >;
+        GraphicsPipeline() = default;
 
-        GraphicsPipeline( rhi::GraphicsPipelineHandle handle, const GraphicsPipelineDescriptor &desc )
+        GraphicsPipeline( rhi::GraphicsPipelineHandle handle, const GraphicsPipelineDescriptor &desc ) noexcept
             : m_Handle{ handle }, m_Descriptor{ desc }
         {
         }
 
-        rhi::GraphicsPipelineHandle GetHandle() const
+        GraphicsPipeline( const GraphicsPipeline & ) = default;
+        GraphicsPipeline( GraphicsPipeline && ) noexcept = default;
+
+        ~GraphicsPipeline() = default;
+
+        GraphicsPipeline &operator=( const GraphicsPipeline & ) = default;
+        GraphicsPipeline &operator=( GraphicsPipeline && ) noexcept = default;
+
+        rhi::GraphicsPipelineHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        const GraphicsPipelineDescriptor &GetDescriptor() const
+        const GraphicsPipelineDescriptor &GetDescriptor() const noexcept
         {
             return m_Descriptor;
         }
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }

@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/resource/frame_buffer.h"
@@ -12,16 +11,15 @@
 
 namespace smile::graphic
 {
-    class Framebuffer final : public memory::Counted
+    class Framebuffer final
     {
       public:
-        using Ref = memory::Ref< Framebuffer >;
-        using ConstRef = memory::Ref< const Framebuffer >;
+        Framebuffer() = default;
 
         Framebuffer( rhi::FramebufferHandle handle,
             const primitive::Vector< FramebufferAttachment > &colorAttachments,
             const FramebufferAttachment &depthAttachment,
-            const rhi::FramebufferInfoExtented &info )
+            const rhi::FramebufferInfoExtented &info ) noexcept
             : m_Handle{ handle },
               m_ColorAttachments{ colorAttachments },
               m_DepthAttachment{ depthAttachment },
@@ -29,29 +27,35 @@ namespace smile::graphic
         {
         }
 
+        Framebuffer( const Framebuffer & ) = default;
+        Framebuffer( Framebuffer && ) = default;
+
         ~Framebuffer() = default;
 
-        bool IsValid() const
+        Framebuffer &operator=( const Framebuffer & ) = default;
+        Framebuffer &operator=( Framebuffer && ) noexcept = default;
+
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }
 
-        rhi::FramebufferHandle GetHandle() const
+        rhi::FramebufferHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        const primitive::Vector< FramebufferAttachment > &GetColorAttachments() const
+        const primitive::Vector< FramebufferAttachment > &GetColorAttachments() const noexcept
         {
             return m_ColorAttachments;
         }
 
-        const FramebufferAttachment &GetDepthAttachment() const
+        const FramebufferAttachment &GetDepthAttachment() const noexcept
         {
             return m_DepthAttachment;
         }
 
-        [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const
+        [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const noexcept
         {
             return m_Info.GetViewport( minZ, maxZ );
         }

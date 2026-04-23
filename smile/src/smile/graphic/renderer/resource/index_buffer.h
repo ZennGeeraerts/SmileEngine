@@ -4,35 +4,39 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
 #include "smile/graphic/rhi/render_handle.h"
 
 namespace smile::graphic
 {
-    class IndexBuffer : public memory::Counted
+    class IndexBuffer final
     {
       public:
-        using Ref = memory::Ref< IndexBuffer >;
-        using ConstRef = memory::Ref< const IndexBuffer >;
+        IndexBuffer() = default;
 
-        IndexBuffer( rhi::GPUBufferHandle handle, const Count indexCount )
+        IndexBuffer( rhi::GPUBufferHandle handle, const Count indexCount ) noexcept
             : m_Handle{ handle }, m_IndexCount{ indexCount }
         {
         }
 
+        IndexBuffer( const IndexBuffer & ) = default;
+        IndexBuffer( IndexBuffer && ) noexcept = default;
+
         ~IndexBuffer() = default;
 
-        rhi::GPUBufferHandle GetHandle() const
+        IndexBuffer &operator=( const IndexBuffer & ) = default;
+        IndexBuffer &operator=( IndexBuffer && ) noexcept = default;
+
+        rhi::GPUBufferHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        Count GetIndexCount() const
+        Count GetIndexCount() const noexcept
         {
             return m_IndexCount;
         }
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }

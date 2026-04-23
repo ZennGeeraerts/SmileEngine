@@ -12,7 +12,7 @@ namespace smile::graphic
         Clear();
     }
 
-    void RenderPassList::Execute( Framebuffer::Ref framebuffer, const View &view ) noexcept
+    void RenderPassList::Execute( const Framebuffer &framebuffer, const View &view ) noexcept
     {
         for ( auto pass : m_RenderPasses )
         {

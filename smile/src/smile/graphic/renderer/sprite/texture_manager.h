@@ -22,7 +22,7 @@ namespace smile::graphic
 
         TextureAsset::Ref GetTexture( asset::AssetHandle handle );
         TextureAsset::Ref GetTexture( const std::filesystem::path &path );
-        TextureAsset::Ref GetTexture( Texture::Ref pTexture ) const;
+        TextureAsset::Ref GetTexture( const Texture &texture ) const;
 
         TextureAsset::Ref GetFallBackTexture() const
         {
@@ -30,7 +30,7 @@ namespace smile::graphic
         }
 
       private:
-        primitive::HashMap< Texture::Ref, TextureAsset::Ref > m_Textures;
+        primitive::HashMap< Texture, TextureAsset::Ref > m_Textures;
         TextureLoader m_TextureLoader;
         TextureAsset::Ref m_pFallBackTexture;
     };

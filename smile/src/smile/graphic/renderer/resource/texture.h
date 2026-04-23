@@ -5,50 +5,61 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/format.h"
 
 namespace smile::graphic
 {
-    class Texture final : public memory::Counted
+    class Texture final
     {
       public:
-        using Ref = memory::Ref< Texture >;
-        using ConstRef = memory::Ref< const Texture >;
+        Texture() = default;
 
-        Texture( rhi::TextureHandle handle, const Uint32 width, const Uint32 height, const rhi::Format format )
+        Texture( rhi::TextureHandle handle, const Uint32 width, const Uint32 height, const rhi::Format format ) noexcept
             : m_Handle{ handle }, m_Width{ width }, m_Height{ height }, m_Format{ format }
         {
         }
 
+        Texture( const Texture & ) = default;
+        Texture( Texture && ) = default;
         ~Texture() = default;
-        Texture( const Texture & ) = delete;
-        Texture( Texture && ) = delete;
 
-        rhi::TextureHandle GetHandle() const
+        Texture &operator=( const Texture & ) = default;
+        Texture &operator=( Texture && ) noexcept = default;
+
+        rhi::TextureHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        Uint32 GetWidth() const
+        Uint32 GetWidth() const noexcept
         {
             return m_Width;
         }
 
-        Uint32 GetHeight() const
+        Uint32 GetHeight() const noexcept
         {
             return m_Height;
         }
 
-        rhi::Format GetFormat() const
+        rhi::Format GetFormat() const noexcept
         {
             return m_Format;
         }
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
+        }
+
+        bool operator==( const Texture &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
+        bool operator!=( const Texture &other ) const noexcept
+        {
+            return !( *this == other );
         }
 
       private:
@@ -58,5 +69,17 @@ namespace smile::graphic
         rhi::Format m_Format;
 
         friend class ResourceManager;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::Texture >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::Texture &texture ) const noexcept
+        {
+            return texture.GetHandle().Hash();
+        }
     };
 }

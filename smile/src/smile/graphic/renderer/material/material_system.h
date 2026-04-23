@@ -31,8 +31,8 @@ namespace smile::graphic
     {
         Program::ConstRef ShaderProgram;
 
-        ConstantBuffer::Ref ConstantBuffer;
-        BindingSet::Ref Bindings;
+        ConstantBuffer ConstantBuffer;
+        BindingSet Bindings;
     };
 
     class RenderContext;

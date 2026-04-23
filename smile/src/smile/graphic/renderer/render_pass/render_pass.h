@@ -40,7 +40,7 @@ namespace smile::graphic
         virtual void ShutDown() = 0;
 
         virtual void BeginPass( const View &view ) = 0;
-        virtual void Execute( Framebuffer::Ref framebuffer ) = 0;
+        virtual void Execute( const Framebuffer &framebuffer ) = 0;
         virtual void EndPass() = 0;
     };
 }

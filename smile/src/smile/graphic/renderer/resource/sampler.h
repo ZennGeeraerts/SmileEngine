@@ -4,29 +4,35 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/resource/sampler.h"
 
 namespace smile::graphic
 {
-    class Sampler final : public memory::Counted
+    class Sampler final
     {
       public:
-        using Ref = memory::Ref< Sampler >;
-        using ConstRef = memory::Ref< const Sampler >;
+        Sampler() = default;
 
-        Sampler( rhi::SamplerHandle handle, const rhi::SamplerDescriptor &desc )
+        Sampler( rhi::SamplerHandle handle, const rhi::SamplerDescriptor &desc ) noexcept
             : m_Handle{ handle }, m_Descriptor{ desc }
         {
         }
 
-        rhi::SamplerHandle GetHandle() const
+        Sampler( const Sampler & ) = default;
+        Sampler( Sampler && ) noexcept = default;
+
+        ~Sampler() = default;
+
+        Sampler &operator=( const Sampler & ) = default;
+        Sampler &operator=( Sampler && ) noexcept = default;
+
+        rhi::SamplerHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }

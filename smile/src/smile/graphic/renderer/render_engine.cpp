@@ -45,7 +45,7 @@ namespace smile::graphic
     {
     }
 
-    rhi::SwapChain *RenderEngine::CreateSwapChain( const window::Window *window ) noexcept
+    rhi::SwapChain *RenderEngine::CreateSwapChain( const window::Window *window )
     {
         auto device = m_RenderContext.GetGraphicsDevice();
         auto swapChain = device->CreateSwapChain( window );
@@ -70,14 +70,14 @@ namespace smile::graphic
         colorDesc.Height = window->GetHeight();
         colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
 
-        Texture::Ref pColorTexture =
+        const Texture colorTexture =
             m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
 
         FramebufferAttachment depthAttachment =
             m_ResourceManager.CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
 
         auto renderTarget = m_ResourceManager.CreateFramebuffer(
-            { FramebufferAttachment{ pColorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
+            { FramebufferAttachment{ colorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
 
         auto swapChainPtr = swapChain.get();
 
@@ -87,7 +87,7 @@ namespace smile::graphic
         return swapChainPtr;
     }
 
-    Renderer *RenderEngine::CreateRenderer() noexcept
+    Renderer *RenderEngine::CreateRenderer()
     {
         auto renderer = memory::CreateScope< Renderer >( *this, m_RenderContext );
         m_Renderers.PushBack( std::move( renderer ) );
@@ -95,7 +95,7 @@ namespace smile::graphic
         return m_Renderers.GetLastItem().GetPointer();
     }
 
-    Framebuffer::Ref RenderEngine::GetRenderTarget( rhi::SwapChain *const swapChain ) const noexcept
+    Framebuffer RenderEngine::GetRenderTarget( rhi::SwapChain *const swapChain ) const
     {
         return m_RenderTargets.GetItemAtKey( swapChain );
     }

@@ -25,7 +25,7 @@ namespace smile::graphic
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
             cameraCBDesc.Add( "ViewInverse", ConstantType::Mat4 );
 
-            m_pCameraCB = m_ResourceManager.CreateConstantBuffer( cameraCBDesc );
+            m_CameraCB = m_ResourceManager.CreateConstantBuffer( cameraCBDesc );
         }
 
         {
@@ -37,10 +37,10 @@ namespace smile::graphic
 
         {
             rhi::BindingSetDescriptor bindingSetDesc{
-                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_pCameraCB->GetHandle() ) },
-                { rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectCB->GetHandle() ) } };
+                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraCB.GetHandle() ) },
+                { rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectCB.GetHandle() ) } };
 
-            m_pBindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+            m_BindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
         }
     }
 
@@ -58,14 +58,14 @@ namespace smile::graphic
             it = CreatePipeline( materialInstance, renderState );
         }
 
-        graphicsState.pPipeline = it.GetItem();
+        graphicsState.Pipeline = it.GetItem();
 
         const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
-        graphicsState.pBindings.PushBack( materialData.Bindings );
+        graphicsState.Bindings.PushBack( materialData.Bindings );
     }
 
-    primitive::HashMap< ForwardRenderPass::PipelineKey, GraphicsPipeline::Ref >::Iterator
-    ForwardRenderPass::CreatePipeline( MaterialInstance::ConstRef materialInstance,
+    primitive::HashMap< ForwardRenderPass::PipelineKey, GraphicsPipeline >::Iterator ForwardRenderPass::CreatePipeline(
+        MaterialInstance::ConstRef materialInstance,
         const rhi::RenderState &renderState )
     {
         const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
@@ -74,17 +74,17 @@ namespace smile::graphic
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
         psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
 
-        psoDesc.pVertexShader =
+        psoDesc.VertexShader =
             m_ResourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
 
-        psoDesc.pPixelShader = m_ResourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
+        psoDesc.PixelShader = m_ResourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
 
         rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
         bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
         bindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
 
         psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
-        psoDesc.BindingLayouts.PushBack( materialData.Bindings->GetLayout() );
+        psoDesc.BindingLayouts.PushBack( materialData.Bindings.GetLayout() );
 
         psoDesc.RenderState = renderState;
 
@@ -101,7 +101,7 @@ namespace smile::graphic
     {
         view.FillConstants( m_ViewConstants );
 
-        m_pCameraCB->Update( &m_ViewConstants );
+        m_CameraCB.Update( &m_ViewConstants );
     }
 
     void ForwardRenderPass::Submit( const DrawItem &drawItem )
@@ -114,25 +114,25 @@ namespace smile::graphic
         m_RenderCollector.DrawList.PushBack( std::move( drawItem ) );
     }
 
-    void ForwardRenderPass::Execute( Framebuffer::Ref framebuffer )
+    void ForwardRenderPass::Execute( const Framebuffer &framebuffer )
     {
-        m_Context.FillConstantBuffer( m_pCameraCB );
+        m_Context.FillConstantBuffer( m_CameraCB );
 
         for ( const DrawItem &drawItem : m_RenderCollector.DrawList )
         {
-            m_PerObjectCB->Update( &drawItem.WorldTransform );
+            m_PerObjectCB.Update( &drawItem.WorldTransform );
             m_Context.FillConstantBuffer( m_PerObjectCB );
 
             GraphicsState state{};
-            state.pFramebuffer = framebuffer;
-            state.VertexBuffers.PushBack( { drawItem.pVertexBuffer, 0u, 0u } );
-            state.IndexBuffer = IndexBufferBinding{ drawItem.pIndexBuffer, rhi::Format::R32_UINT, 0u };
-            state.pBindings.PushBack( m_pBindingSet );
+            state.Framebuffer = framebuffer;
+            state.VertexBuffers.PushBack( { drawItem.VertexBuffer, 0u, 0u } );
+            state.IndexBuffer = IndexBufferBinding{ drawItem.IndexBuffer, rhi::Format::R32_UINT, 0u };
+            state.Bindings.PushBack( m_BindingSet );
 
             SetupMaterial( drawItem.MaterialInstance, drawItem.RenderState, state );
 
             m_Context.SetGraphicsState( state );
-            m_Context.DrawIndexed( drawItem.pIndexBuffer->GetIndexCount() );
+            m_Context.DrawIndexed( drawItem.IndexBuffer.GetIndexCount() );
         }
     }
 

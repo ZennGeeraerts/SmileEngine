@@ -141,7 +141,7 @@ namespace smile::graphic
         m_View.OnUpdate();
 
         m_Renderer->BeginFrame( m_SwapChain );
-        m_Renderer->OnRender( m_View );
+        m_Renderer->OnRender( m_View, m_RenderEngine->GetRenderTarget( m_SwapChain ) );
         m_Renderer->EndFrame();
     }
 

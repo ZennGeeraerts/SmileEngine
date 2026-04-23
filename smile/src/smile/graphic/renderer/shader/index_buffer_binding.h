@@ -12,7 +12,7 @@ namespace smile::graphic
 {
     struct IndexBufferBinding final
     {
-        IndexBuffer::Ref pIndexBuffer;
+        IndexBuffer IndexBuffer;
         rhi::Format BufferFormat;
         Uint32 Offset;
     };

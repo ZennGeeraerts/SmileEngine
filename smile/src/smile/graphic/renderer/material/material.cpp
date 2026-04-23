@@ -37,7 +37,7 @@ namespace smile::graphic
     }
 
     void Material::SetTextureBinding( const primitive::StringView name,
-        Texture::ConstRef texture,
+        const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
         m_DefaultInstance->SetTextureBinding( name, texture, samplerDesc );

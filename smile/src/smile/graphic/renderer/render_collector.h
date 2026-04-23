@@ -17,8 +17,8 @@ namespace smile::graphic
 {
     struct DrawItem final
     {
-        VertexBuffer::Ref pVertexBuffer;
-        IndexBuffer::Ref pIndexBuffer;
+        VertexBuffer VertexBuffer;
+        IndexBuffer IndexBuffer;
         MaterialInstance::Ref MaterialInstance;
         DirectX::XMFLOAT4X4 WorldTransform;
         rhi::RenderState RenderState;

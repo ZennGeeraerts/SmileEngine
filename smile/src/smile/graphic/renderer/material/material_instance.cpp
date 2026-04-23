@@ -44,7 +44,7 @@ namespace smile::graphic
     }
 
     void MaterialInstance::SetTextureBinding( const primitive::StringView name,
-        Texture::ConstRef texture,
+        const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
         if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )

@@ -32,7 +32,7 @@ namespace smile::graphic
         ~Renderer() = default;
 
         void BeginFrame( rhi::SwapChain *swapChain );
-        void OnRender( const View &view, Framebuffer::Ref framebuffer = nullptr );
+        void OnRender( const View &view, const Framebuffer &framebuffer );
         void EndFrame();
 
         RenderPassList &GetRenderPassList()

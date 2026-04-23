@@ -45,17 +45,17 @@ namespace smile::graphic
         return m_pFallBackTexture;
     }
 
-    TextureAsset::Ref TextureManager::GetTexture( Texture::Ref pTexture ) const
+    TextureAsset::Ref TextureManager::GetTexture( const Texture &texture ) const
     {
-        auto it = m_Textures.FindItemAtKey( pTexture );
+        auto it = m_Textures.FindItemAtKey( texture );
 
         if ( it != m_Textures.end() )
         {
             return it.GetItem();
         }
 
-        SM_LOG_WARNING( "TextureManager::GetTexture > Could not find texture in texture map: {}",
-            pTexture->GetHandle().GetIndex() );
+        SM_LOG_WARNING(
+            "TextureManager::GetTexture > Could not find texture in texture map: {}", texture.GetHandle().GetIndex() );
 
         return m_pFallBackTexture;
     }

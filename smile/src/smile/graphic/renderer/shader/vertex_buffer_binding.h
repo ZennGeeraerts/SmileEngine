@@ -11,7 +11,7 @@ namespace smile::graphic
 {
     struct VertexBufferBinding final
     {
-        VertexBuffer::Ref pVertexBuffer;
+        VertexBuffer VertexBuffer;
         Uint32 Slot;
         Uint64 Offset;
     };

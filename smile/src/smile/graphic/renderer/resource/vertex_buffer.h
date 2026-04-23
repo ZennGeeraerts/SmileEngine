@@ -4,46 +4,50 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/resource/buffer.h"
 
 namespace smile::graphic
 {
-    class VertexBuffer final : public memory::Counted
+    class VertexBuffer final
     {
       public:
-        using Ref = memory::Ref< VertexBuffer >;
-        using ConstRef = memory::Ref< const VertexBuffer >;
+        VertexBuffer() = default;
 
-        VertexBuffer( rhi::GPUBufferHandle handle, const rhi::BufferLayout &layout, const Count vertexCount )
+        VertexBuffer( rhi::GPUBufferHandle handle, const rhi::BufferLayout &layout, const Count vertexCount ) noexcept
             : m_Handle{ handle }, m_BufferLayout{ layout }, m_VertexCount{ vertexCount }
         {
         }
 
+        VertexBuffer( const VertexBuffer & ) = default;
+        VertexBuffer( VertexBuffer && ) noexcept = default;
+
         ~VertexBuffer() = default;
 
-        rhi::GPUBufferHandle GetHandle() const
+        VertexBuffer &operator=( const VertexBuffer & ) = default;
+        VertexBuffer &operator=( VertexBuffer && ) = default;
+
+        rhi::GPUBufferHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        const rhi::BufferLayout &GetBufferLayout() const
+        const rhi::BufferLayout &GetBufferLayout() const noexcept
         {
             return m_BufferLayout;
         }
 
-        Count GetVertexCount() const
+        Count GetVertexCount() const noexcept
         {
             return m_VertexCount;
         }
 
-        Uint32 GetStride() const
+        Uint32 GetStride() const noexcept
         {
             return m_BufferLayout.GetStride();
         }
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }

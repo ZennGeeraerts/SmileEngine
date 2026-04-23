@@ -12,12 +12,12 @@ namespace smile::graphic
     struct FramebufferAttachment final
     {
         FramebufferAttachment() = default;
-        FramebufferAttachment( Texture::Ref pTex, rhi::Format format, bool isReadOnly )
-            : pTexture{ pTex }, TextureFormat{ format }, IsReadOnly{ isReadOnly }
+        FramebufferAttachment( Texture tex, rhi::Format format, bool isReadOnly )
+            : Texture{ tex }, TextureFormat{ format }, IsReadOnly{ isReadOnly }
         {
         }
 
-        Texture::Ref pTexture;
+        Texture Texture;
         rhi::Format TextureFormat = rhi::Format::UNKNOWN;
         bool IsReadOnly = false;
     };

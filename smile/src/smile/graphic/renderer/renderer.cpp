@@ -37,14 +37,9 @@ namespace smile::graphic
         m_Context.Open();
     }
 
-    void Renderer::OnRender( const View &view, Framebuffer::Ref framebuffer )
+    void Renderer::OnRender( const View &view, const Framebuffer &framebuffer )
     {
         SM_ASSERT( m_SwapChain );
-
-        if ( !framebuffer )
-        {
-            framebuffer = m_Engine.GetRenderTarget( m_SwapChain );
-        }
 
         m_Context.Clear( framebuffer, math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
 

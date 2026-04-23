@@ -44,8 +44,8 @@ namespace smile::graphic
         rhi::SwapChain *m_SwapChain;
 
         View m_View;
-        VertexBuffer::Ref m_VertexBuffer;
-        IndexBuffer::Ref m_IndexBuffer;
+        VertexBuffer m_VertexBuffer;
+        IndexBuffer m_IndexBuffer;
         Material::Ref m_Material;
     };
 }

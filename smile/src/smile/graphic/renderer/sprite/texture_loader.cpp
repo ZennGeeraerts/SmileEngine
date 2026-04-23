@@ -45,7 +45,7 @@ namespace smile::graphic
         }
 
         Image::Ref image = ImageReader::Read( path );
-        Texture::Ref texture = m_ResourceManager->CreateTexture2D( image, false );
+        const Texture texture = m_ResourceManager->CreateTexture2D( image, false );
         TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( texture );
 
         return textureAsset;

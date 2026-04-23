@@ -4,26 +4,34 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 
 namespace smile::graphic
 {
-    class PixelShader final : public memory::Counted
+    class PixelShader final
     {
       public:
-        using Ref = memory::Ref< PixelShader >;
-        using ConstRef = memory::Ref< const PixelShader >;
+        PixelShader() = default;
 
-        PixelShader( rhi::ShaderHandle handle ) : m_Handle{ handle }
+        PixelShader( rhi::ShaderHandle handle ) noexcept : m_Handle{ handle }
         {
         }
 
+        PixelShader( const PixelShader & ) = default;
+        PixelShader( PixelShader && ) noexcept = default;
         ~PixelShader() = default;
 
-        bool IsValid() const
+        PixelShader &operator=( const PixelShader & ) = default;
+        PixelShader &operator=( PixelShader && ) noexcept = default;
+
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
+        }
+
+        rhi::ShaderHandle GetHandle() const noexcept
+        {
+            return m_Handle;
         }
 
       private:

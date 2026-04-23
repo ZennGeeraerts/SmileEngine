@@ -28,7 +28,7 @@ namespace smile::graphic
         void ShutDown() override;
 
         void BeginPass( const View &view ) override;
-        void Execute( Framebuffer::Ref framebuffer ) override;
+        void Execute( const Framebuffer &framebuffer ) override;
         void EndPass() override;
 
         void DrawLine( const DirectX::XMFLOAT3 &start, const DirectX::XMFLOAT3 &end, const DirectX::XMFLOAT4 &color );
@@ -49,10 +49,10 @@ namespace smile::graphic
         };
 
         primitive::Vector< VertexPosCol > m_LineList{};
-        GraphicsPipeline::Ref m_pPipeline;
-        VertexBuffer::Ref m_pVertexBuffer;
-        ConstantBuffer::Ref m_pCameraCB;
-        BindingSet::Ref m_pBindingSet;
+        GraphicsPipeline m_Pipeline;
+        VertexBuffer m_VertexBuffer;
+        ConstantBuffer m_CameraCB;
+        BindingSet m_BindingSet;
 
         Count m_VertexCount{ 100 };
 

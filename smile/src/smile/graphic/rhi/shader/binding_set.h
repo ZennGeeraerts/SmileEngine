@@ -135,6 +135,8 @@ namespace smile::graphic::rhi
 
     struct BindingSetDescriptor final
     {
+        BindingSetDescriptor() = default;
+
         BindingSetDescriptor( const std::initializer_list< BindingSetElement > &elements ) : Elements{ elements }
         {
         }

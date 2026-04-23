@@ -57,7 +57,7 @@ namespace smile::graphic
         void ShutDown() override;
 
         void BeginPass( const View &view ) override;
-        void Execute( Framebuffer::Ref framebuffer ) override;
+        void Execute( const Framebuffer &framebuffer ) override;
         void EndPass() override;
 
         void Submit( const DrawItem &drawItem );
@@ -68,17 +68,17 @@ namespace smile::graphic
             const rhi::RenderState &renderState,
             GraphicsState &graphicsState );
 
-        primitive::HashMap< PipelineKey, GraphicsPipeline::Ref >::Iterator
+        primitive::HashMap< PipelineKey, GraphicsPipeline >::Iterator
         CreatePipeline( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState );
 
         void ClearDrawList();
 
       private:
         RenderCollector m_RenderCollector;
-        primitive::HashMap< PipelineKey, GraphicsPipeline::Ref > m_Pipelines;
-        ConstantBuffer::Ref m_pCameraCB;
-        ConstantBuffer::Ref m_PerObjectCB;
-        BindingSet::Ref m_pBindingSet;
+        primitive::HashMap< PipelineKey, GraphicsPipeline > m_Pipelines;
+        ConstantBuffer m_CameraCB;
+        ConstantBuffer m_PerObjectCB;
+        BindingSet m_BindingSet;
 
         ViewConstants m_ViewConstants{};
 

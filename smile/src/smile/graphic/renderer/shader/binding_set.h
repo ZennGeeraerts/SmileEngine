@@ -4,37 +4,42 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/ref.h"
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/shader/binding_set.h"
 #include "smile/graphic/rhi/shader/binding_layout.h"
 
 namespace smile::graphic
 {
-    class BindingSet final : public memory::Counted
+    class BindingSet final
     {
       public:
-        using Ref = memory::Ref< BindingSet >;
-        using ConstRef = memory::Ref< const BindingSet >;
+        BindingSet() = default;
 
         BindingSet( rhi::BindingSetHandle handle,
             const rhi::BindingSetDescriptor &descriptor,
-            const rhi::BindingLayout &layout )
+            const rhi::BindingLayout &layout ) noexcept
             : m_Handle{ handle }, m_Descriptor{ descriptor }, m_Layout{ layout }
         {
         }
 
-        rhi::BindingSetHandle GetHandle() const
+        BindingSet( const BindingSet & ) = default;
+        BindingSet( BindingSet && ) noexcept = default;
+        ~BindingSet() = default;
+
+        BindingSet &operator=( const BindingSet & ) = default;
+        BindingSet &operator=( BindingSet && ) noexcept = default;
+
+        rhi::BindingSetHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        const rhi::BindingLayout &GetLayout() const
+        const rhi::BindingLayout &GetLayout() const noexcept
         {
             return m_Layout;
         }
 
-        bool IsValid() const
+        [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }

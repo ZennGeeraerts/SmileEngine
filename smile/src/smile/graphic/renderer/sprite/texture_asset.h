@@ -16,7 +16,7 @@ namespace smile::graphic
         using Ref = memory::Ref< TextureAsset >;
         using ConstRef = memory::Ref< const TextureAsset >;
 
-        TextureAsset( memory::Ref< Texture > pTexture ) : m_pTexture{ pTexture }
+        TextureAsset( const Texture &texture ) : m_Texture{ texture }
         {
         }
 
@@ -25,12 +25,12 @@ namespace smile::graphic
             return asset::AssetType{ foundation::TypeNameOf< TextureAsset >() };
         }
 
-        memory::Ref< Texture > GetTexture() const
+        Texture GetTexture() const
         {
-            return m_pTexture;
+            return m_Texture;
         }
 
       private:
-        memory::Ref< Texture > m_pTexture;
+        Texture m_Texture;
     };
 }

@@ -118,7 +118,7 @@ namespace smile::graphic
                 value );
         }
 
-        data.ConstantBuffer->UpdateBuffer( bufferData.GetData(), bufferData.GetItemCount() );
+        data.ConstantBuffer.UpdateBuffer( bufferData.GetData(), bufferData.GetItemCount() );
 
         m_Context->FillConstantBuffer( data.ConstantBuffer );
     }
@@ -131,21 +131,21 @@ namespace smile::graphic
         auto &data = m_MaterialData[materialInstance->GetID().GetIndex()];
 
         rhi::BindingSetDescriptor bindingSetDesc{
-            { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer->GetHandle() ) } };
+            { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer.GetHandle() ) } };
 
         for ( const auto &textureBinding : layout.Textures )
         {
             const MaterialTextureBinding textureParam = desc.TextureBindings.GetItemAtKey( textureBinding.Name );
 
-            if ( textureParam.Texture )
+            if ( textureParam.Texture.IsValid() )
             {
                 bindingSetDesc.AddItem( rhi::BindingSetElement::CreateTextureSRV(
-                    textureBinding.Slot, textureParam.Texture->GetHandle(), textureParam.Texture->GetFormat() ) );
+                    textureBinding.Slot, textureParam.Texture.GetHandle(), textureParam.Texture.GetFormat() ) );
 
-                Sampler::Ref sampler = m_ResourceManager->GetOrCreateSampler( textureParam.SamplerDescriptor );
+                const Sampler sampler = m_ResourceManager->GetOrCreateSampler( textureParam.SamplerDescriptor );
 
                 bindingSetDesc.AddItem(
-                    rhi::BindingSetElement::CreateSampler( textureBinding.Slot, sampler->GetHandle() ) );
+                    rhi::BindingSetElement::CreateSampler( textureBinding.Slot, sampler.GetHandle() ) );
             }
         }
 
