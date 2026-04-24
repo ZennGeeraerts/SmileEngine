@@ -7,6 +7,7 @@
 #include "smile/common/memory/scope.h"
 
 #include "render_context.h"
+#include "smile/graphic/rhi/swap_chain.h"
 #include "resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "sprite/texture_manager.h"
@@ -56,7 +57,7 @@ namespace smile::graphic
             return m_MaterialSystem;
         }
 
-        Framebuffer GetRenderTarget( rhi::SwapChain *const swapChain ) const;
+        const Framebuffer &GetRenderTarget( rhi::SwapChain *const swapChain ) const;
 
       public:
         RenderEngine( rhi::RendererBackendType api ) noexcept;

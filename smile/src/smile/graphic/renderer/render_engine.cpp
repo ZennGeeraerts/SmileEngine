@@ -95,7 +95,7 @@ namespace smile::graphic
         return m_Renderers.GetLastItem().GetPointer();
     }
 
-    Framebuffer RenderEngine::GetRenderTarget( rhi::SwapChain *const swapChain ) const
+    const Framebuffer &RenderEngine::GetRenderTarget( rhi::SwapChain *const swapChain ) const
     {
         return m_RenderTargets.GetItemAtKey( swapChain );
     }
