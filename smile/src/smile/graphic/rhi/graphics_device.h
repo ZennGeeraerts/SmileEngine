@@ -8,7 +8,6 @@
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "command_list.h"
-#include "render_handle.h"
 #include "object.h"
 
 #include "resource/buffer.h"

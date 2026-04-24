@@ -4,9 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/render_handle.h"
 #include "frame_buffer_attachment.h"
-#include "smile/graphic/rhi/viewport.h"
 
 namespace smile::graphic
 {
@@ -60,8 +58,8 @@ namespace smile::graphic
       private:
         rhi::FramebufferHandle m_Handle;
         FramebufferAttachmentSetHandle m_AttachmentSetHandle;
-        Uint32 m_Width;
-        Uint32 m_Height;
+        Uint32 m_Width = 0;
+        Uint32 m_Height = 0;
 
         friend class ResourceManager;
     };

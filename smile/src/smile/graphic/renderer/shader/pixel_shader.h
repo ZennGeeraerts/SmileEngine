@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/render_handle.h"
+#include "smile/graphic/rhi/shader/shader.h"
 
 namespace smile::graphic
 {

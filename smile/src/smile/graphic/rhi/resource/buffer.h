@@ -9,7 +9,7 @@
 #include "smile/common/foundation/flags.h"
 #include "smile/common/primitive/text/string.h"
 #include "smile/common/primitive/collection/array_utils.h"
-#include "smile/graphic/rhi/render_handle.h"
+#include "smile/common/primitive/handle_manager.h"
 #include "smile/graphic/rhi/format.h"
 #include "smile/graphic/rhi/cpu_access_mode.h"
 #include "smile/graphic/rhi/shader/resource_type.h"
@@ -216,6 +216,13 @@ namespace smile::graphic::rhi
         Format Format;
         ResourceType Type;
     };
+
+    using GPUBufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using GPUBufferHandle = GPUBufferHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxBufferCount = ( 12 << 10 );
+    static constexpr Uint16 s_MaxVertexAttributeCount = 16;
+    static constexpr Uint32 s_ConstantBufferOffsetSizeAlignment = 256;
 
     struct VertexBufferBinding final
     {

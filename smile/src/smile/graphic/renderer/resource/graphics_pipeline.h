@@ -4,13 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/compiled.h"
-#include "smile/common/primitive/collection/vector.h"
-#include "smile/graphic/rhi/rhi.h"
-#include "smile/graphic/rhi/render_handle.h"
-#include "smile/graphic/rhi/primitive_topology.h"
-#include "smile/graphic/rhi/resource/buffer.h"
-#include "smile/graphic/rhi/render_state.h"
+#include "smile/common/primitive/collection/fixed_vector.h"
+#include "smile/graphic/rhi/resource/graphics_pipeline.h"
 #include "smile/graphic/renderer/shader/binding_layout.h"
 #include "smile/graphic/renderer/shader/vertex_shader.h"
 #include "smile/graphic/renderer/shader/pixel_shader.h"

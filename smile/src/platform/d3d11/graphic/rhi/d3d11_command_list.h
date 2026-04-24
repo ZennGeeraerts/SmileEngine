@@ -5,7 +5,9 @@
 #pragma once
 
 #include "smile/graphic/rhi/command_list.h"
-#include "smile/graphic/rhi/rhi.h"
+#include "smile/graphic/rhi/resource/graphics_pipeline.h"
+#include "smile/graphic/rhi/resource/frame_buffer.h"
+#include "smile/graphic/rhi/shader/binding_set.h"
 #include "d3d11_context.h"
 
 namespace smile::graphic::rhi

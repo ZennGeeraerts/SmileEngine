@@ -5,8 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
-#include "smile/graphic/rhi/render_handle.h"
-#include "smile/graphic/rhi/format.h"
+#include "smile/graphic/rhi/resource/texture.h"
 
 namespace smile::graphic
 {

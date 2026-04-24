@@ -4,8 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/render_handle.h"
-#include "smile/graphic/shader/constant_buffer_descriptor.h"
+#include "smile/graphic/rhi/resource/buffer.h"
 
 namespace smile::graphic
 {
@@ -58,7 +57,7 @@ namespace smile::graphic
       private:
         rhi::GPUBufferHandle m_Handle;
         const void *m_Buffer = nullptr;
-        Count m_Size;
+        Count m_Size = 0;
 
         friend class ResourceManager;
     };

@@ -6,6 +6,8 @@
 
 #include "smile/common/foundation/flags.h"
 #include "smile/common/primitive/collection/array_utils.h"
+#include "smile/common/primitive/collection/fixed_vector.h"
+#include "smile/common/primitive/handle_manager.h"
 #include "resource_type.h"
 #include "shader_stage.h"
 
@@ -107,4 +109,11 @@ namespace smile::graphic::rhi
         primitive::Vector< BindingLayoutElement > m_Elements;
         foundation::Flags< ShaderStage > m_Visibility;
     };
+
+    using BindingLayoutHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using BindingLayoutHandle = BindingLayoutHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxBindingLayoutCount = 5;
+
+    using BindingLayoutVector = primitive::FixedVector< BindingLayoutHandle, s_MaxBindingLayoutCount >;
 }

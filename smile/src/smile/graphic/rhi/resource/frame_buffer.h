@@ -5,7 +5,6 @@
 #pragma once
 
 #include "texture.h"
-#include "smile/graphic/rhi/rhi.h"
 #include "smile/graphic/rhi/viewport.h"
 #include "smile/common/primitive/collection/fixed_vector.h"
 #include "smile/common/primitive/collection/array_utils.h"
@@ -13,6 +12,8 @@
 namespace smile::graphic::rhi
 {
     static constexpr Uint32 s_MaxFramebufferSize = 8192;
+    static constexpr Uint16 s_MaxFramebufferCount = ( 4 << 10 );
+    static constexpr Uint16 s_MaxRenderTargets = 8;
 
     struct FramebufferAttachment final
     {
@@ -73,4 +74,7 @@ namespace smile::graphic::rhi
         Uint32 Width{ 0 };
         Uint32 Height{ 0 };
     };
+
+    using FramebufferHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using FramebufferHandle = FramebufferHandleManager::HandleType;
 }

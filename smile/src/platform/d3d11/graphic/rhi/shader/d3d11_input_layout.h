@@ -5,7 +5,6 @@
 #pragma once
 
 #include "smile/graphic/rhi/resource/buffer.h"
-#include "smile/graphic/rhi/render_handle.h"
 
 #include <wrl/client.h>
 

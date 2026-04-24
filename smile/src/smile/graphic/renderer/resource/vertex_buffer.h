@@ -4,7 +4,6 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/resource/buffer.h"
 
 namespace smile::graphic
@@ -54,8 +53,8 @@ namespace smile::graphic
 
       private:
         rhi::GPUBufferHandle m_Handle;
-        Count m_VertexCount;
-        Uint32 m_Stride;
+        Count m_VertexCount = 0;
+        Uint32 m_Stride = 0;
 
         friend class ResourceManager;
     };

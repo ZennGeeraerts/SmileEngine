@@ -5,12 +5,10 @@
 #pragma once
 
 #include "buffer.h"
-#include "smile/graphic/rhi/rhi.h"
 #include "smile/graphic/rhi/primitive_topology.h"
 #include "smile/graphic/rhi/render_state.h"
-#include "smile/graphic/rhi/render_handle.h"
-
-#include "smile/common/primitive/collection/fixed_vector.h"
+#include "smile/graphic/rhi/shader/shader.h"
+#include "smile/graphic/rhi/shader/binding_layout.h"
 
 namespace smile::graphic::rhi
 {
@@ -23,7 +21,7 @@ namespace smile::graphic::rhi
         ShaderHandle VertexShaderHandle;
         ShaderHandle PixelShaderHandle;
 
-        primitive::FixedVector< BindingLayoutHandle, s_MaxBindingLayoutCount > BindingLayouts;
+        BindingLayoutVector BindingLayouts;
 
         foundation::HashCode GetHashCode() const
         {
@@ -40,4 +38,9 @@ namespace smile::graphic::rhi
             return lhs.GetHashCode() == rhs.GetHashCode();
         }
     };
+
+    using GraphicsPipelineHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using GraphicsPipelineHandle = GraphicsPipelineHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxGraphicsPipelineCount = ( 4 << 10 );
 }

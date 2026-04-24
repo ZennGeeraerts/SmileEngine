@@ -4,9 +4,10 @@
 /*=============================================================================*/
 #pragma once
 
-#include "rhi.h"
-#include "render_handle.h"
 #include "resource/buffer.h"
+#include "resource/frame_buffer.h"
+#include "resource/graphics_pipeline.h"
+#include "shader/binding_set.h"
 #include "viewport_state.h"
 
 namespace smile::graphic::rhi

@@ -16,7 +16,6 @@
  */
 #pragma once
 
-#include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/shader/binding_layout.h"
 
 namespace smile::graphic

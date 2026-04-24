@@ -5,9 +5,8 @@
 #pragma once
 
 #include "smile/common/primitive/collection/fixed_vector.h"
+#include "smile/graphic/rhi/resource/frame_buffer.h"
 #include "texture.h"
-#include "smile/graphic/rhi/format.h"
-#include "smile/graphic/rhi/rhi.h"
 
 namespace smile::graphic
 {

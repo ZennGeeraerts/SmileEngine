@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/handle_manager.h"
+
 namespace smile::graphic::rhi
 {
     enum class SamplerFiltering
@@ -48,6 +50,11 @@ namespace smile::graphic::rhi
             return !( *this == other );
         }
     };
+
+    using SamplerHandlerManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using SamplerHandle = SamplerHandlerManager::HandleType;
+
+    static constexpr Uint16 s_MaxSamplerCount = ( 4 << 10 );
 }
 
 namespace std

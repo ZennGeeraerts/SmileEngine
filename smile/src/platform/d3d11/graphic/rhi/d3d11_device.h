@@ -3,7 +3,6 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
-#include "smile/graphic/rhi/rhi.h"
 #include "smile/graphic/rhi/graphics_device.h"
 #include "smile/graphic/rhi/render_state.h"
 

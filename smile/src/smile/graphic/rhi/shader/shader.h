@@ -6,6 +6,7 @@
 
 #include "shader_stage.h"
 #include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/handle_manager.h"
 
 namespace smile::graphic::rhi
 {
@@ -21,4 +22,9 @@ namespace smile::graphic::rhi
         primitive::String EntryPoint = "main";
         primitive::String TargetProfile;
     };
+
+    using ShaderHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using ShaderHandle = ShaderHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
 }

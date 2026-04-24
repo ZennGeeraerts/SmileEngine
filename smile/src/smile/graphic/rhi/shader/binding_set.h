@@ -4,10 +4,12 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/fixed_vector.h"
 #include "resource_type.h"
-#include "smile/graphic/rhi/render_handle.h"
+#include "binding_layout.h"
 #include "smile/graphic/rhi/resource/buffer.h"
 #include "smile/graphic/rhi/resource/texture.h"
+#include "smile/graphic/rhi/resource/sampler.h"
 
 namespace smile::graphic::rhi
 {
@@ -168,4 +170,11 @@ namespace smile::graphic::rhi
 
         std::vector< BindingSetElement > Elements;
     };
+
+    using BindingSetHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using BindingSetHandle = BindingSetHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxBindingSetCount = ( 4 << 10 );
+
+    using BindingSetVector = primitive::FixedVector< BindingSetHandle, s_MaxBindingLayoutCount >;
 }

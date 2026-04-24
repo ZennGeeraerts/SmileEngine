@@ -6,6 +6,7 @@
 
 #include "smile/common/foundation/flags.h"
 #include "smile/common/foundation/hash_code.h"
+#include "smile/common/primitive/handle_manager.h"
 #include "smile/graphic/rhi/cpu_access_mode.h"
 #include "smile/graphic/rhi/format.h"
 
@@ -130,9 +131,17 @@ namespace smile::graphic::rhi
                    ArraySliceCount == other.ArraySliceCount;
         }
 
-        Format TextureFormat;
-        bool IsReadOnlyDSV;
+        Format TextureFormat = Format::UNKNOWN;
+        bool IsReadOnlyDSV = false;
     };
+
+    using TextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using TextureHandle = TextureHandleManager::HandleType;
+
+    using StagingTextureHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using StagingTextureHandle = StagingTextureHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxTextureCount = ( 4 << 10 );
 }
 
 namespace std
