@@ -14,8 +14,7 @@ namespace smile::graphic
       public:
         Sampler() = default;
 
-        Sampler( rhi::SamplerHandle handle, const rhi::SamplerDescriptor &desc ) noexcept
-            : m_Handle{ handle }, m_Descriptor{ desc }
+        Sampler( rhi::SamplerHandle handle ) noexcept : m_Handle{ handle }
         {
         }
 
@@ -37,9 +36,13 @@ namespace smile::graphic
             return m_Handle.IsValid();
         }
 
+        bool operator==( const Sampler &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
       private:
         rhi::SamplerHandle m_Handle;
-        rhi::SamplerDescriptor m_Descriptor;
 
         friend class ResourceManager;
     };

@@ -14,8 +14,8 @@ namespace smile::graphic
       public:
         VertexBuffer() = default;
 
-        VertexBuffer( rhi::GPUBufferHandle handle, const rhi::BufferLayout &layout, const Count vertexCount ) noexcept
-            : m_Handle{ handle }, m_BufferLayout{ layout }, m_VertexCount{ vertexCount }
+        VertexBuffer( rhi::GPUBufferHandle handle, const Count vertexCount, const Uint32 stride ) noexcept
+            : m_Handle{ handle }, m_VertexCount{ vertexCount }, m_Stride{ stride }
         {
         }
 
@@ -32,11 +32,6 @@ namespace smile::graphic
             return m_Handle;
         }
 
-        const rhi::BufferLayout &GetBufferLayout() const noexcept
-        {
-            return m_BufferLayout;
-        }
-
         Count GetVertexCount() const noexcept
         {
             return m_VertexCount;
@@ -44,7 +39,7 @@ namespace smile::graphic
 
         Uint32 GetStride() const noexcept
         {
-            return m_BufferLayout.GetStride();
+            return m_Stride;
         }
 
         [[nodiscard]] bool IsValid() const noexcept
@@ -52,10 +47,15 @@ namespace smile::graphic
             return m_Handle.IsValid();
         }
 
+        bool operator==( const VertexBuffer &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
       private:
         rhi::GPUBufferHandle m_Handle;
-        rhi::BufferLayout m_BufferLayout;
         Count m_VertexCount;
+        Uint32 m_Stride;
 
         friend class ResourceManager;
     };

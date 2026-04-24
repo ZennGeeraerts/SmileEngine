@@ -149,7 +149,8 @@ namespace smile::graphic
             }
         }
 
-        data.Bindings = m_ResourceManager->CreateBindingSet( bindingSetDesc, layout.Visibility );
+        m_ResourceManager->CreateBindingSetAndLayout(
+            bindingSetDesc, layout.Visibility, data.BindingLayout, data.Bindings );
     }
 
     const MaterialData &MaterialSystem::GetMaterialData( MaterialInstance::ConstRef materialInstance ) const

@@ -41,9 +41,14 @@ namespace smile::graphic
             return m_Handle.IsValid();
         }
 
+        bool operator==( const IndexBuffer &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
       private:
         rhi::GPUBufferHandle m_Handle;
-        Count m_IndexCount;
+        Count m_IndexCount = 0;
 
         friend class ResourceManager;
     };

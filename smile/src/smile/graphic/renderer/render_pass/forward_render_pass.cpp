@@ -40,7 +40,8 @@ namespace smile::graphic
                 { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraCB.GetHandle() ) },
                 { rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectCB.GetHandle() ) } };
 
-            m_BindingSet = m_ResourceManager.CreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+            m_ResourceManager.CreateBindingSetAndLayout(
+                bindingSetDesc, { rhi::ShaderStage::Vertex }, m_BindingLayout, m_BindingSet );
         }
     }
 
@@ -79,12 +80,8 @@ namespace smile::graphic
 
         psoDesc.PixelShader = m_ResourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
 
-        rhi::BindingLayout bindingLayout{ { rhi::ShaderStage::Vertex } };
-        bindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
-        bindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
-
-        psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
-        psoDesc.BindingLayouts.PushBack( materialData.Bindings.GetLayout() );
+        psoDesc.BindingLayouts.PushBack( m_BindingLayout );
+        psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
 
         psoDesc.RenderState = renderState;
 

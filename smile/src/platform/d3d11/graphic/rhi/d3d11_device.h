@@ -69,7 +69,7 @@ namespace smile::graphic::rhi
 
         void CreateBindingSet( BindingSetHandle handle,
             const BindingSetDescriptor &bindingSetDesc,
-            const BindingLayout &layout ) override;
+            BindingLayoutHandle layoutHandle ) override;
         void DestroyBindingSet( BindingSetHandle handle ) override;
 
         void CreateShader( ShaderHandle handle,

@@ -32,12 +32,16 @@ namespace smile::graphic::rhi
             ShaderMask.Set( ShaderStage::Pixel );
         }
 
-        for ( const auto &layout : desc.BindingLayouts )
+        for ( const auto &layoutHandle : desc.BindingLayouts )
         {
-            if ( !layout.GetVisibility().Has( ShaderStage::Pixel ) )
+            SM_ASSERT( device.IsHandleValid( layoutHandle, device.m_BindingLayouts ) );
+
+            const auto &layout = device.m_BindingLayouts[layoutHandle.GetIndex()];
+
+            if ( !layout.Internal.GetVisibility().Has( ShaderStage::Pixel ) )
                 continue;
 
-            for ( const auto &elem : layout.GetElements() )
+            for ( const auto &elem : layout.Internal.GetElements() )
             {
                 if ( elem.Type == ResourceType::TypedBuffer_UAV || elem.Type == ResourceType::Texture_UAV ||
                      elem.Type == ResourceType::StructuredBuffer_UAV )

@@ -24,7 +24,7 @@ namespace smile::graphic
 
     void RenderEngine::Initialize() noexcept
     {
-        m_RenderContext.Initialize( m_API );
+        m_RenderContext.Initialize( m_API, &m_ResourceManager );
         m_ResourceManager.Initialize( m_RenderContext.GetGraphicsDevice() );
 
         m_TextureManager.Initialize( &m_ResourceManager );

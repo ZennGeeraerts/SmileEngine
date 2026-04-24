@@ -5,12 +5,12 @@
 #pragma once
 
 #include "buffer.h"
+#include "smile/graphic/rhi/rhi.h"
 #include "smile/graphic/rhi/primitive_topology.h"
 #include "smile/graphic/rhi/render_state.h"
 #include "smile/graphic/rhi/render_handle.h"
-#include "smile/graphic/rhi/shader/binding_layout.h"
 
-#include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/collection/fixed_vector.h"
 
 namespace smile::graphic::rhi
 {
@@ -23,7 +23,7 @@ namespace smile::graphic::rhi
         ShaderHandle VertexShaderHandle;
         ShaderHandle PixelShaderHandle;
 
-        primitive::Vector< BindingLayout > BindingLayouts;
+        primitive::FixedVector< BindingLayoutHandle, s_MaxBindingLayoutCount > BindingLayouts;
 
         foundation::HashCode GetHashCode() const
         {

@@ -10,6 +10,7 @@
 #include "smile/graphic/renderer/material/material_instance.h"
 #include "smile/graphic/renderer/resource/graphics_pipeline.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
+#include "smile/graphic/renderer/shader/binding_layout.h"
 #include "smile/graphic/renderer/shader/binding_set.h"
 
 namespace smile::graphic
@@ -78,6 +79,7 @@ namespace smile::graphic
         primitive::HashMap< PipelineKey, GraphicsPipeline > m_Pipelines;
         ConstantBuffer m_CameraCB;
         ConstantBuffer m_PerObjectCB;
+        BindingLayout m_BindingLayout;
         BindingSet m_BindingSet;
 
         ViewConstants m_ViewConstants{};

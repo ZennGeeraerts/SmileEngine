@@ -34,6 +34,11 @@ namespace smile::graphic
             return m_Handle;
         }
 
+        bool operator==( const PixelShader &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
       private:
         rhi::ShaderHandle m_Handle;
 

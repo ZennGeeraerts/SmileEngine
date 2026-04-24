@@ -30,11 +30,11 @@ namespace smile::graphic::rhi
         D3D11BindingLayout &operator=( const D3D11BindingLayout & ) = delete;
         D3D11BindingLayout &operator=( D3D11BindingLayout && ) = delete;
 
-        void Create( const BindingLayout &layout )
+        void Create( const BindingLayout &layout ) noexcept
         {
-            Layout = layout;
+            Internal = layout;
         }
 
-        BindingLayout Layout;
+        BindingLayout Internal;
     };
 }

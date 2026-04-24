@@ -13,7 +13,7 @@ namespace smile::graphic
     {
       public:
         ConstantBuffer() = default;
-        ConstantBuffer( rhi::GPUBufferHandle handle, const ConstantBufferDescriptor &desc ) noexcept;
+        ConstantBuffer( rhi::GPUBufferHandle handle, const Count size ) noexcept;
 
         ConstantBuffer( const ConstantBuffer & ) = default;
         ConstantBuffer( ConstantBuffer && ) noexcept = default;
@@ -45,15 +45,20 @@ namespace smile::graphic
             return m_Handle;
         }
 
-        const ConstantBufferDescriptor &GetDescriptor() const noexcept
+        Count GetSize() const noexcept
         {
-            return m_Descriptor;
+            return m_Size;
+        }
+
+        bool operator==( const ConstantBuffer &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
         }
 
       private:
         rhi::GPUBufferHandle m_Handle;
         const void *m_Buffer = nullptr;
-        ConstantBufferDescriptor m_Descriptor;
+        Count m_Size;
 
         friend class ResourceManager;
     };

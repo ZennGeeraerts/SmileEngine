@@ -4,6 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/foundation/flags.h"
+#include "smile/common/primitive/collection/array_utils.h"
 #include "resource_type.h"
 #include "shader_stage.h"
 

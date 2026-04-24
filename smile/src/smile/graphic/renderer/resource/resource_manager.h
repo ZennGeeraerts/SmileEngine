@@ -7,6 +7,7 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/collection/array.h"
 
 #include "smile/graphic/resource/image.h"
 
@@ -21,6 +22,7 @@
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/shader/vertex_shader.h"
 #include "smile/graphic/renderer/shader/pixel_shader.h"
+#include "smile/graphic/renderer/shader/binding_layout.h"
 #include "smile/graphic/renderer/shader/binding_set.h"
 
 #include "smile/graphic/rhi/object.h"
@@ -41,10 +43,11 @@ namespace smile::graphic
         void Initialize( rhi::GraphicsDevice *pDevice );
 
         VertexBuffer CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
-
         VertexBuffer CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
+        void DestroyVertexBuffer( VertexBuffer &vertexBuffer );
 
         IndexBuffer CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
+        void DestroyIndexBuffer( IndexBuffer &indexBuffer );
 
         Texture CreateTexture2D( Image::ConstRef pImage, bool updateable );
 
@@ -53,14 +56,18 @@ namespace smile::graphic
         Texture
         CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
 
+        void DestroyTexture( Texture &texture );
+
         Sampler CreateSampler( const rhi::SamplerDescriptor &descriptor );
         Sampler GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor );
+        void DestroySampler( Sampler &sampler );
 
         FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
 
         FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
         ConstantBuffer CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
+        void DestroyConstantBuffer( ConstantBuffer &constantBuffer );
 
         VertexShader CreateVertexShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
@@ -71,6 +78,8 @@ namespace smile::graphic
         VertexShader GetOrCreateVertexShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
+
+        void DestroyVertexShader( VertexShader &vertexShader );
 
         VertexShader GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset );
 
@@ -86,20 +95,40 @@ namespace smile::graphic
 
         PixelShader GetOrCreatePixelShader( ShaderAsset::ConstRef shaderAsset );
 
+        void DestroyPixelShader( PixelShader &pixelShader );
+
         Framebuffer CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
             const FramebufferAttachment &depthAttachment );
 
-        Framebuffer CreateFramebuffer( const primitive::Vector< FramebufferAttachment > &colorAttachments,
+        Framebuffer CreateFramebuffer(
+            const primitive::FixedVector< FramebufferAttachment, rhi::s_MaxRenderTargets > &colorAttachments,
             const FramebufferAttachment &depthAttachment );
 
         void ResizeFramebuffer( Framebuffer &framebuffer, const Uint32 width, const Uint32 height );
 
+        void DestroyFramebuffer( Framebuffer &framebuffer );
+
+        BindingLayout CreateBindingLayout( const rhi::BindingLayout &layout );
+        void DestroyBindingLayout( BindingLayout &bindingLayout );
+
         BindingSet CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+            const BindingLayout &layout,
             foundation::Flags< rhi::ShaderStage > shaderStage );
 
+        void DestroyBindingSet( BindingSet &bindingSet );
+
+         void CreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
+            foundation::Flags< rhi::ShaderStage > shaderStage,
+            BindingLayout &layout,
+            BindingSet &set );
+
         GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
+        void DestroyGraphicsPipeline( GraphicsPipeline &pipeline );
 
         rhi::Object GetShaderResourceView( const Texture &texture );
+
+        FramebufferAttachmentSet &GetFramebufferAttachmentSet( const Framebuffer &framebuffer );
+        const FramebufferAttachmentSet &GetFramebufferAttachmentSet( const Framebuffer &framebuffer ) const;
 
         struct ShaderKey final
         {
@@ -145,6 +174,7 @@ namespace smile::graphic
         primitive::Vector< VertexShader > m_VertexShaders;
         primitive::Vector< PixelShader > m_PixelShaders;
         primitive::Vector< Framebuffer > m_Framebuffers;
+        primitive::Vector< BindingLayout > m_BindingLayouts;
         primitive::Vector< BindingSet > m_BindingSets;
         primitive::Vector< GraphicsPipeline > m_GraphicsPipelines;
 
@@ -157,8 +187,12 @@ namespace smile::graphic
         rhi::SamplerHandlerManager m_SamplerHandleManager;
         rhi::FramebufferHandleManager m_FramebufferHandleManager;
         rhi::ShaderHandleManager m_ShaderHandleManager;
+        rhi::BindingLayoutHandleManager m_BindingLayoutHandleManager;
         rhi::BindingSetHandleManager m_BindingSetHandleManager;
         rhi::GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
+
+        FramebufferAttachmentSetHandleManager m_FramebufferAttachmentSetHandleManager;
+        primitive::Array< FramebufferAttachmentSet, rhi::s_MaxRenderTargets > m_FramebufferAttachmentSets;
     };
 }
 

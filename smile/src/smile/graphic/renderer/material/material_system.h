@@ -19,6 +19,7 @@
 #include "smile/common/primitive/handle_manager.h"
 #include "smile/common/primitive/collection/array.h"
 
+#include "smile/graphic/renderer/shader/binding_layout.h"
 #include "smile/graphic/renderer/shader/binding_set.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 
@@ -32,6 +33,7 @@ namespace smile::graphic
         Program::ConstRef ShaderProgram;
 
         ConstantBuffer ConstantBuffer;
+        BindingLayout BindingLayout;
         BindingSet Bindings;
     };
 

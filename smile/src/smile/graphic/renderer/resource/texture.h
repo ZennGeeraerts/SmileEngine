@@ -64,9 +64,9 @@ namespace smile::graphic
 
       private:
         rhi::TextureHandle m_Handle;
-        Uint32 m_Width;
-        Uint32 m_Height;
-        rhi::Format m_Format;
+        Uint32 m_Width = 0;
+        Uint32 m_Height = 0;
+        rhi::Format m_Format = rhi::Format::UNKNOWN;
 
         friend class ResourceManager;
     };

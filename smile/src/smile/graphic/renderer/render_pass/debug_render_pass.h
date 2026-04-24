@@ -51,6 +51,7 @@ namespace smile::graphic
         primitive::Vector< VertexPosCol > m_LineList{};
         GraphicsPipeline m_Pipeline;
         VertexBuffer m_VertexBuffer;
+        const rhi::BufferLayout m_VertexLayout;
         ConstantBuffer m_CameraCB;
         BindingSet m_BindingSet;
 

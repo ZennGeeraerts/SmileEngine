@@ -112,9 +112,13 @@ namespace smile::graphic::rhi
 
     void D3D11Device::CreateBindingSet( BindingSetHandle handle,
         const BindingSetDescriptor &bindingSetDesc,
-        const BindingLayout &layout )
+        BindingLayoutHandle layoutHandle )
     {
-        m_BindingSets[handle.GetIndex()].Create( *this, bindingSetDesc, layout );
+        SM_ASSERT( IsHandleValid( layoutHandle, m_BindingLayouts ) );
+
+        const auto &bindingLayout = m_BindingLayouts[layoutHandle.GetIndex()];
+
+        m_BindingSets[handle.GetIndex()].Create( *this, bindingSetDesc, bindingLayout.Internal );
     }
 
     void D3D11Device::DestroyBindingSet( BindingSetHandle handle )

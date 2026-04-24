@@ -4,10 +4,9 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/render_handle.h"
-#include "smile/graphic/rhi/resource/frame_buffer.h"
 #include "frame_buffer_attachment.h"
+#include "smile/graphic/rhi/viewport.h"
 
 namespace smile::graphic
 {
@@ -17,13 +16,10 @@ namespace smile::graphic
         Framebuffer() = default;
 
         Framebuffer( rhi::FramebufferHandle handle,
-            const primitive::Vector< FramebufferAttachment > &colorAttachments,
-            const FramebufferAttachment &depthAttachment,
-            const rhi::FramebufferInfoExtented &info ) noexcept
-            : m_Handle{ handle },
-              m_ColorAttachments{ colorAttachments },
-              m_DepthAttachment{ depthAttachment },
-              m_Info{ info }
+            FramebufferAttachmentSetHandle attachmentSetHandle,
+            const Uint32 width,
+            const Uint32 height ) noexcept
+            : m_Handle{ handle }, m_AttachmentSetHandle{ attachmentSetHandle }, m_Width{ width }, m_Height{ height }
         {
         }
 
@@ -45,26 +41,27 @@ namespace smile::graphic
             return m_Handle;
         }
 
-        const primitive::Vector< FramebufferAttachment > &GetColorAttachments() const noexcept
+        FramebufferAttachmentSetHandle GetAttachmentSetHandle() const noexcept
         {
-            return m_ColorAttachments;
+            return m_AttachmentSetHandle;
         }
 
-        const FramebufferAttachment &GetDepthAttachment() const noexcept
+        [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const
         {
-            return m_DepthAttachment;
+            return rhi::Viewport{
+                0.0f, static_cast< float >( m_Width ), 0.0f, static_cast< float >( m_Height ), minZ, maxZ };
         }
 
-        [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const noexcept
+        bool operator==( const Framebuffer &other ) const noexcept
         {
-            return m_Info.GetViewport( minZ, maxZ );
+            return m_Handle == other.m_Handle;
         }
 
       private:
         rhi::FramebufferHandle m_Handle;
-        primitive::Vector< FramebufferAttachment > m_ColorAttachments;
-        FramebufferAttachment m_DepthAttachment;
-        rhi::FramebufferInfoExtented m_Info;
+        FramebufferAttachmentSetHandle m_AttachmentSetHandle;
+        Uint32 m_Width;
+        Uint32 m_Height;
 
         friend class ResourceManager;
     };

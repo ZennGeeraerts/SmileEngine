@@ -8,18 +8,18 @@
 #include "frame.h"
 #include "smile/core/window/window.h"
 
-#include "resource/vertex_buffer.h"
-#include "shader/constant_buffer.h"
+#include "resource/resource_manager.h"
 
 namespace smile::graphic
 {
     RenderContext::RenderContext() = default;
     RenderContext::~RenderContext() = default;
 
-    void RenderContext::Initialize( rhi::RendererBackendType api )
+    void RenderContext::Initialize( rhi::RendererBackendType api, ResourceManager *resourceManager )
     {
         m_pDevice = rhi::GraphicsDevice::Create( api );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
+        m_ResourceManager = resourceManager;
     }
 
     void RenderContext::Clear( const Framebuffer &framebuffer,
@@ -27,9 +27,11 @@ namespace smile::graphic
         std::optional< float > depth,
         std::optional< Uint8 > stencil )
     {
+        const auto &attachmentSet = m_ResourceManager->GetFramebufferAttachmentSet( framebuffer );
+
         if ( color.has_value() )
         {
-            for ( const auto &colorAttachment : framebuffer.GetColorAttachments() )
+            for ( const auto &colorAttachment : attachmentSet.ColorAttachments )
             {
                 m_pImmediateCommandList->ClearTexture( colorAttachment.Texture.GetHandle(),
                     rhi::TextureSubresourceSet{},
@@ -39,9 +41,8 @@ namespace smile::graphic
 
         if ( depth.has_value() || stencil.has_value() )
         {
-            const auto &depthAttachment = framebuffer.GetDepthAttachment();
             m_pImmediateCommandList->ClearDepthStencilTexture(
-                depthAttachment.Texture.GetHandle(), rhi::TextureSubresourceSet{}, depth, stencil );
+                attachmentSet.DepthAttachment.Texture.GetHandle(), rhi::TextureSubresourceSet{}, depth, stencil );
         }
     }
 
@@ -98,13 +99,12 @@ namespace smile::graphic
 
     void RenderContext::FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const
     {
-        m_pImmediateCommandList->FillBuffer(
-            vertexBuffer.GetHandle(), pData, vertexCount * vertexBuffer.GetBufferLayout().GetStride() );
+        m_pImmediateCommandList->FillBuffer( vertexBuffer.GetHandle(), pData, vertexCount * vertexBuffer.GetStride() );
     }
 
     void RenderContext::FillConstantBuffer( const ConstantBuffer &constantBuffer ) const
     {
         m_pImmediateCommandList->FillBuffer(
-            constantBuffer.GetHandle(), constantBuffer.GetBuffer(), constantBuffer.GetDescriptor().GetSize() );
+            constantBuffer.GetHandle(), constantBuffer.GetBuffer(), constantBuffer.GetSize() );
     }
 }

@@ -17,6 +17,7 @@
 #include "resource/sampler.h"
 #include "resource/graphics_pipeline.h"
 #include "shader/shader.h"
+#include "shader/binding_layout.h"
 #include "shader/binding_set.h"
 
 namespace smile::graphic::rhi
@@ -53,7 +54,7 @@ namespace smile::graphic::rhi
 
         virtual void CreateBindingSet( BindingSetHandle handle,
             const BindingSetDescriptor &bindingSetDesc,
-            const BindingLayout &layout ) = 0;
+            BindingLayoutHandle layoutHandle ) = 0;
         virtual void DestroyBindingSet( BindingSetHandle handle ) = 0;
 
         virtual void CreateShader( ShaderHandle handle,
@@ -98,7 +99,7 @@ namespace smile::graphic::rhi
 
       protected:
         template < HasIsValidIndex CollectionType >
-        bool IsHandleValid( primitive::Handle< Uint64, 32, 32 > handle, const CollectionType &collection )
+        bool IsHandleValid( primitive::Handle< Uint64, 32, 32 > handle, const CollectionType &collection ) const
         {
             return handle.IsValid() && collection.IsValidIndex( handle.GetIndex() );
         }

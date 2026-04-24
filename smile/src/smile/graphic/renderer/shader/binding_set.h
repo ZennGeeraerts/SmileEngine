@@ -6,7 +6,6 @@
 
 #include "smile/graphic/rhi/render_handle.h"
 #include "smile/graphic/rhi/shader/binding_set.h"
-#include "smile/graphic/rhi/shader/binding_layout.h"
 
 namespace smile::graphic
 {
@@ -15,10 +14,7 @@ namespace smile::graphic
       public:
         BindingSet() = default;
 
-        BindingSet( rhi::BindingSetHandle handle,
-            const rhi::BindingSetDescriptor &descriptor,
-            const rhi::BindingLayout &layout ) noexcept
-            : m_Handle{ handle }, m_Descriptor{ descriptor }, m_Layout{ layout }
+        BindingSet( rhi::BindingSetHandle handle ) noexcept : m_Handle{ handle }
         {
         }
 
@@ -34,20 +30,18 @@ namespace smile::graphic
             return m_Handle;
         }
 
-        const rhi::BindingLayout &GetLayout() const noexcept
-        {
-            return m_Layout;
-        }
-
         [[nodiscard]] bool IsValid() const noexcept
         {
             return m_Handle.IsValid();
         }
 
+        bool operator==( const BindingSet &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
       private:
         rhi::BindingSetHandle m_Handle;
-        rhi::BindingSetDescriptor m_Descriptor;
-        rhi::BindingLayout m_Layout;
 
         friend class ResourceManager;
     };
