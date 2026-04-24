@@ -201,6 +201,16 @@ namespace smile::graphic
     {
         m_pDevice->DestroySampler( sampler.GetHandle() );
         m_Samplers.Erase( sampler );
+
+        auto it = std::find_if( m_SamplerCache.begin(),
+            m_SamplerCache.end(),
+            [&sampler]( const auto &kv ) { return kv.Value == sampler; } );
+
+        if ( it != m_SamplerCache.end() )
+        {
+            m_SamplerCache.Erase( it );
+        }
+
         sampler.m_Handle = rhi::SamplerHandle::NullHandle();
     }
 
@@ -327,6 +337,16 @@ namespace smile::graphic
     {
         m_pDevice->DestroyShader( vertexShader.GetHandle() );
         m_VertexShaders.Erase( vertexShader );
+
+        auto it = std::find_if( m_VertexShaderCache.begin(),
+            m_VertexShaderCache.end(),
+            [&vertexShader]( const auto &kv ) { return kv.Value == vertexShader; } );
+
+        if ( it != m_VertexShaderCache.end() )
+        {
+            m_VertexShaderCache.Erase( it );
+        }
+
         vertexShader.m_Handle = rhi::ShaderHandle::NullHandle();
     }
 
@@ -391,6 +411,16 @@ namespace smile::graphic
     {
         m_pDevice->DestroyShader( pixelShader.GetHandle() );
         m_PixelShaders.Erase( pixelShader );
+
+        auto it = std::find_if( m_PixelShaderCache.begin(),
+            m_PixelShaderCache.end(),
+            [&pixelShader]( const auto &kv ) { return kv.Value == pixelShader; } );
+
+        if ( it != m_PixelShaderCache.end() )
+        {
+            m_PixelShaderCache.Erase( it );
+        }
+
         pixelShader.m_Handle = rhi::ShaderHandle::NullHandle();
     }
 
@@ -555,7 +585,7 @@ namespace smile::graphic
         desc.VertexShaderHandle = descriptor.VertexShader.GetHandle();
         desc.PixelShaderHandle = descriptor.PixelShader.GetHandle();
 
-        for (const auto& bindingLayout : descriptor.BindingLayouts)
+        for ( const auto &bindingLayout : descriptor.BindingLayouts )
         {
             desc.BindingLayouts.PushBack( bindingLayout.GetHandle() );
         }

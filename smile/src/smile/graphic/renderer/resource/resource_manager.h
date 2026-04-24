@@ -79,9 +79,9 @@ namespace smile::graphic
             const primitive::String &entryPoint,
             const primitive::String &targetProfile );
 
-        void DestroyVertexShader( VertexShader &vertexShader );
-
         VertexShader GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset );
+
+        void DestroyVertexShader( VertexShader &vertexShader );
 
         PixelShader CreatePixelShader( const primitive::Vector< Byte > &byteCode,
             const primitive::String &entryPoint,
@@ -135,32 +135,23 @@ namespace smile::graphic
             ShaderKey( const primitive::Vector< Byte > &byteCode,
                 const primitive::String &EntryPoint,
                 const primitive::String &targetProfile )
-                : ByteCode{ byteCode }, EntryPoint{ EntryPoint }, TargetProfile{ targetProfile }
             {
+                Hash = std::hash< primitive::Vector< Byte > >{}( byteCode );
+                Hash = foundation::HashCombine( Hash, std::hash< primitive::String >{}( EntryPoint ) );
+                Hash = foundation::HashCombine( Hash, std::hash< primitive::String >{}( targetProfile ) );
             }
 
-            bool operator==( const ShaderKey &other ) const
+            bool operator==( const ShaderKey &other ) const noexcept
             {
-                return primitive::array::IsEqual( ByteCode, other.ByteCode ) && EntryPoint == other.EntryPoint &&
-                       TargetProfile == other.TargetProfile;
+                return Hash == other.Hash;
             }
 
-            bool operator!=( const ShaderKey &other ) const
+            bool operator!=( const ShaderKey &other ) const noexcept
             {
-                return !( *this == other );
+                return Hash != other.Hash;
             }
 
-            foundation::HashCode GetHashCode() const
-            {
-                foundation::HashCode hash = std::hash< primitive::Vector< Byte > >{}( ByteCode );
-                hash = foundation::HashCombine( hash, std::hash< primitive::String >{}( EntryPoint ) );
-                hash = foundation::HashCombine( hash, std::hash< primitive::String >{}( TargetProfile ) );
-                return hash;
-            }
-
-            primitive::Vector< Byte > ByteCode;
-            primitive::String EntryPoint;
-            primitive::String TargetProfile;
+            foundation::HashCode Hash;
         };
 
       private:
@@ -203,7 +194,7 @@ namespace std
     {
         smile::foundation::HashCode operator()( const smile::graphic::ResourceManager::ShaderKey &key ) const
         {
-            return key.GetHashCode();
+            return key.Hash;
         }
     };
 }
