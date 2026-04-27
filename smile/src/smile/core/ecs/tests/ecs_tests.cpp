@@ -24,6 +24,24 @@ struct DataComponent final
     double MyData;
 };
 
+struct TestObject
+{
+    static int s_DestructorCount;
+
+    int Value;
+
+    TestObject( int v ) : Value{ v }
+    {
+    }
+
+    ~TestObject()
+    {
+        ++s_DestructorCount;
+    }
+};
+
+int TestObject::s_DestructorCount = 0;
+
 namespace smile
 {
     TEST_CASE( "ECS" )
@@ -325,6 +343,67 @@ namespace smile
 
             engine.AddComponent< TestComponent >( entity, 10, 20 );
             engine.RemoveComponent< TestComponent >( entity );
+        }
+
+        SECTION( "Emplace, Get and Has work correctly", "[Context]" )
+        {
+            ecs::ECSEngine::Context ctx;
+
+            REQUIRE_FALSE( ctx.Has< TestObject >() );
+
+            auto &obj = ctx.Emplace< TestObject >( 42 );
+
+            REQUIRE( ctx.Has< TestObject >() );
+            REQUIRE( &obj == &ctx.Get< TestObject >() );
+            REQUIRE( ctx.Get< TestObject >().Value == 42 );
+        }
+
+        SECTION( "Destructor is called on Erase", "[Context]" )
+        {
+            ecs::ECSEngine::Context ctx;
+
+            TestObject::s_DestructorCount = 0;
+
+            ctx.Emplace< TestObject >( 123 );
+
+            REQUIRE( TestObject::s_DestructorCount == 0 );
+
+            ctx.Erase< TestObject >();
+
+            REQUIRE( TestObject::s_DestructorCount == 1 );
+            REQUIRE_FALSE( ctx.Has< TestObject >() );
+        }
+
+        SECTION( "Destructor is called on Clear", "[Context]" )
+        {
+            ecs::ECSEngine::Context ctx;
+
+            TestObject::s_DestructorCount = 0;
+
+            ctx.Emplace< TestObject >( 1 );
+
+            ctx.Clear();
+
+            REQUIRE( TestObject::s_DestructorCount == 1 );
+            REQUIRE_FALSE( ctx.Has< TestObject >() );
+        }
+
+        SECTION( "GetOrEmplace returns existing instance", "[Context]" )
+        {
+            ecs::ECSEngine::Context ctx;
+
+            auto &obj1 = ctx.GetOrEmplace< TestObject >( 10 );
+            auto &obj2 = ctx.GetOrEmplace< TestObject >( 999 );
+
+            REQUIRE( &obj1 == &obj2 );
+            REQUIRE( obj2.Value == 10 );
+        }
+
+        SECTION( "Erase on non-existing type is safe", "[Context]" )
+        {
+            ecs::ECSEngine::Context ctx;
+
+            REQUIRE_NOTHROW( ctx.Erase< TestObject >() );
         }
     }
 }

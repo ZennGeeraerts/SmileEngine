@@ -227,6 +227,101 @@ namespace smile::ecs
             }
         };
 
+        class Context final
+        {
+          public:
+            Context() = default;
+
+            ~Context() noexcept
+            {
+                Clear();
+            }
+
+            template < typename Type, typename... Args >
+            Type &Emplace( Args &&...args )
+            {
+                SM_ASSERT_MSG( !Has< Type >(), "Type already exists in Context" );
+
+                const foundation::TypeID typeID = foundation::TypeIDOf< Type >();
+
+                Type *instance = new Type( std::forward< Args >( args )... );
+
+                Item item;
+                item.Data = instance;
+                item.Destructor = []( void *ptr ) { delete reinterpret_cast< Type * >( ptr ); };
+
+                m_Context[typeID] = item;
+
+                return *instance;
+            }
+
+            template < typename Type >
+            Type &Get( const foundation::TypeID typeID = foundation::TypeIDOf< Type >() )
+            {
+                auto &item = m_Context.GetItemAtKey( typeID );
+
+                return *reinterpret_cast< Type * >( item.Data );
+            }
+
+            template < typename Type >
+            const Type &Get( const foundation::TypeID typeID = foundation::TypeIDOf< Type >() ) const
+            {
+                const auto &item = m_Context.GetItemAtKey( typeID );
+
+                return *reinterpret_cast< Type * >( item.Data );
+            }
+
+            template < typename Type >
+            bool Has( const foundation::TypeID typeID = foundation::TypeIDOf< Type >() ) const noexcept
+            {
+                return m_Context.HasItemAtKey( typeID );
+            }
+
+            template < typename Type >
+            void Erase( const foundation::TypeID typeID = foundation::TypeIDOf< Type >() )
+            {
+                auto it = m_Context.FindItemAtKey( typeID );
+                if ( it == m_Context.end() )
+                    return;
+
+                const Item &item = it.GetItem();
+
+                if ( item.Destructor )
+                    item.Destructor( item.Data );
+
+                m_Context.Erase( it );
+            }
+
+            template < typename Type, typename... Args >
+            Type &GetOrEmplace( Args &&...args )
+            {
+                if ( !Has< Type >() )
+                    return Emplace< Type >( std::forward< Args >( args )... );
+
+                return Get< Type >();
+            }
+
+            void Clear() noexcept
+            {
+                for ( const auto &[id, item] : m_Context )
+                {
+                    if ( item.Destructor )
+                        item.Destructor( item.Data );
+                }
+
+                m_Context.Clear();
+            }
+
+          private:
+            struct Item final
+            {
+                void *Data = nullptr;
+                std::function< void( void * ) > Destructor = nullptr;
+            };
+
+            primitive::HashMap< foundation::TypeID, Item > m_Context;
+        };
+
       public:
         ECSEngine() = default;
         ~ECSEngine();
@@ -486,6 +581,16 @@ namespace smile::ecs
             return pCPool->OnDestruction();
         }
 
+        Context &GetContext() noexcept
+        {
+            return m_Context;
+        }
+
+        const Context &GetContext() const noexcept
+        {
+            return m_Context;
+        }
+
       private:
         template < typename ComponentType >
         ComponentPool *GetComponentPool( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
@@ -506,6 +611,7 @@ namespace smile::ecs
         bool IsComponentOwned( const ComponentPool *pCPool ) const;
 
       private:
+        Context m_Context{};
         EntityHandleManager m_HandleManager{};
         primitive::Vector< ComponentPool * > m_pComponentPools{};
         std::unordered_map< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
