@@ -84,10 +84,16 @@ namespace smile::graphic
         vsBindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
         vsBindingLayout.AddElement( { 1, rhi::ResourceType::ConstantBuffer } );
 
+        rhi::BindingLayoutHandle vsBindingLayoutHandle = m_BindingLayoutHandleManager.CreateHandle();
+        m_pDevice->CreateBindingLayout( vsBindingLayoutHandle, vsBindingLayout );
+
         rhi::BindingLayout psBindingLayout{ { rhi::ShaderStage::Pixel } };
-        psBindingLayout.AddElement( { 0, rhi::ResourceType::ConstantBuffer } );
+        psBindingLayout.AddElement( { 2, rhi::ResourceType::ConstantBuffer } );
         psBindingLayout.AddElement( { 0, rhi::ResourceType::Texture_SRV } );
         psBindingLayout.AddElement( { 0, rhi::ResourceType::Sampler } );
+
+        rhi::BindingLayoutHandle psBindingLayoutHandle = m_BindingLayoutHandleManager.CreateHandle();
+        m_pDevice->CreateBindingLayout( psBindingLayoutHandle, psBindingLayout );
 
         {
             rhi::GraphicsPipelineDescriptor psoDesc{};
@@ -96,8 +102,8 @@ namespace smile::graphic
             psoDesc.VertexShaderHandle = m_VertexShaderHandle;
             psoDesc.PixelShaderHandle = m_PixelShaderHandle;
 
-            psoDesc.BindingLayouts.PushBack( vsBindingLayout );
-            psoDesc.BindingLayouts.PushBack( psBindingLayout );
+            psoDesc.BindingLayouts.PushBack( vsBindingLayoutHandle );
+            psoDesc.BindingLayouts.PushBack( psBindingLayoutHandle );
 
             psoDesc.State.RasterizerState.CullMode = rhi::CullMode::None;
             psoDesc.State.DepthStencilState.DepthEnable = false;
@@ -151,14 +157,14 @@ namespace smile::graphic
                     rhi::BindingSetElement::CreateConstantBuffer( 1, m_PerObjectBufferHandle ) } };
 
             rhi::BindingSetDescriptor psBindingSetDesc{
-                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_MaterialBufferHandle ),
+                { rhi::BindingSetElement::CreateConstantBuffer( 2, m_MaterialBufferHandle ),
                     rhi::BindingSetElement::CreateSampler( 0, m_SamplerHandle ) } };
 
             m_VSBindingSetHandle = m_BindingSetHandleManager.CreateHandle();
-            m_pDevice->CreateBindingSet( m_VSBindingSetHandle, vsBindingSetDesc, vsBindingLayout );
+            m_pDevice->CreateBindingSet( m_VSBindingSetHandle, vsBindingSetDesc, vsBindingLayoutHandle );
 
             m_PSBindingSetHandle = m_BindingSetHandleManager.CreateHandle();
-            m_pDevice->CreateBindingSet( m_PSBindingSetHandle, psBindingSetDesc, psBindingLayout );
+            m_pDevice->CreateBindingSet( m_PSBindingSetHandle, psBindingSetDesc, psBindingLayoutHandle );
         }
 
         {

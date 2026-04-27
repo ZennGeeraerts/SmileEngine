@@ -46,6 +46,8 @@ namespace smile::graphic
         rhi::GPUBufferHandle m_PerObjectBufferHandle;
         rhi::GPUBufferHandle m_MaterialBufferHandle;
 
+        rhi::BindingLayoutHandleManager m_BindingLayoutHandleManager;
+
         rhi::BindingSetHandleManager m_BindingSetHandleManager;
         rhi::BindingSetHandle m_VSBindingSetHandle;
         rhi::BindingSetHandle m_PSBindingSetHandle;
