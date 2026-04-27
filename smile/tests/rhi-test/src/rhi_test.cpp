@@ -12,8 +12,15 @@ namespace smile
     class RHITest final : public application::Application
     {
       public:
-        RHITest( const application::ApplicationDescriptor &descriptor ) : application::Application{ descriptor }
+        RHITest( const application::ApplicationDescriptor &descriptor ) noexcept
+            : application::Application{ descriptor }
         {
+        }
+
+        void Initialize() override
+        {
+            Application::Initialize();
+
             PushLayer( new graphic::RHITestLayer{} );
         }
     };

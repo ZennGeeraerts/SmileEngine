@@ -13,22 +13,32 @@ namespace smile::application
 {
     Application *Application::s_pInstance = nullptr;
 
-    Application::Application( const ApplicationDescriptor &descriptor ) : m_Descriptor{ descriptor }
+    Application::Application( const ApplicationDescriptor &descriptor ) noexcept : m_Descriptor{ descriptor }
     {
         SM_ASSERT_MSG( !s_pInstance,
             "Application::Application > There is already an instance of Application, there can only be 1" );
         s_pInstance = this;
+    }
 
-        if ( !descriptor.WorkingDirectory.IsEmpty() )
-            fs::PhysicalSystem::SetCurrentDirectory( descriptor.WorkingDirectory );
+    void Application::Initialize()
+    {
+        if ( !m_Descriptor.WorkingDirectory.IsEmpty() )
+            fs::PhysicalSystem::SetCurrentDirectory( m_Descriptor.WorkingDirectory );
 
         m_pWindowManager = window::WindowManager::Create();
 
         window::Window::Ref pMainWindow =
-            m_pWindowManager->CreateAppWindow( window::WindowSettings{ descriptor.Name } );
+            m_pWindowManager->CreateAppWindow( window::WindowSettings{ m_Descriptor.Name } );
 
         pMainWindow->SetEventCallback( SM_BIND_EVENT_FN( Application::OnEvent ) );
         pMainWindow->SetVSync( false );
+
+        m_IsRunning = true;
+    }
+
+    void Application::ShutDown()
+    {
+        m_IsRunning = false;
     }
 
     void Application::PushLayer( Layer *pLayer )
@@ -75,19 +85,14 @@ namespace smile::application
             timer.OnUpdate();
             primitive::Timestep deltaTime = timer.GetDeltaTime();
 
+            m_pWindowManager->PollEvents();
+
             if ( !m_IsMinimized )
             {
                 for ( Layer *pLayer : m_LayerStack )
                     pLayer->OnUpdate( deltaTime );
             }
-
-            m_pWindowManager->PollEvents();
         }
-    }
-
-    void Application::ShutDown()
-    {
-        m_IsRunning = false;
     }
 
     bool Application::OnWindowClose( window::WindowCloseEvent &e )

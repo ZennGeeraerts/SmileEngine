@@ -25,8 +25,15 @@ namespace smile
     class SpriteTest final : public application::Application
     {
       public:
-        SpriteTest( const application::ApplicationDescriptor &descriptor ) : application::Application{ descriptor }
+        SpriteTest( const application::ApplicationDescriptor &descriptor ) noexcept
+            : application::Application{ descriptor }
         {
+        }
+
+        void Initialize() override
+        {
+            Application::Initialize();
+
             PushLayer( new graphic::SpriteTestLayer{} );
         }
     };

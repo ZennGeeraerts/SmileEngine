@@ -37,11 +37,13 @@ namespace smile::application
     class Application
     {
       public:
-        Application( const ApplicationDescriptor &descriptor );
+        Application( const ApplicationDescriptor &descriptor ) noexcept;
         virtual ~Application() = default;
 
-        virtual void Run();
+        virtual void Initialize();
         void ShutDown();
+
+        virtual void Run();
 
         void OnEvent( window::Event &e );
 
@@ -54,10 +56,12 @@ namespace smile::application
         {
             return *s_pInstance;
         }
+
         inline window::Window &GetMainWindow() const
         {
             return *m_pWindowManager->GetWindow( 0 );
         }
+
         inline const ApplicationDescriptor &GetDescriptor() const
         {
             return m_Descriptor;
@@ -74,7 +78,7 @@ namespace smile::application
 
       protected:
         window::WindowManager *m_pWindowManager;
-        bool m_IsRunning = true;
+        bool m_IsRunning = false;
         bool m_IsMinimized = false;
         LayerStack m_LayerStack;
 

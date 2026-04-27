@@ -25,8 +25,15 @@ namespace smile
     class RendererTest final : public application::Application
     {
       public:
-        RendererTest( const application::ApplicationDescriptor &descriptor ) : application::Application{ descriptor }
+        RendererTest( const application::ApplicationDescriptor &descriptor ) noexcept
+            : application::Application{ descriptor }
         {
+        }
+
+        void Initialize() override
+        {
+            Application::Initialize();
+
             PushLayer( new graphic::RendererTestLayer{} );
         }
     };
