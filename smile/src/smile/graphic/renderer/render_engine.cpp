@@ -24,11 +24,11 @@ namespace smile::graphic
 
     void RenderEngine::Initialize() noexcept
     {
-        m_RenderContext.Initialize( m_API, &m_ResourceManager );
-        m_ResourceManager.Initialize( m_RenderContext.GetGraphicsDevice() );
+        m_RenderContext.Initialize( m_API );
 
-        m_TextureManager.Initialize( &m_ResourceManager );
-        m_MaterialSystem.Initialize( &m_RenderContext, &m_ResourceManager );
+        m_ResourceManager = memory::CreateScope< ResourceManager >( *m_RenderContext.GetGraphicsDevice() );
+        m_TextureManager = memory::CreateScope< TextureManager >( *m_ResourceManager );
+        m_MaterialSystem = memory::CreateScope< MaterialSystem >( m_RenderContext, *m_ResourceManager );
 
         m_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
         m_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
@@ -71,12 +71,12 @@ namespace smile::graphic
         colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
 
         const Texture colorTexture =
-            m_ResourceManager.CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
+            m_ResourceManager->CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
 
         FramebufferAttachment depthAttachment =
-            m_ResourceManager.CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
+            m_ResourceManager->CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
 
-        auto renderTarget = m_ResourceManager.CreateFramebuffer(
+        auto renderTarget = m_ResourceManager->CreateFramebuffer(
             { FramebufferAttachment{ colorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
 
         auto swapChainPtr = swapChain.get();
@@ -89,7 +89,7 @@ namespace smile::graphic
 
     Renderer *RenderEngine::CreateRenderer()
     {
-        auto renderer = memory::CreateScope< Renderer >( *this, m_RenderContext );
+        auto renderer = memory::CreateScope< Renderer >( m_RenderContext, *m_ResourceManager );
         m_Renderers.PushBack( std::move( renderer ) );
 
         return m_Renderers.GetLastItem().GetPointer();

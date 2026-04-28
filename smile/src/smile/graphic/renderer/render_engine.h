@@ -39,9 +39,9 @@ namespace smile::graphic
 
         ResourceManager &GetResourceManager() noexcept
         {
-            return m_ResourceManager;
+            return *m_ResourceManager;
         }
-
+        
         ShaderLibrary &GetShaderLibrary() noexcept
         {
             return m_ShaderLibrary;
@@ -49,12 +49,12 @@ namespace smile::graphic
 
         TextureManager &GetTextureManager() noexcept
         {
-            return m_TextureManager;
+            return *m_TextureManager;
         }
 
         MaterialSystem &GetMaterialSystem() noexcept
         {
-            return m_MaterialSystem;
+            return *m_MaterialSystem;
         }
 
         const Framebuffer &GetRenderTarget( rhi::SwapChain *const swapChain ) const;
@@ -65,11 +65,11 @@ namespace smile::graphic
       private:
         rhi::RendererBackendType m_API;
         RenderContext m_RenderContext;
-        ResourceManager m_ResourceManager;
+        memory::Scope< ResourceManager > m_ResourceManager;
 
         ShaderLibrary m_ShaderLibrary;
-        TextureManager m_TextureManager;
-        MaterialSystem m_MaterialSystem;
+        memory::Scope< TextureManager > m_TextureManager;
+        memory::Scope< MaterialSystem > m_MaterialSystem;
 
         primitive::Vector< Scope< rhi::SwapChain > > m_SwapChains;
         primitive::Vector< memory::Scope< Renderer > > m_Renderers;

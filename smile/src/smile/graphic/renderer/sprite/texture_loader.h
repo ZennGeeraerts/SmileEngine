@@ -14,9 +14,7 @@ namespace smile::graphic
     class TextureLoader : public asset::AssetLoader
     {
       public:
-        TextureLoader() noexcept;
-
-        void Initialize( ResourceManager *resourceManager ) noexcept;
+        TextureLoader( ResourceManager &resourceManager ) noexcept;
 
         asset::AssetType GetType() const override
         {
@@ -35,6 +33,6 @@ namespace smile::graphic
 
       private:
         const std::vector< std::filesystem::path > m_Extensions{ ".png", ".jpg", ".dds" };
-        ResourceManager *m_ResourceManager;
+        ResourceManager &m_ResourceManager;
     };
 }

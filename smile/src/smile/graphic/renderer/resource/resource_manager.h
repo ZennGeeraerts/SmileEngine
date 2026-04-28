@@ -37,7 +37,8 @@ namespace smile::graphic
     class ResourceManager final
     {
       public:
-        ResourceManager() = default;
+        ResourceManager( rhi::GraphicsDevice &device ) noexcept;
+        
         ~ResourceManager();
 
         void Initialize( rhi::GraphicsDevice *pDevice );
@@ -155,7 +156,7 @@ namespace smile::graphic
         };
 
       private:
-        rhi::GraphicsDevice *m_pDevice = nullptr;
+        rhi::GraphicsDevice &m_Device;
 
         primitive::Vector< VertexBuffer > m_VertexBuffers;
         primitive::Vector< IndexBuffer > m_IndexBuffers;

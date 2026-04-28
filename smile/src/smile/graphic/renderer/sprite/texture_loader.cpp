@@ -14,14 +14,9 @@
 
 namespace smile::graphic
 {
-    TextureLoader::TextureLoader() noexcept
+    TextureLoader::TextureLoader( ResourceManager &resourceManager ) noexcept : m_ResourceManager{ resourceManager }
     {
         asset::AssetImporter::GetInstance().RegisterLoader( this );
-    }
-
-    void TextureLoader::Initialize( ResourceManager *resourceManager ) noexcept
-    {
-        m_ResourceManager = resourceManager;
     }
 
     memory::Ref< asset::Asset > TextureLoader::Load( asset::AssetHandle handle,
@@ -45,7 +40,7 @@ namespace smile::graphic
         }
 
         Image::Ref image = ImageReader::Read( path );
-        const Texture texture = m_ResourceManager->CreateTexture2D( image, false );
+        const Texture texture = m_ResourceManager.CreateTexture2D( image, false );
         TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( texture );
 
         return textureAsset;

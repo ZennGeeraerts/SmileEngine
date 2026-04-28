@@ -9,45 +9,44 @@
 
 namespace smile::graphic
 {
+    ResourceManager::ResourceManager( rhi::GraphicsDevice &device ) noexcept : m_Device{ device }
+    {
+    }
+
     ResourceManager::~ResourceManager()
     {
         for ( const auto &vertexBuffer : m_VertexBuffers )
-            m_pDevice->DestroyGPUBuffer( vertexBuffer.GetHandle() );
+            m_Device.DestroyGPUBuffer( vertexBuffer.GetHandle() );
 
         for ( const auto &indexBuffer : m_IndexBuffers )
-            m_pDevice->DestroyGPUBuffer( indexBuffer.GetHandle() );
+            m_Device.DestroyGPUBuffer( indexBuffer.GetHandle() );
 
         for ( const auto &constantBuffer : m_ConstantBuffers )
-            m_pDevice->DestroyGPUBuffer( constantBuffer.GetHandle() );
+            m_Device.DestroyGPUBuffer( constantBuffer.GetHandle() );
 
         for ( const auto &vertexShader : m_VertexShaders )
-            m_pDevice->DestroyShader( vertexShader.GetHandle() );
+            m_Device.DestroyShader( vertexShader.GetHandle() );
 
         for ( const auto &pixelShader : m_PixelShaders )
-            m_pDevice->DestroyShader( pixelShader.GetHandle() );
+            m_Device.DestroyShader( pixelShader.GetHandle() );
 
         for ( const auto &texture : m_Textures )
-            m_pDevice->DestroyTexture( texture.GetHandle() );
+            m_Device.DestroyTexture( texture.GetHandle() );
 
         for ( const auto &sampler : m_Samplers )
-            m_pDevice->DestroySampler( sampler.GetHandle() );
+            m_Device.DestroySampler( sampler.GetHandle() );
 
         for ( const auto &framebuffer : m_Framebuffers )
-            m_pDevice->DestroyFramebuffer( framebuffer.GetHandle() );
+            m_Device.DestroyFramebuffer( framebuffer.GetHandle() );
 
         for ( const auto &bindingLayout : m_BindingLayouts )
-            m_pDevice->DestroyBindingLayout( bindingLayout.GetHandle() );
+            m_Device.DestroyBindingLayout( bindingLayout.GetHandle() );
 
         for ( const auto &bindingSet : m_BindingSets )
-            m_pDevice->DestroyBindingSet( bindingSet.GetHandle() );
+            m_Device.DestroyBindingSet( bindingSet.GetHandle() );
 
         for ( const auto &graphicsPipeline : m_GraphicsPipelines )
-            m_pDevice->DestroyGraphicsPipeline( graphicsPipeline.GetHandle() );
-    }
-
-    void ResourceManager::Initialize( rhi::GraphicsDevice *pDevice )
-    {
-        m_pDevice = pDevice;
+            m_Device.DestroyGraphicsPipeline( graphicsPipeline.GetHandle() );
     }
 
     VertexBuffer
@@ -60,7 +59,7 @@ namespace smile::graphic
         bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
 
         rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pVertices );
+        m_Device.CreateGPUBuffer( handle, bufferDesc, pVertices );
 
         const VertexBuffer vertexBuffer{ handle, vertexCount, layout.GetStride() };
         m_VertexBuffers.PushBack( vertexBuffer );
@@ -76,7 +75,7 @@ namespace smile::graphic
         bufferDesc.BindFlags = { rhi::BufferBindFlags::VertexBuffer };
 
         rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        m_Device.CreateGPUBuffer( handle, bufferDesc );
 
         const VertexBuffer vertexBuffer{ handle, vertexCount, layout.GetStride() };
         m_VertexBuffers.PushBack( vertexBuffer );
@@ -85,7 +84,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyVertexBuffer( VertexBuffer &vertexBuffer )
     {
-        m_pDevice->DestroyGPUBuffer( vertexBuffer.GetHandle() );
+        m_Device.DestroyGPUBuffer( vertexBuffer.GetHandle() );
         m_VertexBuffers.Erase( vertexBuffer );
         vertexBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
     }
@@ -99,7 +98,7 @@ namespace smile::graphic
         bufferDesc.BindFlags = { rhi::BufferBindFlags::IndexBuffer };
 
         rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc, pIndices );
+        m_Device.CreateGPUBuffer( handle, bufferDesc, pIndices );
 
         const IndexBuffer indexBuffer{ handle, indexCount };
         m_IndexBuffers.PushBack( indexBuffer );
@@ -108,7 +107,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyIndexBuffer( IndexBuffer &indexBuffer )
     {
-        m_pDevice->DestroyGPUBuffer( indexBuffer.GetHandle() );
+        m_Device.DestroyGPUBuffer( indexBuffer.GetHandle() );
         m_IndexBuffers.Erase( indexBuffer );
         indexBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
     }
@@ -126,7 +125,7 @@ namespace smile::graphic
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
         auto buffer = primitive::Vector< Byte >{ pImage->GetData(), pImage->GetDataSize() };
-        m_pDevice->CreateTexture( handle, textureDesc, buffer );
+        m_Device.CreateTexture( handle, textureDesc, buffer );
 
         const Texture texture{ handle, pImage->GetWidth(), pImage->GetHeight(), pImage->GetFormat() };
         m_Textures.PushBack( texture );
@@ -146,7 +145,7 @@ namespace smile::graphic
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
         auto buffer = primitive::Vector< Byte >{ pImage->GetData(), pImage->GetDataSize() };
-        m_pDevice->CreateTexture( handle, textureDesc, buffer );
+        m_Device.CreateTexture( handle, textureDesc, buffer );
 
         const Texture texture{ handle, pImage->GetWidth(), pImage->GetHeight(), pImage->GetFormat() };
         m_Textures.PushBack( texture );
@@ -159,7 +158,7 @@ namespace smile::graphic
     {
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
-        m_pDevice->CreateHandleForNativeTexture( handle, nativeTexture, type, desc );
+        m_Device.CreateHandleForNativeTexture( handle, nativeTexture, type, desc );
 
         const Texture texture{ handle, desc.Width, desc.Height, desc.TextureFormat };
         m_Textures.PushBack( texture );
@@ -168,7 +167,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyTexture( Texture &texture )
     {
-        m_pDevice->DestroyTexture( texture.GetHandle() );
+        m_Device.DestroyTexture( texture.GetHandle() );
         m_Textures.Erase( texture );
         texture.m_Handle = rhi::TextureHandle::NullHandle();
     }
@@ -177,7 +176,7 @@ namespace smile::graphic
     {
         rhi::SamplerHandle handle = m_SamplerHandleManager.CreateHandle();
 
-        m_pDevice->CreateSampler( handle, descriptor );
+        m_Device.CreateSampler( handle, descriptor );
 
         const Sampler sampler{ handle };
         m_Samplers.PushBack( sampler );
@@ -199,7 +198,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroySampler( Sampler &sampler )
     {
-        m_pDevice->DestroySampler( sampler.GetHandle() );
+        m_Device.DestroySampler( sampler.GetHandle() );
         m_Samplers.Erase( sampler );
 
         auto it = std::find_if( m_SamplerCache.begin(),
@@ -225,7 +224,7 @@ namespace smile::graphic
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
-        m_pDevice->CreateTexture( handle, textureDesc );
+        m_Device.CreateTexture( handle, textureDesc );
 
         const Texture texture{ handle, width, height, textureDesc.TextureFormat };
         m_Textures.PushBack( texture );
@@ -244,7 +243,7 @@ namespace smile::graphic
 
         rhi::TextureHandle handle = m_TextureHandleManager.CreateHandle();
 
-        m_pDevice->CreateTexture( handle, textureDesc );
+        m_Device.CreateTexture( handle, textureDesc );
 
         const Texture texture{ handle, width, height, textureDesc.TextureFormat };
         m_Textures.PushBack( texture );
@@ -261,7 +260,7 @@ namespace smile::graphic
         bufferDesc.BindFlags = { rhi::BufferBindFlags::ConstantBuffer };
 
         rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
-        m_pDevice->CreateGPUBuffer( handle, bufferDesc );
+        m_Device.CreateGPUBuffer( handle, bufferDesc );
 
         const ConstantBuffer constantBuffer{ handle, bufferDesc.Size };
         m_ConstantBuffers.PushBack( constantBuffer );
@@ -270,7 +269,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyConstantBuffer( ConstantBuffer &constantBuffer )
     {
-        m_pDevice->DestroyGPUBuffer( constantBuffer.GetHandle() );
+        m_Device.DestroyGPUBuffer( constantBuffer.GetHandle() );
         m_ConstantBuffers.Erase( constantBuffer );
         constantBuffer.m_Handle = rhi::TextureHandle::NullHandle();
     }
@@ -293,7 +292,7 @@ namespace smile::graphic
         shaderDesc.TargetProfile = targetProfile;
 
         rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
-        m_pDevice->CreateShader( handle, shaderDesc, byteCode );
+        m_Device.CreateShader( handle, shaderDesc, byteCode );
 
         const VertexShader vertexShader{ handle };
         m_VertexShaders.PushBack( vertexShader );
@@ -335,7 +334,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyVertexShader( VertexShader &vertexShader )
     {
-        m_pDevice->DestroyShader( vertexShader.GetHandle() );
+        m_Device.DestroyShader( vertexShader.GetHandle() );
         m_VertexShaders.Erase( vertexShader );
 
         auto it = std::find_if( m_VertexShaderCache.begin(),
@@ -368,7 +367,7 @@ namespace smile::graphic
         shaderDesc.TargetProfile = targetProfile;
 
         rhi::ShaderHandle handle = m_ShaderHandleManager.CreateHandle();
-        m_pDevice->CreateShader( handle, shaderDesc, byteCode );
+        m_Device.CreateShader( handle, shaderDesc, byteCode );
 
         const PixelShader pixelShader{ handle };
         m_PixelShaders.PushBack( pixelShader );
@@ -409,7 +408,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyPixelShader( PixelShader &pixelShader )
     {
-        m_pDevice->DestroyShader( pixelShader.GetHandle() );
+        m_Device.DestroyShader( pixelShader.GetHandle() );
         m_PixelShaders.Erase( pixelShader );
 
         auto it = std::find_if( m_PixelShaderCache.begin(),
@@ -462,7 +461,7 @@ namespace smile::graphic
         rhi::FramebufferInfoExtented info{ desc };
 
         rhi::FramebufferHandle handle = m_FramebufferHandleManager.CreateHandle();
-        m_pDevice->CreateFramebuffer( handle, desc );
+        m_Device.CreateFramebuffer( handle, desc );
 
         const FramebufferAttachmentSetHandle attachmentSetHandle =
             m_FramebufferAttachmentSetHandleManager.CreateHandle();
@@ -506,7 +505,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyFramebuffer( Framebuffer &framebuffer )
     {
-        m_pDevice->DestroyFramebuffer( framebuffer.GetHandle() );
+        m_Device.DestroyFramebuffer( framebuffer.GetHandle() );
         m_Framebuffers.Erase( framebuffer );
         framebuffer.m_Handle = rhi::FramebufferHandle::NullHandle();
     }
@@ -514,7 +513,7 @@ namespace smile::graphic
     BindingLayout ResourceManager::CreateBindingLayout( const rhi::BindingLayout &layout )
     {
         rhi::BindingLayoutHandle handle = m_BindingLayoutHandleManager.CreateHandle();
-        m_pDevice->CreateBindingLayout( handle, layout );
+        m_Device.CreateBindingLayout( handle, layout );
 
         const BindingLayout bindingLayout{ handle };
         m_BindingLayouts.PushBack( bindingLayout );
@@ -523,7 +522,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyBindingLayout( BindingLayout &bindingLayout )
     {
-        m_pDevice->DestroyBindingLayout( bindingLayout.GetHandle() );
+        m_Device.DestroyBindingLayout( bindingLayout.GetHandle() );
         m_BindingLayouts.Erase( bindingLayout );
         bindingLayout.m_Handle = rhi::BindingLayoutHandle::NullHandle();
     }
@@ -533,7 +532,7 @@ namespace smile::graphic
         foundation::Flags< rhi::ShaderStage > shaderStage )
     {
         rhi::BindingSetHandle handle = m_BindingSetHandleManager.CreateHandle();
-        m_pDevice->CreateBindingSet( handle, descriptor, layout.GetHandle() );
+        m_Device.CreateBindingSet( handle, descriptor, layout.GetHandle() );
 
         const BindingSet bindingSet{ handle };
         m_BindingSets.PushBack( bindingSet );
@@ -542,7 +541,7 @@ namespace smile::graphic
 
     void ResourceManager::DestroyBindingSet( BindingSet &bindingSet )
     {
-        m_pDevice->DestroyBindingSet( bindingSet.GetHandle() );
+        m_Device.DestroyBindingSet( bindingSet.GetHandle() );
         m_BindingSets.Erase( bindingSet );
         bindingSet.m_Handle = rhi::BindingSetHandle::NullHandle();
     }
@@ -591,7 +590,7 @@ namespace smile::graphic
         }
 
         rhi::GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
-        m_pDevice->CreateGraphicsPipeline( handle, desc );
+        m_Device.CreateGraphicsPipeline( handle, desc );
 
         const GraphicsPipeline pipeline{ handle };
         m_GraphicsPipelines.PushBack( pipeline );
@@ -600,14 +599,14 @@ namespace smile::graphic
 
     void ResourceManager::DestroyGraphicsPipeline( GraphicsPipeline &pipeline )
     {
-        m_pDevice->DestroyGraphicsPipeline( pipeline.GetHandle() );
+        m_Device.DestroyGraphicsPipeline( pipeline.GetHandle() );
         m_GraphicsPipelines.Erase( pipeline );
         pipeline.m_Handle = rhi::GraphicsPipelineHandle::NullHandle();
     }
 
     rhi::Object ResourceManager::GetShaderResourceView( const Texture &texture )
     {
-        return m_pDevice->GetNativeView( texture.GetHandle(),
+        return m_Device.GetNativeView( texture.GetHandle(),
             rhi::ObjectType::D3D11_ShaderResourceView,
             texture.GetFormat(),
             rhi::TextureSubresourceSet{},

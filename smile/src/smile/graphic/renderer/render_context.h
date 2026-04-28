@@ -20,7 +20,6 @@ namespace smile::window
 
 namespace smile::graphic
 {
-    class ResourceManager;
     class VertexBuffer;
     class ConstantBuffer;
 
@@ -30,9 +29,9 @@ namespace smile::graphic
         RenderContext();
         ~RenderContext();
 
-        void Initialize( rhi::RendererBackendType api, ResourceManager *resourceManager );
+        void Initialize( rhi::RendererBackendType api );
 
-        void Clear( const Framebuffer &framebuffer,
+        void Clear( const FramebufferAttachmentSet &attachmentSet,
             const std::optional< math::Color > &color,
             std::optional< float > depth,
             std::optional< Uint8 > stencil );
@@ -61,7 +60,5 @@ namespace smile::graphic
       private:
         Scope< rhi::GraphicsDevice > m_pDevice;
         rhi::CommandList *m_pImmediateCommandList{ nullptr };
-
-        ResourceManager *m_ResourceManager{ nullptr };
     };
 }

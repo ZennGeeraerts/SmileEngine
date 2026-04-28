@@ -28,7 +28,7 @@ namespace smile::graphic
     class Renderer final
     {
       public:
-        Renderer( RenderEngine &engine, RenderContext &context ) noexcept;
+        Renderer( RenderContext &context, const ResourceManager &resourceManager ) noexcept;
         ~Renderer() = default;
 
         void BeginFrame( rhi::SwapChain *swapChain );
@@ -41,8 +41,8 @@ namespace smile::graphic
         }
 
       private:
-        RenderEngine &m_Engine;
         RenderContext &m_Context;
+        const ResourceManager &m_ResourceManager;
 
         RenderPassList m_RenderPassList;
 

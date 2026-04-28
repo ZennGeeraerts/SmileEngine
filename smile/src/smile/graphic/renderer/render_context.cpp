@@ -8,27 +8,25 @@
 #include "frame.h"
 #include "smile/core/window/window.h"
 
-#include "resource/resource_manager.h"
+#include "resource/vertex_buffer.h"
+#include "shader/constant_buffer.h"
 
 namespace smile::graphic
 {
     RenderContext::RenderContext() = default;
     RenderContext::~RenderContext() = default;
 
-    void RenderContext::Initialize( rhi::RendererBackendType api, ResourceManager *resourceManager )
+    void RenderContext::Initialize( rhi::RendererBackendType api )
     {
         m_pDevice = rhi::GraphicsDevice::Create( api );
         m_pImmediateCommandList = m_pDevice->CreateCommandList();
-        m_ResourceManager = resourceManager;
     }
 
-    void RenderContext::Clear( const Framebuffer &framebuffer,
+    void RenderContext::Clear( const FramebufferAttachmentSet &attachmentSet,
         const std::optional< math::Color > &color,
         std::optional< float > depth,
         std::optional< Uint8 > stencil )
     {
-        const auto &attachmentSet = m_ResourceManager->GetFramebufferAttachmentSet( framebuffer );
-
         if ( color.has_value() )
         {
             for ( const auto &colorAttachment : attachmentSet.ColorAttachments )

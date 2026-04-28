@@ -44,10 +44,8 @@ namespace smile::graphic
       public:
         using IDManager = primitive::HandleManager< Uint32, 24, 8 >;
 
-        MaterialSystem() = default;
+        MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept;
         ~MaterialSystem() = default;
-
-        void Initialize( RenderContext *context, ResourceManager *resourceManager ) noexcept;
 
         Material::Ref
         CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc );
@@ -68,7 +66,7 @@ namespace smile::graphic
         primitive::Array< MaterialData, s_MaxMaterialCount > m_MaterialData;
         IDManager m_IDManager;
 
-        RenderContext *m_Context;
-        ResourceManager *m_ResourceManager;
+        RenderContext &m_Context;
+        ResourceManager &m_ResourceManager;
     };
 }

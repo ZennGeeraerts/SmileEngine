@@ -22,8 +22,8 @@
 
 namespace smile::graphic
 {
-    Renderer::Renderer( RenderEngine &engine, RenderContext &context ) noexcept
-        : m_Engine{ engine }, m_Context{ context }
+    Renderer::Renderer( RenderContext &context, const ResourceManager &resourceManager ) noexcept
+        : m_Context{ context }, m_ResourceManager{ resourceManager }
     {
     }
 
@@ -41,7 +41,8 @@ namespace smile::graphic
     {
         SM_ASSERT( m_SwapChain );
 
-        m_Context.Clear( framebuffer, math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
+        const auto &attachmentSet = m_ResourceManager.GetFramebufferAttachmentSet( framebuffer );
+        m_Context.Clear( attachmentSet, math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
 
         m_RenderPassList.Execute( framebuffer, view );
     }

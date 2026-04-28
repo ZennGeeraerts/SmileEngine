@@ -15,10 +15,8 @@ namespace smile::graphic
     class TextureManager final
     {
       public:
-        TextureManager() = default;
+        TextureManager( ResourceManager &resourceManager ) noexcept;
         ~TextureManager() = default;
-
-        void Initialize( ResourceManager *resourceManager ) noexcept;
 
         TextureAsset::Ref GetTexture( asset::AssetHandle handle );
         TextureAsset::Ref GetTexture( const std::filesystem::path &path );
