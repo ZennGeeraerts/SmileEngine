@@ -11,6 +11,7 @@
 #include "resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "sprite/texture_manager.h"
+#include "material/material_manager.h"
 #include "material/material_system.h"
 #include "renderer.h"
 
@@ -52,6 +53,11 @@ namespace smile::graphic
             return *m_TextureManager;
         }
 
+        MaterialManager &GetMaterialManager() noexcept
+        {
+            return *m_MaterialManager;
+        }
+
         MaterialSystem &GetMaterialSystem() noexcept
         {
             return *m_MaterialSystem;
@@ -69,6 +75,7 @@ namespace smile::graphic
 
         ShaderLibrary m_ShaderLibrary;
         memory::Scope< TextureManager > m_TextureManager;
+        memory::Scope< MaterialManager > m_MaterialManager;
         memory::Scope< MaterialSystem > m_MaterialSystem;
 
         primitive::Vector< Scope< rhi::SwapChain > > m_SwapChains;

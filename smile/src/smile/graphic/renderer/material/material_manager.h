@@ -16,15 +16,14 @@
  */
 #pragma once
 
-#include "smile/common/foundation/singleton.h"
 #include "material_loader.h"
 
 namespace smile::graphic
 {
-    class MaterialManager final : public memory::Counted, public foundation::Singleton< MaterialManager >
+    class MaterialManager final
     {
       public:
-        MaterialManager() = default;
+        MaterialManager( TextureManager &textureManager, ShaderLibrary &shaderLibrary ) noexcept;
         ~MaterialManager() = default;
 
         MaterialAsset::Ref
@@ -44,5 +43,6 @@ namespace smile::graphic
       private:
         MaterialLoader m_MaterialLoader;
         primitive::HashMap< primitive::String, MaterialAsset::Ref > m_Materials;
+        TextureManager &m_TextureManager;
     };
 }

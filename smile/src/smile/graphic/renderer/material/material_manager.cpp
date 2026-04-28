@@ -18,10 +18,14 @@
 #include "material_manager.h"
 
 #include "smile/core/asset/asset_manager.h"
-#include "smile/graphic/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
+    MaterialManager::MaterialManager( TextureManager &textureManager, ShaderLibrary &shaderLibrary ) noexcept
+        : m_MaterialLoader{ textureManager, shaderLibrary }, m_TextureManager{ textureManager }
+    {
+    }
+
     MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name,
         const MaterialLayout &layout,
         const MaterialDescriptor &desc )
@@ -38,7 +42,7 @@ namespace smile::graphic
         MaterialLayout layout{};
         MaterialDescriptor desc{};
 
-        BuildMaterialLayoutAndDescriptor( program, layout, desc );
+        BuildMaterialLayoutAndDescriptor( m_TextureManager, program, layout, desc );
 
         return CreateMaterial( name, layout, desc );
     }

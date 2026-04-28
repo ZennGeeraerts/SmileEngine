@@ -48,7 +48,7 @@ namespace smile::graphic
         }
 
         void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
-        MaterialParameterValue GetParameter( const primitive::StringView name ) const;
+        const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
 
         void SetTextureBinding( const primitive::StringView name,
             const Texture &texture,
@@ -63,9 +63,4 @@ namespace smile::graphic
 
         friend class MaterialSystem;
     };
-
-    void BuildMaterialLayoutAndDescriptor( const TextureManager &textureManager,
-        Program::ConstRef program,
-        MaterialLayout &layout,
-        MaterialDescriptor &desc );
 }

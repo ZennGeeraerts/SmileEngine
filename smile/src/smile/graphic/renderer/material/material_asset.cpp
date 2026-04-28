@@ -17,7 +17,7 @@
 #include "smpch.h"
 #include "material_asset.h"
 
-#include "smile/graphic/sprite/texture_manager.h"
+#include "smile/graphic/renderer/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
@@ -25,33 +25,43 @@ namespace smile::graphic
     {
         if ( !m_Descriptor.Parameters.HasItemAtKey( name ) )
         {
-            SM_LOG_WARNING( "MaterialAsset::SetParameter > Could not find material parameter with name: {}", name );
+            SM_LOG_WARNING( "Material::SetParameter > Could not find material parameter with name: {}", name );
             return;
         }
+
+        // TODO: Once we have our own vector class that supports operator==
+        /*if ( m_Descriptor.Parameters[name] == data )
+            return;*/
 
         m_Descriptor.Parameters[name] = data;
     }
 
-    MaterialParameterValue MaterialAsset::GetParameter( const primitive::StringView name ) const
+    const MaterialParameterValue &MaterialAsset::GetParameter( const primitive::StringView name ) const
     {
         return m_Descriptor.Parameters.GetItemAtKey( name );
     }
 
-    void MaterialAsset::SetTextureBinding( const primitive::StringView name, TextureAsset::Ref texture )
+    void MaterialAsset::SetTextureBinding( const primitive::StringView name,
+        const Texture &texture,
+        const rhi::SamplerDescriptor &samplerDesc )
     {
         if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
         {
-            SM_LOG_WARNING( "MaterialAsset::SetTextureBinding > Could not find texture binding with name: {}", name );
+            SM_LOG_WARNING( "Material::SetTextureBinding > Could not find texture binding with name: {}", name );
             return;
         }
 
-        m_Descriptor.TextureBindings[name] = texture->GetTexture();
+        MaterialTextureBinding textureBinding{ texture, samplerDesc };
+
+        if ( m_Descriptor.TextureBindings[name] == textureBinding )
+            return;
+
+        m_Descriptor.TextureBindings[name] = std::move( textureBinding );
     }
 
-    TextureAsset::Ref MaterialAsset::GetTextureBinding( const primitive::StringView name ) const
+    const MaterialTextureBinding &MaterialAsset::GetTextureBinding( const primitive::StringView name ) const
     {
-        auto texture = m_Descriptor.TextureBindings.GetItemAtKey( name );
-        return TextureManager::GetInstance().GetTexture( texture );
+        return m_Descriptor.TextureBindings.GetItemAtKey( name );
     }
 
     static MaterialParameterType ConstantTypeToMaterialParamType( ConstantType constantType )
@@ -74,7 +84,10 @@ namespace smile::graphic
         }
     }
 
-    void BuildMaterialLayoutAndDescriptor( Program::ConstRef program, MaterialLayout &layout, MaterialDescriptor &desc )
+    void BuildMaterialLayoutAndDescriptor( const TextureManager &textureManager,
+        Program::ConstRef program,
+        MaterialLayout &layout,
+        MaterialDescriptor &desc )
     {
         const auto &cbDesc = program->GetConstantBufferDescriptor( "Material" );
         for ( const auto &cbItem : cbDesc )
@@ -96,8 +109,10 @@ namespace smile::graphic
 
                 layout.Textures.PushBack( std::move( textureBinding ) );
 
-                desc.TextureBindings.Insert(
-                    res.NamedElement.Name, TextureManager::GetInstance().GetFallBackTexture() );
+                auto fallbackTexture = textureManager.GetFallBackTexture()->GetTexture();
+                rhi::SamplerDescriptor fallbackSampler{};
+
+                desc.TextureBindings.Insert( res.NamedElement.Name, { fallbackTexture, fallbackSampler } );
             }
             else if ( res.NamedElement.Name == "Material" )
             {

@@ -27,8 +27,11 @@ namespace smile::graphic
         m_RenderContext.Initialize( m_API );
 
         m_ResourceManager = memory::CreateScope< ResourceManager >( *m_RenderContext.GetGraphicsDevice() );
-        m_TextureManager = memory::CreateScope< TextureManager >( *m_ResourceManager );
-        m_MaterialSystem = memory::CreateScope< MaterialSystem >( m_RenderContext, *m_ResourceManager );
+
+        m_TextureManager = memory::CreateScope< TextureManager >( GetResourceManager() );
+        m_MaterialManager = memory::CreateScope< MaterialManager >( GetTextureManager(), m_ShaderLibrary );
+
+        m_MaterialSystem = memory::CreateScope< MaterialSystem >( m_RenderContext, GetResourceManager() );
 
         m_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
         m_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
@@ -89,7 +92,7 @@ namespace smile::graphic
 
     Renderer *RenderEngine::CreateRenderer()
     {
-        auto renderer = memory::CreateScope< Renderer >( m_RenderContext, *m_ResourceManager );
+        auto renderer = memory::CreateScope< Renderer >( m_RenderContext, GetResourceManager() );
         m_Renderers.PushBack( std::move( renderer ) );
 
         return m_Renderers.GetLastItem().GetPointer();

@@ -44,6 +44,16 @@ namespace smile::graphic
             return m_AttachmentSetHandle;
         }
 
+        Uint32 GetWidth() const noexcept
+        {
+            return m_Width;
+        }
+
+        Uint32 GetHeight() const noexcept
+        {
+            return m_Height;
+        }
+
         [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const
         {
             return rhi::Viewport{

@@ -20,10 +20,13 @@
 
 namespace smile::graphic
 {
+    class TextureManager;
+    class ShaderLibrary;
+
     class MaterialLoader final : public asset::AssetLoader
     {
       public:
-        MaterialLoader();
+        MaterialLoader( TextureManager &textureManager, ShaderLibrary &shaderLib ) noexcept;
 
         asset::AssetType GetType() const override
         {
@@ -42,5 +45,7 @@ namespace smile::graphic
 
       private:
         const std::vector< std::filesystem::path > m_Extensions{ ".smmat" };
+        TextureManager &m_TextureManager;
+        ShaderLibrary &m_ShaderLibrary;
     };
 }

@@ -23,7 +23,8 @@
 
 namespace smile::graphic
 {
-    MaterialLoader::MaterialLoader()
+    MaterialLoader::MaterialLoader( TextureManager &textureManager, ShaderLibrary &shaderLib ) noexcept
+        : m_TextureManager{ textureManager }, m_ShaderLibrary{ shaderLib }
     {
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
@@ -50,7 +51,7 @@ namespace smile::graphic
 
         auto pMaterialAsset = memory::CreateRef< MaterialAsset >();
 
-        MaterialSerializer serializer{ pMaterialAsset };
+        MaterialSerializer serializer{ pMaterialAsset, m_TextureManager, m_ShaderLibrary };
         if ( !serializer.Deserialize( fs::Path{ path.string().c_str() } ) )
         {
             SM_LOG_WARNING( "MaterialLoader::LoadMaterial > Deserialization failed" );
