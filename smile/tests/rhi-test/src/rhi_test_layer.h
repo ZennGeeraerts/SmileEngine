@@ -23,9 +23,9 @@ namespace smile::graphic
         void OnImGuiRender() override;
 
       private:
-        Scope< rhi::GraphicsDevice > m_pDevice;
+        memory::Scope< rhi::GraphicsDevice > m_pDevice;
         rhi::CommandList *m_pImmediateCommandList;
-        Scope< rhi::SwapChain > m_pSwapChain;
+        memory::Scope< rhi::SwapChain > m_pSwapChain;
 
         rhi::TextureHandleManager m_TextureHandleManager;
 

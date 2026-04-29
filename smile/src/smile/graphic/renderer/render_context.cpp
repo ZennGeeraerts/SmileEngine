@@ -13,14 +13,12 @@
 
 namespace smile::graphic
 {
-    RenderContext::RenderContext() = default;
-    RenderContext::~RenderContext() = default;
-
-    void RenderContext::Initialize( rhi::RendererBackendType api )
+    RenderContext::RenderContext( rhi::CommandList &immediateCommandList ) noexcept
+        : m_ImmediateCommandList{ immediateCommandList }
     {
-        m_pDevice = rhi::GraphicsDevice::Create( api );
-        m_pImmediateCommandList = m_pDevice->CreateCommandList();
     }
+
+    RenderContext::~RenderContext() = default;
 
     void RenderContext::Clear( const FramebufferAttachmentSet &attachmentSet,
         const std::optional< math::Color > &color,
@@ -31,7 +29,7 @@ namespace smile::graphic
         {
             for ( const auto &colorAttachment : attachmentSet.ColorAttachments )
             {
-                m_pImmediateCommandList->ClearTexture( colorAttachment.Texture.GetHandle(),
+                m_ImmediateCommandList.ClearTexture( colorAttachment.Texture.GetHandle(),
                     rhi::TextureSubresourceSet{},
                     color.value_or( math::Color{ 0.0f, 0.0f, 0.0f, 1.0f } ) );
             }
@@ -39,19 +37,19 @@ namespace smile::graphic
 
         if ( depth.has_value() || stencil.has_value() )
         {
-            m_pImmediateCommandList->ClearDepthStencilTexture(
+            m_ImmediateCommandList.ClearDepthStencilTexture(
                 attachmentSet.DepthAttachment.Texture.GetHandle(), rhi::TextureSubresourceSet{}, depth, stencil );
         }
     }
 
     void RenderContext::Open()
     {
-        m_pImmediateCommandList->Open();
+        m_ImmediateCommandList.Open();
     }
 
     void RenderContext::Close()
     {
-        m_pImmediateCommandList->Close();
+        m_ImmediateCommandList.Close();
     }
 
     void RenderContext::SetGraphicsState( const GraphicsState &state )
@@ -80,29 +78,29 @@ namespace smile::graphic
                 state.IndexBuffer.IndexBuffer.GetHandle(), state.IndexBuffer.BufferFormat, state.IndexBuffer.Offset };
         }
 
-        m_pImmediateCommandList->SetGraphicsState( graphicsState );
+        m_ImmediateCommandList.SetGraphicsState( graphicsState );
     }
 
     void RenderContext::DrawIndexed( Uint32 indexCount )
     {
         rhi::DrawIndexedParams params{ indexCount, 0, 0 };
-        m_pImmediateCommandList->DrawIndexed( params );
+        m_ImmediateCommandList.DrawIndexed( params );
     }
 
     void RenderContext::Draw( Uint32 vertexCount )
     {
         rhi::DrawParams params{ vertexCount, 0 };
-        m_pImmediateCommandList->Draw( params );
+        m_ImmediateCommandList.Draw( params );
     }
 
     void RenderContext::FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const
     {
-        m_pImmediateCommandList->FillBuffer( vertexBuffer.GetHandle(), pData, vertexCount * vertexBuffer.GetStride() );
+        m_ImmediateCommandList.FillBuffer( vertexBuffer.GetHandle(), pData, vertexCount * vertexBuffer.GetStride() );
     }
 
     void RenderContext::FillConstantBuffer( const ConstantBuffer &constantBuffer ) const
     {
-        m_pImmediateCommandList->FillBuffer(
+        m_ImmediateCommandList.FillBuffer(
             constantBuffer.GetHandle(), constantBuffer.GetBuffer(), constantBuffer.GetSize() );
     }
 }

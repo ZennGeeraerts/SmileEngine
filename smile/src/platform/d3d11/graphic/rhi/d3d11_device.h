@@ -56,7 +56,7 @@ namespace smile::graphic::rhi
 
         CommandList *CreateCommandList() override;
 
-        Scope< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
+        memory::Scope< SwapChain > CreateSwapChain( const window::Window *pWindow ) override;
 
         void CreateGPUBuffer( GPUBufferHandle handle,
             const GPUBufferDescriptor &bufferDesc,
@@ -119,7 +119,7 @@ namespace smile::graphic::rhi
 
       private:
         D3D11Context m_Context{};
-        Scope< D3D11CommandList > m_pImmediateCommandList;
+        memory::Scope< D3D11CommandList > m_pImmediateCommandList;
 
         primitive::Array< D3D11Buffer, s_MaxBufferCount > m_GPUBuffers;
         primitive::Array< D3D11Texture, s_MaxTextureCount > m_Textures;

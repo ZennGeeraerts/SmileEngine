@@ -27,25 +27,24 @@ namespace smile::graphic
       public:
         static memory::Scope< RenderEngine > Create( rhi::RendererBackendType api );
 
-        void Initialize() noexcept;
-        void ShutDown() noexcept;
+        void LoadShaders();
 
         rhi::SwapChain *CreateSwapChain( const window::Window *window );
         Renderer *CreateRenderer();
 
         RenderContext &GetRenderContext() noexcept
         {
-            return m_RenderContext;
+            return *m_RenderContext;
         }
 
         ResourceManager &GetResourceManager() noexcept
         {
             return *m_ResourceManager;
         }
-        
+
         ShaderLibrary &GetShaderLibrary() noexcept
         {
-            return m_ShaderLibrary;
+            return *m_ShaderLibrary;
         }
 
         TextureManager &GetTextureManager() noexcept
@@ -65,22 +64,33 @@ namespace smile::graphic
 
         const Framebuffer &GetRenderTarget( rhi::SwapChain *const swapChain ) const;
 
-      public:
-        RenderEngine( rhi::RendererBackendType api ) noexcept;
+      private:
+        RenderEngine( rhi::RendererBackendType api,
+            memory::Scope< rhi::GraphicsDevice > device,
+            memory::Scope< RenderContext > context,
+            memory::Scope< ResourceManager > resourceManager,
+            memory::Scope< ShaderLibrary > shaderLibrary,
+            memory::Scope< TextureManager > textureManager,
+            memory::Scope< MaterialManager > materialManager,
+            memory::Scope< MaterialSystem > materialSystem ) noexcept;
 
       private:
         rhi::RendererBackendType m_API;
-        RenderContext m_RenderContext;
+        memory::Scope< rhi::GraphicsDevice > m_Device;
+        memory::Scope< RenderContext > m_RenderContext;
         memory::Scope< ResourceManager > m_ResourceManager;
 
-        ShaderLibrary m_ShaderLibrary;
+        memory::Scope< ShaderLibrary > m_ShaderLibrary;
         memory::Scope< TextureManager > m_TextureManager;
         memory::Scope< MaterialManager > m_MaterialManager;
         memory::Scope< MaterialSystem > m_MaterialSystem;
 
-        primitive::Vector< Scope< rhi::SwapChain > > m_SwapChains;
+        primitive::Vector< memory::Scope< rhi::SwapChain > > m_SwapChains;
         primitive::Vector< memory::Scope< Renderer > > m_Renderers;
 
         primitive::HashMap< rhi::SwapChain *, Framebuffer > m_RenderTargets;
+
+        template < typename Type, typename... Args >
+        friend constexpr memory::Scope< Type > memory::CreateScope( Args &&... );
     };
 }

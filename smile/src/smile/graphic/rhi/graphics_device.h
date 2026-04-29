@@ -6,6 +6,7 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/memory/scope.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "command_list.h"
 #include "object.h"
@@ -42,7 +43,7 @@ namespace smile::graphic::rhi
 
         virtual CommandList *CreateCommandList() = 0;
 
-        virtual Scope< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
+        virtual memory::Scope< SwapChain > CreateSwapChain( const window::Window *pWindow ) = 0;
 
         virtual void
         CreateGPUBuffer( GPUBufferHandle handle, const GPUBufferDescriptor &bufferDesc, void *pData = nullptr ) = 0;
@@ -94,7 +95,7 @@ namespace smile::graphic::rhi
         virtual void CreateFramebuffer( FramebufferHandle handle, const FramebufferDescriptor &descriptor ) = 0;
         virtual void DestroyFramebuffer( FramebufferHandle handle ) = 0;
 
-        static Scope< GraphicsDevice > Create( RendererBackendType backendType );
+        static memory::Scope< GraphicsDevice > Create( RendererBackendType backendType );
 
       protected:
         template < HasIsValidIndex CollectionType >

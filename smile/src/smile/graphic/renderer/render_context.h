@@ -26,10 +26,8 @@ namespace smile::graphic
     class RenderContext final
     {
       public:
-        RenderContext();
+        RenderContext( rhi::CommandList &immediateCommandList ) noexcept;
         ~RenderContext();
-
-        void Initialize( rhi::RendererBackendType api );
 
         void Clear( const FramebufferAttachmentSet &attachmentSet,
             const std::optional< math::Color > &color,
@@ -42,23 +40,16 @@ namespace smile::graphic
         void SetGraphicsState( const GraphicsState &state );
         void DrawIndexed( Uint32 indexCount );
         void Draw( Uint32 vertexCount );
-        void Present();
 
         void FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const;
         void FillConstantBuffer( const ConstantBuffer &constantBuffer ) const;
 
-        rhi::GraphicsDevice *GetGraphicsDevice() const
+        rhi::CommandList &GetImmediateCommandList() const
         {
-            return m_pDevice.get();
-        }
-
-        rhi::CommandList *GetImmediateCommandList() const
-        {
-            return m_pImmediateCommandList;
+            return m_ImmediateCommandList;
         }
 
       private:
-        Scope< rhi::GraphicsDevice > m_pDevice;
-        rhi::CommandList *m_pImmediateCommandList{ nullptr };
+        rhi::CommandList &m_ImmediateCommandList;
     };
 }

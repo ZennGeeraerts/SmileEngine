@@ -121,7 +121,6 @@ namespace smile::graphic
 
     void RendererTestLayer::OnDetach()
     {
-        m_RenderEngine->ShutDown();
     }
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )

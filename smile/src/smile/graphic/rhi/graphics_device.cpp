@@ -9,12 +9,12 @@
 
 namespace smile::graphic::rhi
 {
-    Scope< GraphicsDevice > GraphicsDevice::Create( RendererBackendType backendType )
+    memory::Scope< GraphicsDevice > GraphicsDevice::Create( RendererBackendType backendType )
     {
         switch ( backendType )
         {
             case RendererBackendType::D3D11:
-                return CreateScope< D3D11Device >();
+                return memory::CreateScope< D3D11Device >();
 
             default:
                 SM_ASSERT_MSG( false,

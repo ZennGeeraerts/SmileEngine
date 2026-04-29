@@ -11,47 +11,67 @@ namespace smile::graphic
 {
     memory::Scope< RenderEngine > RenderEngine::Create( rhi::RendererBackendType api )
     {
-        auto engine = memory::CreateScope< RenderEngine >( api );
+        auto device = rhi::GraphicsDevice::Create( api );
+        auto immediateCommandList = device->CreateCommandList();
 
-        engine->Initialize();
+        auto renderContext = memory::CreateScope< RenderContext >( *immediateCommandList );
+        auto resourceManager = memory::CreateScope< ResourceManager >( *device );
+
+        auto shaderLibrary = memory::CreateScope< ShaderLibrary >();
+        auto textureManager = memory::CreateScope< TextureManager >( *resourceManager );
+        auto materialManager = memory::CreateScope< MaterialManager >( *textureManager, *shaderLibrary );
+
+        auto materialSystem = memory::CreateScope< MaterialSystem >( *renderContext, *resourceManager );
+
+        auto engine = memory::CreateScope< RenderEngine >( api,
+            std::move( device ),
+            std::move( renderContext ),
+            std::move( resourceManager ),
+            std::move( shaderLibrary ),
+            std::move( textureManager ),
+            std::move( materialManager ),
+            std::move( materialSystem ) );
+
+        engine->LoadShaders();
 
         return engine;
     }
 
-    RenderEngine::RenderEngine( rhi::RendererBackendType api ) noexcept : m_API{ api }
+    RenderEngine::RenderEngine( rhi::RendererBackendType api,
+        memory::Scope< rhi::GraphicsDevice > device,
+        memory::Scope< RenderContext > context,
+        memory::Scope< ResourceManager > resourceManager,
+        memory::Scope< ShaderLibrary > shaderLibrary,
+        memory::Scope< TextureManager > textureManager,
+        memory::Scope< MaterialManager > materialManager,
+        memory::Scope< MaterialSystem > materialSystem ) noexcept
+        : m_API{ api },
+          m_Device{ std::move( device ) },
+          m_RenderContext{ std::move( context ) },
+          m_ResourceManager{ std::move( resourceManager ) },
+          m_ShaderLibrary{ std::move( shaderLibrary ) },
+          m_TextureManager{ std::move( textureManager ) },
+          m_MaterialManager{ std::move( materialManager ) },
+          m_MaterialSystem{ std::move( materialSystem ) }
     {
     }
 
-    void RenderEngine::Initialize() noexcept
+    void RenderEngine::LoadShaders()
     {
-        m_RenderContext.Initialize( m_API );
-
-        m_ResourceManager = memory::CreateScope< ResourceManager >( *m_RenderContext.GetGraphicsDevice() );
-
-        m_TextureManager = memory::CreateScope< TextureManager >( GetResourceManager() );
-        m_MaterialManager = memory::CreateScope< MaterialManager >( GetTextureManager(), m_ShaderLibrary );
-
-        m_MaterialSystem = memory::CreateScope< MaterialSystem >( m_RenderContext, GetResourceManager() );
-
-        m_ShaderLibrary.LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/pos_col.ps.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/col_tex.ps.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/skybox.vs.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/skybox.ps.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/pbr.vs.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/pbr.ps.smshader" );
-        m_ShaderLibrary.LoadShader( "resources/shaders/pbr_skinned.vs.smshader" );
-    }
-
-    void RenderEngine::ShutDown() noexcept
-    {
+        m_ShaderLibrary->LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/pos_col.ps.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/pos_tex.vs.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/col_tex.ps.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/skybox.vs.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/skybox.ps.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/pbr.vs.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/pbr.ps.smshader" );
+        m_ShaderLibrary->LoadShader( "resources/shaders/pbr_skinned.vs.smshader" );
     }
 
     rhi::SwapChain *RenderEngine::CreateSwapChain( const window::Window *window )
     {
-        auto device = m_RenderContext.GetGraphicsDevice();
-        auto swapChain = device->CreateSwapChain( window );
+        auto swapChain = m_Device->CreateSwapChain( window );
 
         rhi::Object nativeRenderTarget = swapChain->GetNativeRenderTarget();
 
@@ -82,7 +102,7 @@ namespace smile::graphic
         auto renderTarget = m_ResourceManager->CreateFramebuffer(
             { FramebufferAttachment{ colorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
 
-        auto swapChainPtr = swapChain.get();
+        auto swapChainPtr = swapChain.GetPointer();
 
         m_SwapChains.PushBack( std::move( swapChain ) );
         m_RenderTargets.Insert( swapChainPtr, std::move( renderTarget ) );
@@ -92,7 +112,7 @@ namespace smile::graphic
 
     Renderer *RenderEngine::CreateRenderer()
     {
-        auto renderer = memory::CreateScope< Renderer >( m_RenderContext, GetResourceManager() );
+        auto renderer = memory::CreateScope< Renderer >( *m_RenderContext, *m_ResourceManager );
         m_Renderers.PushBack( std::move( renderer ) );
 
         return m_Renderers.GetLastItem().GetPointer();

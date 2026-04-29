@@ -100,7 +100,6 @@ namespace smile::graphic
     void SpriteTestLayer::OnDetach()
     {
         Renderer2D::GetInstance().ShutDown();
-        m_RenderEngine->ShutDown();
     }
 
     void SpriteTestLayer::OnUpdate( primitive::Timestep deltaTime )

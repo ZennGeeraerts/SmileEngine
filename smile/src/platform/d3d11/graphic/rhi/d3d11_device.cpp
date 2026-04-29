@@ -50,7 +50,7 @@ namespace smile::graphic::rhi
             return;
         }
 
-        m_pImmediateCommandList = CreateScope< D3D11CommandList >( this, std::ref( m_Context ) );
+        m_pImmediateCommandList = memory::CreateScope< D3D11CommandList >( this, std::ref( m_Context ) );
     }
 
     D3D11Device::~D3D11Device()
@@ -80,12 +80,12 @@ namespace smile::graphic::rhi
 
     CommandList *D3D11Device::CreateCommandList()
     {
-        return m_pImmediateCommandList.get();
+        return m_pImmediateCommandList.GetPointer();
     }
 
-    Scope< SwapChain > D3D11Device::CreateSwapChain( const window::Window *pWindow )
+    memory::Scope< SwapChain > D3D11Device::CreateSwapChain( const window::Window *pWindow )
     {
-        auto pSwapChain = CreateScope< D3D11SwapChain >(
+        auto pSwapChain = memory::CreateScope< D3D11SwapChain >(
             pWindow, m_Context.pDevice, m_Context.pImmediateContext, m_Context.pDXGIFactory );
         pSwapChain->Create();
         return pSwapChain;

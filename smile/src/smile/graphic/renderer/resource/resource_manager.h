@@ -38,10 +38,7 @@ namespace smile::graphic
     {
       public:
         ResourceManager( rhi::GraphicsDevice &device ) noexcept;
-        
         ~ResourceManager();
-
-        void Initialize( rhi::GraphicsDevice *pDevice );
 
         VertexBuffer CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
         VertexBuffer CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
