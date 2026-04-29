@@ -45,18 +45,14 @@ namespace smile::graphic
         }
     }
 
-    void ForwardRenderPass::SetupMaterial( MaterialInstance::Ref materialInstance,
-        const rhi::RenderState &renderState,
-        GraphicsState &graphicsState )
+    void ForwardRenderPass::SetupMaterial( MaterialInstance::Ref materialInstance, GraphicsState &graphicsState )
     {
         m_MaterialSystem.UpdateMaterialInstance( materialInstance );
 
-        const PipelineKey key{ materialInstance, renderState };
-
-        auto it = m_Pipelines.FindItemAtKey( key );
+        auto it = m_Pipelines.FindItemAtKey( materialInstance );
         if ( it == m_Pipelines.end() )
         {
-            it = CreatePipeline( materialInstance, renderState );
+            it = CreatePipeline( materialInstance );
         }
 
         graphicsState.Pipeline = it.GetItem();
@@ -65,9 +61,8 @@ namespace smile::graphic
         graphicsState.Bindings.PushBack( materialData.Bindings );
     }
 
-    primitive::HashMap< ForwardRenderPass::PipelineKey, GraphicsPipeline >::Iterator ForwardRenderPass::CreatePipeline(
-        MaterialInstance::ConstRef materialInstance,
-        const rhi::RenderState &renderState )
+    primitive::HashMap< MaterialInstance::ConstRef, GraphicsPipeline >::Iterator ForwardRenderPass::CreatePipeline(
+        MaterialInstance::ConstRef materialInstance )
     {
         const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
 
@@ -83,10 +78,10 @@ namespace smile::graphic
         psoDesc.BindingLayouts.PushBack( m_BindingLayout );
         psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
 
-        psoDesc.RenderState = renderState;
+        psoDesc.RenderState = materialInstance->GetMaterial().GetLayout().RenderState;
 
         auto pipeline = m_ResourceManager.CreateGraphicsPipeline( psoDesc );
-        return m_Pipelines.Insert( PipelineKey{ materialInstance, renderState }, std::move( pipeline ) );
+        return m_Pipelines.Insert( materialInstance, std::move( pipeline ) );
     }
 
     void ForwardRenderPass::ShutDown()
@@ -126,7 +121,7 @@ namespace smile::graphic
             state.IndexBuffer = IndexBufferBinding{ drawItem.IndexBuffer, rhi::Format::R32_UINT, 0u };
             state.Bindings.PushBack( m_BindingSet );
 
-            SetupMaterial( drawItem.MaterialInstance, drawItem.RenderState, state );
+            SetupMaterial( drawItem.MaterialInstance, state );
 
             m_Context.SetGraphicsState( state );
             m_Context.DrawIndexed( drawItem.IndexBuffer.GetIndexCount() );

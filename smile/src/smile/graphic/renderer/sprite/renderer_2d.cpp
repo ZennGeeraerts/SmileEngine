@@ -88,11 +88,8 @@ namespace smile::graphic
 
     void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance::Ref materialInstance )
     {
-        DrawItem drawItem{ s_pStorage->QuadVertexBuffer,
-            s_pStorage->QuadIndexBuffer,
-            materialInstance,
-            worldTransform,
-            rhi::RenderState{} };
+        DrawItem drawItem{
+            s_pStorage->QuadVertexBuffer, s_pStorage->QuadIndexBuffer, materialInstance, worldTransform };
 
         s_pStorage->ForwardPass->Submit( std::move( drawItem ) );
     }

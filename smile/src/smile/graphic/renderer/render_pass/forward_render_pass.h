@@ -22,34 +22,6 @@ namespace smile::graphic
     class ForwardRenderPass final : public RenderPass
     {
       public:
-        struct PipelineKey final
-        {
-            PipelineKey( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState )
-                : MaterialInstance{ materialInstance }, RenderState{ renderState }
-            {
-            }
-
-            bool operator==( const PipelineKey &other ) const
-            {
-                return MaterialInstance->GetID() == other.MaterialInstance->GetID() && RenderState == other.RenderState;
-            }
-
-            bool operator!=( const PipelineKey &other ) const
-            {
-                return !( *this == other );
-            }
-
-            foundation::HashCode GetHashCode() const
-            {
-                foundation::HashCode hash = MaterialInstance->GetID().Hash();
-                hash = foundation::HashCombine( hash, std::hash< rhi::RenderState >{}( RenderState ) );
-                return hash;
-            }
-
-            MaterialInstance::ConstRef MaterialInstance;
-            rhi::RenderState RenderState;
-        };
-
         ForwardRenderPass( RenderContext &context,
             ResourceManager &resourceManager,
             MaterialSystem &materialSystem ) noexcept;
@@ -65,18 +37,16 @@ namespace smile::graphic
         void Submit( DrawItem &&drawItem );
 
       private:
-        void SetupMaterial( MaterialInstance::Ref materialInstance,
-            const rhi::RenderState &renderState,
-            GraphicsState &graphicsState );
+        void SetupMaterial( MaterialInstance::Ref materialInstance, GraphicsState &graphicsState );
 
-        primitive::HashMap< PipelineKey, GraphicsPipeline >::Iterator
-        CreatePipeline( MaterialInstance::ConstRef materialInstance, const rhi::RenderState &renderState );
+        primitive::HashMap< MaterialInstance::ConstRef, GraphicsPipeline >::Iterator CreatePipeline(
+            MaterialInstance::ConstRef materialInstance );
 
         void ClearDrawList();
 
       private:
         RenderCollector m_RenderCollector;
-        primitive::HashMap< PipelineKey, GraphicsPipeline > m_Pipelines;
+        primitive::HashMap< MaterialInstance::ConstRef, GraphicsPipeline > m_Pipelines;
         ConstantBuffer m_CameraCB;
         ConstantBuffer m_PerObjectCB;
         BindingLayout m_BindingLayout;
@@ -87,17 +57,5 @@ namespace smile::graphic
         RenderContext &m_Context;
         ResourceManager &m_ResourceManager;
         MaterialSystem &m_MaterialSystem;
-    };
-}
-
-namespace std
-{
-    template <>
-    struct hash< smile::graphic::ForwardRenderPass::PipelineKey >
-    {
-        smile::foundation::HashCode operator()( const smile::graphic::ForwardRenderPass::PipelineKey &key ) const
-        {
-            return key.GetHashCode();
-        }
     };
 }

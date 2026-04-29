@@ -9,7 +9,6 @@
 #include "material/material_instance.h"
 
 #include "smile/common/primitive/collection/vector.h"
-#include "smile/graphic/rhi/render_state.h"
 
 #include <DirectXMath.h>
 
@@ -21,7 +20,6 @@ namespace smile::graphic
         IndexBuffer IndexBuffer;
         MaterialInstance::Ref MaterialInstance;
         DirectX::XMFLOAT4X4 WorldTransform;
-        rhi::RenderState RenderState;
     };
 
     struct RenderCollector final

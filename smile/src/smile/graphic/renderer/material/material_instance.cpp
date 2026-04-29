@@ -9,7 +9,7 @@
 
 namespace smile::graphic
 {
-    MaterialInstance::MaterialInstance( ID id, const MaterialDescriptor &desc, const Material &material )
+    MaterialInstance::MaterialInstance( ID id, const MaterialDescriptor &desc, const Material &material ) noexcept
         : m_ID{ id },
           m_Descriptor{ desc },
           m_Material{ material },
@@ -17,7 +17,7 @@ namespace smile::graphic
     {
     }
 
-    void MaterialInstance::Clear()
+    void MaterialInstance::Clear() noexcept
     {
         // m_Params.Clear();
     }

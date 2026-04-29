@@ -28,10 +28,10 @@ namespace smile::graphic
         };
 
         // TODO: Create Link for material instead of const ref
-        MaterialInstance( ID id, const MaterialDescriptor &desc, const Material &material );
+        MaterialInstance( ID id, const MaterialDescriptor &desc, const Material &material ) noexcept;
         ~MaterialInstance() = default;
 
-        void Clear();
+        void Clear() noexcept;
 
         void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
         const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
@@ -42,27 +42,27 @@ namespace smile::graphic
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
-        const MaterialDescriptor &GetDescriptor() const
+        const MaterialDescriptor &GetDescriptor() const noexcept
         {
             return m_Descriptor;
         }
 
-        ID GetID() const
+        ID GetID() const noexcept
         {
             return m_ID;
         }
 
-        const Material &GetMaterial() const
+        const Material &GetMaterial() const noexcept
         {
             return m_Material;
         }
 
-        foundation::Flags< DirtyFlags > GetDirtyFlags() const
+        foundation::Flags< DirtyFlags > GetDirtyFlags() const noexcept
         {
             return m_DirtyFlags;
         }
 
-        void ClearDirtyFlags()
+        constexpr void ClearDirtyFlags() noexcept
         {
             m_DirtyFlags.ClearAll();
         }

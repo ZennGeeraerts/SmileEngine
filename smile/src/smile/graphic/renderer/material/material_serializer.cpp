@@ -124,6 +124,40 @@ namespace smile::graphic
             }
 
             yamlOutput << YAML::EndMap;
+
+            yamlOutput << YAML::BeginMap;
+            {
+                // Rasterizer
+                yamlOutput << YAML::Key << "RasterizerState";
+                yamlOutput << YAML::BeginMap;
+                {
+                    yamlOutput << YAML::Key << "CullMode" << YAML::Value
+                               << static_cast< Uint8 >( layout.RenderState.RasterizerState.CullMode );
+
+                    yamlOutput << YAML::Key << "FillMode" << YAML::Value
+                               << static_cast< Uint8 >( layout.RenderState.RasterizerState.FillMode );
+
+                    yamlOutput << YAML::Key << "EnableDepthClip" << YAML::Value
+                               << layout.RenderState.RasterizerState.EnableDepthClip;
+                }
+                yamlOutput << YAML::EndMap;
+
+                // DepthStencil
+                yamlOutput << YAML::Key << "DepthStencilState";
+                yamlOutput << YAML::BeginMap;
+                {
+                    yamlOutput << YAML::Key << "DepthEnable" << YAML::Value
+                               << layout.RenderState.DepthStencilState.DepthEnable;
+
+                    yamlOutput << YAML::Key << "DepthWriteMask" << YAML::Value
+                               << static_cast< Uint8 >( layout.RenderState.DepthStencilState.DepthWriteMask );
+
+                    yamlOutput << YAML::Key << "DepthComparissonFunc" << YAML::Value
+                               << static_cast< Uint8 >( layout.RenderState.DepthStencilState.DepthComparissonFunc );
+                }
+                yamlOutput << YAML::EndMap;
+            }
+            yamlOutput << YAML::EndMap;
         }
         yamlOutput << YAML::EndMap;
 
@@ -252,6 +286,57 @@ namespace smile::graphic
                 auto textureAsset = m_TextureManager.GetTexture( textureAssetHandle );
 
                 m_MaterialAsset->SetTextureBinding( texture.Name, textureAsset->GetTexture(), samplerDesc );
+            }
+        }
+
+        if ( data["RenderState"] )
+        {
+            rhi::RenderState &renderState = m_MaterialAsset->m_Layout.RenderState;
+
+            // Rasterizer
+            if ( data["RenderState"]["RasterizerState"] )
+            {
+                const auto &raster = data["RenderState"]["RasterizerState"];
+
+                if ( raster["CullMode"] )
+                {
+                    renderState.RasterizerState.CullMode =
+                        static_cast< rhi::CullMode >( raster["CullMode"].as< Uint8 >() );
+                }
+
+                if ( raster["FillMode"] )
+                {
+                    renderState.RasterizerState.FillMode =
+                        static_cast< rhi::FillMode >( raster["FillMode"].as< Uint8 >() );
+                }
+
+                if ( raster["EnableDepthClip"] )
+                {
+                    renderState.RasterizerState.EnableDepthClip = raster["EnableDepthClip"].as< bool >();
+                }
+            }
+
+            // DepthStencil
+            if ( data["RenderState"]["DepthStencilState"] )
+            {
+                const auto &depth = data["RenderState"]["DepthStencilState"];
+
+                if ( depth["DepthEnable"] )
+                {
+                    renderState.DepthStencilState.DepthEnable = depth["DepthEnable"].as< bool >();
+                }
+
+                if ( depth["DepthWriteMask"] )
+                {
+                    renderState.DepthStencilState.DepthWriteMask =
+                        static_cast< rhi::DepthWriteMask >( depth["DepthWriteMask"].as< Uint8 >() );
+                }
+
+                if ( depth["DepthComparissonFunc"] )
+                {
+                    renderState.DepthStencilState.DepthComparissonFunc =
+                        static_cast< rhi::DepthComparissonFunc >( depth["DepthComparissonFunc"].as< Uint8 >() );
+                }
             }
         }
 

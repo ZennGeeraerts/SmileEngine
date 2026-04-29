@@ -132,10 +132,7 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
-        rhi::RenderState renderState{};
-
-        forwardRenderPass.Submit(
-            { m_VertexBuffer, m_IndexBuffer, m_Material->GetDefaultInstance(), worldTransform, renderState } );
+        forwardRenderPass.Submit( { m_VertexBuffer, m_IndexBuffer, m_Material->GetDefaultInstance(), worldTransform } );
 
         m_View.OnUpdate();
 

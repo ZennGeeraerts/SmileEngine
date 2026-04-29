@@ -19,6 +19,7 @@
 #include "smile/common/foundation/flags.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/rhi/shader/shader_stage.h"
+#include "smile/graphic/rhi/render_state.h"
 
 namespace smile::graphic
 {
@@ -67,5 +68,7 @@ namespace smile::graphic
         Uint32 CbSlot;
         Count CbSize;
         foundation::Flags< rhi::ShaderStage > Visibility;
+
+        rhi::RenderState RenderState;
     };
 }
