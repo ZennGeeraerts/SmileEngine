@@ -1,69 +1,58 @@
-/*=============================================================================*/
-// Copyright 2022-2025 Smile Engine
-// Authors: Zenn Geeraerts
-/*=============================================================================*/
-#include "smpch.h"
-#include "material_instance.h"
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
 
+/**
+ * @file        material_instance.cpp
+ * @author      Zenn Geeraerts
+ * @created     30 April 2026
+ * @brief       Public facing API, object oriented material instance class
+ */
+#include "smpch.h"
 #include "material.h"
+
+#include "material_system.h"
 
 namespace smile::graphic
 {
-    MaterialInstance::MaterialInstance( ID id, const MaterialDescriptor &desc, const Material &material ) noexcept
-        : m_ID{ id },
-          m_Descriptor{ desc },
-          m_Material{ material },
-          m_DirtyFlags{ { DirtyFlags::Parameter, DirtyFlags::Texture } }
+    MaterialInstance::MaterialInstance( const detail::MaterialInstanceHandle handle,
+        detail::MaterialSystem *system ) noexcept
+        : m_Handle{ handle }, m_System{ system }
     {
     }
 
-    void MaterialInstance::Clear() noexcept
+    void MaterialInstance::SetParameter( const primitive::StringView name, const MaterialParameterValue &value )
     {
-        // m_Params.Clear();
-    }
-
-    void MaterialInstance::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
-    {
-        if ( !m_Descriptor.Parameters.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetParameter > Could not find material parameter with name: {}", name );
-            return;
-        }
-
-        // TODO: Once we have our own vector class that supports operator==
-        /*if ( m_Descriptor.Parameters[name] == data )
-            return;*/
-
-        m_Descriptor.Parameters[name] = data;
-        m_DirtyFlags.Set( DirtyFlags::Parameter );
+        m_System->GetMaterialInstance( m_Handle ).SetParameter( name, value );
     }
 
     const MaterialParameterValue &MaterialInstance::GetParameter( const primitive::StringView name ) const
     {
-        return m_Descriptor.Parameters.GetItemAtKey( name );
+        return m_System->GetMaterialInstance( m_Handle ).GetParameter( name );
     }
 
     void MaterialInstance::SetTextureBinding( const primitive::StringView name,
         const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
-        if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetTextureBinding > Could not find texture binding with name: {}", name );
-            return;
-        }
-
-        MaterialTextureBinding textureBinding{ texture, samplerDesc };
-
-        if ( m_Descriptor.TextureBindings[name] == textureBinding )
-            return;
-
-        m_Descriptor.TextureBindings[name] = std::move( textureBinding );
-        m_DirtyFlags.Set( DirtyFlags::Texture );
+        m_System->GetMaterialInstance( m_Handle ).SetTextureBinding( name, texture, samplerDesc );
     }
 
     const MaterialTextureBinding &MaterialInstance::GetTextureBinding( const primitive::StringView name ) const
     {
-        return m_Descriptor.TextureBindings.GetItemAtKey( name );
+        return m_System->GetMaterialInstance( m_Handle ).GetTextureBinding( name );
+    }
+
+    Material MaterialInstance::GetMaterial() const
+    {
+        const auto materialHandle = m_System->GetMaterialInstance( m_Handle ).GetMaterialHandle();
+
+        return { materialHandle, m_System };
     }
 }

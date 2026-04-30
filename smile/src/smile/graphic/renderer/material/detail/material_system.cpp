@@ -22,34 +22,56 @@
 #include "smile/common/memory/memory.h"
 #include "smile/common/foundation/traits/type_traits.h"
 
-namespace smile::graphic
+namespace smile::graphic::detail
 {
     MaterialSystem::MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept
         : m_Context{ context }, m_ResourceManager{ resourceManager }
     {
     }
 
-    Material::Ref MaterialSystem::CreateMaterial( const primitive::String &name,
+    MaterialSystem::~MaterialSystem()
+    {
+        for ( const auto materialHandle : m_MaterialHandleManager )
+        {
+            DestroyMaterial( materialHandle );
+        }
+
+        for ( const auto instanceHandle : m_MaterialInstanceHandleManager )
+        {
+            DestroyMaterialInstance( instanceHandle );
+        }
+    }
+
+    detail::MaterialHandle MaterialSystem::CreateMaterial( const primitive::String &name,
         const MaterialLayout &layout,
         const MaterialDescriptor &desc )
     {
-        Material::Ref material = memory::CreateRef< Material >( name, layout );
-        material->m_DefaultInstance = CreateMaterialInstance( material, desc );
+        auto handle = m_MaterialHandleManager.CreateHandle();
 
-        return material;
+        const auto instanceHandle = CreateMaterialInstance( handle, desc );
+        auto &material = m_Materials[handle.GetIndex()];
+        material = detail::Material{ name, layout, instanceHandle };
+
+        return handle;
     }
 
-    /*Material::Ref MaterialSystem::CreateMaterial( MaterialAsset::ConstRef asset )
+    void MaterialSystem::DestroyMaterial( const detail::MaterialHandle handle )
     {
-        return CreateMaterial( asset->GetName(), asset->GetLayout(), asset->GetDescriptor() );
-    }*/
+        const auto &material = GetMaterial( handle );
 
-    MaterialInstance::Ref MaterialSystem::CreateMaterialInstance( Material::ConstRef material,
+        DestroyMaterialInstance( material.GetDefaultInstance() );
+
+        m_MaterialHandleManager.DestroyHandle( handle );
+    }
+
+    MaterialInstanceHandle MaterialSystem::CreateMaterialInstance( const MaterialHandle materialHandle,
         const MaterialDescriptor &desc )
     {
-        MaterialInstance::ID id = m_IDManager.CreateHandle();
+        const auto handle = m_MaterialInstanceHandleManager.CreateHandle();
+        const auto index = handle.GetIndex();
 
-        MaterialInstance::Ref materialInstance = memory::CreateRef< MaterialInstance >( id, desc, *material );
+        auto &materialInstance = m_MaterialInstances[index];
+        materialInstance = detail::MaterialInstance{ handle, desc, materialHandle };
 
         MaterialData data;
         data.ShaderProgram = desc.ShaderProgram;
@@ -57,15 +79,29 @@ namespace smile::graphic
         const auto &cbDesc = desc.ShaderProgram->GetConstantBufferDescriptor( "Material" );
         data.ConstantBuffer = m_ResourceManager.CreateConstantBuffer( cbDesc );
 
-        m_MaterialInstances[id.GetIndex()] = materialInstance;
-        m_MaterialData[id.GetIndex()] = std::move( data );
+        m_MaterialData[index] = std::move( data );
 
-        return materialInstance;
+        return handle;
     }
 
-    void MaterialSystem::UpdateMaterialInstance( MaterialInstance::Ref materialInstance )
+    void MaterialSystem::DestroyMaterialInstance( const detail::MaterialInstanceHandle handle )
     {
-        auto dirtyFlags = materialInstance->GetDirtyFlags();
+        SM_ASSERT( IsMaterialInstanceValid( handle ) );
+
+        auto &materialData = m_MaterialData[handle.GetIndex()];
+
+        m_ResourceManager.DestroyConstantBuffer( materialData.ConstantBuffer );
+        m_ResourceManager.DestroyBindingLayout( materialData.BindingLayout );
+        m_ResourceManager.DestroyBindingSet( materialData.Bindings );
+
+        m_MaterialInstanceHandleManager.DestroyHandle( handle );
+    }
+
+    void MaterialSystem::UpdateMaterialInstance( const MaterialInstanceHandle handle )
+    {
+        auto &materialInstance = m_MaterialInstances[handle.GetIndex()];
+
+        auto dirtyFlags = materialInstance.GetDirtyFlags();
         if ( dirtyFlags.Has( MaterialInstance::DirtyFlags::Parameter ) )
         {
             UpdateConstantBuffer( materialInstance );
@@ -78,15 +114,17 @@ namespace smile::graphic
 
         if ( dirtyFlags.HasAny( { MaterialInstance::DirtyFlags::Parameter, MaterialInstance::DirtyFlags::Texture } ) )
         {
-            materialInstance->ClearDirtyFlags();
+            materialInstance.ClearDirtyFlags();
         }
     }
 
-    void MaterialSystem::UpdateConstantBuffer( MaterialInstance::Ref materialInstance )
+    void MaterialSystem::UpdateConstantBuffer( const MaterialInstance &materialInstance )
     {
-        const auto &layout = materialInstance->GetMaterial().GetLayout();
-        const auto &desc = materialInstance->GetDescriptor();
-        auto &data = m_MaterialData[materialInstance->GetID().GetIndex()];
+        const auto &material = GetMaterial( materialInstance.GetMaterialHandle() );
+        const auto &layout = material.GetLayout();
+        const auto &desc = materialInstance.GetDescriptor();
+
+        auto &data = m_MaterialData[materialInstance.GetHandle().GetIndex()];
 
         primitive::Vector< Byte > bufferData( layout.CbSize );
 
@@ -122,12 +160,13 @@ namespace smile::graphic
         m_Context.FillConstantBuffer( data.ConstantBuffer );
     }
 
-    void MaterialSystem::UpdateBindingSet( MaterialInstance::Ref materialInstance )
+    void MaterialSystem::UpdateBindingSet( const MaterialInstance &materialInstance )
     {
-        const auto &layout = materialInstance->GetMaterial().GetLayout();
-        const auto &desc = materialInstance->GetDescriptor();
+        const auto &material = GetMaterial( materialInstance.GetMaterialHandle() );
+        const auto &layout = material.GetLayout();
+        const auto &desc = materialInstance.GetDescriptor();
 
-        auto &data = m_MaterialData[materialInstance->GetID().GetIndex()];
+        auto &data = m_MaterialData[materialInstance.GetHandle().GetIndex()];
 
         rhi::BindingSetDescriptor bindingSetDesc{
             { rhi::BindingSetElement::CreateConstantBuffer( layout.CbSlot, data.ConstantBuffer.GetHandle() ) } };
@@ -148,16 +187,48 @@ namespace smile::graphic
             }
         }
 
+        if ( data.BindingLayout.IsValid() )
+            m_ResourceManager.DestroyBindingLayout( data.BindingLayout );
+
+        if ( data.Bindings.IsValid() )
+            m_ResourceManager.DestroyBindingSet( data.Bindings );
+
         m_ResourceManager.CreateBindingSetAndLayout(
             bindingSetDesc, layout.Visibility, data.BindingLayout, data.Bindings );
     }
 
-    const MaterialData &MaterialSystem::GetMaterialData( MaterialInstance::ConstRef materialInstance ) const
+    const MaterialData &MaterialSystem::GetMaterialData( const MaterialInstanceHandle handle ) const
     {
-        const auto id = materialInstance->GetID();
+        SM_ASSERT( IsMaterialInstanceValid( handle ) );
 
-        SM_ASSERT( m_IDManager.IsHandleActive( id ) );
+        return m_MaterialData[handle.GetIndex()];
+    }
 
-        return m_MaterialData[id.GetIndex()];
+    Material &MaterialSystem::GetMaterial( const MaterialHandle handle )
+    {
+        SM_ASSERT( IsMaterialValid( handle ) );
+
+        return m_Materials[handle.GetIndex()];
+    }
+
+    const Material &MaterialSystem::GetMaterial( const MaterialHandle handle ) const
+    {
+        SM_ASSERT( IsMaterialValid( handle ) );
+
+        return m_Materials[handle.GetIndex()];
+    }
+
+    MaterialInstance &MaterialSystem::GetMaterialInstance( const MaterialInstanceHandle handle )
+    {
+        SM_ASSERT( IsMaterialInstanceValid( handle ) );
+
+        return m_MaterialInstances[handle.GetIndex()];
+    }
+
+    const MaterialInstance &MaterialSystem::GetMaterialInstance( const MaterialInstanceHandle handle ) const
+    {
+        SM_ASSERT( IsMaterialInstanceValid( handle ) );
+
+        return m_MaterialInstances[handle.GetIndex()];
     }
 }

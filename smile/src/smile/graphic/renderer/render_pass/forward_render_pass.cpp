@@ -45,7 +45,7 @@ namespace smile::graphic
         }
     }
 
-    void ForwardRenderPass::SetupMaterial( MaterialInstance::Ref materialInstance, GraphicsState &graphicsState )
+    void ForwardRenderPass::SetupMaterial( MaterialInstance materialInstance, GraphicsState &graphicsState )
     {
         m_MaterialSystem.UpdateMaterialInstance( materialInstance );
 
@@ -58,13 +58,15 @@ namespace smile::graphic
         graphicsState.Pipeline = it.GetItem();
 
         const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
+
         graphicsState.Bindings.PushBack( materialData.Bindings );
     }
 
-    primitive::HashMap< MaterialInstance::ConstRef, GraphicsPipeline >::Iterator ForwardRenderPass::CreatePipeline(
-        MaterialInstance::ConstRef materialInstance )
+    primitive::HashMap< MaterialInstance, GraphicsPipeline >::Iterator ForwardRenderPass::CreatePipeline(
+        MaterialInstance materialInstance )
     {
         const auto &materialData = m_MaterialSystem.GetMaterialData( materialInstance );
+        const auto material = materialInstance.GetMaterial();
 
         GraphicsPipelineDescriptor psoDesc{};
         psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
@@ -78,7 +80,7 @@ namespace smile::graphic
         psoDesc.BindingLayouts.PushBack( m_BindingLayout );
         psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
 
-        psoDesc.RenderState = materialInstance->GetMaterial().GetLayout().RenderState;
+        psoDesc.RenderState = material.GetLayout().RenderState;
 
         auto pipeline = m_ResourceManager.CreateGraphicsPipeline( psoDesc );
         return m_Pipelines.Insert( materialInstance, std::move( pipeline ) );

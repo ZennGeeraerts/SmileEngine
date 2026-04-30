@@ -11,41 +11,30 @@
 /**
  * @file        material.h
  * @author      Zenn Geeraerts
- * @created     9 Januari 2026
- * @brief       Holds the data of a material and its default instance
+ * @created     30 April 2026
+ * @brief       Public facing API, object oriented material / instance class
  */
 #pragma once
 
+#include "detail/material_handle.h"
 #include "material_layout.h"
-#include "material_instance.h"
+#include "material_descriptor.h"
 
 namespace smile::graphic
 {
-    class TextureManager;
+    namespace detail
+    {
+        class MaterialSystem;
+    }
 
-    class Material final : public memory::Counted
+    class MaterialData;
+    class MaterialInstance;
+
+    class Material final
     {
       public:
-        using Ref = memory::Ref< Material >;
-        using ConstRef = memory::Ref< const Material >;
-
-        Material( const primitive::String &name, const MaterialLayout &layout );
-        ~Material() = default;
-
-        primitive::StringView GetName() const
-        {
-            return m_Name.AsStringView();
-        }
-
-        const MaterialLayout &GetLayout() const
-        {
-            return m_Layout;
-        }
-
-        MaterialInstance::Ref GetDefaultInstance() const
-        {
-            return m_DefaultInstance;
-        }
+        Material() = default;
+        Material( const detail::MaterialHandle handle, detail::MaterialSystem *system ) noexcept;
 
         void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
         const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
@@ -56,11 +45,78 @@ namespace smile::graphic
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
+        [[nodiscard]] bool IsValid() const noexcept
+        {
+            return m_Handle.IsValid();
+        }
+
+        MaterialInstance GetDefaultInstance() const;
+
+        const MaterialLayout &GetLayout() const;
+
       private:
-        primitive::String m_Name;
-        MaterialLayout m_Layout;
-        MaterialInstance::Ref m_DefaultInstance = nullptr;
+        detail::MaterialHandle m_Handle;
+        detail::MaterialSystem *m_System = nullptr;
 
         friend class MaterialSystem;
+    };
+
+    class MaterialInstance final
+    {
+      public:
+        MaterialInstance() = default;
+        MaterialInstance( const detail::MaterialInstanceHandle handle, detail::MaterialSystem *system ) noexcept;
+
+        void SetParameter( const primitive::StringView name, const MaterialParameterValue &value );
+
+        const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
+
+        void SetTextureBinding( const primitive::StringView name,
+            const Texture &texture,
+            const rhi::SamplerDescriptor &samplerDesc );
+
+        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
+
+        [[nodiscard]] bool IsValid() const noexcept
+        {
+            return m_Handle.IsValid();
+        }
+
+        Material GetMaterial() const;
+
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hashCode = m_Handle.Hash();
+            hashCode = foundation::HashCombine( hashCode, std::hash< detail::MaterialSystem * >{}( m_System ) );
+            return hashCode;
+        }
+
+        bool operator==( const MaterialInstance &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle && m_System == other.m_System;
+        }
+
+        bool operator!=( const MaterialInstance &other ) const noexcept
+        {
+            return !( *this == other );
+        }
+
+      private:
+        detail::MaterialInstanceHandle m_Handle;
+        detail::MaterialSystem *m_System = nullptr;
+
+        friend class MaterialSystem;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::MaterialInstance >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::MaterialInstance &instance ) const noexcept
+        {
+            return instance.GetHashCode();
+        }
     };
 }

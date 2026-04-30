@@ -4,22 +4,17 @@
 /*=============================================================================*/
 #pragma once
 
-#include "material_descriptor.h"
+#include "material_handle.h"
+#include "smile/graphic/renderer/material/material_descriptor.h"
 
 #include "smile/common/foundation/flags.h"
-#include "smile/common/memory/counted.h"
 
-namespace smile::graphic
+namespace smile::graphic::detail
 {
-    class Material;
-
-    class MaterialInstance final : public memory::Counted
+    class MaterialInstance final
     {
       public:
-        using Ref = memory::Ref< MaterialInstance >;
-        using ConstRef = memory::Ref< const MaterialInstance >;
-
-        using ID = primitive::Handle< Uint32, 24, 8 >;
+        using Handle = MaterialInstanceHandle;
 
         enum class DirtyFlags
         {
@@ -27,8 +22,12 @@ namespace smile::graphic
             Texture,
         };
 
-        // TODO: Create Link for material instead of const ref
-        MaterialInstance( ID id, const MaterialDescriptor &desc, const Material &material ) noexcept;
+        MaterialInstance() = default;
+
+        MaterialInstance( const MaterialInstanceHandle handle,
+            const MaterialDescriptor &desc,
+            const MaterialHandle materialHandle ) noexcept;
+
         ~MaterialInstance() = default;
 
         void Clear() noexcept;
@@ -42,19 +41,19 @@ namespace smile::graphic
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
+        Handle GetHandle() const noexcept
+        {
+            return m_Handle;
+        }
+
         const MaterialDescriptor &GetDescriptor() const noexcept
         {
             return m_Descriptor;
         }
 
-        ID GetID() const noexcept
+        MaterialHandle GetMaterialHandle() const noexcept
         {
-            return m_ID;
-        }
-
-        const Material &GetMaterial() const noexcept
-        {
-            return m_Material;
+            return m_MaterialHandle;
         }
 
         foundation::Flags< DirtyFlags > GetDirtyFlags() const noexcept
@@ -68,9 +67,9 @@ namespace smile::graphic
         }
 
       private:
+        Handle m_Handle;
         MaterialDescriptor m_Descriptor;
-        ID m_ID;
-        const Material &m_Material;
+        MaterialHandle m_MaterialHandle;
         foundation::Flags< DirtyFlags > m_DirtyFlags;
     };
 }

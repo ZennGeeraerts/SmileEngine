@@ -25,6 +25,7 @@ namespace smile::graphic
 {
     enum class MaterialParameterType
     {
+        Unknown,
         Float,
         Int,
         Bool,
@@ -36,15 +37,17 @@ namespace smile::graphic
     {
         struct Parameter final
         {
+            Parameter() = default;
+
             Parameter( const primitive::String &name, MaterialParameterType type, Uint32 offset, Count size ) noexcept
                 : Name{ name }, Type{ type }, Offset{ offset }, Size{ size }
             {
             }
 
             primitive::String Name;
-            MaterialParameterType Type;
-            Uint32 Offset;
-            Count Size;
+            MaterialParameterType Type = MaterialParameterType::Unknown;
+            Uint32 Offset = 0;
+            Count Size = 0;
 
             inline bool operator==( const Parameter &other ) const noexcept
             {

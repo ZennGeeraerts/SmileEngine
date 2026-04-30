@@ -7,7 +7,7 @@
 #include "render_pass.h"
 #include "smile/graphic/renderer/render_collector.h"
 #include "smile/graphic/renderer/graphics_state.h"
-#include "smile/graphic/renderer/material/material_instance.h"
+#include "smile/graphic/renderer/material/material.h"
 #include "smile/graphic/renderer/resource/graphics_pipeline.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/shader/binding_layout.h"
@@ -37,16 +37,16 @@ namespace smile::graphic
         void Submit( DrawItem &&drawItem );
 
       private:
-        void SetupMaterial( MaterialInstance::Ref materialInstance, GraphicsState &graphicsState );
+        void SetupMaterial( MaterialInstance materialInstance, GraphicsState &graphicsState );
 
-        primitive::HashMap< MaterialInstance::ConstRef, GraphicsPipeline >::Iterator CreatePipeline(
-            MaterialInstance::ConstRef materialInstance );
+        primitive::HashMap< MaterialInstance, GraphicsPipeline >::Iterator CreatePipeline(
+            MaterialInstance materialInstanceHandle );
 
         void ClearDrawList();
 
       private:
         RenderCollector m_RenderCollector;
-        primitive::HashMap< MaterialInstance::ConstRef, GraphicsPipeline > m_Pipelines;
+        primitive::HashMap< MaterialInstance, GraphicsPipeline > m_Pipelines;
         ConstantBuffer m_CameraCB;
         ConstantBuffer m_PerObjectCB;
         BindingLayout m_BindingLayout;

@@ -11,38 +11,52 @@
 /**
  * @file        material.cpp
  * @author      Zenn Geeraerts
- * @created     9 Januari 2026
- * @brief       Holds the data of a material and its default instance
+ * @created     30 April 2026
+ * @brief       Public facing API, object oriented material class
  */
 #include "smpch.h"
 #include "material.h"
 
+#include "material_system.h"
+
 namespace smile::graphic
 {
-    Material::Material( const primitive::String &name, const MaterialLayout &layout )
-        : m_Name{ name }, m_Layout{ layout }
+    Material::Material( const detail::MaterialHandle handle, detail::MaterialSystem *system ) noexcept
+        : m_Handle{ handle }, m_System{ system }
     {
     }
 
-    void Material::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
+    void Material::SetParameter( const primitive::StringView name, const MaterialParameterValue &value )
     {
-        m_DefaultInstance->SetParameter( name, data );
+        GetDefaultInstance().SetParameter( name, value );
     }
 
     const MaterialParameterValue &Material::GetParameter( const primitive::StringView name ) const
     {
-        return m_DefaultInstance->GetParameter( name );
+        return GetDefaultInstance().GetParameter( name );
     }
 
     void Material::SetTextureBinding( const primitive::StringView name,
         const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
-        m_DefaultInstance->SetTextureBinding( name, texture, samplerDesc );
+        GetDefaultInstance().SetTextureBinding( name, texture, samplerDesc );
     }
 
     const MaterialTextureBinding &Material::GetTextureBinding( const primitive::StringView name ) const
     {
-        return m_DefaultInstance->GetTextureBinding( name );
+        return GetDefaultInstance().GetTextureBinding( name );
+    }
+
+    MaterialInstance Material::GetDefaultInstance() const
+    {
+        const auto handle = m_System->GetMaterial( m_Handle ).GetDefaultInstance();
+
+        return { handle, m_System };
+    }
+
+    const MaterialLayout &Material::GetLayout() const
+    {
+        return m_System->GetMaterial( m_Handle ).GetLayout();
     }
 }

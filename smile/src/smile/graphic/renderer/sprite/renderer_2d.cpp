@@ -75,7 +75,7 @@ namespace smile::graphic
     void Renderer2D::DrawSprite( const DirectX::XMFLOAT2 &position,
         float rotation,
         const DirectX::XMFLOAT2 &size,
-        MaterialInstance::Ref materialInstance )
+        MaterialInstance materialInstance )
     {
         DirectX::XMMATRIX worldTransformMat = DirectX::XMMatrixScaling( size.x, size.y, 1 ) *
                                               DirectX::XMMatrixRotationRollPitchYaw( 0, 0, rotation ) *
@@ -86,7 +86,7 @@ namespace smile::graphic
         DrawSprite( worldTransform, materialInstance );
     }
 
-    void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance::Ref materialInstance )
+    void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance materialInstance )
     {
         DrawItem drawItem{
             s_pStorage->QuadVertexBuffer, s_pStorage->QuadIndexBuffer, materialInstance, worldTransform };

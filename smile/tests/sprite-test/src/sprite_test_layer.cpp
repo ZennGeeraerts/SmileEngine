@@ -109,7 +109,7 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
-        renderer2D.DrawSprite( worldTransform, m_Material->GetDefaultInstance() );
+        renderer2D.DrawSprite( worldTransform, m_Material.GetDefaultInstance() );
 
         m_View.OnUpdate();
 

@@ -11,62 +11,68 @@
 /**
  * @file        material_system.h
  * @author      Zenn Geeraerts
- * @created     29 Januari 2026
- * @brief       Manages gpu resources and updates of material
+ * @created     30 April 2026
+ * @brief       Public material system API
  */
 #pragma once
 
-#include "smile/common/primitive/handle_manager.h"
-#include "smile/common/primitive/collection/array.h"
-
-#include "smile/graphic/renderer/shader/binding_layout.h"
-#include "smile/graphic/renderer/shader/binding_set.h"
-#include "smile/graphic/renderer/shader/constant_buffer.h"
-
+#include "detail/material_system.h"
 #include "material.h"
-// #include "material_asset.h"
+#include "material_asset.h"
 
 namespace smile::graphic
 {
-    struct MaterialData final
-    {
-        Program::ConstRef ShaderProgram;
-
-        ConstantBuffer ConstantBuffer;
-        BindingLayout BindingLayout;
-        BindingSet Bindings;
-    };
-
-    class RenderContext;
-
-    class MaterialSystem final
+    class MaterialSystem final : public detail::MaterialSystem
     {
       public:
-        using IDManager = primitive::HandleManager< Uint32, 24, 8 >;
+        MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept
+            : detail::MaterialSystem{ context, resourceManager }
+        {
+        }
 
-        MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept;
-        ~MaterialSystem() = default;
+        Material
+        CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc )
+        {
+            const auto handle = detail::MaterialSystem::CreateMaterial( name, layout, desc );
 
-        Material::Ref
-        CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc );
-        // Material::Ref CreateMaterial( MaterialAsset::ConstRef asset );
+            return { handle, this };
+        }
 
-        MaterialInstance::Ref CreateMaterialInstance( Material::ConstRef material, const MaterialDescriptor &desc );
+        Material CreateMaterial( MaterialAsset::ConstRef asset )
+        {
+            const auto handle =
+                detail::MaterialSystem::CreateMaterial( asset->GetName(), asset->GetLayout(), asset->GetDescriptor() );
 
-        void UpdateMaterialInstance( MaterialInstance::Ref materialInstance );
+            return { handle, this };
+        }
 
-        const MaterialData &GetMaterialData( MaterialInstance::ConstRef materialInstance ) const;
+        void DestroyMaterial( Material &material )
+        {
+            detail::MaterialSystem::DestroyMaterial( material.m_Handle );
+            material.m_Handle = detail::MaterialHandle::NullHandle();
+        }
 
-      private:
-        void UpdateConstantBuffer( MaterialInstance::Ref materialInstance );
-        void UpdateBindingSet( MaterialInstance::Ref materialInstance );
+        MaterialInstance CreateMaterialInstance( const Material material, const MaterialDescriptor &desc )
+        {
+            const auto handle = detail::MaterialSystem::CreateMaterialInstance( material.m_Handle, desc );
 
-        static constexpr Uint16 s_MaxMaterialCount = ( 4 << 10 );
-        primitive::Array< MaterialInstance::Ref, s_MaxMaterialCount > m_MaterialInstances;
-        primitive::Array< MaterialData, s_MaxMaterialCount > m_MaterialData;
-        IDManager m_IDManager;
+            return { handle, this };
+        }
 
-        RenderContext &m_Context;
-        ResourceManager &m_ResourceManager;
+        void DestroyMaterialInstance( MaterialInstance &instance )
+        {
+            detail::MaterialSystem::DestroyMaterialInstance( instance.m_Handle );
+            instance.m_Handle = detail::MaterialInstanceHandle::NullHandle();
+        }
+
+        void UpdateMaterialInstance( const MaterialInstance instance )
+        {
+            detail::MaterialSystem::UpdateMaterialInstance( instance.m_Handle );
+        }
+
+        const MaterialData &GetMaterialData( const MaterialInstance instance ) const
+        {
+            return detail::MaterialSystem::GetMaterialData( instance.m_Handle );
+        }
     };
 }

@@ -42,6 +42,6 @@ namespace smile::graphic
         rhi::SwapChain *m_SwapChain;
 
         View m_View;
-        Material::Ref m_Material;
+        Material m_Material;
     };
 }

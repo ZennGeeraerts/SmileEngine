@@ -46,6 +46,6 @@ namespace smile::graphic
         View m_View;
         VertexBuffer m_VertexBuffer;
         IndexBuffer m_IndexBuffer;
-        Material::Ref m_Material;
+        Material m_Material;
     };
 }

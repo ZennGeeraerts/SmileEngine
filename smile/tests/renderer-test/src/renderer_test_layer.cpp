@@ -125,14 +125,13 @@ namespace smile::graphic
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        auto &forwardRenderPass = m_Renderer->GetRenderPassList().Get< ForwardRenderPass >();
-
-        m_Material->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
+        m_Material.SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
 
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
-        forwardRenderPass.Submit( { m_VertexBuffer, m_IndexBuffer, m_Material->GetDefaultInstance(), worldTransform } );
+        auto &forwardRenderPass = m_Renderer->GetRenderPassList().Get< ForwardRenderPass >();
+        forwardRenderPass.Submit( { m_VertexBuffer, m_IndexBuffer, m_Material.GetDefaultInstance(), worldTransform } );
 
         m_View.OnUpdate();
 

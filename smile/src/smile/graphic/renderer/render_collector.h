@@ -6,7 +6,7 @@
 
 #include "resource/vertex_buffer.h"
 #include "resource/index_buffer.h"
-#include "material/material_instance.h"
+#include "material/material.h"
 
 #include "smile/common/primitive/collection/vector.h"
 
@@ -18,7 +18,7 @@ namespace smile::graphic
     {
         VertexBuffer VertexBuffer;
         IndexBuffer IndexBuffer;
-        MaterialInstance::Ref MaterialInstance;
+        MaterialInstance MaterialInstance;
         DirectX::XMFLOAT4X4 WorldTransform;
     };
 
