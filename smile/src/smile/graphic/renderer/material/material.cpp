@@ -28,35 +28,40 @@ namespace smile::graphic
 
     void Material::SetParameter( const primitive::StringView name, const MaterialParameterValue &value )
     {
-        GetDefaultInstance().SetParameter( name, value );
+        m_System->SetMaterialParameter( m_Handle, name, value );
     }
 
     const MaterialParameterValue &Material::GetParameter( const primitive::StringView name ) const
     {
-        return GetDefaultInstance().GetParameter( name );
+        return m_System->GetMaterialParameter( m_Handle, name );
     }
 
     void Material::SetTextureBinding( const primitive::StringView name,
         const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
-        GetDefaultInstance().SetTextureBinding( name, texture, samplerDesc );
+        m_System->SetMaterialTextureBinding( m_Handle, name, texture, samplerDesc );
     }
 
     const MaterialTextureBinding &Material::GetTextureBinding( const primitive::StringView name ) const
     {
-        return GetDefaultInstance().GetTextureBinding( name );
+        return m_System->GetMaterialTextureBinding( m_Handle, name );
+    }
+
+    bool Material::IsValid() const noexcept
+    {
+        return m_System->IsMaterialValid( m_Handle );
     }
 
     MaterialInstance Material::GetDefaultInstance() const
     {
-        const auto handle = m_System->GetMaterial( m_Handle ).GetDefaultInstance();
+        const auto handle = m_System->GetDefaultInstanceHandle( m_Handle );
 
         return { handle, m_System };
     }
 
     const MaterialLayout &Material::GetLayout() const
     {
-        return m_System->GetMaterial( m_Handle ).GetLayout();
+        return m_System->GetMaterialLayout( m_Handle );
     }
 }

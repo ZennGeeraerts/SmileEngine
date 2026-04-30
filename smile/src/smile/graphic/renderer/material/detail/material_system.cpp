@@ -231,4 +231,88 @@ namespace smile::graphic::detail
 
         return m_MaterialInstances[handle.GetIndex()];
     }
+
+    MaterialInstance &MaterialSystem::GetDefaultInstance( const MaterialHandle handle )
+    {
+        const auto instanceHandle = GetMaterial( handle ).GetDefaultInstance();
+
+        return GetMaterialInstance( instanceHandle );
+    }
+
+    const MaterialInstance &MaterialSystem::GetDefaultInstance( const MaterialHandle handle ) const
+    {
+        const auto instanceHandle = GetMaterial( handle ).GetDefaultInstance();
+
+        return GetMaterialInstance( instanceHandle );
+    }
+
+    void MaterialSystem::SetMaterialParameter( const MaterialHandle handle,
+        const primitive::StringView name,
+        const MaterialParameterValue &value )
+    {
+        GetDefaultInstance( handle ).SetParameter( name, value );
+    }
+
+    const MaterialParameterValue &MaterialSystem::GetMaterialParameter( const MaterialHandle handle,
+        const primitive::StringView name ) const
+    {
+        return GetDefaultInstance( handle ).GetParameter( name );
+    }
+
+    void MaterialSystem::SetMaterialTextureBinding( const MaterialHandle handle,
+        const primitive::StringView name,
+        const Texture &texture,
+        const rhi::SamplerDescriptor &samplerDesc )
+    {
+        GetDefaultInstance( handle ).SetTextureBinding( name, texture, samplerDesc );
+    }
+
+    const MaterialTextureBinding &MaterialSystem::GetMaterialTextureBinding( const MaterialHandle handle,
+        const primitive::StringView name ) const
+    {
+        return GetDefaultInstance( handle ).GetTextureBinding( name );
+    }
+
+    void MaterialSystem::SetMaterialInstanceParameter( const MaterialInstanceHandle handle,
+        const primitive::StringView name,
+        const MaterialParameterValue &value )
+    {
+        GetMaterialInstance( handle ).SetParameter( name, value );
+    }
+
+    const MaterialParameterValue &MaterialSystem::GetMaterialInstanceParameter( const MaterialInstanceHandle handle,
+        const primitive::StringView name ) const
+    {
+        return GetMaterialInstance( handle ).GetParameter( name );
+    }
+
+    void MaterialSystem::SetMaterialInstanceTextureBinding( const MaterialInstanceHandle handle,
+        const primitive::StringView name,
+        const Texture &texture,
+        const rhi::SamplerDescriptor &samplerDesc )
+    {
+        GetMaterialInstance( handle ).SetTextureBinding( name, texture, samplerDesc );
+    }
+
+    const MaterialTextureBinding &MaterialSystem::GetMaterialInstanceTextureBinding(
+        const MaterialInstanceHandle handle,
+        const primitive::StringView name ) const
+    {
+        return GetMaterialInstance( handle ).GetTextureBinding( name );
+    }
+
+    MaterialInstanceHandle MaterialSystem::GetDefaultInstanceHandle( const MaterialHandle handle ) const
+    {
+        return GetMaterial( handle ).GetDefaultInstance();
+    }
+
+    const MaterialLayout &MaterialSystem::GetMaterialLayout( const MaterialHandle handle ) const
+    {
+        return GetMaterial( handle ).GetLayout();
+    }
+
+    MaterialHandle MaterialSystem::GetMaterialHandle( const MaterialInstanceHandle instanceHandle ) const
+    {
+        return GetMaterialInstance( instanceHandle ).GetMaterialHandle();
+    }
 }

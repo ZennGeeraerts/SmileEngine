@@ -42,19 +42,12 @@ namespace smile::graphic
 
     namespace detail
     {
-        class MaterialSystem
+        class MaterialSystem final
         {
           public:
             MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept;
             virtual ~MaterialSystem();
 
-            Material &GetMaterial( const MaterialHandle handle );
-            const Material &GetMaterial( const MaterialHandle handle ) const;
-
-            MaterialInstance &GetMaterialInstance( const MaterialInstanceHandle handle );
-            const MaterialInstance &GetMaterialInstance( const MaterialInstanceHandle handle ) const;
-
-          protected:
             MaterialHandle CreateMaterial( const primitive::String &name,
                 const MaterialLayout &layout,
                 const MaterialDescriptor &desc );
@@ -70,9 +63,36 @@ namespace smile::graphic
 
             const MaterialData &GetMaterialData( const MaterialInstanceHandle handle ) const;
 
-          private:
-            void UpdateConstantBuffer( const MaterialInstance &materialInstance );
-            void UpdateBindingSet( const MaterialInstance &materialInstance );
+            // Wrapper
+            void SetMaterialParameter( const MaterialHandle handle,
+                const primitive::StringView name,
+                const MaterialParameterValue &value );
+
+            const MaterialParameterValue &GetMaterialParameter( const MaterialHandle handle,
+                const primitive::StringView name ) const;
+
+            void SetMaterialTextureBinding( const MaterialHandle handle,
+                const primitive::StringView name,
+                const Texture &texture,
+                const rhi::SamplerDescriptor &samplerDesc );
+
+            const MaterialTextureBinding &GetMaterialTextureBinding( const MaterialHandle handle,
+                const primitive::StringView name ) const;
+
+            void SetMaterialInstanceParameter( const MaterialInstanceHandle handle,
+                const primitive::StringView name,
+                const MaterialParameterValue &value );
+
+            const MaterialParameterValue &GetMaterialInstanceParameter( const MaterialInstanceHandle handle,
+                const primitive::StringView name ) const;
+
+            void SetMaterialInstanceTextureBinding( const MaterialInstanceHandle handle,
+                const primitive::StringView name,
+                const Texture &texture,
+                const rhi::SamplerDescriptor &samplerDesc );
+
+            const MaterialTextureBinding &GetMaterialInstanceTextureBinding( const MaterialInstanceHandle handle,
+                const primitive::StringView name ) const;
 
             [[nodiscard]] bool IsMaterialValid( const MaterialHandle handle ) const noexcept
             {
@@ -83,6 +103,23 @@ namespace smile::graphic
             {
                 return handle.IsValid() && m_MaterialInstanceHandleManager.IsHandleActive( handle );
             }
+
+            MaterialInstanceHandle GetDefaultInstanceHandle( const MaterialHandle handle ) const;
+            const MaterialLayout &GetMaterialLayout( const MaterialHandle handle ) const;
+            MaterialHandle GetMaterialHandle( const MaterialInstanceHandle instanceHandle ) const;
+
+          private:
+            void UpdateConstantBuffer( const MaterialInstance &materialInstance );
+            void UpdateBindingSet( const MaterialInstance &materialInstance );
+
+            Material &GetMaterial( const MaterialHandle handle );
+            const Material &GetMaterial( const MaterialHandle handle ) const;
+
+            MaterialInstance &GetMaterialInstance( const MaterialInstanceHandle handle );
+            const MaterialInstance &GetMaterialInstance( const MaterialInstanceHandle handle ) const;
+
+            MaterialInstance &GetDefaultInstance( const MaterialHandle handle );
+            const MaterialInstance &GetDefaultInstance( const MaterialHandle handle ) const;
 
             static constexpr Uint16 s_MaxMaterialCount = ( 4 << 10 );
 

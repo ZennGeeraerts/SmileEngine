@@ -45,10 +45,7 @@ namespace smile::graphic
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
-        [[nodiscard]] bool IsValid() const noexcept
-        {
-            return m_Handle.IsValid();
-        }
+        [[nodiscard]] bool IsValid() const noexcept;
 
         MaterialInstance GetDefaultInstance() const;
 
@@ -77,10 +74,7 @@ namespace smile::graphic
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
-        [[nodiscard]] bool IsValid() const noexcept
-        {
-            return m_Handle.IsValid();
-        }
+        [[nodiscard]] bool IsValid() const noexcept;
 
         Material GetMaterial() const;
 

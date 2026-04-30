@@ -29,29 +29,34 @@ namespace smile::graphic
 
     void MaterialInstance::SetParameter( const primitive::StringView name, const MaterialParameterValue &value )
     {
-        m_System->GetMaterialInstance( m_Handle ).SetParameter( name, value );
+        m_System->SetMaterialInstanceParameter( m_Handle, name, value );
     }
 
     const MaterialParameterValue &MaterialInstance::GetParameter( const primitive::StringView name ) const
     {
-        return m_System->GetMaterialInstance( m_Handle ).GetParameter( name );
+        return m_System->GetMaterialInstanceParameter( m_Handle, name );
     }
 
     void MaterialInstance::SetTextureBinding( const primitive::StringView name,
         const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
-        m_System->GetMaterialInstance( m_Handle ).SetTextureBinding( name, texture, samplerDesc );
+        m_System->SetMaterialInstanceTextureBinding( m_Handle, name, texture, samplerDesc );
     }
 
     const MaterialTextureBinding &MaterialInstance::GetTextureBinding( const primitive::StringView name ) const
     {
-        return m_System->GetMaterialInstance( m_Handle ).GetTextureBinding( name );
+        return m_System->GetMaterialInstanceTextureBinding( m_Handle, name );
+    }
+
+    bool MaterialInstance::IsValid() const noexcept
+    {
+        return m_System->IsMaterialInstanceValid( m_Handle );
     }
 
     Material MaterialInstance::GetMaterial() const
     {
-        const auto materialHandle = m_System->GetMaterialInstance( m_Handle ).GetMaterialHandle();
+        const auto materialHandle = m_System->GetMaterialHandle( m_Handle );
 
         return { materialHandle, m_System };
     }

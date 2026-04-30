@@ -22,57 +22,60 @@
 
 namespace smile::graphic
 {
-    class MaterialSystem final : public detail::MaterialSystem
+    class MaterialSystem final
     {
       public:
         MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept
-            : detail::MaterialSystem{ context, resourceManager }
+            : m_Internal{ context, resourceManager }
         {
         }
 
         Material
         CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc )
         {
-            const auto handle = detail::MaterialSystem::CreateMaterial( name, layout, desc );
+            const auto handle = m_Internal.CreateMaterial( name, layout, desc );
 
-            return { handle, this };
+            return { handle, &m_Internal };
         }
 
         Material CreateMaterial( MaterialAsset::ConstRef asset )
         {
             const auto handle =
-                detail::MaterialSystem::CreateMaterial( asset->GetName(), asset->GetLayout(), asset->GetDescriptor() );
+                m_Internal.CreateMaterial( asset->GetName(), asset->GetLayout(), asset->GetDescriptor() );
 
-            return { handle, this };
+            return { handle, &m_Internal };
         }
 
         void DestroyMaterial( Material &material )
         {
-            detail::MaterialSystem::DestroyMaterial( material.m_Handle );
+            m_Internal.DestroyMaterial( material.m_Handle );
             material.m_Handle = detail::MaterialHandle::NullHandle();
         }
 
         MaterialInstance CreateMaterialInstance( const Material material, const MaterialDescriptor &desc )
         {
-            const auto handle = detail::MaterialSystem::CreateMaterialInstance( material.m_Handle, desc );
+            const auto handle = m_Internal.CreateMaterialInstance( material.m_Handle, desc );
 
-            return { handle, this };
+            return { handle, &m_Internal };
         }
 
         void DestroyMaterialInstance( MaterialInstance &instance )
         {
-            detail::MaterialSystem::DestroyMaterialInstance( instance.m_Handle );
+            m_Internal.DestroyMaterialInstance( instance.m_Handle );
             instance.m_Handle = detail::MaterialInstanceHandle::NullHandle();
         }
 
         void UpdateMaterialInstance( const MaterialInstance instance )
         {
-            detail::MaterialSystem::UpdateMaterialInstance( instance.m_Handle );
+            m_Internal.UpdateMaterialInstance( instance.m_Handle );
         }
 
         const MaterialData &GetMaterialData( const MaterialInstance instance ) const
         {
-            return detail::MaterialSystem::GetMaterialData( instance.m_Handle );
+            return m_Internal.GetMaterialData( instance.m_Handle );
         }
+
+      private:
+        detail::MaterialSystem m_Internal;
     };
 }
