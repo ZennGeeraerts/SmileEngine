@@ -86,6 +86,7 @@ namespace smile::graphic
     {
         m_Device.DestroyGPUBuffer( vertexBuffer.GetHandle() );
         m_VertexBuffers.Erase( vertexBuffer );
+        m_GPUBufferHandleManager.DestroyHandle( vertexBuffer.GetHandle() );
         vertexBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
     }
 
@@ -109,6 +110,7 @@ namespace smile::graphic
     {
         m_Device.DestroyGPUBuffer( indexBuffer.GetHandle() );
         m_IndexBuffers.Erase( indexBuffer );
+        m_GPUBufferHandleManager.DestroyHandle( indexBuffer.GetHandle() );
         indexBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
     }
 
@@ -169,6 +171,7 @@ namespace smile::graphic
     {
         m_Device.DestroyTexture( texture.GetHandle() );
         m_Textures.Erase( texture );
+        m_TextureHandleManager.DestroyHandle( texture.GetHandle() );
         texture.m_Handle = rhi::TextureHandle::NullHandle();
     }
 
@@ -210,6 +213,7 @@ namespace smile::graphic
             m_SamplerCache.Erase( it );
         }
 
+        m_SamplerHandleManager.DestroyHandle( sampler.GetHandle() );
         sampler.m_Handle = rhi::SamplerHandle::NullHandle();
     }
 
@@ -271,6 +275,7 @@ namespace smile::graphic
     {
         m_Device.DestroyGPUBuffer( constantBuffer.GetHandle() );
         m_ConstantBuffers.Erase( constantBuffer );
+        m_GPUBufferHandleManager.DestroyHandle( constantBuffer.GetHandle() );
         constantBuffer.m_Handle = rhi::TextureHandle::NullHandle();
     }
 
@@ -346,6 +351,7 @@ namespace smile::graphic
             m_VertexShaderCache.Erase( it );
         }
 
+        m_ShaderHandleManager.DestroyHandle( vertexShader.GetHandle() );
         vertexShader.m_Handle = rhi::ShaderHandle::NullHandle();
     }
 
@@ -420,6 +426,7 @@ namespace smile::graphic
             m_PixelShaderCache.Erase( it );
         }
 
+        m_ShaderHandleManager.DestroyHandle( pixelShader.GetHandle() );
         pixelShader.m_Handle = rhi::ShaderHandle::NullHandle();
     }
 
@@ -507,6 +514,7 @@ namespace smile::graphic
     {
         m_Device.DestroyFramebuffer( framebuffer.GetHandle() );
         m_Framebuffers.Erase( framebuffer );
+        m_FramebufferHandleManager.DestroyHandle( framebuffer.GetHandle() );
         framebuffer.m_Handle = rhi::FramebufferHandle::NullHandle();
     }
 
@@ -524,6 +532,7 @@ namespace smile::graphic
     {
         m_Device.DestroyBindingLayout( bindingLayout.GetHandle() );
         m_BindingLayouts.Erase( bindingLayout );
+        m_BindingLayoutHandleManager.DestroyHandle( bindingLayout.GetHandle() );
         bindingLayout.m_Handle = rhi::BindingLayoutHandle::NullHandle();
     }
 
@@ -543,6 +552,7 @@ namespace smile::graphic
     {
         m_Device.DestroyBindingSet( bindingSet.GetHandle() );
         m_BindingSets.Erase( bindingSet );
+        m_BindingSetHandleManager.DestroyHandle( bindingSet.GetHandle() );
         bindingSet.m_Handle = rhi::BindingSetHandle::NullHandle();
     }
 
@@ -601,6 +611,7 @@ namespace smile::graphic
     {
         m_Device.DestroyGraphicsPipeline( pipeline.GetHandle() );
         m_GraphicsPipelines.Erase( pipeline );
+        m_GraphicsPipelineHandleManager.DestroyHandle( pipeline.GetHandle() );
         pipeline.m_Handle = rhi::GraphicsPipelineHandle::NullHandle();
     }
 

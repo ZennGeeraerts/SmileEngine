@@ -99,6 +99,8 @@ namespace smile::graphic::detail
 
     void MaterialSystem::UpdateMaterialInstance( const MaterialInstanceHandle handle )
     {
+        SM_ASSERT( IsMaterialInstanceValid( handle ) );
+
         auto &materialInstance = m_MaterialInstances[handle.GetIndex()];
 
         auto dirtyFlags = materialInstance.GetDirtyFlags();
