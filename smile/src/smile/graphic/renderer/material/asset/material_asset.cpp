@@ -23,45 +23,24 @@ namespace smile::graphic
 {
     void MaterialAsset::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
     {
-        if ( !m_Descriptor.Parameters.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetParameter > Could not find material parameter with name: {}", name );
-            return;
-        }
-
-        // TODO: Once we have our own vector class that supports operator==
-        /*if ( m_Descriptor.Parameters[name] == data )
-            return;*/
-
-        m_Descriptor.Parameters[name] = data;
+        m_Descriptor.SetParameter( name, data );
     }
 
     const MaterialParameterValue &MaterialAsset::GetParameter( const primitive::StringView name ) const
     {
-        return m_Descriptor.Parameters.GetItemAtKey( name );
+        return m_Descriptor.GetParameter( name );
     }
 
     void MaterialAsset::SetTextureBinding( const primitive::StringView name,
         const Texture &texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
-        if ( !m_Descriptor.TextureBindings.HasItemAtKey( name ) )
-        {
-            SM_LOG_WARNING( "Material::SetTextureBinding > Could not find texture binding with name: {}", name );
-            return;
-        }
-
-        MaterialTextureBinding textureBinding{ texture, samplerDesc };
-
-        if ( m_Descriptor.TextureBindings[name] == textureBinding )
-            return;
-
-        m_Descriptor.TextureBindings[name] = std::move( textureBinding );
+        m_Descriptor.SetTextureBinding( name, texture, samplerDesc );
     }
 
     const MaterialTextureBinding &MaterialAsset::GetTextureBinding( const primitive::StringView name ) const
     {
-        return m_Descriptor.TextureBindings.GetItemAtKey( name );
+        return m_Descriptor.GetTextureBinding( name );
     }
 
     static MaterialParameterType ConstantTypeToMaterialParamType( ConstantType constantType )

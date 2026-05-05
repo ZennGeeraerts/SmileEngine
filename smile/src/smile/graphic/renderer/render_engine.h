@@ -11,7 +11,7 @@
 #include "resource/resource_manager.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "sprite/texture_manager.h"
-#include "material/material_manager.h"
+#include "material/asset/material_manager.h"
 #include "material/material_system.h"
 #include "renderer.h"
 

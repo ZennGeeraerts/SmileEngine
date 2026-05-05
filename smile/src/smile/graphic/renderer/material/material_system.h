@@ -18,7 +18,7 @@
 
 #include "detail/material_system.h"
 #include "material.h"
-#include "material_asset.h"
+#include "asset/material_asset.h"
 
 namespace smile::graphic
 {

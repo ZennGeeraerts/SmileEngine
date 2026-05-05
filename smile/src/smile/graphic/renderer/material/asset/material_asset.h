@@ -18,8 +18,8 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/core/asset/asset.h"
-#include "material_descriptor.h"
-#include "material_layout.h"
+#include "smile/graphic/renderer/material/material_layout.h"
+#include "smile/graphic/renderer/material/material_descriptor.h"
 
 namespace smile::graphic
 {

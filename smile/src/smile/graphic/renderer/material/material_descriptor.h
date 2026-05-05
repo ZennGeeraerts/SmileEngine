@@ -54,6 +54,15 @@ namespace smile::graphic
 
     struct MaterialDescriptor final
     {
+        void SetParameter( const primitive::StringView name, const MaterialParameterValue &data );
+        const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
+
+        void SetTextureBinding( const primitive::StringView name,
+            const Texture &texture,
+            const rhi::SamplerDescriptor &samplerDesc );
+
+        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
+
         Program::ConstRef ShaderProgram;
         primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
         primitive::HashMap< primitive::String, MaterialTextureBinding > TextureBindings;
