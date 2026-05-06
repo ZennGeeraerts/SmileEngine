@@ -164,6 +164,8 @@ namespace smile::graphic
 
     void ModelLoader::LoadBones( SkinnedMeshSource &mesh, const aiMesh &aiMesh )
     {
+        mesh.m_Skeleton = memory::CreateRef< Skeleton >();
+
         for ( Index i{}; i < aiMesh.mNumBones; ++i )
         {
             aiBone *pBone = aiMesh.mBones[i];
@@ -172,10 +174,11 @@ namespace smile::graphic
                 Index boneID = s_InvalidIndex;
                 primitive::String boneName{ pBone->mName.C_Str() };
 
-                if ( mesh.m_SkeletonMap.HasItemAtKey( boneName ) )
+                if ( mesh.m_Skeleton->HasBone( boneName ) )
                 {
-                    graphic::BoneInfo boneInfo{};
-                    boneInfo.ID = mesh.m_BoneCount;
+                    auto &boneInfo = mesh.m_Skeleton->GetBone( boneName );
+
+                    boneInfo.ID = mesh.m_Skeleton->GetBoneCount();
                     boneInfo.Offset = DirectX::XMFLOAT4X4{ pBone->mOffsetMatrix.a1,
                         pBone->mOffsetMatrix.b1,
                         pBone->mOffsetMatrix.c1,
@@ -193,16 +196,15 @@ namespace smile::graphic
                         pBone->mOffsetMatrix.c4,
                         pBone->mOffsetMatrix.d4 };
 
-                    mesh.m_SkeletonMap[boneName] = boneInfo;
-                    boneID = mesh.m_BoneCount;
-                    ++mesh.m_BoneCount;
+                    boneID = mesh.m_Skeleton->GetBoneCount();
+                    ++mesh.m_Skeleton->m_BoneCount;
                 }
                 else
                 {
-                    boneID = mesh.m_SkeletonMap[boneName].ID;
+                    boneID = mesh.m_Skeleton->GetBone( boneName ).ID;
                 }
 
-                SM_ASSERT_MSG( boneID != -1, "ModelLoader::LoadBones > Invalid bone ID" );
+                SM_ASSERT_MSG( boneID != s_InvalidIndex, "ModelLoader::LoadBones > Invalid bone ID" );
 
                 for ( Index j{}; j < pBone->mNumWeights; ++j )
                 {
@@ -255,8 +257,8 @@ namespace smile::graphic
 
                 for ( auto &skinnedMesh : model->m_SkinnedMeshes )
                 {
-                    auto boneInfoMapIt = skinnedMesh.m_SkeletonMap.FindItemAtKey( boneName );
-                    if ( boneInfoMapIt != skinnedMesh.m_SkeletonMap.end() )
+                    auto boneInfoMapIt = skinnedMesh.m_Skeleton->FindBone( boneName );
+                    if ( boneInfoMapIt != skinnedMesh.m_Skeleton->end() )
                     {
                         const BoneInfo &boneInfo = ( *boneInfoMapIt ).Value;
                         Bone bone{ boneName, boneInfo.ID };

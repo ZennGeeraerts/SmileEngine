@@ -5,8 +5,7 @@
 #pragma once
 
 #include "mesh_source.h"
-#include "bone_info.h"
-#include "smile/common/primitive/collection/hash_map.h"
+#include "skeleton.h"
 
 namespace smile::graphic
 {
@@ -24,8 +23,7 @@ namespace smile::graphic
         primitive::Vector< DirectX::XMFLOAT4 > m_BlendIndices = {};
         primitive::Vector< DirectX::XMFLOAT4 > m_BlendWeights = {};
 
-        primitive::HashMap< primitive::String, BoneInfo > m_SkeletonMap{};
-        Count m_BoneCount = 0;
+        Skeleton::Ref m_Skeleton = nullptr;
 
         friend class MeshFactory;
         friend class ModelLoader;
