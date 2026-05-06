@@ -19,6 +19,7 @@
 #include "detail/material_system.h"
 #include "material.h"
 #include "asset/material_asset.h"
+#include "asset/material_instance_asset.h"
 
 namespace smile::graphic
 {
@@ -40,14 +41,38 @@ namespace smile::graphic
 
         Material CreateMaterial( MaterialAsset::ConstRef asset )
         {
+            SM_ASSERT( !m_AssetToMaterial.HasItemAtKey( asset.GetPointer() ) );
+
             const auto handle =
                 m_Internal.CreateMaterial( asset->GetName(), asset->GetLayout(), asset->GetDescriptor() );
+
+            m_AssetToMaterial.Insert( asset.GetPointer(), handle );
 
             return { handle, &m_Internal };
         }
 
+        Material GetOrCreateMaterial( MaterialAsset::ConstRef asset )
+        {
+            if ( m_AssetToMaterial.HasItemAtKey( asset.GetPointer() ) )
+            {
+                const auto handle = m_AssetToMaterial[asset.GetPointer()];
+                return { handle, &m_Internal };
+            }
+
+            return CreateMaterial( asset );
+        }
+
         void DestroyMaterial( Material &material )
         {
+            for ( auto it = m_AssetToMaterial.begin(); it != m_AssetToMaterial.end(); ++it )
+            {
+                if ( it.GetItem() == material.m_Handle )
+                {
+                    m_AssetToMaterial.Erase( it );
+                    break;
+                }
+            }
+
             m_Internal.DestroyMaterial( material.m_Handle );
             material.m_Handle = detail::MaterialHandle::NullHandle();
         }
@@ -55,6 +80,15 @@ namespace smile::graphic
         MaterialInstance CreateMaterialInstance( const Material material, const MaterialDescriptor &desc )
         {
             const auto handle = m_Internal.CreateMaterialInstance( material.m_Handle, desc );
+
+            return { handle, &m_Internal };
+        }
+
+        MaterialInstance CreateMaterialInstance( MaterialInstanceAsset::ConstRef asset )
+        {
+            auto material = GetOrCreateMaterial( asset->GetMaterialAsset() );
+
+            const auto handle = m_Internal.CreateMaterialInstance( material.m_Handle, asset->GetDescriptor() );
 
             return { handle, &m_Internal };
         }
@@ -77,5 +111,6 @@ namespace smile::graphic
 
       private:
         detail::MaterialSystem m_Internal;
+        primitive::HashMap< const MaterialAsset *, detail::MaterialHandle > m_AssetToMaterial;
     };
 }

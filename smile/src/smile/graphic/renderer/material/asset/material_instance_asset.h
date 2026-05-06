@@ -49,12 +49,17 @@ namespace smile::graphic
             return asset::AssetType{ foundation::TypeNameOf< MaterialInstanceAsset >() };
         }
 
-        primitive::StringView GetName() const
+        primitive::StringView GetName() const noexcept
         {
             return m_Name.AsStringView();
         }
 
-        const MaterialDescriptor &GetDescriptor() const
+        MaterialAsset::Ref GetMaterialAsset() const noexcept
+        {
+            return m_MaterialAsset;
+        }
+
+        const MaterialDescriptor &GetDescriptor() const noexcept
         {
             return m_Descriptor;
         }
