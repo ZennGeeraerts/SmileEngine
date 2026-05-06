@@ -28,9 +28,10 @@ namespace smile::graphic
 
         MaterialInstanceAsset() = default;
 
-        MaterialInstanceAsset( MaterialAsset::Ref materialAsset,
+        MaterialInstanceAsset( const primitive::String &name,
+            MaterialAsset::Ref materialAsset,
             const MaterialDescriptor &desc ) noexcept
-            : m_MaterialAsset{ materialAsset }, m_Descriptor{ desc }
+            : m_Name{ name }, m_MaterialAsset{ materialAsset }, m_Descriptor{ desc }
         {
         }
 
@@ -48,12 +49,18 @@ namespace smile::graphic
             return asset::AssetType{ foundation::TypeNameOf< MaterialInstanceAsset >() };
         }
 
+        primitive::StringView GetName() const
+        {
+            return m_Name.AsStringView();
+        }
+
         const MaterialDescriptor &GetDescriptor() const
         {
             return m_Descriptor;
         }
 
       private:
+        primitive::String m_Name;
         MaterialAsset::Ref m_MaterialAsset;
         MaterialDescriptor m_Descriptor;
 

@@ -53,6 +53,7 @@ namespace smile::graphic
             const MaterialDescriptor &desc = m_MaterialInstanceAsset->GetDescriptor();
             const MaterialLayout &layout = m_MaterialInstanceAsset->m_MaterialAsset->GetLayout();
 
+            yamlOutput << YAML::Key << "Name" << YAML::Value << m_MaterialInstanceAsset->GetName();
             yamlOutput << YAML::Key << "Material" << YAML::Value << m_MaterialInstanceAsset->m_MaterialAsset->m_Handle;
             yamlOutput << YAML::Key << "VertexShader" << YAML::Value << desc.ShaderProgram->GetVertexShader()->m_Handle;
             yamlOutput << YAML::Key << "PixelShader" << YAML::Value << desc.ShaderProgram->GetPixelShader()->m_Handle;
@@ -90,6 +91,11 @@ namespace smile::graphic
             SM_LOG_ERROR( "Failed to load material: {}", e.what() );
             return false;
         }
+
+        if ( !data["Name"] )
+            return false;
+
+        m_MaterialInstanceAsset->m_Name = data["Name"].as< primitive::String >();
 
         if ( !data["Material"] )
             return false;

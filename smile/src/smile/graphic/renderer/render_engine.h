@@ -12,6 +12,7 @@
 #include "smile/graphic/shader/shader_library.h"
 #include "sprite/texture_manager.h"
 #include "material/asset/material_manager.h"
+#include "material/asset/material_instance_manager.h"
 #include "material/material_system.h"
 #include "renderer.h"
 
@@ -57,6 +58,11 @@ namespace smile::graphic
             return *m_MaterialManager;
         }
 
+        MaterialInstanceManager &GetMaterialInstanceManager() noexcept
+        {
+            return *m_MaterialInstanceManager;
+        }
+
         MaterialSystem &GetMaterialSystem() noexcept
         {
             return *m_MaterialSystem;
@@ -72,6 +78,7 @@ namespace smile::graphic
             memory::Scope< ShaderLibrary > shaderLibrary,
             memory::Scope< TextureManager > textureManager,
             memory::Scope< MaterialManager > materialManager,
+            memory::Scope< MaterialInstanceManager > materialInstanceManager,
             memory::Scope< MaterialSystem > materialSystem ) noexcept;
 
       private:
@@ -83,6 +90,7 @@ namespace smile::graphic
         memory::Scope< ShaderLibrary > m_ShaderLibrary;
         memory::Scope< TextureManager > m_TextureManager;
         memory::Scope< MaterialManager > m_MaterialManager;
+        memory::Scope< MaterialInstanceManager > m_MaterialInstanceManager;
         memory::Scope< MaterialSystem > m_MaterialSystem;
 
         primitive::Vector< memory::Scope< rhi::SwapChain > > m_SwapChains;
