@@ -144,166 +144,167 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f } };
 
-    Mesh MeshFactory::CreateMesh( MeshSource &meshSource, const rhi::BufferLayout &layout )
+    Mesh MeshFactory::CreateMesh( const MeshSource::Ref &meshSource, const rhi::BufferLayout &layout ) const
     {
-        meshSource.m_pDataLocation =
-            malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( meshSource.m_VertexCount ) );
-        if ( !meshSource.m_pDataLocation )
+        meshSource->m_pDataLocation =
+            malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( meshSource->m_VertexCount ) );
+        if ( !meshSource->m_pDataLocation )
         {
             SM_LOG_ERROR( "MeshFactory::CreateMesh > Failed to allocate memory for the vertex buffer" );
             return {};
         }
 
-        void *pData = meshSource.m_pDataLocation;
+        void *pData = meshSource->m_pDataLocation;
 
-        for ( Index i{}; i < meshSource.m_VertexCount; ++i )
+        for ( Index i{}; i < meshSource->m_VertexCount; ++i )
         {
             for ( const rhi::BufferElement &element : layout )
             {
                 if ( element.Name == "POSITION" )
-                    memcpy( meshSource.m_pDataLocation,
-                        meshSource.HasSemantic( Semantic::Positon ) ? &meshSource.m_Positions[i] : &s_DefaultFloat3,
+                    memcpy( meshSource->m_pDataLocation,
+                        meshSource->HasSemantic( Semantic::Positon ) ? &meshSource->m_Positions[i] : &s_DefaultFloat3,
                         element.Size );
                 else if ( element.Name == "NORMAL" )
-                    memcpy( meshSource.m_pDataLocation,
-                        meshSource.HasSemantic( Semantic::Normal ) ? &meshSource.m_Normals[i] : &s_DefaultFloat3,
+                    memcpy( meshSource->m_pDataLocation,
+                        meshSource->HasSemantic( Semantic::Normal ) ? &meshSource->m_Normals[i] : &s_DefaultFloat3,
                         element.Size );
                 else if ( element.Name == "TEXCOORD" )
-                    memcpy( meshSource.m_pDataLocation,
-                        meshSource.HasSemantic( Semantic::TexCoord ) ? &meshSource.m_TexCoords[i] : &s_DefaultFloat2,
+                    memcpy( meshSource->m_pDataLocation,
+                        meshSource->HasSemantic( Semantic::TexCoord ) ? &meshSource->m_TexCoords[i] : &s_DefaultFloat2,
                         element.Size );
                 else if ( element.Name == "TANGENT" )
-                    memcpy( meshSource.m_pDataLocation,
-                        meshSource.HasSemantic( Semantic::Tangent ) ? &meshSource.m_Tangents[i] : &s_DefaultFloat3,
+                    memcpy( meshSource->m_pDataLocation,
+                        meshSource->HasSemantic( Semantic::Tangent ) ? &meshSource->m_Tangents[i] : &s_DefaultFloat3,
                         element.Size );
                 else if ( element.Name == "BINORMAL" )
-                    memcpy( meshSource.m_pDataLocation,
-                        meshSource.HasSemantic( Semantic::Binormal ) ? &meshSource.m_Binormals[i] : &s_DefaultFloat3,
+                    memcpy( meshSource->m_pDataLocation,
+                        meshSource->HasSemantic( Semantic::Binormal ) ? &meshSource->m_Binormals[i] : &s_DefaultFloat3,
                         element.Size );
                 else if ( element.Name == "COLOR" )
-                    memcpy( meshSource.m_pDataLocation,
-                        meshSource.HasSemantic( Semantic::Color ) ? &meshSource.m_Colors[i] : &s_DefaultFloat4,
+                    memcpy( meshSource->m_pDataLocation,
+                        meshSource->HasSemantic( Semantic::Color ) ? &meshSource->m_Colors[i] : &s_DefaultFloat4,
                         element.Size );
 
-                meshSource.m_pDataLocation = ( Byte * )meshSource.m_pDataLocation + element.Size;
+                meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
             }
         }
 
-        VertexBuffer vb = m_ResourceManager.CreateVertexBuffer( pData, meshSource.m_VertexCount, layout );
-        IndexBuffer ib =
-            m_ResourceManager.CreateIndexBuffer( meshSource.m_Indices.GetData(), meshSource.m_Indices.GetItemCount() );
+        VertexBuffer vb = m_ResourceManager.CreateVertexBuffer( pData, meshSource->m_VertexCount, layout );
+        IndexBuffer ib = m_ResourceManager.CreateIndexBuffer(
+            meshSource->m_Indices.GetData(), meshSource->m_Indices.GetItemCount() );
 
         return Mesh{ vb, ib };
     }
 
-    SkinnedMesh MeshFactory::CreateSkinnedMesh( SkinnedMeshSource &skinnedMeshSource, const rhi::BufferLayout &layout )
+    SkinnedMesh MeshFactory::CreateSkinnedMesh( const SkinnedMeshSource::Ref &skinnedMeshSource,
+        const rhi::BufferLayout &layout ) const
     {
-        skinnedMeshSource.m_pDataLocation = malloc(
-            static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( skinnedMeshSource.m_VertexCount ) );
-        if ( !skinnedMeshSource.m_pDataLocation )
+        skinnedMeshSource->m_pDataLocation = malloc(
+            static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( skinnedMeshSource->m_VertexCount ) );
+        if ( !skinnedMeshSource->m_pDataLocation )
         {
             SM_LOG_ERROR( "MeshFactory::CreateSkinnedMesh > Failed to allocate memory for the vertex buffer" );
             return {};
         }
 
-        void *pData = skinnedMeshSource.m_pDataLocation;
+        void *pData = skinnedMeshSource->m_pDataLocation;
 
-        for ( Index i{}; i < skinnedMeshSource.m_VertexCount; ++i )
+        for ( Index i{}; i < skinnedMeshSource->m_VertexCount; ++i )
         {
             for ( const rhi::BufferElement &element : layout )
             {
                 if ( element.Name == "POSITION" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::Positon ) ? &skinnedMeshSource.m_Positions[i]
-                                                                           : &s_DefaultFloat3,
-                        element.Size );
-                else if ( element.Name == "NORMAL" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::Normal ) ? &skinnedMeshSource.m_Normals[i]
-                                                                          : &s_DefaultFloat3,
-                        element.Size );
-                else if ( element.Name == "TEXCOORD" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::TexCoord ) ? &skinnedMeshSource.m_TexCoords[i]
-                                                                            : &s_DefaultFloat2,
-                        element.Size );
-                else if ( element.Name == "TANGENT" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::Tangent ) ? &skinnedMeshSource.m_Tangents[i]
-                                                                           : &s_DefaultFloat3,
-                        element.Size );
-                else if ( element.Name == "BINORMAL" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::Binormal ) ? &skinnedMeshSource.m_Binormals[i]
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::Positon ) ? &skinnedMeshSource->m_Positions[i]
                                                                             : &s_DefaultFloat3,
                         element.Size );
+                else if ( element.Name == "NORMAL" )
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::Normal ) ? &skinnedMeshSource->m_Normals[i]
+                                                                           : &s_DefaultFloat3,
+                        element.Size );
+                else if ( element.Name == "TEXCOORD" )
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::TexCoord ) ? &skinnedMeshSource->m_TexCoords[i]
+                                                                             : &s_DefaultFloat2,
+                        element.Size );
+                else if ( element.Name == "TANGENT" )
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::Tangent ) ? &skinnedMeshSource->m_Tangents[i]
+                                                                            : &s_DefaultFloat3,
+                        element.Size );
+                else if ( element.Name == "BINORMAL" )
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::Binormal ) ? &skinnedMeshSource->m_Binormals[i]
+                                                                             : &s_DefaultFloat3,
+                        element.Size );
                 else if ( element.Name == "COLOR" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::Color ) ? &skinnedMeshSource.m_Colors[i]
-                                                                         : &s_DefaultFloat4,
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::Color ) ? &skinnedMeshSource->m_Colors[i]
+                                                                          : &s_DefaultFloat4,
                         element.Size );
                 else if ( element.Name == "BLENDINDICES" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::BlendIndices ) ? &skinnedMeshSource.m_BlendIndices[i]
-                                                                                : &s_DefaultIndices4,
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::BlendIndices ) ? &skinnedMeshSource->m_BlendIndices[i]
+                                                                                 : &s_DefaultIndices4,
                         element.Size );
                 else if ( element.Name == "BLENDWEIGHTS" )
-                    memcpy( skinnedMeshSource.m_pDataLocation,
-                        skinnedMeshSource.HasSemantic( Semantic::BlendWeights ) ? &skinnedMeshSource.m_BlendWeights[i]
-                                                                                : &s_DefaultFloat4,
+                    memcpy( skinnedMeshSource->m_pDataLocation,
+                        skinnedMeshSource->HasSemantic( Semantic::BlendWeights ) ? &skinnedMeshSource->m_BlendWeights[i]
+                                                                                 : &s_DefaultFloat4,
                         element.Size );
 
-                skinnedMeshSource.m_pDataLocation = ( Byte * )skinnedMeshSource.m_pDataLocation + element.Size;
+                skinnedMeshSource->m_pDataLocation = ( Byte * )skinnedMeshSource->m_pDataLocation + element.Size;
             }
         }
 
-        VertexBuffer vb = m_ResourceManager.CreateVertexBuffer( pData, skinnedMeshSource.m_VertexCount, layout );
+        VertexBuffer vb = m_ResourceManager.CreateVertexBuffer( pData, skinnedMeshSource->m_VertexCount, layout );
 
         IndexBuffer ib = m_ResourceManager.CreateIndexBuffer(
-            skinnedMeshSource.m_Indices.GetData(), skinnedMeshSource.m_Indices.GetItemCount() );
+            skinnedMeshSource->m_Indices.GetData(), skinnedMeshSource->m_Indices.GetItemCount() );
 
-        return SkinnedMesh{ vb, ib, skinnedMeshSource.m_Skeleton };
+        return SkinnedMesh{ vb, ib, skinnedMeshSource->m_Skeleton };
     }
 
-    Mesh MeshFactory::CreatePlane( const rhi::BufferLayout &vertexLayout )
+    Mesh MeshFactory::CreatePlane( const rhi::BufferLayout &vertexLayout ) const
     {
-        MeshSource meshSource{};
+        auto meshSource = memory::CreateRef< MeshSource >();
 
         for ( const auto &element : vertexLayout )
         {
             if ( element.Name == "POSITION" )
             {
-                meshSource.m_Semantics.Set( Semantic::Positon );
-                meshSource.m_Positions = s_PlanePositions;
+                meshSource->m_Semantics.Set( Semantic::Positon );
+                meshSource->m_Positions = s_PlanePositions;
             }
             else if ( element.Name == "NORMAL" )
             {
-                meshSource.m_Semantics.Set( Semantic::Normal );
-                meshSource.m_Normals = s_PlaneNormals;
+                meshSource->m_Semantics.Set( Semantic::Normal );
+                meshSource->m_Normals = s_PlaneNormals;
             }
         }
 
-        meshSource.m_VertexCount = s_PlanePositions.GetItemCount();
-        meshSource.m_Indices = s_PlaneIndices;
+        meshSource->m_VertexCount = s_PlanePositions.GetItemCount();
+        meshSource->m_Indices = s_PlaneIndices;
 
         return CreateMesh( meshSource, vertexLayout );
     }
 
-    Mesh MeshFactory::CreateCube( const rhi::BufferLayout &vertexLayout )
+    Mesh MeshFactory::CreateCube( const rhi::BufferLayout &vertexLayout ) const
     {
-        MeshSource meshSource{};
+        auto meshSource = memory::CreateRef< MeshSource >();
 
         for ( const auto &element : vertexLayout )
         {
             if ( element.Name == "POSITION" )
             {
-                meshSource.m_Semantics.Set( Semantic::Positon );
-                meshSource.m_Positions = s_CubePositions;
+                meshSource->m_Semantics.Set( Semantic::Positon );
+                meshSource->m_Positions = s_CubePositions;
             }
             else if ( element.Name == "NORMAL" )
             {
-                meshSource.m_Semantics.Set( Semantic::Normal );
-                meshSource.m_Normals = s_CubeNormals;
+                meshSource->m_Semantics.Set( Semantic::Normal );
+                meshSource->m_Normals = s_CubeNormals;
             }
             /*else if (element.Name == "TexCoord")
             {
@@ -312,13 +313,14 @@ namespace smile::graphic
             }*/
         }
 
-        meshSource.m_VertexCount = s_CubePositions.GetItemCount();
-        meshSource.m_Indices = s_CubeIndices;
+        meshSource->m_VertexCount = s_CubePositions.GetItemCount();
+        meshSource->m_Indices = s_CubeIndices;
 
         return CreateMesh( meshSource, vertexLayout );
     }
 
-    Mesh MeshFactory::CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Uint32 steps )
+    Mesh
+    MeshFactory::CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Uint32 steps ) const
     {
         primitive::Vector< DirectX::XMFLOAT3 > positions{};
         primitive::Vector< DirectX::XMFLOAT3 > normals{};
@@ -408,24 +410,24 @@ namespace smile::graphic
             indices.PushBack( vertCount - 1 );
         }
 
-        MeshSource meshSource{};
+        auto meshSource = memory::CreateRef< MeshSource >();
 
         for ( const auto &element : vertexLayout )
         {
             if ( element.Name == "POSITION" )
             {
-                meshSource.m_Semantics.Set( Semantic::Positon );
-                meshSource.m_Positions = positions;
+                meshSource->m_Semantics.Set( Semantic::Positon );
+                meshSource->m_Positions = positions;
             }
             else if ( element.Name == "NORMAL" )
             {
-                meshSource.m_Semantics.Set( Semantic::Normal );
-                meshSource.m_Normals = normals;
+                meshSource->m_Semantics.Set( Semantic::Normal );
+                meshSource->m_Normals = normals;
             }
         }
 
-        meshSource.m_VertexCount = vertCount;
-        meshSource.m_Indices = indices;
+        meshSource->m_VertexCount = vertCount;
+        meshSource->m_Indices = indices;
 
         return CreateMesh( meshSource, vertexLayout );
     }

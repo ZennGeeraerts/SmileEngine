@@ -12,6 +12,9 @@ namespace smile::graphic
     class SkinnedMeshSource final : public MeshSource
     {
       public:
+        using Ref = memory::Ref< SkinnedMeshSource >;
+        using ConstRef = memory::Ref< const SkinnedMeshSource >;
+
         SkinnedMeshSource() = default;
         SkinnedMeshSource( const primitive::String &name ) noexcept : MeshSource{ name }
         {

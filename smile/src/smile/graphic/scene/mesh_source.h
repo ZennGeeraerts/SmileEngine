@@ -26,9 +26,12 @@ namespace smile::graphic
         BlendWeights
     };
 
-    class MeshSource
+    class MeshSource : public memory::Counted
     {
       public:
+        using Ref = memory::Ref< MeshSource >;
+        using ConstRef = memory::Ref< const MeshSource >;
+
         MeshSource() = default;
         MeshSource( const primitive::String &name ) noexcept : m_Name{ name }
         {

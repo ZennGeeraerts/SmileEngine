@@ -21,12 +21,12 @@ namespace smile::graphic
         {
         }
 
-        Mesh CreateMesh( MeshSource &meshSource, const rhi::BufferLayout &layout );
-        SkinnedMesh CreateSkinnedMesh( SkinnedMeshSource &skinnedMeshSource, const rhi::BufferLayout &layout );
+        Mesh CreateMesh( const MeshSource::Ref &meshSource, const rhi::BufferLayout &layout ) const;
+        SkinnedMesh CreateSkinnedMesh( const SkinnedMeshSource::Ref &skinnedMeshSource, const rhi::BufferLayout &layout ) const;
 
-        Mesh CreatePlane( const rhi::BufferLayout &vertexLayout );
-        Mesh CreateCube( const rhi::BufferLayout &vertexLayout );
-        Mesh CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Count steps );
+        Mesh CreatePlane( const rhi::BufferLayout &vertexLayout ) const;
+        Mesh CreateCube( const rhi::BufferLayout &vertexLayout ) const;
+        Mesh CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Count steps ) const;
 
       private:
         static const DirectX::XMFLOAT4 s_DefaultColor;
