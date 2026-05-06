@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        material_instance_loader.h
+ * @author      Zenn Geeraerts
+ * @created     6 May 2026
+ * @brief       Loads a material instance asset
+ */
 #pragma once
 
 #include "smile/core/asset/asset_loader.h"
