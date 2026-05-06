@@ -7,23 +7,26 @@
 #include "mesh.h"
 #include "skinned_mesh.h"
 
-#include "mesh_filter.h"
-#include "skinned_mesh_filter.h"
+#include "mesh_source.h"
+#include "skinned_mesh_source.h"
 #include "smile/graphic/rhi/resource/buffer.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 
 namespace smile::graphic
 {
     class MeshFactory final
     {
       public:
-        static Ref< Mesh > CreateMesh( const Ref< MeshSource > &pMeshFilter, const rhi::BufferLayout &layout );
-        static Ref< SkinnedMesh > CreateSkinnedMesh( const Ref< SkinnedMeshSource > &pSkinnedMeshFilter,
-            const rhi::BufferLayout &layout );
+        MeshFactory( ResourceManager &resourceManager ) noexcept : m_ResourceManager{ resourceManager }
+        {
+        }
 
-        static Ref< Mesh > CreatePlane( const rhi::BufferLayout &vertexLayout );
-        static Ref< Mesh > CreateCube( const rhi::BufferLayout &vertexLayout );
-        static Ref< Mesh >
-        CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Uint32 steps );
+        Mesh CreateMesh( MeshSource &meshSource, const rhi::BufferLayout &layout );
+        SkinnedMesh CreateSkinnedMesh( SkinnedMeshSource &skinnedMeshSource, const rhi::BufferLayout &layout );
+
+        Mesh CreatePlane( const rhi::BufferLayout &vertexLayout );
+        Mesh CreateCube( const rhi::BufferLayout &vertexLayout );
+        Mesh CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Count steps );
 
       private:
         static const DirectX::XMFLOAT4 s_DefaultColor;
@@ -31,5 +34,7 @@ namespace smile::graphic
         static const DirectX::XMFLOAT3 s_DefaultFloat3;
         static const DirectX::XMFLOAT2 s_DefaultFloat2;
         static const DirectX::XMFLOAT4 s_DefaultIndices4;
+
+        ResourceManager &m_ResourceManager;
     };
 }

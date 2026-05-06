@@ -6,13 +6,23 @@
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer/resource/index_buffer.h"
-#include "smile/common/memory/ref.h"
 
 namespace smile::graphic
 {
     struct Mesh final
     {
-        VertexBuffer::Ref pVertexBuffer = nullptr;
-        IndexBuffer::Ref pIndexBuffer = nullptr;
+        Mesh() = default;
+
+        Mesh( const VertexBuffer &vb, const IndexBuffer &ib ) noexcept : VertexBuffer{ vb }, IndexBuffer{ ib }
+        {
+        }
+
+        [[nodiscard]] bool IsValid() const noexcept
+        {
+            return VertexBuffer.IsValid() && IndexBuffer.IsValid();
+        }
+
+        VertexBuffer VertexBuffer;
+        IndexBuffer IndexBuffer;
     };
 }

@@ -6,16 +6,26 @@
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer/resource/index_buffer.h"
-#include "bone_info.h"
-#include "smile/common/memory/ref.h"
+#include "skeleton.h"
 
 namespace smile::graphic
 {
     struct SkinnedMesh final
     {
-        VertexBuffer::Ref pVertexBuffer = nullptr;
-        IndexBuffer::Ref pIndexBuffer = nullptr;
-        primitive::HashMap< primitive::String, BoneInfo > SkeletonMap{};
-        Count BoneCount = 0;
+        SkinnedMesh() = default;
+
+        SkinnedMesh( const VertexBuffer &vb, const IndexBuffer &ib, Skeleton::Ref skeleton ) noexcept
+            : VertexBuffer{ vb }, IndexBuffer{ ib }, Skeleton{ skeleton }
+        {
+        }
+
+        [[nodiscard]] bool IsValid() const
+        {
+            return VertexBuffer.IsValid() && IndexBuffer.IsValid();
+        }
+
+        VertexBuffer VertexBuffer;
+        IndexBuffer IndexBuffer;
+        Skeleton::Ref Skeleton = nullptr;
     };
 }
