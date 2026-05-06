@@ -4,9 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/core/asset/asset_loader.h"
 #include "model.h"
-
-#include <filesystem>
 
 struct aiMesh;
 struct aiScene;
@@ -15,20 +14,34 @@ struct aiNode;
 
 namespace smile::graphic
 {
-    class ModelLoader final
+    class ModelLoader final : public asset::AssetLoader
     {
       public:
-        static Ref< graphic::Model > LoadModel( const std::filesystem::path &filePath );
+        ModelLoader();
+
+        asset::AssetType GetType() const override
+        {
+            return asset::AssetType{ foundation::TypeNameOf< Model >() };
+        }
+
+        const std::vector< std::filesystem::path > &GetExtensions() const override
+        {
+            return m_Extensions;
+        }
+
+        memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
+            const asset::AssetMetadata &metadata ) const override;
+
+        Model::Ref LoadModel( const std::filesystem::path &path ) const;
 
       private:
-        static Ref< graphic::MeshSource > LoadMesh( aiMesh *pAiMesh );
-        static Ref< graphic::SkinnedMeshSource > LoadSkinnedMesh( aiMesh *pAiMesh );
+        static MeshSource LoadMesh( const aiMesh &aiMesh );
+        static SkinnedMeshSource LoadSkinnedMesh( const aiMesh &aiMesh );
+        static void LoadVertices( MeshSource &mesh, const aiMesh &aiMesh );
+        static void LoadBones( SkinnedMeshSource &mesh, const aiMesh &aiMesh );
+        static AnimationClip LoadAnimation( Model::ConstRef model, const aiAnimation &aiAnim, const aiScene &aiScene );
+        static void LoadNodeHierarchy( AnimationNode &dest, const aiNode &src );
 
-        static void LoadVertices( const Ref< graphic::MeshSource > &pMesh, aiMesh *pAiMesh );
-        static void LoadBones( const Ref< graphic::SkinnedMeshSource > &pMesh, aiMesh *pAiMesh );
-
-        static Ref< graphic::AnimationClip >
-        LoadAnimation( const Ref< graphic::Model > &pModel, const aiAnimation *pAiAnim, const aiScene *pAiScene );
-        static void LoadNodeHierarchy( graphic::AnimationNode &dest, const aiNode *pSrc );
+        const std::vector< std::filesystem::path > m_Extensions{ ".smmat" };
     };
 }

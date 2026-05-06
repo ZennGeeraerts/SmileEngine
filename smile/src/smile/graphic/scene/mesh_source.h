@@ -30,6 +30,10 @@ namespace smile::graphic
     {
       public:
         MeshSource() = default;
+        MeshSource( const primitive::String &name ) noexcept : m_Name{ name }
+        {
+        }
+
         virtual ~MeshSource() = default;
 
         primitive::StringView GetName() const

@@ -4,56 +4,52 @@
 /*=============================================================================*/
 #pragma once
 
-#include "mesh_filter.h"
-#include "skinned_mesh_filter.h"
+#include "mesh_source.h"
+#include "skinned_mesh_source.h"
 #include "smile/graphic/animation/animation_clip.h"
 
 namespace smile::graphic
 {
-    class Model final
+    class Model final : public asset::Asset
     {
       public:
+        using Ref = memory::Ref< Model >;
+        using ConstRef = memory::Ref< const Model >;
+
         Model() = default;
         ~Model() = default;
 
-        const std::string &GetFilePath() const
+        const MeshSource &GetMeshSource( const Index index ) const
         {
-            return m_FilePath;
+            SM_ASSERT_MSG( m_SkinnedMeshes.IsValidIndex( index ), "Model::GetMeshSource > Index out of range" );
+            return m_Meshes[index];
         }
 
-        Ref< MeshSource > GetMeshFilter( Uint32 index ) const
+        Count GetMeshCount() const noexcept
         {
-            SM_ASSERT_MSG( index >= 0 && index < m_pMeshes.size(), "Model::GetMeshFilter > Index out of range" );
-            return m_pMeshes[index];
+            return m_Meshes.GetItemCount();
         }
 
-        Uint32 GetMeshCount() const
+        const SkinnedMeshSource &GetSkinnedMeshSource( const Index index ) const
         {
-            return m_pMeshes.size();
+            SM_ASSERT_MSG( m_SkinnedMeshes.IsValidIndex( index ), "Model::GetSkinnedMeshSource > Index out of range" );
+            return m_SkinnedMeshes[index];
         }
 
-        Ref< SkinnedMeshSource > GetSkinnedMeshFilter( Uint32 index ) const
+        Count GetSkinnedMeshCount() const noexcept
         {
-            SM_ASSERT_MSG(
-                index >= 0 && index < m_pSkinnedMeshes.size(), "Model::GetSkinnedMeshFilter > Index out of range" );
-            return m_pSkinnedMeshes[index];
+            return m_SkinnedMeshes.GetItemCount();
         }
 
-        Uint32 GetSkinnedMeshCount() const
+        const primitive::Vector< AnimationClip > &GetAnimationClips() const noexcept
         {
-            return m_pSkinnedMeshes.size();
-        }
-
-        const std::vector< Ref< AnimationClip > >& GetAnimationClips() const
-        {
-            return m_pAnimationClips;
+            return m_AnimationClips;
         }
 
       private:
-        std::string m_FilePath;
-        std::vector< Ref< MeshSource > > m_pMeshes{};
-        std::vector< Ref< SkinnedMeshSource > > m_pSkinnedMeshes{};
-        std::vector< Ref< AnimationClip > > m_pAnimationClips{};
+        primitive::Vector< MeshSource > m_Meshes;
+        primitive::Vector< SkinnedMeshSource > m_SkinnedMeshes;
+        primitive::Vector< AnimationClip > m_AnimationClips;
 
         friend class ModelLoader;
     };

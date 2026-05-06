@@ -14,6 +14,10 @@ namespace smile::graphic
     {
       public:
         SkinnedMeshSource() = default;
+        SkinnedMeshSource( const primitive::String &name ) noexcept : MeshSource{ name }
+        {
+        }
+
         virtual ~SkinnedMeshSource() = default;
 
       private:

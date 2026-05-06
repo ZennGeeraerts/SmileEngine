@@ -18,6 +18,11 @@ namespace smile::graphic
 
     struct AnimationClip final
     {
+        AnimationClip( const primitive::String &name, const float duration, const float ticksPerSecond ) noexcept
+            : Name{ name }, Duration{ duration }, TicksPerSecond{ ticksPerSecond }
+        {
+        }
+
         primitive::String Name{};
         float Duration{};
         float TicksPerSecond{};

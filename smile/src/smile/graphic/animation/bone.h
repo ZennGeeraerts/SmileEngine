@@ -14,18 +14,31 @@ namespace smile::graphic
 {
     struct KeyTranslation final
     {
+        KeyTranslation( const DirectX::XMFLOAT3 &translation, const float tick ) noexcept
+            : Translation{ translation }, Tick{ tick }
+        {
+        }
+
         DirectX::XMFLOAT3 Translation{};
         float Tick{};
     };
 
     struct KeyRotation final
     {
+        KeyRotation( const DirectX::XMFLOAT4 &rotation, const float tick ) noexcept : Rotation{ rotation }, Tick{ tick }
+        {
+        }
+
         DirectX::XMFLOAT4 Rotation{};
         float Tick{};
     };
 
     struct KeyScale final
     {
+        KeyScale( const DirectX::XMFLOAT3 &scale, const float tick ) noexcept : Scale{ scale }, Tick{ tick }
+        {
+        }
+
         DirectX::XMFLOAT3 Scale{};
         float Tick{};
     };
