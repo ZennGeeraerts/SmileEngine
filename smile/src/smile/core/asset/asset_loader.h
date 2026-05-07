@@ -9,8 +9,6 @@
 #include "smile/common/primitive/collection/array_view.h"
 #include "smile/core/fs/path.h"
 
-#include <type_traits>
-
 namespace smile::asset
 {
     class BaseAssetLoader
@@ -21,11 +19,8 @@ namespace smile::asset
         virtual AssetType GetType() const = 0;
         virtual primitive::ArrayView< const fs::Path > GetExtensions() const = 0;
 
-        virtual memory::Ref< Asset > Load( AssetHandle handle, const AssetMetadata &metadata ) const = 0;
+        virtual memory::Ref< BaseAsset > Load( AssetHandle handle, const AssetMetadata &metadata ) const = 0;
     };
-
-    template < typename Type >
-    concept AssetDerived = std::is_base_of_v< Asset, Type >;
 
     template < AssetDerived TAsset >
     class AssetLoader : public BaseAssetLoader

@@ -29,7 +29,7 @@ namespace smile::graphic
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
 
-    memory::Ref< asset::Asset > MaterialLoader::Load( asset::AssetHandle handle,
+    memory::Ref< asset::BaseAsset > MaterialLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
         return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );

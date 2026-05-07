@@ -12,7 +12,7 @@
 
 namespace smile::graphic
 {
-    class ShaderAsset final : public asset::Asset
+    class ShaderAsset final : public asset::Asset< ShaderAsset >
     {
       public:
         using Ref = memory::Ref< ShaderAsset >;
@@ -25,11 +25,6 @@ namespace smile::graphic
             const ShaderReflectionData &reflectionData )
             : m_Name{ name }, m_ByteCode{ byteCode }, m_ReflectionData{ reflectionData }
         {
-        }
-
-        asset::AssetType GetType() const override
-        {
-            return asset::AssetType{ foundation::TypeNameOf< ShaderAsset >() };
         }
 
         primitive::StringView GetName() const

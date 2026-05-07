@@ -20,10 +20,10 @@ namespace smile::graphic
             return m_Extensions.AsView();
         }
 
-        memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
+        memory::Ref< asset::BaseAsset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        memory::Ref< ShaderAsset > Load( const fs::Path &path ) const override;
+        ShaderAsset::Ref Load( const fs::Path &path ) const override;
 
       private:
         const primitive::Array< fs::Path, 1 > m_Extensions{ ".smshader" };

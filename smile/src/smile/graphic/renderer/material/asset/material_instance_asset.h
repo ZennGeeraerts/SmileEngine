@@ -20,7 +20,7 @@
 
 namespace smile::graphic
 {
-    class MaterialInstanceAsset final : public asset::Asset
+    class MaterialInstanceAsset final : public asset::Asset< MaterialInstanceAsset >
     {
       public:
         using Ref = memory::Ref< MaterialInstanceAsset >;
@@ -43,11 +43,6 @@ namespace smile::graphic
             const rhi::SamplerDescriptor &samplerDesc );
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
-
-        asset::AssetType GetType() const override
-        {
-            return asset::AssetType{ foundation::TypeNameOf< MaterialInstanceAsset >() };
-        }
 
         primitive::StringView GetName() const noexcept
         {

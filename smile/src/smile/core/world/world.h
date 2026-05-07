@@ -19,7 +19,7 @@ namespace smile::world
 {
     class Entity;
 
-    class World final : public asset::Asset
+    class World final : public asset::Asset< World >
     {
       public:
         using Ref = memory::Ref< World >;
@@ -57,11 +57,6 @@ namespace smile::world
         const smile::ecs::ECSEngine::Context &GetContext() const noexcept
         {
             return m_ECSEngine.GetContext();
-        }
-
-        asset::AssetType GetType() const override
-        {
-            return asset::AssetType{ foundation::TypeNameOf< World >() };
         }
 
         template < typename ComponentType >

@@ -18,7 +18,7 @@ namespace smile::asset
     {
       public:
         void RegisterLoader( BaseAssetLoader *pLoader );
-        memory::Ref< Asset > ImportAsset( AssetHandle handle, const AssetMetadata &metadata );
+        memory::Ref< BaseAsset > ImportAsset( AssetHandle handle, const AssetMetadata &metadata );
         AssetType GetAssetTypeFromFileExtension( const fs::Path &extension );
 
       private:

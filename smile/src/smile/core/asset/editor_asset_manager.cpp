@@ -13,18 +13,18 @@
 
 namespace smile::asset
 {
-    memory::Ref< Asset > EditorAssetManager::GetAsset( AssetHandle handle )
+    memory::Ref< BaseAsset > EditorAssetManager::GetAsset( AssetHandle handle )
     {
         // 1. Check if handle is valid
         if ( !IsAssetHandleValid( handle ) )
             return nullptr;
 
         // 2. Check if asset needs load (and if so, load)
-        memory::Ref< Asset > pAsset;
+        memory::Ref< BaseAsset > pAsset;
 
         if ( IsAssetLoaded( handle ) )
         {
-            pAsset = m_LoadedAssets.at( handle );
+            pAsset = m_LoadedAssets.GetItemAtKey( handle );
         }
         else
         {
@@ -51,7 +51,7 @@ namespace smile::asset
 
     bool EditorAssetManager::IsAssetLoaded( AssetHandle handle ) const
     {
-        return m_LoadedAssets.find( handle ) != m_LoadedAssets.end();
+        return m_LoadedAssets.HasItemAtKey( handle );
     }
 
     void EditorAssetManager::ImportAsset( const fs::Path &path )
@@ -64,7 +64,7 @@ namespace smile::asset
         SM_ASSERT_MSG(
             metadata.Type.IsValid(), "AssetImporter::ImportAsset > Failed to get asset type from file extension" );
 
-        memory::Ref< Asset > pAsset = AssetImporter::GetInstance().ImportAsset( handle, metadata );
+        memory::Ref< BaseAsset > pAsset = AssetImporter::GetInstance().ImportAsset( handle, metadata );
         if ( pAsset )
         {
             pAsset->m_Handle = handle;

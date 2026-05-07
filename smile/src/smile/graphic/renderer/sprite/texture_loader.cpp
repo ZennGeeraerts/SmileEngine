@@ -19,23 +19,23 @@ namespace smile::graphic
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
 
-    memory::Ref< asset::Asset > TextureLoader::Load( asset::AssetHandle handle,
+    memory::Ref< asset::BaseAsset > TextureLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
         return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    memory::Ref< TextureAsset > TextureLoader::Load( const fs::Path &path ) const
+    TextureAsset::Ref TextureLoader::Load( const fs::Path &path ) const
     {
         if ( path.IsEmpty() )
         {
-            SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load texture: the path was empty" );
+            SM_LOG_WARNING( "TextureLoader::Load > Failed to load texture: the path was empty" );
             return nullptr;
         }
 
         if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
-            SM_LOG_WARNING( "TextureLoader::LoadTexture > Failed to load texture: wrong file extension" );
+            SM_LOG_WARNING( "TextureLoader::Load > Failed to load texture: wrong file extension" );
             return nullptr;
         }
 

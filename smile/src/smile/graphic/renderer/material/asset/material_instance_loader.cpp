@@ -31,7 +31,7 @@ namespace smile::graphic
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
 
-    memory::Ref< asset::Asset > MaterialInstanceLoader::Load( asset::AssetHandle handle,
+    memory::Ref< asset::BaseAsset > MaterialInstanceLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
         return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
@@ -41,14 +41,14 @@ namespace smile::graphic
     {
         if ( path.IsEmpty() )
         {
-            SM_LOG_WARNING( "MaterialInstanceLoader::LoadMaterialInstance > Failed to load material instances: the "
+            SM_LOG_WARNING( "MaterialInstanceLoader::Load > Failed to load material instances: the "
                             "path was empty" );
             return nullptr;
         }
 
         if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
-            SM_LOG_WARNING( "MaterialInstanceLoader::LoadMaterialInstance > Failed to load material instance: wrong "
+            SM_LOG_WARNING( "MaterialInstanceLoader::Load > Failed to load material instance: wrong "
                             "file extension" );
             return nullptr;
         }
@@ -60,7 +60,7 @@ namespace smile::graphic
 
         if ( !serializer.Deserialize( path ) )
         {
-            SM_LOG_WARNING( "MaterialInstanceLoader::LoadMaterialInstance > Deserialization failed" );
+            SM_LOG_WARNING( "MaterialInstanceLoader::Load > Deserialization failed" );
             return nullptr;
         }
 

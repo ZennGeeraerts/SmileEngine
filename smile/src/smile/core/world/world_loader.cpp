@@ -17,7 +17,7 @@ namespace smile::world
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
 
-    memory::Ref< asset::Asset > WorldLoader::Load( asset::AssetHandle handle,
+    memory::Ref< asset::BaseAsset > WorldLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
         return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
@@ -27,13 +27,13 @@ namespace smile::world
     {
         if ( path.IsEmpty() )
         {
-            SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: the path was empty" );
+            SM_LOG_WARNING( "WorldLoader::Load > Failed to load world: the path was empty" );
             return nullptr;
         }
 
         if ( path.GetExtension() != ".smile" )
         {
-            SM_LOG_WARNING( "WorldLoader::LoadWorld > Failed to load world: wrong file extension" );
+            SM_LOG_WARNING( "WorldLoader::Load > Failed to load world: wrong file extension" );
             return nullptr;
         }
 

@@ -23,7 +23,7 @@ namespace smile::asset
         }
     }
 
-    memory::Ref< Asset > AssetImporter::ImportAsset( AssetHandle handle, const AssetMetadata &metadata )
+    memory::Ref< BaseAsset > AssetImporter::ImportAsset( AssetHandle handle, const AssetMetadata &metadata )
     {
         if ( !m_AssetLoaderMap.HasItemAtKey( metadata.Type ) )
         {

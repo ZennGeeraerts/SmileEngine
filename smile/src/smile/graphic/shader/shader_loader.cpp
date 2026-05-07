@@ -12,38 +12,28 @@
 
 namespace smile::graphic
 {
-    struct ShaderHeader final
-    {
-        Uint32 Magic;
-        Uint32 Version;
-        Uint32 BlobOffset;
-        Uint32 BlobSize;
-        Uint32 YamlOffset;
-        Uint32 YamlSize;
-    };
-
     ShaderLoader::ShaderLoader()
     {
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
 
-    memory::Ref< asset::Asset > ShaderLoader::Load( asset::AssetHandle handle,
+    memory::Ref< asset::BaseAsset > ShaderLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
         return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    memory::Ref< ShaderAsset > ShaderLoader::Load( const fs::Path &path ) const
+    ShaderAsset::Ref ShaderLoader::Load( const fs::Path &path ) const
     {
         if ( path.IsEmpty() )
         {
-            SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: the path was empty" );
+            SM_LOG_WARNING( "ShaderLoader::Load > Failed to load shader: the path was empty" );
             return nullptr;
         }
 
         if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
-            SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: wrong file extension" );
+            SM_LOG_WARNING( "ShaderLoader::Load > Failed to load shader: wrong file extension" );
             return nullptr;
         }
 
@@ -52,7 +42,7 @@ namespace smile::graphic
         ShaderSerializer serializer{ pShaderAsset };
         if ( !serializer.Deserialize( path ) )
         {
-            SM_LOG_WARNING( "ShaderLoader::LoadShader > Deserialization failed" );
+            SM_LOG_WARNING( "ShaderLoader::Load > Deserialization failed" );
             return nullptr;
         }
 

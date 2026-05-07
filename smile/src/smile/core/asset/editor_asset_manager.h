@@ -15,7 +15,7 @@ namespace smile::asset
     class EditorAssetManager : public AssetManagerBase
     {
       public:
-        memory::Ref< Asset > GetAsset( AssetHandle handle ) override;
+        memory::Ref< BaseAsset > GetAsset( AssetHandle handle ) override;
 
         bool IsAssetHandleValid( AssetHandle handle ) const override;
         bool IsAssetLoaded( AssetHandle handle ) const override;

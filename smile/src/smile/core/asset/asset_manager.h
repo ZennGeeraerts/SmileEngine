@@ -13,11 +13,13 @@ namespace smile::asset
     class AssetManager final
     {
       public:
-        template < typename AssetType >
-        static memory::Ref< AssetType > GetAsset( AssetHandle handle )
+        template < AssetDerived TAsset >
+        static memory::Ref< TAsset > GetAsset( AssetHandle handle )
         {
-            memory::Ref< Asset > pAsset = project::ProjectManager::GetActive()->GetAssetManager()->GetAsset( handle );
-            return memory::Ref< AssetType >{ pAsset };
+            memory::Ref< BaseAsset > pAsset =
+                project::ProjectManager::GetActive()->GetAssetManager()->GetAsset( handle );
+
+            return memory::Ref< TAsset >{ pAsset };
         }
     };
 }

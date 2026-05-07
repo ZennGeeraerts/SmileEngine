@@ -10,7 +10,7 @@
 
 namespace smile::graphic
 {
-    class TextureAsset final : public asset::Asset
+    class TextureAsset final : public asset::Asset< TextureAsset >
     {
       public:
         using Ref = memory::Ref< TextureAsset >;
@@ -18,11 +18,6 @@ namespace smile::graphic
 
         TextureAsset( const Texture &texture ) : m_Texture{ texture }
         {
-        }
-
-        asset::AssetType GetType() const override
-        {
-            return asset::AssetType{ foundation::TypeNameOf< TextureAsset >() };
         }
 
         Texture GetTexture() const

@@ -20,11 +20,11 @@ namespace smile::world
             return m_Extensions.AsView();
         }
 
-        memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
+        memory::Ref< asset::BaseAsset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
         World::Ref Load( const fs::Path &path ) const override;
-        
+
         void SaveWorld( memory::Ref< World > pWorld, const fs::Path &path ) const;
 
       private:

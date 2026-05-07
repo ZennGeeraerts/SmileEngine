@@ -25,7 +25,7 @@ namespace smile::graphic
 {
     class TextureManager;
 
-    class MaterialAsset final : public asset::Asset
+    class MaterialAsset final : public asset::Asset< MaterialAsset >
     {
       public:
         using Ref = memory::Ref< MaterialAsset >;
@@ -48,11 +48,6 @@ namespace smile::graphic
             const rhi::SamplerDescriptor &samplerDesc );
 
         const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
-
-        asset::AssetType GetType() const override
-        {
-            return asset::AssetType{ foundation::TypeNameOf< MaterialAsset >() };
-        }
 
         primitive::StringView GetName() const
         {
