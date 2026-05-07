@@ -71,6 +71,11 @@ namespace smile::fs
             return *this;
         }
 
+        bool IsPhysical() const
+        {
+            return IsPhysical( *this );
+        }
+
         primitive::StringView GetStem() const
         {
             return GetStem( *this );
@@ -100,6 +105,7 @@ namespace smile::fs
         static primitive::StringView GetExtension( const primitive::StringView filePath );
         static primitive::StringView GetDirectory( const primitive::StringView filePath );
         static primitive::StringView GetFileName( const primitive::StringView filePath );
+        static bool IsPhysical( const primitive::StringView filePath );
 
         static Path FromPlatformPath( const primitive::StringView path );
     };

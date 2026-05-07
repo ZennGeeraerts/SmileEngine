@@ -30,6 +30,7 @@ namespace smile::fs
 
         static Path GetCurrentDirectory();
         static void SetCurrentDirectory( const Path &path );
+        static Path GetAbsolutePath( const Path &path );
 
         static bool DoesFileExist( const Path &path );
         static bool DoesDirectoryExist( const Path &path );

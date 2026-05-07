@@ -38,6 +38,11 @@ namespace smile::fs
         std::filesystem::current_path( path.GetData() );
     }
 
+    Path PhysicalSystem::GetAbsolutePath( const Path &path )
+    {
+        return Path::FromPlatformPath( std::filesystem::absolute( path.GetData() ).string().c_str() );
+    }
+
     bool PhysicalSystem::DoesFileExist( const Path &path )
     {
         std::error_code errorCode;

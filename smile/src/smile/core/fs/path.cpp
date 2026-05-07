@@ -166,6 +166,12 @@ namespace smile::fs
         }
     }
 
+    bool Path::IsPhysical( const primitive::StringView filePath )
+    {
+        return primitive::ContainsText( filePath, ":/" ) || primitive::StartsWith( filePath, "/" ) ||
+               primitive::StartsWith( filePath, "./" ) || primitive::StartsWith( filePath, "../" );
+    }
+
     Path Path::FromPlatformPath( const primitive::StringView path )
     {
         Path result{ path };
