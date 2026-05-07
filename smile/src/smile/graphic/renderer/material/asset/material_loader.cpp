@@ -32,29 +32,29 @@ namespace smile::graphic
     memory::Ref< asset::Asset > MaterialLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
-        return LoadMaterial( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
+        return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    MaterialAsset::Ref MaterialLoader::LoadMaterial( const std::filesystem::path &path ) const
+    MaterialAsset::Ref MaterialLoader::Load( const fs::Path &path ) const
     {
-        if ( path.empty() )
+        if ( path.IsEmpty() )
         {
-            SM_LOG_WARNING( "MaterialLoader::LoadMaterial > Failed to load material: the path was empty" );
+            SM_LOG_WARNING( "MaterialLoader::Load > Failed to load material: the path was empty" );
             return nullptr;
         }
 
-        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
+        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
-            SM_LOG_WARNING( "MaterialLoader::LoadMaterial > Failed to load material: wrong file extension" );
+            SM_LOG_WARNING( "MaterialLoader::Load > Failed to load material: wrong file extension" );
             return nullptr;
         }
 
         auto pMaterialAsset = memory::CreateRef< MaterialAsset >();
 
         MaterialSerializer serializer{ pMaterialAsset, m_TextureManager, m_ShaderLibrary };
-        if ( !serializer.Deserialize( fs::Path{ path.string().c_str() } ) )
+        if ( !serializer.Deserialize( path ) )
         {
-            SM_LOG_WARNING( "MaterialLoader::LoadMaterial > Deserialization failed" );
+            SM_LOG_WARNING( "MaterialLoader::Load > Deserialization failed" );
             return nullptr;
         }
 

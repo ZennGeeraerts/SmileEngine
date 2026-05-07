@@ -30,18 +30,18 @@ namespace smile::graphic
     memory::Ref< asset::Asset > ShaderLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
-        return LoadShader( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
+        return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    memory::Ref< ShaderAsset > ShaderLoader::LoadShader( const std::filesystem::path &path ) const
+    memory::Ref< ShaderAsset > ShaderLoader::Load( const fs::Path &path ) const
     {
-        if ( path.empty() )
+        if ( path.IsEmpty() )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: the path was empty" );
             return nullptr;
         }
 
-        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
+        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Failed to load shader: wrong file extension" );
             return nullptr;
@@ -50,7 +50,7 @@ namespace smile::graphic
         auto pShaderAsset = memory::CreateRef< ShaderAsset >();
 
         ShaderSerializer serializer{ pShaderAsset };
-        if ( !serializer.Deserialize( fs::Path{ path.string().c_str() } ) )
+        if ( !serializer.Deserialize( path ) )
         {
             SM_LOG_WARNING( "ShaderLoader::LoadShader > Deserialization failed" );
             return nullptr;

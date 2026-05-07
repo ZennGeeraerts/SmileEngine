@@ -12,12 +12,18 @@
 
 namespace smile::graphic
 {
-    memory::Ref< Image > DDSReader::Read( const std::filesystem::path &path )
+    memory::Ref< Image > DDSReader::Read( const fs::Path &path )
     {
         DirectX::TexMetadata info{};
         DirectX::ScratchImage image{};
 
-        HRESULT result = DirectX::LoadFromDDSFile( path.c_str(), DirectX::DDS_FLAGS_NONE, &info, image );
+        const int size = MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, path.GetData(), -1, nullptr, 0 );
+        SM_ASSERT( size != 0 );
+        std::wstring pathWChar;
+        pathWChar.resize( size );
+        MultiByteToWideChar( CP_UTF8, MB_ERR_INVALID_CHARS, path.GetData(), -1, pathWChar.data(), size );
+
+        HRESULT result = DirectX::LoadFromDDSFile( pathWChar.data(), DirectX::DDS_FLAGS_NONE, &info, image );
 
         if ( FAILED( result ) )
         {

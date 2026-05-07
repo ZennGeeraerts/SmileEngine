@@ -29,9 +29,9 @@ namespace smile::graphic
         return m_pFallBackTexture;
     }
 
-    TextureAsset::Ref TextureManager::GetTexture( const std::filesystem::path &path )
+    TextureAsset::Ref TextureManager::GetTexture( const fs::Path &path )
     {
-        TextureAsset::Ref pTextureAsset = m_TextureLoader.LoadTexture( path );
+        TextureAsset::Ref pTextureAsset = m_TextureLoader.Load( path );
 
         if ( pTextureAsset )
         {
@@ -39,7 +39,7 @@ namespace smile::graphic
             return pTextureAsset;
         }
 
-        SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", path.string() );
+        SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", path );
 
         return m_pFallBackTexture;
     }

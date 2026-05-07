@@ -18,15 +18,15 @@ namespace smile::project
         }
 
         // TODO: move to asset manager when we have one
-        static std::filesystem::path GetAssetFileSystemPath( const std::filesystem::path &assetPath )
+        static fs::Path GetAssetFileSystemPath( const fs::Path &assetPath )
         {
             SM_ASSERT_MSG( s_pActiveProject, "Project::GetAssetFileSystemPath > No active project" );
             return s_pActiveProject->GetAssetDirectory() / assetPath;
         }
 
         static Ref< Project > New();
-        static Ref< Project > Load( const std::filesystem::path &path );
-        static bool SaveActive( const std::filesystem::path &path );
+        static Ref< Project > Load( const fs::Path &path );
+        static bool SaveActive( const fs::Path &path );
 
       private:
         inline static Ref< Project > s_pActiveProject;

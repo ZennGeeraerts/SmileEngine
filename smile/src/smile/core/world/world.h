@@ -22,6 +22,9 @@ namespace smile::world
     class World final : public asset::Asset
     {
       public:
+        using Ref = memory::Ref< World >;
+        using ConstRef = memory::Ref< const World >;
+
         World( memory::Ref< smile::ecs::state::SystemRegistry > pSystemRegistry =
                    memory::CreateRef< smile::ecs::state::SystemRegistry >() );
         ~World();
@@ -45,6 +48,16 @@ namespace smile::world
         void DuplicateEntity( Entity entity );
 
         Entity GetEntityByUUID( primitive::UUID uuid );
+
+        smile::ecs::ECSEngine::Context &GetContext() noexcept
+        {
+            return m_ECSEngine.GetContext();
+        }
+
+        const smile::ecs::ECSEngine::Context &GetContext() const noexcept
+        {
+            return m_ECSEngine.GetContext();
+        }
 
         asset::AssetType GetType() const override
         {

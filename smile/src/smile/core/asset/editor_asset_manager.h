@@ -6,10 +6,11 @@
 
 #include "asset_manager_base.h"
 #include "asset_metadata.h"
+#include "smile/common/primitive/collection/dictionary.h"
 
 namespace smile::asset
 {
-    using AssetRegistry = std::map< AssetHandle, AssetMetadata >;
+    using AssetRegistry = primitive::Dictionary< AssetHandle, AssetMetadata >;
 
     class EditorAssetManager : public AssetManagerBase
     {
@@ -19,10 +20,10 @@ namespace smile::asset
         bool IsAssetHandleValid( AssetHandle handle ) const override;
         bool IsAssetLoaded( AssetHandle handle ) const override;
 
-        void ImportAsset( const std::filesystem::path &path );
+        void ImportAsset( const fs::Path &path );
 
         const AssetMetadata &GetMetadata( AssetHandle handle ) const;
-        const std::filesystem::path &GetFilePath( AssetHandle handle ) const;
+        const fs::Path &GetFilePath( AssetHandle handle ) const;
 
         const AssetRegistry &GetAssetRegistry() const
         {

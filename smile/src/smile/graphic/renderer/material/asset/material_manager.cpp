@@ -82,9 +82,9 @@ namespace smile::graphic
         return nullptr;
     }
 
-    MaterialAsset::Ref MaterialManager::LoadMaterial( const std::filesystem::path &path )
+    MaterialAsset::Ref MaterialManager::LoadMaterial( const fs::Path &path )
     {
-        MaterialAsset::Ref pMaterialAsset = m_MaterialLoader.LoadMaterial( path );
+        MaterialAsset::Ref pMaterialAsset = m_MaterialLoader.Load( path );
 
         if ( pMaterialAsset )
         {
@@ -92,7 +92,7 @@ namespace smile::graphic
             return pMaterialAsset;
         }
 
-        SM_LOG_WARNING( "MaterialManager::LoadMaterial > Could not load material: {}", path.string() );
+        SM_LOG_WARNING( "MaterialManager::LoadMaterial > Could not load material: {}", path );
 
         return nullptr;
     }

@@ -72,9 +72,9 @@ namespace smile::graphic
         return nullptr;
     }
 
-    MaterialInstanceAsset::Ref MaterialInstanceManager::LoadMaterialInstance( const std::filesystem::path &path )
+    MaterialInstanceAsset::Ref MaterialInstanceManager::LoadMaterialInstance( const fs::Path &path )
     {
-        MaterialInstanceAsset::Ref materialInstanceAsset = m_MaterialInstanceLoader.LoadMaterialInstance( path );
+        MaterialInstanceAsset::Ref materialInstanceAsset = m_MaterialInstanceLoader.Load( path );
 
         if ( materialInstanceAsset )
         {
@@ -83,7 +83,7 @@ namespace smile::graphic
         }
 
         SM_LOG_WARNING(
-            "MaterialInstanceManager::LoadMaterialInstance > Could not load material instance: {}", path.string() );
+            "MaterialInstanceManager::LoadMaterialInstance > Could not load material instance: {}", path );
 
         return nullptr;
     }

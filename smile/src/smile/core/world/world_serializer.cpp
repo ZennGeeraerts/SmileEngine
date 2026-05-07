@@ -9,8 +9,7 @@
 #include "entity.h"
 #include "smile/core/yaml/string.h"
 #include "smile/core/serializer/serializer.h"
-
-#include <fstream>
+#include "smile/core/fs/file.h"
 
 namespace smile::world
 {
@@ -18,9 +17,9 @@ namespace smile::world
     {
     }
 
-    void WorldSerializer::Serialize( const std::filesystem::path &filePath )
+    void WorldSerializer::Serialize( const fs::Path &filePath )
     {
-        YAML::Emitter output{};
+        yaml::Emitter output{};
         output << YAML::BeginMap;
         output << YAML::Key << "World" << YAML::Value << "Untitled";
         output << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
@@ -40,25 +39,33 @@ namespace smile::world
         output << YAML::EndSeq;
         output << YAML::EndMap;
 
-        std::ofstream fileOutput{ filePath };
-        fileOutput << output.c_str();
+        fs::File fileOutput{ filePath };
+        if ( !fileOutput.OpenOutput( stream::OpeningModeFlags{} ) )
+        {
+            SM_LOG_ERROR( "Failed to open output file: {}", filePath );
+            return;
+        }
+
+        fileOutput.WriteText( output.c_str() );
+
+        fileOutput.Close();
     }
 
-    void WorldSerializer::SerializeRuntime( const std::filesystem::path &filePath )
+    void WorldSerializer::SerializeRuntime( const fs::Path &filePath )
     {
         SM_ASSERT_MSG( false, "WorldSerializer::SerializeRuntime > Not implemented" );
     }
 
-    bool WorldSerializer::Deserialize( const std::filesystem::path &filePath )
+    bool WorldSerializer::Deserialize( const fs::Path &filePath )
     {
         YAML::Node data;
         try
         {
-            data = YAML::LoadFile( filePath.string() );
+            data = YAML::LoadFile( filePath.GetData() );
         }
         catch ( YAML::ParserException e )
         {
-            SM_LOG_ERROR( "Failed to load .smile file: {0}\n{1}", filePath.string(), e.what() );
+            SM_LOG_ERROR( "Failed to load .smile file: {0}\n{1}", filePath, e.what() );
             return false;
         }
 
@@ -93,7 +100,7 @@ namespace smile::world
         return true;
     }
 
-    bool WorldSerializer::DeserializeRuntime( const std::filesystem::path &filePath )
+    bool WorldSerializer::DeserializeRuntime( const fs::Path &filePath )
     {
         SM_ASSERT_MSG( false, "WorldSerializer::DeserializeRuntime > Not implemented" );
         return false;

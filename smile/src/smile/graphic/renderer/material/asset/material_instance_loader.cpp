@@ -34,19 +34,19 @@ namespace smile::graphic
     memory::Ref< asset::Asset > MaterialInstanceLoader::Load( asset::AssetHandle handle,
         const asset::AssetMetadata &metadata ) const
     {
-        return LoadMaterialInstance( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
+        return Load( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
     }
 
-    MaterialInstanceAsset::Ref MaterialInstanceLoader::LoadMaterialInstance( const std::filesystem::path &path ) const
+    MaterialInstanceAsset::Ref MaterialInstanceLoader::Load( const fs::Path &path ) const
     {
-        if ( path.empty() )
+        if ( path.IsEmpty() )
         {
             SM_LOG_WARNING( "MaterialInstanceLoader::LoadMaterialInstance > Failed to load material instances: the "
                             "path was empty" );
             return nullptr;
         }
 
-        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.extension() ) == m_Extensions.end() )
+        if ( std::find( m_Extensions.begin(), m_Extensions.end(), path.GetExtension() ) == m_Extensions.end() )
         {
             SM_LOG_WARNING( "MaterialInstanceLoader::LoadMaterialInstance > Failed to load material instance: wrong "
                             "file extension" );
@@ -55,8 +55,10 @@ namespace smile::graphic
 
         auto pMaterialInstanceAsset = memory::CreateRef< MaterialInstanceAsset >();
 
-        MaterialInstanceSerializer serializer{ pMaterialInstanceAsset, m_TextureManager, m_ShaderLibrary, m_MaterialManager };
-        if ( !serializer.Deserialize( fs::Path{ path.string().c_str() } ) )
+        MaterialInstanceSerializer serializer{
+            pMaterialInstanceAsset, m_TextureManager, m_ShaderLibrary, m_MaterialManager };
+
+        if ( !serializer.Deserialize( path ) )
         {
             SM_LOG_WARNING( "MaterialInstanceLoader::LoadMaterialInstance > Deserialization failed" );
             return nullptr;

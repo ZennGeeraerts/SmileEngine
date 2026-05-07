@@ -4,34 +4,28 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/array.h"
 #include "smile/core/asset/asset_loader.h"
+#include "shader_asset.h"
 
 namespace smile::graphic
 {
-    class ShaderAsset;
-    struct ShaderReflectionData;
-
-    class ShaderLoader final : public asset::AssetLoader
+    class ShaderLoader final : public asset::AssetLoader< ShaderAsset >
     {
       public:
         ShaderLoader();
 
-        asset::AssetType GetType() const override
+        primitive::ArrayView< const fs::Path > GetExtensions() const override
         {
-            return asset::AssetType{ foundation::TypeNameOf< ShaderAsset >() };
-        }
-
-        const std::vector< std::filesystem::path > &GetExtensions() const override
-        {
-            return m_Extensions;
+            return m_Extensions.AsView();
         }
 
         memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        memory::Ref< ShaderAsset > LoadShader( const std::filesystem::path &path ) const;
+        memory::Ref< ShaderAsset > Load( const fs::Path &path ) const override;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".smshader" };
+        const primitive::Array< fs::Path, 1 > m_Extensions{ ".smshader" };
     };
 }

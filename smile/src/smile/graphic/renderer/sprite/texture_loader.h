@@ -4,35 +4,31 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/array.h"
 #include "smile/core/asset/asset_loader.h"
+#include "texture_asset.h"
 
 namespace smile::graphic
 {
-    class TextureAsset;
     class ResourceManager;
 
-    class TextureLoader : public asset::AssetLoader
+    class TextureLoader final : public asset::AssetLoader< TextureAsset >
     {
       public:
         TextureLoader( ResourceManager &resourceManager ) noexcept;
 
-        asset::AssetType GetType() const override
+        primitive::ArrayView< const fs::Path > GetExtensions() const override
         {
-            return asset::AssetType{ foundation::TypeNameOf< TextureAsset >() };
-        }
-
-        const std::vector< std::filesystem::path > &GetExtensions() const override
-        {
-            return m_Extensions;
+            return m_Extensions.AsView();
         }
 
         memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        memory::Ref< TextureAsset > LoadTexture( const std::filesystem::path &path ) const;
+        memory::Ref< TextureAsset > Load( const fs::Path &path ) const override;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".png", ".jpg", ".dds" };
+        const primitive::Array< fs::Path, 3 > m_Extensions{ ".png", ".jpg", ".dds" };
         ResourceManager &m_ResourceManager;
     };
 }

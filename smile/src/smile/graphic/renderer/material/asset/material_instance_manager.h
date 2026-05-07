@@ -36,7 +36,7 @@ namespace smile::graphic
         MaterialInstanceAsset::Ref GetMaterialInstance( asset::AssetHandle handle );
         MaterialInstanceAsset::Ref GetMaterialInstance( const primitive::StringView name ) const;
 
-        MaterialInstanceAsset::Ref LoadMaterialInstance( const std::filesystem::path &path );
+        MaterialInstanceAsset::Ref LoadMaterialInstance( const fs::Path &path );
 
       private:
         MaterialInstanceLoader m_MaterialInstanceLoader;

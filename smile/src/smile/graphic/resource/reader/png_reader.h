@@ -5,8 +5,7 @@
 #pragma once
 
 #include "smile/common/memory/ref.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::graphic
 {
@@ -15,7 +14,7 @@ namespace smile::graphic
     class PNGReader final
     {
       public:
-        static memory::Ref< Image > Read( const std::filesystem::path &path );
+        static memory::Ref< Image > Read( const fs::Path &path );
 
       private:
         PNGReader() = delete;

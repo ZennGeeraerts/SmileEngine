@@ -38,9 +38,9 @@ namespace smile::graphic
         return nullptr;
     }
 
-    memory::Ref< ShaderAsset > ShaderLibrary::LoadShader( const std::filesystem::path &path )
+    memory::Ref< ShaderAsset > ShaderLibrary::LoadShader( const fs::Path &path )
     {
-        memory::Ref< ShaderAsset > pShaderAsset = m_ShaderLoader.LoadShader( path );
+        memory::Ref< ShaderAsset > pShaderAsset = m_ShaderLoader.Load( path );
 
         if ( pShaderAsset )
         {
@@ -48,7 +48,7 @@ namespace smile::graphic
             return pShaderAsset;
         }
 
-        SM_LOG_WARNING( "ShaderLibrary::GetShader > Could not load shader: {}", path.string() );
+        SM_LOG_WARNING( "ShaderLibrary::LoadShader > Could not load shader: {}", path );
 
         return nullptr;
     }

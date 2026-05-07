@@ -4,34 +4,30 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/array.h"
 #include "smile/core/asset/asset_loader.h"
+#include "world.h"
 
 namespace smile::world
 {
-    class World;
-
-    class WorldLoader final : public asset::AssetLoader
+    class WorldLoader final : public asset::AssetLoader< World >
     {
       public:
         WorldLoader();
 
-        asset::AssetType GetType() const override
+        primitive::ArrayView< const fs::Path > GetExtensions() const override
         {
-            return asset::AssetType{ foundation::TypeNameOf< World >() };
-        }
-
-        const std::vector< std::filesystem::path > &GetExtensions() const override
-        {
-            return m_Extensions;
+            return m_Extensions.AsView();
         }
 
         memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        memory::Ref< World > LoadWorld( const std::filesystem::path &path ) const;
-        void SaveWorld( memory::Ref< World > pWorld, const std::filesystem::path &path ) const;
+        World::Ref Load( const fs::Path &path ) const override;
+        
+        void SaveWorld( memory::Ref< World > pWorld, const fs::Path &path ) const;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".smile" };
+        const primitive::Array< fs::Path, 1 > m_Extensions{ ".smile" };
     };
 }

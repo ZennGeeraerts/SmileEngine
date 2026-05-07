@@ -15,6 +15,8 @@
  * @brief       Loads a material asset
  */
 #pragma once
+
+#include "smile/common/primitive/collection/array.h"
 #include "smile/core/asset/asset_loader.h"
 #include "material_asset.h"
 
@@ -23,28 +25,23 @@ namespace smile::graphic
     class TextureManager;
     class ShaderLibrary;
 
-    class MaterialLoader final : public asset::AssetLoader
+    class MaterialLoader final : public asset::AssetLoader< MaterialAsset >
     {
       public:
         MaterialLoader( TextureManager &textureManager, ShaderLibrary &shaderLib ) noexcept;
 
-        asset::AssetType GetType() const override
+        primitive::ArrayView< const fs::Path > GetExtensions() const override
         {
-            return asset::AssetType{ foundation::TypeNameOf< MaterialAsset >() };
-        }
-
-        const std::vector< std::filesystem::path > &GetExtensions() const override
-        {
-            return m_Extensions;
+            return m_Extensions.AsView();
         }
 
         memory::Ref< asset::Asset > Load( asset::AssetHandle handle,
             const asset::AssetMetadata &metadata ) const override;
 
-        MaterialAsset::Ref LoadMaterial( const std::filesystem::path &path ) const;
+        MaterialAsset::Ref Load( const fs::Path &path ) const override;
 
       private:
-        const std::vector< std::filesystem::path > m_Extensions{ ".smmat" };
+        const primitive::Array< fs::Path, 1 > m_Extensions{ ".smmat" };
         TextureManager &m_TextureManager;
         ShaderLibrary &m_ShaderLibrary;
     };

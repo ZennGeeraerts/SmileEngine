@@ -5,6 +5,7 @@
 #include "smpch.h"
 #include "png_reader.h"
 
+#include "smile/core/fs/physical_system.h"
 #include "smile/graphic/resource/image.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -12,24 +13,25 @@
 
 namespace smile::graphic
 {
-    memory::Ref< Image > PNGReader::Read( const std::filesystem::path &path )
+    memory::Ref< Image > PNGReader::Read( const fs::Path &path )
     {
         int width;
         int height;
         int channelsPerPixel;
 
-        std::filesystem::path finalPath = [&]()
+        fs::Path finalPath = [&]()
         {
-            if ( path.is_absolute() )
+            if ( path.IsPhysical() )
                 return path;
             else
-                return std::filesystem::absolute( path );
+                return fs::PhysicalSystem::GetAbsolutePath( path );
         }();
 
-        SM_ASSERT_MSG(
-            std::filesystem::exists( finalPath ), "PNGReader::Read > Path: {} does not exist", finalPath.string() );
+        SM_ASSERT_MSG( fs::PhysicalSystem::DoesFileExist( finalPath ),
+            "PNGReader::Read > Path: {} does not exist",
+            finalPath.string() );
 
-        stbi_uc *pData = stbi_load( finalPath.string().c_str(), &width, &height, &channelsPerPixel, 4 );
+        stbi_uc *pData = stbi_load( finalPath.GetData(), &width, &height, &channelsPerPixel, 4 );
 
         if ( !pData )
             return memory::CreateRef< Image >();
