@@ -58,4 +58,8 @@ namespace smile::primitive
 
     void ToLowerCase( String &text );
     void ToUpperCase( String &text );
+
+    bool StartsWith( const StringView text, const StringView startingText );
+    bool EndsWith( const StringView text, const StringView endingText );
+    bool ContainsText( const StringView text, const StringView textToFind );
 }

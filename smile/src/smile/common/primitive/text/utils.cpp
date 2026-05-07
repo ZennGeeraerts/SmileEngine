@@ -240,4 +240,57 @@ namespace smile::primitive
             text[index] = foundation::NumericCast< char >( toupper( text[index] ) );
         }
     }
+
+    bool StartsWith( const StringView text, const StringView startingText )
+    {
+        SM_ASSERT( startingText.GetCharCount() != 0 );
+
+        if ( text.GetCharCount() < startingText.GetCharCount() )
+        {
+            return false;
+        }
+
+        const char *textArray = text.GetSubText();
+        const char *startingTextArray = startingText.GetSubText();
+
+        for ( auto charIndex : foundation::GetCountIterator( startingText.GetCharCount() ) )
+        {
+            if ( textArray[charIndex] != startingTextArray[charIndex] )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool EndsWith( const StringView text, const StringView endingText )
+    {
+        SM_ASSERT( endingText.GetCharCount() != 0 );
+
+        if ( text.GetCharCount() < endingText.GetCharCount() )
+        {
+            return false;
+        }
+
+        const char *textArray = text.GetSubText();
+        const char *endingTextArray = endingText.GetSubText();
+        const Index lastIndex = text.GetCharCount() - 1;
+        const Index ending_text_last_index = endingText.GetCharCount() - 1;
+
+        for ( auto charIndex : foundation::GetCountIterator( endingText.GetCharCount() ) )
+        {
+            if ( textArray[lastIndex - charIndex] != endingTextArray[ending_text_last_index - charIndex] )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool ContainsText( const StringView text, const StringView textToFind )
+    {
+        return FindText( text, textToFind ) != s_InvalidIndex;
+    }
 }

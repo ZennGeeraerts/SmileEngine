@@ -188,5 +188,46 @@ namespace smile::primitive
             CHECK_ASSERT( ReplaceTextInsideRange( result, 0, 18, "text" ) );
             CHECK_ASSERT( ReplaceTextInsideRange( result, 17, 1, "text" ) );
         }
+
+        SECTION( "StartsWith" )
+        {
+            const String text{ "Hello world!" };
+            const String emptyText{ "" };
+            const StringView validPrefixWithGarbage{ "HelloStupid", 5 };
+            const StringView InvalidPrefixWithGarbage{ "HelloStupid", 6 };
+
+            CHECK( StartsWith( text, "Hello" ) );
+            CHECK( !StartsWith( emptyText, "Hello" ) );
+            CHECK( StartsWith( text, validPrefixWithGarbage ) );
+            CHECK( !StartsWith( text, InvalidPrefixWithGarbage ) );
+            CHECK_ASSERT( StartsWith( "Anytext", emptyText ) );
+        }
+
+        SECTION( "EndsWith" )
+        {
+            const String text{ "Hello world!" };
+            const String emptyText{ "" };
+            const StringView validSuffixWithGarbage{ "world!", 6 };
+            const StringView invalidSuffixWithGarbage( "aworld!", 7 );
+
+            CHECK( EndsWith( text, "world!" ) );
+            CHECK( !EndsWith( emptyText, "Hello" ) );
+            CHECK( EndsWith( text, validSuffixWithGarbage ) );
+            CHECK( !EndsWith( text, invalidSuffixWithGarbage ) );
+            CHECK_ASSERT( EndsWith( "Anytext", emptyText ) );
+        }
+
+        SECTION( "ContainsText" )
+        {
+            const String text{ "This contains some text" };
+
+            CHECK( ContainsText( text, "This" ) );
+            CHECK( ContainsText( text, "text" ) );
+            CHECK( ContainsText( text, "contains some" ) );
+
+            CHECK( !ContainsText( text, "this" ) );
+            CHECK( !ContainsText( text, "Text" ) );
+            CHECK( !ContainsText( text, "Contains Some" ) );
+        }
     }
 }
