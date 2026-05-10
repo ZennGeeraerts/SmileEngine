@@ -2,6 +2,7 @@ include(smile)
 
 include(build/yaml.cmake)
 include(build/serializer.cmake)
+include(build/lz4.cmake)
 
 set(DIRECTORIES
     application
