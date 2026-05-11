@@ -30,7 +30,7 @@ namespace smile::graphic
 
     MaterialInstanceAsset::Ref MaterialInstanceManager::CreateMaterialInstance( const primitive::String &name,
         MaterialAsset::Ref material,
-        const MaterialDescriptor &desc )
+        const MaterialAssetDescriptor &desc )
     {
         SM_ASSERT( !m_MaterialInstances.HasItemAtKey( name ) );
 
@@ -82,8 +82,7 @@ namespace smile::graphic
             return materialInstanceAsset;
         }
 
-        SM_LOG_WARNING(
-            "MaterialInstanceManager::LoadMaterialInstance > Could not load material instance: {}", path );
+        SM_LOG_WARNING( "MaterialInstanceManager::LoadMaterialInstance > Could not load material instance: {}", path );
 
         return nullptr;
     }

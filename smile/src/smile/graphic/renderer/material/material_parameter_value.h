@@ -9,27 +9,20 @@
 =======================================================================*/
 
 /**
- * @file        material_serializer_utils.h
+ * @file        material_parameter_value.h
  * @author      Zenn Geeraerts
- * @created     5 May 2026
- * @brief       Utility functions for serializing material assets to a file
+ * @created     11 May 2026
+ * @brief       Shared material parameter value type used by both asset and runtime descriptors
  */
 #pragma once
 
-#include "smile/core/yaml/yaml.h"
-#include "smile/graphic/renderer/material/material_layout.h"
-#include "material_asset_descriptor.h"
+#include "smile/common/primitive/collection/vector.h"
+
+#include <DirectXMath.h>
+#include <variant>
 
 namespace smile::graphic
 {
-    class TextureManager;
-
-    void SerializeMaterialAssetDescriptor( const MaterialLayout &layout,
-        const MaterialAssetDescriptor &desc,
-        yaml::Emitter &output );
-
-    void DeserializeMaterialAssetDescriptor( TextureManager &textureManager,
-        const yaml::Node &node,
-        const MaterialLayout &layout,
-        MaterialAssetDescriptor &desc );
+    using MaterialParameterValue = std::
+        variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, DirectX::XMFLOAT4, primitive::Vector< Byte > >;
 }

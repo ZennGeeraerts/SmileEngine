@@ -9,57 +9,47 @@
 =======================================================================*/
 
 /**
- * @file        material_descriptor.h
+ * @file        material_asset_descriptor.h
  * @author      Zenn Geeraerts
- * @created     13 April 2026
- * @brief       Values for parameters and texture bindings of a material
+ * @created     11 May 2026
+ * @brief       Asset-level material descriptor; holds TextureAsset refs instead of GPU resources
  */
 #pragma once
 
-#include "material_parameter_value.h"
+#include "smile/graphic/renderer/material/material_parameter_value.h"
 #include "smile/graphic/renderer/shader/program.h"
-#include "smile/graphic/renderer/resource/texture.h"
+#include "smile/graphic/renderer/sprite/texture_asset.h"
 #include "smile/graphic/rhi/resource/sampler.h"
+#include "smile/common/primitive/collection/hash_map.h"
 
 namespace smile::graphic
 {
-
-    struct MaterialTextureBinding final
+    struct MaterialAssetTextureBinding final
     {
-        MaterialTextureBinding() = default;
+        MaterialAssetTextureBinding() = default;
 
-        MaterialTextureBinding( const Texture &texture, const rhi::SamplerDescriptor &samplerDesc ) noexcept
+        MaterialAssetTextureBinding( TextureAsset::Ref texture, const rhi::SamplerDescriptor &samplerDesc ) noexcept
             : Texture{ texture }, SamplerDescriptor{ samplerDesc }
         {
         }
 
-        bool operator==( const MaterialTextureBinding &other ) const noexcept
-        {
-            return Texture == other.Texture && SamplerDescriptor == other.SamplerDescriptor;
-        }
-
-        bool operator!=( const MaterialTextureBinding &other ) const noexcept
-        {
-            return !( *this == other );
-        }
-
-        Texture Texture;
+        TextureAsset::Ref Texture;
         rhi::SamplerDescriptor SamplerDescriptor;
     };
 
-    struct MaterialDescriptor final
+    struct MaterialAssetDescriptor final
     {
         void SetParameter( const primitive::StringView name, const MaterialParameterValue &data );
         const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
 
         void SetTextureBinding( const primitive::StringView name,
-            const Texture &texture,
+            TextureAsset::Ref textureAsset,
             const rhi::SamplerDescriptor &samplerDesc );
 
-        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
+        const MaterialAssetTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
         Program::ConstRef ShaderProgram;
         primitive::HashMap< primitive::String, MaterialParameterValue > Parameters;
-        primitive::HashMap< primitive::String, MaterialTextureBinding > TextureBindings;
+        primitive::HashMap< primitive::String, MaterialAssetTextureBinding > TextureBindings;
     };
 }

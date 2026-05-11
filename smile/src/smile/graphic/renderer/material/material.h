@@ -27,7 +27,7 @@ namespace smile::graphic
         class MaterialSystem;
     }
 
-    class MaterialData;
+    struct MaterialData;
     class MaterialInstance;
 
     class Material final

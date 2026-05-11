@@ -30,13 +30,14 @@ namespace smile::graphic
     }
 
     void MaterialInstanceAsset::SetTextureBinding( const primitive::StringView name,
-        const Texture &texture,
+        TextureAsset::Ref texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
         m_Descriptor.SetTextureBinding( name, texture, samplerDesc );
     }
 
-    const MaterialTextureBinding &MaterialInstanceAsset::GetTextureBinding( const primitive::StringView name ) const
+    const MaterialAssetTextureBinding &MaterialInstanceAsset::GetTextureBinding(
+        const primitive::StringView name ) const
     {
         return m_Descriptor.GetTextureBinding( name );
     }

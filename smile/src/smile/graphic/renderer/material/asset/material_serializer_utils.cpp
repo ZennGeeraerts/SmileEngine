@@ -23,9 +23,8 @@
 
 namespace smile::graphic
 {
-    void SerializeMaterialDescriptor( const TextureManager &textureManager,
-        const MaterialLayout &layout,
-        const MaterialDescriptor &desc,
+    void SerializeMaterialAssetDescriptor( const MaterialLayout &layout,
+        const MaterialAssetDescriptor &desc,
         yaml::Emitter &output )
     {
         output << YAML::Key << "Parameters";
@@ -71,13 +70,15 @@ namespace smile::graphic
             auto it = desc.TextureBindings.FindItemAtKey( texture.Name );
             if ( it != desc.TextureBindings.end() )
             {
-                const MaterialTextureBinding &binding = it.GetItem();
-                auto textureAsset = textureManager.GetTexture( binding.Texture );
+                const MaterialAssetTextureBinding &binding = it.GetItem();
+                if ( !binding.Texture )
+                    continue;
+
                 output << YAML::Key << texture.Name << YAML::Value;
 
                 output << YAML::BeginMap;
                 {
-                    output << YAML::Key << "Texture" << YAML::Value << textureAsset->m_Handle;
+                    output << YAML::Key << "Texture" << YAML::Value << binding.Texture->m_Handle;
 
                     output << YAML::Key << "Sampler";
                     output << YAML::BeginMap;
@@ -103,10 +104,10 @@ namespace smile::graphic
         output << YAML::EndMap;
     }
 
-    void DeserializeMaterialDescriptor( TextureManager &textureManager,
+    void DeserializeMaterialAssetDescriptor( TextureManager &textureManager,
         const yaml::Node &node,
         const MaterialLayout &layout,
-        MaterialDescriptor &desc )
+        MaterialAssetDescriptor &desc )
     {
         if ( node["Parameters"] )
         {
@@ -178,9 +179,9 @@ namespace smile::graphic
                 samplerDesc.AddressingW =
                     static_cast< rhi::SamplerAddressing >( valueNode["Sampler"]["AddressingW"].as< Uint32 >() );
 
-                auto textureAsset = textureManager.GetTexture( textureAssetHandle );
+                TextureAsset::Ref textureAsset = textureManager.GetTexture( textureAssetHandle );
 
-                desc.SetTextureBinding( texture.Name, textureAsset->GetTexture(), samplerDesc );
+                desc.SetTextureBinding( texture.Name, textureAsset, samplerDesc );
             }
         }
     }

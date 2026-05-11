@@ -45,14 +45,14 @@ namespace smile::graphic
         yaml::Emitter yamlOutput{};
         yamlOutput << YAML::BeginMap;
         {
-            const MaterialDescriptor &desc = m_MaterialAsset->GetDescriptor();
+            const MaterialAssetDescriptor &desc = m_MaterialAsset->GetDescriptor();
             const MaterialLayout &layout = m_MaterialAsset->GetLayout();
 
             yamlOutput << YAML::Key << "Name" << YAML::Value << m_MaterialAsset->GetName();
             yamlOutput << YAML::Key << "VertexShader" << YAML::Value << desc.ShaderProgram->GetVertexShader()->m_Handle;
             yamlOutput << YAML::Key << "PixelShader" << YAML::Value << desc.ShaderProgram->GetPixelShader()->m_Handle;
 
-            SerializeMaterialDescriptor( m_TextureManager, layout, desc, yamlOutput );
+            SerializeMaterialAssetDescriptor( layout, desc, yamlOutput );
 
             yamlOutput << YAML::BeginMap;
             {
@@ -140,9 +140,9 @@ namespace smile::graphic
         auto program = Program::Create( pVertexShader, pPixelShader );
 
         BuildMaterialLayoutAndDescriptor(
-            m_TextureManager, program, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
+            m_TextureManager.GetFallBackTexture(), program, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
 
-        DeserializeMaterialDescriptor(
+        DeserializeMaterialAssetDescriptor(
             m_TextureManager, data, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
 
         if ( data["RenderState"] )

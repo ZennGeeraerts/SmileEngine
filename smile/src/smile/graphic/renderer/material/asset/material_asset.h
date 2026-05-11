@@ -19,12 +19,10 @@
 #include "smile/common/memory/ref.h"
 #include "smile/core/asset/asset.h"
 #include "smile/graphic/renderer/material/material_layout.h"
-#include "smile/graphic/renderer/material/material_descriptor.h"
+#include "material_asset_descriptor.h"
 
 namespace smile::graphic
 {
-    class TextureManager;
-
     class MaterialAsset final : public asset::Asset< MaterialAsset >
     {
       public:
@@ -35,7 +33,7 @@ namespace smile::graphic
 
         MaterialAsset( const primitive::String &name,
             const MaterialLayout &layout,
-            const MaterialDescriptor &desc ) noexcept
+            const MaterialAssetDescriptor &desc ) noexcept
             : m_Name{ name }, m_Descriptor{ desc }, m_Layout{ layout }
         {
         }
@@ -44,17 +42,17 @@ namespace smile::graphic
         const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
 
         void SetTextureBinding( const primitive::StringView name,
-            const Texture &texture,
+            TextureAsset::Ref texture,
             const rhi::SamplerDescriptor &samplerDesc );
 
-        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
+        const MaterialAssetTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
         primitive::StringView GetName() const
         {
             return m_Name.AsStringView();
         }
 
-        const MaterialDescriptor &GetDescriptor() const
+        const MaterialAssetDescriptor &GetDescriptor() const
         {
             return m_Descriptor;
         }
@@ -67,13 +65,13 @@ namespace smile::graphic
       private:
         primitive::String m_Name;
         MaterialLayout m_Layout;
-        MaterialDescriptor m_Descriptor;
+        MaterialAssetDescriptor m_Descriptor;
 
         friend class MaterialSerializer;
     };
 
-    void BuildMaterialLayoutAndDescriptor( const TextureManager &textureManager,
+    void BuildMaterialLayoutAndDescriptor( TextureAsset::Ref fallbackTexture,
         Program::ConstRef program,
         MaterialLayout &layout,
-        MaterialDescriptor &desc );
+        MaterialAssetDescriptor &desc );
 }

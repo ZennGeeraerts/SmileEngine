@@ -17,8 +17,6 @@
 #include "smpch.h"
 #include "material_asset.h"
 
-#include "smile/graphic/renderer/sprite/texture_manager.h"
-
 namespace smile::graphic
 {
     void MaterialAsset::SetParameter( const primitive::StringView name, const MaterialParameterValue &data )
@@ -32,13 +30,13 @@ namespace smile::graphic
     }
 
     void MaterialAsset::SetTextureBinding( const primitive::StringView name,
-        const Texture &texture,
+        TextureAsset::Ref texture,
         const rhi::SamplerDescriptor &samplerDesc )
     {
         m_Descriptor.SetTextureBinding( name, texture, samplerDesc );
     }
 
-    const MaterialTextureBinding &MaterialAsset::GetTextureBinding( const primitive::StringView name ) const
+    const MaterialAssetTextureBinding &MaterialAsset::GetTextureBinding( const primitive::StringView name ) const
     {
         return m_Descriptor.GetTextureBinding( name );
     }
@@ -63,10 +61,10 @@ namespace smile::graphic
         }
     }
 
-    void BuildMaterialLayoutAndDescriptor( const TextureManager &textureManager,
+    void BuildMaterialLayoutAndDescriptor( TextureAsset::Ref fallbackTexture,
         Program::ConstRef program,
         MaterialLayout &layout,
-        MaterialDescriptor &desc )
+        MaterialAssetDescriptor &desc )
     {
         const auto &cbDesc = program->GetConstantBufferDescriptor( "Material" );
         for ( const auto &cbItem : cbDesc )
@@ -88,7 +86,6 @@ namespace smile::graphic
 
                 layout.Textures.PushBack( std::move( textureBinding ) );
 
-                auto fallbackTexture = textureManager.GetFallBackTexture()->GetTexture();
                 rhi::SamplerDescriptor fallbackSampler{};
 
                 desc.TextureBindings.Insert( res.NamedElement.Name, { fallbackTexture, fallbackSampler } );

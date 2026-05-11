@@ -18,6 +18,7 @@
 #include "material_manager.h"
 
 #include "smile/core/asset/asset_manager.h"
+#include "smile/graphic/renderer/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
@@ -28,7 +29,7 @@ namespace smile::graphic
 
     MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name,
         const MaterialLayout &layout,
-        const MaterialDescriptor &desc )
+        const MaterialAssetDescriptor &desc )
     {
         SM_ASSERT( !m_Materials.HasItemAtKey( name ) );
 
@@ -40,9 +41,9 @@ namespace smile::graphic
     MaterialAsset::Ref MaterialManager::CreateMaterial( const primitive::String &name, Program::ConstRef program )
     {
         MaterialLayout layout{};
-        MaterialDescriptor desc{};
+        MaterialAssetDescriptor desc{};
 
-        BuildMaterialLayoutAndDescriptor( m_TextureManager, program, layout, desc );
+        BuildMaterialLayoutAndDescriptor( m_TextureManager.GetFallBackTexture(), program, layout, desc );
 
         return CreateMaterial( name, layout, desc );
     }

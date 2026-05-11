@@ -26,8 +26,9 @@ namespace smile::graphic
         MaterialManager( TextureManager &textureManager, ShaderLibrary &shaderLibrary ) noexcept;
         ~MaterialManager() = default;
 
-        MaterialAsset::Ref
-        CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc );
+        MaterialAsset::Ref CreateMaterial( const primitive::String &name,
+            const MaterialLayout &layout,
+            const MaterialAssetDescriptor &desc );
 
         MaterialAsset::Ref CreateMaterial( const primitive::String &name, Program::ConstRef program );
 

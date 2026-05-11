@@ -31,7 +31,7 @@ namespace smile::graphic
 
         MaterialInstanceAsset::Ref CreateMaterialInstance( const primitive::String &name,
             MaterialAsset::Ref material,
-            const MaterialDescriptor &desc );
+            const MaterialAssetDescriptor &desc );
 
         MaterialInstanceAsset::Ref GetMaterialInstance( asset::AssetHandle handle );
         MaterialInstanceAsset::Ref GetMaterialInstance( const primitive::StringView name ) const;

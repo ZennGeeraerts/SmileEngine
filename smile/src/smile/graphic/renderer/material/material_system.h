@@ -23,13 +23,14 @@
 
 namespace smile::graphic
 {
+    class TextureManager;
+
     class MaterialSystem final
     {
       public:
-        MaterialSystem( RenderContext &context, ResourceManager &resourceManager ) noexcept
-            : m_Internal{ context, resourceManager }
-        {
-        }
+        MaterialSystem( RenderContext &context,
+            ResourceManager &resourceManager,
+            TextureManager &textureManager ) noexcept;
 
         Material
         CreateMaterial( const primitive::String &name, const MaterialLayout &layout, const MaterialDescriptor &desc )
@@ -43,8 +44,10 @@ namespace smile::graphic
         {
             SM_ASSERT( !m_AssetToMaterial.HasItemAtKey( asset.GetPointer() ) );
 
-            const auto handle =
-                m_Internal.CreateMaterial( asset->GetName(), asset->GetLayout(), asset->GetDescriptor() );
+            const auto &layout = asset->GetLayout();
+
+            const auto handle = m_Internal.CreateMaterial(
+                asset->GetName(), layout, BuildMaterialDescriptor( asset->GetDescriptor(), layout ) );
 
             m_AssetToMaterial.Insert( asset.GetPointer(), handle );
 
@@ -88,7 +91,10 @@ namespace smile::graphic
         {
             auto material = GetOrCreateMaterial( asset->GetMaterialAsset() );
 
-            const auto handle = m_Internal.CreateMaterialInstance( material.m_Handle, asset->GetDescriptor() );
+            const auto &layout = m_Internal.GetMaterialLayout( material.m_Handle );
+
+            const auto handle = m_Internal.CreateMaterialInstance(
+                material.m_Handle, BuildMaterialDescriptor( asset->GetDescriptor(), layout ) );
 
             return { handle, &m_Internal };
         }
@@ -110,7 +116,11 @@ namespace smile::graphic
         }
 
       private:
+        MaterialDescriptor BuildMaterialDescriptor( const MaterialAssetDescriptor &assetDesc,
+            const MaterialLayout &layout );
+
         detail::MaterialSystem m_Internal;
         primitive::HashMap< const MaterialAsset *, detail::MaterialHandle > m_AssetToMaterial;
+        TextureManager &m_TextureManager;
     };
 }

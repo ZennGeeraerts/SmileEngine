@@ -23,7 +23,8 @@ namespace smile::graphic
         auto materialInstanceManager =
             memory::CreateScope< MaterialInstanceManager >( *textureManager, *shaderLibrary, *materialManager );
 
-        auto materialSystem = memory::CreateScope< MaterialSystem >( *renderContext, *resourceManager );
+        auto materialSystem =
+            memory::CreateScope< MaterialSystem >( *renderContext, *resourceManager, *textureManager );
 
         auto engine = memory::CreateScope< RenderEngine >( api,
             std::move( device ),

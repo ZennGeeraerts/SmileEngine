@@ -30,7 +30,7 @@ namespace smile::graphic
 
         MaterialInstanceAsset( const primitive::String &name,
             MaterialAsset::Ref materialAsset,
-            const MaterialDescriptor &desc ) noexcept
+            const MaterialAssetDescriptor &desc ) noexcept
             : m_Name{ name }, m_MaterialAsset{ materialAsset }, m_Descriptor{ desc }
         {
         }
@@ -39,10 +39,10 @@ namespace smile::graphic
         const MaterialParameterValue &GetParameter( const primitive::StringView name ) const;
 
         void SetTextureBinding( const primitive::StringView name,
-            const Texture &texture,
+            TextureAsset::Ref texture,
             const rhi::SamplerDescriptor &samplerDesc );
 
-        const MaterialTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
+        const MaterialAssetTextureBinding &GetTextureBinding( const primitive::StringView name ) const;
 
         primitive::StringView GetName() const noexcept
         {
@@ -54,7 +54,7 @@ namespace smile::graphic
             return m_MaterialAsset;
         }
 
-        const MaterialDescriptor &GetDescriptor() const noexcept
+        const MaterialAssetDescriptor &GetDescriptor() const noexcept
         {
             return m_Descriptor;
         }
@@ -62,7 +62,7 @@ namespace smile::graphic
       private:
         primitive::String m_Name;
         MaterialAsset::Ref m_MaterialAsset;
-        MaterialDescriptor m_Descriptor;
+        MaterialAssetDescriptor m_Descriptor;
 
         friend class MaterialInstanceSerializer;
     };
