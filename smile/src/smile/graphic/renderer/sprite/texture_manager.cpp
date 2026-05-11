@@ -10,17 +10,13 @@
 
 namespace smile::graphic
 {
-    TextureManager::TextureManager( ResourceManager &resourceManager ) noexcept : m_TextureLoader{ resourceManager }
-    {
-    }
-
     TextureAsset::Ref TextureManager::GetTexture( asset::AssetHandle handle )
     {
         TextureAsset::Ref pTextureAsset = asset::AssetManager::GetAsset< TextureAsset >( handle );
 
         if ( pTextureAsset )
         {
-            m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
+            // m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
             return pTextureAsset;
         }
 
@@ -35,26 +31,11 @@ namespace smile::graphic
 
         if ( pTextureAsset )
         {
-            m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
+            // m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
             return pTextureAsset;
         }
 
         SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", path );
-
-        return m_pFallBackTexture;
-    }
-
-    TextureAsset::Ref TextureManager::GetTexture( const Texture &texture ) const
-    {
-        auto it = m_Textures.FindItemAtKey( texture );
-
-        if ( it != m_Textures.end() )
-        {
-            return it.GetItem();
-        }
-
-        SM_LOG_WARNING(
-            "TextureManager::GetTexture > Could not find texture in texture map: {}", texture.GetHandle().GetIndex() );
 
         return m_pFallBackTexture;
     }

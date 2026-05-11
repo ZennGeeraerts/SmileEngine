@@ -10,12 +10,10 @@
 
 namespace smile::graphic
 {
-    class ResourceManager;
-
     class TextureLoader final : public asset::AssetLoader< TextureAsset >
     {
       public:
-        TextureLoader( ResourceManager &resourceManager ) noexcept;
+        TextureLoader() noexcept;
 
         primitive::ArrayView< const fs::Path > GetExtensions() const override
         {
@@ -29,6 +27,5 @@ namespace smile::graphic
 
       private:
         const primitive::Array< fs::Path, 3 > m_Extensions{ ".png", ".jpg", ".dds" };
-        ResourceManager &m_ResourceManager;
     };
 }

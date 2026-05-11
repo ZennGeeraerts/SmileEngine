@@ -24,6 +24,7 @@
 #include "smile/graphic/renderer/shader/pixel_shader.h"
 #include "smile/graphic/renderer/shader/binding_layout.h"
 #include "smile/graphic/renderer/shader/binding_set.h"
+#include "smile/graphic/renderer/sprite/texture_asset.h"
 
 #include "smile/graphic/rhi/object.h"
 
@@ -48,6 +49,9 @@ namespace smile::graphic
         void DestroyIndexBuffer( IndexBuffer &indexBuffer );
 
         Texture CreateTexture2D( Image::ConstRef pImage, bool updateable );
+        Texture CreateTexture2D( TextureAsset::ConstRef textureAsset );
+
+        Texture GetOrCreateTexture2D( TextureAsset::ConstRef textureAsset );
 
         Texture CreateTextureCube( Image::ConstRef pImage, bool updateable );
 
@@ -115,7 +119,7 @@ namespace smile::graphic
 
         void DestroyBindingSet( BindingSet &bindingSet );
 
-         void CreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
+        void CreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
             foundation::Flags< rhi::ShaderStage > shaderStage,
             BindingLayout &layout,
             BindingSet &set );
@@ -166,6 +170,8 @@ namespace smile::graphic
         primitive::Vector< BindingLayout > m_BindingLayouts;
         primitive::Vector< BindingSet > m_BindingSets;
         primitive::Vector< GraphicsPipeline > m_GraphicsPipelines;
+
+        primitive::HashMap< TextureAsset::ConstRef, Texture > m_TextureCache;
 
         primitive::HashMap< ShaderKey, VertexShader > m_VertexShaderCache;
         primitive::HashMap< ShaderKey, PixelShader > m_PixelShaderCache;

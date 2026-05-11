@@ -134,6 +134,25 @@ namespace smile::graphic
         return texture;
     }
 
+    Texture ResourceManager::CreateTexture2D( TextureAsset::ConstRef textureAsset )
+    {
+        const auto texture = CreateTexture2D( textureAsset->GetImage(), false );
+        m_TextureCache.Insert( textureAsset, texture );
+        return texture;
+    }
+
+    Texture ResourceManager::GetOrCreateTexture2D( TextureAsset::ConstRef textureAsset )
+    {
+        auto it = m_TextureCache.FindItemAtKey( textureAsset );
+
+        if ( it != m_TextureCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreateTexture2D( textureAsset );
+    }
+
     Texture ResourceManager::CreateTextureCube( Image::ConstRef pImage, bool updateable )
     {
         rhi::TextureDescriptor textureDesc{};
@@ -171,6 +190,16 @@ namespace smile::graphic
     {
         m_Device.DestroyTexture( texture.GetHandle() );
         m_Textures.Erase( texture );
+
+        auto it = std::find_if( m_TextureCache.begin(),
+            m_TextureCache.end(),
+            [&texture]( const auto &kv ) { return kv.Value == texture; } );
+
+        if ( it != m_TextureCache.end() )
+        {
+            m_TextureCache.Erase( it );
+        }
+
         m_TextureHandleManager.DestroyHandle( texture.GetHandle() );
         texture.m_Handle = rhi::TextureHandle::NullHandle();
     }

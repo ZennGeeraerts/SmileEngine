@@ -6,7 +6,7 @@
 
 #include "smile/common/memory/ref.h"
 #include "smile/core/asset/asset.h"
-#include "smile/graphic/renderer/resource/texture.h"
+#include "smile/graphic/resource/image.h"
 
 namespace smile::graphic
 {
@@ -16,16 +16,16 @@ namespace smile::graphic
         using Ref = memory::Ref< TextureAsset >;
         using ConstRef = memory::Ref< const TextureAsset >;
 
-        TextureAsset( const Texture &texture ) : m_Texture{ texture }
+        TextureAsset( Image::Ref image ) noexcept : m_Image{ image }
         {
         }
 
-        Texture GetTexture() const
+        Image::ConstRef GetImage() const noexcept
         {
-            return m_Texture;
+            return m_Image;
         }
 
       private:
-        Texture m_Texture;
+        Image::Ref m_Image;
     };
 }

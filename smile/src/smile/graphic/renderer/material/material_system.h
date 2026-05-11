@@ -121,6 +121,7 @@ namespace smile::graphic
 
         detail::MaterialSystem m_Internal;
         primitive::HashMap< const MaterialAsset *, detail::MaterialHandle > m_AssetToMaterial;
+        ResourceManager &m_ResourceManager;
         TextureManager &m_TextureManager;
     };
 }

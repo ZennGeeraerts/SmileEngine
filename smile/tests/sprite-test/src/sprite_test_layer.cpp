@@ -91,7 +91,7 @@ namespace smile::graphic
             desc.ShaderProgram = program;
             desc.Parameters["Color"] = DirectX::XMFLOAT3{ 1.0f, 0.0f, 0.0f };
             desc.Parameters["UseTexture"] = 1;
-            desc.TextureBindings["Diffuse"] = { textureAsset->GetTexture(), samplerDesc };
+            desc.TextureBindings["Diffuse"] = { resourceManager.GetOrCreateTexture2D( textureAsset ), samplerDesc };
 
             m_Material = materialSystem.CreateMaterial( "DefaultSprite", layout, desc );
         }

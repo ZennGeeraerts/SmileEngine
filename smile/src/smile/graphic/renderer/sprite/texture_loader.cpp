@@ -9,12 +9,11 @@
 
 #include "smile/core/asset/asset_importer.h"
 #include "smile/core/project/project_manager.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/resource/reader/image_reader.h"
 
 namespace smile::graphic
 {
-    TextureLoader::TextureLoader( ResourceManager &resourceManager ) noexcept : m_ResourceManager{ resourceManager }
+    TextureLoader::TextureLoader() noexcept
     {
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
@@ -40,8 +39,7 @@ namespace smile::graphic
         }
 
         Image::Ref image = ImageReader::Read( path );
-        const Texture texture = m_ResourceManager.CreateTexture2D( image, false );
-        TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( texture );
+        TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( std::move( image ) );
 
         return textureAsset;
     }

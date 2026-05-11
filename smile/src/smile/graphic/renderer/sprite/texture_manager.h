@@ -10,17 +10,14 @@
 
 namespace smile::graphic
 {
-    class ResourceManager;
-
     class TextureManager final
     {
       public:
-        TextureManager( ResourceManager &resourceManager ) noexcept;
+        TextureManager() = default;
         ~TextureManager() = default;
 
         TextureAsset::Ref GetTexture( asset::AssetHandle handle );
         TextureAsset::Ref GetTexture( const fs::Path &path );
-        TextureAsset::Ref GetTexture( const Texture &texture ) const;
 
         TextureAsset::Ref GetFallBackTexture() const
         {
@@ -28,7 +25,6 @@ namespace smile::graphic
         }
 
       private:
-        primitive::HashMap< Texture, TextureAsset::Ref > m_Textures;
         TextureLoader m_TextureLoader;
         TextureAsset::Ref m_pFallBackTexture;
     };

@@ -17,6 +17,7 @@
 #include "smpch.h"
 #include "material_system.h"
 
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/sprite/texture_manager.h"
 
 namespace smile::graphic
@@ -24,7 +25,9 @@ namespace smile::graphic
     MaterialSystem::MaterialSystem( RenderContext &context,
         ResourceManager &resourceManager,
         TextureManager &textureManager ) noexcept
-        : m_Internal{ context, resourceManager }, m_TextureManager{ textureManager }
+        : m_Internal{ context, resourceManager },
+          m_ResourceManager{ resourceManager },
+          m_TextureManager{ textureManager }
     {
     }
 
@@ -38,8 +41,11 @@ namespace smile::graphic
         for ( const auto &textureLayout : layout.Textures )
         {
             const auto &binding = assetDesc.GetTextureBinding( textureLayout.Name );
-            const Texture texture = binding.TextureAsset ? binding.TextureAsset->GetTexture()
-                                                         : m_TextureManager.GetFallBackTexture()->GetTexture();
+
+            TextureAsset::ConstRef textureAsset =
+                binding.Texture ? binding.Texture : m_TextureManager.GetFallBackTexture();
+
+            const Texture texture = m_ResourceManager.GetOrCreateTexture2D( textureAsset );
 
             desc.TextureBindings.Insert( textureLayout.Name, { texture, binding.SamplerDescriptor } );
         }
