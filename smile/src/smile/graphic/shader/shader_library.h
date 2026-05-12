@@ -5,22 +5,21 @@
 #pragma once
 
 #include "smile/common/primitive/text/string.h"
-#include "smile/common/primitive/collection/hash_map.h"
+#include "smile/core/asset/asset_provider.h"
 #include "shader_loader.h"
-#include "shader_asset.h"
 
 namespace smile::graphic
 {
-    class ShaderLibrary final
+    class ShaderLibrary final : public asset::AssetProvider< ShaderAsset, primitive::String, ShaderLoader >
     {
       public:
-        memory::Ref< ShaderAsset > GetShader( const primitive::StringView shaderName ) const;
-        memory::Ref< ShaderAsset > LoadShader( const fs::Path &path );
+        ShaderLibrary() = default;
+        ~ShaderLibrary() = default;
 
-        bool Exists( const primitive::StringView shaderName ) const;
-
-      private:
-        ShaderLoader m_ShaderLoader;
-        primitive::HashMap< primitive::String, memory::Ref< ShaderAsset > > m_Shaders;
+      protected:
+        primitive::String GetKey( ShaderAsset::Ref asset ) const override
+        {
+            return asset->GetName();
+        }
     };
 }

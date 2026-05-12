@@ -16,8 +16,13 @@ namespace smile::graphic
         using Ref = memory::Ref< TextureAsset >;
         using ConstRef = memory::Ref< const TextureAsset >;
 
-        TextureAsset( Image::Ref image ) noexcept : m_Image{ image }
+        TextureAsset( const primitive::String &id, Image::Ref image ) noexcept : m_ID{ id }, m_Image{ image }
         {
+        }
+
+        primitive::StringView GetID() const noexcept
+        {
+            return m_ID;
         }
 
         Image::ConstRef GetImage() const noexcept
@@ -26,6 +31,7 @@ namespace smile::graphic
         }
 
       private:
+        primitive::String m_ID;
         Image::Ref m_Image;
     };
 }

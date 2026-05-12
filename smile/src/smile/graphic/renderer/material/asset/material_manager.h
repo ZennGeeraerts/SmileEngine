@@ -16,11 +16,12 @@
  */
 #pragma once
 
+#include "smile/core/asset/asset_provider.h"
 #include "material_loader.h"
 
 namespace smile::graphic
 {
-    class MaterialManager final
+    class MaterialManager final : public asset::AssetProvider< MaterialAsset, primitive::String, MaterialLoader >
     {
       public:
         MaterialManager( TextureManager &textureManager ) noexcept;
@@ -36,13 +37,13 @@ namespace smile::graphic
             ShaderAsset::ConstRef vertexShader,
             ShaderAsset::ConstRef pixelShader );
 
-        MaterialAsset::Ref GetMaterial( const primitive::StringView name ) const;
-
-        MaterialAsset::Ref LoadMaterial( const fs::Path &path );
+      protected:
+        primitive::String GetKey( MaterialAsset::Ref asset ) const override
+        {
+            return asset->GetName();
+        }
 
       private:
-        MaterialLoader m_MaterialLoader;
-        primitive::HashMap< primitive::String, MaterialAsset::Ref > m_Materials;
         TextureManager &m_TextureManager;
     };
 }

@@ -138,7 +138,7 @@ namespace smile::graphic
         auto program = Program::Create( pVertexShader, pPixelShader );
 
         BuildMaterialLayoutAndDescriptor(
-            m_TextureManager.GetFallBackTexture(), program, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
+            m_TextureManager.GetFallback(), program, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
 
         DeserializeMaterialAssetDescriptor( data, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
 

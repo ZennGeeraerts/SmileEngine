@@ -71,8 +71,8 @@ namespace smile::graphic
             layout.CbSize = 16u;
             layout.Visibility = { rhi::ShaderStage::Pixel };
 
-            auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
-            auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
+            auto vertexShader = shaderLibrary.Get( "pos_tex.vs" );
+            auto pixelShader = shaderLibrary.Get( "col_tex.ps" );
 
             auto program = Program::Create( vertexShader, pixelShader );
 

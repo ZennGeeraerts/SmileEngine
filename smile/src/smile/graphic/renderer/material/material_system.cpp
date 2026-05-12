@@ -42,9 +42,7 @@ namespace smile::graphic
         {
             const auto &binding = assetDesc.GetTextureBinding( textureLayout.Name );
 
-            TextureAsset::ConstRef textureAsset =
-                binding.Texture ? binding.Texture : m_TextureManager.GetFallBackTexture();
-
+            TextureAsset::ConstRef textureAsset = binding.Texture ? binding.Texture : m_TextureManager.GetFallback();
             const Texture texture = m_ResourceManager.GetOrCreateTexture2D( textureAsset );
 
             desc.TextureBindings.Insert( textureLayout.Name, { texture, binding.SamplerDescriptor } );

@@ -61,8 +61,7 @@ namespace smile::graphic
 
         m_View.SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
-        TextureAsset::Ref textureAsset =
-            m_RenderEngine->GetTextureManager().GetTexture( "resources/textures/uv_grid.png" );
+        TextureAsset::Ref textureAsset = m_RenderEngine->GetTextureManager().Get( "resources/textures/uv_grid.png" );
 
         {
             MaterialLayout layout{};
@@ -76,8 +75,8 @@ namespace smile::graphic
             layout.Visibility = { rhi::ShaderStage::Pixel };
 
             auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
-            auto vertexShader = shaderLibrary.GetShader( "pos_tex.vs" );
-            auto pixelShader = shaderLibrary.GetShader( "col_tex.ps" );
+            auto vertexShader = shaderLibrary.Get( "pos_tex.vs" );
+            auto pixelShader = shaderLibrary.Get( "col_tex.ps" );
 
             auto program = Program::Create( vertexShader, pixelShader );
 

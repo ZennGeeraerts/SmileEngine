@@ -22,7 +22,7 @@
 namespace smile::graphic
 {
     MaterialManager::MaterialManager( TextureManager &textureManager ) noexcept
-        : m_MaterialLoader{ textureManager }, m_TextureManager{ textureManager }
+        : AssetProvider{ textureManager }, m_TextureManager{ textureManager }
     {
     }
 
@@ -30,10 +30,10 @@ namespace smile::graphic
         const MaterialLayout &layout,
         const MaterialAssetDescriptor &desc )
     {
-        SM_ASSERT( !m_Materials.HasItemAtKey( name ) );
+        SM_ASSERT( !Contains( name ) );
 
         MaterialAsset::Ref material = memory::CreateRef< MaterialAsset >( name, layout, desc );
-        m_Materials.Insert( name, material );
+        Insert( material );
         return material;
     }
 
@@ -42,7 +42,7 @@ namespace smile::graphic
         MaterialLayout layout{};
         MaterialAssetDescriptor desc{};
 
-        BuildMaterialLayoutAndDescriptor( m_TextureManager.GetFallBackTexture(), program, layout, desc );
+        BuildMaterialLayoutAndDescriptor( m_TextureManager.GetFallback(), program, layout, desc );
 
         return CreateMaterial( name, layout, desc );
     }
@@ -53,32 +53,5 @@ namespace smile::graphic
     {
         auto program = Program::Create( vertexShader, pixelShader );
         return CreateMaterial( name, program );
-    }
-
-    MaterialAsset::Ref MaterialManager::GetMaterial( const primitive::StringView name ) const
-    {
-        if ( m_Materials.HasItemAtKey( name ) )
-        {
-            return m_Materials[name];
-        }
-
-        SM_LOG_WARNING( "MaterialManager::GetMaterial > Could not find material with name: {}", name );
-
-        return nullptr;
-    }
-
-    MaterialAsset::Ref MaterialManager::LoadMaterial( const fs::Path &path )
-    {
-        MaterialAsset::Ref pMaterialAsset = m_MaterialLoader.Load( path );
-
-        if ( pMaterialAsset )
-        {
-            m_Materials.Insert( pMaterialAsset->GetName(), pMaterialAsset );
-            return pMaterialAsset;
-        }
-
-        SM_LOG_WARNING( "MaterialManager::LoadMaterial > Could not load material: {}", path );
-
-        return nullptr;
     }
 }

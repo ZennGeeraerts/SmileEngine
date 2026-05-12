@@ -16,11 +16,13 @@
  */
 #pragma once
 
+#include "smile/core/asset/asset_provider.h"
 #include "material_instance_loader.h"
 
 namespace smile::graphic
 {
     class MaterialInstanceManager final
+        : public asset::AssetProvider< MaterialInstanceAsset, primitive::String, MaterialInstanceLoader >
     {
       public:
         MaterialInstanceManager() = default;
@@ -30,12 +32,10 @@ namespace smile::graphic
             MaterialAsset::Ref material,
             const MaterialAssetDescriptor &desc );
 
-        MaterialInstanceAsset::Ref GetMaterialInstance( const primitive::StringView name ) const;
-
-        MaterialInstanceAsset::Ref LoadMaterialInstance( const fs::Path &path );
-
-      private:
-        MaterialInstanceLoader m_MaterialInstanceLoader;
-        primitive::HashMap< primitive::String, MaterialInstanceAsset::Ref > m_MaterialInstances;
+      protected:
+        primitive::String GetKey( MaterialInstanceAsset::Ref asset ) const override
+        {
+            return asset->GetName();
+        }
     };
 }

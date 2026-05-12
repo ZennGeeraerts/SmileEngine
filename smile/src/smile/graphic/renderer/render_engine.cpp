@@ -63,15 +63,15 @@ namespace smile::graphic
 
     void RenderEngine::LoadShaders()
     {
-        m_ShaderLibrary->LoadShader( "resources/shaders/debug_renderer.vs.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/pos_col.ps.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/pos_tex.vs.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/col_tex.ps.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/skybox.vs.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/skybox.ps.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/pbr.vs.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/pbr.ps.smshader" );
-        m_ShaderLibrary->LoadShader( "resources/shaders/pbr_skinned.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/debug_renderer.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pos_col.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pos_tex.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/col_tex.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/skybox.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/skybox.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pbr.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pbr.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pbr_skinned.vs.smshader" );
     }
 
     rhi::SwapChain *RenderEngine::CreateSwapChain( const window::Window *window )

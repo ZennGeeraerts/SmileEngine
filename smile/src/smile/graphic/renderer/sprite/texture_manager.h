@@ -4,27 +4,30 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/primitive/collection/hash_map.h"
+#include "smile/core/asset/asset_provider.h"
 #include "texture_loader.h"
-#include "texture_asset.h"
 
 namespace smile::graphic
 {
-    class TextureManager final
+    class TextureManager final : public asset::AssetProvider< TextureAsset, primitive::String, TextureLoader >
     {
       public:
-        TextureManager() = default;
-        ~TextureManager() = default;
+        TextureManager() noexcept : m_pFallBackTexture{ nullptr }
+        {
+        }
 
-        TextureAsset::Ref GetTexture( const fs::Path &path );
-
-        TextureAsset::Ref GetFallBackTexture() const
+        TextureAsset::Ref GetFallback() const override
         {
             return m_pFallBackTexture;
         }
 
+      protected:
+        primitive::String GetKey( TextureAsset::Ref asset ) const override
+        {
+            return asset->GetID();
+        }
+
       private:
-        TextureLoader m_TextureLoader;
         TextureAsset::Ref m_pFallBackTexture;
     };
 }

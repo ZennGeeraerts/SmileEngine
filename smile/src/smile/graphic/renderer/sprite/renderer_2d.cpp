@@ -29,8 +29,8 @@ namespace smile::graphic
         s_pStorage = memory::CreateScope< Renderer2DStorage >();
         s_pStorage->ForwardPass = forwardRenderPass;
 
-        auto vertexShaderAsset = shaderLib.GetShader( "pos_tex.vs" );
-        auto pixelShaderAsset = shaderLib.GetShader( "col_tex.ps" );
+        auto vertexShaderAsset = shaderLib.Get( "pos_tex.vs" );
+        auto pixelShaderAsset = shaderLib.Get( "col_tex.ps" );
 
         auto program = Program::Create( vertexShaderAsset, pixelShaderAsset );
         {

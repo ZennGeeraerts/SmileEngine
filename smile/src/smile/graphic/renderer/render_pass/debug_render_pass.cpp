@@ -35,8 +35,8 @@ namespace smile::graphic
         }
 
         {
-            auto vertexShaderAsset = m_ShaderLib.GetShader( "debug_renderer.vs" );
-            auto pixelShaderAsset = m_ShaderLib.GetShader( "pos_col.ps" );
+            auto vertexShaderAsset = m_ShaderLib.Get( "debug_renderer.vs" );
+            auto pixelShaderAsset = m_ShaderLib.Get( "pos_col.ps" );
 
             auto program = Program::Create( vertexShaderAsset, pixelShaderAsset );
 

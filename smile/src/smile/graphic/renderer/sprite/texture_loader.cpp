@@ -38,8 +38,9 @@ namespace smile::graphic
             return nullptr;
         }
 
+        const primitive::String textureID = path.GetDirectory() + path.GetStem();
         Image::Ref image = ImageReader::Read( path );
-        TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( std::move( image ) );
+        TextureAsset::Ref textureAsset = memory::CreateRef< TextureAsset >( textureID, std::move( image ) );
 
         return textureAsset;
     }
