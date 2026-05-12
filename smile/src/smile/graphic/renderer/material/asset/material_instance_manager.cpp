@@ -17,17 +17,8 @@
 #include "smpch.h"
 #include "material_instance_manager.h"
 
-#include "smile/core/asset/asset_manager.h"
-
 namespace smile::graphic
 {
-    MaterialInstanceManager::MaterialInstanceManager( TextureManager &textureManager,
-        ShaderLibrary &shaderLibrary,
-        MaterialManager &materialManager ) noexcept
-        : m_MaterialInstanceLoader{ textureManager, shaderLibrary, materialManager }, m_TextureManager{ textureManager }
-    {
-    }
-
     MaterialInstanceAsset::Ref MaterialInstanceManager::CreateMaterialInstance( const primitive::String &name,
         MaterialAsset::Ref material,
         const MaterialAssetDescriptor &desc )
@@ -40,23 +31,6 @@ namespace smile::graphic
         m_MaterialInstances.Insert( name, materialInstance );
 
         return materialInstance;
-    }
-
-    MaterialInstanceAsset::Ref MaterialInstanceManager::GetMaterialInstance( asset::AssetHandle handle )
-    {
-        MaterialInstanceAsset::Ref materialInstanceAsset =
-            asset::AssetManager::GetAsset< MaterialInstanceAsset >( handle );
-
-        if ( materialInstanceAsset )
-        {
-            m_MaterialInstances.Insert( materialInstanceAsset->GetName(), materialInstanceAsset );
-            return materialInstanceAsset;
-        }
-
-        SM_LOG_WARNING( "MaterialInstanceManager::GetMaterialInstance > Could not find material instance: {}",
-            static_cast< Uint64 >( handle ) );
-
-        return nullptr;
     }
 
     MaterialInstanceAsset::Ref MaterialInstanceManager::GetMaterialInstance( const primitive::StringView name ) const

@@ -19,9 +19,8 @@ namespace smile::graphic
 
         auto shaderLibrary = memory::CreateScope< ShaderLibrary >();
         auto textureManager = memory::CreateScope< TextureManager >();
-        auto materialManager = memory::CreateScope< MaterialManager >( *textureManager, *shaderLibrary );
-        auto materialInstanceManager =
-            memory::CreateScope< MaterialInstanceManager >( *textureManager, *shaderLibrary, *materialManager );
+        auto materialManager = memory::CreateScope< MaterialManager >( *textureManager );
+        auto materialInstanceManager = memory::CreateScope< MaterialInstanceManager >();
 
         auto materialSystem =
             memory::CreateScope< MaterialSystem >( *renderContext, *resourceManager, *textureManager );

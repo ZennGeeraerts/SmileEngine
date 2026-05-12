@@ -19,7 +19,8 @@
 
 #include "smile/core/yaml/string.h"
 #include "smile/core/yaml/math.h"
-#include "smile/graphic/renderer/sprite/texture_manager.h"
+#include "smile/core/asset/asset_manager.h"
+#include "smile/graphic/renderer/sprite/texture_asset.h"
 
 namespace smile::graphic
 {
@@ -104,8 +105,7 @@ namespace smile::graphic
         output << YAML::EndMap;
     }
 
-    void DeserializeMaterialAssetDescriptor( TextureManager &textureManager,
-        const yaml::Node &node,
+    void DeserializeMaterialAssetDescriptor( const yaml::Node &node,
         const MaterialLayout &layout,
         MaterialAssetDescriptor &desc )
     {
@@ -179,7 +179,7 @@ namespace smile::graphic
                 samplerDesc.AddressingW =
                     static_cast< rhi::SamplerAddressing >( valueNode["Sampler"]["AddressingW"].as< Uint32 >() );
 
-                TextureAsset::Ref textureAsset = textureManager.GetTexture( textureAssetHandle );
+                TextureAsset::Ref textureAsset = asset::AssetManager::GetAsset< TextureAsset >( textureAssetHandle );
 
                 desc.SetTextureBinding( texture.Name, textureAsset, samplerDesc );
             }

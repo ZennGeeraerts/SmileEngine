@@ -19,22 +19,14 @@
 
 #include "smile/core/yaml/string.h"
 #include "smile/core/fs/file.h"
-#include "smile/graphic/shader/shader_library.h"
-#include "smile/graphic/renderer/sprite/texture_manager.h"
+#include "smile/core/asset/asset_manager.h"
 
 #include "material_serializer_utils.h"
-#include "material_manager.h"
 
 namespace smile::graphic
 {
-    MaterialInstanceSerializer::MaterialInstanceSerializer( MaterialInstanceAsset::Ref materialInstanceAsset,
-        TextureManager &textureManager,
-        ShaderLibrary &shaderLib,
-        MaterialManager &materialManager ) noexcept
-        : m_MaterialInstanceAsset{ materialInstanceAsset },
-          m_TextureManager{ textureManager },
-          m_ShaderLib{ shaderLib },
-          m_MaterialManager{ materialManager }
+    MaterialInstanceSerializer::MaterialInstanceSerializer( MaterialInstanceAsset::Ref materialInstanceAsset ) noexcept
+        : m_MaterialInstanceAsset{ materialInstanceAsset }
     {
     }
 
@@ -101,23 +93,23 @@ namespace smile::graphic
             return false;
 
         auto materialAssetHandle = data["Material"].as< Uint64 >();
-        m_MaterialInstanceAsset->m_MaterialAsset = m_MaterialManager.GetMaterial( materialAssetHandle );
+        m_MaterialInstanceAsset->m_MaterialAsset = asset::AssetManager::GetAsset< MaterialAsset >( materialAssetHandle );
 
         if ( !data["VertexShader"] )
             return false;
 
         asset::AssetHandle vertexShaderHandle = data["VertexShader"].as< Uint64 >();
-        ShaderAsset::Ref pVertexShader = m_ShaderLib.GetShader( vertexShaderHandle );
+        ShaderAsset::Ref pVertexShader = asset::AssetManager::GetAsset< ShaderAsset >( vertexShaderHandle );
 
         if ( !data["PixelShader"] )
             return false;
 
         asset::AssetHandle pixelShaderHandle = data["PixelShader"].as< Uint64 >();
-        ShaderAsset::Ref pPixelShader = m_ShaderLib.GetShader( pixelShaderHandle );
+        ShaderAsset::Ref pPixelShader = asset::AssetManager::GetAsset< ShaderAsset >( pixelShaderHandle );
 
         m_MaterialInstanceAsset->m_Descriptor.ShaderProgram = Program::Create( pVertexShader, pPixelShader );
 
-        DeserializeMaterialAssetDescriptor( m_TextureManager,
+        DeserializeMaterialAssetDescriptor(
             data,
             m_MaterialInstanceAsset->m_MaterialAsset->GetLayout(),
             m_MaterialInstanceAsset->m_Descriptor );

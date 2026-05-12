@@ -14,7 +14,6 @@ namespace smile::graphic
     class ShaderLibrary final
     {
       public:
-        memory::Ref< ShaderAsset > GetShader( asset::AssetHandle handle );
         memory::Ref< ShaderAsset > GetShader( const primitive::StringView shaderName ) const;
         memory::Ref< ShaderAsset > LoadShader( const fs::Path &path );
 

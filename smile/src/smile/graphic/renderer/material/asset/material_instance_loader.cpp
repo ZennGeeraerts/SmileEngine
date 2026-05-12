@@ -23,10 +23,7 @@
 
 namespace smile::graphic
 {
-    MaterialInstanceLoader::MaterialInstanceLoader( TextureManager &textureManager,
-        ShaderLibrary &shaderLib,
-        MaterialManager &materialManager ) noexcept
-        : m_TextureManager{ textureManager }, m_ShaderLibrary{ shaderLib }, m_MaterialManager{ materialManager }
+    MaterialInstanceLoader::MaterialInstanceLoader() noexcept
     {
         asset::AssetImporter::GetInstance().RegisterLoader( this );
     }
@@ -55,8 +52,7 @@ namespace smile::graphic
 
         auto pMaterialInstanceAsset = memory::CreateRef< MaterialInstanceAsset >();
 
-        MaterialInstanceSerializer serializer{
-            pMaterialInstanceAsset, m_TextureManager, m_ShaderLibrary, m_MaterialManager };
+        MaterialInstanceSerializer serializer{ pMaterialInstanceAsset };
 
         if ( !serializer.Deserialize( path ) )
         {

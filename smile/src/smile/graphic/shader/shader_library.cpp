@@ -7,25 +7,8 @@
 
 #include "shader_asset.h"
 
-#include "smile/core/asset/asset_manager.h"
-
 namespace smile::graphic
 {
-    memory::Ref< ShaderAsset > ShaderLibrary::GetShader( asset::AssetHandle handle )
-    {
-        memory::Ref< ShaderAsset > pShaderAsset = asset::AssetManager::GetAsset< ShaderAsset >( handle );
-
-        if ( pShaderAsset )
-        {
-            m_Shaders.Insert( pShaderAsset->GetName(), pShaderAsset );
-            return pShaderAsset;
-        }
-
-        SM_LOG_WARNING( "ShaderLibrary::GetShader > Could not load shader: {}", static_cast< Uint64 >( handle ) );
-
-        return nullptr;
-    }
-
     memory::Ref< ShaderAsset > ShaderLibrary::GetShader( const primitive::StringView shaderName ) const
     {
         if ( Exists( shaderName ) )

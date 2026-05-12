@@ -16,7 +16,6 @@ namespace smile::graphic
         TextureManager() = default;
         ~TextureManager() = default;
 
-        TextureAsset::Ref GetTexture( asset::AssetHandle handle );
         TextureAsset::Ref GetTexture( const fs::Path &path );
 
         TextureAsset::Ref GetFallBackTexture() const

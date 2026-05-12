@@ -19,17 +19,15 @@
 
 #include "smile/core/yaml/string.h"
 #include "smile/core/fs/file.h"
-#include "smile/graphic/shader/shader_library.h"
+#include "smile/core/asset/asset_manager.h"
 #include "smile/graphic/renderer/sprite/texture_manager.h"
 
 #include "material_serializer_utils.h"
 
 namespace smile::graphic
 {
-    MaterialSerializer::MaterialSerializer( MaterialAsset::Ref materialAsset,
-        TextureManager &textureManager,
-        ShaderLibrary &shaderLib ) noexcept
-        : m_MaterialAsset{ materialAsset }, m_TextureManager{ textureManager }, m_ShaderLib{ shaderLib }
+    MaterialSerializer::MaterialSerializer( MaterialAsset::Ref materialAsset, TextureManager &textureManager ) noexcept
+        : m_MaterialAsset{ materialAsset }, m_TextureManager{ textureManager }
     {
     }
 
@@ -129,21 +127,20 @@ namespace smile::graphic
             return false;
 
         asset::AssetHandle vertexShaderHandle = data["VertexShader"].as< Uint64 >();
-        ShaderAsset::Ref pVertexShader = m_ShaderLib.GetShader( vertexShaderHandle );
+        ShaderAsset::Ref pVertexShader = asset::AssetManager::GetAsset< ShaderAsset >( vertexShaderHandle );
 
         if ( !data["PixelShader"] )
             return false;
 
         asset::AssetHandle pixelShaderHandle = data["PixelShader"].as< Uint64 >();
-        ShaderAsset::Ref pPixelShader = m_ShaderLib.GetShader( pixelShaderHandle );
+        ShaderAsset::Ref pPixelShader = asset::AssetManager::GetAsset< ShaderAsset >( pixelShaderHandle );
 
         auto program = Program::Create( pVertexShader, pPixelShader );
 
         BuildMaterialLayoutAndDescriptor(
             m_TextureManager.GetFallBackTexture(), program, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
 
-        DeserializeMaterialAssetDescriptor(
-            m_TextureManager, data, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
+        DeserializeMaterialAssetDescriptor( data, m_MaterialAsset->m_Layout, m_MaterialAsset->m_Descriptor );
 
         if ( data["RenderState"] )
         {

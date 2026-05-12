@@ -21,16 +21,10 @@
 
 namespace smile::graphic
 {
-    class TextureManager;
-    class ShaderLibrary;
-    class MaterialManager;
-
     class MaterialInstanceLoader final : public asset::AssetLoader< MaterialInstanceAsset >
     {
       public:
-        MaterialInstanceLoader( TextureManager &textureManager,
-            ShaderLibrary &shaderLib,
-            MaterialManager &materialManager ) noexcept;
+        MaterialInstanceLoader() noexcept;
 
         primitive::ArrayView< const fs::Path > GetExtensions() const override
         {
@@ -44,8 +38,5 @@ namespace smile::graphic
 
       private:
         const primitive::Array< fs::Path, 1 > m_Extensions{ ".smmati" };
-        TextureManager &m_TextureManager;
-        ShaderLibrary &m_ShaderLibrary;
-        MaterialManager &m_MaterialManager;
     };
 }

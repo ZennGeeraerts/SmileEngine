@@ -22,14 +22,11 @@
 
 namespace smile::graphic
 {
-    class TextureManager;
-
     void SerializeMaterialAssetDescriptor( const MaterialLayout &layout,
         const MaterialAssetDescriptor &desc,
         yaml::Emitter &output );
 
-    void DeserializeMaterialAssetDescriptor( TextureManager &textureManager,
-        const yaml::Node &node,
+    void DeserializeMaterialAssetDescriptor( const yaml::Node &node,
         const MaterialLayout &layout,
         MaterialAssetDescriptor &desc );
 }

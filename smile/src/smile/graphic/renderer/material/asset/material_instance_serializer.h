@@ -21,25 +21,15 @@
 
 namespace smile::graphic
 {
-    class TextureManager;
-    class ShaderLibrary;
-    class MaterialManager;
-
     class MaterialInstanceSerializer final
     {
       public:
-        MaterialInstanceSerializer( MaterialInstanceAsset::Ref materialInstanceAsset,
-            TextureManager &textureManager,
-            ShaderLibrary &shaderLib,
-            MaterialManager &materialManager ) noexcept;
+        MaterialInstanceSerializer( MaterialInstanceAsset::Ref materialInstanceAsset ) noexcept;
 
         void Serialize( const fs::Path &filePath ) const;
         bool Deserialize( const fs::Path &filePath );
 
       private:
         MaterialInstanceAsset::Ref m_MaterialInstanceAsset;
-        TextureManager &m_TextureManager;
-        ShaderLibrary &m_ShaderLib;
-        MaterialManager &m_MaterialManager;
     };
 }

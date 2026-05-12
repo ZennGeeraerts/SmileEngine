@@ -23,17 +23,13 @@ namespace smile::graphic
     class MaterialInstanceManager final
     {
       public:
-        MaterialInstanceManager( TextureManager &textureManager,
-            ShaderLibrary &shaderLibrary,
-            MaterialManager &materialManagera ) noexcept;
-
+        MaterialInstanceManager() = default;
         ~MaterialInstanceManager() = default;
 
         MaterialInstanceAsset::Ref CreateMaterialInstance( const primitive::String &name,
             MaterialAsset::Ref material,
             const MaterialAssetDescriptor &desc );
 
-        MaterialInstanceAsset::Ref GetMaterialInstance( asset::AssetHandle handle );
         MaterialInstanceAsset::Ref GetMaterialInstance( const primitive::StringView name ) const;
 
         MaterialInstanceAsset::Ref LoadMaterialInstance( const fs::Path &path );
@@ -41,6 +37,5 @@ namespace smile::graphic
       private:
         MaterialInstanceLoader m_MaterialInstanceLoader;
         primitive::HashMap< primitive::String, MaterialInstanceAsset::Ref > m_MaterialInstances;
-        TextureManager &m_TextureManager;
     };
 }

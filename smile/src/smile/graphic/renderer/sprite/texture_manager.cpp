@@ -5,26 +5,10 @@
 #include "smpch.h"
 #include "texture_manager.h"
 
-#include "smile/core/asset/asset_manager.h"
 #include "smile/graphic/renderer/resource/texture.h"
 
 namespace smile::graphic
 {
-    TextureAsset::Ref TextureManager::GetTexture( asset::AssetHandle handle )
-    {
-        TextureAsset::Ref pTextureAsset = asset::AssetManager::GetAsset< TextureAsset >( handle );
-
-        if ( pTextureAsset )
-        {
-            // m_Textures.Insert( pTextureAsset->GetTexture(), pTextureAsset );
-            return pTextureAsset;
-        }
-
-        SM_LOG_WARNING( "TextureManager::GetTexture > Could not load texture: {}", static_cast< Uint64 >( handle ) );
-
-        return m_pFallBackTexture;
-    }
-
     TextureAsset::Ref TextureManager::GetTexture( const fs::Path &path )
     {
         TextureAsset::Ref pTextureAsset = m_TextureLoader.Load( path );

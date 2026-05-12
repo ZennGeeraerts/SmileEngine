@@ -23,7 +23,7 @@ namespace smile::graphic
     class MaterialManager final
     {
       public:
-        MaterialManager( TextureManager &textureManager, ShaderLibrary &shaderLibrary ) noexcept;
+        MaterialManager( TextureManager &textureManager ) noexcept;
         ~MaterialManager() = default;
 
         MaterialAsset::Ref CreateMaterial( const primitive::String &name,
@@ -36,7 +36,6 @@ namespace smile::graphic
             ShaderAsset::ConstRef vertexShader,
             ShaderAsset::ConstRef pixelShader );
 
-        MaterialAsset::Ref GetMaterial( asset::AssetHandle handle );
         MaterialAsset::Ref GetMaterial( const primitive::StringView name ) const;
 
         MaterialAsset::Ref LoadMaterial( const fs::Path &path );

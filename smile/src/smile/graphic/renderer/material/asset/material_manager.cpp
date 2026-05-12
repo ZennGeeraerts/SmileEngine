@@ -17,13 +17,12 @@
 #include "smpch.h"
 #include "material_manager.h"
 
-#include "smile/core/asset/asset_manager.h"
 #include "smile/graphic/renderer/sprite/texture_manager.h"
 
 namespace smile::graphic
 {
-    MaterialManager::MaterialManager( TextureManager &textureManager, ShaderLibrary &shaderLibrary ) noexcept
-        : m_MaterialLoader{ textureManager, shaderLibrary }, m_TextureManager{ textureManager }
+    MaterialManager::MaterialManager( TextureManager &textureManager ) noexcept
+        : m_MaterialLoader{ textureManager }, m_TextureManager{ textureManager }
     {
     }
 
@@ -54,21 +53,6 @@ namespace smile::graphic
     {
         auto program = Program::Create( vertexShader, pixelShader );
         return CreateMaterial( name, program );
-    }
-
-    MaterialAsset::Ref MaterialManager::GetMaterial( asset::AssetHandle handle )
-    {
-        MaterialAsset::Ref pMaterialAsset = asset::AssetManager::GetAsset< MaterialAsset >( handle );
-
-        if ( pMaterialAsset )
-        {
-            m_Materials.Insert( pMaterialAsset->GetName(), pMaterialAsset );
-            return pMaterialAsset;
-        }
-
-        SM_LOG_WARNING( "MaterialManager::GetMaterial > Could not find material: {}", static_cast< Uint64 >( handle ) );
-
-        return nullptr;
     }
 
     MaterialAsset::Ref MaterialManager::GetMaterial( const primitive::StringView name ) const
