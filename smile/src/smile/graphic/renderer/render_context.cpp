@@ -103,4 +103,12 @@ namespace smile::graphic
         m_ImmediateCommandList.FillBuffer(
             constantBuffer.GetHandle(), constantBuffer.GetBuffer(), constantBuffer.GetSize() );
     }
+
+    void RenderContext::CopyTexture( const Texture &dst,
+        const rhi::TextureSlice &dstSlice,
+        const Texture &src,
+        const rhi::TextureSlice &srcSlice ) const
+    {
+        m_ImmediateCommandList.CopyTexture( dst.GetHandle(), dstSlice, src.GetHandle(), srcSlice );
+    }
 }

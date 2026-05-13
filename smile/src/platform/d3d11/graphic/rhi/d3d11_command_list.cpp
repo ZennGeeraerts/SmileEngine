@@ -358,6 +358,63 @@ namespace smile::graphic::rhi
         }
     }
 
+    void D3D11CommandList::CopyTexture( TextureHandle dst,
+        const TextureDescriptor &dstDesc,
+        const TextureSlice &dstSlice,
+        TextureHandle src,
+        const TextureDescriptor &srcDesc,
+        const TextureSlice &srcSlice ) const
+    {
+        SM_ASSERT( m_pDevice->IsHandleValid( dst, m_pDevice->m_Textures ) );
+        SM_ASSERT( m_pDevice->IsHandleValid( src, m_pDevice->m_Textures ) );
+
+        auto resolvedSrcSlice = srcSlice.Resolve( srcDesc );
+        auto resolvedDstSlice = dstSlice.Resolve( dstDesc );
+
+        SM_ASSERT( resolvedDstSlice.Width == resolvedSrcSlice.Width );
+        SM_ASSERT( resolvedDstSlice.Height == resolvedSrcSlice.Height );
+
+        UINT srcSubresource =
+            D3D11CalcSubresource( resolvedSrcSlice.MipLevelCount, resolvedSrcSlice.Slice, srcDesc.MipLevelCount );
+
+        UINT dstSubresource =
+            D3D11CalcSubresource( resolvedDstSlice.MipLevelCount, resolvedDstSlice.Slice, dstDesc.MipLevelCount );
+
+        D3D11_BOX srcBox{};
+        srcBox.left = resolvedSrcSlice.x;
+        srcBox.top = resolvedSrcSlice.y;
+        srcBox.front = resolvedSrcSlice.z;
+        srcBox.right = resolvedSrcSlice.x + resolvedSrcSlice.Width;
+        srcBox.bottom = resolvedSrcSlice.y + resolvedSrcSlice.Height;
+        srcBox.back = resolvedSrcSlice.z + resolvedSrcSlice.Depth;
+
+        const D3D11Texture &srcTexture = m_pDevice->m_Textures[src.GetIndex()];
+        const D3D11Texture &dstTexture = m_pDevice->m_Textures[dst.GetIndex()];
+
+        m_Context.pImmediateContext->CopySubresourceRegion( dstTexture.pInternal.Get(),
+            dstSubresource,
+            resolvedDstSlice.x,
+            resolvedDstSlice.y,
+            resolvedDstSlice.z,
+            srcTexture.pInternal.Get(),
+            srcSubresource,
+            &srcBox );
+    }
+
+    void D3D11CommandList::CopyTexture( TextureHandle dst,
+        const TextureSlice &dstSlice,
+        TextureHandle src,
+        const TextureSlice &srcSlice ) const
+    {
+        SM_ASSERT( m_pDevice->IsHandleValid( dst, m_pDevice->m_Textures ) );
+        SM_ASSERT( m_pDevice->IsHandleValid( src, m_pDevice->m_Textures ) );
+
+        const D3D11Texture &srcTexture = m_pDevice->m_Textures[src.GetIndex()];
+        const D3D11Texture &dstTexture = m_pDevice->m_Textures[dst.GetIndex()];
+
+        CopyTexture( dst, dstTexture.Descriptor, dstSlice, src, srcTexture.Descriptor, srcSlice );
+    }
+
     void D3D11CommandList::Draw( const DrawParams &params )
     {
         m_Context.pImmediateContext->Draw( params.VertexCount, params.VertexOffset );

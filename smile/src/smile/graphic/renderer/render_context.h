@@ -44,6 +44,11 @@ namespace smile::graphic
         void FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const;
         void FillConstantBuffer( const ConstantBuffer &constantBuffer ) const;
 
+        void CopyTexture( const Texture &dst,
+            const rhi::TextureSlice &dstSlice,
+            const Texture &src,
+            const rhi::TextureSlice &srcSlice ) const;
+
         rhi::CommandList &GetImmediateCommandList() const
         {
             return m_ImmediateCommandList;

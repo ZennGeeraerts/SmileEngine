@@ -54,7 +54,7 @@ namespace smile::graphic
 
         graphic::ShaderLoader shaderLoader{};
         {
-            auto pShaderAsset = shaderLoader.LoadShader( "resources/shaders/pos_tex.vs.smshader" );
+            auto pShaderAsset = shaderLoader.Load( "resources/shaders/pos_tex.vs.smshader" );
             const auto &reflectionData = pShaderAsset->GetReflectionData();
 
             m_VertexShaderHandle = m_ShaderHandleManager.CreateHandle();
@@ -66,7 +66,7 @@ namespace smile::graphic
         }
 
         {
-            auto pShaderAsset = shaderLoader.LoadShader( "resources/shaders/col_tex.ps.smshader" );
+            auto pShaderAsset = shaderLoader.Load( "resources/shaders/col_tex.ps.smshader" );
             const auto &reflectionData = pShaderAsset->GetReflectionData();
 
             m_PixelShaderHandle = m_ShaderHandleManager.CreateHandle();

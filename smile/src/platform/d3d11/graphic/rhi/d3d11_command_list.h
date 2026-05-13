@@ -47,6 +47,18 @@ namespace smile::graphic::rhi
             std::optional< float > depth,
             std::optional< Uint8 > stencil ) const override;
 
+        void CopyTexture( TextureHandle dst,
+            const TextureDescriptor &dstDesc,
+            const TextureSlice &dstSlice,
+            TextureHandle src,
+            const TextureDescriptor &srcDesc,
+            const TextureSlice &srcSlice ) const override;
+
+        void CopyTexture( TextureHandle dst,
+            const TextureSlice &dstSlice,
+            TextureHandle src,
+            const TextureSlice &srcSlice ) const override;
+
       private:
         void PrepareToBindGraphicsResourceSets( const BindingSetVector &resourceSets,
             const BindingSetVector *pCurrentResourceSets,
