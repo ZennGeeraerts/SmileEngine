@@ -47,7 +47,7 @@ namespace smile::graphic::rhi
 
       private:
         template < typename Type >
-        using TextureBindingMap = std::unordered_map< TextureBindingKey, Microsoft::WRL::ComPtr< Type > >;
+        using TextureBindingMap = primitive::HashMap< TextureBindingKey, Microsoft::WRL::ComPtr< Type > >;
 
         TextureBindingMap< ID3D11ShaderResourceView > m_ShaderResourceViewMap;
         TextureBindingMap< ID3D11RenderTargetView > m_RenderTargetViewMap;

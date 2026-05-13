@@ -193,6 +193,10 @@ namespace smile::graphic::rhi
 
     void D3D11Texture::Destroy()
     {
+        m_RenderTargetViewMap.Clear();
+        m_DepthStencilViewMap.Clear();
+        m_ShaderResourceViewMap.Clear();
+        m_UnorderedAccessViewMap.Clear();
         pInternal.Reset();
     }
 
@@ -210,9 +214,9 @@ namespace smile::graphic::rhi
         subresources = subresources.Resolve( Descriptor, false );
 
         TextureBindingKey textureBindingKey{ subresources, format };
-        auto srvIt = m_ShaderResourceViewMap.find( textureBindingKey );
+        auto srvIt = m_ShaderResourceViewMap.FindItemAtKey( textureBindingKey );
         if ( srvIt != m_ShaderResourceViewMap.end() )
-            return srvIt->second.Get();
+            return srvIt.GetItem().Get();
 
         D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
         viewDesc.Format = GetDXGIFormatMapping( format ).SRVFormat;
@@ -288,7 +292,7 @@ namespace smile::graphic::rhi
             return nullptr;
         }
 
-        m_ShaderResourceViewMap.insert( std::make_pair( textureBindingKey, pShaderResourceView ) );
+        m_ShaderResourceViewMap.Insert( textureBindingKey, pShaderResourceView );
 
         return pShaderResourceView.Get();
     }
@@ -303,9 +307,9 @@ namespace smile::graphic::rhi
         subresources = subresources.Resolve( Descriptor, true );
 
         TextureBindingKey textureBindingKey{ subresources, format };
-        auto rtvIt = m_RenderTargetViewMap.find( textureBindingKey );
+        auto rtvIt = m_RenderTargetViewMap.FindItemAtKey( textureBindingKey );
         if ( rtvIt != m_RenderTargetViewMap.end() )
-            return rtvIt->second.Get();
+            return rtvIt.GetItem().Get();
 
         D3D11_RENDER_TARGET_VIEW_DESC viewDesc;
         viewDesc.Format = GetDXGIFormatMapping( format ).RTVFormat;
@@ -354,7 +358,7 @@ namespace smile::graphic::rhi
             return nullptr;
         }
 
-        m_RenderTargetViewMap.insert( std::make_pair( textureBindingKey, pRenderTargetView ) );
+        m_RenderTargetViewMap.Insert( textureBindingKey, pRenderTargetView );
 
         return pRenderTargetView.Get();
     }
@@ -366,9 +370,9 @@ namespace smile::graphic::rhi
         subresources = subresources.Resolve( Descriptor, true );
 
         TextureBindingKey textureBindingKey{ subresources, Descriptor.TextureFormat, isReadOnly };
-        auto dsvIt = m_DepthStencilViewMap.find( textureBindingKey );
+        auto dsvIt = m_DepthStencilViewMap.FindItemAtKey( textureBindingKey );
         if ( dsvIt != m_DepthStencilViewMap.end() )
-            return dsvIt->second.Get();
+            return dsvIt.GetItem().Get();
 
         D3D11_DEPTH_STENCIL_VIEW_DESC viewDesc;
         viewDesc.Format = GetDXGIFormatMapping( Descriptor.TextureFormat ).RTVFormat;
@@ -423,7 +427,7 @@ namespace smile::graphic::rhi
             return nullptr;
         }
 
-        m_DepthStencilViewMap.insert( std::make_pair( textureBindingKey, pDepthStencilView ) );
+        m_DepthStencilViewMap.Insert( textureBindingKey, pDepthStencilView );
 
         return pDepthStencilView.Get();
     }
@@ -442,9 +446,9 @@ namespace smile::graphic::rhi
         subresources = subresources.Resolve( Descriptor, true );
 
         TextureBindingKey textureBindingKey{ subresources, format };
-        auto uavIt = m_UnorderedAccessViewMap.find( textureBindingKey );
+        auto uavIt = m_UnorderedAccessViewMap.FindItemAtKey( textureBindingKey );
         if ( uavIt != m_UnorderedAccessViewMap.end() )
-            return uavIt->second.Get();
+            return uavIt.GetItem().Get();
 
         D3D11_UNORDERED_ACCESS_VIEW_DESC viewDesc;
         viewDesc.Format = GetDXGIFormatMapping( format ).SRVFormat;
@@ -493,7 +497,7 @@ namespace smile::graphic::rhi
             return nullptr;
         }
 
-        m_UnorderedAccessViewMap.insert( std::make_pair( textureBindingKey, pUnorderedAccessView ) );
+        m_UnorderedAccessViewMap.Insert( textureBindingKey, pUnorderedAccessView );
 
         return pUnorderedAccessView.Get();
     }
