@@ -46,5 +46,17 @@ namespace smile::graphic::rhi
             TextureSubresourceSet subresources,
             std::optional< float > depth,
             std::optional< Uint8 > stencil ) const = 0;
+
+        virtual void CopyTexture( TextureHandle dst,
+            const TextureDescriptor &dstDesc,
+            const TextureSlice &dstSlice,
+            TextureHandle src,
+            const TextureDescriptor &srcDesc,
+            const TextureSlice &srcSlice ) const = 0;
+
+        virtual void CopyTexture( TextureHandle dst,
+            const TextureSlice &dstSlice,
+            TextureHandle src,
+            const TextureSlice &srcSlice ) const = 0;
     };
 }

@@ -22,7 +22,7 @@ namespace smile::graphic::rhi
 
         virtual ~SwapChain() = default;
 
-        virtual void Present() = 0;
+        virtual void Present() const = 0;
         virtual void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) = 0;
 
         virtual Object GetNativeRenderTarget() const = 0;

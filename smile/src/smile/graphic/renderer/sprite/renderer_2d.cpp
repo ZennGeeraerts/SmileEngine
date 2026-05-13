@@ -8,7 +8,8 @@
 #include "smile/common/memory/scope.h"
 
 #include "smile/graphic/renderer/resource/resource_manager.h"
-#include "smile/graphic/renderer/render_pass/forward_render_pass.h"
+#include "smile/graphic/renderer/render_scene.h"
+#include "smile/graphic/renderer/renderable.h"
 #include "smile/graphic/shader/shader_library.h"
 
 namespace smile::graphic
@@ -17,17 +18,14 @@ namespace smile::graphic
     {
         VertexBuffer QuadVertexBuffer;
         IndexBuffer QuadIndexBuffer;
-        ForwardRenderPass *ForwardPass{ nullptr };
+        RenderScene *Scene{ nullptr };
     };
 
     static memory::Scope< Renderer2DStorage > s_pStorage;
 
-    void Renderer2D::Initialize( ResourceManager &resourceManager,
-        const ShaderLibrary &shaderLib,
-        ForwardRenderPass *forwardRenderPass )
+    void Renderer2D::Initialize( ResourceManager &resourceManager, const ShaderLibrary &shaderLib )
     {
         s_pStorage = memory::CreateScope< Renderer2DStorage >();
-        s_pStorage->ForwardPass = forwardRenderPass;
 
         auto vertexShaderAsset = shaderLib.Get( "pos_tex.vs" );
         auto pixelShaderAsset = shaderLib.Get( "col_tex.ps" );
@@ -67,6 +65,12 @@ namespace smile::graphic
         }
     }
 
+    void Renderer2D::BeginFrame( RenderScene &scene )
+    {
+        SM_ASSERT( s_pStorage );
+        s_pStorage->Scene = &scene;
+    }
+
     void Renderer2D::ShutDown()
     {
         s_pStorage.Reset();
@@ -88,9 +92,13 @@ namespace smile::graphic
 
     void Renderer2D::DrawSprite( const DirectX::XMFLOAT4X4 &worldTransform, MaterialInstance materialInstance )
     {
-        DrawItem drawItem{
-            s_pStorage->QuadVertexBuffer, s_pStorage->QuadIndexBuffer, materialInstance, worldTransform };
+        SM_ASSERT( s_pStorage && s_pStorage->Scene );
+        Renderable &renderable = s_pStorage->Scene->AddRenderable( SceneLayer::World );
+        renderable.SetWorldTransform( worldTransform );
 
-        s_pStorage->ForwardPass->Submit( std::move( drawItem ) );
+        RenderPrimitive &primitive = renderable.AddPrimitive();
+        primitive.SetGeometry(
+            s_pStorage->QuadVertexBuffer, s_pStorage->QuadIndexBuffer, rhi::PrimitiveTopology::TriangleList );
+        primitive.SetMaterialInstance( materialInstance );
     }
 }

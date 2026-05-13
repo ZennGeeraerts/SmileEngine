@@ -19,7 +19,7 @@
 #include "smile/core/application/application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/render_pass/forward_render_pass.h"
+#include "smile/graphic/renderer/render_scene.h"
 #include "smile/graphic/renderer/sprite/renderer_2d.h"
 
 namespace smile::graphic
@@ -32,15 +32,10 @@ namespace smile::graphic
         m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
         m_Renderer = m_RenderEngine->CreateRenderer();
 
-        auto &renderContext = m_RenderEngine->GetRenderContext();
         auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
 
-        m_Renderer->GetRenderPassList().PushBack< ForwardRenderPass >( renderContext, resourceManager, materialSystem );
-
-        Renderer2D::GetInstance().Initialize( resourceManager,
-            m_RenderEngine->GetShaderLibrary(),
-            &m_Renderer->GetRenderPassList().Get< ForwardRenderPass >() );
+        Renderer2D::GetInstance().Initialize( resourceManager, m_RenderEngine->GetShaderLibrary() );
 
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
@@ -105,6 +100,10 @@ namespace smile::graphic
     {
         auto &renderer2D = Renderer2D::GetInstance();
 
+        m_Scene.Clear();
+        m_Scene.SetView( m_View );
+        renderer2D.BeginFrame( m_Scene );
+
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
@@ -112,9 +111,10 @@ namespace smile::graphic
 
         m_View.OnUpdate();
 
-        m_Renderer->BeginFrame( m_SwapChain );
-        m_Renderer->OnRender( m_View, m_RenderEngine->GetRenderTarget( m_SwapChain ) );
-        m_Renderer->EndFrame();
+        const auto &backBuffer = m_RenderEngine->GetRenderTarget( m_SwapChain );
+        m_Renderer->BeginFrame( m_SwapChain, backBuffer );
+        m_Renderer->OnRender( m_Scene, backBuffer );
+        m_Renderer->EndFrame( m_SwapChain );
     }
 
     void SpriteTestLayer::OnEvent( window::Event &event )

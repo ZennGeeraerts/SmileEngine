@@ -13,16 +13,20 @@ namespace smile::graphic
 {
     class ResourceManager;
     class ShaderLibrary;
-    class ForwardRenderPass;
+    class RenderScene;
 
     class Renderer2D final : public foundation::MeyersSingleton< Renderer2D >
     {
       public:
-        void Initialize( ResourceManager &resourceManager,
-            const ShaderLibrary &shaderLib,
-            ForwardRenderPass *forwardRenderPass );
+        void Initialize( ResourceManager &resourceManager, const ShaderLibrary &shaderLib );
 
         void ShutDown();
+
+        /**
+         * Sets the scene that DrawSprite() will submit renderables into this frame.
+         * Must be called once per frame before any DrawSprite() calls.
+         */
+        void BeginFrame( RenderScene &scene );
 
         void DrawSprite( const DirectX::XMFLOAT2 &position,
             float rotation,

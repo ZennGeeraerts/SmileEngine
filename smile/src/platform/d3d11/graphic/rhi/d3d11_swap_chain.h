@@ -21,7 +21,7 @@ namespace smile::graphic::rhi
         void Create();
         void Destroy();
 
-        void Present() override;
+        void Present() const override;
         void Resize( Uint32 x, Uint32 y, Uint32 width, Uint32 height ) override;
 
         Object GetNativeRenderTarget() const override;

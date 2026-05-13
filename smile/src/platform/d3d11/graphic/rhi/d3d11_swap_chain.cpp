@@ -95,7 +95,7 @@ namespace smile::graphic::rhi
         SAFE_RELEASE( m_pSwapChain );
     }
 
-    void D3D11SwapChain::Present()
+    void D3D11SwapChain::Present() const
     {
         m_pSwapChain->Present( m_pWindow->IsVSync(), 0 );
     }

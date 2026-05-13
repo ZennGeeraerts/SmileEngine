@@ -12,41 +12,66 @@
  * @file        renderer.h
  * @author      Zenn Geeraerts
  * @created     17 April 2026
- * @brief       Render pass orchastration and frame management
+ * @brief       Per-frame orchestration. Owns the RenderGraph (DAG + resource lifetimes),
+ *              pass data structs, and batch systems. Registers passes via free functions
+ *              in OnRender() — no long-lived pass objects, no virtual dispatch.
  */
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
-#include "render_pass/render_pass_list.h"
+#include "smile/graphic/renderer/render_graph/render_graph.h"
+#include "smile/graphic/renderer/passes/forward_pass.h"
+#include "smile/graphic/renderer/passes/debug_pass.h"
+#include "smile/graphic/renderer/sprite/sprite_batch.h"
+#include "smile/graphic/renderer/debug_renderer.h"
 #include "smile/graphic/rhi/swap_chain.h"
 
 namespace smile::graphic
 {
     class RenderEngine;
-    class RenderContext;
 
     class Renderer final
     {
       public:
-        Renderer( RenderContext &context, const ResourceManager &resourceManager ) noexcept;
+        explicit Renderer( RenderEngine &engine ) noexcept;
         ~Renderer() = default;
 
-        void BeginFrame( rhi::SwapChain *swapChain );
-        void OnRender( const View &view, const Framebuffer &framebuffer );
-        void EndFrame();
+        Renderer( const Renderer & ) = delete;
+        Renderer( Renderer && ) = delete;
+        Renderer &operator=( const Renderer & ) = delete;
+        Renderer &operator=( Renderer && ) = delete;
 
-        RenderPassList &GetRenderPassList()
+        /** Opens the command list and records back-buffer dimensions for this frame. */
+        void BeginFrame();
+
+        /**
+         * Flushes CPU batches, registers all render passes into the RenderGraph,
+         * compiles, and executes in dependency order.
+         */
+        void OnRender( RenderScene &scene, const Framebuffer &framebuffer );
+
+        /** Presents, closes the command list, and resets all per-frame state. */
+        void EndFrame( const rhi::SwapChain &swapChain );
+
+        // ---- Batch submission (called from SceneExtractor / gameplay) ----
+
+        SpriteBatch &GetSpriteBatch() noexcept
         {
-            return m_RenderPassList;
+            return m_SpriteBatch;
+        }
+        DebugRenderer &GetDebugRenderer() noexcept
+        {
+            return m_DebugRenderer;
         }
 
       private:
-        RenderContext &m_Context;
-        const ResourceManager &m_ResourceManager;
+        RenderEngine &m_Engine;
 
-        RenderPassList m_RenderPassList;
-
-        rhi::SwapChain *m_SwapChain{ nullptr };
+        RenderGraph m_Graph;
+        ForwardPassData m_ForwardData;
+        DebugPassData m_DebugData;
+        SpriteBatch m_SpriteBatch;
+        DebugRenderer m_DebugRenderer;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

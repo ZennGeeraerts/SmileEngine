@@ -20,6 +20,7 @@
 #include "smile/core/window/events/application_event.h"
 
 #include "smile/graphic/renderer/view.h"
+#include "smile/graphic/renderer/render_scene.h"
 #include "smile/graphic/renderer/material/material.h"
 #include "smile/graphic/renderer/render_engine.h"
 
@@ -42,6 +43,7 @@ namespace smile::graphic
         rhi::SwapChain *m_SwapChain;
 
         View m_View;
+        RenderScene m_Scene;
         Material m_Material;
     };
 }

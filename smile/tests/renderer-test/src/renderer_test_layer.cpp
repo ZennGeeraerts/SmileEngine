@@ -19,8 +19,8 @@
 #include "smile/core/application/application.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/render_pass/forward_render_pass.h"
-#include "smile/graphic/renderer/render_pass/debug_render_pass.h"
+#include "smile/graphic/renderer/render_scene.h"
+#include "smile/graphic/renderer/renderable.h"
 
 namespace smile::graphic
 {
@@ -32,14 +32,9 @@ namespace smile::graphic
         m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
         m_Renderer = m_RenderEngine->CreateRenderer();
 
-        auto &renderPassList = m_Renderer->GetRenderPassList();
-        auto &renderContext = m_RenderEngine->GetRenderContext();
         auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
         const auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
-
-        renderPassList.PushBack< ForwardRenderPass >( renderContext, resourceManager, materialSystem );
-        renderPassList.PushBack< DebugRenderPass >( renderContext, resourceManager, shaderLibrary );
 
         DirectX::XMFLOAT4X4 viewMatrix{};
         {
@@ -58,7 +53,7 @@ namespace smile::graphic
             DirectX::XMStoreFloat4x4( &projectionMatrix, projectionMatrixMat );
         }
 
-        m_View.SetViewProjectionMatrix( viewMatrix, projectionMatrix );
+        m_Scene.GetView().SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
         {
             MaterialLayout layout{};
@@ -117,6 +112,15 @@ namespace smile::graphic
 
             m_IndexBuffer = resourceManager.CreateIndexBuffer( quadIndices, quadIndexCount );
         }
+
+        DirectX::XMFLOAT4X4 worldTransform;
+        DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
+
+        Renderable &renderable = m_Scene.AddRenderable( SceneLayer::World );
+        renderable.SetWorldTransform( worldTransform );
+        RenderPrimitive &prim = renderable.AddPrimitive();
+        prim.SetGeometry( m_VertexBuffer, m_IndexBuffer, rhi::PrimitiveTopology::TriangleList );
+        prim.SetMaterialInstance( m_Material.GetDefaultInstance() );
     }
 
     void RendererTestLayer::OnDetach()
@@ -127,17 +131,12 @@ namespace smile::graphic
     {
         m_Material.SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
 
-        DirectX::XMFLOAT4X4 worldTransform;
-        DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
+        m_Scene.GetView().OnUpdate();
 
-        auto &forwardRenderPass = m_Renderer->GetRenderPassList().Get< ForwardRenderPass >();
-        forwardRenderPass.Submit( { m_VertexBuffer, m_IndexBuffer, m_Material.GetDefaultInstance(), worldTransform } );
-
-        m_View.OnUpdate();
-
-        m_Renderer->BeginFrame( m_SwapChain );
-        m_Renderer->OnRender( m_View, m_RenderEngine->GetRenderTarget( m_SwapChain ) );
-        m_Renderer->EndFrame();
+        const auto &framebuffer = m_RenderEngine->GetRenderTarget( m_SwapChain );
+        m_Renderer->BeginFrame();
+        m_Renderer->OnRender( m_Scene, framebuffer );
+        m_Renderer->EndFrame( *m_SwapChain );
     }
 
     void RendererTestLayer::OnEvent( window::Event &event )
