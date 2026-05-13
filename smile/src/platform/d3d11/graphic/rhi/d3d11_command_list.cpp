@@ -427,6 +427,8 @@ namespace smile::graphic::rhi
 
     void D3D11CommandList::FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size ) const
     {
+        SM_ASSERT( m_pDevice->IsHandleValid( handle, m_pDevice->m_GPUBuffers ) );
+
         const auto &gpuBuffer = m_pDevice->m_GPUBuffers[handle.GetIndex()];
 
         D3D11_MAPPED_SUBRESOURCE mappedResource{};

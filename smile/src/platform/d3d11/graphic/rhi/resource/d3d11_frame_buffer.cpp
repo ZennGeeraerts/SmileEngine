@@ -38,7 +38,7 @@ namespace smile::graphic::rhi
         for ( auto pRTV : pRenderTargetViews )
             pRTV.Reset();
 
-        // TODO: Clear the render target views
+        pRenderTargetViews.Clear();
 
         pDepthStencilView.Reset();
     }

@@ -526,23 +526,45 @@ namespace smile::graphic
 
         for ( auto &colorAttachment : attachmentSet.ColorAttachments )
         {
-            DestroyTexture( colorAttachment.Texture );
+            if ( colorAttachment.Texture.IsValid() )
+                DestroyTexture( colorAttachment.Texture );
 
             FramebufferAttachment newColorAttachment = CreateColorAttachment( width, height );
             newColorAttachments.PushBack( std::move( newColorAttachment ) );
         }
 
-        DestroyTexture( attachmentSet.DepthAttachment.Texture );
+        if ( attachmentSet.DepthAttachment.Texture.IsValid() )
+            DestroyTexture( attachmentSet.DepthAttachment.Texture );
 
         FramebufferAttachment newDepthAttachment = CreateDepthAttachment( width, height );
+
+        m_FramebufferAttachmentSetHandleManager.DestroyHandle( framebuffer.GetAttachmentSetHandle() );
+        framebuffer.m_AttachmentSetHandle = FramebufferAttachmentSetHandle::NullHandle();
 
         framebuffer = CreateFramebuffer( newColorAttachments, newDepthAttachment );
     }
 
-    void ResourceManager::DestroyFramebuffer( Framebuffer &framebuffer )
+    void ResourceManager::DestroyFramebuffer( Framebuffer &framebuffer, bool destroyTextureAttachments )
     {
         m_Device.DestroyFramebuffer( framebuffer.GetHandle() );
         m_Framebuffers.Erase( framebuffer );
+
+        if ( destroyTextureAttachments )
+        {
+            FramebufferAttachmentSet &attachmentSet = GetFramebufferAttachmentSet( framebuffer );
+            for ( auto &colorAttachment : attachmentSet.ColorAttachments )
+            {
+                if ( colorAttachment.Texture.IsValid() )
+                    DestroyTexture( colorAttachment.Texture );
+            }
+
+            if ( attachmentSet.DepthAttachment.Texture.IsValid() )
+                DestroyTexture( attachmentSet.DepthAttachment.Texture );
+        }
+
+        m_FramebufferAttachmentSetHandleManager.DestroyHandle( framebuffer.GetAttachmentSetHandle() );
+        framebuffer.m_AttachmentSetHandle = FramebufferAttachmentSetHandle::NullHandle();
+
         m_FramebufferHandleManager.DestroyHandle( framebuffer.GetHandle() );
         framebuffer.m_Handle = rhi::FramebufferHandle::NullHandle();
     }

@@ -108,7 +108,7 @@ namespace smile::graphic
 
         void ResizeFramebuffer( Framebuffer &framebuffer, const Uint32 width, const Uint32 height );
 
-        void DestroyFramebuffer( Framebuffer &framebuffer );
+        void DestroyFramebuffer( Framebuffer &framebuffer, bool destroyTextureAttachments = true );
 
         BindingLayout CreateBindingLayout( const rhi::BindingLayout &layout );
         void DestroyBindingLayout( BindingLayout &bindingLayout );
