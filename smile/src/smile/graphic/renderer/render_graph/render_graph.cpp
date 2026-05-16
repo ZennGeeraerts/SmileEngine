@@ -27,9 +27,9 @@ namespace smile::graphic
     const Texture &RenderGraphPassResources::GetTexture( RenderGraphResourceHandle handle ) const noexcept
     {
         SM_ASSERT( handle.IsValid() );
-        SM_ASSERT( handle.Index < foundation::NumericCast< Uint32 >( m_Resources.GetItemCount() ) );
-        return m_Resources.GetItemAtIndex( foundation::NumericCast< Index >( handle.Index ) )
-            .ResolvedAttachment.Texture;
+        SM_ASSERT( handle.Index < m_Resources.GetItemCount() );
+
+        return m_Resources.GetItemAtIndex( handle.Index ).ResolvedAttachment.Texture;
     }
 
     const Framebuffer &RenderGraphPassResources::GetFramebuffer() const noexcept
@@ -51,10 +51,10 @@ namespace smile::graphic
         const RenderGraphTextureDescriptor &desc )
     {
         // Deduplicate by name: return the existing handle if a resource with this name was already declared
-        for ( Count i = 0; i < m_Resources.GetItemCount(); ++i )
+        for ( Index index = 0; index < m_Resources.GetItemCount(); ++index )
         {
-            if ( m_Resources.GetItemAtIndex( i ).Name == name )
-                return RenderGraphResourceHandle{ foundation::NumericCast< Uint32 >( i ) };
+            if ( m_Resources.GetItemAtIndex( index ).Name == name )
+                return RenderGraphResourceHandle{ index };
         }
 
         const Index index = m_Resources.GetItemCount();
@@ -120,16 +120,14 @@ namespace smile::graphic
             for ( const auto &handle : pass.ColorOutputs )
             {
                 SM_ASSERT( handle.IsValid() );
-                colorAttachments.PushBack(
-                    m_Resources.GetItemAtIndex( foundation::NumericCast< Index >( handle.Index ) ).ResolvedAttachment );
+
+                colorAttachments.PushBack( m_Resources.GetItemAtIndex( handle.Index ).ResolvedAttachment );
             }
 
             FramebufferAttachment depthAttachment{};
             if ( hasDepthOutput )
             {
-                depthAttachment =
-                    m_Resources.GetItemAtIndex( foundation::NumericCast< Index >( pass.DepthOutput.Index ) )
-                        .ResolvedAttachment;
+                depthAttachment = m_Resources.GetItemAtIndex( pass.DepthOutput.Index ).ResolvedAttachment;
             }
 
             pass.ResolvedFramebuffer = m_ResourceManager.CreateFramebuffer( colorAttachments, depthAttachment );
@@ -144,19 +142,25 @@ namespace smile::graphic
         const Count passCount = m_Passes.GetItemCount();
         const Count resourceCount = m_Resources.GetItemCount();
 
-        // For each resource: which pass last wrote to it? (~0u = no producer yet)
-        primitive::Vector< Index > resourceProducer;
-        resourceProducer.SetItemCount( resourceCount, s_InvalidIndex );
+        // Stack-allocated temporaries: pass and resource counts are small (typically < 16) and
+        // constant per frame. Using FixedVector avoids 4 heap allocations per Compile() call.
+        constexpr Count maxPasses{ 16 };
+
+        // For each resource: which pass last wrote to it? (s_InvalidIndex = no producer yet)
+        primitive::FixedVector< Index, maxPasses > resourceProducer;
+        for ( Index index = 0; index < resourceCount; ++index )
+            resourceProducer.PushBack( s_InvalidIndex );
 
         // Build adjacency list and producer map in a single forward pass so that each pass's
         // reads are resolved against whoever wrote the resource BEFORE this pass, then this
         // pass's writes update the producer map for subsequent passes.
-        primitive::Vector< Count > inDegree;
-        inDegree.SetItemCount( passCount, Count{ 0 } );
+        primitive::FixedVector< Index, maxPasses > inDegree;
+        inDegree.Resize( passCount ); // Resize zero-initializes all entries
 
         // adj[i] stores indices of passes that must run after pass i
-        primitive::Vector< primitive::Vector< Index > > adj;
-        adj.SetItemCount( passCount );
+        primitive::FixedVector< primitive::FixedVector< Index, maxPasses >, maxPasses > adj;
+        for ( Index index = 0; index < passCount; ++index )
+            adj.EmplaceBack();
 
         for ( Index index = 0; index < passCount; ++index )
         {
@@ -165,27 +169,26 @@ namespace smile::graphic
             // Step 1: build read→write edges using the producer state from BEFORE this pass
             for ( const auto &h : pass.Inputs )
             {
-                const Index producer = resourceProducer.GetItemAtIndex( h.Index );
+                const Index producer = resourceProducer[h.Index];
                 if ( producer != s_InvalidIndex && producer != index )
                 {
-                    adj.GetItemAtIndex( producer ).PushBack( index );
-                    Count &deg = inDegree.GetItemAtIndex( index );
-                    ++deg;
+                    adj[producer].PushBack( index );
+                    ++inDegree[index];
                 }
             }
 
             // Step 2: update producers from this pass's writes so later passes see the new version
             for ( const auto &h : pass.ColorOutputs )
-                resourceProducer.SetItemAtIndex( index, h.Index );
+                resourceProducer[h.Index] = index;
             if ( pass.DepthOutput.IsValid() )
-                resourceProducer.SetItemAtIndex( index, pass.DepthOutput.Index );
+                resourceProducer[pass.DepthOutput.Index] = index;
         }
 
         // Kahn's algorithm — begin with all zero-in-degree passes
-        primitive::Vector< Index > queue;
+        primitive::FixedVector< Index, maxPasses > queue;
         for ( Index index = 0; index < passCount; ++index )
         {
-            if ( inDegree.GetItemAtIndex( index ) == 0 )
+            if ( inDegree[index] == 0 )
                 queue.PushBack( index );
         }
 
@@ -193,15 +196,14 @@ namespace smile::graphic
 
         while ( !queue.IsEmpty() )
         {
-            const Index current = queue.GetLastItem();
-            queue.EraseAtIndex( queue.GetLastIndex() );
+            const Index current = queue[queue.GetItemCount() - 1];
+            queue.PopBack();
             m_SortedOrder.PushBack( current );
 
-            for ( const Index neighbour : adj.GetItemAtIndex( current ) )
+            for ( const Index neighbour : adj[current] )
             {
-                Count &deg = inDegree.GetItemAtIndex( neighbour );
-                --deg;
-                if ( deg == 0 )
+                --inDegree[neighbour];
+                if ( inDegree[neighbour] == 0 )
                     queue.PushBack( neighbour );
             }
         }
