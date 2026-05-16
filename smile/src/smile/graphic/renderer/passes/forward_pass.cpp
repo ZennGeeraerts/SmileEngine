@@ -119,11 +119,10 @@ namespace smile::graphic
             data.PerObjectCB.Update( &renderable.GetWorldTransform() );
             data.Context->FillConstantBuffer( data.PerObjectCB );
 
-            GraphicsState state{};
-            state.Framebuffer = framebuffer;
-
             for ( const RenderPrimitive &primitive : renderable )
             {
+                GraphicsState state{};
+                state.Framebuffer = framebuffer;
                 state.VertexBuffers.PushBack( { primitive.VertexBuffer, 0u, 0u } );
                 state.IndexBuffer = IndexBufferBinding{ primitive.IndexBuffer, rhi::Format::R32_UINT, 0u };
                 state.Bindings.PushBack( data.PassBindingSet );
@@ -154,7 +153,7 @@ namespace smile::graphic
                     "SceneColor", RenderGraphTextureDescriptor{ width, height, rhi::Format::RGBA8_UNORM } );
 
                 outDepth = builder.CreateTexture(
-                    "SceneDepth", RenderGraphTextureDescriptor{ width, height, rhi::Format::D32 } );
+                    "SceneDepth", RenderGraphTextureDescriptor{ width, height, rhi::Format::D24S8 } );
 
                 builder.WriteColor( outColor );
                 builder.WriteDepth( outDepth );
