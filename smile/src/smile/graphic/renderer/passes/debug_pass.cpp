@@ -31,6 +31,10 @@
 
 namespace smile::graphic
 {
+    // Shared vertex layout for the debug line pipeline
+    static const rhi::BufferLayout s_DebugVertexLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" },
+        { rhi::Format::RGBA32_FLOAT, "COLOR" } };
+
     // ---- DebugPassData ----------------------------------------------------------
 
     void DebugPassData::Initialize( RenderContext &context,
@@ -39,9 +43,6 @@ namespace smile::graphic
     {
         Context = &context;
         ResourceMgr = &resourceManager;
-
-        const rhi::BufferLayout vertexLayout{
-            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
         {
             ConstantBufferDescriptor cameraCBDesc{};
@@ -53,11 +54,14 @@ namespace smile::graphic
             auto vertexShaderAsset = shaderLib.Get( "debug_renderer.vs" );
             auto pixelShaderAsset = shaderLib.Get( "pos_col.ps" );
 
-            Program::Create( vertexShaderAsset, pixelShaderAsset );
+            // Validates VS/PS shader-pair compatibility (input/output signature, CB layout) at startup.
+            // The returned program is not stored, the debug pipeline uses an explicit vertex layout
+            // rather than VS reflection.
+            [[maybe_unused]] const auto debugProgram = Program::Create( vertexShaderAsset, pixelShaderAsset );
 
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::LineList;
-            psoDesc.InputLayout = vertexLayout;
+            psoDesc.InputLayout = s_DebugVertexLayout;
             psoDesc.VertexShader = resourceManager.CreateVertexShader( vertexShaderAsset );
             psoDesc.PixelShader = resourceManager.CreatePixelShader( pixelShaderAsset );
 
@@ -74,7 +78,7 @@ namespace smile::graphic
             Pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
         }
 
-        DynamicVB = resourceManager.CreateDynamicVertexBuffer( VertexCapacity, vertexLayout );
+        DynamicVB = resourceManager.CreateDynamicVertexBuffer( VertexCapacity, s_DebugVertexLayout );
     }
 
     void DebugPassData::ShutDown()
@@ -91,11 +95,8 @@ namespace smile::graphic
 
     void DebugPassData::GrowVertexBuffer()
     {
-        const rhi::BufferLayout vertexLayout{
-            { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RGBA32_FLOAT, "COLOR" } };
-
         ResourceMgr->DestroyVertexBuffer( DynamicVB );
-        DynamicVB = ResourceMgr->CreateDynamicVertexBuffer( VertexCapacity, vertexLayout );
+        DynamicVB = ResourceMgr->CreateDynamicVertexBuffer( VertexCapacity, s_DebugVertexLayout );
     }
 
     void DebugPassData::CreateFixedLineList()
