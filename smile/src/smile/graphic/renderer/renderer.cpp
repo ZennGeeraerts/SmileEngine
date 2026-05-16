@@ -45,10 +45,6 @@ namespace smile::graphic
         auto &ctx = m_Engine.GetRenderContext();
         auto &resourceManager = m_Engine.GetResourceManager();
 
-        // Clear back-buffer
-        const auto &attachmentSet = resourceManager.GetFramebufferAttachmentSet( framebuffer );
-        ctx.Clear( attachmentSet, math::Color{ 0.392156899f, 0.584313750f, 0.929411829f, 1.0f }, 1.0f, 0.0f );
-
         // Flush batch systems into their targets
         m_SpriteBatch.Flush( scene, resourceManager, ctx ); // SceneLayer::Sprite Renderables
         m_DebugRenderer.Flush( m_DebugData );               // DebugPassData::LineList

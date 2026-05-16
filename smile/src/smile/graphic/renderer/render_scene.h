@@ -110,7 +110,9 @@ namespace smile::graphic
         // ---- Frame lifecycle ----------------------------------------
 
         /**
-         * Clears all layer lists. Called by FrameGraph at the beginning of each frame.
+         * Clears all layer lists. Call before each frame's scene extraction pass, after
+         * the previous frame has finished rendering. The Renderer does not call this —
+         * it is the caller's responsibility to clear before re-populating the scene.
          */
         void Clear() noexcept
         {
