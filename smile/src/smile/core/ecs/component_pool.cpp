@@ -45,7 +45,7 @@ namespace smile::ecs
 
         std::sort( sparseSetCopy.m_Dense.begin(), sparseSetCopy.m_Dense.end(), std::move( compare ) );
 
-        for ( std::size_t pos{}; pos < sparseSetCopy.GetItemCount(); ++pos )
+        for ( Index pos{}; pos < sparseSetCopy.GetItemCount(); ++pos )
         {
             auto curr = pos;
             auto next = m_SparseSet.m_Sparse[sparseSetCopy.m_Dense[curr]];
@@ -76,6 +76,14 @@ namespace smile::ecs
     void ComponentPool::PublishOnDestruction( const EntityHandle entityHandle )
     {
         for ( const auto &listenerFunc : m_DestructionListeners )
+        {
+            listenerFunc( m_ECSEngine, entityHandle );
+        }
+    }
+
+    void ComponentPool::PublishOnPatch( const EntityHandle entityHandle )
+    {
+        for ( const auto &listenerFunc : m_PatchListeners )
         {
             listenerFunc( m_ECSEngine, entityHandle );
         }
