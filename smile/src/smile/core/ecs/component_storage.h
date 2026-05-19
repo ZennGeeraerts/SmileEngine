@@ -64,6 +64,16 @@ namespace smile::ecs
             return *pResult;
         }
 
+        template < typename ComponentType, typename... Args >
+        ComponentType &Replace( IndexType index, Args &&...args )
+        {
+            ComponentType *pResult = reinterpret_cast< ComponentType * >( m_pData ) + index;
+            m_pDestructor( pResult );
+            ConstructObject< ComponentType >( pResult, std::forward< Args >( args )... );
+
+            return *pResult;
+        }
+
         void Swap( IndexType element1, IndexType element2 );
         virtual IndexType RemoveSwap( IndexType deadEIndex );
         void PopSwap( IndexType a );
@@ -105,23 +115,23 @@ namespace smile::ecs
                               : reinterpret_cast< EntityHandle * >( m_pData + m_ComponentSize * index )->GetIndex();
         }
 
-        Uint32 GetSize() const
+        Count GetSize() const
         {
             return m_Size;
         }
-        Uint32 GetRawSize() const
+        Count GetRawSize() const
         {
             return m_Size * m_ComponentSize;
         }
 
       private:
         void Grow();
-        void Reallocate( Uint32 newSize );
+        void Reallocate( Count newSize );
 
       protected:
-        Uint32 m_ComponentSize = 0;
-        Uint32 m_Allocated = 0;
-        Uint32 m_Size = 0;
+        Count m_ComponentSize = 0;
+        Count m_Allocated = 0;
+        Count m_Size = 0;
         Byte *m_pData{ nullptr };
         IndexType *m_pIndices{ nullptr };
 
