@@ -6,6 +6,7 @@
 
 #include "counted.h"
 #include "smile/common/foundation/hash_code.h"
+#include "smile/common/foundation/derived_cast.h"
 
 #include <type_traits>
 
@@ -157,12 +158,12 @@ namespace smile::memory
         }
 
         template < typename OtherType >
-        inline typename std::conditional< std::is_const< Type >::value, const OtherType, OtherType >::type &
-        GetObject() const
+        inline typename std::conditional< std::is_const_v< Type >, const OtherType, OtherType >::type &GetObject() const
         {
             SM_ASSERT_MSG( m_pInstance, "Instance is nullptr" );
 
-            return static_cast< typename std::conditional< std::is_const< Type >::value, const Type, Type >::type & >(
+            return foundation::DerivedCast<
+                typename std::conditional< std::is_const_v< Type >, const OtherType, OtherType >::type & >(
                 *m_pInstance );
         }
 

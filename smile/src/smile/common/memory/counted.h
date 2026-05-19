@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/foundation/compiled.h"
+#include "memory.h"
 
 #include <atomic>
 
@@ -23,6 +24,20 @@ namespace smile::memory
 
         virtual ~Counted();
 
+        Counted &operator=( const Counted & )
+        {
+            return *this;
+        }
+
+        void *operator new( const size_t size );
+
+        void *operator new( const size_t, void *byteArray, memory::InPlace * ) noexcept
+        {
+            return byteArray;
+        }
+
+        void operator delete( void *byteArray );
+
         // This needs to be const to work in Reset function of Object
         inline void IncreaseRefCount() const
         {
@@ -35,18 +50,55 @@ namespace smile::memory
         {
             const Count decreasedRefCount = --m_RefCount;
 
-            if ( decreasedRefCount == 0 )
+            if ( decreasedRefCount == 0 && IsAllocated() )
             {
-                delete this;
+                this->~Counted();
+
+                if ( !m_LinkCount )
+                {
+                    memory::DeallocateByteArray( const_cast< Counted * >( this ) );
+                }
             }
         }
 
-        Count GetRefCount() const
+        inline void IncreaseLinkCount() const
+        {
+            SM_ASSERT_MSG( m_RefCount != s_InvalidCount, "Object is destructed" );
+            ++m_LinkCount;
+        }
+
+        inline void RemoveLink() const
+        {
+            const Count decreasedLinkCount = --m_LinkCount;
+
+            if ( decreasedLinkCount == 0 && m_RefCount == s_InvalidCount && IsAllocated() )
+            {
+                memory::DeallocateByteArray( const_cast< Counted * >( this ) );
+            }
+        }
+
+        Count GetRefCount() const noexcept
         {
             return m_RefCount;
         }
 
+        Count GetLinkCount() const noexcept
+        {
+            return m_LinkCount;
+        }
+
+        bool IsAllocated() const
+        {
+            return memory::IsAllocatedObject( this );
+        }
+
+        bool IsDestructed() const noexcept
+        {
+            return m_RefCount == s_InvalidCount;
+        }
+
       private:
         mutable std::atomic< Count > m_RefCount;
+        mutable std::atomic< Count > m_LinkCount;
     };
 }

@@ -30,6 +30,8 @@ namespace smile::memory
     Count GetAllocatedSize( const Count size, const bool addHeaderSize = true );
     Header *GetHeader( const void *pObject );
 
+    bool IsAllocatedObject( const void *pObject );
+
 #if SM_C_DEBUG
     void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size );
     void MoveByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size );
