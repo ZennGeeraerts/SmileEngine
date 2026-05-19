@@ -82,6 +82,7 @@ New optional subsystems inside `smile/core/` follow this pattern (see `smile/src
 
 - **Namespace**: everything in `namespace smile`. Sub-namespaces follow module/subsystem (e.g. `smile::ecs`, `smile::graphic`, `smile::application`, `smile::foundation`). Sub-subsystems nest further (e.g. `smile::compression::lz4`).
 - **Smart pointers**: use engine aliases — `smile::Ref<T>` (`shared_ptr`), `smile::Scope<T>` (`unique_ptr`), created with `CreateRef<T>()` / `CreateScope<T>()`.
+- **Variable naming**: do not prefix variables with `p` for pointers or smart pointers. Use the plain name (e.g. `object`, not `pObject`).
 - **RTTI**: use the custom macro-based RTTI, not `dynamic_cast`. Declare with `RTTI_DEFINE_BASE(MyClass)` on base, `RTTI_DEFINE(MyClass, BaseClass)` on derived.
 - **Assertions**: `SM_ASSERT(cond)`, `SM_ASSERT_MSG(cond, msg)` — active in `SM_C_DEBUG` builds only.
 - **Logging**: engine logger via `smile::logging`. Use the logger registry.

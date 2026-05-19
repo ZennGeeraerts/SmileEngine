@@ -67,7 +67,7 @@ namespace smile::memory
             ++m_LinkCount;
         }
 
-        inline void RemoveLink() const
+        inline void DecreaseLinkCount() const
         {
             const Count decreasedLinkCount = --m_LinkCount;
 
