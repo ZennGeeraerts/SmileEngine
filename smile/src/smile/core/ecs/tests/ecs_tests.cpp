@@ -405,5 +405,217 @@ namespace smile
 
             REQUIRE_NOTHROW( ctx.Erase< TestObject >() );
         }
+
+        SECTION( "PatchComponent fires OnPatch listener", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            bool patchCalled = false;
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&patchCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { patchCalled = true; } );
+
+            engine.PatchComponent< TestComponent >( entity );
+
+            REQUIRE( patchCalled );
+        }
+
+        SECTION( "PatchComponent passes correct entity handle to OnPatch listener", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 5, 10 );
+
+            ecs::EntityHandle receivedHandle = ecs::EntityHandle::NullHandle();
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&receivedHandle]( ecs::ECSEngine &, ecs::EntityHandle entityHandle )
+                { receivedHandle = entityHandle; } );
+
+            engine.PatchComponent< TestComponent >( entity );
+
+            REQUIRE( receivedHandle == entity );
+        }
+
+        SECTION( "PatchComponent with modifier function updates component before firing signal", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            int valueInListener = 0;
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&valueInListener]( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
+                { valueInListener = ecsEngine.GetComponent< TestComponent >( entityHandle ).x; } );
+
+            engine.PatchComponent< TestComponent >( entity,
+                []( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
+                { ecsEngine.GetComponent< TestComponent >( entityHandle ).x = 99; } );
+
+            REQUIRE( engine.GetComponent< TestComponent >( entity ).x == 99 );
+            REQUIRE( valueInListener == 99 );
+        }
+
+        SECTION( "PatchComponent returns reference to the component", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 7, 8 );
+
+            TestComponent &comp = engine.PatchComponent< TestComponent >( entity );
+
+            REQUIRE( comp.x == 7 );
+            REQUIRE( comp.y == 8 );
+            REQUIRE( &comp == &engine.GetComponent< TestComponent >( entity ) );
+        }
+
+        SECTION( "Multiple OnPatch listeners all fire in registration order", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            std::vector< int > callOrder{};
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&callOrder]( ecs::ECSEngine &, ecs::EntityHandle ) { callOrder.push_back( 1 ); } );
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&callOrder]( ecs::ECSEngine &, ecs::EntityHandle ) { callOrder.push_back( 2 ); } );
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&callOrder]( ecs::ECSEngine &, ecs::EntityHandle ) { callOrder.push_back( 3 ); } );
+
+            engine.PatchComponent< TestComponent >( entity );
+
+            REQUIRE( callOrder.size() == 3 );
+            REQUIRE( callOrder[0] == 1 );
+            REQUIRE( callOrder[1] == 2 );
+            REQUIRE( callOrder[2] == 3 );
+        }
+
+        SECTION( "PatchComponent does not fire construction or destruction signals", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            bool constructionCalled = false;
+            bool destructionCalled = false;
+            bool patchCalled = false;
+
+            engine.OnConstruction< TestComponent >().emplace_back(
+                [&constructionCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { constructionCalled = true; } );
+            engine.OnDestruction< TestComponent >().emplace_back(
+                [&destructionCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { destructionCalled = true; } );
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&patchCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { patchCalled = true; } );
+
+            engine.PatchComponent< TestComponent >( entity );
+
+            REQUIRE_FALSE( constructionCalled );
+            REQUIRE_FALSE( destructionCalled );
+            REQUIRE( patchCalled );
+        }
+
+        SECTION( "AddOrReplaceComponent fires OnPatch when replacing an existing component", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            bool patchCalled = false;
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&patchCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { patchCalled = true; } );
+
+            engine.AddOrReplaceComponent< TestComponent >( entity, 10, 20 );
+
+            REQUIRE( patchCalled );
+        }
+
+        SECTION( "AddOrReplaceComponent does not fire OnPatch when adding a fresh component", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+
+            bool patchCalled = false;
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&patchCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { patchCalled = true; } );
+
+            engine.AddOrReplaceComponent< TestComponent >( entity, 10, 20 );
+
+            REQUIRE_FALSE( patchCalled );
+        }
+
+        SECTION( "AddOrReplaceComponent updates component data when replacing", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+            engine.AddOrReplaceComponent< TestComponent >( entity, 42, 84 );
+
+            const auto &comp = engine.GetComponent< TestComponent >( entity );
+            REQUIRE( comp.x == 42 );
+            REQUIRE( comp.y == 84 );
+        }
+
+        SECTION( "OnPatch listener receives engine reference that can access component", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 55, 66 );
+
+            int capturedX = 0;
+            int capturedY = 0;
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&capturedX, &capturedY]( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
+                {
+                    const auto &comp = ecsEngine.GetComponent< TestComponent >( entityHandle );
+                    capturedX = comp.x;
+                    capturedY = comp.y;
+                } );
+
+            engine.PatchComponent< TestComponent >( entity );
+
+            REQUIRE( capturedX == 55 );
+            REQUIRE( capturedY == 66 );
+        }
+
+        SECTION( "PatchComponent fires listener only for patched entity", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity1 = engine.CreateEntity();
+            auto entity2 = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity1, 1, 2 );
+            engine.AddComponent< TestComponent >( entity2, 3, 4 );
+
+            ecs::EntityHandle patchedEntity = ecs::EntityHandle::NullHandle();
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&patchedEntity]( ecs::ECSEngine &, ecs::EntityHandle entityHandle )
+                { patchedEntity = entityHandle; } );
+
+            engine.PatchComponent< TestComponent >( entity1 );
+
+            REQUIRE( patchedEntity == entity1 );
+            REQUIRE( patchedEntity != entity2 );
+        }
     }
 }

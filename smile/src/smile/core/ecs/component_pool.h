@@ -53,6 +53,13 @@ namespace smile::ecs
 
         void Remove( EntityHandle entityHandle );
 
+        template < typename... Func >
+        void Patch( EntityHandle entityHandle, Func &&...func )
+        {
+            ( std::invoke( std::forward< Func >( func ), m_ECSEngine, entityHandle ), ... );
+            PublishOnPatch( entityHandle );
+        }
+
         template < typename ComponentType >
         ComponentType &Get( EntityHandle entityHandle )
         {
@@ -127,7 +134,7 @@ namespace smile::ecs
             m_pComponentStorage->Swap( lhs, rhs );
         }
 
-        Uint32 GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_SparseSet.GetItemCount();
         }
@@ -150,6 +157,11 @@ namespace smile::ecs
             return m_DestructionListeners;
         }
 
+        ListenerContainer &OnPatch()
+        {
+            return m_PatchListeners;
+        }
+
         ConstIterator begin() const
         {
             return m_SparseSet.begin();
@@ -163,6 +175,7 @@ namespace smile::ecs
       private:
         void PublishOnConstruction( const EntityHandle entityHandle );
         void PublishOnDestruction( const EntityHandle entityHandle );
+        void PublishOnPatch( const EntityHandle entityHandle );
 
       private:
         ECSEngine &m_ECSEngine;
@@ -171,5 +184,6 @@ namespace smile::ecs
 
         ListenerContainer m_ContructionListeners;
         ListenerContainer m_DestructionListeners;
+        ListenerContainer m_PatchListeners;
     };
 }

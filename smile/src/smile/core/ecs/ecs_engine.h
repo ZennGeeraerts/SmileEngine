@@ -384,10 +384,21 @@ namespace smile::ecs
         ComponentType &AddOrReplaceComponent( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
             ComponentPool *pCPool = GetComponentPool< ComponentType >();
-            if ( pCPool && pCPool->Contains( entityHandle ) )
-                RemoveComponent< ComponentType >( entityHandle );
 
-            return AddComponent< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
+            bool isReplaced = false;
+            if ( pCPool && pCPool->Contains( entityHandle ) )
+            {
+                RemoveComponent< ComponentType >( entityHandle );
+                isReplaced = true;
+            }
+
+            ComponentType &component =
+                AddComponent< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
+
+            if ( isReplaced )
+                pCPool->Patch( entityHandle );
+
+            return component;
         }
 
         template < typename ComponentType >
@@ -462,6 +473,18 @@ namespace smile::ecs
         {
             const ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
             return pCPool ? pCPool->Contains( entityHandle ) : false;
+        }
+
+        template < typename ComponentType, typename... Func >
+        ComponentType &PatchComponent( EntityHandle entityHandle, Func &&...func )
+        {
+            const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >();
+            ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
+            ComponentType &component = pCPool->Get< ComponentType >( entityHandle );
+
+            pCPool->Patch( entityHandle, std::forward< Func >( func )... );
+
+            return component;
         }
 
         template < typename ComponentType >
@@ -579,6 +602,13 @@ namespace smile::ecs
         {
             auto *pCPool = GetComponentPool< ComponentType >( typeID );
             return pCPool->OnDestruction();
+        }
+
+        template < typename ComponentType >
+        auto &OnPatch( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
+        {
+            auto *pCPool = GetComponentPool< ComponentType >( typeID );
+            return pCPool->OnPatch();
         }
 
         Context &GetContext() noexcept
