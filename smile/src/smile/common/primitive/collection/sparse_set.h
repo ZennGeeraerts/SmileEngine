@@ -64,13 +64,13 @@ namespace smile::primitive
             return deadIndex;
         }
 
-        bool Contains( IndexType element ) const
+        [[nodiscard]] bool Contains( IndexType element ) const noexcept
         {
             return ( element < m_Sparse.GetItemCount() ) && ( m_Sparse[element] < m_Dense.GetItemCount() ) &&
                    ( m_Sparse[element] != std::numeric_limits< IndexType >::max() );
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             m_Sparse.Clear();
             m_Dense.Clear();
@@ -116,22 +116,22 @@ namespace smile::primitive
             }
         }
 
-        Iterator begin()
+        Iterator begin() noexcept
         {
             return m_Dense.begin();
         }
 
-        Iterator end()
+        Iterator end() noexcept
         {
             return m_Dense.end();
         }
 
-        ConstIterator begin() const
+        ConstIterator begin() const noexcept
         {
             return m_Dense.begin();
         }
 
-        ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return m_Dense.end();
         }
@@ -150,12 +150,12 @@ namespace smile::primitive
             return m_Dense[index];
         }
 
-        Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_Dense.GetItemCount();
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_Dense.IsEmpty();
         }

@@ -48,7 +48,7 @@ namespace smile::primitive
         }
 
         template < int Size >
-        constexpr EnumArray( const Item ( &items )[Size] )
+        constexpr EnumArray( const Item ( &items )[Size] ) noexcept
         {
             static_assert( Size == s_ItemCount );
 
@@ -59,7 +59,7 @@ namespace smile::primitive
         }
 
         template < typename OtherItem, int Size >
-        constexpr EnumArray( const OtherItem ( &items )[Size] )
+        constexpr EnumArray( const OtherItem ( &items )[Size] ) noexcept
         {
             static_assert( Size == s_ItemCount );
 
@@ -71,12 +71,12 @@ namespace smile::primitive
 
         ~EnumArray() = default;
 
-        constexpr Item &operator[]( const EnumType index )
+        constexpr Item &operator[]( const EnumType index ) noexcept
         {
             return m_Items[static_cast< int >( index )];
         }
 
-        constexpr const Item &operator[]( const EnumType index ) const
+        constexpr const Item &operator[]( const EnumType index ) const noexcept
         {
             return m_Items[static_cast< int >( index )];
         }
@@ -95,14 +95,14 @@ namespace smile::primitive
             return m_Items[index];
         }
 
-        EnumArray &operator=( const EnumArray &other )
+        EnumArray &operator=( const EnumArray &other ) noexcept
         {
             Set( other );
 
             return *this;
         }
 
-        constexpr bool IsEmpty() const
+        static constexpr bool IsEmpty() noexcept
         {
             return s_ItemCount == 0;
         }
@@ -114,47 +114,47 @@ namespace smile::primitive
             return m_Items[index];
         }
 
-        constexpr const Item &GetItemAtIndex( const EnumType index ) const
+        constexpr const Item &GetItemAtIndex( const EnumType index ) const noexcept
         {
             return m_Items[static_cast< int >( index )];
         }
 
-        constexpr Item *GetData()
+        constexpr Item *GetData() noexcept
         {
             return m_Items;
         }
 
-        constexpr const Item *GetData() const
+        constexpr const Item *GetData() const noexcept
         {
             return m_Items;
         }
 
-        constexpr Count GetItemCount() const
+        static constexpr Count GetItemCount() noexcept
         {
             return s_ItemCount;
         }
 
-        constexpr bool IsValidIndex( const EnumType index ) const
+        [[nodiscard]] constexpr bool IsValidIndex( const EnumType index ) const noexcept
         {
             return static_cast< Index >( index ) < s_ItemCount;
         }
 
-        constexpr Iterator begin()
+        constexpr Iterator begin() noexcept
         {
             return { this, 0, m_Items };
         }
 
-        constexpr ConstIterator begin() const
+        constexpr ConstIterator begin() const noexcept
         {
             return { this, 0, m_Items };
         }
 
-        constexpr Iterator end()
+        constexpr Iterator end() noexcept
         {
             return { this, s_ItemCount, m_Items };
         }
 
-        constexpr ConstIterator end() const
+        constexpr ConstIterator end() const noexcept
         {
             return { this, s_ItemCount, m_Items };
         }
@@ -166,7 +166,7 @@ namespace smile::primitive
             m_Items[index] = item;
         }
 
-        void Set( const EnumArray< EnumType, Item > &other )
+        void Set( const EnumArray< EnumType, Item > &other ) noexcept
         {
             if constexpr ( memory::IsRawType< Item >() )
             {
