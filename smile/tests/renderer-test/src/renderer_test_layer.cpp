@@ -53,7 +53,8 @@ namespace smile::graphic
             DirectX::XMStoreFloat4x4( &projectionMatrix, projectionMatrixMat );
         }
 
-        m_Scene.GetView().SetViewProjectionMatrix( viewMatrix, projectionMatrix );
+        m_Scene = m_RenderEngine->CreateScene( m_SwapChain );
+        m_Scene->GetView().SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
         {
             MaterialLayout layout{};
@@ -116,7 +117,7 @@ namespace smile::graphic
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
-        Renderable &renderable = m_Scene.AddRenderable( SceneLayer::World );
+        Renderable &renderable = m_Scene->AddRenderable( SceneLayer::World );
         renderable.SetWorldTransform( worldTransform );
         RenderPrimitive &prim = renderable.AddPrimitive();
         prim.SetGeometry( m_VertexBuffer, m_IndexBuffer, rhi::PrimitiveTopology::TriangleList );
@@ -131,11 +132,10 @@ namespace smile::graphic
     {
         m_Material.SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
 
-        m_Scene.GetView().OnUpdate();
+        m_Scene->GetView().OnUpdate();
 
-        const auto &framebuffer = m_RenderEngine->GetRenderTarget( m_SwapChain );
         m_Renderer->BeginFrame();
-        m_Renderer->OnRender( m_Scene, framebuffer );
+        m_Renderer->OnRender( *m_Scene );
         m_Renderer->EndFrame( *m_SwapChain );
     }
 

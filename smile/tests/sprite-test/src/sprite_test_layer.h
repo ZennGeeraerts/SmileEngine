@@ -41,9 +41,8 @@ namespace smile::graphic
         memory::Scope< RenderEngine > m_RenderEngine;
         Renderer *m_Renderer;
         rhi::SwapChain *m_SwapChain;
+        RenderScene *m_Scene;
 
-        View m_View;
-        RenderScene m_Scene;
         Material m_Material;
     };
 }

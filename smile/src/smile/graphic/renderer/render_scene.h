@@ -18,9 +18,10 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/collection/vector.h"
-#include "smile/common/primitive/collection/array.h"
+#include "smile/common/primitive/collection/enum_array.h"
 #include "renderable.h"
 #include "view.h"
+#include "resource/frame_buffer.h"
 
 namespace smile::graphic
 {
@@ -54,6 +55,10 @@ namespace smile::graphic
     class RenderScene final
     {
       public:
+        explicit RenderScene( const Framebuffer &framebuffer ) noexcept : m_Framebuffer{ framebuffer }
+        {
+        }
+
         // ---- Layer-aware API ----------------------------------------
 
         /**
@@ -62,7 +67,7 @@ namespace smile::graphic
          */
         Renderable &AddRenderable( const SceneLayer layer ) noexcept
         {
-            auto &list = GetLayerList( layer );
+            auto &list = m_Layers[layer];
             list.PushBack( {} );
             return list.GetLastItem();
         }
@@ -72,7 +77,7 @@ namespace smile::graphic
          */
         const primitive::Vector< Renderable > &GetRenderables( const SceneLayer layer ) const noexcept
         {
-            return GetLayerList( layer );
+            return m_Layers[layer];
         }
 
         // ---- Legacy / convenience (World layer) ---------------------
@@ -92,7 +97,7 @@ namespace smile::graphic
          */
         const primitive::Vector< Renderable > &GetRenderables() const noexcept
         {
-            return GetRenderables( SceneLayer::World );
+            return m_Layers[SceneLayer::World];
         }
 
         // ---- View ---------------------------------------------------
@@ -105,6 +110,18 @@ namespace smile::graphic
         View &GetView() noexcept
         {
             return m_View;
+        }
+
+        // ---- Framebuffer override -------------------------------------
+
+        void SetFramebuffer( const Framebuffer &framebuffer ) noexcept
+        {
+            m_Framebuffer = framebuffer;
+        }
+
+        const Framebuffer &GetFramebuffer() const noexcept
+        {
+            return m_Framebuffer;
         }
 
         // ---- Frame lifecycle ----------------------------------------
@@ -121,19 +138,9 @@ namespace smile::graphic
         }
 
       private:
-        primitive::Vector< Renderable > &GetLayerList( const SceneLayer layer ) noexcept
-        {
-            return m_Layers[static_cast< Index >( layer )];
-        }
-
-        const primitive::Vector< Renderable > &GetLayerList( const SceneLayer layer ) const noexcept
-        {
-            return m_Layers[static_cast< Index >( layer )];
-        }
-
-      private:
         static constexpr Count s_LayerCount = static_cast< Count >( SceneLayer::Count );
-        primitive::Array< primitive::Vector< Renderable >, s_LayerCount > m_Layers;
+        primitive::EnumArray< SceneLayer, primitive::Vector< Renderable > > m_Layers;
         View m_View;
+        Framebuffer m_Framebuffer;
     };
 }

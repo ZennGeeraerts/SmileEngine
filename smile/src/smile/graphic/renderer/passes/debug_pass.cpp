@@ -31,10 +31,6 @@
 
 namespace smile::graphic
 {
-    // Shared vertex layout for the debug line pipeline
-    static const rhi::BufferLayout s_DebugVertexLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" },
-        { rhi::Format::RGBA32_FLOAT, "COLOR" } };
-
     // ---- DebugPassData ----------------------------------------------------------
 
     void DebugPassData::Initialize( RenderContext &context,
@@ -61,7 +57,7 @@ namespace smile::graphic
 
             GraphicsPipelineDescriptor psoDesc{};
             psoDesc.Topology = rhi::PrimitiveTopology::LineList;
-            psoDesc.InputLayout = s_DebugVertexLayout;
+            psoDesc.InputLayout = m_VertexLayout;
             psoDesc.VertexShader = resourceManager.CreateVertexShader( vertexShaderAsset );
             psoDesc.PixelShader = resourceManager.CreatePixelShader( pixelShaderAsset );
 
@@ -78,7 +74,7 @@ namespace smile::graphic
             Pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
         }
 
-        DynamicVB = resourceManager.CreateDynamicVertexBuffer( VertexCapacity, s_DebugVertexLayout );
+        DynamicVB = resourceManager.CreateDynamicVertexBuffer( VertexCapacity, m_VertexLayout );
     }
 
     void DebugPassData::ShutDown()
@@ -96,7 +92,7 @@ namespace smile::graphic
     void DebugPassData::GrowVertexBuffer()
     {
         ResourceMgr->DestroyVertexBuffer( DynamicVB );
-        DynamicVB = ResourceMgr->CreateDynamicVertexBuffer( VertexCapacity, s_DebugVertexLayout );
+        DynamicVB = ResourceMgr->CreateDynamicVertexBuffer( VertexCapacity, m_VertexLayout );
     }
 
     void DebugPassData::CreateFixedLineList()

@@ -33,7 +33,8 @@ namespace smile::graphic
 
         rhi::SwapChain *CreateSwapChain( const window::Window *window );
         Renderer *CreateRenderer();
-        RenderScene *CreateScene();
+        RenderScene *CreateScene( rhi::SwapChain *const swapChain );
+        RenderScene *CreateScene( const Framebuffer &framebuffer );
 
         RenderContext &GetRenderContext() noexcept
         {

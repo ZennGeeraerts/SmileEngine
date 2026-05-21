@@ -81,6 +81,8 @@ namespace smile::graphic
         ConstantBuffer CameraCB;
         BindingSet PassBindingSet;
         Count VertexCapacity{ 100 };
+        const rhi::BufferLayout m_VertexLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" },
+            { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
         // ---- Per-frame CPU data ----
 

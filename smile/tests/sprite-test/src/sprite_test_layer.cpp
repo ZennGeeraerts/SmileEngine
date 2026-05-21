@@ -31,6 +31,7 @@ namespace smile::graphic
         m_RenderEngine = RenderEngine::Create( rhi::RendererBackendType::D3D11 );
         m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
         m_Renderer = m_RenderEngine->CreateRenderer();
+        m_Scene = m_RenderEngine->CreateScene( m_SwapChain );
 
         auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
@@ -54,9 +55,9 @@ namespace smile::graphic
             DirectX::XMStoreFloat4x4( &projectionMatrix, projectionMatrixMat );
         }
 
-        m_View.SetViewProjectionMatrix( viewMatrix, projectionMatrix );
+        m_Scene->GetView().SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
-        TextureAsset::Ref textureAsset = m_RenderEngine->GetTextureManager().Get( "resources/textures/uv_grid.png" );
+        TextureAsset::Ref textureAsset = m_RenderEngine->GetTextureManager().Load( "resources/textures/uv_grid.png" );
 
         {
             MaterialLayout layout{};
@@ -100,21 +101,20 @@ namespace smile::graphic
     {
         auto &renderer2D = Renderer2D::GetInstance();
 
-        m_Scene.Clear();
-        m_Scene.SetView( m_View );
-        renderer2D.BeginFrame( m_Scene );
+        m_Scene->Clear();
+        renderer2D.BeginFrame( *m_Scene );
 
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
 
         renderer2D.DrawSprite( worldTransform, m_Material.GetDefaultInstance() );
 
-        m_View.OnUpdate();
+        m_Scene->GetView().OnUpdate();
 
         const auto &backBuffer = m_RenderEngine->GetRenderTarget( m_SwapChain );
-        m_Renderer->BeginFrame( m_SwapChain, backBuffer );
-        m_Renderer->OnRender( m_Scene, backBuffer );
-        m_Renderer->EndFrame( m_SwapChain );
+        m_Renderer->BeginFrame();
+        m_Renderer->OnRender( *m_Scene );
+        m_Renderer->EndFrame( *m_SwapChain );
     }
 
     void SpriteTestLayer::OnEvent( window::Event &event )

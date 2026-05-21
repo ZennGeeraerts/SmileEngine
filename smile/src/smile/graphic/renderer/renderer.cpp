@@ -40,7 +40,7 @@ namespace smile::graphic
         m_Engine.GetRenderContext().Open();
     }
 
-    void Renderer::OnRender( RenderScene &scene, const Framebuffer &framebuffer )
+    void Renderer::OnRender( RenderScene &scene )
     {
         auto &ctx = m_Engine.GetRenderContext();
         auto &resourceManager = m_Engine.GetResourceManager();
@@ -53,13 +53,17 @@ namespace smile::graphic
         RenderGraphResourceHandle colorHandle;
         RenderGraphResourceHandle depthHandle;
 
+        const auto &framebuffer = scene.GetFramebuffer();
+
+        SM_ASSERT( framebuffer.IsValid() );
+
         AddForwardPass(
             m_Graph, m_ForwardData, scene, framebuffer.GetWidth(), framebuffer.GetHeight(), colorHandle, depthHandle );
 
         AddSpritePass( m_Graph, m_ForwardData, scene, colorHandle, depthHandle );
         AddDebugPass( m_Graph, m_DebugData, scene, colorHandle );
 
-        // PostProcess — extension point (tone-map, bloom); currently a no-op passthrough
+        // PostProcess - extension point (tone-map, bloom); currently a no-op passthrough
         m_Graph.AddPass(
             "PostProcess",
             [&]( RenderGraphPassBuilder &builder )
@@ -71,18 +75,17 @@ namespace smile::graphic
 
         AddUIPass( m_Graph, m_ForwardData, scene, colorHandle );
 
-        // PresentPass — blit SceneColor → swapchain back-buffer
+        // PresentPass - blit SceneColor to final render target
         m_Graph.AddPass(
             "PresentPass",
             [&]( RenderGraphPassBuilder &builder ) { builder.ReadTexture( colorHandle ); },
             [&ctx, &resourceManager, &framebuffer, colorHandle]( const RenderGraphPassResources &res, RenderContext & )
             {
-                const FramebufferAttachmentSet &backBufferSet =
-                    resourceManager.GetFramebufferAttachmentSet( framebuffer );
+                const FramebufferAttachmentSet &fbSet = resourceManager.GetFramebufferAttachmentSet( framebuffer );
 
-                SM_ASSERT( !backBufferSet.ColorAttachments.IsEmpty() );
+                SM_ASSERT( !fbSet.ColorAttachments.IsEmpty() );
 
-                ctx.CopyTexture( backBufferSet.ColorAttachments[0].Texture, {}, res.GetTexture( colorHandle ), {} );
+                ctx.CopyTexture( fbSet.ColorAttachments[0].Texture, {}, res.GetTexture( colorHandle ), {} );
             } );
 
         m_Graph.Compile();

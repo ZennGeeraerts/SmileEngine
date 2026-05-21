@@ -123,9 +123,15 @@ namespace smile::graphic
         return m_Renderers.GetLastItem().GetPointer();
     }
 
-    RenderScene *RenderEngine::CreateScene()
+    RenderScene *RenderEngine::CreateScene( rhi::SwapChain *const swapChain )
     {
-        auto scene = memory::CreateScope< RenderScene >();
+        const auto &renderTarget = GetRenderTarget( swapChain );
+        return CreateScene( renderTarget );
+    }
+
+    RenderScene *RenderEngine::CreateScene( const Framebuffer &framebuffer )
+    {
+        auto scene = memory::CreateScope< RenderScene >( framebuffer );
         m_Scenes.PushBack( std::move( scene ) );
 
         return m_Scenes.GetLastItem().GetPointer();

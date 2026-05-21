@@ -41,14 +41,14 @@ namespace smile::graphic
         Renderer &operator=( const Renderer & ) = delete;
         Renderer &operator=( Renderer && ) = delete;
 
-        /** Opens the command list and records back-buffer dimensions for this frame. */
+        /** Opens the command list */
         void BeginFrame();
 
         /**
          * Flushes CPU batches, registers all render passes into the RenderGraph,
          * compiles, and executes in dependency order.
          */
-        void OnRender( RenderScene &scene, const Framebuffer &framebuffer );
+        void OnRender( RenderScene &scene );
 
         /** Presents, closes the command list, and resets all per-frame state. */
         void EndFrame( const rhi::SwapChain &swapChain );
@@ -59,6 +59,7 @@ namespace smile::graphic
         {
             return m_SpriteBatch;
         }
+
         DebugRenderer &GetDebugRenderer() noexcept
         {
             return m_DebugRenderer;
