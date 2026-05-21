@@ -29,12 +29,12 @@ namespace smile::ecs
     IndexType ComponentStorage::RemoveSwap( IndexType deadEIndex )
     {
         if ( deadEIndex >= m_Size )
-            return -1;
+            return s_InvalidIndex;
 
         IndexType swapHandle = GetIndex( m_Size - 1 );
 
         if ( deadEIndex == m_Size - 1 )
-            swapHandle = -1;
+            swapHandle = s_InvalidIndex;
 
         PopSwap( deadEIndex );
 
@@ -63,7 +63,7 @@ namespace smile::ecs
 
     void ComponentStorage::Grow()
     {
-        Uint32 newSize = m_Size + 1;
+        const Count newSize = m_Size + 1;
 
         if ( newSize > m_Allocated )
             Reallocate( m_Allocated > 3 ? m_Allocated * 2 : 8 );
@@ -71,10 +71,10 @@ namespace smile::ecs
         m_Size = newSize;
     }
 
-    void ComponentStorage::Reallocate( Uint32 newSize )
+    void ComponentStorage::Reallocate( Count newSize )
     {
         m_pData = reinterpret_cast< Byte * >( realloc( m_pData, newSize * m_ComponentSize ) );
-        m_pIndices = reinterpret_cast< Uint32 * >( realloc( m_pIndices, newSize * sizeof( Uint32 ) ) );
+        m_pIndices = reinterpret_cast< IndexType * >( realloc( m_pIndices, newSize * sizeof( IndexType ) ) );
 
         m_Allocated = newSize;
 
@@ -83,7 +83,7 @@ namespace smile::ecs
 
     void ComponentStorage::Clear()
     {
-        Uint32 count = m_Size;
+        Count count = m_Size;
         Byte *pData = m_pData;
 
         for ( ; count > 0; --count, pData += m_ComponentSize )

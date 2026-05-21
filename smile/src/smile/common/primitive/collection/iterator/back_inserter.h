@@ -16,14 +16,14 @@ namespace smile::primitive
 
         struct Inserter
         {
-            Inserter &operator=( const Item &value )
+            Inserter &operator=( const Item &value ) noexcept
             {
                 pCollection->PushBack( value );
 
                 return *this;
             }
 
-            Inserter &operator=( Item &&value )
+            Inserter &operator=( Item &&value ) noexcept
             {
                 pCollection->EmplaceBack( std::move( value ) );
 
@@ -33,23 +33,23 @@ namespace smile::primitive
             CollectionType *pCollection;
         };
 
-        BackInserter( CollectionType &collection ) noexcept : pCollection{ &collection }
+        explicit BackInserter( CollectionType &collection ) noexcept : pCollection{ &collection }
         {
         }
 
         ~BackInserter() noexcept = default;
 
-        Inserter operator*()
+        Inserter operator*() noexcept
         {
             return { pCollection };
         }
 
-        BackInserter &operator++()
+        BackInserter &operator++() noexcept
         {
             return *this;
         }
 
-        BackInserter &operator++( int )
+        BackInserter &operator++( int ) noexcept
         {
             return *this;
         }

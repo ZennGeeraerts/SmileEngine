@@ -79,17 +79,17 @@ namespace smile::primitive
                 return *this;
             }
 
-            bool operator==( const BaseIterator &other ) const
+            bool operator==( const BaseIterator &other ) const noexcept
             {
                 return m_pNode == other.m_pNode;
             }
 
-            bool operator!=( const BaseIterator &other ) const
+            bool operator!=( const BaseIterator &other ) const noexcept
             {
                 return m_pNode != other.m_pNode;
             }
 
-            void SetNode( IteratorNode *pNode )
+            void SetNode( IteratorNode *pNode ) noexcept
             {
                 m_pNode = pNode;
             }
@@ -137,19 +137,19 @@ namespace smile::primitive
 
         HashTable &operator=( const HashTable & ) = delete;
 
-        HashTable &operator=( HashTable &&other )
+        HashTable &operator=( HashTable &&other ) noexcept
         {
             Swap( other );
 
             return *this;
         }
 
-        Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_ItemCount;
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_ItemCount == 0;
         }
@@ -194,7 +194,7 @@ namespace smile::primitive
             return FindItemAtKey( KeyType{ key } );
         }
 
-        bool HasItemAtKey( const KeyType &key ) const
+        [[nodiscard]] bool HasItemAtKey( const KeyType &key ) const
         {
             return FindNodeAtKey( key ) != nullptr;
         }
@@ -217,7 +217,7 @@ namespace smile::primitive
             return pNode->GetItem();
         }
 
-        bool ContainsHashCode( const foundation::HashCode hashCode ) const
+        [[nodiscard]] bool ContainsHashCode( const foundation::HashCode hashCode ) const
         {
             auto bucketIndex = hashCode & s_BucketMask;
 
@@ -311,7 +311,7 @@ namespace smile::primitive
             return pNodeToErase;
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             NodeType *pCurrentNode{ nullptr };
 
@@ -334,7 +334,7 @@ namespace smile::primitive
                 static_cast< Count >( sizeof( NodeType * ) * static_cast< std::size_t >( s_BucketSize ) ) );
         }
 
-        void Swap( HashTable &other )
+        void Swap( HashTable &other ) noexcept
         {
             std::swap( m_ppBuckets, other.m_ppBuckets );
             std::swap( m_ItemCount, other.m_ItemCount );
@@ -372,12 +372,12 @@ namespace smile::primitive
             return { nullptr, this };
         }
 
-        Iterator end()
+        Iterator end() noexcept
         {
             return { nullptr, this };
         }
 
-        ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return { nullptr, this };
         }

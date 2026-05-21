@@ -24,7 +24,7 @@ namespace smile::primitive
         using reference = ItemType &;
         using pointer = ItemType *;
 
-        ArrayIterator() : m_pCollection{ nullptr }, m_Index{ 0 }
+        ArrayIterator() noexcept : m_pCollection{ nullptr }, m_Index{ 0 }
         {
         }
 
@@ -33,32 +33,32 @@ namespace smile::primitive
         ArrayIterator &operator=( const ArrayIterator & ) = default;
 
         template < bool OtherIsConst >
-        bool operator==( const ArrayIterator< Collection, OtherIsConst > &other ) const
+        bool operator==( const ArrayIterator< Collection, OtherIsConst > &other ) const noexcept
         {
             return ( m_pCollection == other.m_pCollection ) && ( m_Index == other.m_Index );
         }
 
-        bool operator!=( const ArrayIterator &other ) const
+        bool operator!=( const ArrayIterator &other ) const noexcept
         {
             return !( *this == other );
         }
 
-        bool operator<( const ArrayIterator &other ) const
+        bool operator<( const ArrayIterator &other ) const noexcept
         {
             return m_Index < other.m_Index;
         }
 
-        bool operator<=( const ArrayIterator &other ) const
+        bool operator<=( const ArrayIterator &other ) const noexcept
         {
             return m_Index <= other.m_Index;
         }
 
-        bool operator>( const ArrayIterator &other ) const
+        bool operator>( const ArrayIterator &other ) const noexcept
         {
             return m_Index > other.m_Index;
         }
 
-        bool operator>=( const ArrayIterator &other ) const
+        bool operator>=( const ArrayIterator &other ) const noexcept
         {
             return m_Index >= other.m_Index;
         }
@@ -101,12 +101,12 @@ namespace smile::primitive
             return std::move( temp );
         }
 
-        ArrayIterator operator+( const Index offset ) const
+        ArrayIterator operator+( const Index offset ) const noexcept
         {
             return { m_pCollection, m_Index + offset };
         }
 
-        ArrayIterator operator+=( const Index offset )
+        ArrayIterator operator+=( const Index offset ) noexcept
         {
             auto temp = *this;
 
@@ -150,7 +150,7 @@ namespace smile::primitive
             return &( ( *m_pCollection )[m_Index] );
         }
 
-        Index GetIndex() const
+        Index GetIndex() const noexcept
         {
             return m_Index;
         }
@@ -158,7 +158,8 @@ namespace smile::primitive
       private:
         friend CollectionType;
 
-        ArrayIterator( CollectionType *pCollection, const Index index ) : m_pCollection{ pCollection }, m_Index{ index }
+        ArrayIterator( CollectionType *pCollection, const Index index ) noexcept
+            : m_pCollection{ pCollection }, m_Index{ index }
         {
         }
 

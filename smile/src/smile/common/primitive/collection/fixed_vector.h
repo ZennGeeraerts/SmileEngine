@@ -17,11 +17,11 @@ namespace smile::primitive
         using Iterator = typename ArrayIterator< FixedVector< Item, MaxItemCount >, false >;
         using ConstIterator = typename ArrayIterator< FixedVector< Item, MaxItemCount >, true >;
 
-        FixedVector() : Base{}, m_ItemCount{ 0 }
+        FixedVector() noexcept : Base{}, m_ItemCount{ 0 }
         {
         }
 
-        FixedVector( const Count itemCount ) : Base{}, m_ItemCount{ itemCount }
+        explicit FixedVector( const Count itemCount ) : Base{}, m_ItemCount{ itemCount }
         {
             SM_ASSERT( itemCount <= MaxItemCount );
         }
@@ -51,27 +51,27 @@ namespace smile::primitive
 
         using Array< Item, MaxItemCount >::GetData;
 
-        bool IsValidIndex( const Index index ) const override
+        [[nodiscard]] bool IsValidIndex( const Index index ) const noexcept override
         {
             return index < m_ItemCount;
         }
 
-        Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_ItemCount;
         }
 
-        Count GetMaxItemCount() const
+        static constexpr Count GetMaxItemCount() noexcept
         {
             return MaxItemCount;
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_ItemCount == 0;
         }
 
-        void PushBack( const Item &item ) noexcept
+        void PushBack( const Item &item )
         {
             SM_ASSERT( m_ItemCount < MaxItemCount );
 
@@ -79,7 +79,7 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
-        void PushBack( Item &&item ) noexcept
+        void PushBack( Item &&item )
         {
             SM_ASSERT( m_ItemCount < MaxItemCount );
 
@@ -96,14 +96,14 @@ namespace smile::primitive
             ++m_ItemCount;
         }
 
-        void PopBack() noexcept
+        void PopBack()
         {
             SM_ASSERT( m_ItemCount > 0 );
 
             --m_ItemCount;
         }
 
-        void Resize( const Count newItemCount ) noexcept
+        void Resize( const Count newItemCount )
         {
             SM_ASSERT( newItemCount <= MaxItemCount );
 
@@ -126,22 +126,22 @@ namespace smile::primitive
             Resize( 0 );
         }
 
-        inline Iterator begin()
+        Iterator begin() noexcept
         {
             return { this, 0 };
         }
 
-        inline ConstIterator begin() const
+        ConstIterator begin() const noexcept
         {
             return { this, 0 };
         }
 
-        inline Iterator end()
+        Iterator end() noexcept
         {
             return { this, m_ItemCount };
         }
 
-        inline ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return { this, m_ItemCount };
         }

@@ -25,27 +25,27 @@ namespace smile::primitive
           public:
             Iterator() = default;
 
-            inline ItemType *operator->() const
+            ItemType *operator->() const noexcept
             {
                 return &m_pCollection->m_Items[m_Index];
             }
 
-            inline ItemType *operator->()
+            ItemType *operator->() noexcept
             {
                 return &m_pCollection->m_Items[m_Index];
             }
 
-            inline IteratorValue operator*() const
+            IteratorValue operator*() const noexcept
             {
                 return { m_pCollection->m_Keys[m_Index], m_pCollection->m_Items[m_Index] };
             }
 
-            inline IteratorValue operator*()
+            IteratorValue operator*() noexcept
             {
                 return { m_pCollection->m_Keys[m_Index], m_pCollection->m_Items[m_Index] };
             }
 
-            inline Iterator &operator++()
+            Iterator &operator++()
             {
                 ++m_Index;
 
@@ -54,27 +54,27 @@ namespace smile::primitive
                 return *this;
             }
 
-            inline bool operator==( const Iterator &other ) const
+            bool operator==( const Iterator &other ) const noexcept
             {
                 return m_pCollection == other.m_pCollection && m_Index == other.m_Index;
             }
 
-            inline bool operator!=( const Iterator &other ) const
+            bool operator!=( const Iterator &other ) const noexcept
             {
                 return m_pCollection != other.m_pCollection || m_Index != other.m_Index;
             }
 
-            inline ItemType &GetItem() const
+            ItemType &GetItem() const noexcept
             {
                 return m_pCollection->m_Items[m_Index];
             }
 
-            inline const KeyType &GetKey() const
+            const KeyType &GetKey() const noexcept
             {
                 return m_pCollection->m_Keys[m_Index];
             }
 
-            inline bool IsValid() const
+            bool IsValid() const noexcept
             {
                 return m_pCollection && m_pCollection->IsValidIndex( m_Index );
             }
@@ -100,24 +100,24 @@ namespace smile::primitive
         class ConstIterator final
         {
           public:
-            inline ConstIterator() = default;
+            ConstIterator() noexcept = default;
 
-            inline ConstIterator( const Iterator &other )
+            ConstIterator( const Iterator &other ) noexcept
                 : m_Index{ other.m_Index }, m_pCollection{ other.m_pCollection }
             {
             }
 
-            inline const ItemType *operator->() const
+            const ItemType *operator->() const noexcept
             {
                 return &( m_pCollection->m_Items[m_Index] );
             }
 
-            inline ConstIteratorValue operator*() const
+            ConstIteratorValue operator*() const noexcept
             {
                 return { m_pCollection->m_Keys[m_Index], m_pCollection->m_Items[m_Index] };
             }
 
-            inline ConstIterator &operator++()
+            ConstIterator &operator++()
             {
                 ++m_Index;
 
@@ -126,27 +126,27 @@ namespace smile::primitive
                 return *this;
             }
 
-            inline bool operator==( const ConstIterator &other ) const
+            bool operator==( const ConstIterator &other ) const noexcept
             {
                 return m_pCollection == other.m_pCollection && m_Index == other.m_Index;
             }
 
-            inline bool operator!=( const ConstIterator &other ) const
+            bool operator!=( const ConstIterator &other ) const noexcept
             {
                 return m_pCollection != other.m_pCollection || m_Index != other.m_Index;
             }
 
-            inline const ItemType &GetItem() const
+            const ItemType &GetItem() const noexcept
             {
                 return m_pCollection->m_Items[m_Index];
             }
 
-            inline const KeyType &GetKey() const
+            const KeyType &GetKey() const noexcept
             {
                 return m_pCollection->m_Keys[m_Index];
             }
 
-            inline bool IsValid() const
+            bool IsValid() const noexcept
             {
                 return m_pCollection && m_pCollection->IsValidIndex( m_Index );
             }
@@ -163,30 +163,30 @@ namespace smile::primitive
             friend class Dictionary;
         };
 
-        inline Dictionary() noexcept = default;
-        inline ~Dictionary() noexcept = default;
+        Dictionary() noexcept = default;
+        ~Dictionary() noexcept = default;
 
-        ItemType &operator[]( const KeyType &key )
+        ItemType &operator[]( const KeyType &key ) noexcept
         {
             return GetItemAtKey( key );
         }
 
-        const ItemType &operator[]( const KeyType &key ) const
+        const ItemType &operator[]( const KeyType &key ) const noexcept
         {
             return GetItemAtKey( key );
         }
 
-        const Vector< KeyType > &GetKeys() const
+        const Vector< KeyType > &GetKeys() const noexcept
         {
             return m_Keys;
         }
 
-        const Vector< ItemType > &GetItems() const
+        const Vector< ItemType > &GetItems() const noexcept
         {
             return m_Items;
         }
 
-        inline ItemType &GetItemAtKey( const KeyType &key )
+        ItemType &GetItemAtKey( const KeyType &key )
         {
             auto index = array::FindItemIndex( m_Keys, key );
 
@@ -195,7 +195,7 @@ namespace smile::primitive
             return m_Items[index.value()];
         }
 
-        inline const ItemType &GetItemAtKey( const KeyType &key ) const
+        const ItemType &GetItemAtKey( const KeyType &key ) const
         {
             auto index = array::FindItemIndex( m_Keys, key );
 
@@ -205,17 +205,17 @@ namespace smile::primitive
         }
 
         template < typename OtherKeyType >
-        inline bool HasItemAtKey( const OtherKeyType &key ) const
+        [[nodiscard]] bool HasItemAtKey( const OtherKeyType &key ) const noexcept
         {
             return array::HasItem( m_Keys, key );
         }
 
-        inline Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_Keys.GetItemCount();
         }
 
-        inline Iterator Add( const KeyType &key, const ItemType &item )
+        Iterator Add( const KeyType &key, const ItemType &item )
         {
             SM_ASSERT( !HasItemAtKey( key ) );
 
@@ -225,7 +225,7 @@ namespace smile::primitive
             return { this, m_Items.GetLastIndex() };
         }
 
-        inline Iterator Add( const KeyType &key, ItemType &&item )
+        Iterator Add( const KeyType &key, ItemType &&item )
         {
             SM_ASSERT( !HasItemAtKey( key ) );
 
@@ -235,7 +235,7 @@ namespace smile::primitive
             return { this, m_Items.GetLastIndex() };
         }
 
-        inline void AddItems( const Dictionary &dict )
+        void AddItems( const Dictionary &dict )
         {
 #if SM_C_DEBUG
             for ( const auto &key : dict.m_Keys )
@@ -298,45 +298,45 @@ namespace smile::primitive
             iterator = {};
         }
 
-        inline void Clear()
+        void Clear() noexcept
         {
             m_Keys.Clear();
             m_Items.Clear();
         }
 
-        inline bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_Keys.IsEmpty();
         }
 
-        inline void Reserve( const Count itemCount )
+        void Reserve( const Count itemCount ) noexcept
         {
             m_Keys.Reserve( itemCount );
             m_Items.Reserve( itemCount );
         }
 
-        inline Iterator begin()
+        Iterator begin() noexcept
         {
             return { this, 0 };
         }
 
-        inline ConstIterator begin() const
+        ConstIterator begin() const noexcept
         {
             return { this, 0 };
         }
 
-        inline Iterator end()
+        Iterator end() noexcept
         {
             return { this, GetItemCount() };
         }
 
-        inline ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return { this, GetItemCount() };
         }
 
       private:
-        bool IsValidIndex( const Index index ) const
+        bool IsValidIndex( const Index index ) const noexcept
         {
             return m_Keys.IsValidIndex( index );
         }

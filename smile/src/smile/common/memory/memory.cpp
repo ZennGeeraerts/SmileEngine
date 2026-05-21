@@ -37,6 +37,13 @@ namespace smile::memory
         return const_cast< Header * >( pHeader );
     }
 
+    bool IsAllocatedObject( const void *pObject )
+    {
+        auto pHeader = GetHeader( pObject );
+
+        return pHeader && !pHeader->IsArray && pHeader->IsUsed;
+    }
+
 #if SM_C_DEBUG
     void SetByteArray( void *pDestByteArray, const void *pSrcByteArray, const Count size )
     {

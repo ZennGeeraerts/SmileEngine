@@ -25,7 +25,7 @@ namespace smile::primitive
         using Iterator = typename ArrayIterator< Vector< Item >, false >;
         using ConstIterator = typename ArrayIterator< Vector< Item >, true >;
 
-        Vector() : m_pItems{ nullptr }, m_ItemCount{ 0 }
+        Vector() noexcept : m_pItems{ nullptr }, m_ItemCount{ 0 }
         {
         }
 
@@ -108,125 +108,125 @@ namespace smile::primitive
             return *this;
         }
 
-        inline Item &operator[]( const Index index )
+        Item &operator[]( const Index index )
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             return m_pItems[index];
         }
 
-        inline const Item &operator[]( const Index index ) const
+        const Item &operator[]( const Index index ) const
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             return m_pItems[index];
         }
 
-        inline Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_ItemCount;
         }
 
-        inline Item *GetData()
+        Item *GetData() noexcept
         {
             return m_pItems;
         }
 
-        inline const Item *GetData() const
+        const Item *GetData() const noexcept
         {
             return m_pItems;
         }
 
-        inline bool IsValidIndex( const Index index ) const
+        [[nodiscard]] bool IsValidIndex( const Index index ) const noexcept
         {
             return index >= 0 && index < m_ItemCount;
         }
 
-        inline Item &GetItemAtIndex( const Index index )
+        Item &GetItemAtIndex( const Index index )
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             return m_pItems[index];
         }
 
-        inline const Item &GetItemAtIndex( const Index index ) const
+        const Item &GetItemAtIndex( const Index index ) const
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             return m_pItems[index];
         }
 
-        inline void SetItemAtIndex( const Item &item, const Index index )
+        void SetItemAtIndex( const Item &item, const Index index )
         {
             SM_ASSERT( IsValidIndex( index ) );
 
             m_pItems[index] = item;
         }
 
-        inline Item &GetLastItem()
+        Item &GetLastItem()
         {
             SM_ASSERT( !IsEmpty() );
 
             return m_pItems[m_ItemCount - 1];
         }
 
-        inline const Item &GetLastItem() const
+        const Item &GetLastItem() const
         {
             SM_ASSERT( !IsEmpty() );
 
             return m_pItems[m_ItemCount - 1];
         }
 
-        inline Item &GetFirstItem()
+        Item &GetFirstItem()
         {
             SM_ASSERT( !IsEmpty() );
 
             return m_pItems[0];
         }
 
-        inline const Item &GetFirstItem() const
+        const Item &GetFirstItem() const
         {
             SM_ASSERT( !IsEmpty() );
 
             return m_pItems[0];
         }
 
-        inline Iterator begin()
+        Iterator begin() noexcept
         {
             return Iterator{ this, 0 };
         }
 
-        inline ConstIterator begin() const
+        ConstIterator begin() const noexcept
         {
             return ConstIterator{ this, 0 };
         }
 
-        inline Iterator end()
+        Iterator end() noexcept
         {
             return Iterator{ this, m_ItemCount };
         }
 
-        inline ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return ConstIterator{ this, m_ItemCount };
         }
 
-        inline bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_ItemCount == 0;
         }
 
-        inline Index GetLastIndex() const
+        Index GetLastIndex() const noexcept
         {
             return m_ItemCount - 1;
         }
 
-        inline Count GetReserved() const
+        Count GetReserved() const noexcept
         {
             return m_pItems ? memory::GetSize( m_pItems ) / sizeof( Item ) : 0;
         }
 
-        Index GetItemIndex( const Item &item ) const
+        Index GetItemIndex( const Item &item ) const noexcept
         {
             for ( auto index : foundation::GetCountIterator( m_ItemCount ) )
             {
@@ -239,12 +239,12 @@ namespace smile::primitive
             return s_InvalidIndex;
         }
 
-        Count GetItemSize() const
+        static constexpr Count GetItemSize() noexcept
         {
             return sizeof( Item );
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             if ( !m_pItems )
                 return;

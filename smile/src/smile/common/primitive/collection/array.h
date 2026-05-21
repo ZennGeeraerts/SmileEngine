@@ -35,14 +35,14 @@ namespace smile::primitive
             }
         }
 
-        Array( const Array &other )
+        Array( const Array &other ) noexcept
         {
             Set( other );
         }
 
         ~Array() = default;
 
-        Array &operator=( const Array &other )
+        Array &operator=( const Array &other ) noexcept
         {
             Set( other );
 
@@ -63,27 +63,27 @@ namespace smile::primitive
             return m_Items[index];
         }
 
-        bool operator==( const Array &other ) const
+        bool operator==( const Array &other ) const noexcept
         {
             return std::equal( std::begin( *this ), std::end( *this ), std::begin( other ) );
         }
 
-        bool operator!=( const Array &other ) const
+        bool operator!=( const Array &other ) const noexcept
         {
             return !( *this == other );
         }
 
-        operator ArrayView< Item >()
+        operator ArrayView< Item >() noexcept
         {
             return ArrayView{ m_Items, ItemCount };
         }
 
-        operator ArrayView< const Item >() const
+        operator ArrayView< const Item >() const noexcept
         {
             return ArrayView{ m_Items, ItemCount };
         }
 
-        virtual bool IsValidIndex( const Index index ) const
+        [[nodiscard]] virtual bool IsValidIndex( const Index index ) const noexcept
         {
             return index < ItemCount;
         }
@@ -102,22 +102,22 @@ namespace smile::primitive
             m_Items[index] = item;
         }
 
-        const Item *GetData() const
+        const Item *GetData() const noexcept
         {
             return m_Items;
         }
 
-        Item *GetData()
+        Item *GetData() noexcept
         {
             return m_Items;
         }
 
-        Count GetItemCount() const
+        static constexpr Count GetItemCount() noexcept
         {
             return ItemCount;
         }
 
-        void Set( const Array< ItemType, ItemCount > &other )
+        void Set( const Array< ItemType, ItemCount > &other ) noexcept
         {
             if constexpr ( memory::IsRawType< Item >() )
             {
@@ -129,22 +129,22 @@ namespace smile::primitive
             }
         }
 
-        inline Iterator begin()
+        Iterator begin() noexcept
         {
             return { this, 0 };
         }
 
-        inline ConstIterator begin() const
+        ConstIterator begin() const noexcept
         {
             return { this, 0 };
         }
 
-        inline Iterator end()
+        Iterator end() noexcept
         {
             return { this, ItemCount };
         }
 
-        inline ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return { this, ItemCount };
         }
@@ -157,31 +157,31 @@ namespace smile::primitive
     };
 
     template < typename ItemType, Count ItemCount >
-    typename Array< ItemType, ItemCount >::Iterator begin( Array< ItemType, ItemCount > &array )
+    typename Array< ItemType, ItemCount >::Iterator begin( Array< ItemType, ItemCount > &array ) noexcept
     {
         return array.begin();
     }
 
     template < typename ItemType, Count ItemCount >
-    typename Array< ItemType, ItemCount >::ConstIterator begin( const Array< ItemType, ItemCount > &array )
+    typename Array< ItemType, ItemCount >::ConstIterator begin( const Array< ItemType, ItemCount > &array ) noexcept
     {
         return array.begin();
     }
 
     template < typename ItemType, Count ItemCount >
-    typename Array< ItemType, ItemCount >::Iterator end( Array< ItemType, ItemCount > &array )
+    typename Array< ItemType, ItemCount >::Iterator end( Array< ItemType, ItemCount > &array ) noexcept
     {
         return array.end();
     }
 
     template < typename ItemType, Count ItemCount >
-    typename Array< ItemType, ItemCount >::ConstIterator end( const Array< ItemType, ItemCount > &array )
+    typename Array< ItemType, ItemCount >::ConstIterator end( const Array< ItemType, ItemCount > &array ) noexcept
     {
         return array.end();
     }
 
     template < typename ItemType, Count ItemCount >
-    inline Count GetArrayItemCount( const Array< ItemType, ItemCount > & )
+    inline constexpr Count GetArrayItemCount( const Array< ItemType, ItemCount > & ) noexcept
     {
         return ItemCount;
     }

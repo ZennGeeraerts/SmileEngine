@@ -381,24 +381,29 @@ namespace smile::ecs
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
-        ComponentType &AddOrReplaceComponent( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
+        ComponentType &ReplaceComponent( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
+            SM_ASSERT( HasComponent< ComponentType >( entityHandle ) );
+
             ComponentPool *pCPool = GetComponentPool< ComponentType >();
 
-            bool isReplaced = false;
-            if ( pCPool && pCPool->Contains( entityHandle ) )
+            return pCPool->Replace< ComponentType >(
+                entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
+        }
+
+        template < typename ComponentType, typename... ConstructorArgs >
+        ComponentType &AddOrReplaceComponent( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
+        {
+            if ( HasComponent< ComponentType >( entityHandle ) )
             {
-                RemoveComponent< ComponentType >( entityHandle );
-                isReplaced = true;
+                return ReplaceComponent< ComponentType >(
+                    entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
             }
-
-            ComponentType &component =
-                AddComponent< ComponentType >( entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
-
-            if ( isReplaced )
-                pCPool->Patch( entityHandle );
-
-            return component;
+            else
+            {
+                return AddComponent< ComponentType >(
+                    entityHandle, std::forward< ConstructorArgs >( constructorArgs )... );
+            }
         }
 
         template < typename ComponentType >

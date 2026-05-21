@@ -15,4 +15,14 @@ namespace smile::memory
         volatile auto &dest = m_RefCount;
         dest = s_InvalidCount;
     }
+
+    void *Counted::operator new( const size_t size )
+    {
+        return memory::AllocateByteArray( foundation::NumericCast< Count >( size ) );
+    }
+
+    void Counted::operator delete( void *byteArray )
+    {
+        memory::DeallocateByteArray( byteArray );
+    }
 }

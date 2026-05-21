@@ -573,6 +573,87 @@ namespace smile
             REQUIRE( comp.y == 84 );
         }
 
+        SECTION( "AddOrReplaceComponent fires OnConstruction when adding a fresh component", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+
+            bool constructionCalled = false;
+            engine.OnConstruction< TestComponent >().emplace_back(
+                [&constructionCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { constructionCalled = true; } );
+
+            engine.AddOrReplaceComponent< TestComponent >( entity, 10, 20 );
+
+            REQUIRE( constructionCalled );
+        }
+
+        SECTION(
+            "AddOrReplaceComponent does not fire OnConstruction when replacing an existing component", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            bool constructionCalled = false;
+            engine.OnConstruction< TestComponent >().emplace_back(
+                [&constructionCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { constructionCalled = true; } );
+
+            engine.AddOrReplaceComponent< TestComponent >( entity, 10, 20 );
+
+            REQUIRE_FALSE( constructionCalled );
+        }
+
+        SECTION( "ReplaceComponent updates component data", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+            engine.ReplaceComponent< TestComponent >( entity, 42, 84 );
+
+            const auto &comp = engine.GetComponent< TestComponent >( entity );
+            REQUIRE( comp.x == 42 );
+            REQUIRE( comp.y == 84 );
+        }
+
+        SECTION( "ReplaceComponent fires OnPatch", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            bool patchCalled = false;
+            engine.OnPatch< TestComponent >().emplace_back(
+                [&patchCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { patchCalled = true; } );
+
+            engine.ReplaceComponent< TestComponent >( entity, 10, 20 );
+
+            REQUIRE( patchCalled );
+        }
+
+        SECTION( "ReplaceComponent does not fire OnConstruction", "[ECSEngine]" )
+        {
+            ecs::ECSEngine engine{};
+            auto entity = engine.CreateEntity();
+
+            engine.RegisterComponent< TestComponent >();
+            engine.AddComponent< TestComponent >( entity, 1, 2 );
+
+            bool constructionCalled = false;
+            engine.OnConstruction< TestComponent >().emplace_back(
+                [&constructionCalled]( ecs::ECSEngine &, ecs::EntityHandle ) { constructionCalled = true; } );
+
+            engine.ReplaceComponent< TestComponent >( entity, 10, 20 );
+
+            REQUIRE_FALSE( constructionCalled );
+        }
+
         SECTION( "OnPatch listener receives engine reference that can access component", "[ECSEngine]" )
         {
             ecs::ECSEngine engine{};

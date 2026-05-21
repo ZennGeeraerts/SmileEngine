@@ -82,6 +82,7 @@ New optional subsystems inside `smile/core/` follow this pattern (see `smile/src
 
 - **Namespace**: everything in `namespace smile`. Sub-namespaces follow module/subsystem (e.g. `smile::ecs`, `smile::graphic`, `smile::application`, `smile::foundation`). Sub-subsystems nest further (e.g. `smile::compression::lz4`).
 - **Smart pointers**: use engine aliases — `smile::Ref<T>` (`shared_ptr`), `smile::Scope<T>` (`unique_ptr`), created with `CreateRef<T>()` / `CreateScope<T>()`.
+- **Variable naming**: do not prefix variables with `p` for pointers or smart pointers. Use the plain name (e.g. `object`, not `pObject`).
 - **RTTI**: use the custom macro-based RTTI, not `dynamic_cast`. Declare with `RTTI_DEFINE_BASE(MyClass)` on base, `RTTI_DEFINE(MyClass, BaseClass)` on derived.
 - **Assertions**: `SM_ASSERT(cond)`, `SM_ASSERT_MSG(cond, msg)` — active in `SM_C_DEBUG` builds only.
 - **Logging**: engine logger via `smile::logging`. Use the logger registry.
@@ -115,6 +116,12 @@ New optional subsystems inside `smile/core/` follow this pattern (see `smile/src
 - **Output parameters**: prefer output parameters (`Type& out`) over returning data by value for non-trivial results, especially when the operation is fallible.
 - **Numeric casts**: always use `foundation::NumericCast<T>(value)` (`smile/common/foundation/numeric_cast.h`) instead of `static_cast` for numeric conversions. It has bounds-checking safety.
 - **Const correctness**: mark all value parameters that are not modified as `const` (e.g. `const Count size`).
+- **`inline`**: do not write `inline` on member functions defined inside a class body — they are implicitly inline. Only use `inline` on free functions or member functions defined **outside** the class body in a header file (to satisfy ODR).
+- **`noexcept`**: mark functions `noexcept` when their body cannot throw. Apply based on the **direct body** of the function only — do not audit transitive call chains. Simple getters, comparisons, and pointer/value operations qualify. **Do not** mark a function `noexcept` if its body directly contains `SM_ASSERT` or `SM_ASSERT_MSG` — in test builds `ThrowOnAssert` is installed as the assert handler, so `SM_ASSERT` can throw; a `noexcept` wrapper would call `std::terminate()` instead of letting the test catch it. Move constructors and move assignment operators should always be `noexcept`.
+- **`constexpr`**: use `constexpr` (and `static constexpr` for member functions) when the result is a compile-time constant independent of instance state (e.g. `sizeof(T)` queries). Do not apply it to functions that allocate or rely on runtime state.
+- **`explicit`**: mark single-argument constructors (and constructors callable with one argument) `explicit` to prevent silent implicit conversions. Multi-parameter constructors do not need it. Copy and move constructors must never be `explicit`.
+- **`[[nodiscard]]`**: only add `[[nodiscard]]` when ignoring the return value is almost certainly a bug — primarily validation predicates (e.g. `IsValidIndex()`). Do not add it to general-purpose getters or query functions.
+- **`[[maybe_unused]]`**: use only on parameters or variables that are intentionally unused in at least one configuration (e.g. debug-only parameters). Do not use it as a blanket suppressor.
 
 ## Key Entry Points
 

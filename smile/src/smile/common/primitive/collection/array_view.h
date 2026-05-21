@@ -15,19 +15,19 @@ namespace smile::primitive
         using Item = ItemType;
 
         ArrayView() = default;
-        ArrayView( Item *pItems, const Count itemCount ) : m_pItems{ pItems }, m_ItemCount{ itemCount }
+        ArrayView( Item *pItems, const Count itemCount ) noexcept : m_pItems{ pItems }, m_ItemCount{ itemCount }
         {
         }
 
         template < Count Size >
-        ArrayView( Item ( &pItems )[Size] ) : ArrayView{ pItems, Size }
+        explicit ArrayView( Item ( &pItems )[Size] ) noexcept : ArrayView{ pItems, Size }
         {
         }
 
         template < typename OtherItemType,
             typename = std::enable_if< std::is_same_v< std::remove_const_t< Item >, OtherItemType > &&
                                        std::is_const_v< Item > > >
-        ArrayView( const ArrayView< OtherItemType > &other ) : ArrayView{ other.m_pItems, other.m_ItemCount }
+        ArrayView( const ArrayView< OtherItemType > &other ) noexcept : ArrayView{ other.m_pItems, other.m_ItemCount }
         {
         }
 
@@ -49,27 +49,27 @@ namespace smile::primitive
             return m_pItems[index];
         }
 
-        Item *GetData()
+        Item *GetData() noexcept
         {
             return m_pItems;
         }
 
-        const Item *GetData() const
+        const Item *GetData() const noexcept
         {
             return m_pItems;
         }
 
-        Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_ItemCount;
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_ItemCount == 0;
         }
 
-        bool IsValidIndex( const Index index ) const
+        [[nodiscard]] bool IsValidIndex( const Index index ) const noexcept
         {
             return index < m_ItemCount;
         }
@@ -80,31 +80,31 @@ namespace smile::primitive
     };
 
     template < typename ItemType >
-    ItemType *begin( ArrayView< ItemType > &view )
+    ItemType *begin( ArrayView< ItemType > &view ) noexcept
     {
         return view.GetData();
     }
 
     template < typename ItemType >
-    ItemType *end( ArrayView< ItemType > &view )
+    ItemType *end( ArrayView< ItemType > &view ) noexcept
     {
         return view.GetData() + view.GetItemCount();
     }
 
     template < typename ItemType >
-    const ItemType *begin( const ArrayView< ItemType > &view )
+    const ItemType *begin( const ArrayView< ItemType > &view ) noexcept
     {
         return view.GetData();
     }
 
     template < typename ItemType >
-    const ItemType *end( const ArrayView< ItemType > &view )
+    const ItemType *end( const ArrayView< ItemType > &view ) noexcept
     {
         return view.GetData() + view.GetItemCount();
     }
 
     template < typename ItemType >
-    inline Count GetArrayItemCount( const ArrayView< ItemType > &view )
+    Count GetArrayItemCount( const ArrayView< ItemType > &view ) noexcept
     {
         return view.GetItemCount();
     }

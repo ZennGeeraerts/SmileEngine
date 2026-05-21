@@ -30,27 +30,27 @@ namespace smile::primitive
             {
             }
 
-            const KeyType &GetKey() const
+            const KeyType &GetKey() const noexcept
             {
                 return Key;
             }
 
-            const ItemType &GetItem() const
+            const ItemType &GetItem() const noexcept
             {
                 return Value;
             }
 
-            ItemType &GetItem()
+            ItemType &GetItem() noexcept
             {
                 return Value;
             }
 
-            Node *GetNextNode() const
+            Node *GetNextNode() const noexcept
             {
                 return pNextNode;
             }
 
-            void SetNextNode( Node *pNode )
+            void SetNextNode( Node *pNode ) noexcept
             {
                 pNextNode = pNode;
             }
@@ -74,7 +74,7 @@ namespace smile::primitive
             }
         }
 
-        HashMap( HashMap &&other ) : m_Table{ std::move( other.m_Table ) }
+        HashMap( HashMap &&other ) noexcept : m_Table{ std::move( other.m_Table ) }
         {
         }
 
@@ -103,7 +103,7 @@ namespace smile::primitive
             return *this;
         }
 
-        HashMap &operator=( HashMap &&other )
+        HashMap &operator=( HashMap &&other ) noexcept
         {
             Clear();
             m_Table.Swap( other.m_Table );
@@ -122,23 +122,23 @@ namespace smile::primitive
             return m_Table.GetItemAtKey( key );
         }
 
-        Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_Table.GetItemCount();
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_Table.IsEmpty();
         }
 
-        inline ConstIterator FindItemAtKey( const TKey &key ) const
+        ConstIterator FindItemAtKey( const TKey &key ) const
         {
             return m_Table.FindItemAtKey( key );
         }
 
         template < typename OtherKeyType >
-        inline ConstIterator FindItemAtKey( const OtherKeyType &key ) const
+        ConstIterator FindItemAtKey( const OtherKeyType &key ) const
         {
             return m_Table.FindItemAtKey( key );
         }
@@ -154,7 +154,7 @@ namespace smile::primitive
             return m_Table.FindItemAtKey( key );
         }
 
-        bool HasItemAtKey( const TKey &key ) const
+        [[nodiscard]] bool HasItemAtKey( const TKey &key ) const
         {
             return m_Table.HasItemAtKey( key );
         }
@@ -272,7 +272,7 @@ namespace smile::primitive
             delete m_Table.EraseAndSetNext( where );
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             auto iterator = m_Table.begin();
 
@@ -287,7 +287,7 @@ namespace smile::primitive
             return m_Table.begin();
         }
 
-        Iterator end()
+        Iterator end() noexcept
         {
             return m_Table.end();
         }
@@ -297,7 +297,7 @@ namespace smile::primitive
             return m_Table.begin();
         }
 
-        ConstIterator end() const
+        ConstIterator end() const noexcept
         {
             return m_Table.end();
         }

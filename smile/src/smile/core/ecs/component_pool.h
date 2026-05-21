@@ -39,7 +39,7 @@ namespace smile::ecs
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &Add( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
-            const IndexType index = m_SparseSet.Insert( entityHandle.GetIndex() );
+            [[maybe_unused]] const IndexType index = m_SparseSet.Insert( entityHandle.GetIndex() );
 
             SM_ASSERT_MSG( index == m_pComponentStorage->GetSize(), "ComponentPool::Add > Failed to add component" );
 
@@ -47,6 +47,21 @@ namespace smile::ecs
                 entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
 
             PublishOnConstruction( entityHandle );
+
+            return component;
+        }
+
+        template < typename ComponentType, typename... ConstructorArgs >
+        ComponentType &Replace( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
+        {
+            SM_ASSERT( Contains( entityHandle ) )
+
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
+
+            auto &component = m_pComponentStorage->Replace< ComponentType >(
+                index, std::forward< ConstructorArgs >( constructorArgs )... );
+
+            Patch( entityHandle );
 
             return component;
         }
