@@ -74,7 +74,7 @@ namespace smile::graphic
         m_ShaderLibrary->Load( "resources/shaders/pbr_skinned.vs.smshader" );
     }
 
-    rhi::SwapChain *RenderEngine::CreateSwapChain( const window::Window *window )
+    rhi::SwapChain &RenderEngine::CreateSwapChain( const window::Window *window )
     {
         auto swapChain = m_Device->CreateSwapChain( window );
 
@@ -112,33 +112,33 @@ namespace smile::graphic
         m_SwapChains.PushBack( std::move( swapChain ) );
         m_RenderTargets.Insert( swapChainPtr, std::move( renderTarget ) );
 
-        return swapChainPtr;
+        return *swapChainPtr;
     }
 
-    Renderer *RenderEngine::CreateRenderer()
+    Renderer &RenderEngine::CreateRenderer()
     {
         auto renderer = memory::CreateScope< Renderer >( *this );
         m_Renderers.PushBack( std::move( renderer ) );
 
-        return m_Renderers.GetLastItem().GetPointer();
+        return *m_Renderers.GetLastItem().GetPointer();
     }
 
-    RenderScene *RenderEngine::CreateScene( rhi::SwapChain *const swapChain )
+    RenderScene &RenderEngine::CreateScene( rhi::SwapChain &swapChain )
     {
         const auto &renderTarget = GetRenderTarget( swapChain );
         return CreateScene( renderTarget );
     }
 
-    RenderScene *RenderEngine::CreateScene( const Framebuffer &framebuffer )
+    RenderScene &RenderEngine::CreateScene( const Framebuffer &framebuffer )
     {
         auto scene = memory::CreateScope< RenderScene >( framebuffer );
         m_Scenes.PushBack( std::move( scene ) );
 
-        return m_Scenes.GetLastItem().GetPointer();
+        return *m_Scenes.GetLastItem().GetPointer();
     }
 
-    const Framebuffer &RenderEngine::GetRenderTarget( rhi::SwapChain *const swapChain ) const
+    const Framebuffer &RenderEngine::GetRenderTarget( const rhi::SwapChain &swapChain ) const
     {
-        return m_RenderTargets.GetItemAtKey( swapChain );
+        return m_RenderTargets.GetItemAtKey( const_cast< rhi::SwapChain * >( &swapChain ) );
     }
 }

@@ -40,9 +40,9 @@ namespace smile::graphic
 
       private:
         memory::Scope< RenderEngine > m_RenderEngine;
-        Renderer *m_Renderer;
-        rhi::SwapChain *m_SwapChain;
-        RenderScene *m_Scene;
+        Renderer *m_Renderer = nullptr;
+        rhi::SwapChain *m_SwapChain = nullptr;
+        RenderScene *m_Scene = nullptr;
 
         VertexBuffer m_VertexBuffer;
         IndexBuffer m_IndexBuffer;

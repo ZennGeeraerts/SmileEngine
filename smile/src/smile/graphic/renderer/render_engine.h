@@ -31,10 +31,10 @@ namespace smile::graphic
 
         void LoadShaders();
 
-        rhi::SwapChain *CreateSwapChain( const window::Window *window );
-        Renderer *CreateRenderer();
-        RenderScene *CreateScene( rhi::SwapChain *const swapChain );
-        RenderScene *CreateScene( const Framebuffer &framebuffer );
+        rhi::SwapChain &CreateSwapChain( const window::Window *window );
+        Renderer &CreateRenderer();
+        RenderScene &CreateScene( rhi::SwapChain &swapChain );
+        RenderScene &CreateScene( const Framebuffer &framebuffer );
 
         RenderContext &GetRenderContext() noexcept
         {
@@ -71,7 +71,7 @@ namespace smile::graphic
             return *m_MaterialSystem;
         }
 
-        const Framebuffer &GetRenderTarget( rhi::SwapChain *const swapChain ) const;
+        const Framebuffer &GetRenderTarget( const rhi::SwapChain &swapChain ) const;
 
       private:
         RenderEngine( rhi::RendererBackendType api,

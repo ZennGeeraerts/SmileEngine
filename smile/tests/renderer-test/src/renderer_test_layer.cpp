@@ -29,8 +29,8 @@ namespace smile::graphic
         auto &window = application::Application::GetInstance().GetMainWindow();
 
         m_RenderEngine = RenderEngine::Create( rhi::RendererBackendType::D3D11 );
-        m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
-        m_Renderer = m_RenderEngine->CreateRenderer();
+        m_SwapChain = &m_RenderEngine->CreateSwapChain( &window );
+        m_Renderer = &m_RenderEngine->CreateRenderer();
 
         auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
@@ -53,7 +53,7 @@ namespace smile::graphic
             DirectX::XMStoreFloat4x4( &projectionMatrix, projectionMatrixMat );
         }
 
-        m_Scene = m_RenderEngine->CreateScene( m_SwapChain );
+        m_Scene = &m_RenderEngine->CreateScene( *m_SwapChain );
         m_Scene->GetView().SetViewProjectionMatrix( viewMatrix, projectionMatrix );
 
         {

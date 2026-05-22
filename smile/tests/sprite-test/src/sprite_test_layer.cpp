@@ -29,9 +29,9 @@ namespace smile::graphic
         auto &window = application::Application::GetInstance().GetMainWindow();
 
         m_RenderEngine = RenderEngine::Create( rhi::RendererBackendType::D3D11 );
-        m_SwapChain = m_RenderEngine->CreateSwapChain( &window );
-        m_Renderer = m_RenderEngine->CreateRenderer();
-        m_Scene = m_RenderEngine->CreateScene( m_SwapChain );
+        m_SwapChain = &m_RenderEngine->CreateSwapChain( &window );
+        m_Renderer = &m_RenderEngine->CreateRenderer();
+        m_Scene = &m_RenderEngine->CreateScene( *m_SwapChain );
 
         auto &resourceManager = m_RenderEngine->GetResourceManager();
         auto &materialSystem = m_RenderEngine->GetMaterialSystem();
@@ -111,7 +111,7 @@ namespace smile::graphic
 
         m_Scene->GetView().OnUpdate();
 
-        const auto &backBuffer = m_RenderEngine->GetRenderTarget( m_SwapChain );
+        const auto &backBuffer = m_RenderEngine->GetRenderTarget( *m_SwapChain );
         m_Renderer->BeginFrame();
         m_Renderer->OnRender( *m_Scene );
         m_Renderer->EndFrame( *m_SwapChain );
