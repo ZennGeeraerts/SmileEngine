@@ -11,6 +11,6 @@ namespace smile::foundation
 
     inline constexpr foundation::HashCode HashCombine( foundation::HashCode seed, foundation::HashCode value )
     {
-        return seed ^ ( value + 0x9e3779b9 + ( seed << 6 ) + ( seed >> 2 ) );
+        return seed ^ ( value + 0x9e3779b97f4a7c15 + ( seed << 6 ) + ( seed >> 2 ) );
     }
 }
