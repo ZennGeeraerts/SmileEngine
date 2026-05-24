@@ -30,7 +30,7 @@ namespace smile::foundation
             SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-            m_Flags |= ( 1 << static_cast< UnderlyingType >( value ) );
+            m_Flags |= ( 1u << static_cast< UnderlyingType >( value ) );
         }
 
         constexpr inline void Set( std::initializer_list< EnumType > values )
@@ -44,7 +44,7 @@ namespace smile::foundation
             SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-            return ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) != 0;
+            return ( m_Flags & ( static_cast< UnderlyingType >( 1u ) << static_cast< UnderlyingType >( value ) ) ) != 0;
         }
 
         constexpr inline bool HasAll( std::initializer_list< EnumType > values ) const
@@ -54,7 +54,8 @@ namespace smile::foundation
                 SM_ASSERT_MSG(
                     static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-                if ( ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) == 0 )
+                if ( ( m_Flags & ( static_cast< UnderlyingType >( 1u ) << static_cast< UnderlyingType >( value ) ) ) ==
+                     0 )
                     return false;
             }
 
@@ -68,7 +69,8 @@ namespace smile::foundation
                 SM_ASSERT_MSG(
                     static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-                if ( ( m_Flags & ( 1 << static_cast< UnderlyingType >( value ) ) ) == 1 )
+                if ( ( m_Flags & ( static_cast< UnderlyingType >( 1u ) << static_cast< UnderlyingType >( value ) ) ) !=
+                     0 )
                     return true;
             }
 
@@ -80,7 +82,7 @@ namespace smile::foundation
             SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-            m_Flags &= ~( 1 << static_cast< UnderlyingType >( value ) );
+            m_Flags &= ~( static_cast< UnderlyingType >( 1u ) << static_cast< UnderlyingType >( value ) );
         }
 
         constexpr inline void Clear( std::initializer_list< EnumType > values )
@@ -94,7 +96,7 @@ namespace smile::foundation
             SM_ASSERT_MSG(
                 static_cast< UnderlyingType >( value ) < ( 8 * sizeof( UnderlyingType ) ), "Value out of range" );
 
-            m_Flags ^= ( 1 << static_cast< UnderlyingType >( value ) );
+            m_Flags ^= ( static_cast< UnderlyingType >( 1u ) << static_cast< UnderlyingType >( value ) );
         }
 
         constexpr inline void Toggle( std::initializer_list< EnumType > values )
