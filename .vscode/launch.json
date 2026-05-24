@@ -1,0 +1,104 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "smiledit (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smiledit/out/build/x64-Debug/Debug/smiledit.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smiledit",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "smiledit (Release)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smiledit/out/build/x64-Release/Release/smiledit.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smiledit",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "unit-tests (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/unit-tests/out/build/x64-Debug/Debug/smile.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/unit-tests",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "unit-tests (Release)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/unit-tests/out/build/x64-Release/Release/smile.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/unit-tests",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "smile-project (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/smile-project/out/build/x64-Debug/Debug/smile-project.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/smile-project",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "smile-project (Release)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/smile-project/out/build/x64-Release/Release/smile-project.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/smile-project",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "rhi-test (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/rhi-test/out/build/x64-Debug/Debug/rhi-test.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/rhi-test",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "renderer-test (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/renderer-test/out/build/x64-Debug/Debug/renderer-test.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/renderer-test",
+      "environment": [],
+      "console": "externalTerminal"
+    },
+    {
+      "name": "sprite-test (Debug)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/smile/tests/sprite-test/out/build/x64-Debug/Debug/sprite-test.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/smile/tests/sprite-test",
+      "environment": [],
+      "console": "externalTerminal"
+    }
+  ]
+}

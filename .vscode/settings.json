@@ -1,0 +1,11 @@
+{
+  "cmake.sourceDirectory": [
+    "${workspaceFolder}/smiledit",
+    "${workspaceFolder}/smile/tests/unit-tests",
+    "${workspaceFolder}/smile/tests/smile-project",
+    "${workspaceFolder}/smile/tests/rhi-test",
+    "${workspaceFolder}/smile/tests/renderer-test",
+    "${workspaceFolder}/smile/tests/sprite-test",
+    "${workspaceFolder}/smile/src/tools/x-shader-c"
+  ]
+}
