@@ -22,7 +22,7 @@
 #    error SmileEngine only supports Windows
 #endif
 
-#define BIT( x ) ( 1 << x )
+#define BIT( x ) ( 1u << x )
 #define SM_BIND_EVENT_FN( fn ) std::bind( &fn, this, std::placeholders::_1 )
 #define SM_EXPAND_MACRO( x ) x
 #define SM_STRINGIFY_MACRO( x ) #x
@@ -46,7 +46,7 @@ namespace smile
     using Scope = std::unique_ptr< Type >;
 
     template < typename Type, typename... Args >
-    constexpr Scope< Type > CreateScope( Args... args )
+    constexpr Scope< Type > CreateScope( Args &&...args )
     {
         return std::make_unique< Type >( std::forward< Args >( args )... );
     }

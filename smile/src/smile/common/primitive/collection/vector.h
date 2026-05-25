@@ -139,7 +139,7 @@ namespace smile::primitive
 
         [[nodiscard]] bool IsValidIndex( const Index index ) const noexcept
         {
-            return index >= 0 && index < m_ItemCount;
+            return index < m_ItemCount;
         }
 
         Item &GetItemAtIndex( const Index index )
