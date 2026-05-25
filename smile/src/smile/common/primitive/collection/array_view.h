@@ -25,8 +25,8 @@ namespace smile::primitive
         }
 
         template < typename OtherItemType,
-            typename = std::enable_if< std::is_same_v< std::remove_const_t< Item >, OtherItemType > &&
-                                       std::is_const_v< Item > > >
+            typename = std::enable_if_t< std::is_same_v< std::remove_const_t< Item >, OtherItemType > &&
+                                         std::is_const_v< Item > > >
         ArrayView( const ArrayView< OtherItemType > &other ) noexcept : ArrayView{ other.m_pItems, other.m_ItemCount }
         {
         }
