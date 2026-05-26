@@ -10,7 +10,7 @@ namespace smile::foundation
     {
     };
 
-    using RTTI_ID = RTTI_IDBase;
+    using RTTI_ID = const RTTI_IDBase *;
 
     namespace detail
     {

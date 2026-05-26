@@ -43,7 +43,7 @@ namespace smile::primitive
             }
         }
 
-        explicit Vector( const Count itemCount ) noexcept : m_pItems{ nullptr }, m_ItemCount{ 0 }
+        explicit Vector( const Count itemCount ) : m_pItems{ nullptr }, m_ItemCount{ 0 }
         {
             Reserve( itemCount );
             m_ItemCount = itemCount;
@@ -80,7 +80,7 @@ namespace smile::primitive
             other.m_ItemCount = 0;
         }
 
-        ~Vector()
+        ~Vector() noexcept
         {
             Clear();
         }

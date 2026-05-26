@@ -71,8 +71,10 @@ namespace smile::ecs
         class ViewIterator final
         {
           public:
-            ViewIterator( ECSEngine &engine, ComponentPool::ConstIterator it, ComponentPool::ConstIterator endIt )
-                : m_Engine{ engine }, m_Iterator{ it }, m_EndIterator{ endIt }
+            ViewIterator( ECSEngine &engine,
+                ComponentPool::ConstIterator it,
+                ComponentPool::ConstIterator endIt ) noexcept
+                : m_Engine{ engine }, m_Iterator{ it }, m_EndIterator{ endIt }, m_GatherComponents{ engine }
             {
             }
 
@@ -101,8 +103,7 @@ namespace smile::ecs
                 {
                     oldIt = m_Iterator;
 
-                    GatherComponents< Components... > gatherComponents{ m_Engine };
-                    if ( gatherComponents.Run( handleManager.GetHandle( *m_Iterator ) ) )
+                    if ( m_GatherComponents.Run( handleManager.GetHandle( *m_Iterator ) ) )
                     {
                         ++m_Iterator;
                         break;
@@ -117,6 +118,7 @@ namespace smile::ecs
             ECSEngine &m_Engine;
             ComponentPool::ConstIterator m_Iterator;
             ComponentPool::ConstIterator m_EndIterator;
+            GatherComponents< Components... > m_GatherComponents;
         };
 
         template < typename... Components >

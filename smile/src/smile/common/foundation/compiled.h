@@ -23,7 +23,7 @@
 #endif
 
 #define BIT( x ) ( 1u << x )
-#define SM_BIND_EVENT_FN( fn ) std::bind( &fn, this, std::placeholders::_1 )
+#define SM_BIND_EVENT_FN( fn ) std::bind_front( &fn, this )
 #define SM_EXPAND_MACRO( x ) x
 #define SM_STRINGIFY_MACRO( x ) #x
 
