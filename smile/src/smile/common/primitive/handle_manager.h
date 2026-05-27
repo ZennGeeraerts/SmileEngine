@@ -11,11 +11,11 @@
 
 namespace smile::primitive
 {
-    template < typename IndexType = Uint32, Uint32 IndexBits = 16, Uint32 GenerationBits = 16 >
+    template < typename IndexType = Uint32, Uint32 IndexBits = 16, Uint32 GenerationBits = 16, typename Tag = void >
     class HandleManager final
     {
       public:
-        using HandleType = Handle< IndexType, IndexBits, GenerationBits >;
+        using HandleType = Handle< IndexType, IndexBits, GenerationBits, Tag >;
 
         struct Iterator final
         {
