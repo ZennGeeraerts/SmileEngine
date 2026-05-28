@@ -62,4 +62,10 @@ namespace smile::primitive
     bool StartsWith( const StringView text, const StringView startingText );
     bool EndsWith( const StringView text, const StringView endingText );
     bool ContainsText( const StringView text, const StringView textToFind );
+
+    StringView
+    GetSubText( const StringView text, const Index firstCharIndex, const std::optional< Count > charCount = {} );
+    StringView GetStartingText( const StringView text, const Count charCount );
+    StringView GetEndingText( const StringView text, const Count charCount );
+    StringView GetEndingTextAtIndex( const StringView text, const Index lastCharIndex );
 }

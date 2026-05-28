@@ -276,11 +276,11 @@ namespace smile::primitive
         const char *textArray = text.GetSubText();
         const char *endingTextArray = endingText.GetSubText();
         const Index lastIndex = text.GetCharCount() - 1;
-        const Index ending_text_last_index = endingText.GetCharCount() - 1;
+        const Index endingTextLastIndex = endingText.GetCharCount() - 1;
 
         for ( auto charIndex : foundation::GetCountIterator( endingText.GetCharCount() ) )
         {
-            if ( textArray[lastIndex - charIndex] != endingTextArray[ending_text_last_index - charIndex] )
+            if ( textArray[lastIndex - charIndex] != endingTextArray[endingTextLastIndex - charIndex] )
             {
                 return false;
             }
@@ -292,5 +292,41 @@ namespace smile::primitive
     bool ContainsText( const StringView text, const StringView textToFind )
     {
         return FindText( text, textToFind ) != s_InvalidIndex;
+    }
+
+    StringView GetSubText( const StringView text, const Index firstCharIndex, const std::optional< Count > charCount )
+    {
+        const Count realCharCount =
+            charCount.has_value() ? charCount.value() : ( text.GetCharCount() - firstCharIndex );
+
+        if ( realCharCount != 0 )
+        {
+            SM_ASSERT( text.IsValidRange( firstCharIndex, realCharCount ) );
+
+            return { text.GetSubText() + firstCharIndex, realCharCount };
+        }
+
+        return {};
+    }
+
+    StringView GetStartingText( const StringView text, const Count charCount )
+    {
+        SM_ASSERT( charCount <= text.GetCharCount() );
+
+        return GetSubText( text, 0, charCount );
+    }
+
+    StringView GetEndingText( const StringView text, const Count charCount )
+    {
+        SM_ASSERT( charCount <= text.GetCharCount() );
+
+        return GetSubText( text, text.GetCharCount() - charCount, charCount );
+    }
+
+    StringView GetEndingTextAtIndex( const StringView text, const Index lastCharIndex )
+    {
+        SM_ASSERT( lastCharIndex < text.GetCharCount() );
+
+        return GetSubText( text, lastCharIndex, text.GetCharCount() - lastCharIndex );
     }
 }
