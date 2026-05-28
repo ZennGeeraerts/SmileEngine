@@ -20,6 +20,7 @@
 #include "smile/common/primitive/name.h"
 #include "type.h"
 #include "path.h"
+#include "compression.h"
 
 namespace smile::fs
 {
@@ -48,6 +49,13 @@ namespace smile::fs
 
         Path GetPhysicalFilePath() const;
 
+        void FillPhysical( const Path &filePath,
+            const Type type,
+            const bool isCaseSensitive,
+            const std::optional< Count > size,
+            const primitive::String &logicalDirectoryPath,
+            const primitive::String &physicalDirectoryPath = {} );
+
         primitive::String PhysicalName;
         primitive::String LogicalName;
         primitive::Name PhysicalDirectoryPath;
@@ -55,6 +63,7 @@ namespace smile::fs
 
         Count Size{ s_InvalidCount };
         Type FileType;
+        Compression FileCompression{ Compression::None };
         bool IsReadOnly{ true };
         bool IsVirtual{ false };
     };
