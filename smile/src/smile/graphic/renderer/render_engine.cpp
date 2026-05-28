@@ -19,6 +19,8 @@ namespace smile::graphic
 
         auto shaderLibrary = memory::CreateScope< ShaderLibrary >();
         auto textureManager = memory::CreateScope< TextureManager >();
+
+        auto meshManager = memory::CreateScope< MeshManager >( *resourceManager );
         auto materialManager = memory::CreateScope< MaterialManager >( *textureManager );
         auto materialInstanceManager = memory::CreateScope< MaterialInstanceManager >();
 
@@ -31,6 +33,7 @@ namespace smile::graphic
             std::move( resourceManager ),
             std::move( shaderLibrary ),
             std::move( textureManager ),
+            std::move( meshManager ),
             std::move( materialManager ),
             std::move( materialInstanceManager ),
             std::move( materialSystem ) );
@@ -46,6 +49,7 @@ namespace smile::graphic
         memory::Scope< ResourceManager > resourceManager,
         memory::Scope< ShaderLibrary > shaderLibrary,
         memory::Scope< TextureManager > textureManager,
+        memory::Scope< MeshManager > meshManager,
         memory::Scope< MaterialManager > materialManager,
         memory::Scope< MaterialInstanceManager > materialInstanceManager,
         memory::Scope< MaterialSystem > materialSystem ) noexcept
@@ -55,6 +59,7 @@ namespace smile::graphic
           m_ResourceManager{ std::move( resourceManager ) },
           m_ShaderLibrary{ std::move( shaderLibrary ) },
           m_TextureManager{ std::move( textureManager ) },
+          m_MeshManager{ std::move( meshManager ) },
           m_MaterialManager{ std::move( materialManager ) },
           m_MaterialInstanceManager{ std::move( materialInstanceManager ) },
           m_MaterialSystem{ std::move( materialSystem ) }

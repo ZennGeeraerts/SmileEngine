@@ -6,6 +6,7 @@
 
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
 #include "smile/graphic/renderer/resource/index_buffer.h"
+#include "smile/graphic/rhi/primitive_topology.h"
 
 namespace smile::graphic
 {
@@ -17,6 +18,11 @@ namespace smile::graphic
         {
         }
 
+        Mesh( const VertexBuffer &vb, const IndexBuffer &ib, rhi::PrimitiveTopology topology ) noexcept
+            : VertexBuffer{ vb }, IndexBuffer{ ib }, Topology{ topology }
+        {
+        }
+
         [[nodiscard]] bool IsValid() const noexcept
         {
             return VertexBuffer.IsValid() && IndexBuffer.IsValid();
@@ -24,5 +30,6 @@ namespace smile::graphic
 
         VertexBuffer VertexBuffer;
         IndexBuffer IndexBuffer;
+        rhi::PrimitiveTopology Topology = rhi::PrimitiveTopology::TriangleList;
     };
 }

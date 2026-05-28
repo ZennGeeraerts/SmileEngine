@@ -335,8 +335,8 @@ namespace smile::graphic
         float phi = 0;
 
         // TOP
-        positions.EmplaceBack( 0, radius, 0 );
-        normals.EmplaceBack( 0, 1, 0 );
+        positions.EmplaceBack( 0.0f, radius, 0.0f );
+        normals.EmplaceBack( 0.0f, 1.0f, 0.0f );
 
         // SPHERE
         for ( Index i{}; i < steps - 1; ++i )
@@ -360,8 +360,8 @@ namespace smile::graphic
         }
 
         // BOTTOM
-        positions.EmplaceBack( 0, -radius, 0 );
-        normals.EmplaceBack( 0, -1, 0 );
+        positions.EmplaceBack( 0.0f, -radius, 0.0f );
+        normals.EmplaceBack( 0.0f, -1.0f, 0.0f );
 
         // Indices
         // TOP

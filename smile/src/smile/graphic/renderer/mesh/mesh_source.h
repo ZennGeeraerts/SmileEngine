@@ -6,6 +6,7 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/foundation/flags.h"
+#include "smile/common/memory/ref.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/primitive/text/string.h"
 
