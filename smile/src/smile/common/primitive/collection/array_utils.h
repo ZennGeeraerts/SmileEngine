@@ -13,12 +13,8 @@ namespace smile::primitive::array
 {
     template < typename ArrayType >
     concept HasBeginEnd = requires( ArrayType &array ) {
-        {
-            std::begin( array )
-        };
-        {
-            std::end( array )
-        };
+        { std::begin( array ) };
+        { std::end( array ) };
     };
 
     template < HasBeginEnd ArrayType, typename ItemType >
@@ -29,7 +25,7 @@ namespace smile::primitive::array
     }
 
     template < HasBeginEnd ArrayType, typename ItemType >
-    std::optional< Index > FindItemIndex( const ArrayType &array, const ItemType &item )
+    inline std::optional< Index > FindItemIndex( const ArrayType &array, const ItemType &item )
     {
         auto iteratorBegin = std::begin( array );
         auto iteratorEnd = std::end( array );
@@ -55,13 +51,11 @@ namespace smile::primitive::array
     template < typename ArrayType >
     concept HasEraseAtIndex = requires( ArrayType &array ) {
         typename ArrayType::Item;
-        {
-            array.EraseAtIndex( Index{} )
-        };
+        { array.EraseAtIndex( Index{} ) };
     };
 
     template < HasEraseAtIndex ArrayType >
-    bool EraseIfExists( ArrayType &array, const typename ArrayType::Item &item )
+    inline bool EraseIfExists( ArrayType &array, const typename ArrayType::Item &item )
     {
         std::optional< Index > index = FindItemIndex( array, item );
 
@@ -70,5 +64,45 @@ namespace smile::primitive::array
 
         array.EraseAtIndex( index.value() );
         return true;
+    }
+
+    template < HasBeginEnd ArrayType, typename Item >
+    inline auto GetLowerBoundIndex( const ArrayType &array, const Item &item )
+    {
+        auto beginIt = std::begin( array );
+
+        auto iterator = std::lower_bound( beginIt, std::end( array ), item );
+
+        return iterator - beginIt;
+    }
+
+    template < HasBeginEnd ArrayType, typename Item, typename Predicate >
+    inline auto GetLowerBoundIndex( const ArrayType &array, const Item &item, Predicate predicate )
+    {
+        auto beginIt = std::begin( array );
+
+        auto iterator = std::lower_bound( beginIt, std::end( array ), item, predicate );
+
+        return iterator - beginIt;
+    }
+
+    template < HasBeginEnd ArrayType, typename Item >
+    inline auto GetUpperBoundIndex( const ArrayType &array, const Item &item )
+    {
+        auto beginIt = std::begin( array );
+
+        auto iterator = std::upper_bound( beginIt, std::end( array ), item );
+
+        return iterator - beginIt;
+    }
+
+    template < HasBeginEnd ArrayType, typename Item, typename Predicate >
+    inline auto GetUpperBoundIndex( const ArrayType &array, const Item &item, Predicate predicate )
+    {
+        auto beginIt = std::begin( array );
+
+        auto iterator = std::upper_bound( beginIt, std::end( array ), item, predicate );
+
+        return iterator - beginIt;
     }
 }

@@ -75,4 +75,76 @@ namespace smile::primitive
             REQUIRE( array::IsEqual( e, a ) );
         }
     }
+
+    struct Value
+    {
+        int Val;
+    };
+
+    TEST_CASE( "Sorted search helpers", "[primitive][collection]" )
+    {
+        const int sortedArray[] = { 1, 3, 5, 7, 9 };
+        const Value valueSortedArray[] = { 1, 3, 5, 7, 9 };
+        auto predicate = []( const Value &first, const Value &second ) { return first.Val < second.Val; };
+
+        SECTION( "GetLowerBoundIndex" )
+        {
+            CHECK( 0 == array::GetLowerBoundIndex( sortedArray, 0 ) );
+            CHECK( 0 == array::GetLowerBoundIndex( sortedArray, 1 ) );
+            CHECK( 1 == array::GetLowerBoundIndex( sortedArray, 2 ) );
+            CHECK( 1 == array::GetLowerBoundIndex( sortedArray, 3 ) );
+            CHECK( 2 == array::GetLowerBoundIndex( sortedArray, 4 ) );
+            CHECK( 2 == array::GetLowerBoundIndex( sortedArray, 5 ) );
+            CHECK( 3 == array::GetLowerBoundIndex( sortedArray, 6 ) );
+            CHECK( 3 == array::GetLowerBoundIndex( sortedArray, 7 ) );
+            CHECK( 4 == array::GetLowerBoundIndex( sortedArray, 8 ) );
+            CHECK( 4 == array::GetLowerBoundIndex( sortedArray, 9 ) );
+            CHECK( 5 == array::GetLowerBoundIndex( sortedArray, 10 ) );
+        }
+
+        SECTION( "GetLowerBoundIndex with predicate" )
+        {
+            CHECK( 0 == array::GetLowerBoundIndex( valueSortedArray, Value{ 0 }, predicate ) );
+            CHECK( 0 == array::GetLowerBoundIndex( valueSortedArray, Value{ 1 }, predicate ) );
+            CHECK( 1 == array::GetLowerBoundIndex( valueSortedArray, Value{ 2 }, predicate ) );
+            CHECK( 1 == array::GetLowerBoundIndex( valueSortedArray, Value{ 3 }, predicate ) );
+            CHECK( 2 == array::GetLowerBoundIndex( valueSortedArray, Value{ 4 }, predicate ) );
+            CHECK( 2 == array::GetLowerBoundIndex( valueSortedArray, Value{ 5 }, predicate ) );
+            CHECK( 3 == array::GetLowerBoundIndex( valueSortedArray, Value{ 6 }, predicate ) );
+            CHECK( 3 == array::GetLowerBoundIndex( valueSortedArray, Value{ 7 }, predicate ) );
+            CHECK( 4 == array::GetLowerBoundIndex( valueSortedArray, Value{ 8 }, predicate ) );
+            CHECK( 4 == array::GetLowerBoundIndex( valueSortedArray, Value{ 9 }, predicate ) );
+            CHECK( 5 == array::GetLowerBoundIndex( valueSortedArray, Value{ 10 }, predicate ) );
+        }
+
+        SECTION( "GetUpperBoundIndex" )
+        {
+            CHECK( 0 == array::GetUpperBoundIndex( sortedArray, 0 ) );
+            CHECK( 1 == array::GetUpperBoundIndex( sortedArray, 1 ) );
+            CHECK( 1 == array::GetUpperBoundIndex( sortedArray, 2 ) );
+            CHECK( 2 == array::GetUpperBoundIndex( sortedArray, 3 ) );
+            CHECK( 2 == array::GetUpperBoundIndex( sortedArray, 4 ) );
+            CHECK( 3 == array::GetUpperBoundIndex( sortedArray, 5 ) );
+            CHECK( 3 == array::GetUpperBoundIndex( sortedArray, 6 ) );
+            CHECK( 4 == array::GetUpperBoundIndex( sortedArray, 7 ) );
+            CHECK( 4 == array::GetUpperBoundIndex( sortedArray, 8 ) );
+            CHECK( 5 == array::GetUpperBoundIndex( sortedArray, 9 ) );
+            CHECK( 5 == array::GetUpperBoundIndex( sortedArray, 10 ) );
+        }
+
+        SECTION( "GetUpperBoundIndex with predicate" )
+        {
+            CHECK( 0 == array::GetUpperBoundIndex( valueSortedArray, Value{ 0 }, predicate ) );
+            CHECK( 1 == array::GetUpperBoundIndex( valueSortedArray, Value{ 1 }, predicate ) );
+            CHECK( 1 == array::GetUpperBoundIndex( valueSortedArray, Value{ 2 }, predicate ) );
+            CHECK( 2 == array::GetUpperBoundIndex( valueSortedArray, Value{ 3 }, predicate ) );
+            CHECK( 2 == array::GetUpperBoundIndex( valueSortedArray, Value{ 4 }, predicate ) );
+            CHECK( 3 == array::GetUpperBoundIndex( valueSortedArray, Value{ 5 }, predicate ) );
+            CHECK( 3 == array::GetUpperBoundIndex( valueSortedArray, Value{ 6 }, predicate ) );
+            CHECK( 4 == array::GetUpperBoundIndex( valueSortedArray, Value{ 7 }, predicate ) );
+            CHECK( 4 == array::GetUpperBoundIndex( valueSortedArray, Value{ 8 }, predicate ) );
+            CHECK( 5 == array::GetUpperBoundIndex( valueSortedArray, Value{ 9 }, predicate ) );
+            CHECK( 5 == array::GetUpperBoundIndex( valueSortedArray, Value{ 10 }, predicate ) );
+        }
+    }
 }
