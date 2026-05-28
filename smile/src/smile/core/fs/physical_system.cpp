@@ -17,15 +17,66 @@
 #include "smpch.h"
 #include "physical_system.h"
 
+#include "smile/common/primitive/text/utils.h"
 #include "file_system.h"
 
 #include <filesystem>
 
 namespace smile::fs
 {
+    namespace detail
+    {
+        void GetFileTable( primitive::Vector< Path > &fileTable,
+            primitive::Vector< Path > *directoryTable,
+            const char *path,
+            const Recursivity recursivity )
+        {
+            std::error_code errorCode;
+            for ( const auto &entry : std::filesystem::directory_iterator( path, errorCode ) )
+            {
+                if ( entry.is_directory( errorCode ) && !errorCode )
+                {
+                    if ( directoryTable )
+                    {
+#ifdef SM_COMPILER_MSVC
+                        primitive::String platformPath{ entry.path().string().c_str() };
+                        primitive::ReplaceText( platformPath, "\\", "/" );
+                        directoryTable->EmplaceBack( std::move( platformPath ) );
+#else
+                        directoryTable->EmplaceBack( entry.path().string().c_str() );
+#endif
+                    }
+
+                    if ( recursivity == Recursivity::Recursive )
+                    {
+                        GetFileTable( fileTable, directoryTable, entry.path().string().c_str(), recursivity );
+                    }
+                }
+                else if ( entry.is_regular_file( errorCode ) && !errorCode )
+                {
+#ifdef SM_COMPILER_MSVC
+                    primitive::String platformPath{ entry.path().string().c_str() };
+                    primitive::ReplaceText( platformPath, "\\", "/" );
+                    fileTable.EmplaceBack( std::move( platformPath ) );
+#else
+                    fileTable.EmplaceBack( entry.path().string().c_str() );
+#endif
+                }
+            }
+        }
+    }
+
     void PhysicalSystem::Initialize()
     {
         FileSystem::GetInstance().AddRootDirectory( GetCurrentDirectory() );
+    }
+
+    void PhysicalSystem::GetFileTable( primitive::Vector< Path > &fileTable,
+        primitive::Vector< Path > *directoryTable,
+        const Path &path,
+        const Recursivity recursivity )
+    {
+        detail::GetFileTable( fileTable, directoryTable, path.GetData(), recursivity );
     }
 
     Path PhysicalSystem::GetCurrentDirectory()

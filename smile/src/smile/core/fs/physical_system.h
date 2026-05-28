@@ -17,6 +17,7 @@
 #pragma once
 
 #include "path.h"
+#include "recursivity.h"
 
 namespace smile::fs
 {
@@ -27,6 +28,11 @@ namespace smile::fs
         ~PhysicalSystem() = delete;
 
         static void Initialize();
+
+        static void GetFileTable( primitive::Vector< Path > &fileTable,
+            primitive::Vector< Path > *directoryTable,
+            const Path &path,
+            const Recursivity recursivity );
 
         static Path GetCurrentDirectory();
         static void SetCurrentDirectory( const Path &path );
