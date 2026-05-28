@@ -78,14 +78,13 @@ namespace smile::fs
         return content;
     }
 
-    bool FileSystem::GetFileBinaryContent( primitive::Vector< Byte > &content, const Path &filePath ) const
+    BoolResult FileSystem::GetFileBinaryContent( primitive::Vector< Byte > &content, const Path &filePath ) const
     {
         auto pFile = GetFile( filePath );
 
         if ( !pFile )
         {
-            SM_LOG_WARNING( "Unable to find file: {}", filePath );
-            return false;
+            return BoolResult::Fail( fmt::format( "Unable to find file: {}", filePath.GetData() ).c_str() );
         }
 
         pFile->OpenInput();
@@ -93,7 +92,7 @@ namespace smile::fs
         pFile->ReadByteArray( content.GetData(), pFile->GetSize() );
         pFile->Close();
 
-        return true;
+        return BoolResult::Succeed();
     }
 
     stream::BinaryStream::Ref FileSystem::GetFile( const Path &filePath ) const

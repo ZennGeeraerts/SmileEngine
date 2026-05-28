@@ -35,6 +35,12 @@ namespace smile::fs
         FileSystem() = default;
         ~FileSystem() = default;
 
+        FileSystem( const FileSystem & ) = delete;
+        FileSystem( FileSystem && ) noexcept = delete;
+
+        FileSystem &operator=( const FileSystem & ) = delete;
+        FileSystem &operator=( FileSystem && ) noexcept = delete;
+
         static void CreateInstance() = delete;
         static void Initialize();
 
@@ -43,7 +49,7 @@ namespace smile::fs
         void ClearRootDirectories();
 
         std::optional< primitive::String > GetFileContent( const Path &filePath ) const;
-        bool GetFileBinaryContent( primitive::Vector< Byte > &content, const Path &filePath ) const;
+        BoolResult GetFileBinaryContent( primitive::Vector< Byte > &content, const Path &filePath ) const;
 
         stream::BinaryStream::Ref GetFile( const Path &filePath ) const;
 
