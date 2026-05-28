@@ -49,10 +49,12 @@ namespace smile::graphic
         {
             return Value < other.Value;
         }
+
         constexpr bool operator==( const SortKey other ) const noexcept
         {
             return Value == other.Value;
         }
+
         constexpr bool operator!=( const SortKey other ) const noexcept
         {
             return Value != other.Value;
