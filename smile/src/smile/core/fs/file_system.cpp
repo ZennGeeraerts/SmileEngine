@@ -84,7 +84,8 @@ namespace smile::fs
 
         if ( !pFile )
         {
-            return BoolResult::Fail( fmt::format( "Unable to find file: {}", filePath.GetData() ).c_str() );
+            SM_LOG_ERROR( "FileSystem::GetFileBinaryContent >> Unable to find file: {}", filePath );
+            return BoolResult::Fail( "Unable to find file" );
         }
 
         pFile->OpenInput();
@@ -104,5 +105,10 @@ namespace smile::fs
         }
 
         return nullptr;
+    }
+
+    std::optional< Path > FileSystem::FindPhysicalFilePath( const Path &filePath ) const
+    {
+        return m_FileDescriptorList.FindPhysicalFilePath( filePath );
     }
 }

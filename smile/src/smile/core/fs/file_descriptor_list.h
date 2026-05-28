@@ -78,6 +78,9 @@ namespace smile::fs
             return m_Descriptors.end();
         }
 
+        std::optional< Path > FindPhysicalFilePath( const Path &filePath ) const;
+        std::optional< FileDescriptor > FindDescriptor( const Path &filePath ) const;
+
       private:
         primitive::Vector< FileDescriptor > m_Descriptors;
         bool m_IsCaseSensitive{ true };

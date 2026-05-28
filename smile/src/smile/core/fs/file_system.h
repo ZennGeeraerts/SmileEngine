@@ -53,6 +53,8 @@ namespace smile::fs
 
         stream::BinaryStream::Ref GetFile( const Path &filePath ) const;
 
+        std::optional< Path > FindPhysicalFilePath( const Path &filePath ) const;
+
       private:
         FileDescriptorList m_FileDescriptorList;
         primitive::Vector< Path > m_RootDirectories;
