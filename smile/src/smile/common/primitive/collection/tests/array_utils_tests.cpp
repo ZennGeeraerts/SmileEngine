@@ -5,6 +5,7 @@
 
 #include "smile/common/primitive/collection/array_utils.h"
 #include "smile/common/primitive/collection/vector.h"
+#include "smile/common/foundation/range_iterator.h"
 
 #include <catch/catch.hpp>
 
@@ -73,6 +74,69 @@ namespace smile::primitive
             REQUIRE_FALSE( array::IsEqual( c, a ) );
             REQUIRE_FALSE( array::IsEqual( d, a ) );
             REQUIRE( array::IsEqual( e, a ) );
+        }
+
+        SECTION( "MergeSortedArray" )
+        {
+            Vector< int > a{ 1, 2, 3 };
+            Vector< int > b{ 6, 7, 8 };
+            Vector< int > c{ 1, 4, 6, 8 };
+            Vector< int > d{ 1, 2, 5, 7 };
+            Vector< int > empty1{};
+            Vector< int > empty2{};
+
+            Vector< int > result;
+
+            {
+                array::MergeSortedArray( result, empty1, empty2 );
+                CHECK( result.GetItemCount() == 0 );
+            }
+
+            {
+                array::MergeSortedArray( result, a, empty1 );
+                REQUIRE( result.GetItemCount() == 3 );
+
+                for ( auto i : foundation::GetCountIterator( result ) )
+                {
+                    CHECK( a[i] == result[i] );
+                }
+            }
+
+            {
+                array::MergeSortedArray( result, empty1, b );
+                REQUIRE( result.GetItemCount() == 3 );
+
+                for ( const auto i : foundation::GetCountIterator( result ) )
+                {
+                    CHECK( b[i] == result[i] );
+                }
+            }
+
+            {
+
+                array::MergeSortedArray( result, a, b );
+                REQUIRE( result.GetItemCount() == 6 );
+
+                const int expectedResultDisjointed[] = { 1, 2, 3, 6, 7, 8 };
+
+                for ( const auto i : foundation::GetCountIterator( result ) )
+                {
+                    CHECK( expectedResultDisjointed[i] == result[i] );
+                }
+            }
+
+            {
+
+                array::MergeSortedArray( result, c, d );
+                REQUIRE( result.GetItemCount() == 8 );
+
+                const int expectedResultOverlap[] = { 1, 1, 2, 4, 5, 6, 7, 8 };
+
+                for ( const auto i : foundation::GetCountIterator( result ) )
+                {
+                    CHECK( expectedResultOverlap[i] == result[i] );
+                }
+            }
         }
     }
 

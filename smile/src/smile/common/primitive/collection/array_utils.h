@@ -105,4 +105,56 @@ namespace smile::primitive::array
 
         return iterator - beginIt;
     }
+
+    template < typename ArrayType, typename Comparator = std::less< typename ArrayType::Item > >
+    inline void
+    MergeSortedArray( ArrayType &output, ArrayType &first, ArrayType &second, const Comparator comparator = {} )
+    {
+        output.SetItemCount( first.GetItemCount() + second.GetItemCount() );
+
+        Index firstIndex{ 0 };
+        Index secondIndex{ 0 };
+        Index outputIndex{ 0 };
+
+        while ( firstIndex < first.GetItemCount() && secondIndex < second.GetItemCount() )
+        {
+            if ( comparator( first[firstIndex], second[secondIndex] ) )
+            {
+                output[outputIndex] = std::move( first[firstIndex] );
+                ++firstIndex;
+            }
+            else
+            {
+                output[outputIndex] = std::move( second[secondIndex] );
+                ++secondIndex;
+            }
+
+            ++outputIndex;
+        }
+
+        if ( firstIndex != first.GetItemCount() )
+        {
+            SM_ASSERT( secondIndex == second.GetItemCount() );
+
+            for ( ; firstIndex < first.GetItemCount(); ++firstIndex )
+            {
+                output[outputIndex] = std::move( first[firstIndex] );
+                ++outputIndex;
+            }
+        }
+        else
+        {
+            SM_ASSERT( firstIndex == first.GetItemCount() );
+
+            for ( ; secondIndex < second.GetItemCount(); ++secondIndex )
+            {
+                output[outputIndex] = std::move( second[secondIndex] );
+                ++outputIndex;
+            }
+        }
+
+        SM_ASSERT( outputIndex == output.GetItemCount() );
+        SM_ASSERT( firstIndex == first.GetItemCount() );
+        SM_ASSERT( secondIndex == second.GetItemCount() );
+    }
 }
