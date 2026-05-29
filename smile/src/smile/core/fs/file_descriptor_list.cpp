@@ -8,6 +8,11 @@ namespace smile::fs
 {
     namespace detail
     {
+        bool CompareFileDescriptor( const FileDescriptor &first, const FileDescriptor &second )
+        {
+            return first.LogicalName < second.LogicalName;
+        }
+
         bool CompareFileDescriptorLower( const FileDescriptor &first, const primitive::StringView second )
         {
             return first.LogicalName < second;
@@ -64,5 +69,22 @@ namespace smile::fs
         }
 
         return std::nullopt;
+    }
+
+    void FileDescriptorList::Merge( primitive::Vector< FileDescriptor > &descriptorTable )
+    {
+        std::stable_sort( descriptorTable.begin(), descriptorTable.end(), detail::CompareFileDescriptor );
+
+        if ( m_Descriptors.IsEmpty() )
+        {
+            m_Descriptors = std::move( descriptorTable );
+        }
+        else
+        {
+            auto oldDescriptors = std::move( m_Descriptors );
+
+            primitive::array::MergeSortedArray(
+                m_Descriptors, oldDescriptors, descriptorTable, detail::CompareFileDescriptor );
+        }
     }
 }

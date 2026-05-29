@@ -18,17 +18,29 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/foundation/singleton.h"
+#include "smile/common/foundation/flags.h"
 #include "smile/common/memory/counted.h"
 #include "smile/common/primitive/text/string.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/stream/binary_stream.h"
 #include "path.h"
 #include "file_descriptor_list.h"
+#include "recursivity.h"
 
 #include <optional>
 
 namespace smile::fs
 {
+    enum class MountOption
+    {
+        ExcludeFiles,
+        ExcludeDirectories,
+        Writable,
+        VirtualCreateIfMissing
+    };
+
+    using MountOptionFlags = foundation::Flags< MountOption >;
+
     class FileSystem final : public memory::Counted, public foundation::Singleton< FileSystem >
     {
       public:
@@ -53,9 +65,19 @@ namespace smile::fs
 
         stream::BinaryStream::Ref GetFile( const Path &filePath ) const;
 
+        BoolResult MountDirectory( const Path &directoryPath,
+            const Recursivity recursivity,
+            const MountOptionFlags options = {},
+            const Path &logicalPath = {} );
+
         std::optional< Path > FindPhysicalFilePath( const Path &filePath ) const;
 
       private:
+        bool MountDirectoryInternal( const Path &directoryPath,
+            const Recursivity recursivity,
+            const MountOptionFlags options,
+            const Path &logicalPath );
+
         FileDescriptorList m_FileDescriptorList;
         primitive::Vector< Path > m_RootDirectories;
     };

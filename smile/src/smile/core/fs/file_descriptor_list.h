@@ -81,6 +81,8 @@ namespace smile::fs
         std::optional< Path > FindPhysicalFilePath( const Path &filePath ) const;
         std::optional< FileDescriptor > FindDescriptor( const Path &filePath ) const;
 
+        void Merge( primitive::Vector< FileDescriptor > &descriptorTable );
+
       private:
         primitive::Vector< FileDescriptor > m_Descriptors;
         bool m_IsCaseSensitive{ true };
