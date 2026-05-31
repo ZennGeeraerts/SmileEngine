@@ -87,3 +87,24 @@ namespace smile::primitive
 
     stream::CharStream &operator<<( stream::CharStream &stream, const Name &name );
 }
+
+namespace std
+{
+    template <>
+    struct formatter< smile::primitive::Name >
+    {
+        formatter< basic_string_view< char > > Base;
+
+        constexpr auto parse( format_parse_context &ctx )
+        {
+            return Base.parse( ctx );
+        }
+
+        auto format( const smile::primitive::Name &name, format_context &ctx ) const
+        {
+            const smile::primitive::String str{ name.GetText() };
+            basic_string_view< char > temp{ str.GetData(), static_cast< size_t >( str.GetCharCount() ) };
+            return Base.format( temp, ctx );
+        }
+    };
+}

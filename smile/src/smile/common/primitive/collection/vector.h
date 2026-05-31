@@ -567,6 +567,11 @@ namespace smile::primitive
 
 namespace smile::primitive
 {
+    template < typename ItemType >
+    inline Count GetArrayItemCount( const Vector< ItemType > &vector )
+    {
+        return vector.GetItemCount();
+    }
 
     template < typename ItemType >
     ArrayView< ItemType > AsView( Vector< ItemType > &vector )

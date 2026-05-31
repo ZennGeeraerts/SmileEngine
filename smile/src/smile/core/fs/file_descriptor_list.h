@@ -33,50 +33,55 @@ namespace smile::fs
         FileDescriptorList &operator=( const FileDescriptorList & ) = delete;
         FileDescriptorList &operator=( FileDescriptorList && ) = delete;
 
-        const FileDescriptor &operator[]( const Index index ) const
+        const FileDescriptor &operator[]( const Index index ) const noexcept
         {
             return m_Descriptors[index];
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const noexcept
         {
             return m_Descriptors.IsEmpty();
         }
 
-        Count GetItemCount() const
+        Count GetItemCount() const noexcept
         {
             return m_Descriptors.GetItemCount();
         }
 
-        bool SetCaseSensitive( bool isCaseSensitive )
+        void SetCaseSensitive( bool isCaseSensitive ) noexcept
         {
             m_IsCaseSensitive = isCaseSensitive;
         }
 
-        bool IsCaseSensitive() const
+        bool IsCaseSensitive() const noexcept
         {
             return m_IsCaseSensitive;
         }
 
-        auto begin() const
+        auto begin() const noexcept
         {
             return m_Descriptors.begin();
         }
 
-        auto begin()
+        auto begin() noexcept
         {
             return m_Descriptors.begin();
         }
 
-        auto end() const
+        auto end() const noexcept
         {
             return m_Descriptors.end();
         }
 
-        auto end()
+        auto end() noexcept
         {
             return m_Descriptors.end();
         }
+
+        std::optional< Path > FindPhysicalFilePath( const Path &filePath ) const;
+        std::optional< FileDescriptor > FindDescriptor( const Path &filePath ) const;
+
+        void Merge( primitive::Vector< FileDescriptor > &descriptorTable );
 
       private:
         primitive::Vector< FileDescriptor > m_Descriptors;

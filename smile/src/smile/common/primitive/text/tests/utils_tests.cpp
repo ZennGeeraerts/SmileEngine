@@ -229,5 +229,55 @@ namespace smile::primitive
             CHECK( !ContainsText( text, "Text" ) );
             CHECK( !ContainsText( text, "Contains Some" ) );
         }
+
+        SECTION( "GetSubText" )
+        {
+            String reference{ "This is some text" };
+
+            String substringToCount = GetSubText( reference, 0, 4 );
+            CHECK( substringToCount == "This" );
+
+            String substringFromOffsetToEnd = GetSubText( reference, 6 );
+            CHECK( substringFromOffsetToEnd == "s some text" );
+
+            String substringFromOffsetToCount = GetSubText( reference, 4, 6 );
+            CHECK( substringFromOffsetToCount == " is so" );
+
+            reference = "Some text to test";
+
+            CHECK( "Some " == GetSubText( reference, 0, 5 ) );
+            CHECK( "text " == GetSubText( reference, 5, 5 ) );
+            CHECK( "t t" == GetSubText( reference, 8, 3 ) );
+
+            CHECK_ASSERT( GetSubText( reference, 8, 35 ) );
+            CHECK_ASSERT( GetSubText( reference, 0, 18 ) );
+            CHECK_ASSERT( GetSubText( reference, 17, 1 ) );
+            CHECK_ASSERT( GetSubText( reference, -2, 35 ) );
+        }
+
+        SECTION( "GetStartingText" )
+        {
+            primitive::String text{ "This contains some text" };
+
+            CHECK( GetStartingText( text, 4 ) == "This" );
+            CHECK( GetStartingText( text, 13 ) == "This contains" );
+        }
+
+        SECTION( "GetEndingText" )
+        {
+            primitive::String text{ "This contains some text" };
+
+            CHECK( GetEndingText( text, 4 ) == "text" );
+            CHECK( GetEndingText( text, 9 ) == "some text" );
+        }
+
+        SECTION( "GetEndingTextAtIndex" )
+        {
+            primitive::String text{ "This contains some text" };
+
+            CHECK( GetEndingTextAtIndex( text, 0 ) == "This contains some text" );
+            CHECK( GetEndingTextAtIndex( text, 5 ) == "contains some text" );
+            CHECK( GetEndingTextAtIndex( text, 19 ) == "text" );
+        }
     }
 }

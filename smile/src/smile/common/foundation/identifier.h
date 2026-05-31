@@ -28,3 +28,11 @@ namespace smile::foundation::identifier
         return GetHashCodeWithSize( text.GetText(), text.GetCharCount() );
     }
 }
+
+namespace smile
+{
+    constexpr foundation::HashCode operator""_id( const char *text, const std::size_t )
+    {
+        return foundation::identifier::GetHashCode( text );
+    }
+}

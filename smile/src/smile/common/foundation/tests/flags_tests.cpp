@@ -44,6 +44,6 @@ namespace smile::foundation
         static_assert(
             Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAny( { TestFlags::One, TestFlags::Four } ) );
         static_assert(
-            !Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAny( { TestFlags::Two, TestFlags::Four } ) );
+            !Flags< TestFlags >{ TestFlags::One, TestFlags::Two }.HasAny( { TestFlags::Three, TestFlags::Four } ) );
     }
 }
