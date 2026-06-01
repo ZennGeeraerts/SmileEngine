@@ -27,6 +27,7 @@ namespace smile::graphic
     class ResourceManager;
     class MeshManager;
     class MaterialSystem;
+    class View;
     class SpriteBatch;
 
     class RenderWorld final
@@ -49,14 +50,21 @@ namespace smile::graphic
             m_ECSEngine.AddOrReplaceComponent< ComponentType >( entity, std::forward< Args >( args )... );
         }
 
+        void SetViewport( const rhi::Viewport &viewport )
+        {
+            m_ViewportState.Viewports[0] = viewport;
+        }
+
         void Prepare( ResourceManager &resourceManager,
             MeshManager &meshManager,
             MaterialSystem &materialSystem,
+            View &view,
             SpriteBatch &spriteBatch );
 
       private:
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
+        rhi::ViewportState m_ViewportState;
 
         Framebuffer m_RenderTarget;
     };
