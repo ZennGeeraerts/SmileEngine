@@ -4,7 +4,8 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/renderer/resource/texture.h"
+#include "smile/graphic/renderer/material/asset/material_instance_asset.h"
+#include "smile/graphic/renderer/sprite/texture_asset.h"
 #include "smile/common/memory/ref.h"
 
 #include <DirectXMath.h>
@@ -15,11 +16,9 @@ namespace smile::graphic::ecs
     {
         SpriteRendererComponent() = default;
         SpriteRendererComponent( const SpriteRendererComponent & ) = default;
-        SpriteRendererComponent( const DirectX::XMFLOAT4 &color ) : Color{ color }
-        {
-        }
 
-        DirectX::XMFLOAT4 Color = { 1.f, 1.f, 1.f, 1.f };
-        memory::Ref< Texture > pTexture = nullptr;
+        MaterialInstanceAsset::Ref Material;
+        DirectX::XMFLOAT4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+        TextureAsset::Ref Texture;
     };
 }
