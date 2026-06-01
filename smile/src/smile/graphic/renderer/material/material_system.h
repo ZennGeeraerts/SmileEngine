@@ -99,6 +99,26 @@ namespace smile::graphic
             return { handle, &m_Internal };
         }
 
+        MaterialInstance GetOrCreateMaterialInstance( MaterialInstanceAsset::ConstRef asset )
+        {
+            if ( m_AssetToInstance.HasItemAtKey( asset.GetPointer() ) )
+            {
+                const auto handle = m_AssetToInstance[asset.GetPointer()];
+                return { handle, &m_Internal };
+            }
+
+            auto material = GetOrCreateMaterial( asset->GetMaterialAsset() );
+
+            const auto &layout = m_Internal.GetMaterialLayout( material.m_Handle );
+
+            const auto handle = m_Internal.CreateMaterialInstance(
+                material.m_Handle, BuildMaterialDescriptor( asset->GetDescriptor(), layout ) );
+
+            m_AssetToInstance.Insert( asset.GetPointer(), handle );
+
+            return { handle, &m_Internal };
+        }
+
         void DestroyMaterialInstance( MaterialInstance &instance )
         {
             m_Internal.DestroyMaterialInstance( instance.m_Handle );
@@ -121,6 +141,7 @@ namespace smile::graphic
 
         detail::MaterialSystem m_Internal;
         primitive::HashMap< const MaterialAsset *, detail::MaterialHandle > m_AssetToMaterial;
+        primitive::HashMap< const MaterialInstanceAsset *, detail::MaterialInstanceHandle > m_AssetToInstance;
         ResourceManager &m_ResourceManager;
         TextureManager &m_TextureManager;
     };
