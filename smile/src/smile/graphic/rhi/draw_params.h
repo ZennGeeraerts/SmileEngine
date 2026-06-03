@@ -26,6 +26,15 @@ namespace smile::graphic::rhi
         Count VertexCount;
         Count InstanceCount;
         Uint32 VertexOffset;
+        Uint32 InstanceOffset;
+    };
+
+    struct DrawIndexedInstancedParams final
+    {
+        Count IndexCount;
+        Count InstanceCount;
         Uint32 IndexOffset;
+        Uint32 VertexOffset;
+        Uint32 InstanceOffset;
     };
 }

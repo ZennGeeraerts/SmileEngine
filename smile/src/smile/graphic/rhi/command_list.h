@@ -36,6 +36,7 @@ namespace smile::graphic::rhi
         virtual void Draw( const DrawParams &params ) = 0;
         virtual void DrawIndexed( const DrawIndexedParams &params ) = 0;
         virtual void DrawInstanced( const DrawInstancedParams &params ) = 0;
+        virtual void DrawIndexedInstanced( const DrawIndexedParams &drawParams ) = 0;
 
         virtual void FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size ) const = 0;
 
