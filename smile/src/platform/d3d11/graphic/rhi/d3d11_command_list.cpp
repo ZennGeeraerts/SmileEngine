@@ -425,6 +425,12 @@ namespace smile::graphic::rhi
         m_Context.pImmediateContext->DrawIndexed( params.IndexCount, params.IndexOffset, params.VertexOffset );
     }
 
+    void D3D11CommandList::DrawInstanced( const DrawInstancedParams &params )
+    {
+        m_Context.pImmediateContext->DrawInstanced(
+            params.VertexCount, params.InstanceCount, params.VertexOffset, params.IndexOffset );
+    }
+
     void D3D11CommandList::FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size ) const
     {
         SM_ASSERT( m_pDevice->IsHandleValid( handle, m_pDevice->m_GPUBuffers ) );

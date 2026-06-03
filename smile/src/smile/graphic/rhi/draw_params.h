@@ -10,14 +10,22 @@ namespace smile::graphic::rhi
 {
     struct DrawParams final
     {
-        Uint32 VertexCount;
+        Count VertexCount;
         Uint32 VertexOffset;
     };
 
     struct DrawIndexedParams final
     {
-        Uint32 IndexCount;
+        Count IndexCount;
         Uint32 IndexOffset;
         Uint32 VertexOffset;
+    };
+
+    struct DrawInstancedParams final
+    {
+        Count VertexCount;
+        Count InstanceCount;
+        Uint32 VertexOffset;
+        Uint32 IndexOffset;
     };
 }
