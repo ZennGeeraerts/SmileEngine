@@ -5,6 +5,7 @@
 #pragma once
 
 #include "smile/common/primitive/collection/fixed_vector.h"
+#include "smile/common/primitive/collection/vector.h"
 #include "resource_type.h"
 #include "binding_layout.h"
 #include "smile/graphic/rhi/resource/buffer.h"
@@ -15,7 +16,7 @@ namespace smile::graphic::rhi
 {
     struct BindingSetElement final
     {
-        BindingSetElement(){};
+        BindingSetElement() noexcept {};
 
         ResourceType Type;
         union
@@ -36,7 +37,7 @@ namespace smile::graphic::rhi
             Uint32 RawData[2];
         };
 
-        static BindingSetElement CreateUnknown( Uint32 slot = 0 )
+        static BindingSetElement CreateUnknown( Uint32 slot = 0 ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::Unknown;
@@ -53,7 +54,7 @@ namespace smile::graphic::rhi
             TextureHandle texture,
             Format format = Format::UNKNOWN,
             const TextureSubresourceSet &subresources = s_AllSubresources,
-            TextureDimension dimension = TextureDimension::Unknown )
+            TextureDimension dimension = TextureDimension::Unknown ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::Texture_SRV;
@@ -70,7 +71,7 @@ namespace smile::graphic::rhi
             Format format = Format::UNKNOWN,
             const TextureSubresourceSet &subresources =
                 TextureSubresourceSet{ 0, 1, 0, TextureSubresourceSet::s_AllSlices },
-            TextureDimension dimension = TextureDimension::Unknown )
+            TextureDimension dimension = TextureDimension::Unknown ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::Texture_UAV;
@@ -85,7 +86,7 @@ namespace smile::graphic::rhi
         static BindingSetElement CreateTypedBufferSRV( Uint32 slot,
             GPUBufferHandle buffer,
             Format format = Format::UNKNOWN,
-            BufferRange range = s_EntireBuffer )
+            BufferRange range = s_EntireBuffer ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::TypedBuffer_SRV;
@@ -99,7 +100,7 @@ namespace smile::graphic::rhi
         static BindingSetElement CreateTypedBufferUAV( Uint32 slot,
             GPUBufferHandle buffer,
             Format format = Format::UNKNOWN,
-            BufferRange range = s_EntireBuffer )
+            BufferRange range = s_EntireBuffer ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::TypedBuffer_UAV;
@@ -111,7 +112,7 @@ namespace smile::graphic::rhi
         }
 
         static BindingSetElement
-        CreateConstantBuffer( Uint32 slot, GPUBufferHandle buffer, BufferRange range = s_EntireBuffer )
+        CreateConstantBuffer( Uint32 slot, GPUBufferHandle buffer, BufferRange range = s_EntireBuffer ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::ConstantBuffer;
@@ -122,7 +123,7 @@ namespace smile::graphic::rhi
             return result;
         }
 
-        static BindingSetElement CreateSampler( Uint32 slot, SamplerHandle sampler )
+        static BindingSetElement CreateSampler( Uint32 slot, SamplerHandle sampler ) noexcept
         {
             BindingSetElement result;
             result.Type = ResourceType::Sampler;
@@ -133,42 +134,72 @@ namespace smile::graphic::rhi
             result.RawData[1] = 0;
             return result;
         }
+
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hash = std::hash< Uint32 >{}( Slot );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( Type ) ) );
+            hash = foundation::HashCombine( hash, Texture.Hash() );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( BindingFormat ) ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( Dimension ) ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( RawData[0] ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( RawData[1] ) );
+            return hash;
+        }
+
+        bool operator==( const BindingSetElement &other ) const noexcept
+        {
+            return Slot == other.Slot && Type == other.Type && Texture == other.Texture &&
+                   BindingFormat == other.BindingFormat && Dimension == other.Dimension &&
+                   RawData[0] == other.RawData[0] && RawData[1] == other.RawData[1];
+        }
+
+        bool operator!=( const BindingSetElement &other ) const noexcept
+        {
+            return !( *this == other );
+        }
     };
 
     struct BindingSetDescriptor final
     {
         BindingSetDescriptor() = default;
 
-        BindingSetDescriptor( const std::initializer_list< BindingSetElement > &elements ) : Elements{ elements }
+        BindingSetDescriptor( const std::initializer_list< BindingSetElement > &elements ) noexcept
+            : Elements{ elements }
         {
         }
 
         void AddItem( const BindingSetElement &elem )
         {
-            Elements.push_back( elem );
+            Elements.PushBack( elem );
         }
 
-        auto begin()
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            return std::hash< primitive::Vector< BindingSetElement > >{}( Elements );
+        }
+
+        auto begin() noexcept
         {
             return Elements.begin();
         }
 
-        auto begin() const
+        auto begin() const noexcept
         {
             return Elements.begin();
         }
 
-        auto end()
+        auto end() noexcept
         {
             return Elements.end();
         }
 
-        auto end() const
+        auto end() const noexcept
         {
             return Elements.end();
         }
 
-        std::vector< BindingSetElement > Elements;
+        primitive::Vector< BindingSetElement > Elements;
     };
 
     using BindingSetHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
@@ -177,4 +208,26 @@ namespace smile::graphic::rhi
     static constexpr Uint16 s_MaxBindingSetCount = ( 4 << 10 );
 
     using BindingSetVector = primitive::FixedVector< BindingSetHandle, s_MaxBindingLayoutCount >;
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::rhi::BindingSetElement >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::BindingSetElement &element ) const noexcept
+        {
+            return element.GetHashCode();
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::rhi::BindingSetDescriptor >
+    {
+        smile::foundation::HashCode operator()(
+            const smile::graphic::rhi::BindingSetDescriptor &descriptor ) const noexcept
+        {
+            return descriptor.GetHashCode();
+        }
+    };
 }

@@ -297,15 +297,39 @@ namespace smile::graphic
 
         const ConstantBuffer constantBuffer{ handle, bufferDesc.Size };
         m_ConstantBuffers.PushBack( constantBuffer );
+        m_ConstantBufferCache[descriptor] = constantBuffer;
+
         return constantBuffer;
+    }
+
+    ConstantBuffer ResourceManager::GetOrCreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
+    {
+        auto it = m_ConstantBufferCache.FindItemAtKey( descriptor );
+
+        if ( it != m_ConstantBufferCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreateConstantBuffer( descriptor );
     }
 
     void ResourceManager::DestroyConstantBuffer( ConstantBuffer &constantBuffer )
     {
         m_Device.DestroyGPUBuffer( constantBuffer.GetHandle() );
         m_ConstantBuffers.Erase( constantBuffer );
+
+        auto it = std::find_if( m_ConstantBufferCache.begin(),
+            m_ConstantBufferCache.end(),
+            [&constantBuffer]( const auto &kv ) { return kv.Value == constantBuffer; } );
+
+        if ( it != m_ConstantBufferCache.end() )
+        {
+            m_ConstantBufferCache.Erase( it );
+        }
+
         m_GPUBufferHandleManager.DestroyHandle( constantBuffer.GetHandle() );
-        constantBuffer.m_Handle = rhi::TextureHandle::NullHandle();
+        constantBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
     }
 
     VertexShader ResourceManager::CreateVertexShader( const primitive::Vector< Byte > &byteCode,
@@ -576,13 +600,37 @@ namespace smile::graphic
 
         const BindingLayout bindingLayout{ handle };
         m_BindingLayouts.PushBack( bindingLayout );
+        m_BindingLayoutCache[layout] = bindingLayout;
+
         return bindingLayout;
+    }
+
+    BindingLayout ResourceManager::GetOrCreateBindingLayout( const rhi::BindingLayout &layout )
+    {
+        auto it = m_BindingLayoutCache.FindItemAtKey( layout );
+
+        if ( it != m_BindingLayoutCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreateBindingLayout( layout );
     }
 
     void ResourceManager::DestroyBindingLayout( BindingLayout &bindingLayout )
     {
         m_Device.DestroyBindingLayout( bindingLayout.GetHandle() );
         m_BindingLayouts.Erase( bindingLayout );
+
+        auto it = std::find_if( m_BindingLayoutCache.begin(),
+            m_BindingLayoutCache.end(),
+            [&bindingLayout]( const auto &kv ) { return kv.Value == bindingLayout; } );
+
+        if ( it != m_BindingLayoutCache.end() )
+        {
+            m_BindingLayoutCache.Erase( it );
+        }
+
         m_BindingLayoutHandleManager.DestroyHandle( bindingLayout.GetHandle() );
         bindingLayout.m_Handle = rhi::BindingLayoutHandle::NullHandle();
     }
@@ -596,13 +644,39 @@ namespace smile::graphic
 
         const BindingSet bindingSet{ handle };
         m_BindingSets.PushBack( bindingSet );
+        m_BindingSetCache[descriptor] = bindingSet;
+
         return bindingSet;
+    }
+
+    BindingSet ResourceManager::GetOrCreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+        const BindingLayout &layout,
+        foundation::Flags< rhi::ShaderStage > shaderStage )
+    {
+        auto it = m_BindingSetCache.FindItemAtKey( descriptor );
+
+        if ( it != m_BindingSetCache.end() )
+        {
+            return it.GetItem();
+        }
+
+        return CreateBindingSet( descriptor, layout, shaderStage );
     }
 
     void ResourceManager::DestroyBindingSet( BindingSet &bindingSet )
     {
         m_Device.DestroyBindingSet( bindingSet.GetHandle() );
         m_BindingSets.Erase( bindingSet );
+
+        auto it = std::find_if( m_BindingSetCache.begin(),
+            m_BindingSetCache.end(),
+            [&bindingSet]( const auto &kv ) { return kv.Value == bindingSet; } );
+
+        if ( it != m_BindingSetCache.end() )
+        {
+            m_BindingSetCache.Erase( it );
+        }
+
         m_BindingSetHandleManager.DestroyHandle( bindingSet.GetHandle() );
         bindingSet.m_Handle = rhi::BindingSetHandle::NullHandle();
     }

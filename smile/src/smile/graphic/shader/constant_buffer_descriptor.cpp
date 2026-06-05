@@ -30,7 +30,7 @@ namespace smile::graphic
         CalculateOffsetAndSize();
     }
 
-    void ConstantBufferDescriptor::CalculateOffsetAndSize()
+    void ConstantBufferDescriptor::CalculateOffsetAndSize() noexcept
     {
         Count offset{ 0 };
         m_Size = 0;

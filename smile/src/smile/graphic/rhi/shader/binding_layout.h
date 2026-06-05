@@ -17,20 +17,29 @@ namespace smile::graphic::rhi
     {
         BindingLayoutElement() = default;
 
-        BindingLayoutElement( Uint32 slot, ResourceType type ) : Slot{ slot }, Type{ type }, Size{ 0 }
+        BindingLayoutElement( Uint32 slot, ResourceType type ) noexcept : Slot{ slot }, Type{ type }, Size{ 0 }
         {
         }
 
-        BindingLayoutElement( Uint32 slot, ResourceType type, Uint16 size ) : Slot{ slot }, Type{ type }, Size{ size }
+        BindingLayoutElement( Uint32 slot, ResourceType type, Uint16 size ) noexcept
+            : Slot{ slot }, Type{ type }, Size{ size }
         {
         }
 
-        inline bool operator==( const BindingLayoutElement &other ) const
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hash = std::hash< Uint32 >{}( Slot );
+            hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( Type ) ) );
+            hash = foundation::HashCombine( hash, std::hash< Uint16 >{}( Size ) );
+            return hash;
+        }
+
+        bool operator==( const BindingLayoutElement &other ) const noexcept
         {
             return Slot == other.Slot && Type == other.Type && Size == other.Size;
         }
 
-        inline bool operator!=( const BindingLayoutElement &other ) const
+        bool operator!=( const BindingLayoutElement &other ) const noexcept
         {
             return !( *this == other );
         }
@@ -45,42 +54,49 @@ namespace smile::graphic::rhi
       public:
         BindingLayout() = default;
 
-        BindingLayout( foundation::Flags< ShaderStage > visibility ) : m_Visibility{ visibility }
+        BindingLayout( foundation::Flags< ShaderStage > visibility ) noexcept : m_Visibility{ visibility }
         {
         }
 
         BindingLayout( foundation::Flags< ShaderStage > visibility,
-            std::initializer_list< BindingLayoutElement > elements )
+            std::initializer_list< BindingLayoutElement > elements ) noexcept
             : m_Visibility{ visibility }, m_Elements{ elements }
         {
         }
 
-        inline const primitive::Vector< BindingLayoutElement > &GetElements() const
+        const primitive::ArrayView< const BindingLayoutElement > GetElements() const noexcept
         {
-            return m_Elements;
+            return m_Elements.AsView();
         }
 
-        inline foundation::Flags< ShaderStage > GetVisibility() const
+        foundation::Flags< ShaderStage > GetVisibility() const noexcept
         {
             return m_Visibility;
         }
 
-        primitive::Vector< BindingLayoutElement >::Iterator begin()
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hash = std::hash< primitive::Vector< BindingLayoutElement > >{}( m_Elements );
+            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( m_Visibility.GetFlags() ) );
+            return hash;
+        }
+
+        primitive::Vector< BindingLayoutElement >::Iterator begin() noexcept
         {
             return m_Elements.begin();
         }
 
-        primitive::Vector< BindingLayoutElement >::Iterator end()
+        primitive::Vector< BindingLayoutElement >::Iterator end() noexcept
         {
             return m_Elements.end();
         }
 
-        primitive::Vector< BindingLayoutElement >::ConstIterator begin() const
+        primitive::Vector< BindingLayoutElement >::ConstIterator begin() const noexcept
         {
             return m_Elements.begin();
         }
 
-        primitive::Vector< BindingLayoutElement >::ConstIterator end() const
+        primitive::Vector< BindingLayoutElement >::ConstIterator end() const noexcept
         {
             return m_Elements.end();
         }
@@ -95,12 +111,12 @@ namespace smile::graphic::rhi
             m_Elements.EmplaceBack( std::move( element ) );
         }
 
-        bool HasElement( const BindingLayoutElement &element ) const
+        bool HasElement( const BindingLayoutElement &element ) const noexcept
         {
             return primitive::array::HasItem( m_Elements, element );
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             m_Elements.Clear();
         }
@@ -116,4 +132,25 @@ namespace smile::graphic::rhi
     static constexpr Uint16 s_MaxBindingLayoutCount = 5;
 
     using BindingLayoutVector = primitive::FixedVector< BindingLayoutHandle, s_MaxBindingLayoutCount >;
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::rhi::BindingLayoutElement >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::BindingLayoutElement &element ) const
+        {
+            return element.GetHashCode();
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::rhi::BindingLayout >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::rhi::BindingLayout &layout ) const
+        {
+            return layout.GetHashCode();
+        }
+    };
 }

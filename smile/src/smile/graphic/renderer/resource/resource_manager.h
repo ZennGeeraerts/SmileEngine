@@ -69,6 +69,7 @@ namespace smile::graphic
         FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
 
         ConstantBuffer CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
+        ConstantBuffer GetOrCreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
         void DestroyConstantBuffer( ConstantBuffer &constantBuffer );
 
         VertexShader CreateVertexShader( const primitive::Vector< Byte > &byteCode,
@@ -111,9 +112,14 @@ namespace smile::graphic
         void DestroyFramebuffer( Framebuffer &framebuffer, bool destroyTextureAttachments = true );
 
         BindingLayout CreateBindingLayout( const rhi::BindingLayout &layout );
+        BindingLayout GetOrCreateBindingLayout( const rhi::BindingLayout &layout );
         void DestroyBindingLayout( BindingLayout &bindingLayout );
 
         BindingSet CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+            const BindingLayout &layout,
+            foundation::Flags< rhi::ShaderStage > shaderStage );
+
+        BindingSet GetOrCreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
             const BindingLayout &layout,
             foundation::Flags< rhi::ShaderStage > shaderStage );
 
@@ -176,6 +182,9 @@ namespace smile::graphic
         primitive::HashMap< ShaderKey, VertexShader > m_VertexShaderCache;
         primitive::HashMap< ShaderKey, PixelShader > m_PixelShaderCache;
         primitive::HashMap< rhi::SamplerDescriptor, Sampler > m_SamplerCache;
+        primitive::HashMap< ConstantBufferDescriptor, ConstantBuffer > m_ConstantBufferCache;
+        primitive::HashMap< rhi::BindingLayout, BindingLayout > m_BindingLayoutCache;
+        primitive::HashMap< rhi::BindingSetDescriptor, BindingSet > m_BindingSetCache;
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;
