@@ -17,6 +17,7 @@
 #pragma once
 
 #include "smile/graphic/rhi/viewport_state.h"
+#include "smile/graphic/renderer/resource/frame_buffer.h"
 
 #include <DirectXMath.h>
 
@@ -40,6 +41,11 @@ namespace smile::graphic
         void SetViewport( const rhi::Viewport &viewport )
         {
             m_Viewport = viewport;
+        }
+
+        void SetRenderTarget( const Framebuffer &renderTarget ) noexcept
+        {
+            m_RenderTarget = renderTarget;
         }
 
         void OnUpdate();
@@ -68,12 +74,19 @@ namespace smile::graphic
             return m_ViewProjectionMatrix;
         }
 
+        const Framebuffer &GetRenderTarget() const noexcept
+        {
+            return m_RenderTarget;
+        }
+
       private:
         rhi::Viewport m_Viewport;
         DirectX::XMFLOAT4X4 m_ViewMatrix;
         DirectX::XMFLOAT4X4 m_ViewInverseMatrix;
         DirectX::XMFLOAT4X4 m_ProjectionMatrix;
         DirectX::XMFLOAT4X4 m_ViewProjectionMatrix;
+
+        Framebuffer m_RenderTarget;
 
         bool m_IsDirty = true;
     };

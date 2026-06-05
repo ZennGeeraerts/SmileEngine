@@ -50,10 +50,7 @@ namespace smile::graphic
          * Flushes CPU batches, registers all render passes into the RenderGraph,
          * compiles, and executes in dependency order.
          */
-        void OnRender( RenderWorld &renderWorld,
-            DrawCommandBuffer &buffer,
-            const View &view,
-            const Framebuffer &framebuffer );
+        void OnRender( RenderWorld &renderWorld );
 
         /** Presents, closes the command list, and resets all per-frame state. */
         void EndFrame( const rhi::SwapChain &swapChain );

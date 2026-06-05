@@ -10,7 +10,6 @@
 #include "resource/resource_manager.h"
 #include "scene/ecs/camera_component.h"
 #include "view.h"
-#include "draw/draw_command_buffer.h"
 #include "draw/sort_key.h"
 
 namespace smile::graphic
@@ -32,13 +31,10 @@ namespace smile::graphic
     void RenderWorld::Prepare( RenderContext &renderContext,
         ResourceManager &resourceManager,
         MeshManager &meshManager,
-        MaterialSystem &materialSystem,
-        View &view )
+        MaterialSystem &materialSystem )
     {
-        view.SetViewport( m_ViewportState.Viewports[0] );
-
-        BindingLayout bindingLayout;
-        BindingSet bindingSet;
+        const BindingLayout viewBindingLayout = resourceManager.GetOrCreateBindingLayout(
+            rhi::BindingLayout{ { rhi::BindingLayoutElement::CreateConstantBuffer( 0, rhi::ShaderStage::Vertex ) } } );
 
         {
             auto group = m_ECSEngine.GetGroup< ecs::CameraComponent, world::ecs::TransformComponent >();
@@ -59,34 +55,43 @@ namespace smile::graphic
                         camera.Camera.SetViewportSize( viewportWidth, viewportHeight );
                 }
 
-                if ( camera.IsPrimary )
-                {
-                    const auto worldTransform = transform.GetWorldTransform();
-                    auto viewMatrixMat =
-                        DirectX::XMMatrixInverse( nullptr, DirectX::XMLoadFloat4x4( &worldTransform ) );
-                    DirectX::XMFLOAT4X4 viewMatrix{};
-                    DirectX::XMStoreFloat4x4( &viewMatrix, viewMatrixMat );
+                SM_ASSERT( camera.RenderTarget.IsValid() );
 
-                    view.SetViewProjectionMatrix( viewMatrix, camera.Camera.GetProjectionMatrix() );
+                const auto worldTransform = transform.GetWorldTransform();
+                auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, DirectX::XMLoadFloat4x4( &worldTransform ) );
+                DirectX::XMFLOAT4X4 viewMatrix{};
+                DirectX::XMStoreFloat4x4( &viewMatrix, viewMatrixMat );
 
-                    ViewConstants viewCons{};
-                    view.FillConstants( viewCons );
+                View view{};
+                view.SetViewport( m_ViewportState.Viewports[0] );
+                view.SetViewProjectionMatrix( viewMatrix, camera.Camera.GetProjectionMatrix() );
+                view.SetRenderTarget( camera.RenderTarget );
 
-                    ConstantBufferDescriptor cbDesc{
-                        { "ViewProjection", ConstantType::Mat4 }, { "ViewInverse", ConstantType::Mat4 } };
+                ViewConstants viewCons{};
+                view.FillConstants( viewCons );
 
-                    const ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
+                view.OnUpdate();
 
-                    cameraConstantBuffer.Update( &viewCons );
-                    renderContext.FillConstantBuffer( cameraConstantBuffer );
-                    AddOrReplaceComponent< ConstantBuffer >( entity, cameraConstantBuffer );
+                AddOrReplaceComponent< View >( entity, view );
 
-                    rhi::BindingSetDescriptor bindingSetDesc{
-                        { rhi::BindingSetElement::CreateConstantBuffer( 0, cameraConstantBuffer.GetHandle() ) } };
+                ConstantBufferDescriptor cbDesc{
+                    { "ViewProjection", ConstantType::Mat4 }, { "ViewInverse", ConstantType::Mat4 } };
 
-                    resourceManager.GetOrCreateBindingSetAndLayout(
-                        bindingSetDesc, { rhi::ShaderStage::Vertex }, bindingLayout, bindingSet );
-                }
+                const ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
+
+                cameraConstantBuffer.Update( &viewCons );
+                renderContext.FillConstantBuffer( cameraConstantBuffer );
+                AddOrReplaceComponent< ConstantBuffer >( entity, cameraConstantBuffer );
+
+                const rhi::BindingSetDescriptor bindingSetDesc{
+                    { rhi::BindingSetElement::CreateConstantBuffer( 0, cameraConstantBuffer.GetHandle() ) } };
+
+                const BindingSet bindingSet =
+                    resourceManager.GetOrCreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+
+                AddOrReplaceComponent< BindingSet >( entity, bindingSet );
+
+                m_OpaqueCommandBuffers[entity] = DrawCommandBuffer{};
             }
         }
 
@@ -123,53 +128,59 @@ namespace smile::graphic
 
                 AddOrReplaceComponent< Mesh >( entity, mesh );
                 AddOrReplaceComponent< MaterialInstance >( entity, materialInstance );
-                EnsurePipeline( materialInstance, bindingLayout, resourceManager, materialSystem );
 
-                const auto pipelineIt = m_PipelineCache.FindItemAtKey( materialInstance );
-                AddOrReplaceComponent< GraphicsPipeline >( entity, pipelineIt.GetItem() );
+                const auto &materialData = materialSystem.GetMaterialData( materialInstance );
+                const auto material = materialInstance.GetMaterial();
+
+                GraphicsPipelineDescriptor psoDesc{};
+                psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
+                psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
+
+                psoDesc.VertexShader =
+                    resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
+                psoDesc.PixelShader =
+                    resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
+
+                psoDesc.BindingLayouts.PushBack( viewBindingLayout );
+                psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
+
+                psoDesc.RenderState = material.GetLayout().RenderState;
+
+                const auto pipeline = resourceManager.GetOrCreateGraphicsPipeline( psoDesc );
+
+                AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
             }
         }
     }
 
-    void RenderWorld::EnsurePipeline( const MaterialInstance &materialInstance,
-        const BindingLayout &layout,
-        ResourceManager &resourceManager,
-        MaterialSystem &materialSystem )
+    void RenderWorld::Enqueue()
     {
-        if ( m_PipelineCache.FindItemAtKey( materialInstance ) != m_PipelineCache.end() )
-            return;
-
-        const auto &materialData = materialSystem.GetMaterialData( materialInstance );
-        const auto material = materialInstance.GetMaterial();
-
-        GraphicsPipelineDescriptor psoDesc{};
-        psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
-        psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
-
-        psoDesc.VertexShader = resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
-        psoDesc.PixelShader = resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
-
-        psoDesc.BindingLayouts.PushBack( layout );
-        psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
-
-        psoDesc.RenderState = material.GetLayout().RenderState;
-
-        m_PipelineCache.Insert( materialInstance, resourceManager.CreateGraphicsPipeline( psoDesc ) );
-    }
-
-    void RenderWorld::Enqueue( DrawCommandBuffer &opaqueCommandBuffer )
-    {
-        auto group = m_ECSEngine.GetGroup< GraphicsPipeline, MaterialInstance, Mesh >();
-
-        for ( auto entity : group )
+        for ( auto cameraEntity : m_ECSEngine.GetGroup< ecs::CameraComponent >() )
         {
-            const auto &[pipeline, materialInstance, mesh] =
-                m_ECSEngine.GetComponents< GraphicsPipeline, MaterialInstance, Mesh >( entity );
+            const auto &view = m_ECSEngine.GetComponent< View >( cameraEntity );
+            const auto &viewMatrix = view.GetViewMatrix();
 
-            const SortKey key = sort_key::EncodeOpaque(
-                pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), 0.0f );
+            auto group = m_ECSEngine.GetGroup< GraphicsPipeline, MaterialInstance, Mesh >(
+                smile::ecs::g_Get< world::ecs::TransformComponent > );
 
-            opaqueCommandBuffer.Add( key, entity );
+            for ( auto entity : group )
+            {
+                const auto &[pipeline, materialInstance, mesh, transform] =
+                    m_ECSEngine
+                        .GetComponents< GraphicsPipeline, MaterialInstance, Mesh, world::ecs::TransformComponent >(
+                            entity );
+
+                const float depth = transform.WorldTranslation.x * viewMatrix._13 +
+                                    transform.WorldTranslation.y * viewMatrix._23 +
+                                    transform.WorldTranslation.z * viewMatrix._33 + viewMatrix._43;
+
+                const SortKey key = sort_key::EncodeOpaque(
+                    pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), depth );
+
+                m_OpaqueCommandBuffers[cameraEntity].Add( key, entity );
+            }
+
+            m_OpaqueCommandBuffers[cameraEntity].Sort();
         }
     }
 }

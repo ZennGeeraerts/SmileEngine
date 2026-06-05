@@ -41,21 +41,19 @@ namespace smile::graphic
         m_Engine.GetRenderContext().Open();
     }
 
-    void Renderer::OnRender( RenderWorld &renderWorld,
-        DrawCommandBuffer &buffer,
-        const View &view,
-        const Framebuffer &framebuffer )
+    void Renderer::OnRender( RenderWorld &renderWorld )
     {
         auto &ctx = m_Engine.GetRenderContext();
         auto &resourceManager = m_Engine.GetResourceManager();
+
+        renderWorld.Prepare( ctx, resourceManager, m_Engine.GetMeshManager(), m_Engine.GetMaterialSystem() );
+        renderWorld.Enqueue();
 
         m_DebugRenderer.Flush( m_DebugData ); // DebugPassData::LineList
 
         // Register render passes
         RenderGraphResourceHandle colorHandle;
         RenderGraphResourceHandle depthHandle;
-
-        SM_ASSERT( framebuffer.IsValid() );
 
         AddForwardPass( m_Graph,
             m_ForwardData,

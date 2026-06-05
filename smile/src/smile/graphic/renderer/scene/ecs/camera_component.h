@@ -3,7 +3,9 @@
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
+
 #include "smile/graphic/scene/scene_camera.h"
+#include "smile/graphic/renderer/resource/frame_buffer.h"
 
 namespace smile::graphic::ecs
 {
@@ -15,5 +17,6 @@ namespace smile::graphic::ecs
         SceneCamera Camera;
         bool IsPrimary = true;
         bool HasFixedAspectRatio = false;
+        Framebuffer RenderTarget;
     };
 }

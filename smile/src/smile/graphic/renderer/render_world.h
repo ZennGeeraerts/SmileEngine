@@ -26,6 +26,7 @@
 #include "shader/binding_layout.h"
 #include "shader/binding_set.h"
 #include "shader/constant_buffer.h"
+#include "draw/draw_command_buffer.h"
 
 namespace smile::graphic
 {
@@ -34,7 +35,6 @@ namespace smile::graphic
     class MaterialSystem;
     class View;
     class RenderContext;
-    class DrawCommandBuffer;
 
     class RenderWorld final
     {
@@ -55,39 +55,28 @@ namespace smile::graphic
         }
 
         template < typename ComponentType >
-        [[nodiscard]] const ComponentType &GetComponent( smile::ecs::EntityHandle entity ) const
+        const ComponentType &GetComponent( smile::ecs::EntityHandle entity ) const
         {
             return m_ECSEngine.GetComponent< ComponentType >( entity );
         }
 
-        void SetViewport( const rhi::Viewport &viewport )
+        void SetViewport( const rhi::Viewport &viewport ) noexcept
         {
             m_ViewportState.Viewports[0] = viewport;
-        }
-
-        const BindingSet &GetPassBindingSet() const noexcept
-        {
-            return m_PassBindingSet;
         }
 
         void Prepare( RenderContext &renderContext,
             ResourceManager &resourceManager,
             MeshManager &meshManager,
-            MaterialSystem &materialSystem,
-            View &view );
-
-        void Enqueue( DrawCommandBuffer &opaqueCommandBuffer );
-
-      private:
-        void EnsurePipeline( const MaterialInstance &materialInstance,
-            const BindingLayout &layout,
-            ResourceManager &resourceManager,
             MaterialSystem &materialSystem );
 
+        void Enqueue();
+
+      private:
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
         rhi::ViewportState m_ViewportState;
-        primitive::HashMap< MaterialInstance, GraphicsPipeline > m_PipelineCache;
-        Framebuffer m_RenderTarget;
+
+        primitive::HashMap< ecs::EntityHandle, DrawCommandBuffer > m_OpaqueCommandBuffers;
     };
 }
