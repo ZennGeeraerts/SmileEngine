@@ -39,8 +39,6 @@ namespace smile::graphic
     class RenderWorld final
     {
       public:
-        void Initialize( ResourceManager &resourceManager );
-
         smile::ecs::EntityHandle CreateEntity();
         smile::ecs::EntityHandle CreateEntity( const primitive::UUID uuid );
 
@@ -78,10 +76,11 @@ namespace smile::graphic
             MaterialSystem &materialSystem,
             View &view );
 
-        void Queue( DrawCommandBuffer &buffer );
+        void Enqueue( DrawCommandBuffer &opaqueCommandBuffer );
 
       private:
         void EnsurePipeline( const MaterialInstance &materialInstance,
+            const BindingLayout &layout,
             ResourceManager &resourceManager,
             MaterialSystem &materialSystem );
 
@@ -89,9 +88,6 @@ namespace smile::graphic
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
         rhi::ViewportState m_ViewportState;
         primitive::HashMap< MaterialInstance, GraphicsPipeline > m_PipelineCache;
-        ConstantBuffer m_CameraConstantBuffer;
-        BindingLayout m_PassBindingLayout;
-        BindingSet m_PassBindingSet;
         Framebuffer m_RenderTarget;
     };
 }

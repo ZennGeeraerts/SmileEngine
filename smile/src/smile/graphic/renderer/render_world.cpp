@@ -15,24 +15,6 @@
 
 namespace smile::graphic
 {
-    void RenderWorld::Initialize( ResourceManager &resourceManager )
-    {
-        {
-            ConstantBufferDescriptor cameraCBDesc{};
-            cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
-            cameraCBDesc.Add( "ViewInverse", ConstantType::Mat4 );
-            m_CameraConstantBuffer = resourceManager.CreateConstantBuffer( cameraCBDesc );
-        }
-
-        {
-            rhi::BindingSetDescriptor bindingSetDesc{
-                { rhi::BindingSetElement::CreateConstantBuffer( 0, m_CameraConstantBuffer.GetHandle() ) } };
-
-            resourceManager.CreateBindingSetAndLayout(
-                bindingSetDesc, { rhi::ShaderStage::Vertex }, m_PassBindingLayout, m_PassBindingSet );
-        }
-    }
-
     smile::ecs::EntityHandle RenderWorld::CreateEntity()
     {
         return CreateEntity( primitive::UUID{} );
@@ -54,6 +36,9 @@ namespace smile::graphic
         View &view )
     {
         view.SetViewport( m_ViewportState.Viewports[0] );
+
+        BindingLayout bindingLayout;
+        BindingSet bindingSet;
 
         {
             auto group = m_ECSEngine.GetGroup< ecs::CameraComponent, world::ecs::TransformComponent >();
@@ -87,9 +72,20 @@ namespace smile::graphic
                     ViewConstants viewCons{};
                     view.FillConstants( viewCons );
 
-                    m_CameraConstantBuffer.Update( &viewCons );
-                    renderContext.FillConstantBuffer( m_CameraConstantBuffer );
-                    AddOrReplaceComponent< ConstantBuffer >( entity, m_CameraConstantBuffer );
+                    ConstantBufferDescriptor cbDesc{
+                        { "ViewProjection", ConstantType::Mat4 }, { "ViewInverse", ConstantType::Mat4 } };
+
+                    const ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
+
+                    cameraConstantBuffer.Update( &viewCons );
+                    renderContext.FillConstantBuffer( cameraConstantBuffer );
+                    AddOrReplaceComponent< ConstantBuffer >( entity, cameraConstantBuffer );
+
+                    rhi::BindingSetDescriptor bindingSetDesc{
+                        { rhi::BindingSetElement::CreateConstantBuffer( 0, cameraConstantBuffer.GetHandle() ) } };
+
+                    resourceManager.GetOrCreateBindingSetAndLayout(
+                        bindingSetDesc, { rhi::ShaderStage::Vertex }, bindingLayout, bindingSet );
                 }
             }
         }
@@ -127,7 +123,7 @@ namespace smile::graphic
 
                 AddOrReplaceComponent< Mesh >( entity, mesh );
                 AddOrReplaceComponent< MaterialInstance >( entity, materialInstance );
-                EnsurePipeline( materialInstance, resourceManager, materialSystem );
+                EnsurePipeline( materialInstance, bindingLayout, resourceManager, materialSystem );
 
                 const auto pipelineIt = m_PipelineCache.FindItemAtKey( materialInstance );
                 AddOrReplaceComponent< GraphicsPipeline >( entity, pipelineIt.GetItem() );
@@ -136,6 +132,7 @@ namespace smile::graphic
     }
 
     void RenderWorld::EnsurePipeline( const MaterialInstance &materialInstance,
+        const BindingLayout &layout,
         ResourceManager &resourceManager,
         MaterialSystem &materialSystem )
     {
@@ -152,7 +149,7 @@ namespace smile::graphic
         psoDesc.VertexShader = resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
         psoDesc.PixelShader = resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
 
-        psoDesc.BindingLayouts.PushBack( m_PassBindingLayout );
+        psoDesc.BindingLayouts.PushBack( layout );
         psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
 
         psoDesc.RenderState = material.GetLayout().RenderState;
@@ -160,7 +157,7 @@ namespace smile::graphic
         m_PipelineCache.Insert( materialInstance, resourceManager.CreateGraphicsPipeline( psoDesc ) );
     }
 
-    void RenderWorld::Queue( DrawCommandBuffer &buffer )
+    void RenderWorld::Enqueue( DrawCommandBuffer &opaqueCommandBuffer )
     {
         auto group = m_ECSEngine.GetGroup< GraphicsPipeline, MaterialInstance, Mesh >();
 
@@ -172,7 +169,7 @@ namespace smile::graphic
             const SortKey key = sort_key::EncodeOpaque(
                 pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), 0.0f );
 
-            buffer.Add( key, entity );
+            opaqueCommandBuffer.Add( key, entity );
         }
     }
 }
