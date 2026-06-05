@@ -35,6 +35,7 @@
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/primitive/collection/hash_map.h"
 #include "smile/graphic/renderer/draw/draw_bin.h"
+#include "smile/graphic/renderer/mesh/mesh_source.h"
 
 namespace smile::graphic
 {
@@ -55,7 +56,7 @@ namespace smile::graphic
          * The bin is created on first insertion; subsequent calls with the same key
          * append the entity to the same bin.
          */
-        void Add( SortKey key, smile::ecs::EntityHandle entity );
+        void Add( const BinKey binKey, const SortKey sortKey, const smile::ecs::EntityHandle entity );
 
         /**
          * Rebuilds the sorted bin list and orders it ascending by SortKey.
@@ -67,7 +68,7 @@ namespace smile::graphic
          * Returns the sorted bin list. Sort() must be called before GetBins() if any
          * Add() calls were made since the last Sort().
          */
-        [[nodiscard]] const primitive::Vector< DrawBin * > &GetBins() const noexcept
+        [[nodiscard]] const primitive::Vector< DrawBin * > &GetSorted() const noexcept
         {
             return m_SortedBins;
         }
@@ -91,7 +92,7 @@ namespace smile::graphic
         void Clear() noexcept;
 
       private:
-        primitive::HashMap< SortKey, DrawBin > m_Bins;
+        primitive::HashMap< BinKey, DrawBin > m_Bins;
         primitive::Vector< DrawBin * > m_SortedBins;
         bool m_Sorted = false;
     };

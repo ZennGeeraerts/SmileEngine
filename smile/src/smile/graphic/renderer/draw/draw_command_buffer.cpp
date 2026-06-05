@@ -21,15 +21,14 @@
 
 namespace smile::graphic
 {
-    void DrawCommandBuffer::Add( const SortKey key, const ecs::EntityHandle entity )
+    void DrawCommandBuffer::Add( const BinKey binKey, const SortKey sortKey, const ecs::EntityHandle entity )
     {
-        auto [it, inserted] = m_Bins.TryCreateItemAtKey( key );
+        auto [it, inserted] = m_Bins.TryCreateItemAtKey( binKey );
         DrawBin &bin = it.GetItem();
 
-        if ( inserted )
-            bin.Key = key;
+        SM_ASSERT( inserted || bin.Key == binKey );
 
-        bin.Entities.PushBack( entity );
+        bin.Items.PushBack( { sortKey, entity } );
         m_Sorted = false;
     }
 
@@ -46,6 +45,9 @@ namespace smile::graphic
         std::sort( m_SortedBins.begin(),
             m_SortedBins.end(),
             []( const DrawBin *a, const DrawBin *b ) noexcept { return a->Key < b->Key; } );
+
+        for ( DrawBin *bin : m_SortedBins )
+            bin->Sort();
 
         m_Sorted = true;
     }
