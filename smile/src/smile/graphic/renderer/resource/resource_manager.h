@@ -130,6 +130,11 @@ namespace smile::graphic
             BindingLayout &layout,
             BindingSet &set );
 
+        void GetOrCreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
+            foundation::Flags< rhi::ShaderStage > shaderStage,
+            BindingLayout &layout,
+            BindingSet &set );
+
         GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
         void DestroyGraphicsPipeline( GraphicsPipeline &pipeline );
 

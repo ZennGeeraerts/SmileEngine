@@ -9,6 +9,26 @@
 
 namespace smile::graphic
 {
+    namespace detail
+    {
+        static void ConvertBindingSetToLayout( const rhi::BindingSetDescriptor &desc, rhi::BindingLayout &layout )
+        {
+            for ( const rhi::BindingSetElement &element : desc )
+            {
+                const Uint16 size = [&element]()
+                {
+                    if ( element.Type == rhi::ResourceType::PushConstants )
+                        return element.Range.Size;
+                    else
+                        return 0u;
+                }();
+
+                rhi::BindingLayoutElement layoutElement{ element.Slot, element.Type, size };
+                layout.AddElement( std::move( layoutElement ) );
+            }
+        }
+    }
+
     ResourceManager::ResourceManager( rhi::GraphicsDevice &device ) noexcept : m_Device{ device }
     {
     }
@@ -686,28 +706,23 @@ namespace smile::graphic
         BindingLayout &layout,
         BindingSet &set )
     {
-        auto convertSetToLayout = []( const rhi::BindingSetDescriptor &desc, rhi::BindingLayout &layout )
-        {
-            for ( const rhi::BindingSetElement &element : desc )
-            {
-                const Uint16 size = [&]()
-                {
-                    if ( element.Type == rhi::ResourceType::PushConstants )
-                        return element.Range.Size;
-                    else
-                        return 0u;
-                }();
-
-                rhi::BindingLayoutElement layoutElement{ element.Slot, element.Type, size };
-                layout.AddElement( std::move( layoutElement ) );
-            }
-        };
-
         rhi::BindingLayout bindingLayout{ shaderStage };
-        convertSetToLayout( descriptor, bindingLayout );
+        detail::ConvertBindingSetToLayout( descriptor, bindingLayout );
 
         layout = CreateBindingLayout( bindingLayout );
         set = CreateBindingSet( descriptor, layout, shaderStage );
+    }
+
+    void ResourceManager::GetOrCreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
+        foundation::Flags< rhi::ShaderStage > shaderStage,
+        BindingLayout &layout,
+        BindingSet &set )
+    {
+        rhi::BindingLayout bindingLayout{ shaderStage };
+        detail::ConvertBindingSetToLayout( descriptor, bindingLayout );
+
+        layout = GetOrCreateBindingLayout( bindingLayout );
+        set = GetOrCreateBindingSet( descriptor, layout, shaderStage );
     }
 
     GraphicsPipeline ResourceManager::CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor )
