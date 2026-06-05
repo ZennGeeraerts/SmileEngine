@@ -33,19 +33,22 @@ namespace smile::graphic
             { rhi::Format::RGB32_FLOAT, "BINORMAL" },
             { rhi::Format::RGBA32_FLOAT, "COLOR" } };
 
-        const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, s_VertexLayout );
-        m_MeshCache.Insert( meshSource, mesh );
+        const MeshHandle handle = m_HandleManager.CreateHandle();
+        const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, s_VertexLayout, handle );
+
+        m_Meshes[handle.GetIndex()] = mesh;
+        m_MeshCache.Add( meshSource, mesh );
 
         return mesh;
     }
 
     Mesh MeshManager::GetOrCreateMesh( MeshSource::Ref meshSource )
     {
-        auto it = m_MeshCache.FindItemAtKey( meshSource );
+        const auto mesh = m_MeshCache.Find( meshSource );
 
-        if ( it != m_MeshCache.end() )
+        if ( mesh )
         {
-            return it.GetItem();
+            return *mesh;
         }
 
         return CreateMesh( meshSource );

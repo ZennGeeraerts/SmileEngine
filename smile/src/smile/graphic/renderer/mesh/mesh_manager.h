@@ -17,6 +17,7 @@
 #pragma once
 
 #include "mesh_factory.h"
+#include "smile/graphic/renderer/resource/resource_cache.h"
 
 namespace smile::graphic
 {
@@ -29,7 +30,12 @@ namespace smile::graphic
         Mesh GetOrCreateMesh( MeshSource::Ref meshSource );
 
       private:
-        primitive::HashMap< MeshSource::Ref, Mesh > m_MeshCache;
+        static constexpr Uint16 s_MaxMeshCount = ( 12 << 10 );
+
+        primitive::FixedVector< Mesh, s_MaxMeshCount > m_Meshes;
+        ResourceCache< MeshSource::Ref, Mesh > m_MeshCache;
+
+        MeshHandleManager m_HandleManager;
 
         MeshFactory m_MeshFactory;
         ResourceManager &m_ResourceManager;

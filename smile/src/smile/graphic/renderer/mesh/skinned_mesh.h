@@ -14,16 +14,20 @@ namespace smile::graphic
     {
         SkinnedMesh() = default;
 
-        SkinnedMesh( const VertexBuffer &vb, const IndexBuffer &ib, Skeleton::Ref skeleton ) noexcept
-            : VertexBuffer{ vb }, IndexBuffer{ ib }, Skeleton{ skeleton }
+        SkinnedMesh( const MeshHandle handle,
+            const VertexBuffer &vb,
+            const IndexBuffer &ib,
+            Skeleton::Ref skeleton ) noexcept
+            : Handle{ handle }, VertexBuffer{ vb }, IndexBuffer{ ib }, Skeleton{ skeleton }
         {
         }
 
         [[nodiscard]] bool IsValid() const
         {
-            return VertexBuffer.IsValid() && IndexBuffer.IsValid();
+            return Handle.IsValid();
         }
 
+        MeshHandle Handle;
         VertexBuffer VertexBuffer;
         IndexBuffer IndexBuffer;
         Skeleton::Ref Skeleton = nullptr;
