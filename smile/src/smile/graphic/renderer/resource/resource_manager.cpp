@@ -157,17 +157,17 @@ namespace smile::graphic
     Texture ResourceManager::CreateTexture2D( TextureAsset::ConstRef textureAsset )
     {
         const auto texture = CreateTexture2D( textureAsset->GetImage(), false );
-        m_TextureCache.Insert( textureAsset, texture );
+        m_TextureCache.Add( textureAsset, texture );
         return texture;
     }
 
     Texture ResourceManager::GetOrCreateTexture2D( TextureAsset::ConstRef textureAsset )
     {
-        auto it = m_TextureCache.FindItemAtKey( textureAsset );
+        const auto texture = m_TextureCache.Find( textureAsset );
 
-        if ( it != m_TextureCache.end() )
+        if ( texture )
         {
-            return it.GetItem();
+            return *texture;
         }
 
         return CreateTexture2D( textureAsset );
@@ -210,15 +210,7 @@ namespace smile::graphic
     {
         m_Device.DestroyTexture( texture.GetHandle() );
         m_Textures.Erase( texture );
-
-        auto it = std::find_if( m_TextureCache.begin(),
-            m_TextureCache.end(),
-            [&texture]( const auto &kv ) { return kv.Value == texture; } );
-
-        if ( it != m_TextureCache.end() )
-        {
-            m_TextureCache.Erase( it );
-        }
+        m_TextureCache.Invalidate( texture );
 
         m_TextureHandleManager.DestroyHandle( texture.GetHandle() );
         texture.m_Handle = rhi::TextureHandle::NullHandle();
@@ -232,17 +224,17 @@ namespace smile::graphic
 
         const Sampler sampler{ handle };
         m_Samplers.PushBack( sampler );
-        m_SamplerCache.Insert( descriptor, sampler );
+        m_SamplerCache.Add( descriptor, sampler );
         return sampler;
     }
 
     Sampler ResourceManager::GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor )
     {
-        auto it = m_SamplerCache.FindItemAtKey( descriptor );
+        const auto sampler = m_SamplerCache.Find( descriptor );
 
-        if ( it != m_SamplerCache.end() )
+        if ( sampler )
         {
-            return it.GetItem();
+            return *sampler;
         }
 
         return CreateSampler( descriptor );
@@ -252,15 +244,7 @@ namespace smile::graphic
     {
         m_Device.DestroySampler( sampler.GetHandle() );
         m_Samplers.Erase( sampler );
-
-        auto it = std::find_if( m_SamplerCache.begin(),
-            m_SamplerCache.end(),
-            [&sampler]( const auto &kv ) { return kv.Value == sampler; } );
-
-        if ( it != m_SamplerCache.end() )
-        {
-            m_SamplerCache.Erase( it );
-        }
+        m_SamplerCache.Invalidate( sampler );
 
         m_SamplerHandleManager.DestroyHandle( sampler.GetHandle() );
         sampler.m_Handle = rhi::SamplerHandle::NullHandle();
@@ -317,18 +301,18 @@ namespace smile::graphic
 
         const ConstantBuffer constantBuffer{ handle, bufferDesc.Size };
         m_ConstantBuffers.PushBack( constantBuffer );
-        m_ConstantBufferCache[descriptor] = constantBuffer;
+        m_ConstantBufferCache.Add( descriptor, constantBuffer );
 
         return constantBuffer;
     }
 
     ConstantBuffer ResourceManager::GetOrCreateConstantBuffer( const ConstantBufferDescriptor &descriptor )
     {
-        auto it = m_ConstantBufferCache.FindItemAtKey( descriptor );
+        const auto constantBuffer = m_ConstantBufferCache.Find( descriptor );
 
-        if ( it != m_ConstantBufferCache.end() )
+        if ( constantBuffer )
         {
-            return it.GetItem();
+            return *constantBuffer;
         }
 
         return CreateConstantBuffer( descriptor );
@@ -338,15 +322,7 @@ namespace smile::graphic
     {
         m_Device.DestroyGPUBuffer( constantBuffer.GetHandle() );
         m_ConstantBuffers.Erase( constantBuffer );
-
-        auto it = std::find_if( m_ConstantBufferCache.begin(),
-            m_ConstantBufferCache.end(),
-            [&constantBuffer]( const auto &kv ) { return kv.Value == constantBuffer; } );
-
-        if ( it != m_ConstantBufferCache.end() )
-        {
-            m_ConstantBufferCache.Erase( it );
-        }
+        m_ConstantBufferCache.Invalidate( constantBuffer );
 
         m_GPUBufferHandleManager.DestroyHandle( constantBuffer.GetHandle() );
         constantBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
@@ -358,7 +334,7 @@ namespace smile::graphic
     {
         const ShaderKey key{ byteCode, entryPoint, targetProfile };
 
-        if ( m_VertexShaderCache.HasItemAtKey( key ) )
+        if ( m_VertexShaderCache.Has( key ) )
         {
             SM_LOG_ERROR( "ResourceManager::CreateVertexShader > Vertex shader with the same bytecode already exists "
                           "in the cache" );
@@ -374,7 +350,7 @@ namespace smile::graphic
 
         const VertexShader vertexShader{ handle };
         m_VertexShaders.PushBack( vertexShader );
-        m_VertexShaderCache[key] = vertexShader;
+        m_VertexShaderCache.Add( key, vertexShader );
 
         return vertexShader;
     }
@@ -392,11 +368,11 @@ namespace smile::graphic
         const primitive::String &targetProfile )
     {
         const ShaderKey key{ byteCode, entryPoint, targetProfile };
-        auto it = m_VertexShaderCache.FindItemAtKey( key );
+        const auto vertexShader = m_VertexShaderCache.Find( key );
 
-        if ( it != m_VertexShaderCache.end() )
+        if ( vertexShader )
         {
-            return it.GetItem();
+            return *vertexShader;
         }
 
         return CreateVertexShader( byteCode, entryPoint, targetProfile );
@@ -414,15 +390,7 @@ namespace smile::graphic
     {
         m_Device.DestroyShader( vertexShader.GetHandle() );
         m_VertexShaders.Erase( vertexShader );
-
-        auto it = std::find_if( m_VertexShaderCache.begin(),
-            m_VertexShaderCache.end(),
-            [&vertexShader]( const auto &kv ) { return kv.Value == vertexShader; } );
-
-        if ( it != m_VertexShaderCache.end() )
-        {
-            m_VertexShaderCache.Erase( it );
-        }
+        m_VertexShaderCache.Invalidate( vertexShader );
 
         m_ShaderHandleManager.DestroyHandle( vertexShader.GetHandle() );
         vertexShader.m_Handle = rhi::ShaderHandle::NullHandle();
@@ -434,7 +402,7 @@ namespace smile::graphic
     {
         const ShaderKey key{ byteCode, entryPoint, targetProfile };
 
-        if ( m_PixelShaderCache.HasItemAtKey( key ) )
+        if ( m_PixelShaderCache.Has( key ) )
         {
             SM_LOG_ERROR( "ResourceManager::CreatePixelShader > Pixel shader with the same bytecode already exists in "
                           "the cache" );
@@ -450,7 +418,7 @@ namespace smile::graphic
 
         const PixelShader pixelShader{ handle };
         m_PixelShaders.PushBack( pixelShader );
-        m_PixelShaderCache[key] = pixelShader;
+        m_PixelShaderCache.Add( key, pixelShader );
 
         return pixelShader;
     }
@@ -467,11 +435,11 @@ namespace smile::graphic
         const primitive::String &targetProfile )
     {
         const ShaderKey key{ byteCode, entryPoint, targetProfile };
-        auto it = m_PixelShaderCache.FindItemAtKey( key );
+        const auto pixelShader = m_PixelShaderCache.Find( key );
 
-        if ( it != m_PixelShaderCache.end() )
+        if ( pixelShader )
         {
-            return it.GetItem();
+            return *pixelShader;
         }
 
         return CreatePixelShader( byteCode, entryPoint, targetProfile );
@@ -489,15 +457,7 @@ namespace smile::graphic
     {
         m_Device.DestroyShader( pixelShader.GetHandle() );
         m_PixelShaders.Erase( pixelShader );
-
-        auto it = std::find_if( m_PixelShaderCache.begin(),
-            m_PixelShaderCache.end(),
-            [&pixelShader]( const auto &kv ) { return kv.Value == pixelShader; } );
-
-        if ( it != m_PixelShaderCache.end() )
-        {
-            m_PixelShaderCache.Erase( it );
-        }
+        m_PixelShaderCache.Invalidate( pixelShader );
 
         m_ShaderHandleManager.DestroyHandle( pixelShader.GetHandle() );
         pixelShader.m_Handle = rhi::ShaderHandle::NullHandle();
@@ -620,18 +580,18 @@ namespace smile::graphic
 
         const BindingLayout bindingLayout{ handle };
         m_BindingLayouts.PushBack( bindingLayout );
-        m_BindingLayoutCache[layout] = bindingLayout;
+        m_BindingLayoutCache.Add( layout, bindingLayout );
 
         return bindingLayout;
     }
 
     BindingLayout ResourceManager::GetOrCreateBindingLayout( const rhi::BindingLayout &layout )
     {
-        auto it = m_BindingLayoutCache.FindItemAtKey( layout );
+        const auto bindingLayout = m_BindingLayoutCache.Find( layout );
 
-        if ( it != m_BindingLayoutCache.end() )
+        if ( bindingLayout )
         {
-            return it.GetItem();
+            return *bindingLayout;
         }
 
         return CreateBindingLayout( layout );
@@ -642,14 +602,7 @@ namespace smile::graphic
         m_Device.DestroyBindingLayout( bindingLayout.GetHandle() );
         m_BindingLayouts.Erase( bindingLayout );
 
-        auto it = std::find_if( m_BindingLayoutCache.begin(),
-            m_BindingLayoutCache.end(),
-            [&bindingLayout]( const auto &kv ) { return kv.Value == bindingLayout; } );
-
-        if ( it != m_BindingLayoutCache.end() )
-        {
-            m_BindingLayoutCache.Erase( it );
-        }
+        m_BindingLayoutCache.Invalidate( bindingLayout );
 
         m_BindingLayoutHandleManager.DestroyHandle( bindingLayout.GetHandle() );
         bindingLayout.m_Handle = rhi::BindingLayoutHandle::NullHandle();
@@ -664,7 +617,7 @@ namespace smile::graphic
 
         const BindingSet bindingSet{ handle };
         m_BindingSets.PushBack( bindingSet );
-        m_BindingSetCache[descriptor] = bindingSet;
+        m_BindingSetCache.Add( descriptor, bindingSet );
 
         return bindingSet;
     }
@@ -673,11 +626,11 @@ namespace smile::graphic
         const BindingLayout &layout,
         foundation::Flags< rhi::ShaderStage > shaderStage )
     {
-        auto it = m_BindingSetCache.FindItemAtKey( descriptor );
+        const auto bindingSet = m_BindingSetCache.Find( descriptor );
 
-        if ( it != m_BindingSetCache.end() )
+        if ( bindingSet )
         {
-            return it.GetItem();
+            return *bindingSet;
         }
 
         return CreateBindingSet( descriptor, layout, shaderStage );
@@ -687,15 +640,7 @@ namespace smile::graphic
     {
         m_Device.DestroyBindingSet( bindingSet.GetHandle() );
         m_BindingSets.Erase( bindingSet );
-
-        auto it = std::find_if( m_BindingSetCache.begin(),
-            m_BindingSetCache.end(),
-            [&bindingSet]( const auto &kv ) { return kv.Value == bindingSet; } );
-
-        if ( it != m_BindingSetCache.end() )
-        {
-            m_BindingSetCache.Erase( it );
-        }
+        m_BindingSetCache.Invalidate( bindingSet );
 
         m_BindingSetHandleManager.DestroyHandle( bindingSet.GetHandle() );
         bindingSet.m_Handle = rhi::BindingSetHandle::NullHandle();

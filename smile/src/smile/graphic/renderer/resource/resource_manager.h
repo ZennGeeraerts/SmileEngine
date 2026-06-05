@@ -19,6 +19,7 @@
 #include "sampler.h"
 #include "frame_buffer.h"
 #include "graphics_pipeline.h"
+#include "resource_cache.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/shader/vertex_shader.h"
 #include "smile/graphic/renderer/shader/pixel_shader.h"
@@ -182,14 +183,14 @@ namespace smile::graphic
         primitive::Vector< BindingSet > m_BindingSets;
         primitive::Vector< GraphicsPipeline > m_GraphicsPipelines;
 
-        primitive::HashMap< TextureAsset::ConstRef, Texture > m_TextureCache;
+        ResourceCache< TextureAsset::ConstRef, Texture > m_TextureCache;
 
-        primitive::HashMap< ShaderKey, VertexShader > m_VertexShaderCache;
-        primitive::HashMap< ShaderKey, PixelShader > m_PixelShaderCache;
-        primitive::HashMap< rhi::SamplerDescriptor, Sampler > m_SamplerCache;
-        primitive::HashMap< ConstantBufferDescriptor, ConstantBuffer > m_ConstantBufferCache;
-        primitive::HashMap< rhi::BindingLayout, BindingLayout > m_BindingLayoutCache;
-        primitive::HashMap< rhi::BindingSetDescriptor, BindingSet > m_BindingSetCache;
+        ResourceCache< ShaderKey, VertexShader > m_VertexShaderCache;
+        ResourceCache< ShaderKey, PixelShader > m_PixelShaderCache;
+        ResourceCache< rhi::SamplerDescriptor, Sampler > m_SamplerCache;
+        ResourceCache< ConstantBufferDescriptor, ConstantBuffer > m_ConstantBufferCache;
+        ResourceCache< rhi::BindingLayout, BindingLayout > m_BindingLayoutCache;
+        ResourceCache< rhi::BindingSetDescriptor, BindingSet > m_BindingSetCache;
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;
