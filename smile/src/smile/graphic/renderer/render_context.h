@@ -38,8 +38,9 @@ namespace smile::graphic
         void Close();
 
         void SetGraphicsState( const GraphicsState &state );
-        void DrawIndexed( Uint32 indexCount );
-        void Draw( Uint32 vertexCount );
+        void DrawIndexed( const Count indexCount );
+        void Draw( const Count vertexCount );
+        void DrawInstanced( const Count vertexCount, const Count instanceCount );
 
         void FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const;
         void FillConstantBuffer( const ConstantBuffer &constantBuffer ) const;

@@ -18,7 +18,7 @@
 #include "debug_pass.h"
 
 #include "smile/graphic/renderer/render_context.h"
-#include "smile/graphic/renderer/render_scene.h"
+#include "smile/graphic/renderer/view.h"
 #include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/common/foundation/numeric_cast.h"
 #include "smile/graphic/shader/shader_library.h"
@@ -153,10 +153,8 @@ namespace smile::graphic
 
     // ---- AddDebugPass -----------------------------------------------------------
 
-    void AddDebugPass( RenderGraph &graph,
-        DebugPassData &data,
-        const RenderScene &scene,
-        RenderGraphResourceHandle &inOutColor )
+    void
+    AddDebugPass( RenderGraph &graph, DebugPassData &data, const View &view, RenderGraphResourceHandle &inOutColor )
     {
         graph.AddPass(
             "DebugPass",
@@ -165,7 +163,7 @@ namespace smile::graphic
                 builder.ReadTexture( inOutColor );
                 builder.WriteColor( inOutColor );
             },
-            [&data, &scene]( const RenderGraphPassResources &res, RenderContext & )
+            [&data, &view]( const RenderGraphPassResources &res, RenderContext & )
             {
                 // Prepend fixed grid + axes
                 data.CreateFixedLineList();
@@ -181,7 +179,7 @@ namespace smile::graphic
                     data.GrowVertexBuffer();
                 }
 
-                data.CameraCB.Update( &scene.GetView().GetViewProjectionMatrix() );
+                data.CameraCB.Update( &view.GetViewProjectionMatrix() );
                 data.Context->FillVertexBuffer(
                     data.DynamicVB, static_cast< void * >( data.LineList.GetData() ), vertexCount );
                 data.Context->FillConstantBuffer( data.CameraCB );

@@ -45,6 +45,11 @@ namespace smile::graphic
     {
         Uint64 Value = 0;
 
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            return std::hash< Uint64 >{}( Value );
+        }
+
         constexpr bool operator<( const SortKey other ) const noexcept
         {
             return Value < other.Value;
@@ -119,4 +124,16 @@ namespace smile::graphic
             return SortKey{ pso | mat };
         }
     }
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::SortKey >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::SortKey key ) const noexcept
+        {
+            return key.GetHashCode();
+        }
+    };
 }

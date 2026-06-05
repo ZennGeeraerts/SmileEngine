@@ -15,34 +15,30 @@
  * @brief       ForwardPassData and pass-builder free functions for forward-lit geometry.
  *
  *              ForwardPassData is a plain struct that owns GPU resources persisted across
- *              frames (pipeline cache, constant buffers, binding objects).  Pass registration
- *              is done via free functions (AddForwardPass, AddSpritePass, AddUIPass) that
- *              call RenderGraph::AddPass() with inline lambdas — no virtual dispatch, no
+ *              frames (constant buffers, binding objects).  The pipeline cache lives in
+ *              RenderWorld and is populated during the Prepare step.
+ *              Pass registration is done via the AddForwardPass free function that
+ *              calls RenderGraph::AddPass() with an inline lambda — no virtual dispatch, no
  *              BeginPass/EndPass ceremony.
  */
 #pragma once
 
-#include "smile/common/primitive/collection/hash_map.h"
-#include "smile/graphic/renderer/graphics_state.h"
-#include "smile/graphic/renderer/material/material.h"
-#include "smile/graphic/renderer/resource/graphics_pipeline.h"
-#include "smile/graphic/renderer/shader/constant_buffer.h"
-#include "smile/graphic/renderer/shader/binding_layout.h"
-#include "smile/graphic/renderer/shader/binding_set.h"
+#include "smile/common/foundation/compiled.h"
 #include "smile/graphic/renderer/render_graph/render_graph_resource.h"
-#include "smile/graphic/renderer/view.h"
 
 namespace smile::graphic
 {
     class RenderContext;
     class ResourceManager;
     class MaterialSystem;
-    class RenderScene;
+    class RenderWorld;
+    class DrawCommandBuffer;
     class RenderGraph;
 
     /**
-     * All GPU state shared across the forward, sprite, and UI render passes.
-     * One instance lives on the Renderer and is re-used every frame.
+     * Thin pass-data struct — owns only the three back-references set by Initialize().
+     * All GPU resources (constant buffers, binding sets, pipelines) live in RenderWorld
+     * and are created or cached during the Prepare step.
      */
     struct ForwardPassData final
     {
@@ -55,22 +51,6 @@ namespace smile::graphic
         void Initialize( RenderContext &context, ResourceManager &resourceManager, MaterialSystem &materialSystem );
         void ShutDown();
 
-        // ---- Helpers called from pass execute lambdas (public to allow lambda capture by pointer) ----
-
-        void SetupMaterial( MaterialInstance materialInstance, GraphicsState &graphicsState );
-
-        primitive::HashMap< MaterialInstance, GraphicsPipeline >::Iterator CreatePipeline(
-            MaterialInstance materialInstance );
-
-        // ---- GPU objects (persistent across frames) ----
-
-        primitive::HashMap< MaterialInstance, GraphicsPipeline > Pipelines;
-        ConstantBuffer CameraCB;
-        ConstantBuffer PerObjectCB;
-        BindingLayout PassBindingLayout;
-        BindingSet PassBindingSet;
-        ViewConstants ViewCons{};
-
         // ---- Back-references set by Initialize() ----
 
         RenderContext *Context = nullptr;
@@ -79,36 +59,20 @@ namespace smile::graphic
     };
 
     /**
-     * Registers a ForwardPass into the graph that renders all Renderables
-     * in SceneLayer::World using the ForwardPassData pipeline.
+     * Registers a ForwardPass into the graph that renders all opaque geometry
+     * from @p buffer using the pipeline components stored on entities in @p renderWorld.
+     * The camera constant buffer must already be filled (by RenderWorld::Prepare) before
+     * the render graph executes.
      *
      * @param outColor  Output handle for SceneColor (created by this pass).
      * @param outDepth  Output handle for SceneDepth (created by this pass).
      */
     void AddForwardPass( RenderGraph &graph,
         ForwardPassData &data,
-        const RenderScene &scene,
+        RenderWorld &renderWorld,
+        const DrawCommandBuffer &buffer,
         Uint32 width,
         Uint32 height,
         RenderGraphResourceHandle &outColor,
         RenderGraphResourceHandle &outDepth );
-
-    /**
-     * Registers a SpritePass that blends batched quads (SceneLayer::Sprite) on top of
-     * the existing SceneColor/SceneDepth produced by AddForwardPass.
-     */
-    void AddSpritePass( RenderGraph &graph,
-        ForwardPassData &data,
-        const RenderScene &scene,
-        RenderGraphResourceHandle &inOutColor,
-        RenderGraphResourceHandle &inOutDepth );
-
-    /**
-     * Registers a UIPass that renders screen-space overlays (SceneLayer::UI)
-     * on top of the FinalColor buffer.
-     */
-    void AddUIPass( RenderGraph &graph,
-        ForwardPassData &data,
-        const RenderScene &scene,
-        RenderGraphResourceHandle &inOutColor );
 }

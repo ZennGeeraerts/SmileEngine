@@ -19,6 +19,8 @@
 
 #include "frame.h"
 #include "render_engine.h"
+#include "render_world.h"
+#include "draw/draw_command_buffer.h"
 #include "smile/core/math/color.h"
 #include "smile/graphic/renderer/render_graph/render_graph_resource.h"
 
@@ -31,7 +33,6 @@ namespace smile::graphic
 
         m_ForwardData.Initialize( ctx, rm, engine.GetMaterialSystem() );
         m_DebugData.Initialize( ctx, rm, engine.GetShaderLibrary() );
-        m_SpriteBatch.Initialize( rm );
     }
 
     void Renderer::BeginFrame()
@@ -40,28 +41,32 @@ namespace smile::graphic
         m_Engine.GetRenderContext().Open();
     }
 
-    void Renderer::OnRender( RenderScene &scene )
+    void Renderer::OnRender( RenderWorld &renderWorld,
+        DrawCommandBuffer &buffer,
+        const View &view,
+        const Framebuffer &framebuffer )
     {
         auto &ctx = m_Engine.GetRenderContext();
         auto &resourceManager = m_Engine.GetResourceManager();
 
-        // Flush batch systems into their targets
-        m_SpriteBatch.Flush( scene, resourceManager, ctx ); // SceneLayer::Sprite Renderables
-        m_DebugRenderer.Flush( m_DebugData );               // DebugPassData::LineList
+        m_DebugRenderer.Flush( m_DebugData ); // DebugPassData::LineList
 
         // Register render passes
         RenderGraphResourceHandle colorHandle;
         RenderGraphResourceHandle depthHandle;
 
-        const auto &framebuffer = scene.GetFramebuffer();
-
         SM_ASSERT( framebuffer.IsValid() );
 
-        AddForwardPass(
-            m_Graph, m_ForwardData, scene, framebuffer.GetWidth(), framebuffer.GetHeight(), colorHandle, depthHandle );
+        AddForwardPass( m_Graph,
+            m_ForwardData,
+            renderWorld,
+            buffer,
+            framebuffer.GetWidth(),
+            framebuffer.GetHeight(),
+            colorHandle,
+            depthHandle );
 
-        AddSpritePass( m_Graph, m_ForwardData, scene, colorHandle, depthHandle );
-        AddDebugPass( m_Graph, m_DebugData, scene, colorHandle );
+        AddDebugPass( m_Graph, m_DebugData, view, colorHandle );
 
         // PostProcess - extension point (tone-map, bloom); currently a no-op passthrough
         m_Graph.AddPass(
@@ -72,8 +77,6 @@ namespace smile::graphic
                 builder.WriteColor( colorHandle );
             },
             []( const RenderGraphPassResources &, RenderContext & ) {} );
-
-        AddUIPass( m_Graph, m_ForwardData, scene, colorHandle );
 
         // PresentPass - blit SceneColor to final render target
         m_Graph.AddPass(
@@ -101,7 +104,6 @@ namespace smile::graphic
         ctx.Close();
 
         m_Graph.Reset();
-        m_SpriteBatch.Reset();
         m_DebugData.Reset();
         m_DebugRenderer.Reset();
 

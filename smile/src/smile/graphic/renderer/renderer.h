@@ -22,13 +22,15 @@
 #include "smile/graphic/renderer/render_graph/render_graph.h"
 #include "smile/graphic/renderer/passes/forward_pass.h"
 #include "smile/graphic/renderer/passes/debug_pass.h"
-#include "smile/graphic/renderer/sprite/sprite_batch.h"
 #include "smile/graphic/renderer/debug_renderer.h"
 #include "smile/graphic/rhi/swap_chain.h"
 
 namespace smile::graphic
 {
     class RenderEngine;
+    class RenderWorld;
+    class DrawCommandBuffer;
+    class View;
 
     class Renderer final
     {
@@ -48,17 +50,15 @@ namespace smile::graphic
          * Flushes CPU batches, registers all render passes into the RenderGraph,
          * compiles, and executes in dependency order.
          */
-        void OnRender( RenderScene &scene );
+        void OnRender( RenderWorld &renderWorld,
+            DrawCommandBuffer &buffer,
+            const View &view,
+            const Framebuffer &framebuffer );
 
         /** Presents, closes the command list, and resets all per-frame state. */
         void EndFrame( const rhi::SwapChain &swapChain );
 
         // ---- Batch submission (called from SceneExtractor / gameplay) ----
-
-        SpriteBatch &GetSpriteBatch() noexcept
-        {
-            return m_SpriteBatch;
-        }
 
         DebugRenderer &GetDebugRenderer() noexcept
         {
@@ -71,7 +71,6 @@ namespace smile::graphic
         RenderGraph m_Graph;
         ForwardPassData m_ForwardData;
         DebugPassData m_DebugData;
-        SpriteBatch m_SpriteBatch;
         DebugRenderer m_DebugRenderer;
 
         Index m_CurrentFrameIndex{ 0 };

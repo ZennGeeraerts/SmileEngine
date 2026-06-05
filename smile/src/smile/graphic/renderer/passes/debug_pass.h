@@ -36,7 +36,7 @@ namespace smile::graphic
     class RenderContext;
     class ResourceManager;
     class ShaderLibrary;
-    class RenderScene;
+    class View;
     class RenderGraph;
 
     /**
@@ -103,8 +103,6 @@ namespace smile::graphic
      *
      * Reads and overwrites @p inOutColor (does not write depth).
      */
-    void AddDebugPass( RenderGraph &graph,
-        DebugPassData &data,
-        const RenderScene &scene,
-        RenderGraphResourceHandle &inOutColor );
+    void
+    AddDebugPass( RenderGraph &graph, DebugPassData &data, const View &view, RenderGraphResourceHandle &inOutColor );
 }

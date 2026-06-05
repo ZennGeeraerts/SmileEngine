@@ -20,7 +20,12 @@
 #include "smile/common/primitive/uuid.h"
 #include "smile/common/primitive/collection/hash_map.h"
 #include "smile/core/ecs/ecs_engine.h"
+#include "material/material.h"
 #include "resource/frame_buffer.h"
+#include "resource/graphics_pipeline.h"
+#include "shader/binding_layout.h"
+#include "shader/binding_set.h"
+#include "shader/constant_buffer.h"
 
 namespace smile::graphic
 {
@@ -28,7 +33,8 @@ namespace smile::graphic
     class MeshManager;
     class MaterialSystem;
     class View;
-    class SpriteBatch;
+    class RenderContext;
+    class DrawCommandBuffer;
 
     class RenderWorld final
     {
@@ -50,22 +56,42 @@ namespace smile::graphic
             m_ECSEngine.AddOrReplaceComponent< ComponentType >( entity, std::forward< Args >( args )... );
         }
 
+        template < typename ComponentType >
+        [[nodiscard]] const ComponentType &GetComponent( smile::ecs::EntityHandle entity ) const
+        {
+            return m_ECSEngine.GetComponent< ComponentType >( entity );
+        }
+
         void SetViewport( const rhi::Viewport &viewport )
         {
             m_ViewportState.Viewports[0] = viewport;
         }
 
-        void Prepare( ResourceManager &resourceManager,
+        const BindingSet &GetPassBindingSet() const noexcept
+        {
+            return m_PassBindingSet;
+        }
+
+        void Prepare( RenderContext &renderContext,
+            ResourceManager &resourceManager,
             MeshManager &meshManager,
             MaterialSystem &materialSystem,
-            View &view,
-            SpriteBatch &spriteBatch );
+            View &view );
+
+        void Queue( DrawCommandBuffer &buffer );
 
       private:
+        void EnsurePipeline( const MaterialInstance &materialInstance,
+            ResourceManager &resourceManager,
+            MaterialSystem &materialSystem );
+
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
         rhi::ViewportState m_ViewportState;
-
+        primitive::HashMap< MaterialInstance, GraphicsPipeline > m_PipelineCache;
+        ConstantBuffer m_CameraConstantBuffer;
+        BindingLayout m_PassBindingLayout;
+        BindingSet m_PassBindingSet;
         Framebuffer m_RenderTarget;
     };
 }

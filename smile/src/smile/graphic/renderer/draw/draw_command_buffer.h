@@ -12,16 +12,20 @@
  * @file        draw_command_buffer.h
  * @author      Zenn Geeraerts
  * @created     01 June 2026
- * @brief       Sorted, per-pass list of DrawCommands.
+ * @brief       Binned, per-pass collection of DrawBins for draw-call ordering.
  *
- *              DrawCommandBuffer accumulates DrawCommand entries submitted by scene
- *              extraction, then sorts them ascending by SortKey immediately before
- *              the render-graph pass execute lambda runs. This ensures state-minimal
- *              GPU dispatch (opaque: near-to-far within PSO/material groups;
- *              transparent: far-to-near).
+ *              DrawCommandBuffer groups submissions by SortKey into DrawBins. Entities
+ *              sharing the same sort key are automatically batched into one bin. All
+ *              mesh, material, and pipeline data is resolved per entity from the
+ *              RenderWorld ECS at execute time — the buffer stores only sort keys and
+ *              entity handles.
  *
- *              The buffer owns its storage via a primitive::Vector. Callers reset
- *              it each frame via Clear(); no heap deallocation occurs on reset.
+ *              After all submissions, call Sort() to order the bins ascending by SortKey
+ *              (opaque: state-sort first, nearest-first within state). The render pass
+ *              execute lambda then iterates GetBins() in sorted order.
+ *
+ *              Clear() resets all bins and the sorted cache without deallocating storage,
+ *              making it cheap to call every frame.
  *
  *              Thread safety: not thread-safe. Populate from a single thread.
  */
@@ -29,8 +33,8 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/collection/vector.h"
-#include "smile/common/primitive/collection/array_view.h"
-#include "smile/graphic/renderer/draw/draw_command.h"
+#include "smile/common/primitive/collection/hash_map.h"
+#include "smile/graphic/renderer/draw/draw_bin.h"
 
 namespace smile::graphic
 {
@@ -47,54 +51,48 @@ namespace smile::graphic
         DrawCommandBuffer &operator=( DrawCommandBuffer && ) = default;
 
         /**
-         * Appends @p command to the buffer and returns a reference to the stored entry.
-         * The reference is valid until the next call to Clear().
+         * Adds @p entity to the bin identified by @p key.
+         * The bin is created on first insertion; subsequent calls with the same key
+         * append the entity to the same bin.
          */
-        DrawCommand &Emplace( DrawCommand command )
-        {
-            m_Commands.PushBack( std::move( command ) );
-            m_Sorted = false;
-            return m_Commands.GetLastItem();
-        }
+        void Add( SortKey key, smile::ecs::EntityHandle entity );
 
         /**
-         * Sorts all commands ascending by SortKey. Idempotent if the buffer has not
-         * been modified since the last Sort() call.
+         * Rebuilds the sorted bin list and orders it ascending by SortKey.
+         * Idempotent if the buffer has not been modified since the last Sort() call.
          */
         void Sort();
 
         /**
-         * Returns a view of all commands in the buffer. Commands are in insertion
-         * order until Sort() is called, then in ascending SortKey order.
+         * Returns the sorted bin list. Sort() must be called before GetBins() if any
+         * Add() calls were made since the last Sort().
          */
-        [[nodiscard]] primitive::ArrayView< const DrawCommand > GetCommands() const noexcept
+        [[nodiscard]] const primitive::Vector< DrawBin * > &GetBins() const noexcept
         {
-            return { m_Commands.GetData(), m_Commands.GetItemCount() };
+            return m_SortedBins;
         }
 
-        /** Number of commands currently in the buffer. */
-        [[nodiscard]] Count GetCommandCount() const noexcept
+        /** Number of bins currently in the buffer. */
+        [[nodiscard]] Count GetBinCount() const noexcept
         {
-            return m_Commands.GetItemCount();
+            return m_Bins.GetItemCount();
         }
 
-        /** True if the buffer has no commands. */
+        /** True if the buffer has no bins. */
         [[nodiscard]] bool IsEmpty() const noexcept
         {
-            return m_Commands.IsEmpty();
+            return m_Bins.IsEmpty();
         }
 
         /**
-         * Removes all commands. Keeps the underlying storage allocated for reuse next frame.
+         * Removes all bins and clears the sorted cache.
+         * Keeps the underlying storage allocated for reuse next frame.
          */
-        void Clear() noexcept
-        {
-            m_Commands.Clear();
-            m_Sorted = false;
-        }
+        void Clear() noexcept;
 
       private:
-        primitive::Vector< DrawCommand > m_Commands;
+        primitive::HashMap< SortKey, DrawBin > m_Bins;
+        primitive::Vector< DrawBin * > m_SortedBins;
         bool m_Sorted = false;
     };
 }

@@ -12,7 +12,7 @@
  * @file        draw_command_buffer_tests.cpp
  * @author      Zenn Geeraerts
  * @created     01 June 2026
- * @brief       Tests for DrawCommandBuffer sorting and lifecycle.
+ * @brief       Tests for DrawCommandBuffer binning and sort lifecycle.
  */
 #include "smile/graphic/renderer/draw/draw_command_buffer.h"
 #include "smile/graphic/renderer/draw/sort_key.h"
@@ -21,11 +21,9 @@
 
 namespace smile::graphic
 {
-    static DrawCommand MakeCommand( const SortKey key )
+    namespace
     {
-        DrawCommand cmd;
-        cmd.Key = key;
-        return cmd;
+        const ecs::EntityHandle k_TestEntity{ 1u, 0u };
     }
 
     TEST_CASE( "DrawCommandBuffer - basic usage", "[graphic][draw]" )
@@ -34,34 +32,48 @@ namespace smile::graphic
         {
             DrawCommandBuffer buf;
 
-            REQUIRE( buf.GetCommandCount() == 0 );
+            REQUIRE( buf.GetBinCount() == 0 );
             REQUIRE( buf.IsEmpty() );
         }
 
-        SECTION( "Emplace increases count" )
+        SECTION( "Adding entries with distinct sort keys creates one bin per key" )
         {
             DrawCommandBuffer buf;
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 1, 0, 1.0f ) ) );
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 2, 0, 2.0f ) ) );
+            buf.Add( sort_key::EncodeOpaque( 1, 0, 1.0f ), k_TestEntity );
+            buf.Add( sort_key::EncodeOpaque( 2, 0, 2.0f ), k_TestEntity );
 
-            REQUIRE( buf.GetCommandCount() == 2 );
+            REQUIRE( buf.GetBinCount() == 2 );
             REQUIRE_FALSE( buf.IsEmpty() );
         }
 
-        SECTION( "Clear resets count to zero" )
+        SECTION( "Same sort key merges into one bin with multiple entities" )
         {
             DrawCommandBuffer buf;
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 1, 0, 1.0f ) ) );
+            const SortKey key = sort_key::EncodeOpaque( 1, 0, 1.0f );
+
+            buf.Add( key, k_TestEntity );
+            buf.Add( key, k_TestEntity );
+
+            REQUIRE( buf.GetBinCount() == 1 );
+
+            buf.Sort();
+            REQUIRE( buf.GetBins()[0]->Entities.GetItemCount() == 2 );
+        }
+
+        SECTION( "Clear resets to empty" )
+        {
+            DrawCommandBuffer buf;
+            buf.Add( sort_key::EncodeOpaque( 1, 0, 1.0f ), k_TestEntity );
             buf.Clear();
 
-            REQUIRE( buf.GetCommandCount() == 0 );
+            REQUIRE( buf.GetBinCount() == 0 );
             REQUIRE( buf.IsEmpty() );
         }
     }
 
     TEST_CASE( "DrawCommandBuffer - Sort", "[graphic][draw]" )
     {
-        SECTION( "Commands are sorted ascending by SortKey" )
+        SECTION( "Bins are sorted ascending by SortKey" )
         {
             DrawCommandBuffer buf;
 
@@ -69,17 +81,17 @@ namespace smile::graphic
             const SortKey mid = sort_key::EncodeOpaque( 2, 0, 10.0f );
             const SortKey lo = sort_key::EncodeOpaque( 1, 0, 1.0f );
 
-            buf.Emplace( MakeCommand( hi ) );
-            buf.Emplace( MakeCommand( mid ) );
-            buf.Emplace( MakeCommand( lo ) );
+            buf.Add( sort_key::EncodeOpaque( 3, 0, 50.0f ), k_TestEntity );
+            buf.Add( sort_key::EncodeOpaque( 2, 0, 10.0f ), k_TestEntity );
+            buf.Add( sort_key::EncodeOpaque( 1, 0, 1.0f ), k_TestEntity );
 
             buf.Sort();
 
-            const auto cmds = buf.GetCommands();
-            REQUIRE( cmds.GetItemCount() == 3 );
-            REQUIRE( cmds[0].Key == lo );
-            REQUIRE( cmds[1].Key == mid );
-            REQUIRE( cmds[2].Key == hi );
+            const auto &bins = buf.GetBins();
+            REQUIRE( bins.GetItemCount() == 3 );
+            REQUIRE( bins[0]->Key == lo );
+            REQUIRE( bins[1]->Key == mid );
+            REQUIRE( bins[2]->Key == hi );
         }
 
         SECTION( "Sort on empty buffer is a no-op" )
@@ -89,53 +101,53 @@ namespace smile::graphic
             REQUIRE( buf.IsEmpty() );
         }
 
-        SECTION( "Sort on single command is a no-op" )
+        SECTION( "Sort on single bin is a no-op" )
         {
             DrawCommandBuffer buf;
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 1, 1, 5.0f ) ) );
+            buf.Add( sort_key::EncodeOpaque( 1, 1, 5.0f ), k_TestEntity );
             buf.Sort();
-            REQUIRE( buf.GetCommandCount() == 1 );
+            REQUIRE( buf.GetBinCount() == 1 );
         }
 
         SECTION( "Second Sort call without modification is idempotent" )
         {
             DrawCommandBuffer buf;
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 2, 0, 1.0f ) ) );
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 1, 0, 2.0f ) ) );
+            buf.Add( sort_key::EncodeOpaque( 2, 0, 1.0f ), k_TestEntity );
+            buf.Add( sort_key::EncodeOpaque( 1, 0, 2.0f ), k_TestEntity );
 
             buf.Sort();
             buf.Sort(); // second call — must not change result
 
-            const auto cmds = buf.GetCommands();
-            REQUIRE( cmds[0].Key < cmds[1].Key );
+            const auto &bins = buf.GetBins();
+            REQUIRE( bins[0]->Key < bins[1]->Key );
         }
 
-        SECTION( "Emplace after Sort marks buffer unsorted" )
+        SECTION( "Add after Sort marks buffer unsorted" )
         {
             DrawCommandBuffer buf;
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 2, 0, 1.0f ) ) );
+            buf.Add( sort_key::EncodeOpaque( 2, 0, 1.0f ), k_TestEntity );
             buf.Sort();
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 1, 0, 1.0f ) ) );
-            buf.Sort(); // must re-sort including the new entry
+            buf.Add( sort_key::EncodeOpaque( 1, 0, 1.0f ), k_TestEntity );
+            buf.Sort(); // must re-sort including the new bin
 
-            const auto cmds = buf.GetCommands();
-            REQUIRE( cmds[0].Key < cmds[1].Key );
+            const auto &bins = buf.GetBins();
+            REQUIRE( bins[0]->Key < bins[1]->Key );
         }
 
         SECTION( "Clear then repopulate and sort" )
         {
             DrawCommandBuffer buf;
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 5, 0, 1.0f ) ) );
+            buf.Add( sort_key::EncodeOpaque( 5, 0, 1.0f ), k_TestEntity );
             buf.Sort();
             buf.Clear();
 
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 2, 0, 10.0f ) ) );
-            buf.Emplace( MakeCommand( sort_key::EncodeOpaque( 1, 0, 5.0f ) ) );
+            buf.Add( sort_key::EncodeOpaque( 2, 0, 10.0f ), k_TestEntity );
+            buf.Add( sort_key::EncodeOpaque( 1, 0, 5.0f ), k_TestEntity );
             buf.Sort();
 
-            const auto cmds = buf.GetCommands();
-            REQUIRE( cmds.GetItemCount() == 2 );
-            REQUIRE( cmds[0].Key < cmds[1].Key );
+            const auto &bins = buf.GetBins();
+            REQUIRE( bins.GetItemCount() == 2 );
+            REQUIRE( bins[0]->Key < bins[1]->Key );
         }
     }
 }

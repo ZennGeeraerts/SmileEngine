@@ -81,16 +81,20 @@ namespace smile::graphic
         m_ImmediateCommandList.SetGraphicsState( graphicsState );
     }
 
-    void RenderContext::DrawIndexed( Uint32 indexCount )
+    void RenderContext::DrawIndexed( const Count indexCount )
     {
         rhi::DrawIndexedParams params{ indexCount, 0, 0 };
         m_ImmediateCommandList.DrawIndexed( params );
     }
 
-    void RenderContext::Draw( Uint32 vertexCount )
+    void RenderContext::Draw( const Count vertexCount )
     {
         rhi::DrawParams params{ vertexCount, 0 };
         m_ImmediateCommandList.Draw( params );
+    }
+
+    void RenderContext::DrawInstanced( const Count vertexCount, const Count instanceCount )
+    {
     }
 
     void RenderContext::FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const
