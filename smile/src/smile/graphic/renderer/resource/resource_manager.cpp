@@ -689,13 +689,28 @@ namespace smile::graphic
 
         const GraphicsPipeline pipeline{ handle };
         m_GraphicsPipelines.PushBack( pipeline );
+        m_GraphicsPipelineCache.Add( descriptor, pipeline );
         return pipeline;
+    }
+
+    GraphicsPipeline ResourceManager::GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor )
+    {
+        const auto pipeline = m_GraphicsPipelineCache.Find( descriptor );
+
+        if ( pipeline )
+        {
+            return *pipeline;
+        }
+
+        return CreateGraphicsPipeline( descriptor );
     }
 
     void ResourceManager::DestroyGraphicsPipeline( GraphicsPipeline &pipeline )
     {
         m_Device.DestroyGraphicsPipeline( pipeline.GetHandle() );
         m_GraphicsPipelines.Erase( pipeline );
+        m_GraphicsPipelineCache.Invalidate( pipeline );
+
         m_GraphicsPipelineHandleManager.DestroyHandle( pipeline.GetHandle() );
         pipeline.m_Handle = rhi::GraphicsPipelineHandle::NullHandle();
     }

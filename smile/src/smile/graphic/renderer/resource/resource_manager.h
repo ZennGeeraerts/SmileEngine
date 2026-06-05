@@ -137,6 +137,7 @@ namespace smile::graphic
             BindingSet &set );
 
         GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
+        GraphicsPipeline GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
         void DestroyGraphicsPipeline( GraphicsPipeline &pipeline );
 
         rhi::Object GetShaderResourceView( const Texture &texture );
@@ -191,6 +192,7 @@ namespace smile::graphic
         ResourceCache< ConstantBufferDescriptor, ConstantBuffer > m_ConstantBufferCache;
         ResourceCache< rhi::BindingLayout, BindingLayout > m_BindingLayoutCache;
         ResourceCache< rhi::BindingSetDescriptor, BindingSet > m_BindingSetCache;
+        ResourceCache< GraphicsPipelineDescriptor, GraphicsPipeline > m_GraphicsPipelineCache;
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;
