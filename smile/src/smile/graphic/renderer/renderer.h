@@ -20,17 +20,15 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/graphic/renderer/render_graph/render_graph.h"
-#include "smile/graphic/renderer/passes/forward_pass.h"
 #include "smile/graphic/renderer/passes/debug_pass.h"
 #include "smile/graphic/renderer/debug_renderer.h"
 #include "smile/graphic/rhi/swap_chain.h"
+#include "smile/core/ecs/entity_handle.h"
 
 namespace smile::graphic
 {
     class RenderEngine;
     class RenderWorld;
-    class DrawCommandBuffer;
-    class View;
 
     class Renderer final
     {
@@ -63,10 +61,17 @@ namespace smile::graphic
         }
 
       private:
-        RenderEngine &m_Engine;
+        void RenderView( const RenderWorld &renderWorld,
+            const ecs::EntityHandle viewEntity,
+            RenderContext &ctx,
+            ResourceManager &resourceManager );
 
-        RenderGraph m_Graph;
-        ForwardPassData m_ForwardData;
+        void BuildRenderGraph( const RenderWorld &renderWorld,
+            const ecs::EntityHandle viewEntity,
+            ResourceManager &resourceManager );
+
+      private:
+        RenderEngine &m_Engine;
         DebugPassData m_DebugData;
         DebugRenderer m_DebugRenderer;
 

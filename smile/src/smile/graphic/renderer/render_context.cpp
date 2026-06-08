@@ -95,6 +95,11 @@ namespace smile::graphic
 
     void RenderContext::DrawInstanced( const Count vertexCount, const Count instanceCount )
     {
+        // m_pImmediateCommandList.DrawIndexedInstanced
+    }
+
+    void DrawInstancedIndexed()
+    {
     }
 
     void RenderContext::FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const

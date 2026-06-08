@@ -26,12 +26,11 @@
 
 namespace smile::graphic
 {
-    Renderer::Renderer( RenderEngine &engine ) noexcept : m_Engine{ engine }, m_Graph{ engine.GetResourceManager() }
+    Renderer::Renderer( RenderEngine &engine ) noexcept : m_Engine{ engine }
     {
         auto &ctx = engine.GetRenderContext();
         auto &rm = engine.GetResourceManager();
 
-        m_ForwardData.Initialize( ctx, rm, engine.GetMaterialSystem() );
         m_DebugData.Initialize( ctx, rm, engine.GetShaderLibrary() );
     }
 
@@ -51,46 +50,111 @@ namespace smile::graphic
 
         m_DebugRenderer.Flush( m_DebugData ); // DebugPassData::LineList
 
+        auto group = renderWorld.GetGroup< View >( ecs::g_Get< BindingSet > );
+        for ( const auto viewEntity : group )
+        {
+            RenderView( renderWorld, viewEntity, ctx, resourceManager );
+        }
+    }
+
+    void Renderer::RenderView( const RenderWorld &renderWorld,
+        const ecs::EntityHandle viewEntity,
+        RenderContext &ctx,
+        ResourceManager &resourceManager )
+    {
+        RenderGraph graph{ resourceManager };
+        BuildRenderGraph( graph, renderWorld, viewEntity, resourceManager );
+
+        graph.Compile();
+        graph.Execute( ctx );
+    }
+
+    void Renderer::BuildRenderGraph( RenderGraph &graph,
+        const RenderWorld &renderWorld,
+        const ecs::EntityHandle viewEntity,
+        ResourceManager &resourceManager )
+    {
         // Register render passes
         RenderGraphResourceHandle colorHandle;
         RenderGraphResourceHandle depthHandle;
 
-        AddForwardPass( m_Graph,
-            m_ForwardData,
-            renderWorld,
-            buffer,
-            framebuffer.GetWidth(),
-            framebuffer.GetHeight(),
-            colorHandle,
-            depthHandle );
+        const auto &view = renderWorld.GetComponent< View >( viewEntity );
+        const auto &renderTarget = view.GetRenderTarget();
+        const auto width = renderTarget.GetWidth();
+        const auto height = renderTarget.GetHeight();
 
-        AddDebugPass( m_Graph, m_DebugData, view, colorHandle );
+        graph.AddPass(
+            "OpaquePass",
+            [&, width, height]( RenderGraphPassBuilder &builder )
+            {
+                colorHandle = builder.CreateTexture(
+                    "SceneColor", RenderGraphTextureDescriptor{ width, height, rhi::Format::RGBA8_UNORM } );
+
+                depthHandle = builder.CreateTexture(
+                    "SceneDepth", RenderGraphTextureDescriptor{ width, height, rhi::Format::D24S8 } );
+
+                builder.WriteColor( colorHandle );
+                builder.WriteDepth( depthHandle );
+            },
+            [this, &renderWorld, &resourceManager, viewEntity](
+                const RenderGraphPassResources &res, RenderContext &ctx )
+            {
+                const Framebuffer &fb = res.GetFramebuffer();
+                ctx.Clear(
+                    resourceManager.GetFramebufferAttachmentSet( fb ), math::Color{ 0.0f, 0.0f, 0.0f, 1.0f }, 1.0f, 0 );
+
+                const auto &viewBindingSet = renderWorld.GetComponent< BindingSet >( viewEntity );
+                const auto &cmdBuffer = renderWorld.GetOpaqueCommandBuffer( viewEntity );
+
+                for ( const DrawBin *bin : cmdBuffer.GetSorted() )
+                {
+                    for ( const BinItem &item : bin->Items )
+                    {
+                        const auto &mesh = renderWorld.GetComponent< Mesh >( item.Entity );
+                        const auto &mi = renderWorld.GetComponent< MaterialInstance >( item.Entity );
+                        const auto &pipeline = renderWorld.GetComponent< GraphicsPipeline >( item.Entity );
+
+                        const auto &materialData = m_Engine.GetMaterialSystem().GetMaterialData( mi );
+
+                        GraphicsState state{};
+                        state.Framebuffer = fb;
+                        state.Pipeline = pipeline;
+                        state.VertexBuffers.PushBack( { mesh.VertexBuffer, 0u, 0u } );
+                        state.IndexBuffer = IndexBufferBinding{ mesh.IndexBuffer, rhi::Format::R32_UINT, 0u };
+                        state.Bindings.PushBack( viewBindingSet );
+                        state.Bindings.PushBack( materialData.Bindings );
+
+                        ctx.SetGraphicsState( state );
+                        ctx.DrawIndexed( mesh.IndexBuffer.GetIndexCount() );
+                    }
+                }
+            } );
+
+        // AddDebugPass( m_Graph, m_DebugData, view, colorHandle );
 
         // PostProcess - extension point (tone-map, bloom); currently a no-op passthrough
-        m_Graph.AddPass(
+        graph.AddPass(
             "PostProcess",
             [&]( RenderGraphPassBuilder &builder )
             {
                 builder.ReadTexture( colorHandle );
                 builder.WriteColor( colorHandle );
             },
-            []( const RenderGraphPassResources &, RenderContext & ) {} );
+            []( const RenderGraphPassResources &, RenderContext &, ecs::EntityHandle ) {} );
 
         // PresentPass - blit SceneColor to final render target
-        m_Graph.AddPass(
+        graph.AddPass(
             "PresentPass",
             [&]( RenderGraphPassBuilder &builder ) { builder.ReadTexture( colorHandle ); },
-            [&ctx, &resourceManager, &framebuffer, colorHandle]( const RenderGraphPassResources &res, RenderContext & )
+            [&resourceManager, colorHandle, &renderWorld, &renderTarget](
+                const RenderGraphPassResources &res, RenderContext &ctx )
             {
-                const FramebufferAttachmentSet &fbSet = resourceManager.GetFramebufferAttachmentSet( framebuffer );
+                const FramebufferAttachmentSet &fbSet = resourceManager.GetFramebufferAttachmentSet( renderTarget );
 
                 SM_ASSERT( !fbSet.ColorAttachments.IsEmpty() );
 
                 ctx.CopyTexture( fbSet.ColorAttachments[0].Texture, {}, res.GetTexture( colorHandle ), {} );
             } );
-
-        m_Graph.Compile();
-        m_Graph.Execute( ctx );
     }
 
     void Renderer::EndFrame( const rhi::SwapChain &swapChain )

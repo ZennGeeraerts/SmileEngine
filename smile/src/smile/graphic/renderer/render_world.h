@@ -60,9 +60,16 @@ namespace smile::graphic
             return m_ECSEngine.GetComponent< ComponentType >( entity );
         }
 
-        void SetViewport( const rhi::Viewport &viewport ) noexcept
+        template < typename... Components >
+        ecs::ECSEngine::View< Components... > GetView()
         {
-            m_ViewportState.Viewports[0] = viewport;
+            return m_ECSEngine.GetView< Components... >();
+        }
+
+        template < typename... Owned, typename... Get >
+        ecs::ECSEngine::Group< Owned..., Get... > GetGroup( ecs::ComponentList< Get... > get = {} )
+        {
+            return m_ECSEngine.GetGroup< Owned..., Get... >( get );
         }
 
         void Prepare( RenderContext &renderContext,
@@ -72,10 +79,11 @@ namespace smile::graphic
 
         void Enqueue();
 
+        const DrawCommandBuffer &GetOpaqueCommandBuffer( ecs::EntityHandle entity ) const;
+
       private:
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
-        rhi::ViewportState m_ViewportState;
 
         primitive::HashMap< ecs::EntityHandle, DrawCommandBuffer > m_OpaqueCommandBuffers;
     };

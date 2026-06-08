@@ -22,7 +22,7 @@ namespace smile::graphic
     smile::ecs::EntityHandle RenderWorld::CreateEntity( const primitive::UUID uuid )
     {
         const auto handle = m_ECSEngine.CreateEntity();
-        m_ECSEngine.AddComponent< ecs::IDComponent >( handle, uuid );
+        m_ECSEngine.AddComponent< world::ecs::IDComponent >( handle, uuid );
         m_EntityMap[uuid] = handle;
 
         return handle;
@@ -33,8 +33,10 @@ namespace smile::graphic
         MeshManager &meshManager,
         MaterialSystem &materialSystem )
     {
-        const BindingLayout viewBindingLayout = resourceManager.GetOrCreateBindingLayout(
-            rhi::BindingLayout{ { rhi::BindingLayoutElement::CreateConstantBuffer( 0, rhi::ShaderStage::Vertex ) } } );
+        const rhi::BindingLayout bindingLayoutDesc{
+            { rhi::ShaderStage::Vertex }, { { 0, rhi::ResourceType::ConstantBuffer } } };
+
+        const BindingLayout viewBindingLayout = resourceManager.GetOrCreateBindingLayout( bindingLayoutDesc );
 
         {
             auto group = m_ECSEngine.GetGroup< ecs::CameraComponent, world::ecs::TransformComponent >();
@@ -44,18 +46,17 @@ namespace smile::graphic
                 const auto &[camera, transform] =
                     m_ECSEngine.GetComponents< ecs::CameraComponent, world::ecs::TransformComponent >( entity );
 
+                SM_ASSERT( camera.RenderTarget.IsValid() );
+
                 if ( !camera.HasFixedAspectRatio )
                 {
-                    const Uint32 viewportWidth =
-                        foundation::NumericCast< Uint32 >( m_ViewportState.Viewports[0].GetWidth() );
-                    const Uint32 viewportHeight =
-                        foundation::NumericCast< Uint32 >( m_ViewportState.Viewports[0].GetHeight() );
+                    const rhi::Viewport vp = camera.RenderTarget.GetViewport();
+                    const Uint32 viewportWidth = foundation::NumericCast< Uint32 >( vp.GetWidth() );
+                    const Uint32 viewportHeight = foundation::NumericCast< Uint32 >( vp.GetHeight() );
 
                     if ( viewportWidth > 0 && viewportHeight > 0 )
                         camera.Camera.SetViewportSize( viewportWidth, viewportHeight );
                 }
-
-                SM_ASSERT( camera.RenderTarget.IsValid() );
 
                 const auto worldTransform = transform.GetWorldTransform();
                 auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, DirectX::XMLoadFloat4x4( &worldTransform ) );
@@ -63,7 +64,7 @@ namespace smile::graphic
                 DirectX::XMStoreFloat4x4( &viewMatrix, viewMatrixMat );
 
                 View view{};
-                view.SetViewport( m_ViewportState.Viewports[0] );
+                view.SetViewport( camera.RenderTarget.GetViewport() );
                 view.SetViewProjectionMatrix( viewMatrix, camera.Camera.GetProjectionMatrix() );
                 view.SetRenderTarget( camera.RenderTarget );
 
@@ -75,7 +76,7 @@ namespace smile::graphic
                 AddOrReplaceComponent< View >( entity, view );
 
                 ConstantBufferDescriptor cbDesc{
-                    { "ViewProjection", ConstantType::Mat4 }, { "ViewInverse", ConstantType::Mat4 } };
+                    { { "ViewProjection", ConstantType::Mat4, 1 }, { "ViewInverse", ConstantType::Mat4, 1 } } };
 
                 const ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
 
@@ -102,7 +103,8 @@ namespace smile::graphic
         //     for ( auto entity : group )
         //     {
         //         const auto &[spriteRenderer, transform] =
-        //             m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity );
+        //             m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity
+        //             );
 
         //         auto materialInstance = materialSystem.GetOrCreateMaterialInstance( spriteRenderer.Material );
         //         auto texture = resourceManager.GetOrCreateTexture2D( spriteRenderer.Texture );
@@ -153,11 +155,18 @@ namespace smile::graphic
         }
     }
 
+    const DrawCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const ecs::EntityHandle entity ) const
+    {
+        return m_OpaqueCommandBuffers[entity];
+    }
+
     void RenderWorld::Enqueue()
     {
-        for ( auto cameraEntity : m_ECSEngine.GetGroup< ecs::CameraComponent >() )
+        auto viewGroup = m_ECSEngine.GetGroup< View >();
+
+        for ( auto viewEntity : viewGroup )
         {
-            const auto &view = m_ECSEngine.GetComponent< View >( cameraEntity );
+            const auto &view = m_ECSEngine.GetComponent< View >( viewEntity );
             const auto &viewMatrix = view.GetViewMatrix();
 
             auto group = m_ECSEngine.GetGroup< GraphicsPipeline, MaterialInstance, Mesh >(
@@ -177,10 +186,10 @@ namespace smile::graphic
                 const SortKey key = sort_key::EncodeOpaque(
                     pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), depth );
 
-                m_OpaqueCommandBuffers[cameraEntity].Add( key, entity );
+                m_OpaqueCommandBuffers[viewEntity].Add( key, entity );
             }
 
-            m_OpaqueCommandBuffers[cameraEntity].Sort();
+            m_OpaqueCommandBuffers[viewEntity].Sort();
         }
     }
 }
