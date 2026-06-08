@@ -121,6 +121,16 @@ namespace smile::graphic::rhi
             m_Elements.Clear();
         }
 
+        bool operator==( const BindingLayout &other ) const noexcept
+        {
+            return m_Visibility == other.m_Visibility && primitive::array::IsEqual( m_Elements, other.m_Elements );
+        }
+
+        bool operator!=( const BindingLayout &other ) const noexcept
+        {
+            return !( *this == other );
+        }
+
       private:
         primitive::Vector< BindingLayoutElement > m_Elements;
         foundation::Flags< ShaderStage > m_Visibility;

@@ -30,7 +30,7 @@ namespace smile::graphic
         const ResourceType *Add( const KeyType &key, const ResourceType &resource )
         {
             Invalidate( key );
-            const auto it = m_Cache.Insert( key, resource );
+            auto it = m_Cache.Insert( key, &resource );
             return it.GetItem();
         }
 
@@ -41,14 +41,14 @@ namespace smile::graphic
 
         const ResourceType *Find( const KeyType &key ) const
         {
-            const auto it = m_Cache.FindItemAtKey( key );
+            auto it = m_Cache.FindItemAtKey( key );
 
             return it != m_Cache.end() ? it.GetItem() : nullptr;
         }
 
         void Invalidate( const KeyType &key )
         {
-            const auto it = m_Cache.FindItemAtKey( key );
+            auto it = m_Cache.FindItemAtKey( key );
 
             if ( it != m_Cache.end() )
                 m_Cache.EraseItemAtKey( key );
@@ -56,7 +56,7 @@ namespace smile::graphic
 
         void Invalidate( const ResourceType &resource )
         {
-            const auto it = std::find_if(
+            auto it = std::find_if(
                 m_Cache.begin(), m_Cache.end(), [&resource]( const auto &kv ) { return kv.Value == &resource; } );
 
             if ( it != m_Cache.end() )

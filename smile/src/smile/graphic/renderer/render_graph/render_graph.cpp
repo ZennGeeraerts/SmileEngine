@@ -86,7 +86,7 @@ namespace smile::graphic
     // ---- RenderGraph ------------------------------------------------------------
 
     RenderGraph::RenderGraph( ResourceManager &resourceManager ) noexcept
-        : m_ResourceManager{ resourceManager }, m_TexturePool( resourceManager )
+        : m_ResourceManager{ resourceManager }, m_TexturePool{ resourceManager }
     {
     }
 

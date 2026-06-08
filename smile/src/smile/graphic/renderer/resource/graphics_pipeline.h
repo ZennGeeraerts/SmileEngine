@@ -14,6 +14,34 @@ namespace smile::graphic
 {
     struct GraphicsPipelineDescriptor final
     {
+        GraphicsPipelineDescriptor() = default;
+
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hash = std::hash< rhi::PrimitiveTopology >{}( Topology );
+            hash = foundation::HashCombine( hash, InputLayout.GetHashCode() );
+            hash = foundation::HashCombine( hash, RenderState.GetHashCode() );
+            hash = foundation::HashCombine( hash, VertexShader.GetHandle().Hash() );
+            hash = foundation::HashCombine( hash, PixelShader.GetHandle().Hash() );
+
+            for ( const auto &bindingLayout : BindingLayouts )
+                hash = foundation::HashCombine( hash, bindingLayout.GetHandle().Hash() );
+
+            return hash;
+        }
+
+        bool operator==( const GraphicsPipelineDescriptor &other ) const noexcept
+        {
+            return Topology == other.Topology && InputLayout == other.InputLayout && RenderState == other.RenderState &&
+                   VertexShader == other.VertexShader && PixelShader == other.PixelShader &&
+                   BindingLayouts == other.BindingLayouts;
+        }
+
+        bool operator!=( const GraphicsPipelineDescriptor &other ) const noexcept
+        {
+            return !( *this == other );
+        }
+
         rhi::PrimitiveTopology Topology;
         rhi::BufferLayout InputLayout;
         rhi::RenderState RenderState;
@@ -29,8 +57,7 @@ namespace smile::graphic
       public:
         GraphicsPipeline() = default;
 
-        GraphicsPipeline( rhi::GraphicsPipelineHandle handle ) noexcept
-            : m_Handle{ handle }
+        GraphicsPipeline( rhi::GraphicsPipelineHandle handle ) noexcept : m_Handle{ handle }
         {
         }
 
@@ -61,5 +88,17 @@ namespace smile::graphic
         rhi::GraphicsPipelineHandle m_Handle;
 
         friend class ResourceManager;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::GraphicsPipelineDescriptor >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::GraphicsPipelineDescriptor &desc ) const noexcept
+        {
+            return desc.GetHashCode();
+        }
     };
 }

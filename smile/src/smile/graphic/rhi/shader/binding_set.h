@@ -4,6 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
+#include "smile/common/primitive/collection/array_utils.h"
 #include "smile/common/primitive/collection/fixed_vector.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "resource_type.h"
@@ -197,6 +198,16 @@ namespace smile::graphic::rhi
         auto end() const noexcept
         {
             return Elements.end();
+        }
+
+        bool operator==( const BindingSetDescriptor &other ) const noexcept
+        {
+            return primitive::array::IsEqual( Elements, other.Elements );
+        }
+
+        bool operator!=( const BindingSetDescriptor &other ) const noexcept
+        {
+            return !( *this == other );
         }
 
         primitive::Vector< BindingSetElement > Elements;

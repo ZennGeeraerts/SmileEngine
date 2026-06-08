@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/scene/scene_camera.h"
+#include "smile/graphic/renderer/scene/scene_camera.h"
 #include "smile/graphic/renderer/resource/frame_buffer.h"
 
 namespace smile::graphic::ecs
