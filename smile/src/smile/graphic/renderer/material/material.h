@@ -78,6 +78,11 @@ namespace smile::graphic
 
         Material GetMaterial() const;
 
+        detail::MaterialInstanceHandle GetHandle() const noexcept
+        {
+            return m_Handle;
+        }
+
         foundation::HashCode GetHashCode() const noexcept
         {
             foundation::HashCode hashCode = m_Handle.Hash();

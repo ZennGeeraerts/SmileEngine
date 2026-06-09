@@ -61,15 +61,15 @@ namespace smile::graphic
         }
 
         template < typename... Components >
-        ecs::ECSEngine::View< Components... > GetView()
+        auto GetView()
         {
-            return m_ECSEngine.GetView< Components... >();
+            return m_ECSEngine.template GetView< Components... >();
         }
 
         template < typename... Owned, typename... Get >
-        ecs::ECSEngine::Group< Owned..., Get... > GetGroup( ecs::ComponentList< Get... > get = {} )
+        auto GetGroup( smile::ecs::ComponentList< Get... > get = {} )
         {
-            return m_ECSEngine.GetGroup< Owned..., Get... >( get );
+            return m_ECSEngine.template GetGroup< Owned..., Get... >( get );
         }
 
         void Prepare( RenderContext &renderContext,
@@ -79,12 +79,12 @@ namespace smile::graphic
 
         void Enqueue();
 
-        const DrawCommandBuffer &GetOpaqueCommandBuffer( ecs::EntityHandle entity ) const;
+        const DrawCommandBuffer &GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const;
 
       private:
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
 
-        primitive::HashMap< ecs::EntityHandle, DrawCommandBuffer > m_OpaqueCommandBuffers;
+        primitive::HashMap< smile::ecs::EntityHandle, DrawCommandBuffer > m_OpaqueCommandBuffers;
     };
 }

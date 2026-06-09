@@ -142,7 +142,7 @@ namespace smile::graphic
                 builder.ReadTexture( colorHandle );
                 builder.WriteColor( colorHandle );
             },
-            []( const RenderGraphPassResources &, RenderContext &, ecs::EntityHandle ) {} );
+            []( const RenderGraphPassResources &, RenderContext & ) {} );
 
         // PresentPass - blit SceneColor to final render target
         m_Graph.AddPass(

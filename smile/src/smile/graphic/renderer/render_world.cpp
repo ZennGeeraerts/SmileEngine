@@ -5,6 +5,7 @@
 #include "smile/core/world/ecs/transform_component.h"
 #include "sprite/ecs/sprite_renderer_component.h"
 #include "mesh/mesh_manager.h"
+#include "mesh/ecs/mesh_renderer_component.h"
 #include "render_context.h"
 #include "material/material_system.h"
 #include "resource/resource_manager.h"
@@ -51,8 +52,8 @@ namespace smile::graphic
                 if ( !camera.HasFixedAspectRatio )
                 {
                     const rhi::Viewport vp = camera.RenderTarget.GetViewport();
-                    const Uint32 viewportWidth = foundation::NumericCast< Uint32 >( vp.GetWidth() );
-                    const Uint32 viewportHeight = foundation::NumericCast< Uint32 >( vp.GetHeight() );
+                    const Uint32 viewportWidth = static_cast< Uint32 >( vp.GetWidth() );
+                    const Uint32 viewportHeight = static_cast< Uint32 >( vp.GetHeight() );
 
                     if ( viewportWidth > 0 && viewportHeight > 0 )
                         camera.Camera.SetViewportSize( viewportWidth, viewportHeight );
@@ -78,7 +79,7 @@ namespace smile::graphic
                 ConstantBufferDescriptor cbDesc{
                     { { "ViewProjection", ConstantType::Mat4, 1 }, { "ViewInverse", ConstantType::Mat4, 1 } } };
 
-                const ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
+                ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
 
                 cameraConstantBuffer.Update( &viewCons );
                 renderContext.FillConstantBuffer( cameraConstantBuffer );
@@ -87,8 +88,8 @@ namespace smile::graphic
                 const rhi::BindingSetDescriptor bindingSetDesc{
                     { rhi::BindingSetElement::CreateConstantBuffer( 0, cameraConstantBuffer.GetHandle() ) } };
 
-                const BindingSet bindingSet =
-                    resourceManager.GetOrCreateBindingSet( bindingSetDesc, { rhi::ShaderStage::Vertex } );
+                const BindingSet bindingSet = resourceManager.GetOrCreateBindingSet(
+                    bindingSetDesc, viewBindingLayout, { rhi::ShaderStage::Vertex } );
 
                 AddOrReplaceComponent< BindingSet >( entity, bindingSet );
 
@@ -155,7 +156,7 @@ namespace smile::graphic
         }
     }
 
-    const DrawCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const ecs::EntityHandle entity ) const
+    const DrawCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const
     {
         return m_OpaqueCommandBuffers[entity];
     }
@@ -179,14 +180,17 @@ namespace smile::graphic
                         .GetComponents< GraphicsPipeline, MaterialInstance, Mesh, world::ecs::TransformComponent >(
                             entity );
 
+                const BinKey binKey = bin_key::EncodeBin(
+                    pipeline.GetHandle(), materialInstance.GetHandle().GetIndex(), mesh.Handle.GetIndex() );
+
                 const float depth = transform.WorldTranslation.x * viewMatrix._13 +
                                     transform.WorldTranslation.y * viewMatrix._23 +
                                     transform.WorldTranslation.z * viewMatrix._33 + viewMatrix._43;
 
-                const SortKey key = sort_key::EncodeOpaque(
+                const SortKey sortKey = sort_key::EncodeOpaque(
                     pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), depth );
 
-                m_OpaqueCommandBuffers[viewEntity].Add( key, entity );
+                m_OpaqueCommandBuffers[viewEntity].Add( binKey, sortKey, entity );
             }
 
             m_OpaqueCommandBuffers[viewEntity].Sort();
