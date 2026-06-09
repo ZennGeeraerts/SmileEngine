@@ -26,7 +26,7 @@
 
 namespace smile::graphic
 {
-    Renderer::Renderer( RenderEngine &engine ) noexcept : m_Engine{ engine }
+    Renderer::Renderer( RenderEngine &engine ) noexcept : m_Engine{ engine }, m_Graph{ engine.GetResourceManager() }
     {
         auto &ctx = engine.GetRenderContext();
         auto &rm = engine.GetResourceManager();
@@ -53,8 +53,11 @@ namespace smile::graphic
         auto group = renderWorld.GetGroup< View >( ecs::g_Get< BindingSet > );
         for ( const auto viewEntity : group )
         {
-            RenderView( renderWorld, viewEntity, ctx, resourceManager );
+            BuildRenderGraph( renderWorld, viewEntity, resourceManager );
         }
+
+        m_Graph.Compile();
+        m_Graph.Execute( ctx );
     }
 
     void Renderer::RenderView( const RenderWorld &renderWorld,
@@ -62,15 +65,13 @@ namespace smile::graphic
         RenderContext &ctx,
         ResourceManager &resourceManager )
     {
-        RenderGraph graph{ resourceManager };
-        BuildRenderGraph( graph, renderWorld, viewEntity, resourceManager );
+        BuildRenderGraph( renderWorld, viewEntity, resourceManager );
 
-        graph.Compile();
-        graph.Execute( ctx );
+        m_Graph.Compile();
+        m_Graph.Execute( ctx );
     }
 
-    void Renderer::BuildRenderGraph( RenderGraph &graph,
-        const RenderWorld &renderWorld,
+    void Renderer::BuildRenderGraph( const RenderWorld &renderWorld,
         const ecs::EntityHandle viewEntity,
         ResourceManager &resourceManager )
     {
@@ -80,13 +81,14 @@ namespace smile::graphic
 
         const auto &view = renderWorld.GetComponent< View >( viewEntity );
         const auto &renderTarget = view.GetRenderTarget();
-        const auto width = renderTarget.GetWidth();
-        const auto height = renderTarget.GetHeight();
 
-        graph.AddPass(
+        m_Graph.AddPass(
             "OpaquePass",
-            [&, width, height]( RenderGraphPassBuilder &builder )
+            [&]( RenderGraphPassBuilder &builder )
             {
+                const auto width = renderTarget.GetWidth();
+                const auto height = renderTarget.GetHeight();
+
                 colorHandle = builder.CreateTexture(
                     "SceneColor", RenderGraphTextureDescriptor{ width, height, rhi::Format::RGBA8_UNORM } );
 
@@ -133,7 +135,7 @@ namespace smile::graphic
         // AddDebugPass( m_Graph, m_DebugData, view, colorHandle );
 
         // PostProcess - extension point (tone-map, bloom); currently a no-op passthrough
-        graph.AddPass(
+        m_Graph.AddPass(
             "PostProcess",
             [&]( RenderGraphPassBuilder &builder )
             {
@@ -143,7 +145,7 @@ namespace smile::graphic
             []( const RenderGraphPassResources &, RenderContext &, ecs::EntityHandle ) {} );
 
         // PresentPass - blit SceneColor to final render target
-        graph.AddPass(
+        m_Graph.AddPass(
             "PresentPass",
             [&]( RenderGraphPassBuilder &builder ) { builder.ReadTexture( colorHandle ); },
             [&resourceManager, colorHandle, &renderWorld, &renderTarget](

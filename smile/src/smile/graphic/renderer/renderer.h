@@ -24,6 +24,7 @@
 #include "smile/graphic/renderer/debug_renderer.h"
 #include "smile/graphic/rhi/swap_chain.h"
 #include "smile/core/ecs/entity_handle.h"
+#include "render_graph/render_graph.h"
 
 namespace smile::graphic
 {
@@ -74,6 +75,7 @@ namespace smile::graphic
         RenderEngine &m_Engine;
         DebugPassData m_DebugData;
         DebugRenderer m_DebugRenderer;
+        RenderGraph m_Graph;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };
