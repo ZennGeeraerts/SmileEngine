@@ -42,7 +42,7 @@ namespace smile::graphic
         memory::Scope< RenderEngine > m_RenderEngine;
         Renderer *m_Renderer = nullptr;
         rhi::SwapChain *m_SwapChain = nullptr;
-        RenderScene *m_Scene = nullptr;
+        RenderWorld *m_RenderWorld = nullptr;
 
         VertexBuffer m_VertexBuffer;
         IndexBuffer m_IndexBuffer;

@@ -16,7 +16,7 @@
 #include "material/asset/material_instance_manager.h"
 #include "material/material_system.h"
 #include "renderer.h"
-#include "render_scene.h"
+#include "render_world.h"
 
 namespace smile::window
 {
@@ -34,8 +34,7 @@ namespace smile::graphic
 
         rhi::SwapChain &CreateSwapChain( const window::Window *window );
         Renderer &CreateRenderer();
-        RenderScene &CreateScene( rhi::SwapChain &swapChain );
-        RenderScene &CreateScene( const Framebuffer &framebuffer );
+        RenderWorld &CreateWorld();
 
         RenderContext &GetRenderContext() noexcept
         {
@@ -106,7 +105,7 @@ namespace smile::graphic
 
         primitive::Vector< memory::Scope< rhi::SwapChain > > m_SwapChains;
         primitive::Vector< memory::Scope< Renderer > > m_Renderers;
-        primitive::Vector< memory::Scope< RenderScene > > m_Scenes;
+        primitive::Vector< memory::Scope< RenderWorld > > m_Worlds;
 
         primitive::HashMap< rhi::SwapChain *, Framebuffer > m_RenderTargets;
 
