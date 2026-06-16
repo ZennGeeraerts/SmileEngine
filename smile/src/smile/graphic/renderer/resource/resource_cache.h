@@ -24,13 +24,13 @@ namespace smile::graphic
     class ResourceCache final
     {
       public:
-        using Iterator = primitive::HashMap< KeyType, const ResourceType * >::Iterator;
-        using ConstIterator = primitive::HashMap< KeyType, const ResourceType * >::ConstIterator;
+        using Iterator = primitive::HashMap< KeyType, ResourceType >::Iterator;
+        using ConstIterator = primitive::HashMap< KeyType, ResourceType >::ConstIterator;
 
-        const ResourceType *Add( const KeyType &key, const ResourceType &resource )
+        ResourceType Add( const KeyType &key, const ResourceType &resource )
         {
             Invalidate( key );
-            auto it = m_Cache.Insert( key, &resource );
+            auto it = m_Cache.Insert( key, resource );
             return it.GetItem();
         }
 
@@ -39,11 +39,11 @@ namespace smile::graphic
             return m_Cache.HasItemAtKey( key );
         }
 
-        const ResourceType *Find( const KeyType &key ) const
+        std::optional< ResourceType > Find( const KeyType &key ) const
         {
             auto it = m_Cache.FindItemAtKey( key );
 
-            return it != m_Cache.end() ? it.GetItem() : nullptr;
+            return it != m_Cache.end() ? std::optional< ResourceType >{ it.GetItem() } : std::nullopt;
         }
 
         void Invalidate( const KeyType &key )
@@ -57,7 +57,7 @@ namespace smile::graphic
         void Invalidate( const ResourceType &resource )
         {
             auto it = std::find_if(
-                m_Cache.begin(), m_Cache.end(), [&resource]( const auto &kv ) { return kv.Value == &resource; } );
+                m_Cache.begin(), m_Cache.end(), [&resource]( const auto &kv ) { return kv.Value == resource; } );
 
             if ( it != m_Cache.end() )
             {
@@ -71,6 +71,6 @@ namespace smile::graphic
         }
 
       private:
-        primitive::HashMap< KeyType, const ResourceType * > m_Cache;
+        primitive::HashMap< KeyType, ResourceType > m_Cache;
     };
 }

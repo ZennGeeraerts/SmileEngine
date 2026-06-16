@@ -165,9 +165,9 @@ namespace smile::graphic
     {
         const auto texture = m_TextureCache.Find( textureAsset );
 
-        if ( texture )
+        if ( texture.has_value() )
         {
-            return *texture;
+            return texture.value();
         }
 
         return CreateTexture2D( textureAsset );
@@ -232,9 +232,9 @@ namespace smile::graphic
     {
         const auto sampler = m_SamplerCache.Find( descriptor );
 
-        if ( sampler )
+        if ( sampler.has_value() )
         {
-            return *sampler;
+            return sampler.value();
         }
 
         return CreateSampler( descriptor );
@@ -370,9 +370,9 @@ namespace smile::graphic
         const ShaderKey key{ byteCode, entryPoint, targetProfile };
         const auto vertexShader = m_VertexShaderCache.Find( key );
 
-        if ( vertexShader )
+        if ( vertexShader.has_value() )
         {
-            return *vertexShader;
+            return vertexShader.value();
         }
 
         return CreateVertexShader( byteCode, entryPoint, targetProfile );
@@ -437,9 +437,9 @@ namespace smile::graphic
         const ShaderKey key{ byteCode, entryPoint, targetProfile };
         const auto pixelShader = m_PixelShaderCache.Find( key );
 
-        if ( pixelShader )
+        if ( pixelShader.has_value() )
         {
-            return *pixelShader;
+            return pixelShader.value();
         }
 
         return CreatePixelShader( byteCode, entryPoint, targetProfile );
@@ -589,9 +589,9 @@ namespace smile::graphic
     {
         const auto bindingLayout = m_BindingLayoutCache.Find( layout );
 
-        if ( bindingLayout )
+        if ( bindingLayout.has_value() )
         {
-            return *bindingLayout;
+            return bindingLayout.value();
         }
 
         return CreateBindingLayout( layout );
@@ -628,9 +628,9 @@ namespace smile::graphic
     {
         const auto bindingSet = m_BindingSetCache.Find( descriptor );
 
-        if ( bindingSet )
+        if ( bindingSet.has_value() )
         {
-            return *bindingSet;
+            return bindingSet.value();
         }
 
         return CreateBindingSet( descriptor, layout, shaderStage );
@@ -697,9 +697,9 @@ namespace smile::graphic
     {
         const auto pipeline = m_GraphicsPipelineCache.Find( descriptor );
 
-        if ( pipeline )
+        if ( pipeline.has_value() )
         {
-            return *pipeline;
+            return pipeline.value();
         }
 
         return CreateGraphicsPipeline( descriptor );

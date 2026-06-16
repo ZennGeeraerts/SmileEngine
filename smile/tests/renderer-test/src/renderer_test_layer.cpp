@@ -47,8 +47,11 @@ namespace smile::graphic
         auto cameraEntity = m_RenderWorld->CreateEntity();
         auto meshEntity = m_RenderWorld->CreateEntity();
 
-        m_RenderWorld->AddComponent< ecs::CameraComponent >(
-            cameraEntity, camera, true, false, m_RenderEngine->GetRenderTarget( *m_SwapChain ) );
+        auto &cameraComponent = m_RenderWorld->AddComponent< ecs::CameraComponent >( cameraEntity );
+        cameraComponent.Camera = camera;
+        cameraComponent.IsPrimary = true;
+        cameraComponent.HasFixedAspectRatio = false;
+        cameraComponent.RenderTarget = m_RenderEngine->GetRenderTarget( *m_SwapChain );
 
         MeshSource::Ref mesh = memory::CreateRef< MeshSource >();
         mesh->AddPosition( { -0.5f, -0.5f, 0.0f } );
@@ -76,7 +79,9 @@ namespace smile::graphic
         MaterialInstanceAsset::Ref materialInstance =
             materialInstanceManager.CreateMaterialInstance( "DefaultMeshMaterialInstance", materialAsset, {} );
 
-        m_RenderWorld->AddComponent< ecs::MeshRendererComponent >( meshEntity, mesh, materialInstance );
+        auto &meshRendererComponent = m_RenderWorld->AddComponent< ecs::MeshRendererComponent >( meshEntity );
+        meshRendererComponent.Mesh = mesh;
+        meshRendererComponent.Material = materialInstance;
 
         DirectX::XMFLOAT4X4 worldTransform;
         DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
@@ -88,8 +93,6 @@ namespace smile::graphic
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
-        m_Material.SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
-
         m_Renderer->BeginFrame();
         m_Renderer->OnRender( *m_RenderWorld );
         m_Renderer->EndFrame( *m_SwapChain );

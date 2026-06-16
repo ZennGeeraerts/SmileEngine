@@ -43,15 +43,15 @@ namespace smile::graphic
         smile::ecs::EntityHandle CreateEntity( const primitive::UUID uuid );
 
         template < typename ComponentType, typename... Args >
-        void AddComponent( smile::ecs::EntityHandle entity, Args &&...args )
+        ComponentType &AddComponent( smile::ecs::EntityHandle entity, Args &&...args )
         {
-            m_ECSEngine.AddComponent< ComponentType >( entity, std::forward< Args >( args )... );
+            return m_ECSEngine.AddComponent< ComponentType >( entity, std::forward< Args >( args )... );
         }
 
         template < typename ComponentType, typename... Args >
-        void AddOrReplaceComponent( smile::ecs::EntityHandle entity, Args &&...args )
+        ComponentType &AddOrReplaceComponent( smile::ecs::EntityHandle entity, Args &&...args )
         {
-            m_ECSEngine.AddOrReplaceComponent< ComponentType >( entity, std::forward< Args >( args )... );
+            return m_ECSEngine.AddOrReplaceComponent< ComponentType >( entity, std::forward< Args >( args )... );
         }
 
         template < typename ComponentType >

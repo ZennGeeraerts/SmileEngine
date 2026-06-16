@@ -18,11 +18,6 @@
 
 #include "smile/core/application/layer.h"
 #include "smile/core/window/events/application_event.h"
-
-#include "smile/graphic/renderer/render_scene.h"
-#include "smile/graphic/renderer/resource/vertex_buffer.h"
-#include "smile/graphic/renderer/resource/index_buffer.h"
-#include "smile/graphic/renderer/material/material.h"
 #include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
@@ -43,9 +38,5 @@ namespace smile::graphic
         Renderer *m_Renderer = nullptr;
         rhi::SwapChain *m_SwapChain = nullptr;
         RenderWorld *m_RenderWorld = nullptr;
-
-        VertexBuffer m_VertexBuffer;
-        IndexBuffer m_IndexBuffer;
-        Material m_Material;
     };
 }
