@@ -79,6 +79,8 @@ namespace smile::graphic
         const auto &resources = program->GetResources();
         for ( const auto &res : resources )
         {
+            layout.Visibility |= res.Visibility;
+
             if ( res.NamedElement.Element.Type == rhi::ResourceType::Texture_SRV ||
                  res.NamedElement.Element.Type == rhi::ResourceType::Texture_UAV )
             {

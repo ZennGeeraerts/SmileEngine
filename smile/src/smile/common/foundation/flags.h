@@ -123,6 +123,12 @@ namespace smile::foundation
             return m_Flags == other.m_Flags;
         }
 
+        constexpr inline Flags &operator|=( const Flags &other )
+        {
+            m_Flags |= other.m_Flags;
+            return *this;
+        }
+
       private:
         UnderlyingType m_Flags{ 0 };
     };
