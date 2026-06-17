@@ -129,6 +129,7 @@ namespace smile::graphic
 
                 const auto mesh = meshManager.GetOrCreateMesh( meshRenderer.Mesh );
                 const auto materialInstance = materialSystem.GetOrCreateMaterialInstance( meshRenderer.Material );
+                materialSystem.UpdateMaterialInstance( materialInstance );
 
                 AddOrReplaceComponent< Mesh >( entity, mesh );
                 AddOrReplaceComponent< MaterialInstance >( entity, materialInstance );

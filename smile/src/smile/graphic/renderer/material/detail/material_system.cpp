@@ -90,9 +90,14 @@ namespace smile::graphic::detail
 
         auto &materialData = m_MaterialData[handle.GetIndex()];
 
-        m_ResourceManager.DestroyConstantBuffer( materialData.ConstantBuffer );
-        m_ResourceManager.DestroyBindingLayout( materialData.BindingLayout );
-        m_ResourceManager.DestroyBindingSet( materialData.Bindings );
+        if ( materialData.ConstantBuffer.IsValid() )
+            m_ResourceManager.DestroyConstantBuffer( materialData.ConstantBuffer );
+
+        if ( materialData.BindingLayout.IsValid() )
+            m_ResourceManager.DestroyBindingLayout( materialData.BindingLayout );
+
+        if ( materialData.Bindings.IsValid() )
+            m_ResourceManager.DestroyBindingSet( materialData.Bindings );
 
         m_MaterialInstanceHandleManager.DestroyHandle( handle );
     }

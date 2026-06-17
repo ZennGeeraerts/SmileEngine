@@ -51,7 +51,7 @@ namespace smile::graphic
 
         m_DebugRenderer.Flush( m_DebugData ); // DebugPassData::LineList
 
-        auto group = renderWorld.GetGroup< View >( ecs::g_Get< BindingSet > );
+        auto group = renderWorld.GetGroup< View >();
         for ( const auto viewEntity : group )
         {
             BuildRenderGraph( renderWorld, viewEntity, resourceManager );

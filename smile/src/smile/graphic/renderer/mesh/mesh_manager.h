@@ -32,7 +32,7 @@ namespace smile::graphic
       private:
         static constexpr Uint16 s_MaxMeshCount = ( 12 << 10 );
 
-        primitive::FixedVector< Mesh, s_MaxMeshCount > m_Meshes;
+        primitive::Array< Mesh, s_MaxMeshCount > m_Meshes;
         ResourceCache< MeshSource::Ref, Mesh > m_MeshCache;
 
         MeshHandleManager m_HandleManager;

@@ -54,6 +54,7 @@ namespace smile::graphic
         cameraComponent.RenderTarget = m_RenderEngine->GetRenderTarget( *m_SwapChain );
 
         MeshSource::Ref mesh = memory::CreateRef< MeshSource >();
+        mesh->SetVertexCount( 4 );
         mesh->AddPosition( { -0.5f, -0.5f, 0.0f } );
         mesh->AddPosition( { -0.5f, 0.5f, 0.0f } );
         mesh->AddPosition( { 0.5f, -0.5f, 0.0f } );
@@ -76,15 +77,13 @@ namespace smile::graphic
         MaterialAsset::Ref materialAsset = materialManager.CreateMaterial(
             "DefaultMeshMaterial", shaderLibrary.Get( "pos_tex.vs" ), shaderLibrary.Get( "col_tex.ps" ) );
 
-        MaterialInstanceAsset::Ref materialInstance =
-            materialInstanceManager.CreateMaterialInstance( "DefaultMeshMaterialInstance", materialAsset, {} );
+        MaterialInstanceAsset::Ref materialInstance = materialInstanceManager.CreateMaterialInstance(
+            "DefaultMeshMaterialInstance", materialAsset, materialAsset->GetDescriptor() );
+        // materialInstance->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
 
         auto &meshRendererComponent = m_RenderWorld->AddComponent< ecs::MeshRendererComponent >( meshEntity );
         meshRendererComponent.Mesh = mesh;
         meshRendererComponent.Material = materialInstance;
-
-        DirectX::XMFLOAT4X4 worldTransform;
-        DirectX::XMStoreFloat4x4( &worldTransform, DirectX::XMMatrixIdentity() );
     }
 
     void RendererTestLayer::OnDetach()

@@ -23,7 +23,6 @@
 
 namespace smile::graphic
 {
-
     struct MaterialTextureBinding final
     {
         MaterialTextureBinding() = default;
