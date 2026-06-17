@@ -38,7 +38,7 @@ namespace smile::graphic
             std::move( materialInstanceManager ),
             std::move( materialSystem ) );
 
-        engine->LoadShaders();
+        engine->LoadResources();
 
         return engine;
     }
@@ -66,7 +66,7 @@ namespace smile::graphic
     {
     }
 
-    void RenderEngine::LoadShaders()
+    void RenderEngine::LoadResources()
     {
         m_ShaderLibrary->Load( "resources/shaders/debug_renderer.vs.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/pos_col.ps.smshader" );
@@ -77,6 +77,8 @@ namespace smile::graphic
         m_ShaderLibrary->Load( "resources/shaders/pbr.vs.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/pbr.ps.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/pbr_skinned.vs.smshader" );
+
+        m_TextureManager->LoadFallback( "resources/textures/uv_grid.png" );
     }
 
     rhi::SwapChain &RenderEngine::CreateSwapChain( const window::Window *window )

@@ -30,7 +30,7 @@ namespace smile::graphic
       public:
         static memory::Scope< RenderEngine > Create( rhi::RendererBackendType api );
 
-        void LoadShaders();
+        void LoadResources();
 
         rhi::SwapChain &CreateSwapChain( const window::Window *window );
         Renderer &CreateRenderer();

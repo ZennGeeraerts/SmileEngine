@@ -96,8 +96,9 @@ namespace smile::asset
 
         virtual TKey GetKey( Ref asset ) const = 0;
 
+        TLoader m_Loader;
+
       private:
         primitive::HashMap< TKey, Ref > m_Assets;
-        TLoader m_Loader;
     };
 }

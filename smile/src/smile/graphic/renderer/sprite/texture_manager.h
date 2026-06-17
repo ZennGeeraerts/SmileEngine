@@ -16,6 +16,13 @@ namespace smile::graphic
         {
         }
 
+        void LoadFallback( const fs::Path &path )
+        {
+            m_pFallBackTexture = m_Loader.Load( path );
+
+            SM_ASSERT( m_pFallBackTexture );
+        }
+
         TextureAsset::Ref GetFallback() const override
         {
             return m_pFallBackTexture;
