@@ -20,7 +20,7 @@
 #include "frame.h"
 #include "render_engine.h"
 #include "render_world.h"
-#include "draw/draw_command_buffer.h"
+#include "draw/binned_command_buffer.h"
 #include "smile/core/math/color.h"
 #include "smile/graphic/renderer/render_graph/render_graph_resource.h"
 #include "smile/graphic/renderer/view.h"

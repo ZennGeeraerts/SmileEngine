@@ -9,12 +9,12 @@
 =======================================================================*/
 
 /**
- * @file        draw_command_buffer.h
+ * @file        binned_command_buffer.h
  * @author      Zenn Geeraerts
  * @created     01 June 2026
- * @brief       Binned, per-pass collection of DrawBins for draw-call ordering.
+ * @brief       BinnedCommandBuffer - Add, Sort, and Clear implementations.
  *
- *              DrawCommandBuffer groups submissions by SortKey into DrawBins. Entities
+ *              BinnedCommandBuffer groups submissions by SortKey into DrawBins. Entities
  *              sharing the same sort key are automatically batched into one bin. All
  *              mesh, material, and pipeline data is resolved per entity from the
  *              RenderWorld ECS at execute time — the buffer stores only sort keys and
@@ -34,22 +34,22 @@
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/primitive/collection/hash_map.h"
-#include "smile/graphic/renderer/draw/draw_bin.h"
+#include "draw_bin.h"
 #include "smile/graphic/renderer/mesh/mesh_source.h"
 
 namespace smile::graphic
 {
-    class DrawCommandBuffer final
+    class BinnedCommandBuffer final
     {
       public:
-        DrawCommandBuffer() = default;
-        ~DrawCommandBuffer() = default;
+        BinnedCommandBuffer() = default;
+        ~BinnedCommandBuffer() = default;
 
-        DrawCommandBuffer( const DrawCommandBuffer & ) = delete;
-        DrawCommandBuffer &operator=( const DrawCommandBuffer & ) = delete;
+        BinnedCommandBuffer( const BinnedCommandBuffer & ) = delete;
+        BinnedCommandBuffer &operator=( const BinnedCommandBuffer & ) = delete;
 
-        DrawCommandBuffer( DrawCommandBuffer && ) = default;
-        DrawCommandBuffer &operator=( DrawCommandBuffer && ) = default;
+        BinnedCommandBuffer( BinnedCommandBuffer && ) = default;
+        BinnedCommandBuffer &operator=( BinnedCommandBuffer && ) = default;
 
         /**
          * Adds @p entity to the bin identified by @p key.

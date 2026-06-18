@@ -94,7 +94,7 @@ namespace smile::graphic
 
                 AddOrReplaceComponent< BindingSet >( entity, bindingSet );
 
-                m_OpaqueCommandBuffers[entity] = DrawCommandBuffer{};
+                m_OpaqueCommandBuffers[entity] = BinnedCommandBuffer{};
             }
         }
 
@@ -158,7 +158,7 @@ namespace smile::graphic
         }
     }
 
-    const DrawCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const
+    const BinnedCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const
     {
         return m_OpaqueCommandBuffers[entity];
     }

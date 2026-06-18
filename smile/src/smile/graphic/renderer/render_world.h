@@ -26,7 +26,7 @@
 #include "shader/binding_layout.h"
 #include "shader/binding_set.h"
 #include "shader/constant_buffer.h"
-#include "draw/draw_command_buffer.h"
+#include "draw/binned_command_buffer.h"
 
 namespace smile::graphic
 {
@@ -79,12 +79,12 @@ namespace smile::graphic
 
         void Enqueue();
 
-        const DrawCommandBuffer &GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const;
+        const BinnedCommandBuffer &GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const;
 
       private:
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
 
-        primitive::HashMap< smile::ecs::EntityHandle, DrawCommandBuffer > m_OpaqueCommandBuffers;
+        primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > m_OpaqueCommandBuffers;
     };
 }

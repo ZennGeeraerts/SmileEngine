@@ -9,19 +9,19 @@
 =======================================================================*/
 
 /**
- * @file        draw_command_buffer.cpp
+ * @file        binned_command_buffer.cpp
  * @author      Zenn Geeraerts
  * @created     01 June 2026
- * @brief       DrawCommandBuffer — Add, Sort, and Clear implementations.
+ * @brief       BinnedCommandBuffer - Add, Sort, and Clear implementations.
  */
 #include "smpch.h"
-#include "smile/graphic/renderer/draw/draw_command_buffer.h"
+#include "binned_command_buffer.h"
 
 #include <algorithm>
 
 namespace smile::graphic
 {
-    void DrawCommandBuffer::Add( const BinKey binKey, const SortKey sortKey, const ecs::EntityHandle entity )
+    void BinnedCommandBuffer::Add( const BinKey binKey, const SortKey sortKey, const ecs::EntityHandle entity )
     {
         auto [it, inserted] = m_Bins.TryCreateItemAtKey( binKey );
         DrawBin &bin = it.GetItem();
@@ -32,7 +32,7 @@ namespace smile::graphic
         m_Sorted = false;
     }
 
-    void DrawCommandBuffer::Sort()
+    void BinnedCommandBuffer::Sort()
     {
         if ( m_Sorted )
             return;
@@ -52,7 +52,7 @@ namespace smile::graphic
         m_Sorted = true;
     }
 
-    void DrawCommandBuffer::Clear() noexcept
+    void BinnedCommandBuffer::Clear() noexcept
     {
         m_Bins.Clear();
         m_SortedBins.Clear();
