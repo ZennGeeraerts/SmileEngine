@@ -437,7 +437,7 @@ namespace smile::graphic::rhi
             params.IndexCount, params.InstanceCount, params.IndexOffset, params.VertexOffset, params.InstanceOffset );
     }
 
-    void D3D11CommandList::FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size ) const
+    void D3D11CommandList::FillBuffer( GPUBufferHandle handle, const void *pData, Uint32 size, Uint32 offset ) const
     {
         SM_ASSERT( m_pDevice->IsHandleValid( handle, m_pDevice->m_GPUBuffers ) );
 
@@ -446,7 +446,7 @@ namespace smile::graphic::rhi
         D3D11_MAPPED_SUBRESOURCE mappedResource{};
         m_Context.pImmediateContext->Map(
             gpuBuffer.pInternal.Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedResource );
-        memcpy( mappedResource.pData, pData, size );
+        memcpy( static_cast< Byte * >( mappedResource.pData ) + offset, pData, size );
         m_Context.pImmediateContext->Unmap( gpuBuffer.pInternal.Get(), 0 );
     }
 
