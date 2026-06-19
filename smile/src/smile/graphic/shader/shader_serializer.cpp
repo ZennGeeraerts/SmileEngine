@@ -53,6 +53,7 @@ namespace smile::graphic
         {
             yaml::Node node;
             node["SemanticName"] = element.Name;
+            node["SemanticIndex"] = element.SemanticIndex;
             node["Format"] = rhi::GetFormatInfo( element.FormatType ).Name;
             inputs.push_back( node );
         }
@@ -64,6 +65,7 @@ namespace smile::graphic
         {
             yaml::Node node;
             node["SemanticName"] = element.Name;
+            node["SemanticIndex"] = element.SemanticIndex;
             node["Format"] = rhi::GetFormatInfo( element.FormatType ).Name;
             outputs.push_back( node );
         }
@@ -143,7 +145,7 @@ namespace smile::graphic
             {
                 rhi::BufferElement element;
                 element.Name = entry["SemanticName"].as< primitive::String >();
-
+                element.SemanticIndex = entry["SemanticIndex"].as< Index >();
                 const rhi::FormatInfo &formatInfo = rhi::GetFormatInfo( entry["Format"].as< primitive::String >() );
                 element.FormatType = formatInfo.Format;
                 element.Size = formatInfo.BytesPerBlock * formatInfo.BlockSize;
@@ -272,9 +274,9 @@ namespace smile::graphic
         if ( header.Magic != g_ShaderFileMagic )
         {
             SM_LOG_WARNING( "ShaderSerializer::Deserialize > Failed to load shader: invalid shader file magic" );
-            
+
             file.Close();
-            
+
             return false;
         }
 

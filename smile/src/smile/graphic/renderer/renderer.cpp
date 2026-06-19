@@ -22,17 +22,32 @@
 #include "render_world.h"
 #include "draw/binned_command_buffer.h"
 #include "smile/core/math/color.h"
+#include "smile/core/world/ecs/transform_component.h"
 #include "smile/graphic/renderer/render_graph/render_graph_resource.h"
 #include "smile/graphic/renderer/view.h"
 
 namespace smile::graphic
 {
-    Renderer::Renderer( RenderEngine &engine ) noexcept : m_Engine{ engine }, m_Graph{ engine.GetResourceManager() }
+    static rhi::GPUBufferDescriptor CreateInstanceBufferDesc()
+    {
+        rhi::GPUBufferDescriptor desc{};
+        desc.Usage = rhi::BufferUsage::Dynamic;
+        desc.CPUAccess = rhi::CPUAccessMode::Write;
+        desc.BindFlags.Set( rhi::BufferBindFlags::VertexBuffer );
+
+        return desc;
+    }
+
+    Renderer::Renderer( RenderEngine &engine ) noexcept
+        : m_Engine{ engine },
+          m_Graph{ engine.GetResourceManager() },
+          m_BufferAllocator{ engine.GetResourceManager(), CreateInstanceBufferDesc() }
     {
         auto &ctx = engine.GetRenderContext();
         auto &rm = engine.GetResourceManager();
 
         m_DebugData.Initialize( ctx, rm, engine.GetShaderLibrary() );
+        m_BufferAllocator.Initialize( 16 * 1024 * 1024 ); // TODO: Move to separate method
     }
 
     void Renderer::BeginFrame()
@@ -111,25 +126,45 @@ namespace smile::graphic
 
                 for ( const DrawBin *bin : cmdBuffer.GetSorted() )
                 {
-                    for ( const BinItem &item : bin->Items )
+                    const Count instanceCount = bin->GetInstanceCount();
+                    const Uint32 instanceStride = sizeof( DirectX::XMFLOAT4X4 );
+
+                    BufferSlice instanceDataSlice =
+                        m_BufferAllocator.Allocate( instanceCount * instanceStride, alignof( DirectX::XMFLOAT4X4 ) );
+
+                    VertexBuffer instanceBuffer{ instanceDataSlice.Buffer, instanceCount, instanceStride };
+
+                    primitive::Vector< DirectX::XMFLOAT4X4 > instanceData( instanceCount );
+                    for ( Index index{ 0 }; index < instanceCount; ++index )
                     {
-                        const auto &mesh = renderWorld.GetComponent< Mesh >( item.Entity );
-                        const auto &mi = renderWorld.GetComponent< MaterialInstance >( item.Entity );
-                        const auto &pipeline = renderWorld.GetComponent< GraphicsPipeline >( item.Entity );
+                        auto entity = bin->Items[index].Entity;
 
-                        const auto &materialData = m_Engine.GetMaterialSystem().GetMaterialData( mi );
+                        const auto &transform = renderWorld.GetComponent< world::ecs::TransformComponent >( entity );
+                        const auto worldTransform = transform.GetWorldTransform();
 
-                        GraphicsState state{};
-                        state.Framebuffer = fb;
-                        state.Pipeline = pipeline;
-                        state.VertexBuffers.PushBack( { mesh.VertexBuffer, 0u, 0u } );
-                        state.IndexBuffer = IndexBufferBinding{ mesh.IndexBuffer, rhi::Format::R32_UINT, 0u };
-                        state.Bindings.PushBack( viewBindingSet );
-                        state.Bindings.PushBack( materialData.Bindings );
-
-                        ctx.SetGraphicsState( state );
-                        ctx.DrawIndexed( mesh.IndexBuffer.GetIndexCount() );
+                        instanceData[index] = worldTransform;
                     }
+
+                    ctx.FillVertexBuffer( instanceBuffer, instanceData.GetData(), instanceCount );
+
+                    const auto &item = bin->Items[0];
+                    const auto &mesh = renderWorld.GetComponent< Mesh >( item.Entity );
+                    const auto &mi = renderWorld.GetComponent< MaterialInstance >( item.Entity );
+                    const auto &pipeline = renderWorld.GetComponent< GraphicsPipeline >( item.Entity );
+
+                    const auto &materialData = m_Engine.GetMaterialSystem().GetMaterialData( mi );
+
+                    GraphicsState state{};
+                    state.Framebuffer = fb;
+                    state.Pipeline = pipeline;
+                    state.VertexBuffers.PushBack( { mesh.VertexBuffer, 0u, 0u } );
+                    state.VertexBuffers.PushBack( { instanceBuffer, 1u, instanceDataSlice.Range.Offset } );
+                    state.IndexBuffer = IndexBufferBinding{ mesh.IndexBuffer, rhi::Format::R32_UINT, 0u };
+                    state.Bindings.PushBack( viewBindingSet );
+                    state.Bindings.PushBack( materialData.Bindings );
+
+                    ctx.SetGraphicsState( state );
+                    ctx.DrawInstancedIndexed( mesh.IndexBuffer.GetIndexCount(), instanceCount );
                 }
             } );
 
@@ -171,6 +206,7 @@ namespace smile::graphic
         m_Graph.Reset();
         m_DebugData.Reset();
         m_DebugRenderer.Reset();
+        m_BufferAllocator.Reset();
 
         ReleaseFrameData( m_RenderedFrameIndex );
         m_RenderedFrameIndex = m_CurrentFrameIndex;

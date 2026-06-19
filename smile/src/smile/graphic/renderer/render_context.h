@@ -41,6 +41,7 @@ namespace smile::graphic
         void DrawIndexed( const Count indexCount );
         void Draw( const Count vertexCount );
         void DrawInstanced( const Count vertexCount, const Count instanceCount );
+        void DrawInstancedIndexed( const Count indexCount, const Count instanceCount );
 
         void FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const;
         void FillConstantBuffer( const ConstantBuffer &constantBuffer ) const;

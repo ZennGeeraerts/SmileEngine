@@ -49,11 +49,13 @@ namespace smile::graphic
         Program( ShaderAsset::ConstRef vertexShader,
             ShaderAsset::ConstRef pixelShader,
             const primitive::Vector< Program::Resource > &resources,
-            const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &cbDescs )
+            const primitive::HashMap< primitive::String, ConstantBufferDescriptor > &cbDescs,
+            const rhi::BufferLayout &vertexLayout )
             : m_VertexShader{ vertexShader },
               m_PixelShader{ pixelShader },
               m_ResourceBindings{ resources },
-              m_ConstantBufferDescs{ cbDescs }
+              m_ConstantBufferDescs{ cbDescs },
+              m_VertexLayout{ vertexLayout }
         {
         }
 
@@ -79,7 +81,7 @@ namespace smile::graphic
 
         const rhi::BufferLayout &GetVertexLayout() const
         {
-            return m_VertexShader->GetReflectionData().InputSignature;
+            return m_VertexLayout;
         }
 
         static Program::Ref Create( ShaderAsset::ConstRef vertexShader, ShaderAsset::ConstRef pixelShader );
@@ -90,5 +92,6 @@ namespace smile::graphic
 
         primitive::Vector< Resource > m_ResourceBindings;
         primitive::HashMap< primitive::String, ConstantBufferDescriptor > m_ConstantBufferDescs;
+        rhi::BufferLayout m_VertexLayout;
     };
 }

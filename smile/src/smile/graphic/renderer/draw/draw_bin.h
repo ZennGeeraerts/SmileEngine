@@ -39,5 +39,10 @@ namespace smile::graphic
         {
             std::sort( Items.begin(), Items.end(), []( const BinItem &a, const BinItem &b ) { return a.Key < b.Key; } );
         }
+
+        Count GetInstanceCount() const noexcept
+        {
+            return Items.GetItemCount();
+        }
     };
 }

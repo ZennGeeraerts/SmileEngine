@@ -17,6 +17,8 @@
 #include "smpch.h"
 #include "program.h"
 
+#include "smile/common/primitive/text/utils.h"
+
 namespace smile::graphic
 {
     static bool ValidateReflectionData( const ShaderReflectionData &vsReflection,
@@ -131,6 +133,16 @@ namespace smile::graphic
         primitive::HashMap< primitive::String, ConstantBufferDescriptor > cbDescs;
         MergeReflectionData( vsReflection, psReflection, resources, cbDescs );
 
-        return memory::CreateRef< Program >( vertexShader, pixelShader, resources, cbDescs );
+        rhi::BufferLayout vertexLayout = vsReflection.InputSignature;
+
+        for ( auto &element : vertexLayout )
+        {
+            if ( primitive::StartsWith( element.Name, "INSTANCE_" ) )
+            {
+                element.IsInstanced = true;
+            }
+        }
+
+        return memory::CreateRef< Program >( vertexShader, pixelShader, resources, cbDescs, vertexLayout );
     }
 }

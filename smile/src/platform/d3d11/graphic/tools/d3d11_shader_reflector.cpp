@@ -215,6 +215,7 @@ namespace smile::graphic
 
             rhi::BufferElement element;
             element.Name = paramDesc.SemanticName;
+            element.SemanticIndex = paramDesc.SemanticIndex;
             element.FormatType = GetFormatFromD3D11Param( paramDesc );
 
             reflectionData.InputSignature.AddElement( element );
@@ -231,6 +232,7 @@ namespace smile::graphic
 
             rhi::BufferElement element;
             element.Name = paramDesc.SemanticName;
+            element.SemanticIndex = paramDesc.SemanticIndex;
             element.FormatType = GetFormatFromD3D11Param( paramDesc );
 
             reflectionData.OutputSignature.AddElement( element );

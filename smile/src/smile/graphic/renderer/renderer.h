@@ -25,6 +25,7 @@
 #include "smile/graphic/rhi/swap_chain.h"
 #include "smile/core/ecs/entity_handle.h"
 #include "render_graph/render_graph.h"
+#include "draw/buffer_allocator.h"
 
 namespace smile::graphic
 {
@@ -76,6 +77,7 @@ namespace smile::graphic
         DebugPassData m_DebugData;
         DebugRenderer m_DebugRenderer;
         RenderGraph m_Graph;
+        BufferAllocator m_BufferAllocator;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

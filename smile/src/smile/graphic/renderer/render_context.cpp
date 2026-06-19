@@ -95,11 +95,14 @@ namespace smile::graphic
 
     void RenderContext::DrawInstanced( const Count vertexCount, const Count instanceCount )
     {
-        // m_pImmediateCommandList.DrawIndexedInstanced
+        rhi::DrawInstancedParams params{ vertexCount, instanceCount, 0, 0 };
+        m_ImmediateCommandList.DrawInstanced( params );
     }
 
-    void DrawInstancedIndexed()
+    void RenderContext::DrawInstancedIndexed( const Count indexCount, const Count instanceCount )
     {
+        rhi::DrawIndexedInstancedParams params{ indexCount, instanceCount, 0, 0, 0 };
+        m_ImmediateCommandList.DrawIndexedInstanced( params );
     }
 
     void RenderContext::FillVertexBuffer( const VertexBuffer &vertexBuffer, void *pData, const Count vertexCount ) const

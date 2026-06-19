@@ -31,12 +31,12 @@ namespace smile::graphic::rhi
         for ( const auto &element : layout )
         {
             inputDescs.PushBack( D3D11_INPUT_ELEMENT_DESC{ element.Name.GetData(),
-                0,
+                element.SemanticIndex,
                 GetDXGIFormatMapping( element.FormatType ).SRVFormat,
-                0,
+                element.IsInstanced ? 1u : 0u,
                 element.Offset,
-                D3D11_INPUT_PER_VERTEX_DATA,
-                0 } );
+                element.IsInstanced ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA,
+                element.IsInstanced ? 1u : 0u } );
         }
 
         UINT count{ static_cast< UINT >( inputDescs.GetItemCount() ) };

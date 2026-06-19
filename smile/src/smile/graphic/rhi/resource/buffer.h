@@ -21,22 +21,29 @@ namespace smile::graphic::rhi
         BufferElement() = default;
 
         BufferElement( Format format, const primitive::String &name )
-            : Name{ name }, FormatType{ format }, Size{ GetFormatInfo( format ).BytesPerBlock }, Offset{ 0 }
+            : Name{ name },
+              FormatType{ format },
+              SemanticIndex{ 0 },
+              Size{ GetFormatInfo( format ).BytesPerBlock },
+              Offset{ 0 }
         {
         }
 
         foundation::HashCode GetHashCode() const
         {
             foundation::HashCode hash = std::hash< primitive::String >{}( Name );
+            hash = foundation::HashCombine( hash, std::hash< Index >{}( SemanticIndex ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( static_cast< Uint8 >( FormatType ) ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Size ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Offset ) );
+            hash = foundation::HashCombine( hash, std::hash< bool >{}( IsInstanced ) );
             return hash;
         }
 
         inline bool operator==( const BufferElement &other ) const noexcept
         {
-            return Name == other.Name && FormatType == other.FormatType && Size == other.Size && Offset == other.Offset;
+            return Name == other.Name && SemanticIndex == other.SemanticIndex && FormatType == other.FormatType &&
+                   Size == other.Size && Offset == other.Offset && IsInstanced == other.IsInstanced;
         }
 
         inline bool operator!=( const BufferElement &other ) const noexcept
@@ -45,9 +52,11 @@ namespace smile::graphic::rhi
         }
 
         primitive::String Name;
+        Index SemanticIndex;
         Format FormatType;
         Uint8 Size;
         Uint8 Offset;
+        bool IsInstanced = false;
     };
 
     class BufferLayout final
@@ -74,7 +83,7 @@ namespace smile::graphic::rhi
         {
             return m_Elements.begin();
         }
-        
+
         primitive::Vector< BufferElement >::Iterator end()
         {
             return m_Elements.end();
