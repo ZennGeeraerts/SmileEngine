@@ -41,6 +41,9 @@ namespace smile::graphic
         for ( const auto &indexBuffer : m_IndexBuffers )
             m_Device.DestroyGPUBuffer( indexBuffer.GetHandle() );
 
+        for ( const auto &buffer : m_GPUBufferHandles )
+            m_Device.DestroyGPUBuffer( buffer );
+
         for ( const auto &constantBuffer : m_ConstantBuffers )
             m_Device.DestroyGPUBuffer( constantBuffer.GetHandle() );
 
@@ -132,6 +135,23 @@ namespace smile::graphic
         m_IndexBuffers.Erase( indexBuffer );
         m_GPUBufferHandleManager.DestroyHandle( indexBuffer.GetHandle() );
         indexBuffer.m_Handle = rhi::GPUBufferHandle::NullHandle();
+    }
+
+    rhi::GPUBufferHandle ResourceManager::CreateGPUBuffer( const rhi::GPUBufferDescriptor &desc )
+    {
+        rhi::GPUBufferHandle handle = m_GPUBufferHandleManager.CreateHandle();
+        m_Device.CreateGPUBuffer( handle, desc );
+
+        m_GPUBufferHandles.PushBack( handle );
+        return handle;
+    }
+
+    void ResourceManager::DestroyGPUBuffer( rhi::GPUBufferHandle &handle )
+    {
+        m_Device.DestroyGPUBuffer( handle );
+        m_GPUBufferHandles.Erase( handle );
+        m_GPUBufferHandleManager.DestroyHandle( handle );
+        handle = rhi::GPUBufferHandle::NullHandle();
     }
 
     Texture ResourceManager::CreateTexture2D( Image::ConstRef pImage, bool updateable )

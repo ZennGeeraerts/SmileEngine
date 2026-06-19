@@ -49,6 +49,12 @@ namespace smile::graphic
         IndexBuffer CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
         void DestroyIndexBuffer( IndexBuffer &indexBuffer );
 
+        InstanceBuffer CreateInstanceBuffer( const Count instanceCount, const rhi::BufferLayout &layout );
+        void DestroyInstanceBuffer( InstanceBuffer &instanceBuffer );
+
+        rhi::GPUBufferHandle CreateGPUBuffer( const rhi::GPUBufferDescriptor &desc );
+        void DestroyGPUBuffer( rhi::GPUBufferHandle &handle );
+
         Texture CreateTexture2D( Image::ConstRef pImage, bool updateable );
         Texture CreateTexture2D( TextureAsset::ConstRef textureAsset );
 
@@ -174,6 +180,7 @@ namespace smile::graphic
 
         primitive::Vector< VertexBuffer > m_VertexBuffers;
         primitive::Vector< IndexBuffer > m_IndexBuffers;
+        primitive::Vector< rhi::GPUBufferHandle > m_GPUBufferHandles;
         primitive::Vector< Texture > m_Textures;
         primitive::Vector< Sampler > m_Samplers;
         primitive::Vector< ConstantBuffer > m_ConstantBuffers;
