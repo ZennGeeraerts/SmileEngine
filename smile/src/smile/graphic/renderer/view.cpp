@@ -35,7 +35,7 @@ namespace smile::graphic
 
         auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &m_ProjectionMatrix );
         auto viewMatrixMat = DirectX::XMLoadFloat4x4( &m_ViewMatrix );
-        auto viewProjectionMatrixMat = DirectX::XMMatrixTranspose( viewMatrixMat * projectionMatrixMat );
+        auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
 
         DirectX::XMStoreFloat4x4( &m_ViewProjectionMatrix, viewProjectionMatrixMat );
         DirectX::XMStoreFloat4x4( &m_ViewInverseMatrix, DirectX::XMMatrixInverse( nullptr, viewMatrixMat ) );

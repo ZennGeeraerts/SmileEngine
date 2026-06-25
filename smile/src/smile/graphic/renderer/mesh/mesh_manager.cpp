@@ -24,17 +24,10 @@ namespace smile::graphic
     {
     }
 
-    Mesh MeshManager::CreateMesh( MeshSource::Ref meshSource )
+    Mesh MeshManager::CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
     {
-        static const rhi::BufferLayout s_VertexLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" },
-            { rhi::Format::RGB32_FLOAT, "NORMAL" },
-            { rhi::Format::RG32_FLOAT, "TEXCOORD" },
-            { rhi::Format::RGB32_FLOAT, "TANGENT" },
-            { rhi::Format::RGB32_FLOAT, "BINORMAL" },
-            { rhi::Format::RGBA32_FLOAT, "COLOR" } };
-
         const MeshHandle handle = m_HandleManager.CreateHandle();
-        const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, s_VertexLayout, handle );
+        const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, vertexLayout, handle );
 
         m_Meshes[handle.GetIndex()] = mesh;
         m_MeshCache.Add( meshSource, mesh );
@@ -42,7 +35,7 @@ namespace smile::graphic
         return mesh;
     }
 
-    Mesh MeshManager::GetOrCreateMesh( MeshSource::Ref meshSource )
+    Mesh MeshManager::GetOrCreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
     {
         const auto mesh = m_MeshCache.Find( meshSource );
 
@@ -51,6 +44,6 @@ namespace smile::graphic
             return *mesh;
         }
 
-        return CreateMesh( meshSource );
+        return CreateMesh( meshSource, vertexLayout );
     }
 }

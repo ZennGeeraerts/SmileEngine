@@ -60,6 +60,12 @@ namespace smile::graphic
             return m_ECSEngine.GetComponent< ComponentType >( entity );
         }
 
+        template < typename ComponentType >
+        ComponentType &GetComponent( smile::ecs::EntityHandle entity )
+        {
+            return m_ECSEngine.GetComponent< ComponentType >( entity );
+        }
+
         template < typename... Components >
         auto GetView()
         {

@@ -17,6 +17,7 @@
 #include "renderer_test_layer.h"
 
 #include "smile/core/application/application.h"
+#include "smile/core/world/ecs/transform_component.h"
 
 #include "smile/graphic/renderer/render_engine.h"
 #include "smile/graphic/renderer/render_scene.h"
@@ -52,6 +53,9 @@ namespace smile::graphic
         cameraComponent.IsPrimary = true;
         cameraComponent.HasFixedAspectRatio = false;
         cameraComponent.RenderTarget = m_RenderEngine->GetRenderTarget( *m_SwapChain );
+
+        auto &transform = m_RenderWorld->GetComponent< world::ecs::TransformComponent >( cameraEntity );
+        transform.WorldTranslation = DirectX::XMFLOAT3{ 0.0f, 0.0f, -5.0f };
 
         MeshSource::Ref mesh = memory::CreateRef< MeshSource >();
         mesh->SetVertexCount( 4 );

@@ -77,7 +77,7 @@ namespace smile::graphic
 
                 AddOrReplaceComponent< View >( entity, view );
 
-                ConstantBufferDescriptor cbDesc{
+                const ConstantBufferDescriptor cbDesc{
                     { { "ViewProjection", ConstantType::Mat4, 1 }, { "ViewInverse", ConstantType::Mat4, 1 } } };
 
                 ConstantBuffer cameraConstantBuffer = resourceManager.GetOrCreateConstantBuffer( cbDesc );
@@ -127,19 +127,21 @@ namespace smile::graphic
                 const auto &[meshRenderer, transform] =
                     m_ECSEngine.GetComponents< ecs::MeshRendererComponent, world::ecs::TransformComponent >( entity );
 
-                const auto mesh = meshManager.GetOrCreateMesh( meshRenderer.Mesh );
                 const auto materialInstance = materialSystem.GetOrCreateMaterialInstance( meshRenderer.Material );
                 materialSystem.UpdateMaterialInstance( materialInstance );
 
-                AddOrReplaceComponent< Mesh >( entity, mesh );
                 AddOrReplaceComponent< MaterialInstance >( entity, materialInstance );
 
                 const auto &materialData = materialSystem.GetMaterialData( materialInstance );
                 const auto material = materialInstance.GetMaterial();
 
+                const auto &vertexLayout = materialData.ShaderProgram->GetVertexLayout();
+                const auto mesh = meshManager.GetOrCreateMesh( meshRenderer.Mesh, vertexLayout );
+                AddOrReplaceComponent< Mesh >( entity, mesh );
+
                 GraphicsPipelineDescriptor psoDesc{};
                 psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
-                psoDesc.InputLayout = materialData.ShaderProgram->GetVertexLayout();
+                psoDesc.InputLayout = vertexLayout;
 
                 psoDesc.VertexShader =
                     resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );

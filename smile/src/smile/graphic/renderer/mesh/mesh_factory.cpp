@@ -163,31 +163,53 @@ namespace smile::graphic
             for ( const rhi::BufferElement &element : layout )
             {
                 if ( element.Name == "POSITION" )
+                {
                     memcpy( meshSource->m_pDataLocation,
                         meshSource->HasSemantic( Semantic::Positon ) ? &meshSource->m_Positions[i] : &s_DefaultFloat3,
                         element.Size );
+
+                    meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                }
                 else if ( element.Name == "NORMAL" )
+                {
                     memcpy( meshSource->m_pDataLocation,
                         meshSource->HasSemantic( Semantic::Normal ) ? &meshSource->m_Normals[i] : &s_DefaultFloat3,
                         element.Size );
+
+                    meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                }
                 else if ( element.Name == "TEXCOORD" )
+                {
                     memcpy( meshSource->m_pDataLocation,
                         meshSource->HasSemantic( Semantic::TexCoord ) ? &meshSource->m_TexCoords[i] : &s_DefaultFloat2,
                         element.Size );
+
+                    meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                }
                 else if ( element.Name == "TANGENT" )
+                {
                     memcpy( meshSource->m_pDataLocation,
                         meshSource->HasSemantic( Semantic::Tangent ) ? &meshSource->m_Tangents[i] : &s_DefaultFloat3,
                         element.Size );
+
+                    meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                }
                 else if ( element.Name == "BINORMAL" )
+                {
                     memcpy( meshSource->m_pDataLocation,
                         meshSource->HasSemantic( Semantic::Binormal ) ? &meshSource->m_Binormals[i] : &s_DefaultFloat3,
                         element.Size );
+
+                    meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                }
                 else if ( element.Name == "COLOR" )
+                {
                     memcpy( meshSource->m_pDataLocation,
                         meshSource->HasSemantic( Semantic::Color ) ? &meshSource->m_Colors[i] : &s_DefaultFloat4,
                         element.Size );
 
-                meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                    meshSource->m_pDataLocation = ( Byte * )meshSource->m_pDataLocation + element.Size;
+                }
             }
         }
 

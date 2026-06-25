@@ -28,10 +28,10 @@ struct VS_OUTPUT
 VS_OUTPUT VSMain( VS_INPUT input )
 {
     float4x4 worldTransform = float4x4( input.Row0, input.Row1, input.Row2, input.Row3 );
-    float4x4 worldViewProjection = mul( worldTransform, ViewProjection );
+    float4 worldPos = mul(worldTransform, float4(input.Position, 1.0f));
 
     VS_OUTPUT output = ( VS_OUTPUT )0;
-    output.Position = mul( float4( input.Position, 1.f ), worldViewProjection );
+    output.Position = mul(worldPos, ViewProjection);
     output.TexCoord = input.TexCoord;
     return output;
 }

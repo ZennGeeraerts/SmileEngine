@@ -26,8 +26,8 @@ namespace smile::graphic
       public:
         explicit MeshManager( ResourceManager &resourceManager ) noexcept;
 
-        Mesh CreateMesh( MeshSource::Ref meshSource );
-        Mesh GetOrCreateMesh( MeshSource::Ref meshSource );
+        Mesh CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
+        Mesh GetOrCreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
 
       private:
         static constexpr Uint16 s_MaxMeshCount = ( 12 << 10 );
