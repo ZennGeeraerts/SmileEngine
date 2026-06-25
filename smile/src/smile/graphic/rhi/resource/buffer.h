@@ -37,13 +37,15 @@ namespace smile::graphic::rhi
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Size ) );
             hash = foundation::HashCombine( hash, std::hash< Uint8 >{}( Offset ) );
             hash = foundation::HashCombine( hash, std::hash< bool >{}( IsInstanced ) );
+            hash = foundation::HashCombine( hash, std::hash< Index >{}( BufferIndex ) );
             return hash;
         }
 
         inline bool operator==( const BufferElement &other ) const noexcept
         {
             return Name == other.Name && SemanticIndex == other.SemanticIndex && FormatType == other.FormatType &&
-                   Size == other.Size && Offset == other.Offset && IsInstanced == other.IsInstanced;
+                   Size == other.Size && Offset == other.Offset && IsInstanced == other.IsInstanced &&
+                   BufferIndex == other.BufferIndex;
         }
 
         inline bool operator!=( const BufferElement &other ) const noexcept
@@ -57,6 +59,7 @@ namespace smile::graphic::rhi
         Uint8 Size;
         Uint8 Offset;
         bool IsInstanced = false;
+        Index BufferIndex = 0;
     };
 
     class BufferLayout final
@@ -74,9 +77,18 @@ namespace smile::graphic::rhi
             return m_Elements;
         }
 
-        Uint32 GetStride() const
+        Uint32 GetStride() const noexcept
         {
-            return m_Stride;
+            SM_ASSERT( m_ElementStrides.HasItemAtKey( 0 ) );
+
+            return m_ElementStrides[0];
+        }
+
+        Uint32 GetStride( const Index bufferIndex ) const
+        {
+            SM_ASSERT( m_ElementStrides.HasItemAtKey( bufferIndex ) );
+
+            return m_ElementStrides[bufferIndex];
         }
 
         primitive::Vector< BufferElement >::Iterator begin()
@@ -117,17 +129,21 @@ namespace smile::graphic::rhi
             for ( const BufferElement &elem : m_Elements )
                 hash = foundation::HashCombine( hash, elem.GetHashCode() );
 
-            hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( m_Stride ) );
+            for ( const auto &stride : m_ElementStrides )
+            {
+                hash = foundation::HashCombine( hash, std::hash< Uint32 >{}( stride.Value ) );
+            }
 
             return hash;
         }
 
         inline bool operator==( const BufferLayout &other ) const
         {
-            if ( m_Stride != other.m_Stride || m_Elements.GetItemCount() != other.m_Elements.GetItemCount() )
+            if ( m_Elements.GetItemCount() != other.m_Elements.GetItemCount() &&
+                 m_ElementStrides.GetItemCount() != other.m_ElementStrides.GetItemCount() )
                 return false;
 
-            return std::equal( m_Elements.begin(), m_Elements.end(), other.m_Elements.begin() );
+            return primitive::array::IsEqual( m_Elements, other.m_Elements );
         }
 
         inline bool operator!=( const BufferLayout &other ) const
@@ -135,22 +151,21 @@ namespace smile::graphic::rhi
             return !( *this == other );
         }
 
-      private:
         void CalculateOffsetAndStride()
         {
-            Uint8 offset{ 0 };
-            m_Stride = 0;
+            m_ElementStrides.Clear();
+
             for ( auto &element : m_Elements )
             {
-                element.Offset = offset;
-                offset += element.Size;
-                m_Stride += element.Size;
+                auto &stride = m_ElementStrides[element.BufferIndex];
+                element.Offset = static_cast< Uint8 >( stride );
+                stride += element.Size;
             }
         }
 
       private:
         primitive::Vector< BufferElement > m_Elements;
-        Uint32 m_Stride = 0;
+        primitive::HashMap< Index, Uint32 > m_ElementStrides;
     };
 
     enum class BufferUsage : Uint8

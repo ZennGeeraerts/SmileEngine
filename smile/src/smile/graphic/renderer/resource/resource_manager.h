@@ -49,9 +49,6 @@ namespace smile::graphic
         IndexBuffer CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
         void DestroyIndexBuffer( IndexBuffer &indexBuffer );
 
-        InstanceBuffer CreateInstanceBuffer( const Count instanceCount, const rhi::BufferLayout &layout );
-        void DestroyInstanceBuffer( InstanceBuffer &instanceBuffer );
-
         rhi::GPUBufferHandle CreateGPUBuffer( const rhi::GPUBufferDescriptor &desc );
         void DestroyGPUBuffer( rhi::GPUBufferHandle &handle );
 

@@ -22,10 +22,10 @@ float4 PSMain( VS_OUTPUT input ) : SV_TARGET
 {
     float3 color;
 
-    if ( UseTexture != 0 )
-        color = Diffuse.Sample( DiffuseSampler, input.TexCoord ).rgb;
-    else
-        color = Color;
+    // if ( UseTexture != 0 )
+    //     color = Diffuse.Sample( DiffuseSampler, input.TexCoord ).rgb;
+    // else
+    //     color = Color;
 
-    return float4( color, 1 );
+    return float4( Color, 1 );
 }

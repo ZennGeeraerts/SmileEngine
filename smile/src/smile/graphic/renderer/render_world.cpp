@@ -70,10 +70,10 @@ namespace smile::graphic
                 view.SetViewProjectionMatrix( viewMatrix, camera.Camera.GetProjectionMatrix() );
                 view.SetRenderTarget( camera.RenderTarget );
 
+                view.OnUpdate();
+
                 ViewConstants viewCons{};
                 view.FillConstants( viewCons );
-
-                view.OnUpdate();
 
                 AddOrReplaceComponent< View >( entity, view );
 

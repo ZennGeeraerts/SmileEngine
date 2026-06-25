@@ -140,8 +140,11 @@ namespace smile::graphic
             if ( primitive::StartsWith( element.Name, "INSTANCE_" ) )
             {
                 element.IsInstanced = true;
+                element.BufferIndex = 1;
             }
         }
+
+        vertexLayout.CalculateOffsetAndStride();
 
         return memory::CreateRef< Program >( vertexShader, pixelShader, resources, cbDescs, vertexLayout );
     }

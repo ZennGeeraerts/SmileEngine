@@ -212,7 +212,7 @@ namespace smile::graphic::rhi
                 SM_ASSERT( m_pDevice->m_GPUBuffers.IsValidIndex( binding.VertexBuffer.GetIndex() ) );
 
                 pVertexBuffers[binding.Slot] = m_pDevice->m_GPUBuffers[binding.VertexBuffer.GetIndex()].pInternal.Get();
-                vertexBufferStrides[binding.Slot] = static_cast< UINT >( pipeline.Layout.GetStride() );
+                vertexBufferStrides[binding.Slot] = static_cast< UINT >( pipeline.Layout.GetStride( binding.Slot ) );
                 vertexBufferOffsets[binding.Slot] = static_cast< UINT >( binding.Offset );
                 maxVertexBufferIndex = std::max( maxVertexBufferIndex, binding.Slot );
             }
