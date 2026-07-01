@@ -21,6 +21,7 @@
 #include "smile/common/primitive/collection/hash_map.h"
 #include "smile/core/ecs/ecs_engine.h"
 #include "material/material.h"
+#include "material/asset/material_instance_asset.h"
 #include "resource/frame_buffer.h"
 #include "resource/graphics_pipeline.h"
 #include "shader/binding_layout.h"
@@ -88,6 +89,30 @@ namespace smile::graphic
         const BinnedCommandBuffer &GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const;
 
       private:
+        void PrepareRenderable( smile::ecs::EntityHandle entity,
+            const BindingLayout &viewBindingLayout,
+            const MeshSource::Ref &meshSource,
+            const MaterialInstanceAsset::ConstRef &materialInstanceAsset,
+            ResourceManager &resourceManager,
+            MeshManager &meshManager,
+            MaterialSystem &materialSystem );
+
+        const MaterialInstance &PrepareMaterial( smile::ecs::EntityHandle entity,
+            const MaterialInstanceAsset::ConstRef &materialInstanceAsset,
+            MaterialSystem &materialSystem );
+
+        void PrepareMesh( smile::ecs::EntityHandle entity,
+            const MeshSource::Ref &meshSource,
+            const rhi::BufferLayout &vertexLayout,
+            MeshManager &meshManager );
+
+        void PreparePipeline( smile::ecs::EntityHandle entity,
+            const rhi::BufferLayout &vertexLayout,
+            const BindingLayout &viewBindingLayout,
+            const Material &material,
+            const MaterialData &materialData,
+            ResourceManager &resourceManager );
+
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
 

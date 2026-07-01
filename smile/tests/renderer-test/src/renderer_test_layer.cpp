@@ -35,8 +35,6 @@ namespace smile::graphic
         m_SwapChain = &m_RenderEngine->CreateSwapChain( &window );
         m_Renderer = &m_RenderEngine->CreateRenderer();
 
-        auto &resourceManager = m_RenderEngine->GetResourceManager();
-        auto &materialSystem = m_RenderEngine->GetMaterialSystem();
         const auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
 
         m_RenderWorld = &m_RenderEngine->CreateWorld();

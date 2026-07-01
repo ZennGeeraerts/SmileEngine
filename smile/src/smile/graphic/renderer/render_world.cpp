@@ -105,16 +105,15 @@ namespace smile::graphic
         //     for ( auto entity : group )
         //     {
         //         const auto &[spriteRenderer, transform] =
-        //             m_ECSEngine.GetComponents< SpriteRendererComponent, world::ecs::TransformComponent >( entity
+        //             m_ECSEngine.GetComponents< ecs::SpriteRendererComponent, world::ecs::TransformComponent >( entity
         //             );
 
-        //         auto materialInstance = materialSystem.GetOrCreateMaterialInstance( spriteRenderer.Material );
-        //         auto texture = resourceManager.GetOrCreateTexture2D( spriteRenderer.Texture );
-
-        //         materialInstance.SetParameter( "Color", spriteRenderer.Color );
-        //         materialInstance.SetTextureBinding( "Texture", texture, rhi::SamplerDescriptor{} );
-
-        //         spriteBatch.Submit( transform.GetWorldMatrix(), materialInstance );
+        //         PrepareRenderable( viewBindingLayout,
+        //             spriteRenderer.Mesh,
+        //             spriteRenderer.Material,
+        //             resourceManager,
+        //             meshManager,
+        //             materialSystem );
         //     }
         // }
 
@@ -127,37 +126,78 @@ namespace smile::graphic
                 const auto &[meshRenderer, transform] =
                     m_ECSEngine.GetComponents< ecs::MeshRendererComponent, world::ecs::TransformComponent >( entity );
 
-                const auto materialInstance = materialSystem.GetOrCreateMaterialInstance( meshRenderer.Material );
-                materialSystem.UpdateMaterialInstance( materialInstance );
-
-                AddOrReplaceComponent< MaterialInstance >( entity, materialInstance );
-
-                const auto &materialData = materialSystem.GetMaterialData( materialInstance );
-                const auto material = materialInstance.GetMaterial();
-
-                const auto &vertexLayout = materialData.ShaderProgram->GetVertexLayout();
-                const auto mesh = meshManager.GetOrCreateMesh( meshRenderer.Mesh, vertexLayout );
-                AddOrReplaceComponent< Mesh >( entity, mesh );
-
-                GraphicsPipelineDescriptor psoDesc{};
-                psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
-                psoDesc.InputLayout = vertexLayout;
-
-                psoDesc.VertexShader =
-                    resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
-                psoDesc.PixelShader =
-                    resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
-
-                psoDesc.BindingLayouts.PushBack( viewBindingLayout );
-                psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
-
-                psoDesc.RenderState = material.GetLayout().RenderState;
-
-                const auto pipeline = resourceManager.GetOrCreateGraphicsPipeline( psoDesc );
-
-                AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
+                PrepareRenderable( entity,
+                    viewBindingLayout,
+                    meshRenderer.Mesh,
+                    meshRenderer.Material,
+                    resourceManager,
+                    meshManager,
+                    materialSystem );
             }
         }
+    }
+
+    void RenderWorld::PrepareRenderable( smile::ecs::EntityHandle entity,
+        const BindingLayout &viewBindingLayout,
+        const MeshSource::Ref &meshSource,
+        const MaterialInstanceAsset::ConstRef &materialInstanceAsset,
+        ResourceManager &resourceManager,
+        MeshManager &meshManager,
+        MaterialSystem &materialSystem )
+    {
+        const auto &materialInstance = PrepareMaterial( entity, materialInstanceAsset, materialSystem );
+
+        const auto &materialData = materialSystem.GetMaterialData( materialInstance );
+        const auto &vertexLayout = materialData.ShaderProgram->GetVertexLayout();
+
+        PrepareMesh( entity, meshSource, vertexLayout, meshManager );
+
+        PreparePipeline(
+            entity, vertexLayout, viewBindingLayout, materialInstance.GetMaterial(), materialData, resourceManager );
+    }
+
+    const MaterialInstance &RenderWorld::PrepareMaterial( smile::ecs::EntityHandle entity,
+        const MaterialInstanceAsset::ConstRef &materialInstanceAsset,
+        MaterialSystem &materialSystem )
+    {
+        const auto materialInstance = materialSystem.GetOrCreateMaterialInstance( materialInstanceAsset );
+        materialSystem.UpdateMaterialInstance( materialInstance );
+
+        return AddOrReplaceComponent< MaterialInstance >( entity, materialInstance );
+    }
+
+    void RenderWorld::PrepareMesh( smile::ecs::EntityHandle entity,
+        const MeshSource::Ref &meshSource,
+        const rhi::BufferLayout &vertexLayout,
+        MeshManager &meshManager )
+    {
+        const auto mesh = meshManager.GetOrCreateMesh( meshSource, vertexLayout );
+
+        AddOrReplaceComponent< Mesh >( entity, mesh );
+    }
+
+    void RenderWorld::PreparePipeline( smile::ecs::EntityHandle entity,
+        const rhi::BufferLayout &vertexLayout,
+        const BindingLayout &viewBindingLayout,
+        const Material &material,
+        const MaterialData &materialData,
+        ResourceManager &resourceManager )
+    {
+        GraphicsPipelineDescriptor psoDesc{};
+        psoDesc.Topology = rhi::PrimitiveTopology::TriangleList;
+        psoDesc.InputLayout = vertexLayout;
+
+        psoDesc.VertexShader = resourceManager.GetOrCreateVertexShader( materialData.ShaderProgram->GetVertexShader() );
+        psoDesc.PixelShader = resourceManager.GetOrCreatePixelShader( materialData.ShaderProgram->GetPixelShader() );
+
+        psoDesc.BindingLayouts.PushBack( viewBindingLayout );
+        psoDesc.BindingLayouts.PushBack( materialData.BindingLayout );
+
+        psoDesc.RenderState = material.GetLayout().RenderState;
+
+        const auto pipeline = resourceManager.GetOrCreateGraphicsPipeline( psoDesc );
+
+        AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
     }
 
     const BinnedCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const
