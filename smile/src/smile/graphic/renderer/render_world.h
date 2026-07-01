@@ -84,9 +84,7 @@ namespace smile::graphic
             MeshManager &meshManager,
             MaterialSystem &materialSystem );
 
-        void Enqueue();
-
-        const BinnedCommandBuffer &GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const;
+        void Enqueue( primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > &opaqueCommandBuffers );
 
       private:
         void PrepareRenderable( smile::ecs::EntityHandle entity,
@@ -115,7 +113,5 @@ namespace smile::graphic
 
         smile::ecs::ECSEngine m_ECSEngine;
         primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
-
-        primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > m_OpaqueCommandBuffers;
     };
 }

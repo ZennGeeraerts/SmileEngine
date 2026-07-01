@@ -93,8 +93,6 @@ namespace smile::graphic
                     bindingSetDesc, viewBindingLayout, { rhi::ShaderStage::Vertex } );
 
                 AddOrReplaceComponent< BindingSet >( entity, bindingSet );
-
-                m_OpaqueCommandBuffers[entity] = BinnedCommandBuffer{};
             }
         }
 
@@ -200,12 +198,8 @@ namespace smile::graphic
         AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
     }
 
-    const BinnedCommandBuffer &RenderWorld::GetOpaqueCommandBuffer( const smile::ecs::EntityHandle entity ) const
-    {
-        return m_OpaqueCommandBuffers[entity];
-    }
-
-    void RenderWorld::Enqueue()
+    void RenderWorld::Enqueue(
+        primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > &opaqueCommandBuffers )
     {
         auto viewGroup = m_ECSEngine.GetGroup< View >();
 
@@ -234,10 +228,10 @@ namespace smile::graphic
                 const SortKey sortKey = sort_key::EncodeOpaque(
                     pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), depth );
 
-                m_OpaqueCommandBuffers[viewEntity].Add( binKey, sortKey, entity );
+                opaqueCommandBuffers[viewEntity].Add( binKey, sortKey, entity );
             }
 
-            m_OpaqueCommandBuffers[viewEntity].Sort();
+            opaqueCommandBuffers[viewEntity].Sort();
         }
     }
 }

@@ -26,6 +26,7 @@
 #include "smile/core/ecs/entity_handle.h"
 #include "render_graph/render_graph.h"
 #include "draw/buffer_allocator.h"
+#include "draw/binned_command_buffer.h"
 
 namespace smile::graphic
 {
@@ -78,6 +79,8 @@ namespace smile::graphic
         DebugRenderer m_DebugRenderer;
         RenderGraph m_Graph;
         BufferAllocator m_BufferAllocator;
+
+        primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > m_OpaqueCommandBuffers;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };
