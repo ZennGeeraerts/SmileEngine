@@ -28,6 +28,7 @@ namespace smile::graphic
         Unknown,
         Float,
         Int,
+        Uint,
         Bool,
         Float2,
         Float3,

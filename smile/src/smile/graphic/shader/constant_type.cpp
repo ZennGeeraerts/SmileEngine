@@ -12,6 +12,7 @@ namespace smile::graphic
         { ConstantType::Float2, 8, "Float2" },
         { ConstantType::Float3, 12, "Float3" },
         { ConstantType::Int, 4, "Int" },
+        { ConstantType::Uint, 4, "Uint" },
         { ConstantType::Bool, 1, "Bool" },
         { ConstantType::Mat4, 4 * 4 * sizeof( float ), "Mat4" },
         { ConstantType::Mat4Array, 4 * 4 * sizeof( float ), "Mat4Array" } };
@@ -24,7 +25,7 @@ namespace smile::graphic
         if ( static_cast< Uint32 >( type ) >= static_cast< Uint32 >( ConstantType::Count ) )
             return s_ConstantTypeInfo[0]; // Unknown constant type
 
-        const ConstantTypeInfo &info = s_ConstantTypeInfo[static_cast< uint32_t >( type )];
+        const ConstantTypeInfo &info = s_ConstantTypeInfo[static_cast< Uint32 >( type )];
 
         SM_ASSERT_MSG( info.Type == type, "Constant type mismatch" );
 

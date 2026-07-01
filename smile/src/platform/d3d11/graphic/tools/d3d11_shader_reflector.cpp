@@ -80,6 +80,8 @@ namespace smile::graphic
                         return ConstantType::Bool;
                     case D3D_SVT_INT:
                         return ConstantType::Int;
+                    case D3D_SVT_UINT:
+                        return ConstantType::Uint;
                     default:
                         return ConstantType::Unknown;
                 }

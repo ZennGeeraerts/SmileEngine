@@ -84,7 +84,7 @@ namespace smile::graphic
         MaterialInstanceAsset::Ref materialInstance = materialInstanceManager.CreateMaterialInstance(
             "DefaultMeshMaterialInstance", materialAsset, materialAsset->GetDescriptor() );
         materialInstance->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
-        materialInstance->SetParameter( "UseTexture", false );
+        materialInstance->SetParameter( "UseTexture", 0u );
 
         auto &meshRendererComponent = m_RenderWorld->AddComponent< ecs::MeshRendererComponent >( meshEntity );
         meshRendererComponent.Mesh = mesh;

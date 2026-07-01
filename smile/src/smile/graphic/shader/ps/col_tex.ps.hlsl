@@ -6,7 +6,7 @@
 cbuffer Material : register( b2 )
 {
     float3 Color;
-    int UseTexture;
+    uint UseTexture;
 };
 
 Texture2D Diffuse : register( t0 );

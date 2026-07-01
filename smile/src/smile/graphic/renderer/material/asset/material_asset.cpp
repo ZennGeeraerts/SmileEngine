@@ -53,6 +53,8 @@ namespace smile::graphic
                 return MaterialParameterType::Float3;
             case ConstantType::Int:
                 return MaterialParameterType::Int;
+            case ConstantType::Uint:
+                return MaterialParameterType::Uint;
             case ConstantType::Bool:
                 return MaterialParameterType::Bool;
 

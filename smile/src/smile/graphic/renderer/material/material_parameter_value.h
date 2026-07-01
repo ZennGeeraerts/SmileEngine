@@ -23,6 +23,12 @@
 
 namespace smile::graphic
 {
-    using MaterialParameterValue = std::
-        variant< bool, int, float, DirectX::XMFLOAT2, DirectX::XMFLOAT3, DirectX::XMFLOAT4, primitive::Vector< Byte > >;
+    using MaterialParameterValue = std::variant< bool,
+        Int32,
+        Uint32,
+        float,
+        DirectX::XMFLOAT2,
+        DirectX::XMFLOAT3,
+        DirectX::XMFLOAT4,
+        primitive::Vector< Byte > >;
 }

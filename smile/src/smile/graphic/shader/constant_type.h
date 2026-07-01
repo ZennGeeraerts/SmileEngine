@@ -16,6 +16,7 @@ namespace smile::graphic
         Float2,
         Float3,
         Int,
+        Uint,
         Bool,
         Mat4,
         Mat4Array,
