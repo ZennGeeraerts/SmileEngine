@@ -38,5 +38,7 @@ namespace smile::graphic
         Renderer *m_Renderer = nullptr;
         rhi::SwapChain *m_SwapChain = nullptr;
         RenderWorld *m_RenderWorld = nullptr;
+
+        smile::ecs::EntityHandle m_MeshEntity;
     };
 }

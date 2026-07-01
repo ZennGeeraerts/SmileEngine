@@ -43,7 +43,7 @@ namespace smile::graphic
         {
             ConstantBufferDescriptor cameraCBDesc{};
             cameraCBDesc.Add( "ViewProjection", ConstantType::Mat4 );
-            CameraCB = resourceManager.CreateConstantBuffer( cameraCBDesc );
+            CameraCB = resourceManager.GetOrCreateConstantBuffer( cameraCBDesc );
         }
 
         {
@@ -191,7 +191,7 @@ namespace smile::graphic
                 state.Bindings.PushBack( data.PassBindingSet );
 
                 data.Context->SetGraphicsState( state );
-                data.Context->Draw( foundation::NumericCast< Uint32 >( vertexCount ) );
+                data.Context->Draw( vertexCount );
             } );
     }
 }

@@ -168,7 +168,7 @@ namespace smile::graphic
                 }
             } );
 
-        // AddDebugPass( m_Graph, m_DebugData, view, colorHandle );
+        AddDebugPass( m_Graph, m_DebugData, view, colorHandle );
 
         // PostProcess - extension point (tone-map, bloom); currently a no-op passthrough
         m_Graph.AddPass(

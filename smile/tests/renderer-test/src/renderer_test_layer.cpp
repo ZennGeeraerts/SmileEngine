@@ -44,7 +44,7 @@ namespace smile::graphic
         camera.SetPerspectiveCamera( 30.f, 0.1f, 2500.f );
 
         auto cameraEntity = m_RenderWorld->CreateEntity();
-        auto meshEntity = m_RenderWorld->CreateEntity();
+        m_MeshEntity = m_RenderWorld->CreateEntity();
 
         auto &cameraComponent = m_RenderWorld->AddComponent< ecs::CameraComponent >( cameraEntity );
         cameraComponent.Camera = camera;
@@ -52,8 +52,8 @@ namespace smile::graphic
         cameraComponent.HasFixedAspectRatio = false;
         cameraComponent.RenderTarget = m_RenderEngine->GetRenderTarget( *m_SwapChain );
 
-        auto &transform = m_RenderWorld->GetComponent< world::ecs::TransformComponent >( cameraEntity );
-        transform.WorldTranslation = DirectX::XMFLOAT3{ 0.0f, 0.0f, -5.0f };
+        auto &cameraTransform = m_RenderWorld->GetComponent< world::ecs::TransformComponent >( cameraEntity );
+        cameraTransform.WorldTranslation = DirectX::XMFLOAT3{ 0.0f, 1.0f, -5.0f };
 
         MeshSource::Ref mesh = memory::CreateRef< MeshSource >();
         mesh->SetVertexCount( 4 );
@@ -84,9 +84,12 @@ namespace smile::graphic
         materialInstance->SetParameter( "Color", DirectX::XMFLOAT3{ 0.0f, 1.0f, 0.0f } );
         materialInstance->SetParameter( "UseTexture", 0u );
 
-        auto &meshRendererComponent = m_RenderWorld->AddComponent< ecs::MeshRendererComponent >( meshEntity );
+        auto &meshRendererComponent = m_RenderWorld->AddComponent< ecs::MeshRendererComponent >( m_MeshEntity );
         meshRendererComponent.Mesh = mesh;
         meshRendererComponent.Material = materialInstance;
+
+        auto &meshTransform = m_RenderWorld->GetComponent< world::ecs::TransformComponent >( m_MeshEntity );
+        meshTransform.WorldTranslation = DirectX::XMFLOAT3{ 1.0f, 1.0f, 0.0f };
     }
 
     void RendererTestLayer::OnDetach()
@@ -95,6 +98,10 @@ namespace smile::graphic
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
+        auto &meshTransform = m_RenderWorld->GetComponent< world::ecs::TransformComponent >( m_MeshEntity );
+        meshTransform.WorldRotation.x += deltaTime * 0.25f;
+        meshTransform.WorldRotation.y += deltaTime * 0.25f;
+
         m_Renderer->BeginFrame();
         m_Renderer->OnRender( *m_RenderWorld );
         m_Renderer->EndFrame( *m_SwapChain );
