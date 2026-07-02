@@ -198,8 +198,7 @@ namespace smile::graphic
         AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
     }
 
-    void RenderWorld::Enqueue(
-        primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > &opaqueCommandBuffers )
+    void RenderWorld::Enqueue( ViewBinnedCommandBuffers< Opaque3d > &opaqueCommandBuffers )
     {
         auto viewGroup = m_ECSEngine.GetGroup< View >();
 
@@ -218,17 +217,16 @@ namespace smile::graphic
                         .GetComponents< GraphicsPipeline, MaterialInstance, Mesh, world::ecs::TransformComponent >(
                             entity );
 
-                const BinKey binKey = bin_key::EncodeBin(
-                    pipeline.GetHandle(), materialInstance.GetHandle().GetIndex(), mesh.Handle.GetIndex() );
+                const Opaque3dBinKey binKey{
+                    pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), mesh.Handle.GetIndex() };
 
                 const float depth = transform.WorldTranslation.x * viewMatrix._13 +
                                     transform.WorldTranslation.y * viewMatrix._23 +
                                     transform.WorldTranslation.z * viewMatrix._33 + viewMatrix._43;
 
-                const SortKey sortKey = sort_key::EncodeOpaque(
-                    pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), depth );
+                const Opaque3d item{ entity, pipeline, materialInstance, depth };
 
-                opaqueCommandBuffers[viewEntity].Add( binKey, sortKey, entity );
+                opaqueCommandBuffers[viewEntity].Add( binKey, item );
             }
 
             opaqueCommandBuffers[viewEntity].Sort();

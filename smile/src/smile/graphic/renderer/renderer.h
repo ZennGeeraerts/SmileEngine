@@ -27,6 +27,7 @@
 #include "render_graph/render_graph.h"
 #include "draw/buffer_allocator.h"
 #include "draw/binned_command_buffer.h"
+#include "draw/opaque3d.h"
 
 namespace smile::graphic
 {
@@ -80,7 +81,7 @@ namespace smile::graphic
         RenderGraph m_Graph;
         BufferAllocator m_BufferAllocator;
 
-        primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > m_OpaqueCommandBuffers;
+        ViewBinnedCommandBuffers< Opaque3d > m_OpaqueCommandBuffers;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

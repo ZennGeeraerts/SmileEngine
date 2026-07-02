@@ -124,7 +124,7 @@ namespace smile::graphic
                 const auto &viewBindingSet = renderWorld.GetComponent< BindingSet >( viewEntity );
                 const auto &cmdBuffer = m_OpaqueCommandBuffers[viewEntity];
 
-                for ( const DrawBin *bin : cmdBuffer.GetSorted() )
+                for ( const DrawBin< Opaque3d > *bin : cmdBuffer.GetSorted() )
                 {
                     const Count instanceCount = bin->GetInstanceCount();
                     const Uint32 instanceStride = sizeof( DirectX::XMFLOAT4X4 );
@@ -137,7 +137,7 @@ namespace smile::graphic
                     primitive::Vector< DirectX::XMFLOAT4X4 > instanceData( instanceCount );
                     for ( Index index{ 0 }; index < instanceCount; ++index )
                     {
-                        auto entity = bin->Items[index].Entity;
+                        auto entity = bin->Items[index].GetEntity();
 
                         const auto &transform = renderWorld.GetComponent< world::ecs::TransformComponent >( entity );
                         const auto worldTransform = transform.GetWorldTransform();
@@ -148,9 +148,10 @@ namespace smile::graphic
                     ctx.FillVertexBuffer( instanceBuffer, instanceData.GetData(), instanceCount );
 
                     const auto &item = bin->Items[0];
-                    const auto &mesh = renderWorld.GetComponent< Mesh >( item.Entity );
-                    const auto &mi = renderWorld.GetComponent< MaterialInstance >( item.Entity );
-                    const auto &pipeline = renderWorld.GetComponent< GraphicsPipeline >( item.Entity );
+                    const auto entity = item.GetEntity();
+                    const auto &mesh = renderWorld.GetComponent< Mesh >( entity );
+                    const auto &mi = renderWorld.GetComponent< MaterialInstance >( entity );
+                    const auto &pipeline = renderWorld.GetComponent< GraphicsPipeline >( entity );
 
                     const auto &materialData = m_Engine.GetMaterialSystem().GetMaterialData( mi );
 

@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        material_descriptor.cpp
+ * @author      Zenn Geeraerts
+ * @created     13 April 2026
+ * @brief       Values for parameters and texture bindings of a material
+ */
 #include "smpch.h"
 #include "material_descriptor.h"
 

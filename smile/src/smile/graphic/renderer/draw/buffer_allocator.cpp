@@ -1,3 +1,19 @@
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        buffer_allocator.cpp
+ * @author      Zenn Geeraerts
+ * @created     2 July 2026
+ * @brief       Buffer allocator for managing GPU buffer slices.
+ */
 #include "smpch.h"
 #include "buffer_allocator.h"
 

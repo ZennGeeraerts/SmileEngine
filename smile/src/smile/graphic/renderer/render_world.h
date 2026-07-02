@@ -28,6 +28,7 @@
 #include "shader/binding_set.h"
 #include "shader/constant_buffer.h"
 #include "draw/binned_command_buffer.h"
+#include "draw/opaque3d.h"
 
 namespace smile::graphic
 {
@@ -84,7 +85,7 @@ namespace smile::graphic
             MeshManager &meshManager,
             MaterialSystem &materialSystem );
 
-        void Enqueue( primitive::HashMap< smile::ecs::EntityHandle, BinnedCommandBuffer > &opaqueCommandBuffers );
+        void Enqueue( ViewBinnedCommandBuffers< Opaque3d > &opaqueCommandBuffers );
 
       private:
         void PrepareRenderable( smile::ecs::EntityHandle entity,

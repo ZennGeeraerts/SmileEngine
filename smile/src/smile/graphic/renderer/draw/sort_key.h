@@ -83,13 +83,13 @@ namespace smile::graphic
          * Smaller key sorts first; sort first by PSO, then material, then near-to-far depth.
          */
         [[nodiscard]] constexpr SortKey
-        EncodeOpaque( const Index psoIndex, const Index materialIndex, const float depth ) noexcept
+        EncodeOpaque( const Uint64 psoIndex, const Uint64 materialIndex, const float depth ) noexcept
         {
             SM_ASSERT( psoIndex <= s_MaxFieldIndex );
             SM_ASSERT( materialIndex <= s_MaxFieldIndex );
 
-            const Uint64 pso = static_cast< Uint64 >( psoIndex ) << 48;
-            const Uint64 mat = static_cast< Uint64 >( materialIndex ) << 32;
+            const Uint64 pso = psoIndex << 48;
+            const Uint64 mat = materialIndex << 32;
             const Uint64 dep = static_cast< Uint64 >( EncodeDepth( depth ) );
             return SortKey{ pso | mat | dep };
         }
@@ -99,14 +99,14 @@ namespace smile::graphic
          * Sorted by farthest depth first; ties broken by PSO then material.
          */
         [[nodiscard]] constexpr SortKey
-        EncodeTransparent( const Index psoIndex, const Index materialIndex, const float depth ) noexcept
+        EncodeTransparent( const Uint64 psoIndex, const Uint64 materialIndex, const float depth ) noexcept
         {
             SM_ASSERT( psoIndex <= s_MaxFieldIndex );
             SM_ASSERT( materialIndex <= s_MaxFieldIndex );
 
             const Uint64 invDepth = static_cast< Uint64 >( ~EncodeDepth( depth ) ) << 32;
-            const Uint64 pso = static_cast< Uint64 >( psoIndex ) << 16;
-            const Uint64 mat = static_cast< Uint64 >( materialIndex );
+            const Uint64 pso = psoIndex << 16;
+            const Uint64 mat = materialIndex;
             return SortKey{ invDepth | pso | mat };
         }
 
@@ -114,13 +114,13 @@ namespace smile::graphic
          * Shadow pass key: PSO (high 16) | Material (mid 16) | low 32 bits unused.
          * Depth is irrelevant for shadow passes — only state coherence matters.
          */
-        [[nodiscard]] constexpr SortKey EncodeShadow( const Index psoIndex, const Index materialIndex ) noexcept
+        [[nodiscard]] constexpr SortKey EncodeShadow( const Uint64 psoIndex, const Uint64 materialIndex ) noexcept
         {
             SM_ASSERT( psoIndex <= s_MaxFieldIndex );
             SM_ASSERT( materialIndex <= s_MaxFieldIndex );
 
-            const Uint64 pso = static_cast< Uint64 >( psoIndex ) << 48;
-            const Uint64 mat = static_cast< Uint64 >( materialIndex ) << 32;
+            const Uint64 pso = psoIndex << 48;
+            const Uint64 mat = materialIndex << 32;
             return SortKey{ pso | mat };
         }
     }
