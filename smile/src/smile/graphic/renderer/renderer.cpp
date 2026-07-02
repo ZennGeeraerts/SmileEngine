@@ -62,7 +62,7 @@ namespace smile::graphic
         auto &resourceManager = m_Engine.GetResourceManager();
 
         renderWorld.Prepare( ctx, resourceManager, m_Engine.GetMeshManager(), m_Engine.GetMaterialSystem() );
-        renderWorld.Enqueue( m_OpaqueCommandBuffers );
+        renderWorld.Enqueue( m_Opaque3dCommandBuffers, m_Transparent2dCommandBuffers );
 
         m_DebugRenderer.Flush( m_DebugData ); // DebugPassData::LineList
 
@@ -122,7 +122,7 @@ namespace smile::graphic
                     resourceManager.GetFramebufferAttachmentSet( fb ), math::Color{ 0.0f, 0.0f, 0.0f, 1.0f }, 1.0f, 0 );
 
                 const auto &viewBindingSet = renderWorld.GetComponent< BindingSet >( viewEntity );
-                const auto &cmdBuffer = m_OpaqueCommandBuffers[viewEntity];
+                const auto &cmdBuffer = m_Opaque3dCommandBuffers[viewEntity];
 
                 for ( const DrawBin< Opaque3d > *bin : cmdBuffer.GetSorted() )
                 {
@@ -203,7 +203,8 @@ namespace smile::graphic
         swapChain.Present();
         ctx.Close();
 
-        m_OpaqueCommandBuffers.Clear();
+        m_Opaque3dCommandBuffers.Clear();
+        m_Transparent2dCommandBuffers.Clear();
 
         m_Graph.Reset();
         m_DebugData.Reset();

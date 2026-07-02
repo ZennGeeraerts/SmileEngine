@@ -198,7 +198,8 @@ namespace smile::graphic
         AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
     }
 
-    void RenderWorld::Enqueue( ViewBinnedCommandBuffers< Opaque3d > &opaqueCommandBuffers )
+    void RenderWorld::Enqueue( ViewBinnedCommandBuffers< Opaque3d > &opaque3dCommandBuffers,
+        ViewSortedCommandBuffers< Transparent2d > &transparent2dCommandBuffers )
     {
         auto viewGroup = m_ECSEngine.GetGroup< View >();
 
@@ -226,10 +227,11 @@ namespace smile::graphic
 
                 const Opaque3d item{ entity, pipeline, materialInstance, depth };
 
-                opaqueCommandBuffers[viewEntity].Add( binKey, item );
+                opaque3dCommandBuffers[viewEntity].Add( binKey, item );
             }
 
-            opaqueCommandBuffers[viewEntity].Sort();
+            opaque3dCommandBuffers[viewEntity].Sort();
+            transparent2dCommandBuffers[viewEntity].Sort();
         }
     }
 }
