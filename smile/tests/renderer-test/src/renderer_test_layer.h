@@ -40,5 +40,7 @@ namespace smile::graphic
         RenderWorld *m_RenderWorld = nullptr;
 
         smile::ecs::EntityHandle m_MeshEntity;
+        float m_ToggleTextureTime = 5.0f;
+        float m_AccumulatedTime = 0.0f;
     };
 }

@@ -98,6 +98,18 @@ namespace smile::graphic
 
     void RendererTestLayer::OnUpdate( primitive::Timestep deltaTime )
     {
+        m_AccumulatedTime += deltaTime;
+        if ( m_AccumulatedTime >= m_ToggleTextureTime )
+        {
+            m_AccumulatedTime = 0.0f;
+
+            auto &materialInstance = m_RenderWorld->GetComponent< MaterialInstance >( m_MeshEntity );
+
+            Uint32 useTexture = std::get< Uint32 >( materialInstance.GetParameter( "UseTexture" ) );
+            useTexture = ( useTexture == 0 ) ? 1u : 0u;
+            materialInstance.SetParameter( "UseTexture", useTexture );
+        }
+
         auto &meshTransform = m_RenderWorld->GetComponent< world::ecs::TransformComponent >( m_MeshEntity );
         meshTransform.WorldRotation.x += deltaTime * 0.25f;
         meshTransform.WorldRotation.y += deltaTime * 0.25f;
