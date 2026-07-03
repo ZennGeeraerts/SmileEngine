@@ -20,8 +20,6 @@
 #include "smile/core/world/ecs/transform_component.h"
 
 #include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/render_scene.h"
-#include "smile/graphic/renderer/renderable.h"
 #include "smile/graphic/renderer/scene/ecs/camera_component.h"
 #include "smile/graphic/renderer/mesh/ecs/mesh_renderer_component.h"
 

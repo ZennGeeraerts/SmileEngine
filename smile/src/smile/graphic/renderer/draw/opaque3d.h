@@ -37,33 +37,33 @@ namespace smile::graphic
             const Uint64 pso = psoIndex << 48;
             const Uint64 mat = materialIndex << 32;
             const Uint64 asset = assetIndex;
-            Value = pso | mat | asset;
+            m_Value = pso | mat | asset;
         }
 
         foundation::HashCode GetHashCode() const noexcept
         {
-            return std::hash< Uint64 >{}( Value );
+            return std::hash< Uint64 >{}( m_Value );
         }
 
         constexpr bool operator<( const Opaque3dBinKey other ) const noexcept
         {
-            return Value < other.Value;
+            return m_Value < other.m_Value;
         }
 
         constexpr bool operator==( const Opaque3dBinKey other ) const noexcept
         {
-            return Value == other.Value;
+            return m_Value == other.m_Value;
         }
 
         constexpr bool operator!=( const Opaque3dBinKey other ) const noexcept
         {
-            return Value != other.Value;
+            return m_Value != other.m_Value;
         }
 
       private:
         static constexpr Uint64 s_MaxFieldIndex = 0xFFFFu;
 
-        Uint64 Value{ 0 };
+        Uint64 m_Value{ 0 };
     };
 
     class Opaque3d final

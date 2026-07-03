@@ -30,7 +30,7 @@
 #include "draw/binned_command_buffer.h"
 #include "draw/sorted_command_buffer.h"
 #include "draw/opaque3d.h"
-#include "draw/transparent2d.h"
+#include "draw/transparent3d.h"
 
 namespace smile::graphic
 {
@@ -43,6 +43,9 @@ namespace smile::graphic
     class RenderWorld final
     {
       public:
+        RenderWorld() = default;
+        ~RenderWorld() = default;
+
         smile::ecs::EntityHandle CreateEntity();
         smile::ecs::EntityHandle CreateEntity( const primitive::UUID uuid );
 
@@ -88,7 +91,7 @@ namespace smile::graphic
             MaterialSystem &materialSystem );
 
         void Enqueue( ViewBinnedCommandBuffers< Opaque3d > &opaque3dCommandBuffers,
-            ViewSortedCommandBuffers< Transparent2d > &transparent2dCommandBuffers );
+            ViewSortedCommandBuffers< Transparent3d > &transparent3dCommandBuffers );
 
       private:
         void PrepareRenderable( smile::ecs::EntityHandle entity,

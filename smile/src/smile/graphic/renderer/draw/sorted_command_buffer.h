@@ -112,7 +112,7 @@ namespace smile::graphic
             return m_BufferPerView[viewEntity];
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             for ( const auto &[viewEntity, buffer] : m_BufferPerView )
                 buffer.Clear();

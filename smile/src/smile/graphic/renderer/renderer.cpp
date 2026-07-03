@@ -62,7 +62,7 @@ namespace smile::graphic
         auto &resourceManager = m_Engine.GetResourceManager();
 
         renderWorld.Prepare( ctx, resourceManager, m_Engine.GetMeshManager(), m_Engine.GetMaterialSystem() );
-        renderWorld.Enqueue( m_Opaque3dCommandBuffers, m_Transparent2dCommandBuffers );
+        renderWorld.Enqueue( m_Opaque3dCommandBuffers, m_Transparent3dCommandBuffers );
 
         m_DebugRenderer.Flush( m_DebugData ); // DebugPassData::LineList
 
@@ -204,7 +204,7 @@ namespace smile::graphic
         ctx.Close();
 
         m_Opaque3dCommandBuffers.Clear();
-        m_Transparent2dCommandBuffers.Clear();
+        m_Transparent3dCommandBuffers.Clear();
 
         m_Graph.Reset();
         m_DebugData.Reset();

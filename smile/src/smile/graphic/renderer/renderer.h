@@ -29,7 +29,7 @@
 #include "draw/binned_command_buffer.h"
 #include "draw/sorted_command_buffer.h"
 #include "draw/opaque3d.h"
-#include "draw/transparent2d.h"
+#include "draw/transparent3d.h"
 
 namespace smile::graphic
 {
@@ -84,7 +84,7 @@ namespace smile::graphic
         BufferAllocator m_BufferAllocator;
 
         ViewBinnedCommandBuffers< Opaque3d > m_Opaque3dCommandBuffers;
-        ViewSortedCommandBuffers< Transparent2d > m_Transparent2dCommandBuffers;
+        ViewSortedCommandBuffers< Transparent3d > m_Transparent3dCommandBuffers;
 
         Index m_CurrentFrameIndex{ 0 };
         Index m_RenderedFrameIndex{ 0 };

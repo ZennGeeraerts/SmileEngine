@@ -23,10 +23,10 @@
 
 namespace smile::graphic
 {
-    class Transparent2d final
+    class Transparent3d final
     {
       public:
-        constexpr Transparent2d( smile::ecs::EntityHandle entity,
+        constexpr Transparent3d( smile::ecs::EntityHandle entity,
             const GraphicsPipeline &pipeline,
             const MaterialInstance &materialInstance,
             float depth ) noexcept
