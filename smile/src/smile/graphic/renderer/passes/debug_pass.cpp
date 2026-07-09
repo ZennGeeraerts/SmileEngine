@@ -19,7 +19,6 @@
 
 #include "smile/graphic/renderer/render_context.h"
 #include "smile/graphic/renderer/view.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/common/foundation/numeric_cast.h"
 #include "smile/graphic/shader/shader_library.h"
 #include "smile/graphic/shader/shader_asset.h"
@@ -71,7 +70,7 @@ namespace smile::graphic
             psoDesc.BindingLayouts.PushBack( std::move( bindingLayout ) );
             psoDesc.RenderState.RasterizerState.CullMode = rhi::CullMode::None;
 
-            Pipeline = resourceManager.CreateGraphicsPipeline( psoDesc );
+            PsoDescHandle = resourceManager.CreateGraphicsPipelineDescriptor( psoDesc );
         }
 
         DynamicVB = resourceManager.CreateDynamicVertexBuffer( VertexCapacity, m_VertexLayout );
@@ -184,9 +183,12 @@ namespace smile::graphic
                     data.DynamicVB, static_cast< void * >( data.LineList.GetData() ), vertexCount );
                 data.Context->FillConstantBuffer( data.CameraCB );
 
+                const auto &psoDesc = data.ResourceMgr->GetGraphicsPipelineDescriptor( data.PsoDescHandle );
+                const auto pipeline = data.ResourceMgr->GetOrCreateGraphicsPipeline( psoDesc, res.GetFramebuffer() );
+
                 GraphicsState state{};
                 state.Framebuffer = res.GetFramebuffer();
-                state.Pipeline = data.Pipeline;
+                state.Pipeline = pipeline;
                 state.VertexBuffers.EmplaceBack( data.DynamicVB, 0u, 0u );
                 state.Bindings.PushBack( data.PassBindingSet );
 

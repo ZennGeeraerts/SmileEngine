@@ -4,6 +4,7 @@
 #include "smile/core/world/ecs/id_component.h"
 #include "smile/core/world/ecs/transform_component.h"
 #include "sprite/ecs/sprite_renderer_component.h"
+#include "sprite/sprite_data.h"
 #include "mesh/mesh_manager.h"
 #include "mesh/ecs/mesh_renderer_component.h"
 #include "render_context.h"
@@ -92,9 +93,49 @@ namespace smile::graphic
                 const BindingSet bindingSet = resourceManager.GetOrCreateBindingSet(
                     bindingSetDesc, viewBindingLayout, { rhi::ShaderStage::Vertex } );
 
+                AddOrReplaceComponent< BindingLayout >( entity, viewBindingLayout );
                 AddOrReplaceComponent< BindingSet >( entity, bindingSet );
             }
         }
+
+        // auto &context = m_ECSEngine.GetContext();
+        // if ( !context.Has< SpriteData >() )
+        // {
+        //     auto &spriteData = context.Emplace< SpriteData >();
+
+        //     spriteData.VertexLayout =
+        //         rhi::BufferLayout{ { rhi::Format::RGB32_FLOAT, "POSITION" }, { rhi::Format::RG32_FLOAT, "TEXCOORDS" }
+        //         };
+
+        //     const Count quadVerticesCount = 12;
+        //     float quadVertices[] = { -0.5f,
+        //         -0.5f,
+        //         0.0f,
+        //         0.0f,
+        //         1.0f,
+        //         /*1*/ -0.5f,
+        //         0.5f,
+        //         0.0f,
+        //         0.0f,
+        //         0.0f,
+        //         /*2*/ 0.5f,
+        //         -0.5f,
+        //         0.0f,
+        //         1.0f,
+        //         1.0f /*3*/,
+        //         0.5f,
+        //         0.5f,
+        //         0.0f,
+        //         1.0f,
+        //         0.0f /*4*/ };
+
+        //     spriteData.QuadVertexBuffer =
+        //         resourceManager.CreateVertexBuffer( quadVertices, quadVerticesCount, spriteData.VertexLayout );
+
+        //     const Count quadIndicesCount = 6;
+        //     Uint32 quadIndices[] = { 0, 1, 2, 2, 1, 3 };
+        //     spriteData.QuadIndexBuffer = resourceManager.CreateIndexBuffer( quadIndices, quadIndicesCount );
+        // }
 
         // {
         //     auto group = m_ECSEngine.GetGroup< ecs::SpriteRendererComponent >(
@@ -106,12 +147,26 @@ namespace smile::graphic
         //             m_ECSEngine.GetComponents< ecs::SpriteRendererComponent, world::ecs::TransformComponent >( entity
         //             );
 
-        //         PrepareRenderable( viewBindingLayout,
-        //             spriteRenderer.Mesh,
-        //             spriteRenderer.Material,
-        //             resourceManager,
-        //             meshManager,
-        //             materialSystem );
+        //         spriteRenderer.Material->SetParameter( "Color", spriteRenderer.Color );
+        //         spriteRenderer.Material->SetTextureBinding( "UseTexture", spriteRenderer.Texture, {} );
+
+        //         const auto &spriteData = m_ECSEngine.GetContext().Get< SpriteData >();
+
+        //         PrepareMaterial( entity, spriteRenderer.Material, materialSystem );
+
+        //         Mesh spriteMesh{};
+        //         spriteMesh.Handle = MeshHandle::NullHandle();
+        //         spriteMesh.VertexBuffer = spriteData.QuadVertexBuffer;
+        //         spriteMesh.IndexBuffer = spriteData.QuadIndexBuffer;
+
+        //         AddOrReplaceComponent< Mesh >( entity, spriteMesh );
+
+        //         PreparePipeline( entity,
+        //             spriteData.VertexLayout,
+        //             viewBindingLayout,
+        //             spriteRenderer.Material->GetMaterial(),
+        //             materialSystem.GetMaterialData( spriteRenderer.Material->GetMaterialInstance() ),
+        //             resourceManager );
         //     }
         // }
 
@@ -193,13 +248,13 @@ namespace smile::graphic
 
         psoDesc.RenderState = material.GetLayout().RenderState;
 
-        const auto pipeline = resourceManager.GetOrCreateGraphicsPipeline( psoDesc );
+        const auto psoDescHandle = resourceManager.GetOrCreateGraphicsPipelineDescriptor( psoDesc );
 
-        AddOrReplaceComponent< GraphicsPipeline >( entity, pipeline );
+        AddOrReplaceComponent< GraphicsPipelineDescriptorHandle >( entity, psoDescHandle );
     }
 
     void RenderWorld::Enqueue( ViewBinnedCommandBuffers< Opaque3d > &opaque3dCommandBuffers,
-        ViewSortedCommandBuffers< Transparent2d > &transparent2dCommandBuffers )
+        ViewSortedCommandBuffers< Transparent3d > &transparent3dCommandBuffers )
     {
         auto viewGroup = m_ECSEngine.GetGroup< View >();
 
@@ -208,30 +263,31 @@ namespace smile::graphic
             const auto &view = m_ECSEngine.GetComponent< View >( viewEntity );
             const auto &viewMatrix = view.GetViewMatrix();
 
-            auto group = m_ECSEngine.GetGroup< GraphicsPipeline, MaterialInstance, Mesh >(
+            auto group = m_ECSEngine.GetGroup< GraphicsPipelineDescriptorHandle, MaterialInstance, Mesh >(
                 smile::ecs::g_Get< world::ecs::TransformComponent > );
 
             for ( auto entity : group )
             {
-                const auto &[pipeline, materialInstance, mesh, transform] =
-                    m_ECSEngine
-                        .GetComponents< GraphicsPipeline, MaterialInstance, Mesh, world::ecs::TransformComponent >(
-                            entity );
+                const auto &[psoDescHandle, materialInstance, mesh, transform] =
+                    m_ECSEngine.GetComponents< GraphicsPipelineDescriptorHandle,
+                        MaterialInstance,
+                        Mesh,
+                        world::ecs::TransformComponent >( entity );
 
                 const Opaque3dBinKey binKey{
-                    pipeline.GetHandle().GetIndex(), materialInstance.GetHandle().GetIndex(), mesh.Handle.GetIndex() };
+                    psoDescHandle.GetIndex(), materialInstance.GetHandle().GetIndex(), mesh.Handle.GetIndex() };
 
                 const float depth = transform.WorldTranslation.x * viewMatrix._13 +
                                     transform.WorldTranslation.y * viewMatrix._23 +
                                     transform.WorldTranslation.z * viewMatrix._33 + viewMatrix._43;
 
-                const Opaque3d item{ entity, pipeline, materialInstance, depth };
+                const Opaque3d item{ entity, psoDescHandle, materialInstance, depth };
 
                 opaque3dCommandBuffers[viewEntity].Add( binKey, item );
             }
 
             opaque3dCommandBuffers[viewEntity].Sort();
-            transparent2dCommandBuffers[viewEntity].Sort();
+            transparent3dCommandBuffers[viewEntity].Sort();
         }
     }
 }

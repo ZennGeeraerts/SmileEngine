@@ -24,6 +24,7 @@
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/graphic/renderer/resource/graphics_pipeline.h"
 #include "smile/graphic/renderer/resource/vertex_buffer.h"
+#include "smile/graphic/renderer/resource/resource_manager.h"
 #include "smile/graphic/renderer/shader/constant_buffer.h"
 #include "smile/graphic/renderer/shader/binding_set.h"
 #include "smile/graphic/renderer/render_graph/render_graph_resource.h"
@@ -76,7 +77,7 @@ namespace smile::graphic
 
         // ---- GPU objects (persistent) ----
 
-        GraphicsPipeline Pipeline;
+        GraphicsPipelineDescriptorHandle PsoDescHandle;
         VertexBuffer DynamicVB;
         ConstantBuffer CameraCB;
         BindingSet PassBindingSet;

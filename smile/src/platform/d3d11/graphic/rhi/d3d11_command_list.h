@@ -79,6 +79,7 @@ namespace smile::graphic::rhi
         GraphicsPipelineHandle m_CurrentGraphicsPipeline;
         FramebufferHandle m_CurrentFramebuffer;
         ViewportState m_CurrentViewport;
+        math::Color m_CurrentBlendConstantColor{};
         BindingSetVector m_CurrentBindings;
         primitive::FixedVector< VertexBufferBinding, s_MaxVertexAttributeCount > m_CurrentVertexBufferBindings;
         IndexBufferBinding m_CurrentIndexBufferBinding;

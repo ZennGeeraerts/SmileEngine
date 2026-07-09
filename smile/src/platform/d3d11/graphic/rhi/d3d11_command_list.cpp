@@ -82,6 +82,10 @@ namespace smile::graphic::rhi
 
         const bool updateViewports = !m_IsCurrentGraphicsStateValid || m_CurrentViewport != graphicsState.Viewport;
 
+        const bool updateBlendState =
+            !m_IsCurrentGraphicsStateValid ||
+            ( pipeline.RequiresBlendFactor && graphicsState.BlendConstantColor != m_CurrentBlendConstantColor );
+
         const bool updateIndexBuffer =
             !m_IsCurrentGraphicsStateValid || m_CurrentIndexBufferBinding != graphicsState.IndexBuffer;
         const bool updateVertexBuffers =
@@ -130,6 +134,17 @@ namespace smile::graphic::rhi
         if ( updatePipeline )
         {
             BindGraphicsPipeline( pipeline );
+        }
+
+        if ( updatePipeline || updateBlendState )
+        {
+            const primitive::Array< FLOAT, 4 > blendFactor{ graphicsState.BlendConstantColor.r,
+                graphicsState.BlendConstantColor.g,
+                graphicsState.BlendConstantColor.b,
+                graphicsState.BlendConstantColor.a };
+
+            m_Context.pImmediateContext->OMSetBlendState(
+                pipeline.pBlendState, blendFactor.GetData(), D3D11_DEFAULT_SAMPLE_MASK );
         }
 
         if ( updateBindings )

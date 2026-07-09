@@ -122,6 +122,7 @@ namespace smile::graphic
                     resourceManager.GetFramebufferAttachmentSet( fb ), math::Color{ 0.0f, 0.0f, 0.0f, 1.0f }, 1.0f, 0 );
 
                 const auto &viewBindingSet = renderWorld.GetComponent< BindingSet >( viewEntity );
+                const auto &viewBindingLayout = renderWorld.GetComponent< BindingLayout >( viewEntity );
                 const auto &cmdBuffer = m_Opaque3dCommandBuffers[viewEntity];
 
                 for ( const DrawBin< Opaque3d > *bin : cmdBuffer.GetSorted() )
@@ -151,7 +152,9 @@ namespace smile::graphic
                     const auto entity = item.GetEntity();
                     const auto &mesh = renderWorld.GetComponent< Mesh >( entity );
                     const auto &mi = renderWorld.GetComponent< MaterialInstance >( entity );
-                    const auto &pipeline = renderWorld.GetComponent< GraphicsPipeline >( entity );
+                    const auto psoDescHandle = renderWorld.GetComponent< GraphicsPipelineDescriptorHandle >( entity );
+                    const auto &psoDesc = resourceManager.GetGraphicsPipelineDescriptor( psoDescHandle );
+                    const auto pipeline = resourceManager.GetOrCreateGraphicsPipeline( psoDesc, fb );
 
                     const auto &materialData = m_Engine.GetMaterialSystem().GetMaterialData( mi );
 

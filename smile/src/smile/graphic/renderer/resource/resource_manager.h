@@ -36,6 +36,9 @@ namespace smile::graphic
         class GraphicsDevice;
     }
 
+    using GraphicsPipelineDescriptorHandleManager = primitive::HandleManager< Uint64, 32, 32 >;
+    using GraphicsPipelineDescriptorHandle = GraphicsPipelineDescriptorHandleManager::HandleType;
+
     class ResourceManager final
     {
       public:
@@ -139,8 +142,18 @@ namespace smile::graphic
             BindingLayout &layout,
             BindingSet &set );
 
-        GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
-        GraphicsPipeline GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor );
+        GraphicsPipelineDescriptorHandle CreateGraphicsPipelineDescriptor(
+            const GraphicsPipelineDescriptor &descriptor );
+        GraphicsPipelineDescriptorHandle GetOrCreateGraphicsPipelineDescriptor(
+            const GraphicsPipelineDescriptor &descriptor );
+
+        const GraphicsPipelineDescriptor &GetGraphicsPipelineDescriptor(
+            GraphicsPipelineDescriptorHandle handle ) const;
+
+        GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor,
+            const Framebuffer &framebuffer );
+        GraphicsPipeline GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor,
+            const Framebuffer &framebuffer );
         void DestroyGraphicsPipeline( GraphicsPipeline &pipeline );
 
         rhi::Object GetShaderResourceView( const Texture &texture );
@@ -152,7 +165,7 @@ namespace smile::graphic
         {
             ShaderKey( const primitive::Vector< Byte > &byteCode,
                 const primitive::String &EntryPoint,
-                const primitive::String &targetProfile )
+                const primitive::String &targetProfile ) noexcept
             {
                 Hash = std::hash< primitive::Vector< Byte > >{}( byteCode );
                 Hash = foundation::HashCombine( Hash, std::hash< primitive::String >{}( EntryPoint ) );
@@ -172,7 +185,33 @@ namespace smile::graphic
             foundation::HashCode Hash;
         };
 
+        struct GraphicsPipelineKey final
+        {
+            GraphicsPipelineKey( const GraphicsPipelineDescriptor &descriptor,
+                const FramebufferAttachmentSet &attachmentSet ) noexcept
+            {
+                Hash = descriptor.GetHashCode();
+                Hash = foundation::HashCombine( Hash, attachmentSet.GetHashCode() );
+            }
+
+            bool operator==( const GraphicsPipelineKey &other ) const noexcept
+            {
+                return Hash == other.Hash;
+            }
+
+            bool operator!=( const GraphicsPipelineKey &other ) const noexcept
+            {
+                return Hash != other.Hash;
+            }
+
+            foundation::HashCode Hash;
+        };
+
       private:
+        rhi::FramebufferInfoExtented ResolveFramebufferInfo(
+            const primitive::FixedVector< FramebufferAttachment, rhi::s_MaxRenderTargets > &colorAttachments,
+            const FramebufferAttachment &depthAttachment ) const;
+
         rhi::GraphicsDevice &m_Device;
 
         primitive::Vector< VertexBuffer > m_VertexBuffers;
@@ -187,6 +226,7 @@ namespace smile::graphic
         primitive::Vector< BindingLayout > m_BindingLayouts;
         primitive::Vector< BindingSet > m_BindingSets;
         primitive::Vector< GraphicsPipeline > m_GraphicsPipelines;
+        primitive::Array< GraphicsPipelineDescriptor, rhi::s_MaxGraphicsPipelineCount > m_GraphicsPipelineDescriptors;
 
         ResourceCache< TextureAsset::ConstRef, Texture > m_TextureCache;
 
@@ -196,7 +236,8 @@ namespace smile::graphic
         ResourceCache< ConstantBufferDescriptor, ConstantBuffer > m_ConstantBufferCache;
         ResourceCache< rhi::BindingLayout, BindingLayout > m_BindingLayoutCache;
         ResourceCache< rhi::BindingSetDescriptor, BindingSet > m_BindingSetCache;
-        ResourceCache< GraphicsPipelineDescriptor, GraphicsPipeline > m_GraphicsPipelineCache;
+        ResourceCache< GraphicsPipelineKey, GraphicsPipeline > m_GraphicsPipelineCache;
+        ResourceCache< GraphicsPipelineDescriptor, GraphicsPipelineDescriptorHandle > m_GraphicsPipelineDescriptorCache;
 
         rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
         rhi::TextureHandleManager m_TextureHandleManager;
@@ -206,6 +247,7 @@ namespace smile::graphic
         rhi::BindingLayoutHandleManager m_BindingLayoutHandleManager;
         rhi::BindingSetHandleManager m_BindingSetHandleManager;
         rhi::GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
+        GraphicsPipelineDescriptorHandleManager m_GraphicsPipelineDescriptorHandleManager;
 
         FramebufferAttachmentSetHandleManager m_FramebufferAttachmentSetHandleManager;
         primitive::Array< FramebufferAttachmentSet, rhi::s_MaxRenderTargets > m_FramebufferAttachmentSets;
@@ -218,6 +260,15 @@ namespace std
     struct hash< smile::graphic::ResourceManager::ShaderKey >
     {
         smile::foundation::HashCode operator()( const smile::graphic::ResourceManager::ShaderKey &key ) const
+        {
+            return key.Hash;
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::ResourceManager::GraphicsPipelineKey >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::ResourceManager::GraphicsPipelineKey &key ) const
         {
             return key.Hash;
         }

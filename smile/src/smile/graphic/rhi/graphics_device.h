@@ -63,7 +63,8 @@ namespace smile::graphic::rhi
         virtual void DestroyShader( ShaderHandle handle ) = 0;
 
         virtual void CreateGraphicsPipeline( GraphicsPipelineHandle handle,
-            const GraphicsPipelineDescriptor &pipelineDesc ) = 0;
+            const GraphicsPipelineDescriptor &pipelineDesc,
+            const rhi::FramebufferInfo &fbInfo ) = 0;
         virtual void DestroyGraphicsPipeline( GraphicsPipelineHandle handle ) = 0;
 
         virtual void CreateTexture( TextureHandle handle,

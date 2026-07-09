@@ -139,9 +139,12 @@ namespace smile::graphic::rhi
     }
 
     void D3D11Device::CreateGraphicsPipeline( GraphicsPipelineHandle handle,
-        const GraphicsPipelineDescriptor &pipelineDesc )
+        const GraphicsPipelineDescriptor &pipelineDesc,
+        const rhi::FramebufferInfo &fbInfo )
     {
-        m_Pipelines[handle.GetIndex()].Create( *this, pipelineDesc );
+        SM_ASSERT( IsHandleValid( handle, m_Pipelines ) );
+
+        m_Pipelines[handle.GetIndex()].Create( *this, pipelineDesc, fbInfo );
     }
 
     void D3D11Device::DestroyGraphicsPipeline( GraphicsPipelineHandle handle )
@@ -244,6 +247,17 @@ namespace smile::graphic::rhi
     void D3D11Device::DestroyFramebuffer( FramebufferHandle handle )
     {
         m_Framebuffers[handle.GetIndex()].Destroy();
+    }
+
+    const D3D11BlendState *D3D11Device::GetOrCreateBlendState( const BlendState &blendState )
+    {
+        const D3D11BlendState *pBlendState = m_BlendStateCache.Find( blendState );
+        if ( pBlendState )
+            return pBlendState;
+
+        auto pNewBlendState = CreateScope< D3D11BlendState >();
+        pNewBlendState->Create( m_Context.pDevice, blendState );
+        return m_BlendStateCache.Add( blendState, std::move( pNewBlendState ) );
     }
 
     const D3D11RasterizerState *D3D11Device::GetOrCreateRasterizerState( const RasterizerState &rasterizerState )

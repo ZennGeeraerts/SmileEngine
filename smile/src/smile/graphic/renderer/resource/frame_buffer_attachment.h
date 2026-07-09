@@ -27,8 +27,44 @@ namespace smile::graphic
     {
         primitive::FixedVector< FramebufferAttachment, rhi::s_MaxRenderTargets > ColorAttachments{};
         FramebufferAttachment DepthAttachment{};
+
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hash{ 0 };
+
+            for ( const auto &attachment : ColorAttachments )
+            {
+                hash = foundation::HashCombine( hash, attachment.Texture.GetHandle().Hash() );
+
+                hash = foundation::HashCombine(
+                    hash, std::hash< Uint8 >{}( static_cast< Uint8 >( attachment.TextureFormat ) ) );
+
+                hash = foundation::HashCombine( hash, std::hash< bool >{}( attachment.IsReadOnly ) );
+            }
+
+            hash = foundation::HashCombine( hash, DepthAttachment.Texture.GetHandle().Hash() );
+
+            hash = foundation::HashCombine(
+                hash, std::hash< Uint8 >{}( static_cast< Uint8 >( DepthAttachment.TextureFormat ) ) );
+
+            hash = foundation::HashCombine( hash, std::hash< bool >{}( DepthAttachment.IsReadOnly ) );
+
+            return hash;
+        }
     };
 
     using FramebufferAttachmentSetHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
     using FramebufferAttachmentSetHandle = FramebufferAttachmentSetHandleManager::HandleType;
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::FramebufferAttachmentSet >
+    {
+        size_t operator()( const smile::graphic::FramebufferAttachmentSet &attachmentSet ) const noexcept
+        {
+            return attachmentSet.GetHashCode();
+        }
+    };
 }

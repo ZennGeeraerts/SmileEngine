@@ -11,6 +11,7 @@
 #include "resource/d3d11_staging_texture.h"
 #include "resource/d3d11_frame_buffer.h"
 #include "resource/d3d11_pipeline.h"
+#include "resource/d3d11_blend_state.h"
 #include "resource/d3d11_rasterizer_state.h"
 #include "resource/d3d11_depth_stencil_state.h"
 #include "resource/d3d11_sampler.h"
@@ -30,8 +31,8 @@ namespace smile::window
     class Window;
 }
 
-class ID3D11RenderTargetView;
-class ID3D11DepthStencilView;
+struct ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
 
 namespace smile::graphic::rhi
 {
@@ -39,6 +40,7 @@ namespace smile::graphic::rhi
 
     class D3D11Device final : public GraphicsDevice
     {
+        using D3D11BlendStateCache = typename D3D11StateCache< BlendState, D3D11BlendState >;
         using D3D11RasterizerStateCache = typename D3D11StateCache< RasterizerState, D3D11RasterizerState >;
         using D3D11DepthStencilStateCache = typename D3D11StateCache< DepthStencilState, D3D11DepthStencilState >;
         using D3D11InputLayoutCache = typename D3D11StateCache< BufferLayout, D3D11InputLayout >;
@@ -77,7 +79,8 @@ namespace smile::graphic::rhi
         void DestroyShader( ShaderHandle handle ) override;
 
         void CreateGraphicsPipeline( GraphicsPipelineHandle handle,
-            const GraphicsPipelineDescriptor &pipelineDesc ) override;
+            const GraphicsPipelineDescriptor &pipelineDesc,
+            const rhi::FramebufferInfo &fbInfo ) override;
         void DestroyGraphicsPipeline( GraphicsPipelineHandle handle ) override;
 
         void CreateTexture( TextureHandle handle,
@@ -110,6 +113,7 @@ namespace smile::graphic::rhi
         void DestroyFramebuffer( FramebufferHandle handle ) override;
 
       private:
+        const D3D11BlendState *GetOrCreateBlendState( const BlendState &blendState );
         const D3D11RasterizerState *GetOrCreateRasterizerState( const RasterizerState &rasterizerState );
         const D3D11DepthStencilState *GetOrCreateDepthStencilState( const DepthStencilState &depthStencilState );
         const D3D11InputLayout *GetOrCreateInputLayout( const GraphicsPipelineDescriptor &pipelineDesc );
@@ -131,6 +135,7 @@ namespace smile::graphic::rhi
         primitive::Array< D3D11Shader, s_MaxShaderCount > m_Shaders;
         primitive::Array< D3D11Pipeline, s_MaxGraphicsPipelineCount > m_Pipelines;
 
+        D3D11BlendStateCache m_BlendStateCache;
         D3D11RasterizerStateCache m_RasterizerStateCache;
         D3D11DepthStencilStateCache m_DepthStencilStateCache;
         D3D11InputLayoutCache m_InputLayoutCache;

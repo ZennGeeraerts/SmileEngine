@@ -10,14 +10,17 @@
 
 namespace smile::graphic::rhi
 {
-    void D3D11Pipeline::Create( D3D11Device &device, const GraphicsPipelineDescriptor &desc )
+    void
+    D3D11Pipeline::Create( D3D11Device &device, const GraphicsPipelineDescriptor &desc, const FramebufferInfo &fbInfo )
     {
         pInputLayout = device.GetOrCreateInputLayout( desc )->pInternal.Get();
         Layout = desc.InputLayout;
 
         PrimitiveTopology = ConvertToD3D11PrimitiveTopology( desc.Topology );
+        pBlendState = device.GetOrCreateBlendState( desc.State.BlendState )->pInternal.Get();
         pRasterizerState = device.GetOrCreateRasterizerState( desc.State.RasterizerState )->pInternal.Get();
         pDepthStencilState = device.GetOrCreateDepthStencilState( desc.State.DepthStencilState )->pInternal.Get();
+        RequiresBlendFactor = desc.State.BlendState.UsesConstantColor( fbInfo.ColorFormats.GetItemCount() );
 
         ShaderMask = { ShaderStage::Unknown };
 

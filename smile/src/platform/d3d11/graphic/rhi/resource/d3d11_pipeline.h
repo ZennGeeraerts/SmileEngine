@@ -17,12 +17,13 @@ namespace smile::graphic::rhi
 
     struct D3D11Pipeline final
     {
-        void Create( D3D11Device &device, const GraphicsPipelineDescriptor &desc );
+        void Create( D3D11Device &device, const GraphicsPipelineDescriptor &desc, const FramebufferInfo &fbInfo );
 
         ID3D11InputLayout *pInputLayout;
         BufferLayout Layout;
 
         D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology;
+        ID3D11BlendState *pBlendState;
         ID3D11RasterizerState *pRasterizerState;
         ID3D11DepthStencilState *pDepthStencilState;
 
@@ -30,5 +31,6 @@ namespace smile::graphic::rhi
         Microsoft::WRL::ComPtr< ID3D11PixelShader > pPixelShader;
         foundation::Flags< ShaderStage > ShaderMask;
         bool PixelShaderHasUAVs = false;
+        bool RequiresBlendFactor = false;
     };
 }

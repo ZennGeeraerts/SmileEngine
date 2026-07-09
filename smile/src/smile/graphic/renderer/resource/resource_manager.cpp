@@ -690,7 +690,38 @@ namespace smile::graphic
         set = GetOrCreateBindingSet( descriptor, layout, shaderStage );
     }
 
-    GraphicsPipeline ResourceManager::CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor )
+    GraphicsPipelineDescriptorHandle ResourceManager::CreateGraphicsPipelineDescriptor(
+        const GraphicsPipelineDescriptor &descriptor )
+    {
+        auto handle = m_GraphicsPipelineDescriptorHandleManager.CreateHandle();
+
+        m_GraphicsPipelineDescriptors[handle.GetIndex()] = descriptor;
+        m_GraphicsPipelineDescriptorCache.Add( descriptor, handle );
+
+        return handle;
+    }
+
+    GraphicsPipelineDescriptorHandle ResourceManager::GetOrCreateGraphicsPipelineDescriptor(
+        const GraphicsPipelineDescriptor &descriptor )
+    {
+        const auto psoDescHandle = m_GraphicsPipelineDescriptorCache.Find( descriptor );
+
+        if ( psoDescHandle.has_value() )
+        {
+            return psoDescHandle.value();
+        }
+
+        return CreateGraphicsPipelineDescriptor( descriptor );
+    }
+
+    const GraphicsPipelineDescriptor &ResourceManager::GetGraphicsPipelineDescriptor(
+        GraphicsPipelineDescriptorHandle handle ) const
+    {
+        return m_GraphicsPipelineDescriptors[handle.GetIndex()];
+    }
+
+    GraphicsPipeline ResourceManager::CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor,
+        const Framebuffer &framebuffer )
     {
         rhi::GraphicsPipelineDescriptor desc;
         desc.Topology = descriptor.Topology;
@@ -704,25 +735,36 @@ namespace smile::graphic
             desc.BindingLayouts.PushBack( bindingLayout.GetHandle() );
         }
 
+        const auto &attachmentSet = GetFramebufferAttachmentSet( framebuffer );
+
+        rhi::FramebufferInfoExtented fbInfo =
+            ResolveFramebufferInfo( attachmentSet.ColorAttachments, attachmentSet.DepthAttachment );
+
         rhi::GraphicsPipelineHandle handle = m_GraphicsPipelineHandleManager.CreateHandle();
-        m_Device.CreateGraphicsPipeline( handle, desc );
+        m_Device.CreateGraphicsPipeline( handle, desc, fbInfo );
 
         const GraphicsPipeline pipeline{ handle };
         m_GraphicsPipelines.PushBack( pipeline );
-        m_GraphicsPipelineCache.Add( descriptor, pipeline );
+
+        const GraphicsPipelineKey key{ descriptor, attachmentSet };
+        m_GraphicsPipelineCache.Add( key, pipeline );
+
         return pipeline;
     }
 
-    GraphicsPipeline ResourceManager::GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor )
+    GraphicsPipeline ResourceManager::GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor,
+        const Framebuffer &framebuffer )
     {
-        const auto pipeline = m_GraphicsPipelineCache.Find( descriptor );
+        const auto &attachmentSet = GetFramebufferAttachmentSet( framebuffer );
+        const GraphicsPipelineKey key{ descriptor, attachmentSet };
+        const auto pipeline = m_GraphicsPipelineCache.Find( key );
 
         if ( pipeline.has_value() )
         {
             return pipeline.value();
         }
 
-        return CreateGraphicsPipeline( descriptor );
+        return CreateGraphicsPipeline( descriptor, framebuffer );
     }
 
     void ResourceManager::DestroyGraphicsPipeline( GraphicsPipeline &pipeline )
@@ -756,5 +798,35 @@ namespace smile::graphic
         SM_ASSERT( framebuffer.GetAttachmentSetHandle().IsValid() )
 
         return m_FramebufferAttachmentSets[framebuffer.GetAttachmentSetHandle().GetIndex()];
+    }
+
+    rhi::FramebufferInfoExtented ResourceManager::ResolveFramebufferInfo(
+        const primitive::FixedVector< FramebufferAttachment, rhi::s_MaxRenderTargets > &colorAttachments,
+        const FramebufferAttachment &depthAttachment ) const
+    {
+        rhi::FramebufferDescriptor desc{};
+
+        for ( const auto &attachment : colorAttachments )
+        {
+            rhi::TextureDescriptor colorDesc;
+            colorDesc.TextureFormat = attachment.TextureFormat;
+            colorDesc.CPUAccess = attachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+            colorDesc.Width = attachment.Texture.GetWidth();
+            colorDesc.Height = attachment.Texture.GetHeight();
+
+            desc.ColorAttachments.PushBack( rhi::FramebufferAttachment{ attachment.Texture.GetHandle(), colorDesc } );
+        }
+
+        {
+            rhi::TextureDescriptor depthDesc;
+            depthDesc.TextureFormat = depthAttachment.TextureFormat;
+            depthDesc.CPUAccess = depthAttachment.IsReadOnly ? rhi::CPUAccessMode::Read : rhi::CPUAccessMode::Write;
+            depthDesc.Width = depthAttachment.Texture.GetWidth();
+            depthDesc.Height = depthAttachment.Texture.GetHeight();
+
+            desc.DepthAttachment = rhi::FramebufferAttachment{ depthAttachment.Texture.GetHandle(), depthDesc };
+        }
+
+        return rhi::FramebufferInfoExtented{ desc };
     }
 }
