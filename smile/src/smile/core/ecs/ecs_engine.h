@@ -15,6 +15,7 @@
 #include "smile/common/primitive/collection/array.h"
 #include "smile/common/primitive/collection/vector.h"
 #include "smile/common/primitive/collection/array_utils.h"
+#include "smile/common/primitive/collection/hash_map.h"
 
 #include <algorithm>
 
@@ -360,7 +361,7 @@ namespace smile::ecs
         template < typename ComponentType >
         void RegisterComponentIfNeeded( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            if ( m_ComponentPoolMap.find( typeID ) == m_ComponentPoolMap.end() )
+            if ( !m_ComponentPoolMap.HasItemAtKey( typeID ) )
                 RegisterComponent< ComponentType >();
         }
 
@@ -420,22 +421,24 @@ namespace smile::ecs
         ComponentType &GetComponent( EntityHandle entityHandle,
             const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto it = m_ComponentPoolMap.find( typeID );
+            SM_ASSERT_MSG(
+                m_ComponentPoolMap.HasItemAtKey( typeID ), "ECSEngine::GetComponent > Component is missing" );
 
-            SM_ASSERT_MSG( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
+            auto componentPool = m_ComponentPoolMap.GetItemAtKey( typeID );
 
-            return it->second->Get< ComponentType >( entityHandle );
+            return componentPool->Get< ComponentType >( entityHandle );
         }
 
         template < typename ComponentType >
         const ComponentType &GetComponent( EntityHandle entityHandle,
             const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            auto it = m_ComponentPoolMap.find( typeID );
+            SM_ASSERT_MSG(
+                m_ComponentPoolMap.HasItemAtKey( typeID ), "ECSEngine::GetComponent > Component is missing" );
 
-            SM_ASSERT_MSG( it != m_ComponentPoolMap.end(), "ECSEngine::GetComponent > Component is missing" );
+            const auto componentPool = m_ComponentPoolMap.GetItemAtKey( typeID );
 
-            return it->second->Get< ComponentType >( entityHandle );
+            return componentPool->Get< ComponentType >( entityHandle );
         }
 
         template < typename... Components >
@@ -454,24 +457,24 @@ namespace smile::ecs
         ComponentType *TryGetComponent( EntityHandle entityHandle,
             const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            auto it = m_ComponentPoolMap.find( typeID );
+            auto it = m_ComponentPoolMap.FindItemAtKey( typeID );
 
             if ( it == m_ComponentPoolMap.end() )
                 return nullptr;
 
-            return it->second->TryGet< ComponentType >( entityHandle );
+            return it.GetItem()->TryGet< ComponentType >( entityHandle );
         }
 
         template < typename ComponentType >
         const ComponentType *TryGetComponent( EntityHandle entityHandle,
             const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            auto it = m_ComponentPoolMap.find( typeID );
+            auto it = m_ComponentPoolMap.FindItemAtKey( typeID );
 
             if ( it == m_ComponentPoolMap.end() )
                 return nullptr;
 
-            return it->second->TryGet< ComponentType >( entityHandle );
+            return it.GetItem()->TryGet< ComponentType >( entityHandle );
         }
 
         template < typename ComponentType >
@@ -506,7 +509,7 @@ namespace smile::ecs
             }
 
             m_pComponentPools.Erase( std::remove( m_pComponentPools.begin(), m_pComponentPools.end(), pCPool ) );
-            m_ComponentPoolMap.erase( typeID );
+            m_ComponentPoolMap.EraseItemAtKey( typeID );
         }
 
         template < typename ComponentType >
@@ -632,15 +635,14 @@ namespace smile::ecs
         template < typename ComponentType >
         ComponentPool *GetComponentPool( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
         {
-            return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap[typeID] : nullptr;
+            return m_ComponentPoolMap.HasItemAtKey( typeID ) ? m_ComponentPoolMap.GetItemAtKey( typeID ) : nullptr;
         }
 
         template < typename ComponentType >
         const ComponentPool *GetComponentPool(
             const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() ) const
         {
-            return m_ComponentPoolMap.find( typeID ) != m_ComponentPoolMap.end() ? m_ComponentPoolMap.at( typeID )
-                                                                                 : nullptr;
+            return m_ComponentPoolMap.HasItemAtKey( typeID ) ? m_ComponentPoolMap.GetItemAtKey( typeID ) : nullptr;
         }
 
         void RemoveComponent( ComponentPool *pCPool, EntityHandle entityHandle );
@@ -651,7 +653,7 @@ namespace smile::ecs
         Context m_Context{};
         EntityHandleManager m_HandleManager{};
         primitive::Vector< ComponentPool * > m_pComponentPools{};
-        std::unordered_map< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
+        primitive::HashMap< foundation::TypeID, ComponentPool * > m_ComponentPoolMap{};
         primitive::Vector< GroupBase * > m_pGroups{};
         primitive::Vector< memory::Ref< BaseSystem > > m_pSystems{};
         primitive::Vector< EntityHandle > m_DeadHandles{};
