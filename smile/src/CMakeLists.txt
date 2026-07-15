@@ -29,4 +29,8 @@ target_compile_definitions(
 
 add_definitions(-DUNICODE)
 
-add_subdirectory(tools)
+smile_option(BUILD_TOOLS "Build additional tools" ON)
+
+if(SMILE_BUILD_TOOLS)
+    add_subdirectory(tools)
+endif()

@@ -6,17 +6,16 @@
 
 #include "asset.h"
 #include "smile/common/memory/ref.h"
-
-#include <map>
+#include "smile/common/primitive/collection/dictionary.h"
 
 namespace smile::asset
 {
-    using AssetMap = std::map< AssetHandle, memory::Ref< Asset > >;
+    using AssetMap = primitive::Dictionary< AssetHandle, memory::Ref< BaseAsset > >;
 
     class AssetManagerBase
     {
       public:
-        virtual memory::Ref< Asset > GetAsset( AssetHandle handle ) = 0;
+        virtual memory::Ref< BaseAsset > GetAsset( AssetHandle handle ) = 0;
 
         virtual bool IsAssetHandleValid( AssetHandle handle ) const = 0;
         virtual bool IsAssetLoaded( AssetHandle handle ) const = 0;

@@ -13,6 +13,8 @@ set_compiler_flags()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
+set(APPLICATION_TARGET smiledit)
+
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(smiledit ${SOURCE_FILES})
@@ -28,7 +30,8 @@ add_module(physics)
 add_module(scripting)
 add_module(blueprint)
 
-add_platform(directx11)
+add_platform(d3dcommon)
+add_platform(d3d11)
 add_platform(physx)
 
 set(LIB_DIRS

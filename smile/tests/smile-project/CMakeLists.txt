@@ -13,19 +13,22 @@ set_compiler_flags()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${SMILE_PATH})
 message(STATUS "Engine main path: " ${CMAKE_MODULE_PATH})
 
+set(APPLICATION_TARGET smile-project)
+
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_executable(smile-project ${SOURCE_FILES})
 
 include(${SMILE_PATH}/smile.cmake)
 
-add_subdirectory(${SMILE_PATH} engine)
+add_subdirectory(${SMILE_PATH} smile)
 
 add_module(common)
 add_module(core)
 add_module(graphic)
 
-add_platform(directx11)
+add_platform(d3dcommon)
+add_platform(d3d11)
 
 set(LIB_DIRS
     smile

@@ -11,17 +11,22 @@ namespace smile::graphic
     struct AnimationNode final
     {
         DirectX::XMFLOAT4X4 Transform{};
-        std::string Name{};
-        Uint32 ChildrenCount{};
-        std::vector< AnimationNode > Children;
+        primitive::String Name{};
+        Count ChildrenCount{};
+        primitive::Vector< AnimationNode > Children;
     };
 
     struct AnimationClip final
     {
-        std::string Name{};
+        AnimationClip( const primitive::String &name, const float duration, const float ticksPerSecond ) noexcept
+            : Name{ name }, Duration{ duration }, TicksPerSecond{ ticksPerSecond }
+        {
+        }
+
+        primitive::String Name{};
         float Duration{};
         float TicksPerSecond{};
-        std::vector< Bone > Bones{};
+        primitive::Vector< Bone > Bones{};
         AnimationNode RootNode{};
     };
 }

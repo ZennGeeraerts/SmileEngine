@@ -6,8 +6,7 @@
 
 #include "world.h"
 #include "smile/common/memory/ref.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::world
 {
@@ -16,13 +15,13 @@ namespace smile::world
       public:
         WorldSerializer( memory::Ref< World > pWorld );
 
-        void Serialize( const std::filesystem::path &filePath );
+        void Serialize( const fs::Path &filePath );
         // Serializes the world to a binary format
-        void SerializeRuntime( const std::filesystem::path &filePath );
+        void SerializeRuntime( const fs::Path &filePath );
 
-        bool Deserialize( const std::filesystem::path &filePath );
+        bool Deserialize( const fs::Path &filePath );
         // Deserializes the world from a binary format
-        bool DeserializeRuntime( const std::filesystem::path &filePath );
+        bool DeserializeRuntime( const fs::Path &filePath );
 
       private:
         memory::Ref< World > m_pWorld = nullptr;

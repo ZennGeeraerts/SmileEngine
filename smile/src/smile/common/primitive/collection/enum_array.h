@@ -134,6 +134,11 @@ namespace smile::primitive
             return s_ItemCount;
         }
 
+        [[nodiscard]] constexpr bool IsValidIndex( const int index ) const noexcept
+        {
+            return index >= 0 && index < s_ItemCount;
+        }
+
         [[nodiscard]] constexpr bool IsValidIndex( const EnumType index ) const noexcept
         {
             return static_cast< Index >( index ) < s_ItemCount;
@@ -141,22 +146,22 @@ namespace smile::primitive
 
         constexpr Iterator begin() noexcept
         {
-            return { this, 0, m_Items };
+            return { this, 0 };
         }
 
         constexpr ConstIterator begin() const noexcept
         {
-            return { this, 0, m_Items };
+            return { this, 0 };
         }
 
         constexpr Iterator end() noexcept
         {
-            return { this, s_ItemCount, m_Items };
+            return { this, s_ItemCount };
         }
 
         constexpr ConstIterator end() const noexcept
         {
-            return { this, s_ItemCount, m_Items };
+            return { this, s_ItemCount };
         }
 
         constexpr void SetItemAtIndex( const Item &item, const EnumType index )

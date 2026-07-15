@@ -4,9 +4,19 @@
 /*=============================================================================*/
 #pragma once
 
-#include "render_system.h"
-#include "smile/graphic/scene/scene_manager.h"
-#include "smile/graphic/rhi/shader/shader_library.h"
+#include "smile/common/memory/scope.h"
+
+#include "render_context.h"
+#include "smile/graphic/rhi/swap_chain.h"
+#include "resource/resource_manager.h"
+#include "smile/graphic/shader/shader_library.h"
+#include "sprite/texture_manager.h"
+#include "mesh/mesh_manager.h"
+#include "material/asset/material_manager.h"
+#include "material/asset/material_instance_manager.h"
+#include "material/material_system.h"
+#include "renderer.h"
+#include "render_world.h"
 
 namespace smile::window
 {
@@ -18,29 +28,88 @@ namespace smile::graphic
     class RenderEngine final
     {
       public:
-        static void Initialize( const window::Window *pWindow );
-        static void ShutDown();
+        static memory::Scope< RenderEngine > Create( rhi::RendererBackendType api );
 
-        static void OnWindowResize( Uint32 width, Uint32 height );
+        void LoadResources();
 
-        static RenderSystem &GetRenderSystem()
+        rhi::SwapChain &CreateSwapChain( const window::Window *window );
+        Renderer &CreateRenderer();
+        RenderWorld &CreateWorld();
+
+        RenderContext &GetRenderContext() noexcept
         {
-            return s_RenderSystem;
+            return *m_RenderContext;
         }
 
-        static SceneManager &GetSceneManager()
+        ResourceManager &GetResourceManager() noexcept
         {
-            return s_SceneManager;
+            return *m_ResourceManager;
         }
 
-        static ShaderLibrary &GetShaderLibrary()
+        ShaderLibrary &GetShaderLibrary() noexcept
         {
-            return s_ShaderLibrary;
+            return *m_ShaderLibrary;
         }
+
+        TextureManager &GetTextureManager() noexcept
+        {
+            return *m_TextureManager;
+        }
+
+        MeshManager &GetMeshManager() noexcept
+        {
+            return *m_MeshManager;
+        }
+
+        MaterialManager &GetMaterialManager() noexcept
+        {
+            return *m_MaterialManager;
+        }
+
+        MaterialInstanceManager &GetMaterialInstanceManager() noexcept
+        {
+            return *m_MaterialInstanceManager;
+        }
+
+        MaterialSystem &GetMaterialSystem() noexcept
+        {
+            return *m_MaterialSystem;
+        }
+
+        const Framebuffer &GetRenderTarget( const rhi::SwapChain &swapChain ) const;
 
       private:
-        static RenderSystem s_RenderSystem;
-        static SceneManager s_SceneManager;
-        static ShaderLibrary s_ShaderLibrary;
+        RenderEngine( rhi::RendererBackendType api,
+            memory::Scope< rhi::GraphicsDevice > device,
+            memory::Scope< RenderContext > context,
+            memory::Scope< ResourceManager > resourceManager,
+            memory::Scope< ShaderLibrary > shaderLibrary,
+            memory::Scope< TextureManager > textureManager,
+            memory::Scope< MeshManager > meshManager,
+            memory::Scope< MaterialManager > materialManager,
+            memory::Scope< MaterialInstanceManager > materialInstanceManager,
+            memory::Scope< MaterialSystem > materialSystem ) noexcept;
+
+      private:
+        rhi::RendererBackendType m_API;
+        memory::Scope< rhi::GraphicsDevice > m_Device;
+        memory::Scope< RenderContext > m_RenderContext;
+        memory::Scope< ResourceManager > m_ResourceManager;
+
+        memory::Scope< ShaderLibrary > m_ShaderLibrary;
+        memory::Scope< TextureManager > m_TextureManager;
+        memory::Scope< MeshManager > m_MeshManager;
+        memory::Scope< MaterialManager > m_MaterialManager;
+        memory::Scope< MaterialInstanceManager > m_MaterialInstanceManager;
+        memory::Scope< MaterialSystem > m_MaterialSystem;
+
+        primitive::Vector< memory::Scope< rhi::SwapChain > > m_SwapChains;
+        primitive::Vector< memory::Scope< Renderer > > m_Renderers;
+        primitive::Vector< memory::Scope< RenderWorld > > m_Worlds;
+
+        primitive::HashMap< rhi::SwapChain *, Framebuffer > m_RenderTargets;
+
+        template < typename Type, typename... Args >
+        friend constexpr memory::Scope< Type > memory::CreateScope( Args &&... );
     };
 }

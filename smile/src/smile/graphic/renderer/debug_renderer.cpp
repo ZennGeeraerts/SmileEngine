@@ -1,140 +1,113 @@
-/*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
-// Authors: Zenn Geeraerts
-/*=============================================================================*/
+/*=======================================================================
+*    _____           _ _          |                                     *
+*   / ____|         (_) |         |                                     *
+*  | (___  _ __ ___  _| | ___     |                                     *
+*   \___ \| '_ ` _ \| | |/ _ \    |  Copyright (c) 2026 Smile Engine    *
+*   ____) | | | | | | | |  __/    |  Inc. All Rights Reserved           *
+*  |_____/|_| |_| |_|_|_|\___|    |                                     *
+*                                 |                                     *
+=======================================================================*/
+
+/**
+ * @file        debug_renderer.cpp
+ * @author      Zenn Geeraerts
+ * @created     12 May 2026
+ * @brief       DebugRenderer implementation
+ */
 #include "smpch.h"
 #include "debug_renderer.h"
 
-#include "smile/graphic/renderer/render_engine.h"
-#include "smile/graphic/renderer/resource/resource_manager.h"
-
-#include <DirectXColors.h>
-
 namespace smile::graphic
 {
-    void DebugRenderer::Initialize()
-    {
-        auto &shaderLibrary = RenderEngine::GetShaderLibrary();
-        BufferLayout vertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGBA32_FLOAT, "COLOR" } };
-        m_pShader = shaderLibrary.Load( "resources/shaders/DebugRenderer.fx", vertexLayout );
-
-        m_State.Topology = PrimitiveTopology::LineList;
-        m_State.CullMode = CullMode::None;
-
-        CreateVertexBuffer();
-    }
-
-    void DebugRenderer::ShutDown()
-    {
-        m_LineList.clear();
-    }
-
-    void DebugRenderer::CreateFixedLineList()
-    {
-        // Grid
-        const Uint32 numGridLines = 20;
-        const float gridSpacing = 1.0f;
-
-        const float startOffset = -( static_cast< int >( numGridLines ) / 2 ) * gridSpacing;
-        const float size = ( numGridLines - 1 ) * gridSpacing;
-        const auto gridColor = static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::LightGray );
-        for ( Uint32 i = 0; i < numGridLines; ++i )
-        {
-            // Vertical
-            const float lineOffset = startOffset + gridSpacing * i;
-            auto vertStart = DirectX::XMFLOAT3( startOffset, 0, lineOffset );
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
-            vertStart.x += size;
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
-
-            // Horizontal
-            vertStart = DirectX::XMFLOAT3( lineOffset, 0, startOffset );
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
-            vertStart.z += size;
-            m_LineList.emplace_back( VertexPosCol{ vertStart, gridColor } );
-        }
-
-        // Axis
-        m_LineList.emplace_back( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) } );
-        m_LineList.emplace_back( VertexPosCol{
-            DirectX::XMFLOAT3( 30, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkRed ) } );
-        m_LineList.emplace_back( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) } );
-        m_LineList.emplace_back( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 30, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkGreen ) } );
-        m_LineList.emplace_back( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 0 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) } );
-        m_LineList.emplace_back( VertexPosCol{
-            DirectX::XMFLOAT3( 0, 0, 30 ), static_cast< DirectX::XMFLOAT4 >( DirectX::Colors::DarkBlue ) } );
-    }
-
-    void DebugRenderer::CreateVertexBuffer()
-    {
-        m_pVertexBuffer = RenderEngine::GetRenderSystem().GetResourceManager().CreateDynamicVertexBuffer(
-            m_VertexCount, m_VertexLayout );
-    }
-
-    void DebugRenderer::BeginScene( const Camera &camera, const DirectX::XMFLOAT4X4 &cameraTransform )
-    {
-        auto cameraTransformMat = DirectX::XMLoadFloat4x4( &cameraTransform );
-        auto projectionMatrixMat = DirectX::XMLoadFloat4x4( &camera.GetProjectionMatrix() );
-        auto viewMatrixMat = DirectX::XMMatrixInverse( nullptr, cameraTransformMat );
-        auto viewProjectionMatrixMat = viewMatrixMat * projectionMatrixMat;
-
-        DirectX::XMStoreFloat4x4( &m_ViewProjectionMatrix, viewProjectionMatrixMat );
-    }
-
-    void DebugRenderer::OnRender()
-    {
-        const Uint32 vertexCount = m_LineList.size();
-
-        if ( vertexCount <= 0 )
-            return;
-
-        if ( vertexCount > m_VertexCount )
-        {
-            m_VertexCount = vertexCount;
-            CreateVertexBuffer();
-        }
-
-        RenderSystem &renderSystem = RenderEngine::GetRenderSystem();
-
-        renderSystem.FillVertexBuffer( m_pVertexBuffer, m_LineList.data(), vertexCount );
-
-        renderSystem.SetState( m_State );
-
-        renderSystem.BindVertexBuffer( m_pVertexBuffer );
-        renderSystem.BindShader( m_pShader );
-
-        m_pShader->UploadMat4( "ViewProjection", m_ViewProjectionMatrix );
-
-        DirectX::XMFLOAT4X4 worldMatrix{};
-        DirectX::XMStoreFloat4x4( &worldMatrix, DirectX::XMMatrixIdentity() );
-        m_pShader->UploadMat4( "World", worldMatrix );
-
-        renderSystem.Draw( vertexCount );
-    }
-
-    void DebugRenderer::EndScene()
-    {
-        m_LineList.clear();
-    }
-
-    void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
+    void DebugRenderer::DrawLine( const DirectX::XMFLOAT3 &start,
         const DirectX::XMFLOAT3 &end,
         const DirectX::XMFLOAT4 &color )
     {
-        m_LineList.emplace_back( VertexPosCol{ start, color } );
-        m_LineList.emplace_back( VertexPosCol{ end, color } );
+        m_Vertices.PushBack( { start, color } );
+        m_Vertices.PushBack( { end, color } );
     }
 
-    void DebugRenderer::SubmitLine( const DirectX::XMFLOAT3 &start,
+    void DebugRenderer::DrawLine( const DirectX::XMFLOAT3 &start,
         const DirectX::XMFLOAT3 &end,
         const DirectX::XMFLOAT4 &colorStart,
         const DirectX::XMFLOAT4 &colorEnd )
     {
-        m_LineList.emplace_back( VertexPosCol{ start, colorStart } );
-        m_LineList.emplace_back( VertexPosCol{ end, colorEnd } );
+        m_Vertices.PushBack( { start, colorStart } );
+        m_Vertices.PushBack( { end, colorEnd } );
+    }
+
+    void DebugRenderer::DrawAABB( const DirectX::XMFLOAT3 &min,
+        const DirectX::XMFLOAT3 &max,
+        const DirectX::XMFLOAT4 &color )
+    {
+        // Bottom face
+        DrawLine( { min.x, min.y, min.z }, { max.x, min.y, min.z }, color );
+        DrawLine( { max.x, min.y, min.z }, { max.x, min.y, max.z }, color );
+        DrawLine( { max.x, min.y, max.z }, { min.x, min.y, max.z }, color );
+        DrawLine( { min.x, min.y, max.z }, { min.x, min.y, min.z }, color );
+        // Top face
+        DrawLine( { min.x, max.y, min.z }, { max.x, max.y, min.z }, color );
+        DrawLine( { max.x, max.y, min.z }, { max.x, max.y, max.z }, color );
+        DrawLine( { max.x, max.y, max.z }, { min.x, max.y, max.z }, color );
+        DrawLine( { min.x, max.y, max.z }, { min.x, max.y, min.z }, color );
+        // Vertical edges
+        DrawLine( { min.x, min.y, min.z }, { min.x, max.y, min.z }, color );
+        DrawLine( { max.x, min.y, min.z }, { max.x, max.y, min.z }, color );
+        DrawLine( { max.x, min.y, max.z }, { max.x, max.y, max.z }, color );
+        DrawLine( { min.x, min.y, max.z }, { min.x, max.y, max.z }, color );
+    }
+
+    void DebugRenderer::DrawSphere( const DirectX::XMFLOAT3 &center,
+        float radius,
+        const DirectX::XMFLOAT4 &color,
+        Uint32 segments )
+    {
+        const float step = DirectX::XM_2PI / static_cast< float >( segments );
+
+        auto ring = [&]( auto x, auto y )
+        {
+            for ( Uint32 i = 0; i < segments; ++i )
+            {
+                const float a0 = static_cast< float >( i ) * step;
+                const float a1 = static_cast< float >( i + 1 ) * step;
+                DrawLine( { center.x + x( a0 ), center.y + y( a0 ), center.z },
+                    { center.x + x( a1 ), center.y + y( a1 ), center.z },
+                    color );
+            }
+        };
+
+        // XY ring
+        ring( [&]( float a ) { return radius * std::cos( a ); }, [&]( float a ) { return radius * std::sin( a ); } );
+        // XZ ring
+        for ( Uint32 i = 0; i < segments; ++i )
+        {
+            const float a0 = static_cast< float >( i ) * step;
+            const float a1 = static_cast< float >( i + 1 ) * step;
+            DrawLine( { center.x + radius * std::cos( a0 ), center.y, center.z + radius * std::sin( a0 ) },
+                { center.x + radius * std::cos( a1 ), center.y, center.z + radius * std::sin( a1 ) },
+                color );
+        }
+        // YZ ring
+        for ( Uint32 i = 0; i < segments; ++i )
+        {
+            const float a0 = static_cast< float >( i ) * step;
+            const float a1 = static_cast< float >( i + 1 ) * step;
+            DrawLine( { center.x, center.y + radius * std::cos( a0 ), center.z + radius * std::sin( a0 ) },
+                { center.x, center.y + radius * std::cos( a1 ), center.z + radius * std::sin( a1 ) },
+                color );
+        }
+    }
+
+    void DebugRenderer::Flush( DebugPassData &data )
+    {
+        for ( const DebugVertex &v : m_Vertices )
+        {
+            data.LineList.PushBack( { v.Position, v.Color } );
+        }
+    }
+
+    void DebugRenderer::Reset()
+    {
+        m_Vertices.Clear();
     }
 }

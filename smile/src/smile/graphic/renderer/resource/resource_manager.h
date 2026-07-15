@@ -6,59 +6,271 @@
 
 #include "smile/common/foundation/compiled.h"
 #include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/common/primitive/collection/array.h"
+
+#include "smile/graphic/resource/image.h"
+
+#include "smile/graphic/shader/shader_asset.h"
 
 #include "vertex_buffer.h"
 #include "index_buffer.h"
-#include "uniform_buffer.h"
 #include "texture.h"
+#include "sampler.h"
 #include "frame_buffer.h"
+#include "graphics_pipeline.h"
+#include "resource_cache.h"
+#include "smile/graphic/renderer/shader/constant_buffer.h"
+#include "smile/graphic/renderer/shader/vertex_shader.h"
+#include "smile/graphic/renderer/shader/pixel_shader.h"
+#include "smile/graphic/renderer/shader/binding_layout.h"
+#include "smile/graphic/renderer/shader/binding_set.h"
+#include "smile/graphic/renderer/sprite/texture_asset.h"
 
-#include "smile/graphic/rhi/resource/buffer.h"
-#include "smile/graphic/rhi/resource/frame_buffer.h"
-#include "smile/graphic/rhi/shader/shader.h"
-
-#include <vector>
-#include <filesystem>
+#include "smile/graphic/rhi/object.h"
 
 namespace smile::graphic
 {
-    class GraphicsDevice;
+    namespace rhi
+    {
+        class GraphicsDevice;
+    }
+
+    using GraphicsPipelineDescriptorHandleManager = primitive::HandleManager< Uint64, 32, 32 >;
+    using GraphicsPipelineDescriptorHandle = GraphicsPipelineDescriptorHandleManager::HandleType;
 
     class ResourceManager final
     {
       public:
-        ResourceManager() = default;
+        ResourceManager( rhi::GraphicsDevice &device ) noexcept;
         ~ResourceManager();
 
-        void Initialize( GraphicsDevice *pDevice );
+        VertexBuffer CreateVertexBuffer( void *pVertices, const Count vertexCount, const rhi::BufferLayout &layout );
+        VertexBuffer CreateDynamicVertexBuffer( const Count vertexCount, const rhi::BufferLayout &layout );
+        void DestroyVertexBuffer( VertexBuffer &vertexBuffer );
 
-        memory::Ref< VertexBuffer >
-        CreateVertexBuffer( void *pVertices, Uint32 vertexCount, const BufferLayout &layout );
-        memory::Ref< VertexBuffer > CreateDynamicVertexBuffer( Uint32 vertexCount, const BufferLayout &layout );
+        IndexBuffer CreateIndexBuffer( Uint32 *pIndices, const Count indexCount );
+        void DestroyIndexBuffer( IndexBuffer &indexBuffer );
 
-        memory::Ref< IndexBuffer > CreateIndexBuffer( Uint32 *pIndices, Uint32 indexCount );
+        rhi::GPUBufferHandle CreateGPUBuffer( const rhi::GPUBufferDescriptor &desc );
+        void DestroyGPUBuffer( rhi::GPUBufferHandle &handle );
 
-        memory::Ref< UniformBuffer > CreateUniformBuffer( const std::string &name, void *pData, Uint32 size );
+        Texture CreateTexture2D( Image::ConstRef pImage, bool updateable );
+        Texture CreateTexture2D( TextureAsset::ConstRef textureAsset );
 
-        memory::Ref< Shader >
-        CreateShader( const std::string &assetFile, const BufferLayout &layout, const std::string &techniqueName = "" );
-        memory::Ref< Shader > CreateShader( const std::string &assetFile, const std::string &techniqueName = "" );
-        memory::Ref< Texture > CreateTexture( const std::filesystem::path &path );
-        memory::Ref< Framebuffer > CreateFramebuffer( const FramebufferDescriptor &descriptor );
+        Texture GetOrCreateTexture2D( TextureAsset::ConstRef textureAsset );
 
-        void ResizeFramebuffer( memory::Ref< Framebuffer > pFramebuffer, Uint32 width, Uint32 height );
+        Texture CreateTextureCube( Image::ConstRef pImage, bool updateable );
+
+        Texture
+        CreateTextureFromNative( rhi::Object nativeTexture, rhi::ObjectType type, const rhi::TextureDescriptor &desc );
+
+        void DestroyTexture( Texture &texture );
+
+        Sampler CreateSampler( const rhi::SamplerDescriptor &descriptor );
+        Sampler GetOrCreateSampler( const rhi::SamplerDescriptor &descriptor );
+        void DestroySampler( Sampler &sampler );
+
+        FramebufferAttachment CreateColorAttachment( const Uint32 width, const Uint32 height );
+
+        FramebufferAttachment CreateDepthAttachment( const Uint32 width, const Uint32 height );
+
+        ConstantBuffer CreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
+        ConstantBuffer GetOrCreateConstantBuffer( const ConstantBufferDescriptor &descriptor );
+        void DestroyConstantBuffer( ConstantBuffer &constantBuffer );
+
+        VertexShader CreateVertexShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
+
+        VertexShader CreateVertexShader( ShaderAsset::ConstRef shaderAsset );
+
+        VertexShader GetOrCreateVertexShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
+
+        VertexShader GetOrCreateVertexShader( ShaderAsset::ConstRef shaderAsset );
+
+        void DestroyVertexShader( VertexShader &vertexShader );
+
+        PixelShader CreatePixelShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
+
+        PixelShader CreatePixelShader( ShaderAsset::ConstRef shaderAsset );
+
+        PixelShader GetOrCreatePixelShader( const primitive::Vector< Byte > &byteCode,
+            const primitive::String &entryPoint,
+            const primitive::String &targetProfile );
+
+        PixelShader GetOrCreatePixelShader( ShaderAsset::ConstRef shaderAsset );
+
+        void DestroyPixelShader( PixelShader &pixelShader );
+
+        Framebuffer CreateFramebuffer( std::initializer_list< FramebufferAttachment > colorAttachments,
+            const FramebufferAttachment &depthAttachment );
+
+        Framebuffer CreateFramebuffer(
+            const primitive::FixedVector< FramebufferAttachment, rhi::s_MaxRenderTargets > &colorAttachments,
+            const FramebufferAttachment &depthAttachment );
+
+        void ResizeFramebuffer( Framebuffer &framebuffer, const Uint32 width, const Uint32 height );
+
+        void DestroyFramebuffer( Framebuffer &framebuffer, bool destroyTextureAttachments = true );
+
+        BindingLayout CreateBindingLayout( const rhi::BindingLayout &layout );
+        BindingLayout GetOrCreateBindingLayout( const rhi::BindingLayout &layout );
+        void DestroyBindingLayout( BindingLayout &bindingLayout );
+
+        BindingSet CreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+            const BindingLayout &layout,
+            foundation::Flags< rhi::ShaderStage > shaderStage );
+
+        BindingSet GetOrCreateBindingSet( const rhi::BindingSetDescriptor &descriptor,
+            const BindingLayout &layout,
+            foundation::Flags< rhi::ShaderStage > shaderStage );
+
+        void DestroyBindingSet( BindingSet &bindingSet );
+
+        void CreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
+            foundation::Flags< rhi::ShaderStage > shaderStage,
+            BindingLayout &layout,
+            BindingSet &set );
+
+        void GetOrCreateBindingSetAndLayout( const rhi::BindingSetDescriptor &descriptor,
+            foundation::Flags< rhi::ShaderStage > shaderStage,
+            BindingLayout &layout,
+            BindingSet &set );
+
+        GraphicsPipelineDescriptorHandle CreateGraphicsPipelineDescriptor(
+            const GraphicsPipelineDescriptor &descriptor );
+        GraphicsPipelineDescriptorHandle GetOrCreateGraphicsPipelineDescriptor(
+            const GraphicsPipelineDescriptor &descriptor );
+
+        const GraphicsPipelineDescriptor &GetGraphicsPipelineDescriptor(
+            GraphicsPipelineDescriptorHandle handle ) const;
+
+        GraphicsPipeline CreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor,
+            const Framebuffer &framebuffer );
+        GraphicsPipeline GetOrCreateGraphicsPipeline( const GraphicsPipelineDescriptor &descriptor,
+            const Framebuffer &framebuffer );
+        void DestroyGraphicsPipeline( GraphicsPipeline &pipeline );
+
+        rhi::Object GetShaderResourceView( const Texture &texture );
+
+        FramebufferAttachmentSet &GetFramebufferAttachmentSet( const Framebuffer &framebuffer );
+        const FramebufferAttachmentSet &GetFramebufferAttachmentSet( const Framebuffer &framebuffer ) const;
+
+        struct ShaderKey final
+        {
+            ShaderKey( const primitive::Vector< Byte > &byteCode,
+                const primitive::String &EntryPoint,
+                const primitive::String &targetProfile ) noexcept
+            {
+                Hash = std::hash< primitive::Vector< Byte > >{}( byteCode );
+                Hash = foundation::HashCombine( Hash, std::hash< primitive::String >{}( EntryPoint ) );
+                Hash = foundation::HashCombine( Hash, std::hash< primitive::String >{}( targetProfile ) );
+            }
+
+            bool operator==( const ShaderKey &other ) const noexcept
+            {
+                return Hash == other.Hash;
+            }
+
+            bool operator!=( const ShaderKey &other ) const noexcept
+            {
+                return Hash != other.Hash;
+            }
+
+            foundation::HashCode Hash;
+        };
+
+        struct GraphicsPipelineKey final
+        {
+            GraphicsPipelineKey( const GraphicsPipelineDescriptor &descriptor,
+                const FramebufferAttachmentSet &attachmentSet ) noexcept
+            {
+                Hash = descriptor.GetHashCode();
+                Hash = foundation::HashCombine( Hash, attachmentSet.GetHashCode() );
+            }
+
+            bool operator==( const GraphicsPipelineKey &other ) const noexcept
+            {
+                return Hash == other.Hash;
+            }
+
+            bool operator!=( const GraphicsPipelineKey &other ) const noexcept
+            {
+                return Hash != other.Hash;
+            }
+
+            foundation::HashCode Hash;
+        };
 
       private:
-        GraphicsDevice *m_pDevice = nullptr;
-        std::vector< memory::Ref< VertexBuffer > > m_pVertexBuffers;
-        std::vector< memory::Ref< IndexBuffer > > m_pIndexBuffers;
-        std::vector< memory::Ref< UniformBuffer > > m_pUniformBuffers;
-        std::vector< memory::Ref< Shader > > m_pShaders;
-        std::vector< memory::Ref< Texture > > m_pTextures;
-        std::vector< memory::Ref< Framebuffer > > m_pFramebuffers;
+        rhi::FramebufferInfoExtented ResolveFramebufferInfo(
+            const primitive::FixedVector< FramebufferAttachment, rhi::s_MaxRenderTargets > &colorAttachments,
+            const FramebufferAttachment &depthAttachment ) const;
 
-        GPUBufferHandleManager m_GPUBufferHandleManager;
-        TextureHandleManager m_TextureHandleManager;
-        FramebufferHandleManager m_FramebufferHandleManager;
+        rhi::GraphicsDevice &m_Device;
+
+        primitive::Vector< VertexBuffer > m_VertexBuffers;
+        primitive::Vector< IndexBuffer > m_IndexBuffers;
+        primitive::Vector< rhi::GPUBufferHandle > m_GPUBufferHandles;
+        primitive::Vector< Texture > m_Textures;
+        primitive::Vector< Sampler > m_Samplers;
+        primitive::Vector< ConstantBuffer > m_ConstantBuffers;
+        primitive::Vector< VertexShader > m_VertexShaders;
+        primitive::Vector< PixelShader > m_PixelShaders;
+        primitive::Vector< Framebuffer > m_Framebuffers;
+        primitive::Vector< BindingLayout > m_BindingLayouts;
+        primitive::Vector< BindingSet > m_BindingSets;
+        primitive::Vector< GraphicsPipeline > m_GraphicsPipelines;
+        primitive::Array< GraphicsPipelineDescriptor, rhi::s_MaxGraphicsPipelineCount > m_GraphicsPipelineDescriptors;
+
+        ResourceCache< TextureAsset::ConstRef, Texture > m_TextureCache;
+
+        ResourceCache< ShaderKey, VertexShader > m_VertexShaderCache;
+        ResourceCache< ShaderKey, PixelShader > m_PixelShaderCache;
+        ResourceCache< rhi::SamplerDescriptor, Sampler > m_SamplerCache;
+        ResourceCache< ConstantBufferDescriptor, ConstantBuffer > m_ConstantBufferCache;
+        ResourceCache< rhi::BindingLayout, BindingLayout > m_BindingLayoutCache;
+        ResourceCache< rhi::BindingSetDescriptor, BindingSet > m_BindingSetCache;
+        ResourceCache< GraphicsPipelineKey, GraphicsPipeline > m_GraphicsPipelineCache;
+        ResourceCache< GraphicsPipelineDescriptor, GraphicsPipelineDescriptorHandle > m_GraphicsPipelineDescriptorCache;
+
+        rhi::GPUBufferHandleManager m_GPUBufferHandleManager;
+        rhi::TextureHandleManager m_TextureHandleManager;
+        rhi::SamplerHandlerManager m_SamplerHandleManager;
+        rhi::FramebufferHandleManager m_FramebufferHandleManager;
+        rhi::ShaderHandleManager m_ShaderHandleManager;
+        rhi::BindingLayoutHandleManager m_BindingLayoutHandleManager;
+        rhi::BindingSetHandleManager m_BindingSetHandleManager;
+        rhi::GraphicsPipelineHandleManager m_GraphicsPipelineHandleManager;
+        GraphicsPipelineDescriptorHandleManager m_GraphicsPipelineDescriptorHandleManager;
+
+        FramebufferAttachmentSetHandleManager m_FramebufferAttachmentSetHandleManager;
+        primitive::Array< FramebufferAttachmentSet, rhi::s_MaxRenderTargets > m_FramebufferAttachmentSets;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::ResourceManager::ShaderKey >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::ResourceManager::ShaderKey &key ) const
+        {
+            return key.Hash;
+        }
+    };
+
+    template <>
+    struct hash< smile::graphic::ResourceManager::GraphicsPipelineKey >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::ResourceManager::GraphicsPipelineKey &key ) const
+        {
+            return key.Hash;
+        }
     };
 }

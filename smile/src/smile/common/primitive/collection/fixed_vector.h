@@ -35,8 +35,19 @@ namespace smile::primitive
         }
 
         using Array< Item, MaxItemCount >::operator[];
-        using Array< Item, MaxItemCount >::operator==;
-        using Array< Item, MaxItemCount >::operator!=;
+
+        bool operator==( const FixedVector &other ) const
+        {
+            if ( m_ItemCount != other.m_ItemCount )
+                return false;
+
+            return std::equal( std::begin( *this ), std::end( *this ), std::begin( other ) );
+        }
+
+        bool operator!=( const FixedVector &other ) const
+        {
+            return !( *this == other );
+        }
 
         using Array< Item, MaxItemCount >::GetData;
 

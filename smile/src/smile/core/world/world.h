@@ -19,9 +19,12 @@ namespace smile::world
 {
     class Entity;
 
-    class World final : public asset::Asset
+    class World final : public asset::Asset< World >
     {
       public:
+        using Ref = memory::Ref< World >;
+        using ConstRef = memory::Ref< const World >;
+
         World( memory::Ref< smile::ecs::state::SystemRegistry > pSystemRegistry =
                    memory::CreateRef< smile::ecs::state::SystemRegistry >() );
         ~World();
@@ -46,9 +49,14 @@ namespace smile::world
 
         Entity GetEntityByUUID( primitive::UUID uuid );
 
-        asset::AssetType GetType() const override
+        smile::ecs::ECSEngine::Context &GetContext() noexcept
         {
-            return asset::AssetType{ foundation::TypeNameOf< World >() };
+            return m_ECSEngine.GetContext();
+        }
+
+        const smile::ecs::ECSEngine::Context &GetContext() const noexcept
+        {
+            return m_ECSEngine.GetContext();
         }
 
         template < typename ComponentType >

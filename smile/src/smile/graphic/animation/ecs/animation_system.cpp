@@ -70,7 +70,7 @@ namespace smile::graphic::ecs
         AnimationNode *pNode,
         const DirectX::XMFLOAT4X4 &parentTransform )
     {
-        const std::string &nodeName = pNode->Name;
+        const primitive::String &nodeName = pNode->Name;
         DirectX::XMFLOAT4X4 nodeTransform = pNode->Transform;
         Ref< AnimationClip > pCurrentClip = animator.pAnimationClips[animator.CurrentClipIndex];
 
@@ -90,7 +90,7 @@ namespace smile::graphic::ecs
         DirectX::XMFLOAT4X4 globalTransform{};
         DirectX::XMStoreFloat4x4( &globalTransform, globalTransformMat );
 
-        if ( pSkinnedMesh->SkeletonMap.find( nodeName ) != pSkinnedMesh->SkeletonMap.end() )
+        if ( pSkinnedMesh->SkeletonMap.HasItemAtKey( nodeName ) )
         {
             Uint32 id = pSkinnedMesh->SkeletonMap[nodeName].ID;
             SM_ASSERT_MSG( id < s_MaxBoneCount, "AnimationSystem::CalculateBoneTransform > Max bone count reached" );

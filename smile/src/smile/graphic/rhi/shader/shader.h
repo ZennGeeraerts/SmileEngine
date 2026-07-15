@@ -1,38 +1,30 @@
 /*=============================================================================*/
-// Copyright 2022-2023 Smile Engine
+// Copyright 2022-2025 Smile Engine
 // Authors: Zenn Geeraerts
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/foundation/compiled.h"
-#include "smile/common/memory/ref.h"
-#include "smile/graphic/rhi/resource/buffer.h"
-#include "smile/graphic/rhi/render_handle.h"
+#include "shader_stage.h"
+#include "smile/common/primitive/text/string.h"
+#include "smile/common/primitive/handle_manager.h"
 
-#include <DirectXMath.h>
-
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
-    struct Shader : public memory::Counted
+    struct ShaderDescriptor final
     {
-        Shader() = default;
-        virtual ~Shader() = default;
+        ShaderDescriptor() = default;
 
-        virtual void UploadMat4( const std::string &sementicName, const DirectX::XMFLOAT4X4 &matrix ) = 0;
-        virtual void UploadMat4Array( const std::string &sementicName,
-            const std::vector< DirectX::XMFLOAT4X4 > &matArray ) = 0;
-        virtual void UploadFloat2( const std::string &sementicName, const DirectX::XMFLOAT2 &value ) = 0;
-        virtual void UploadFloat3( const std::string &sementicName, const DirectX::XMFLOAT3 &value ) = 0;
-        virtual void UploadInt( const std::string &sementicName, int value ) = 0;
-        virtual void UploadTexture( const std::string &sementicName, TextureHandle texture ) = 0;
-        virtual void UploadBool( const std::string &sementicName, bool value ) = 0;
-        virtual void UploadFloat( const std::string &sementicName, float value ) = 0;
+        ShaderDescriptor( ShaderStage stage ) : Stage{ stage }
+        {
+        }
 
-        virtual void *GetData() const = 0;
-
-        void SetName( const std::string &assetFile );
-
-        std::string Name;
-        BufferLayout BufferLayout{};
+        ShaderStage Stage = ShaderStage::Unknown;
+        primitive::String EntryPoint = "main";
+        primitive::String TargetProfile;
     };
+
+    using ShaderHandleManager = typename primitive::HandleManager< Uint64, 32, 32 >;
+    using ShaderHandle = ShaderHandleManager::HandleType;
+
+    static constexpr Uint16 s_MaxShaderCount = ( 4 << 10 );
 }

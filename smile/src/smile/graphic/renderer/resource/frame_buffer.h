@@ -4,23 +4,73 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
-#include "smile/graphic/rhi/render_handle.h"
+#include "frame_buffer_attachment.h"
 
 namespace smile::graphic
 {
-    struct Framebuffer final : public memory::Counted
+    class Framebuffer final
     {
       public:
-        Framebuffer( FramebufferHandle handle ) : Handle{ handle }
+        Framebuffer() = default;
+
+        Framebuffer( rhi::FramebufferHandle handle,
+            FramebufferAttachmentSetHandle attachmentSetHandle,
+            const Uint32 width,
+            const Uint32 height ) noexcept
+            : m_Handle{ handle }, m_AttachmentSetHandle{ attachmentSetHandle }, m_Width{ width }, m_Height{ height }
         {
         }
+
+        Framebuffer( const Framebuffer & ) = default;
+        Framebuffer( Framebuffer && ) = default;
+
         ~Framebuffer() = default;
 
-        FramebufferHandle Handle;
-        Uint32 Width{};
-        Uint32 Height{};
+        Framebuffer &operator=( const Framebuffer & ) = default;
+        Framebuffer &operator=( Framebuffer && ) noexcept = default;
 
-        static constexpr Uint32 MaxFramebufferSize{ 8192 };
+        [[nodiscard]] bool IsValid() const noexcept
+        {
+            return m_Handle.IsValid();
+        }
+
+        rhi::FramebufferHandle GetHandle() const noexcept
+        {
+            return m_Handle;
+        }
+
+        FramebufferAttachmentSetHandle GetAttachmentSetHandle() const noexcept
+        {
+            return m_AttachmentSetHandle;
+        }
+
+        Uint32 GetWidth() const noexcept
+        {
+            return m_Width;
+        }
+
+        Uint32 GetHeight() const noexcept
+        {
+            return m_Height;
+        }
+
+        [[nodiscard]] rhi::Viewport GetViewport( const float minZ = 0.0f, const float maxZ = 0.0f ) const
+        {
+            return rhi::Viewport{
+                0.0f, static_cast< float >( m_Width ), 0.0f, static_cast< float >( m_Height ), minZ, maxZ };
+        }
+
+        bool operator==( const Framebuffer &other ) const noexcept
+        {
+            return m_Handle == other.m_Handle;
+        }
+
+      private:
+        rhi::FramebufferHandle m_Handle;
+        FramebufferAttachmentSetHandle m_AttachmentSetHandle;
+        Uint32 m_Width = 0;
+        Uint32 m_Height = 0;
+
+        friend class ResourceManager;
     };
 }

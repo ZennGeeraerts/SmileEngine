@@ -5,6 +5,7 @@
 #include "smpch.h"
 #include "png_reader.h"
 
+#include "smile/core/fs/physical_system.h"
 #include "smile/graphic/resource/image.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -12,39 +13,38 @@
 
 namespace smile::graphic
 {
-    memory::Ref< Image > PNGReader::Read( const std::filesystem::path &path )
+    memory::Ref< Image > PNGReader::Read( const fs::Path &path )
     {
         int width;
         int height;
-        int stridePerPixel;
+        int channelsPerPixel;
 
-        std::filesystem::path finalPath = [&]()
+        fs::Path finalPath = [&]()
         {
-            if ( path.is_absolute() )
+            if ( path.IsPhysical() )
                 return path;
             else
-                return std::filesystem::absolute( path );
+                return fs::PhysicalSystem::GetAbsolutePath( path );
         }();
 
-        SM_ASSERT_MSG(
-            std::filesystem::exists( finalPath ), "PNGReader::Read > Path: {} does not exist", finalPath.string() );
+        SM_ASSERT_MSG( fs::PhysicalSystem::DoesFileExist( finalPath ),
+            "PNGReader::Read > Path: {} does not exist",
+            finalPath.string() );
 
-        stbi_uc *pData = stbi_load( finalPath.string().c_str(), &width, &height, &stridePerPixel, 0 );
+        stbi_uc *pData = stbi_load( finalPath.GetData(), &width, &height, &channelsPerPixel, 4 );
 
-        if ( pData )
+        if ( !pData )
             return memory::CreateRef< Image >();
 
         memory::Ref< Image > pImage = [&]()
         {
-            switch ( stridePerPixel )
+            switch ( channelsPerPixel )
             {
                 case 4:
-                    return memory::CreateRef< Image >( width, height, ImageFormat::RGBA, pData );
-                case 3:
-                    return memory::CreateRef< Image >( width, height, ImageFormat::RGB, pData );
+                    return memory::CreateRef< Image >( width, height, rhi::Format::RGBA8_UNORM, pData );
 
                 default:
-                    SM_ASSERT_MSG( false, "PNGReader::Read > Unsupported stride per pixel" );
+                    SM_ASSERT_MSG( false, "PNGReader::Read > Unsupported channels per pixel" );
             }
         }();
 

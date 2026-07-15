@@ -5,15 +5,14 @@
 #pragma once
 
 #include "asset.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::asset
 {
     struct AssetMetadata final
     {
         AssetType Type = AssetType::NullType();
-        std::filesystem::path FilePath;
+        fs::Path FilePath;
 
         operator bool() const
         {

@@ -89,6 +89,11 @@ namespace smile::foundation
                 Clear( value );
         }
 
+        constexpr inline void ClearAll()
+        {
+            m_Flags = 0;
+        }
+
         constexpr inline void Toggle( EnumType value )
         {
             SM_ASSERT_MSG(
@@ -118,7 +123,29 @@ namespace smile::foundation
             return m_Flags == other.m_Flags;
         }
 
+        constexpr inline Flags &operator|=( const Flags &other )
+        {
+            m_Flags |= other.m_Flags;
+            return *this;
+        }
+
       private:
         UnderlyingType m_Flags{ 0 };
     };
+
+    template < typename EnumType >
+    inline constexpr Flags< EnumType > operator|( Flags< EnumType > flags, EnumType value )
+    {
+        auto result = flags;
+        result.Set( value );
+        return result;
+    }
+
+    template < typename EnumType >
+    inline constexpr Flags< EnumType > operator&( Flags< EnumType > lhs, Flags< EnumType > rhs )
+    {
+        Flags< EnumType > result;
+        result.SetFlags( lhs.GetFlags() & rhs.GetFlags() );
+        return result;
+    }
 }

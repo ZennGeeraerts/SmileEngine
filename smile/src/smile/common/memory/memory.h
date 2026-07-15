@@ -21,6 +21,13 @@ namespace smile::memory
     constexpr Count g_AlignedSize = 8; // x64
     constexpr Count g_DefaultAllocatorAlignedSize = 8;
 
+	// Rounds up a given size to a multiple of the given alignment
+    template < typename Type >
+    Type Align( Type size, Type alignment )
+    {
+        return ( size + alignment - 1 ) & ~( alignment - 1 );
+	}
+
     constexpr Count GetAlignedSize( const Count size )
     {
         return ( size + g_AlignedSize - 1 ) & ~( g_AlignedSize - 1 );

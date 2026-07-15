@@ -6,8 +6,7 @@
 
 #include "smile/core/asset/runtime_asset_manager.h"
 #include "smile/core/asset/editor_asset_manager.h"
-
-#include <filesystem>
+#include "smile/core/fs/path.h"
 
 namespace smile::project
 {
@@ -17,25 +16,25 @@ namespace smile::project
 
         asset::AssetHandle StartWorld;
 
-        std::filesystem::path AssetDirectory;
-        std::filesystem::path AssetRegistryPath;
-        std::filesystem::path ScriptModulePath;
+        fs::Path AssetDirectory;
+        fs::Path AssetRegistryPath;
+        fs::Path ScriptModulePath;
     };
 
     class Project final
     {
       public:
-        const std::filesystem::path &GetProjectDirectory() const
+        const fs::Path &GetProjectDirectory() const
         {
             return m_ProjectDirectory;
         }
 
-        std::filesystem::path GetAssetDirectory() const
+        fs::Path GetAssetDirectory() const
         {
             return m_ProjectDirectory / m_Config.AssetDirectory;
         }
 
-        std::filesystem::path GetAssetRegistryPath() const
+        fs::Path GetAssetRegistryPath() const
         {
             return GetAssetDirectory() / m_Config.AssetRegistryPath;
         }
@@ -62,7 +61,7 @@ namespace smile::project
 
       private:
         ProjectConfig m_Config;
-        std::filesystem::path m_ProjectDirectory;
+        fs::Path m_ProjectDirectory;
         std::shared_ptr< asset::AssetManagerBase > m_AssetManager;
 
         friend class ProjectManager;

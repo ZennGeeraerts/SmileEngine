@@ -4,63 +4,66 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/common/memory/counted.h"
+#include "smile/common/memory/ref.h"
+#include "smile/common/primitive/collection/vector.h"
+#include "smile/graphic/rhi/format.h"
 
 namespace smile::graphic
 {
-    enum class ImageFormat : Uint8
-    {
-        RGB,
-        RGBA,
-        BGRA,
-        BC1,
-        BC2,
-        BC3,
-        BC4,
-        BC5,
-        BC6,
-        BC7,
-        RG32F,
-        Count,
-        None
-    };
-
     class Image final : public memory::Counted
     {
       public:
-        Image();
-        Image( const Uint32 width, const Uint32 height, const ImageFormat format, const Byte *pData );
+        using Ref = memory::Ref< Image >;
+        using ConstRef = memory::Ref< const Image >;
 
-        Uint32 GetWidth() const
+        Image() noexcept;
+        Image( const Uint32 width, const Uint32 height, const rhi::Format format, const Byte *pData );
+
+        [[nodiscard]] Uint32 GetWidth() const noexcept
         {
             return m_Width;
         }
 
-        Uint32 GetHeight() const
+        [[nodiscard]] Uint32 GetHeight() const noexcept
         {
             return m_Height;
         }
 
-        ImageFormat GetFormat() const
+        [[nodiscard]] rhi::Format GetFormat() const noexcept
         {
             return m_Format;
         }
 
-        const Byte *GetData() const
+        [[nodiscard]] const Byte *GetData() const noexcept
         {
-            return m_Buffer.data();
+            return m_Buffer.GetData();
         }
 
-        Uint32 GetDataSize() const
+        [[nodiscard]] Count GetDataSize() const noexcept
         {
-            return static_cast< Uint32 >( m_Buffer.size() );
+            return m_Buffer.GetItemCount();
+        }
+
+        [[nodiscard]] Count GetBytesPerPixel() const noexcept
+        {
+            return m_BytesPerPixel;
+        }
+
+        [[nodiscard]] Count GetRowStride() const noexcept
+        {
+            return m_BytesPerPixel * m_Width;
+        }
+
+        [[nodiscard]] bool IsEmpty() const noexcept
+        {
+            return m_Buffer.IsEmpty();
         }
 
       private:
         Uint32 m_Width;
         Uint32 m_Height;
-        ImageFormat m_Format;
-        std::vector< Byte > m_Buffer;
-        Uint32 m_Stride;
+        rhi::Format m_Format;
+        primitive::Vector< Byte > m_Buffer;
+        Count m_BytesPerPixel;
     };
 }

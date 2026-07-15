@@ -5,16 +5,16 @@
 #include "smpch.h"
 #include "graphics_device.h"
 
-#include "platform/directx11/graphic/rhi/directx11_device.h"
+#include "platform/d3d11/graphic/rhi/d3d11_device.h"
 
-namespace smile::graphic
+namespace smile::graphic::rhi
 {
-    Scope< GraphicsDevice > GraphicsDevice::Create( RendererBackendType backendType )
+    memory::Scope< GraphicsDevice > GraphicsDevice::Create( RendererBackendType backendType )
     {
         switch ( backendType )
         {
-            case RendererBackendType::DirectX11:
-                return CreateScope< DirectX11Device >();
+            case RendererBackendType::D3D11:
+                return memory::CreateScope< D3D11Device >();
 
             default:
                 SM_ASSERT_MSG( false,

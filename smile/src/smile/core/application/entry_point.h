@@ -27,6 +27,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int nCmdSho
 {
     smile::application::ApplicationCommandLineArgs commandLineArgs{ __argc, __argv };
     smile::application::Application *pApplication = smile::application::CreateApplication( commandLineArgs );
+    pApplication->Initialize();
     pApplication->Run();
     delete pApplication;
     return 0;

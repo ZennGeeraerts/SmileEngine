@@ -6,6 +6,8 @@
 #include "model_loader.h"
 
 #include "model_loader_utils.h"
+#include "smile/core/asset/asset_importer.h"
+#include "smile/core/project/project_manager.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
@@ -13,7 +15,18 @@
 
 namespace smile::graphic
 {
-    Ref< graphic::Model > ModelLoader::LoadModel( const std::filesystem::path &filePath )
+    ModelLoader::ModelLoader()
+    {
+        asset::AssetImporter::GetInstance().RegisterLoader( this );
+    }
+
+    memory::Ref< asset::Asset > ModelLoader::Load( asset::AssetHandle handle,
+        const asset::AssetMetadata &metadata ) const
+    {
+        return LoadModel( project::ProjectManager::GetAssetFileSystemPath( metadata.FilePath ) );
+    }
+
+    Model::Ref ModelLoader::LoadModel( const std::filesystem::path &filePath ) const
     {
         aiPropertyStore *pPropertyStore = aiCreatePropertyStore();
         aiSetImportPropertyInteger( pPropertyStore, AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0 );
@@ -31,24 +44,23 @@ namespace smile::graphic
             return nullptr;
         }
 
-        Ref< graphic::Model > pModel = CreateRef< graphic::Model >();
-        pModel->m_FilePath = filePath.string();
+        Model::Ref model = memory::CreateRef< Model >();
 
         if ( pAiScene->HasMeshes() )
         {
-            for ( Uint32 m{}; m < pAiScene->mNumMeshes; ++m )
+            for ( Index m{}; m < pAiScene->mNumMeshes; ++m )
             {
-                aiMesh *pAiMesh = pAiScene->mMeshes[m];
+                const aiMesh &aiMesh = *pAiScene->mMeshes[m];
 
-                if ( !pAiMesh->HasBones() )
+                if ( !aiMesh.HasBones() )
                 {
-                    auto pMeshFilter = LoadMesh( pAiMesh );
-                    pModel->m_pMeshes.push_back( pMeshFilter );
+                    auto mesh = LoadMesh( aiMesh );
+                    model->m_Meshes.PushBack( std::move( mesh ) );
                 }
                 else
                 {
-                    auto pSkinnedMeshFilter = LoadSkinnedMesh( pAiMesh );
-                    pModel->m_pSkinnedMeshes.push_back( pSkinnedMeshFilter );
+                    auto pSkinnedMeshFilter = LoadSkinnedMesh( aiMesh );
+                    model->m_SkinnedMeshes.PushBack( pSkinnedMeshFilter );
                 }
             }
         }
@@ -60,8 +72,8 @@ namespace smile::graphic
                 aiAnimation *pAiAnim = pAiScene->mAnimations[i];
                 if ( pAiAnim )
                 {
-                    Ref< graphic::AnimationClip > pAnimClip = LoadAnimation( pModel, pAiAnim, pAiScene );
-                    pModel->m_pAnimationClips.push_back( pAnimClip );
+                    AnimationClip animClip = LoadAnimation( model, *pAiAnim, *pAiScene );
+                    model->m_AnimationClips.PushBack( std::move(animClip) );
                 }
             }
         }
@@ -69,102 +81,104 @@ namespace smile::graphic
         aiReleaseImport( pAiScene );
         aiReleasePropertyStore( pPropertyStore );
 
-        return pModel;
+        return model;
     }
 
-    Ref< graphic::MeshFilter > ModelLoader::LoadMesh( aiMesh *pAiMesh )
+    MeshSource ModelLoader::LoadMesh( const aiMesh &aiMesh )
     {
-        Ref< graphic::MeshFilter > pMeshFilter = CreateRef< graphic::MeshFilter >();
-        pMeshFilter->m_Name = pAiMesh->mName.C_Str();
+        MeshSource meshSource{ aiMesh.mName.C_Str() };
 
-        LoadVertices( pMeshFilter, pAiMesh );
+        LoadVertices( meshSource, aiMesh );
 
-        return pMeshFilter;
+        return meshSource;
     }
 
-    Ref< graphic::SkinnedMeshFilter > ModelLoader::LoadSkinnedMesh( aiMesh *pAiMesh )
+    SkinnedMeshSource ModelLoader::LoadSkinnedMesh( const aiMesh &aiMesh )
     {
-        Ref< graphic::SkinnedMeshFilter > pSkinnedMeshFilter = CreateRef< graphic::SkinnedMeshFilter >();
-        pSkinnedMeshFilter->m_Name = pAiMesh->mName.C_Str();
-        pSkinnedMeshFilter->m_Semantics |= static_cast< Uint32 >( graphic::Semantic::BlendIndices );
-        pSkinnedMeshFilter->m_Semantics |= static_cast< Uint32 >( graphic::Semantic::BlendWeights );
+        SkinnedMeshSource skinnedMeshSource{ aiMesh.mName.C_Str() };
 
-        pSkinnedMeshFilter->m_BlendIndices.resize( pAiMesh->mNumVertices );
-        pSkinnedMeshFilter->m_BlendWeights.resize( pAiMesh->mNumVertices );
-        std::fill( pSkinnedMeshFilter->m_BlendIndices.begin(),
-            pSkinnedMeshFilter->m_BlendIndices.end(),
+        skinnedMeshSource.m_Semantics.Set( graphic::Semantic::BlendIndices );
+        skinnedMeshSource.m_Semantics.Set( graphic::Semantic::BlendWeights );
+
+        skinnedMeshSource.m_BlendIndices.SetItemCount( aiMesh.mNumVertices );
+        skinnedMeshSource.m_BlendWeights.SetItemCount( aiMesh.mNumVertices );
+        std::fill( skinnedMeshSource.m_BlendIndices.begin(),
+            skinnedMeshSource.m_BlendIndices.end(),
             DirectX::XMFLOAT4{ -1, -1, -1, -1 } );
 
-        LoadVertices( pSkinnedMeshFilter, pAiMesh );
-        LoadBones( pSkinnedMeshFilter, pAiMesh );
+        LoadVertices( skinnedMeshSource, aiMesh );
+        LoadBones( skinnedMeshSource, aiMesh );
 
-        return pSkinnedMeshFilter;
+        return skinnedMeshSource;
     }
 
-    void ModelLoader::LoadVertices( const Ref< graphic::MeshFilter > &pMesh, aiMesh *pAiMesh )
+    void ModelLoader::LoadVertices( MeshSource &mesh, const aiMesh &aiMesh )
     {
-        pMesh->SetVertexCount( pAiMesh->mNumVertices );
+        mesh.SetVertexCount( aiMesh.mNumVertices );
 
-        for ( Uint32 v{}; v < pAiMesh->mNumVertices; ++v )
+        for ( Uint32 v{}; v < aiMesh.mNumVertices; ++v )
         {
-            aiVector3D &vertex = pAiMesh->mVertices[v];
+            const aiVector3D &vertex = aiMesh.mVertices[v];
             auto position = utils::ConvertToVector3( vertex );
-            pMesh->AddPosition( position );
+            mesh.AddPosition( position );
 
-            if ( pAiMesh->HasNormals() )
+            if ( aiMesh.HasNormals() )
             {
-                aiVector3D &normal = pAiMesh->mNormals[v];
-                pMesh->AddNormal( utils::ConvertToVector3( normal ) );
+                const aiVector3D &normal = aiMesh.mNormals[v];
+                mesh.AddNormal( utils::ConvertToVector3( normal ) );
             }
 
-            if ( pAiMesh->HasTextureCoords( 0 ) )
+            if ( aiMesh.HasTextureCoords( 0 ) )
             {
-                aiVector3D &texCoord = pAiMesh->mTextureCoords[0][v];
-                pMesh->AddTexCoord( { texCoord.x, 1 - texCoord.y } );
+                const aiVector3D &texCoord = aiMesh.mTextureCoords[0][v];
+                mesh.AddTexCoord( { texCoord.x, 1 - texCoord.y } );
             }
 
-            if ( pAiMesh->HasTangentsAndBitangents() )
+            if ( aiMesh.HasTangentsAndBitangents() )
             {
-                aiVector3D &tangent = pAiMesh->mTangents[v];
-                pMesh->AddTangent( utils::ConvertToVector3( tangent ) );
+                const aiVector3D &tangent = aiMesh.mTangents[v];
+                mesh.AddTangent( utils::ConvertToVector3( tangent ) );
             }
 
-            if ( pAiMesh->HasVertexColors( 0 ) )
+            if ( aiMesh.HasVertexColors( 0 ) )
             {
-                aiColor4D &color = pAiMesh->mColors[0][v];
-                pMesh->AddColor( utils::ConvertToVector4( color ) );
+                const aiColor4D &color = aiMesh.mColors[0][v];
+                mesh.AddColor( utils::ConvertToVector4( color ) );
             }
         }
 
-        pMesh->SetIndexCount( pAiMesh->mNumFaces * 3 );
+        mesh.SetIndexCount( aiMesh.mNumFaces * 3 );
 
-        for ( Uint32 f{}; f < pAiMesh->mNumFaces; ++f )
+        for ( Index f{}; f < aiMesh.mNumFaces; ++f )
         {
-            const Uint32 index0 = pAiMesh->mFaces[f].mIndices[0];
-            const Uint32 index1 = pAiMesh->mFaces[f].mIndices[1];
-            const Uint32 index2 = pAiMesh->mFaces[f].mIndices[2];
+            const Index index0 = aiMesh.mFaces[f].mIndices[0];
+            const Index index1 = aiMesh.mFaces[f].mIndices[1];
+            const Index index2 = aiMesh.mFaces[f].mIndices[2];
 
-            const Uint32 indexIdx = static_cast< size_t >( f ) * 3;
-            pMesh->AddIndex( indexIdx, index0 );
-            pMesh->AddIndex( indexIdx + 1, index1 );
-            pMesh->AddIndex( indexIdx + 2, index2 );
+            const Index indexIdx = f * 3;
+            mesh.AddIndex( indexIdx, index0 );
+            mesh.AddIndex( indexIdx + 1, index1 );
+            mesh.AddIndex( indexIdx + 2, index2 );
         }
     }
 
-    void ModelLoader::LoadBones( const Ref< graphic::SkinnedMeshFilter > &pMesh, aiMesh *pAiMesh )
+    void ModelLoader::LoadBones( SkinnedMeshSource &mesh, const aiMesh &aiMesh )
     {
-        for ( Uint32 i{}; i < pAiMesh->mNumBones; ++i )
+        mesh.m_Skeleton = memory::CreateRef< Skeleton >();
+
+        for ( Index i{}; i < aiMesh.mNumBones; ++i )
         {
-            aiBone *pBone = pAiMesh->mBones[i];
+            aiBone *pBone = aiMesh.mBones[i];
             if ( pBone )
             {
-                Uint32 boneID = -1;
-                std::string boneName = pBone->mName.C_Str();
+                Index boneID = s_InvalidIndex;
+                primitive::String boneName{ pBone->mName.C_Str() };
 
-                if ( pMesh->m_SkeletonMap.find( boneName ) == pMesh->m_SkeletonMap.end() )
+                if ( mesh.m_Skeleton->HasBone( boneName ) )
                 {
-                    graphic::BoneInfo boneInfo{};
-                    boneInfo.ID = pMesh->m_BoneCount;
+                    auto &boneInfo = mesh.m_Skeleton->GetBone( boneName );
+
+                    boneInfo.ID = mesh.m_Skeleton->GetBoneCount();
                     boneInfo.Offset = DirectX::XMFLOAT4X4{ pBone->mOffsetMatrix.a1,
                         pBone->mOffsetMatrix.b1,
                         pBone->mOffsetMatrix.c1,
@@ -182,44 +196,43 @@ namespace smile::graphic
                         pBone->mOffsetMatrix.c4,
                         pBone->mOffsetMatrix.d4 };
 
-                    pMesh->m_SkeletonMap[boneName] = boneInfo;
-                    boneID = pMesh->m_BoneCount;
-                    ++pMesh->m_BoneCount;
+                    boneID = mesh.m_Skeleton->GetBoneCount();
+                    ++mesh.m_Skeleton->m_BoneCount;
                 }
                 else
                 {
-                    boneID = pMesh->m_SkeletonMap[boneName].ID;
+                    boneID = mesh.m_Skeleton->GetBone( boneName ).ID;
                 }
 
-                SM_ASSERT_MSG( boneID != -1, "ModelLoader::LoadBones > Invalid bone ID" );
+                SM_ASSERT_MSG( boneID != s_InvalidIndex, "ModelLoader::LoadBones > Invalid bone ID" );
 
-                for ( Uint32 j{}; j < pBone->mNumWeights; ++j )
+                for ( Index j{}; j < pBone->mNumWeights; ++j )
                 {
                     aiVertexWeight &weight = pBone->mWeights[j];
                     if ( &weight )
                     {
                         SM_ASSERT_MSG(
-                            weight.mVertexId <= pMesh->m_VertexCount, "ModelLoader::LoadBones > Invalid vertex ID" );
+                            weight.mVertexId <= mesh.m_VertexCount, "ModelLoader::LoadBones > Invalid vertex ID" );
 
-                        if ( pMesh->m_BlendIndices[weight.mVertexId].x < 0 )
+                        if ( mesh.m_BlendIndices[weight.mVertexId].x < 0 )
                         {
-                            pMesh->m_BlendIndices[weight.mVertexId].x = static_cast< float >( boneID );
-                            pMesh->m_BlendWeights[weight.mVertexId].x = weight.mWeight;
+                            mesh.m_BlendIndices[weight.mVertexId].x = static_cast< float >( boneID );
+                            mesh.m_BlendWeights[weight.mVertexId].x = weight.mWeight;
                         }
-                        else if ( pMesh->m_BlendIndices[weight.mVertexId].y < 0 )
+                        else if ( mesh.m_BlendIndices[weight.mVertexId].y < 0 )
                         {
-                            pMesh->m_BlendIndices[weight.mVertexId].y = static_cast< float >( boneID );
-                            pMesh->m_BlendWeights[weight.mVertexId].y = weight.mWeight;
+                            mesh.m_BlendIndices[weight.mVertexId].y = static_cast< float >( boneID );
+                            mesh.m_BlendWeights[weight.mVertexId].y = weight.mWeight;
                         }
-                        else if ( pMesh->m_BlendIndices[weight.mVertexId].z < 0 )
+                        else if ( mesh.m_BlendIndices[weight.mVertexId].z < 0 )
                         {
-                            pMesh->m_BlendIndices[weight.mVertexId].z = static_cast< float >( boneID );
-                            pMesh->m_BlendWeights[weight.mVertexId].z = weight.mWeight;
+                            mesh.m_BlendIndices[weight.mVertexId].z = static_cast< float >( boneID );
+                            mesh.m_BlendWeights[weight.mVertexId].z = weight.mWeight;
                         }
-                        else if ( pMesh->m_BlendIndices[weight.mVertexId].w < 0 )
+                        else if ( mesh.m_BlendIndices[weight.mVertexId].w < 0 )
                         {
-                            pMesh->m_BlendIndices[weight.mVertexId].w = static_cast< float >( boneID );
-                            pMesh->m_BlendWeights[weight.mVertexId].w = weight.mWeight;
+                            mesh.m_BlendIndices[weight.mVertexId].w = static_cast< float >( boneID );
+                            mesh.m_BlendWeights[weight.mVertexId].w = weight.mWeight;
                         }
                     }
                 }
@@ -227,108 +240,111 @@ namespace smile::graphic
         }
     }
 
-    Ref< graphic::AnimationClip > ModelLoader::LoadAnimation( const Ref< graphic::Model > &pModel,
-        const aiAnimation *pAiAnim,
-        const aiScene *pAiScene )
+    AnimationClip ModelLoader::LoadAnimation( Model::ConstRef model, const aiAnimation &aiAnim, const aiScene &aiScene )
     {
-        Ref< graphic::AnimationClip > pAnimClip = CreateRef< graphic::AnimationClip >();
-        pAnimClip->Name = pAiAnim->mName.C_Str();
-        pAnimClip->Duration = static_cast< float >( pAiAnim->mDuration );
-        pAnimClip->TicksPerSecond = static_cast< float >( pAiAnim->mTicksPerSecond );
+        AnimationClip animClip{ aiAnim.mName.C_Str(),
+            static_cast< float >( aiAnim.mDuration ),
+            static_cast< float >( aiAnim.mTicksPerSecond ) };
 
-        LoadNodeHierarchy( pAnimClip->RootNode, pAiScene->mRootNode );
+        LoadNodeHierarchy( animClip.RootNode, *aiScene.mRootNode );
 
-        for ( Uint32 j{}; j < pAiAnim->mNumChannels; ++j )
+        for ( Uint32 j{}; j < aiAnim.mNumChannels; ++j )
         {
-            aiNodeAnim *pChannel = pAiAnim->mChannels[j];
+            aiNodeAnim *pChannel = aiAnim.mChannels[j];
             if ( pChannel )
             {
-                std::string boneName = pChannel->mNodeName.C_Str();
+                primitive::String boneName{ pChannel->mNodeName.C_Str() };
 
-                for ( auto pSkinnedMesh : pModel->m_pSkinnedMeshes )
+                for ( auto &skinnedMesh : model->m_SkinnedMeshes )
                 {
-                    auto boneInfoMapIt = pSkinnedMesh->m_SkeletonMap.find( boneName );
-                    if ( boneInfoMapIt != pSkinnedMesh->m_SkeletonMap.end() )
+                    auto boneInfoMapIt = skinnedMesh.m_Skeleton->FindBone( boneName );
+                    if ( boneInfoMapIt != skinnedMesh.m_Skeleton->end() )
                     {
-                        graphic::BoneInfo &boneInfo = ( *boneInfoMapIt ).second;
-                        graphic::Bone bone{ boneName, boneInfo.ID };
+                        const BoneInfo &boneInfo = ( *boneInfoMapIt ).Value;
+                        Bone bone{ boneName, boneInfo.ID };
 
                         bone.m_TranslationCount = pChannel->mNumPositionKeys;
-                        for ( Uint32 k{}; k < pChannel->mNumPositionKeys; ++k )
+                        for ( Index k{}; k < pChannel->mNumPositionKeys; ++k )
                         {
-                            graphic::KeyTranslation keyTranslation{};
-                            keyTranslation.Translation =
+                            const DirectX::XMFLOAT3 translation =
                                 *reinterpret_cast< DirectX::XMFLOAT3 * >( &pChannel->mPositionKeys[k].mValue );
-                            keyTranslation.Tick = static_cast< float >( pChannel->mPositionKeys[k].mTime );
-                            bone.m_Translations.push_back( keyTranslation );
+
+                            const float tick = static_cast< float >( pChannel->mPositionKeys[k].mTime );
+
+                            KeyTranslation keyTranslation{ translation, tick };
+                            bone.m_Translations.PushBack( std::move( keyTranslation ) );
                         }
 
                         bone.m_RotationCount = pChannel->mNumRotationKeys;
-                        for ( Uint32 k{}; k < pChannel->mNumRotationKeys; ++k )
+                        for ( Index k{}; k < pChannel->mNumRotationKeys; ++k )
                         {
-                            graphic::KeyRotation keyRotation{};
-                            keyRotation.Rotation = DirectX::XMFLOAT4{ pChannel->mRotationKeys[k].mValue.x,
+                            const auto rotation = DirectX::XMFLOAT4{ pChannel->mRotationKeys[k].mValue.x,
                                 pChannel->mRotationKeys[k].mValue.y,
                                 pChannel->mRotationKeys[k].mValue.z,
                                 pChannel->mRotationKeys[k].mValue.w };
-                            keyRotation.Tick = static_cast< float >( pChannel->mRotationKeys[k].mTime );
-                            bone.m_Rotations.push_back( keyRotation );
+
+                            const float tick = static_cast< float >( pChannel->mRotationKeys[k].mTime );
+
+                            KeyRotation keyRotation{ rotation, tick };
+                            bone.m_Rotations.PushBack( std::move( keyRotation ) );
                         }
 
                         bone.m_ScaleCount = pChannel->mNumScalingKeys;
-                        for ( Uint32 k{}; k < pChannel->mNumScalingKeys; ++k )
+                        for ( Index k{}; k < pChannel->mNumScalingKeys; ++k )
                         {
-                            graphic::KeyScale keyScale{};
-                            keyScale.Scale =
+                            const auto scale =
                                 *reinterpret_cast< DirectX::XMFLOAT3 * >( &pChannel->mScalingKeys[k].mValue );
-                            keyScale.Tick = static_cast< float >( pChannel->mScalingKeys[k].mTime );
-                            bone.m_Scales.push_back( keyScale );
+
+                            const float tick = static_cast< float >( pChannel->mScalingKeys[k].mTime );
+
+                            KeyScale keyScale{ scale, tick };
+                            bone.m_Scales.PushBack( std::move( keyScale ) );
                         }
 
-                        pAnimClip->Bones.push_back( bone );
+                        animClip.Bones.PushBack( std::move( bone ) );
                         break;
                     }
                 }
             }
         }
 
-        return pAnimClip;
+        return animClip;
     }
 
-    void ModelLoader::LoadNodeHierarchy( graphic::AnimationNode &dest, const aiNode *pSrc )
+    void ModelLoader::LoadNodeHierarchy( AnimationNode &dest, const aiNode &src )
     {
-        dest.Name = pSrc->mName.data;
+        dest.Name = src.mName.data;
         // if (src->mNumMeshes > 0)
         {
-            dest.Transform = DirectX::XMFLOAT4X4{ pSrc->mTransformation.a1,
-                pSrc->mTransformation.b1,
-                pSrc->mTransformation.c1,
-                pSrc->mTransformation.d1,
-                pSrc->mTransformation.a2,
-                pSrc->mTransformation.b2,
-                pSrc->mTransformation.c2,
-                pSrc->mTransformation.d2,
-                pSrc->mTransformation.a3,
-                pSrc->mTransformation.b3,
-                pSrc->mTransformation.c3,
-                pSrc->mTransformation.d3,
-                pSrc->mTransformation.a4,
-                pSrc->mTransformation.b4,
-                pSrc->mTransformation.c4,
-                pSrc->mTransformation.d4 };
+            dest.Transform = DirectX::XMFLOAT4X4{ src.mTransformation.a1,
+                src.mTransformation.b1,
+                src.mTransformation.c1,
+                src.mTransformation.d1,
+                src.mTransformation.a2,
+                src.mTransformation.b2,
+                src.mTransformation.c2,
+                src.mTransformation.d2,
+                src.mTransformation.a3,
+                src.mTransformation.b3,
+                src.mTransformation.c3,
+                src.mTransformation.d3,
+                src.mTransformation.a4,
+                src.mTransformation.b4,
+                src.mTransformation.c4,
+                src.mTransformation.d4 };
         }
         /*else
         {
             DirectX::XMStoreFloat4x4(&dest.Transform, DirectX::XMMatrixIdentity());
         }*/
 
-        dest.ChildrenCount = pSrc->mNumChildren;
+        dest.ChildrenCount = src.mNumChildren;
 
-        for ( Uint32 i{}; i < pSrc->mNumChildren; ++i )
+        for ( Index i{}; i < src.mNumChildren; ++i )
         {
-            graphic::AnimationNode newNode{};
-            LoadNodeHierarchy( newNode, pSrc->mChildren[i] );
-            dest.Children.push_back( newNode );
+            AnimationNode newNode{};
+            LoadNodeHierarchy( newNode, *src.mChildren[i] );
+            dest.Children.PushBack( std::move( newNode ) );
         }
     }
 }

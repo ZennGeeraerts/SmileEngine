@@ -7,22 +7,22 @@
 #include "asset_metadata.h"
 #include "smile/common/memory/ref.h"
 #include "smile/common/foundation/meyers_singleton.h"
-
-#include <map>
+#include "smile/common/primitive/collection/dictionary.h"
+#include "smile/core/fs/path.h"
 
 namespace smile::asset
 {
-    class AssetLoader;
+    class BaseAssetLoader;
 
     class AssetImporter final : public foundation::MeyersSingleton< AssetImporter >
     {
       public:
-        void RegisterLoader( AssetLoader *pLoader );
-        memory::Ref< Asset > ImportAsset( AssetHandle handle, const AssetMetadata &metadata );
-        AssetType GetAssetTypeFromFileExtension( const std::filesystem::path &extension );
+        void RegisterLoader( BaseAssetLoader *pLoader );
+        memory::Ref< BaseAsset > ImportAsset( AssetHandle handle, const AssetMetadata &metadata );
+        AssetType GetAssetTypeFromFileExtension( const fs::Path &extension );
 
       private:
-        std::map< AssetType, AssetLoader * > m_AssetLoaderMap{};
-        std::map< std::filesystem::path, AssetType > m_AssetExtensionMap{};
+        primitive::Dictionary< AssetType, BaseAssetLoader * > m_AssetLoaderMap{};
+        primitive::Dictionary< fs::Path, AssetType > m_AssetExtensionMap{};
     };
 }

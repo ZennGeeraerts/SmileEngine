@@ -17,7 +17,7 @@ namespace smile::memory
 
         Scope( const Scope & ) = delete;
 
-        constexpr Scope( Scope &&other ) : m_pObject{ other.m_pObject }
+        constexpr Scope( Scope &&other ) noexcept : m_pObject{ other.m_pObject }
         {
             other.m_pObject = nullptr;
         }
@@ -28,12 +28,12 @@ namespace smile::memory
 
         template < typename OtherType >
         requires std::is_base_of_v< Type, OtherType >
-        constexpr Scope( Scope< OtherType > &&other ) : m_pObject{ other.m_pObject }
+        constexpr Scope( Scope< OtherType > &&other ) noexcept : m_pObject{ other.m_pObject }
         {
             other.m_pObject = nullptr;
         }
 
-        ~Scope()
+        ~Scope() noexcept
         {
             delete m_pObject;
         }
@@ -41,7 +41,7 @@ namespace smile::memory
         Scope &operator=( const Scope & ) = delete;
 
         template < typename OtherType >
-        constexpr Scope &operator=( Scope< OtherType > &&other )
+        constexpr Scope &operator=( Scope< OtherType > &&other ) noexcept
         {
             if ( m_pObject )
             {

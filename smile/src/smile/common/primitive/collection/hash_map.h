@@ -20,7 +20,7 @@ namespace smile::primitive
             Node() = delete;
 
             template < typename OtherKeyType >
-            Node( OtherKeyType &&key ) : Key{ std::forward< OtherKeyType >( key ) }
+            Node( OtherKeyType &&key ) : Key{ std::forward< OtherKeyType >( key ) }, Value{}
             {
             }
 

@@ -5,53 +5,141 @@
 #include "smpch.h"
 #include "render_engine.h"
 
-#include "forward_renderer.h"
-#include "wireframe_renderer.h"
-#include "debug_renderer.h"
-#include "renderer_2d.h"
-#include "skybox_renderer.h"
-
 #include "smile/core/window/window.h"
-#include "smile/core/world/world_manager.h"
 
 namespace smile::graphic
 {
-    RenderSystem RenderEngine::s_RenderSystem{};
-    SceneManager RenderEngine::s_SceneManager{};
-    ShaderLibrary RenderEngine::s_ShaderLibrary{};
-
-    void RenderEngine::Initialize( const window::Window *pWindow )
+    memory::Scope< RenderEngine > RenderEngine::Create( rhi::RendererBackendType api )
     {
-        s_RenderSystem.Initialize( pWindow );
+        auto device = rhi::GraphicsDevice::Create( api );
+        auto immediateCommandList = device->CreateCommandList();
 
-        BufferLayout vertexLayout{ { Format::RGB32_FLOAT, "POSITION" }, { Format::RGB32_FLOAT, "NORMAL" } };
-        s_ShaderLibrary.Load( "resources/shaders/PosColNorm.fx", vertexLayout );
-        s_ShaderLibrary.Load( "resources/shaders/PosCol.fx", { { Format::RGB32_FLOAT, "POSITION" } } );
-        s_ShaderLibrary.Load( "resources/shaders/PosColTex.fx",
-            { { Format::RGB32_FLOAT, "POSITION" }, { Format::RG32_FLOAT, "TEXCOORD" } } );
-        s_ShaderLibrary.Load( "resources/shaders/Skybox.fx", { { Format::RGB32_FLOAT, "POSITION" } } );
+        auto renderContext = memory::CreateScope< RenderContext >( *immediateCommandList );
+        auto resourceManager = memory::CreateScope< ResourceManager >( *device );
 
-        s_SceneManager.Initialize( pWindow );
-        world::WorldManager::AddListener( &s_SceneManager );
+        auto shaderLibrary = memory::CreateScope< ShaderLibrary >();
+        auto textureManager = memory::CreateScope< TextureManager >();
 
-        ForwardRenderer::Initialize();
-        WireframeRenderer::GetInstance().Initialize();
-        DebugRenderer::GetInstance().Initialize();
-        Renderer2D::Initialize();
-        SkyboxRenderer::Initialize();
+        auto meshManager = memory::CreateScope< MeshManager >( *resourceManager );
+        auto materialManager = memory::CreateScope< MaterialManager >( *textureManager );
+        auto materialInstanceManager = memory::CreateScope< MaterialInstanceManager >();
+
+        auto materialSystem =
+            memory::CreateScope< MaterialSystem >( *renderContext, *resourceManager, *textureManager );
+
+        auto engine = memory::CreateScope< RenderEngine >( api,
+            std::move( device ),
+            std::move( renderContext ),
+            std::move( resourceManager ),
+            std::move( shaderLibrary ),
+            std::move( textureManager ),
+            std::move( meshManager ),
+            std::move( materialManager ),
+            std::move( materialInstanceManager ),
+            std::move( materialSystem ) );
+
+        engine->LoadResources();
+
+        return engine;
     }
 
-    void RenderEngine::ShutDown()
+    RenderEngine::RenderEngine( rhi::RendererBackendType api,
+        memory::Scope< rhi::GraphicsDevice > device,
+        memory::Scope< RenderContext > context,
+        memory::Scope< ResourceManager > resourceManager,
+        memory::Scope< ShaderLibrary > shaderLibrary,
+        memory::Scope< TextureManager > textureManager,
+        memory::Scope< MeshManager > meshManager,
+        memory::Scope< MaterialManager > materialManager,
+        memory::Scope< MaterialInstanceManager > materialInstanceManager,
+        memory::Scope< MaterialSystem > materialSystem ) noexcept
+        : m_API{ api },
+          m_Device{ std::move( device ) },
+          m_RenderContext{ std::move( context ) },
+          m_ResourceManager{ std::move( resourceManager ) },
+          m_ShaderLibrary{ std::move( shaderLibrary ) },
+          m_TextureManager{ std::move( textureManager ) },
+          m_MeshManager{ std::move( meshManager ) },
+          m_MaterialManager{ std::move( materialManager ) },
+          m_MaterialInstanceManager{ std::move( materialInstanceManager ) },
+          m_MaterialSystem{ std::move( materialSystem ) }
     {
-        ForwardRenderer::ShutDown();
-        WireframeRenderer::GetInstance().ShutDown();
-        DebugRenderer::GetInstance().ShutDown();
-        Renderer2D::ShutDown();
-        SkyboxRenderer::ShutDown();
     }
 
-    void RenderEngine::OnWindowResize( Uint32 width, Uint32 height )
+    void RenderEngine::LoadResources()
     {
-        s_RenderSystem.ResizeWindow( 0, 0, width, height );
+        m_ShaderLibrary->Load( "resources/shaders/debug_renderer.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pos_col.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pos_tex.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/col_tex.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/skybox.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/skybox.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pbr.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pbr.ps.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pbr_skinned.vs.smshader" );
+
+        m_TextureManager->LoadFallback( "resources/textures/uv_grid.png" );
+    }
+
+    rhi::SwapChain &RenderEngine::CreateSwapChain( const window::Window *window )
+    {
+        auto swapChain = m_Device->CreateSwapChain( window );
+
+        rhi::Object nativeRenderTarget = swapChain->GetNativeRenderTarget();
+
+        const rhi::ObjectType objectType = [&]()
+        {
+            switch ( m_API )
+            {
+                case rhi::RendererBackendType::D3D11:
+                    return rhi::ObjectType::D3D11_Resource;
+                default:
+                    SM_ASSERT( false );
+            }
+        }();
+
+        rhi::TextureDescriptor colorDesc;
+        colorDesc.Dimension = rhi::TextureDimension::Texture2D;
+        colorDesc.TextureFormat = rhi::Format::RGBA8_UNORM;
+        colorDesc.Width = window->GetWidth();
+        colorDesc.Height = window->GetHeight();
+        colorDesc.BindFlags = { rhi::TextureBindFlags::RenderTarget };
+
+        const Texture colorTexture =
+            m_ResourceManager->CreateTextureFromNative( nativeRenderTarget, objectType, colorDesc );
+
+        FramebufferAttachment depthAttachment =
+            m_ResourceManager->CreateDepthAttachment( window->GetWidth(), window->GetHeight() );
+
+        auto renderTarget = m_ResourceManager->CreateFramebuffer(
+            { FramebufferAttachment{ colorTexture, colorDesc.TextureFormat, false } }, depthAttachment );
+
+        auto swapChainPtr = swapChain.GetPointer();
+
+        m_SwapChains.PushBack( std::move( swapChain ) );
+        m_RenderTargets.Insert( swapChainPtr, std::move( renderTarget ) );
+
+        return *swapChainPtr;
+    }
+
+    Renderer &RenderEngine::CreateRenderer()
+    {
+        auto renderer = memory::CreateScope< Renderer >( *this );
+        m_Renderers.PushBack( std::move( renderer ) );
+
+        return *m_Renderers.GetLastItem().GetPointer();
+    }
+
+    RenderWorld &RenderEngine::CreateWorld()
+    {
+        auto world = memory::CreateScope< RenderWorld >();
+        m_Worlds.PushBack( std::move( world ) );
+
+        return *m_Worlds.GetLastItem().GetPointer();
+    }
+
+    const Framebuffer &RenderEngine::GetRenderTarget( const rhi::SwapChain &swapChain ) const
+    {
+        return m_RenderTargets.GetItemAtKey( const_cast< rhi::SwapChain * >( &swapChain ) );
     }
 }

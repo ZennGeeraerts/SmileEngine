@@ -11,9 +11,9 @@
 
 namespace smile::graphic
 {
-    memory::Ref< Image > ImageReader::Read( const std::filesystem::path &path )
+    memory::Ref< Image > ImageReader::Read( const fs::Path &path )
     {
-        auto extension = path.extension();
+        auto extension = path.GetExtension();
 
         if ( extension == ".png" )
         {
@@ -24,7 +24,7 @@ namespace smile::graphic
             return DDSReader::Read( path );
         }
 
-        SM_LOG_WARNING( "ImageReader::Read > Unknown extention: {}, returning nullptr", extension.string() );
+        SM_LOG_WARNING( "ImageReader::Read > Unknown extention: {}, returning nullptr", extension );
 
         return nullptr;
     }

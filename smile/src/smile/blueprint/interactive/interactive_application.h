@@ -4,7 +4,7 @@
 /*=============================================================================*/
 #pragma once
 
-#include "smile/graphic/application/graphic_application.h"
+#include "smile/graphic/scene/graphic_application.h"
 
 namespace smile::interactive
 {

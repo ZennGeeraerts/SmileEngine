@@ -609,3 +609,20 @@ namespace smile::primitive
         return { GetData(), GetItemCount() };
     }
 }
+
+namespace std
+{
+    template < typename ItemType >
+    struct hash< smile::primitive::Vector< ItemType > >
+    {
+        smile::foundation::HashCode operator()( const smile::primitive::Vector< ItemType > &vector ) const
+        {
+            smile::foundation::HashCode hash{ 0 };
+            for ( const auto &item : vector )
+            {
+                hash = smile::foundation::HashCombine( hash, std::hash< ItemType >{}( item ) );
+            }
+            return hash;
+        }
+    };
+}
