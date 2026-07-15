@@ -72,7 +72,7 @@ namespace smile::math
     };
 
     template < Numeric Type >
-    inline constexpr Matrix< 3, 3, Type > operator+( const Matrix< 3, 3, Type > &first,
+    constexpr Matrix< 3, 3, Type > operator+( const Matrix< 3, 3, Type > &first,
         const Matrix< 3, 3, Type > &second ) noexcept
     {
         return { first.xx + second.xx,
@@ -87,7 +87,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Matrix< 3, 3, Type > operator-( const Matrix< 3, 3, Type > &first,
+    constexpr Matrix< 3, 3, Type > operator-( const Matrix< 3, 3, Type > &first,
         const Matrix< 3, 3, Type > &second ) noexcept
     {
         return { first.xx - second.xx,
@@ -102,7 +102,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline constexpr Matrix< 3, 3, T > operator*( const Matrix< 3, 3, T > &first, const U scale ) noexcept
+    constexpr Matrix< 3, 3, T > operator*( const Matrix< 3, 3, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
@@ -118,7 +118,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline constexpr Matrix< 3, 3, T > operator/( const Matrix< 3, 3, T > &first, const U scale ) noexcept
+    constexpr Matrix< 3, 3, T > operator/( const Matrix< 3, 3, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
@@ -134,7 +134,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Matrix< 3, 3, Type > operator*( const Matrix< 3, 3, Type > &first,
+    constexpr Matrix< 3, 3, Type > operator*( const Matrix< 3, 3, Type > &first,
         const Matrix< 3, 3, Type > &second ) noexcept
     {
         return { first.xx * second.xx + first.xy * second.yx + first.xz * second.zx,
@@ -149,8 +149,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 3, Type > operator*( const Matrix< 3, 3, Type > &first,
-        const Vector< 3, Type > &vector ) noexcept
+    constexpr Vector< 3, Type > operator*( const Matrix< 3, 3, Type > &first, const Vector< 3, Type > &vector ) noexcept
     {
         return { first.xx * vector.x + first.yx * vector.y + first.zx * vector.z,
             first.xy * vector.x + first.yy * vector.y + first.zy * vector.z,
@@ -158,7 +157,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Matrix< 3, 3, Type > &operator+=( Matrix< 3, 3, Type > &first,
+    constexpr Matrix< 3, 3, Type > &operator+=( Matrix< 3, 3, Type > &first,
         const Matrix< 3, 3, Type > &second ) noexcept
     {
         first.xx += second.xx;
@@ -175,7 +174,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Matrix< 3, 3, Type > &operator-=( Matrix< 3, 3, Type > &first,
+    constexpr Matrix< 3, 3, Type > &operator-=( Matrix< 3, 3, Type > &first,
         const Matrix< 3, 3, Type > &second ) noexcept
     {
         first.xx -= second.xx;
@@ -192,7 +191,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Matrix< 3, 3, Type > &operator*=( Matrix< 3, 3, Type > &first,
+    constexpr Matrix< 3, 3, Type > &operator*=( Matrix< 3, 3, Type > &first,
         const Matrix< 3, 3, Type > &second ) noexcept
     {
         first = first * second;
@@ -201,7 +200,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline constexpr Matrix< 3, 3, T > &operator*=( Matrix< 3, 3, T > &first, const U scale ) noexcept
+    constexpr Matrix< 3, 3, T > &operator*=( Matrix< 3, 3, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
@@ -219,7 +218,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline constexpr Matrix< 3, 3, T > &operator/=( Matrix< 3, 3, T > &first, const U scale ) noexcept
+    constexpr Matrix< 3, 3, T > &operator/=( Matrix< 3, 3, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
@@ -237,7 +236,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr void SetIdentity( Matrix< 3, 3, Type > &matrix ) noexcept
+    constexpr void SetIdentity( Matrix< 3, 3, Type > &matrix ) noexcept
     {
         matrix.xx = static_cast< Type >( 1 );
         matrix.xy = static_cast< Type >( 0 );
