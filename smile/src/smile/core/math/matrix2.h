@@ -21,121 +21,111 @@
 namespace smile::math
 {
     template < Numeric Type >
-    struct Matrix< 2, 2, Type > final
+    class Matrix< 2, 2, Type > final
     {
+      public:
+        constexpr Matrix( Type _xx, Type _xy, Type _yx, Type _yy ) noexcept : xx{ _xx }, xy{ _xy }, yx{ _yx }, yy{ _yy }
+        {
+        }
+
+        constexpr Matrix( const Vector< 2, Type > &v1, const Vector< 2, Type > &v2 ) noexcept
+            : xx{ v1.x }, xy{ v2.x }, yx{ v1.y }, yy{ v2.y }
+        {
+        }
+
+        static constexpr Matrix GetIdentity() noexcept
+        {
+            return { static_cast< Type >( 1 ),
+                static_cast< Type >( 0 ),
+                static_cast< Type >( 0 ),
+                static_cast< Type >( 1 ) };
+        }
+
         union
         {
             Type Data[2][2];
             struct
             {
-                Type m00, m10;
-                Type m01, m11;
+                Type xx, xy;
+                Type yx, yy;
             };
         };
-
-        Matrix< 2, 2, Type >() = default;
-
-        Matrix< 2, 2, Type >( Type _00, Type _01, Type _10, Type _11 ) : m00{ _00 }, m10{ _01 }, m01{ _10 }, m11{ _11 }
-        {
-        }
-
-        Matrix< 2, 2, Type >( const Vector< 2, Type > &v1, const Vector< 2, Type > &v2 )
-            : m00{ v1.x }, m10{ v2.x }, m01{ v1.y }, m11{ v2.y }
-        {
-        }
-
-        Matrix< 2, 2, Type >( const Matrix< 2, 2, Type > &other )
-            : m00{ other.m00 }, m10{ other.m10 }, m01{ other.m01 }, m11{ other.m11 }
-        {
-        }
-
-        Matrix< 2, 2, Type >( Matrix< 2, 2, Type > &&other ) noexcept
-            : m00{ std::move( other.m00 ) },
-              m10{ std::move( other.m10 ) },
-              m01{ std::move( other.m01 ) },
-              m11{ std::move( other.m11 ) }
-        {
-        }
-
-        inline Matrix< 2, 2, Type > &operator=( const Matrix< 2, 2, Type > &other )
-        {
-            m00 = other.m00;
-            m10 = other.m10;
-            m01 = other.m01;
-            m11 = other.m11;
-
-            return *this;
-        }
     };
 
     template < Numeric Type >
-    inline Matrix< 2, 2, Type > operator+( const Matrix< 2, 2, Type > &first, const Matrix< 2, 2, Type > &second )
+    inline constexpr Matrix< 2, 2, Type > operator+( const Matrix< 2, 2, Type > &first,
+        const Matrix< 2, 2, Type > &second ) noexcept
     {
-        return { first.m00 + second.m00, first.m10 + second.m10, first.m01 + second.m01, first.m11 + second.m11 };
+        return { first.xx + second.xx, first.xy + second.xy, first.yx + second.yx, first.yy + second.yy };
     }
 
     template < Numeric Type >
-    inline Matrix< 2, 2, Type > operator-( const Matrix< 2, 2, Type > &first, const Matrix< 2, 2, Type > &second )
+    inline constexpr Matrix< 2, 2, Type > operator-( const Matrix< 2, 2, Type > &first,
+        const Matrix< 2, 2, Type > &second ) noexcept
     {
-        return { first.m00 - second.m00, first.m10 - second.m10, first.m01 - second.m01, first.m11 - second.m11 };
+        return { first.xx - second.xx, first.xy - second.xy, first.yx - second.yx, first.yy - second.yy };
     }
 
     template < Numeric T, Numeric U >
-    inline Matrix< 2, 2, T > operator*( const Matrix< 2, 2, T > &first, const U scale )
+    inline constexpr Matrix< 2, 2, T > operator*( const Matrix< 2, 2, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
-        return { first.m00 * s, first.m10 * s, first.m01 * s, first.m11 * s };
+        return { first.xx * s, first.xy * s, first.yx * s, first.yy * s };
     }
 
     template < Numeric T, Numeric U >
-    inline Matrix< 2, 2, T > operator/( const Matrix< 2, 2, T > &first, const U scale )
+    inline constexpr Matrix< 2, 2, T > operator/( const Matrix< 2, 2, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
-        return { first.m00 / s, first.m10 / s, first.m01 / s, first.m11 / s };
+        return { first.xx / s, first.xy / s, first.yx / s, first.yy / s };
     }
 
     template < Numeric Type >
-    inline Matrix< 2, 2, Type > operator*( const Matrix< 2, 2, Type > &lm, const Matrix< 2, 2, Type > &rm )
+    inline constexpr Matrix< 2, 2, Type > operator*( const Matrix< 2, 2, Type > &first,
+        const Matrix< 2, 2, Type > &second ) noexcept
     {
-        return { lm( 0, 0 ) * rm( 0, 0 ) + lm( 0, 1 ) * rm( 1, 0 ),
-            lm( 0, 0 ) * rm( 0, 1 ) + lm( 0, 1 ) * rm( 1, 1 ),
-            lm( 1, 0 ) * rm( 0, 0 ) + lm( 1, 1 ) * rm( 1, 0 ),
-            lm( 1, 0 ) * rm( 0, 1 ) + lm( 1, 1 ) * rm( 1, 1 ) };
+        return { first.xx * second.xx + first.xy * second.yx,
+            first.xx * second.xy + first.xy * second.yy,
+            first.yx * second.xx + first.yy * second.yx,
+            first.yx * second.xy + first.yy * second.yy };
     }
 
     template < Numeric Type >
-    inline Vector< 2, Type > operator*( const Matrix< 2, 2, Type > &first, const Vector< 2, Type > &vector )
+    inline constexpr Vector< 2, Type > operator*( const Matrix< 2, 2, Type > &first,
+        const Vector< 2, Type > &vector ) noexcept
     {
-        return {
-            first( 0, 0 ) * vector.x + first( 0, 1 ) * vector.y, first( 1, 0 ) * vector.x + first( 1, 1 ) * vector.y };
+        return { first.xx * vector.x + first.yx * vector.y, first.xy * vector.x + first.yy * vector.y };
     }
 
-    template< Numeric Type >
-    inline Matrix< 2, 2, Type >& operator+=( Matrix< 2, 2, Type >& first, const Matrix< 2, 2, Type >& second)
+    template < Numeric Type >
+    inline constexpr Matrix< 2, 2, Type > &operator+=( Matrix< 2, 2, Type > &first,
+        const Matrix< 2, 2, Type > &second ) noexcept
     {
-        first.m00 += second.m00;
-        first.m01 += second.m01;
-        first.m10 += second.m10;
-        first.m11 += second.m11;
+        first.xx += second.xx;
+        first.xy += second.xy;
+        first.yx += second.yx;
+        first.yy += second.yy;
 
         return first;
     }
 
     template < Numeric Type >
-    inline Matrix< 2, 2, Type > &operator-=( Matrix< 2, 2, Type > &first, const Matrix< 2, 2, Type > &second )
+    inline constexpr Matrix< 2, 2, Type > &operator-=( Matrix< 2, 2, Type > &first,
+        const Matrix< 2, 2, Type > &second ) noexcept
     {
-        first.m00 -= second.m00;
-        first.m01 -= second.m01;
-        first.m10 -= second.m10;
-        first.m11 -= second.m11;
+        first.xx -= second.xx;
+        first.xy -= second.xy;
+        first.yx -= second.yx;
+        first.yy -= second.yy;
 
         return first;
     }
 
     template < Numeric Type >
-    inline Matrix< 2, 2, Type > &operator*=( Matrix< 2, 2, Type > &first, const Matrix< 2, 2, Type > &second )
+    inline constexpr Matrix< 2, 2, Type > &operator*=( Matrix< 2, 2, Type > &first,
+        const Matrix< 2, 2, Type > &second ) noexcept
     {
         first = first * second;
 
@@ -143,28 +133,37 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Matrix< 2, 2, T > &operator*=( Matrix< 2, 2, T > &first, const U scale )
+    inline constexpr Matrix< 2, 2, T > &operator*=( Matrix< 2, 2, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
-        first.m00 *= s;
-        first.m01 *= s;
-        first.m10 *= s;
-        first.m11 *= s;
+        first.xx *= s;
+        first.xy *= s;
+        first.yx *= s;
+        first.yy *= s;
 
         return first;
     }
 
     template < Numeric T, Numeric U >
-    inline Matrix< 2, 2, T > &operator/=( Matrix< 2, 2, T > &first, const U scale )
+    inline constexpr Matrix< 2, 2, T > &operator/=( Matrix< 2, 2, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
 
-        first.m00 /= s;
-        first.m01 /= s;
-        first.m10 /= s;
-        first.m11 /= s;
+        first.xx /= s;
+        first.xy /= s;
+        first.yx /= s;
+        first.yy /= s;
 
         return first;
+    }
+
+    template < Numeric Type >
+    inline constexpr void SetIdentity( Matrix< 2, 2, Type > &matrix ) noexcept
+    {
+        matrix.xx = static_cast< Type >( 1 );
+        matrix.xy = static_cast< Type >( 0 );
+        matrix.yx = static_cast< Type >( 0 );
+        matrix.yy = static_cast< Type >( 1 );
     }
 }

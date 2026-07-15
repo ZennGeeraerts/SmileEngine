@@ -66,7 +66,7 @@ namespace smile::math
         return static_cast< Type >( std::abs( value ) );
     }
 
-    template< typename Type >
+    template < typename Type >
     inline int Floor( Type value )
     {
         return static_cast< int >( std::floor( value ) );
@@ -127,7 +127,7 @@ namespace smile::math
     float GenerateRandom( float min, float max );
     Int32 GenerateRandomInt( Int32 min, Int32 max );
 
-    template< typename Type >
+    template < typename Type >
     inline Type Minimum( Type a, Type b )
     {
         return a < b ? a : b;
