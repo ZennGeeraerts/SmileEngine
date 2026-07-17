@@ -37,6 +37,12 @@ namespace smile::math
     }
 
     template < Numeric Type >
+    inline Type ArcCosinus( Type value ) noexcept
+    {
+        return static_cast< Type >( acos( value ) );
+    }
+
+    template < Numeric Type >
     inline Type Tangent( Type value ) noexcept
     {
         return static_cast< Type >( tan( value ) );

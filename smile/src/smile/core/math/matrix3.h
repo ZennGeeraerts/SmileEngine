@@ -250,4 +250,12 @@ namespace smile::math
         matrix.zy = static_cast< Type >( 0 );
         matrix.zz = static_cast< Type >( 1 );
     }
+
+    template < Numeric Type >
+    constexpr Type Determinant( const Matrix< 3, 3, Type > &matrix ) noexcept
+    {
+        return matrix.xx * ( matrix.yy * matrix.zz - matrix.yz * matrix.zy ) -
+               matrix.xy * ( matrix.yx * matrix.zz - matrix.yz * matrix.zx ) +
+               matrix.xz * ( matrix.yx * matrix.zy - matrix.yy * matrix.zx );
+    }
 }

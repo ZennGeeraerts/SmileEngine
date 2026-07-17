@@ -21,7 +21,6 @@
 
 namespace smile::math
 {
-
     void SetPerspectiveProjection( Matrix< 4, 4, Real > &matrix,
         const Real frustumLeft,
         const Real frustumRight,
@@ -29,7 +28,7 @@ namespace smile::math
         const Real frustumTop,
         const Real frustumNear,
         const Real frustumFar,
-        const DepthRange depthRange = DepthRange::Between0And1 ) noexcept
+        const DepthRange depthRange ) noexcept
     {
         SM_ASSERT( frustumLeft < frustumRight );
         SM_ASSERT( frustumBottom < frustumTop );
