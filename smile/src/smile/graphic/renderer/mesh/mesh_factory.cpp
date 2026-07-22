@@ -144,9 +144,7 @@ namespace smile::graphic
         { -1.0f, 0.0f, 0.0f },
         { -1.0f, 0.0f, 0.0f } };
 
-    Mesh MeshFactory::CreateMesh( const MeshSource::Ref &meshSource,
-        const rhi::BufferLayout &layout,
-        const MeshHandle handle ) const
+    Mesh MeshFactory::CreateMesh( const MeshSource::Ref &meshSource, const rhi::BufferLayout &layout ) const
     {
         meshSource->m_pDataLocation =
             malloc( static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( meshSource->m_VertexCount ) );
@@ -217,12 +215,11 @@ namespace smile::graphic
         IndexBuffer ib = m_ResourceManager.CreateIndexBuffer(
             meshSource->m_Indices.GetData(), meshSource->m_Indices.GetItemCount() );
 
-        return Mesh{ handle, vb, ib };
+        return Mesh{ vb, ib, layout };
     }
 
     SkinnedMesh MeshFactory::CreateSkinnedMesh( const SkinnedMeshSource::Ref &skinnedMeshSource,
-        const rhi::BufferLayout &layout,
-        const MeshHandle handle ) const
+        const rhi::BufferLayout &layout ) const
     {
         skinnedMeshSource->m_pDataLocation = malloc(
             static_cast< size_t >( layout.GetStride() ) * static_cast< size_t >( skinnedMeshSource->m_VertexCount ) );
@@ -288,10 +285,10 @@ namespace smile::graphic
         IndexBuffer ib = m_ResourceManager.CreateIndexBuffer(
             skinnedMeshSource->m_Indices.GetData(), skinnedMeshSource->m_Indices.GetItemCount() );
 
-        return SkinnedMesh{ handle, vb, ib, skinnedMeshSource->m_Skeleton };
+        return SkinnedMesh{ vb, ib, skinnedMeshSource->m_Skeleton };
     }
 
-    Mesh MeshFactory::CreatePlane( const rhi::BufferLayout &vertexLayout, const MeshHandle handle ) const
+    Mesh MeshFactory::CreatePlane( const rhi::BufferLayout &vertexLayout ) const
     {
         auto meshSource = memory::CreateRef< MeshSource >();
 
@@ -312,10 +309,10 @@ namespace smile::graphic
         meshSource->m_VertexCount = s_PlanePositions.GetItemCount();
         meshSource->m_Indices = s_PlaneIndices;
 
-        return CreateMesh( meshSource, vertexLayout, handle );
+        return CreateMesh( meshSource, vertexLayout );
     }
 
-    Mesh MeshFactory::CreateCube( const rhi::BufferLayout &vertexLayout, const MeshHandle handle ) const
+    Mesh MeshFactory::CreateCube( const rhi::BufferLayout &vertexLayout ) const
     {
         auto meshSource = memory::CreateRef< MeshSource >();
 
@@ -341,13 +338,11 @@ namespace smile::graphic
         meshSource->m_VertexCount = s_CubePositions.GetItemCount();
         meshSource->m_Indices = s_CubeIndices;
 
-        return CreateMesh( meshSource, vertexLayout, handle );
+        return CreateMesh( meshSource, vertexLayout );
     }
 
-    Mesh MeshFactory::CreateSphere( const rhi::BufferLayout &vertexLayout,
-        const float radius,
-        const Uint32 steps,
-        const MeshHandle handle ) const
+    Mesh
+    MeshFactory::CreateSphere( const rhi::BufferLayout &vertexLayout, const float radius, const Uint32 steps ) const
     {
         primitive::Vector< DirectX::XMFLOAT3 > positions{};
         primitive::Vector< DirectX::XMFLOAT3 > normals{};
@@ -456,6 +451,6 @@ namespace smile::graphic
         meshSource->m_VertexCount = vertCount;
         meshSource->m_Indices = indices;
 
-        return CreateMesh( meshSource, vertexLayout, handle );
+        return CreateMesh( meshSource, vertexLayout );
     }
 }

@@ -16,26 +16,29 @@
  */
 #pragma once
 
+#include "smile/common/primitive/collection/slot_map.h"
 #include "mesh_factory.h"
 #include "smile/graphic/renderer/resource/resource_cache.h"
 
 namespace smile::graphic
 {
+    static constexpr Uint16 s_MaxMeshCount = ( 12 << 10 );
+
+    using MeshSlotMap = typename primitive::SlotMap< Mesh, s_MaxMeshCount, Uint64, 32u, 32u, struct Mesh >;
+    using MeshHandle = MeshSlotMap::HandleType;
+
     class MeshManager final
     {
       public:
         explicit MeshManager( ResourceManager &resourceManager ) noexcept;
 
-        Mesh CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
-        Mesh GetOrCreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
+        MeshHandle CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
+        MeshHandle CreateMeshIfNotExists( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
+        const Mesh &GetMesh( MeshHandle meshHandle ) const;
 
       private:
-        static constexpr Uint16 s_MaxMeshCount = ( 12 << 10 );
-
-        primitive::Array< Mesh, s_MaxMeshCount > m_Meshes;
-        ResourceCache< MeshSource::Ref, Mesh > m_MeshCache;
-
-        MeshHandleManager m_HandleManager;
+        MeshSlotMap m_Meshes;
+        ResourceCache< MeshSource::Ref, MeshHandle > m_MeshCache;
 
         MeshFactory m_MeshFactory;
         ResourceManager &m_ResourceManager;

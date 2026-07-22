@@ -150,7 +150,8 @@ namespace smile::graphic
 
                     const auto &item = bin->Items[0];
                     const auto entity = item.GetEntity();
-                    const auto &mesh = renderWorld.GetComponent< Mesh >( entity );
+                    const auto meshHandle = renderWorld.GetComponent< MeshHandle >( entity );
+                    const auto &mesh = m_Engine.GetMeshManager().GetMesh( meshHandle );
                     const auto &mi = renderWorld.GetComponent< MaterialInstance >( entity );
                     const auto psoDescHandle = renderWorld.GetComponent< GraphicsPipelineDescriptorHandle >( entity );
                     const auto &psoDesc = resourceManager.GetGraphicsPipelineDescriptor( psoDescHandle );

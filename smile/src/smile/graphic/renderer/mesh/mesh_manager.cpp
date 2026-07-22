@@ -24,26 +24,30 @@ namespace smile::graphic
     {
     }
 
-    Mesh MeshManager::CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
+    MeshHandle MeshManager::CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
     {
-        const MeshHandle handle = m_HandleManager.CreateHandle();
-        const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, vertexLayout, handle );
+        const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, vertexLayout );
 
-        m_Meshes[handle.GetIndex()] = mesh;
-        m_MeshCache.Add( meshSource, mesh );
+        const auto meshHandle = m_Meshes.Insert( mesh );
+        m_MeshCache.Add( meshSource, meshHandle );
 
-        return mesh;
+        return meshHandle;
     }
 
-    Mesh MeshManager::GetOrCreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
+    MeshHandle MeshManager::CreateMeshIfNotExists( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
     {
-        const auto mesh = m_MeshCache.Find( meshSource );
+        const auto meshHandle = m_MeshCache.Find( meshSource );
 
-        if ( mesh )
+        if ( meshHandle )
         {
-            return *mesh;
+            return *meshHandle;
         }
 
         return CreateMesh( meshSource, vertexLayout );
+    }
+
+    const Mesh &MeshManager::GetMesh( MeshHandle meshHandle ) const
+    {
+        return m_Meshes.GetItemAtSlot( meshHandle );
     }
 }

@@ -224,9 +224,9 @@ namespace smile::graphic
         const rhi::BufferLayout &vertexLayout,
         MeshManager &meshManager )
     {
-        const auto mesh = meshManager.GetOrCreateMesh( meshSource, vertexLayout );
+        const auto meshHandle = meshManager.CreateMeshIfNotExists( meshSource, vertexLayout );
 
-        AddOrReplaceComponent< Mesh >( entity, mesh );
+        AddOrReplaceComponent< MeshHandle >( entity, meshHandle );
     }
 
     void RenderWorld::PreparePipeline( smile::ecs::EntityHandle entity,
@@ -263,19 +263,19 @@ namespace smile::graphic
             const auto &view = m_ECSEngine.GetComponent< View >( viewEntity );
             const auto &viewMatrix = view.GetViewMatrix();
 
-            auto group = m_ECSEngine.GetGroup< GraphicsPipelineDescriptorHandle, MaterialInstance, Mesh >(
+            auto group = m_ECSEngine.GetGroup< GraphicsPipelineDescriptorHandle, MaterialInstance, MeshHandle >(
                 smile::ecs::g_Get< world::ecs::TransformComponent > );
 
             for ( auto entity : group )
             {
-                const auto &[psoDescHandle, materialInstance, mesh, transform] =
+                const auto &[psoDescHandle, materialInstance, meshHandle, transform] =
                     m_ECSEngine.GetComponents< GraphicsPipelineDescriptorHandle,
                         MaterialInstance,
-                        Mesh,
+                        MeshHandle,
                         world::ecs::TransformComponent >( entity );
 
                 const Opaque3dBinKey binKey{
-                    psoDescHandle.GetIndex(), materialInstance.GetHandle().GetIndex(), mesh.Handle.GetIndex() };
+                    psoDescHandle.GetIndex(), materialInstance.GetHandle().GetIndex(), meshHandle.GetIndex() };
 
                 const float depth = transform.WorldTranslation.x * viewMatrix._13 +
                                     transform.WorldTranslation.y * viewMatrix._23 +
