@@ -5,46 +5,35 @@
 #include "smpch.h"
 #include "timer.h"
 
-using namespace std::chrono;
+#include "smile/common/platform/clock.h"
 
 namespace smile::application
 {
-    Timer::Timer()
-        : m_MsPerFrame{ 16 },
-          m_Lag{ 0.0f },
-          m_TotalTimePassed{ 0.0f },
-          m_DeltaTime{ 0.0f },
-          m_FPS{ 0 },
-          m_LastTime{},
-          m_IsRunning{ false }
-    {
-    }
-
-    void Timer::Run()
+    void Timer::Run() noexcept
     {
         m_IsRunning = true;
-        m_LastTime = high_resolution_clock::now();
+        m_LastTime = platform::Clock::GetTime();
     }
 
-    void Timer::OnUpdate()
+    void Timer::OnUpdate() noexcept
     {
         if ( !m_IsRunning )
             return;
 
-        const auto currentTime{ high_resolution_clock::now() };
-        m_DeltaTime = duration< float >( currentTime - m_LastTime ).count();
+        const auto currentTime{ platform::Clock::GetTime() };
+        m_DeltaTime = ( currentTime - m_LastTime ) * 1_us;
         m_LastTime = currentTime;
 
         m_Lag += m_DeltaTime;
 
-        m_FPS = static_cast< Uint32 >( 1.f / m_DeltaTime.GetSeconds() );
+        m_FPS = static_cast< Uint32 >( 1.f / m_DeltaTime );
     }
 
-    bool Timer::IsCatchingUpInFixedSteps()
+    bool Timer::IsCatchingUpInFixedSteps() noexcept
     {
-        if ( m_Lag >= m_MsPerFrame )
+        if ( m_Lag >= m_TimePerFrame )
         {
-            m_Lag -= static_cast< float >( m_MsPerFrame );
+            m_Lag -= m_TimePerFrame;
             return true;
         }
 
