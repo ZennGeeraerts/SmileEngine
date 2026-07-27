@@ -59,6 +59,16 @@ namespace smile::application
             return m_LastTime;
         }
 
+        Uint64 GetTicks() const noexcept
+        {
+            return m_Ticks;
+        }
+
+        Uint64 GetFixedTicks() const noexcept
+        {
+            return m_FixedTicks;
+        }
+
       private:
         primitive::Timestep m_TimePerFrame; /* amount of seconds per frame for the fixed update */
         primitive::Timestep m_Lag;
@@ -67,5 +77,7 @@ namespace smile::application
         Uint32 m_FPS;
         platform::SystemTime m_LastTime;
         bool m_IsRunning;
+        Uint64 m_Ticks{ 0 };
+        Uint64 m_FixedTicks{ 0 };
     };
 }

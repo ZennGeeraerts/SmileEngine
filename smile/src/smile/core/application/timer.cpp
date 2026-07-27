@@ -27,6 +27,8 @@ namespace smile::application
         m_Lag += m_DeltaTime;
 
         m_FPS = static_cast< Uint32 >( 1.f / m_DeltaTime );
+
+        ++m_Ticks;
     }
 
     bool Timer::IsCatchingUpInFixedSteps() noexcept
@@ -34,6 +36,9 @@ namespace smile::application
         if ( m_Lag >= m_TimePerFrame )
         {
             m_Lag -= m_TimePerFrame;
+
+            ++m_FixedTicks;
+
             return true;
         }
 
