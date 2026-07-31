@@ -492,7 +492,7 @@ namespace smile::ecs
             ComponentPool *pCPool = GetComponentPool< ComponentType >( typeID );
             ComponentType &component = pCPool->Get< ComponentType >( entityHandle );
 
-            pCPool->Patch( entityHandle, std::forward< Func >( func )... );
+            pCPool->Patch< ComponentType >( entityHandle, std::forward< Func >( func )... );
 
             return component;
         }
