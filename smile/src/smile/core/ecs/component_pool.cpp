@@ -65,7 +65,7 @@ namespace smile::ecs
 
     void ComponentPool::PublishOnConstruction( const EntityHandle entityHandle )
     {
-        for ( const auto &listenerFunc : m_ContructionListeners )
+        for ( const auto &listenerFunc : m_ConstructionListeners )
         {
             listenerFunc( m_ECSEngine, entityHandle );
         }

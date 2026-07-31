@@ -66,29 +66,30 @@ namespace smile::ecs
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &Replace( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
-            SM_ASSERT( Contains( entityHandle ) )
+            SM_ASSERT( Contains( entityHandle ) );
 
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
             auto &component = m_ComponentStorage->Replace< ComponentType >(
                 index, std::forward< ConstructorArgs >( constructorArgs )... );
 
-            Patch( entityHandle );
+            Patch< ComponentType >( entityHandle );
 
             return component;
         }
 
         void Remove( EntityHandle entityHandle );
 
-        template < typename... Func >
+        template < typename ComponentType, typename... Func >
         void Patch( EntityHandle entityHandle, Func &&...func )
         {
-            SM_ASSERT( Contains( entityHandle ) )
+            SM_ASSERT( Contains( entityHandle ) );
 
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
             m_ComponentMetadata[index].LastModified = application::Timer::GetInstance().GetTicks();
 
-            ( std::invoke( std::forward< Func >( func ), m_ECSEngine, entityHandle ), ... );
+            auto &component = m_ComponentStorage->Get< ComponentType >( index );
+            ( std::invoke( std::forward< Func >( func ), component ), ... );
             PublishOnPatch( entityHandle );
         }
 
@@ -183,7 +184,7 @@ namespace smile::ecs
 
         ListenerContainer &OnConstruction()
         {
-            return m_ContructionListeners;
+            return m_ConstructionListeners;
         }
 
         ListenerContainer &OnDestruction()
@@ -217,7 +218,7 @@ namespace smile::ecs
         memory::Scope< ComponentStorage > m_ComponentStorage;
         primitive::Vector< Metadata > m_ComponentMetadata;
 
-        ListenerContainer m_ContructionListeners;
+        ListenerContainer m_ConstructionListeners;
         ListenerContainer m_DestructionListeners;
         ListenerContainer m_PatchListeners;
     };

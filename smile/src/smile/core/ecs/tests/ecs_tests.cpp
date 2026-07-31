@@ -454,9 +454,7 @@ namespace smile
                 [&valueInListener]( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
                 { valueInListener = ecsEngine.GetComponent< TestComponent >( entityHandle ).x; } );
 
-            engine.PatchComponent< TestComponent >( entity,
-                []( ecs::ECSEngine &ecsEngine, ecs::EntityHandle entityHandle )
-                { ecsEngine.GetComponent< TestComponent >( entityHandle ).x = 99; } );
+            engine.PatchComponent< TestComponent >( entity, []( TestComponent &component ) { component.x = 99; } );
 
             REQUIRE( engine.GetComponent< TestComponent >( entity ).x == 99 );
             REQUIRE( valueInListener == 99 );
