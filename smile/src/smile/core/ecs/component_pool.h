@@ -150,6 +150,8 @@ namespace smile::ecs
             return m_ComponentStorage->GetRaw( index );
         }
 
+        bool HasChanged( EntityHandle entityHandle ) const;
+
         void Clear() noexcept
         {
             m_ComponentStorage->Clear();

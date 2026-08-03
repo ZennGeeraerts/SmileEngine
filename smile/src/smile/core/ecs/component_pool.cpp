@@ -86,4 +86,14 @@ namespace smile::ecs
             listenerFunc( m_ECSEngine, entityHandle );
         }
     }
+
+    bool ComponentPool::HasChanged( EntityHandle entityHandle ) const
+    {
+        const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
+
+        if ( index == EntityHandle::NullHandle().GetIndex() || !m_ComponentMetadata.IsValidIndex( index ) )
+            return false;
+
+        return m_ComponentMetadata[index].LastModified > m_ECSEngine.GetLastTick();
+    }
 }

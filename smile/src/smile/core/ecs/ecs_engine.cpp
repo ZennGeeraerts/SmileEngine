@@ -34,9 +34,11 @@ namespace smile::ecs
 
     void ECSEngine::OnUpdate()
     {
-        for ( auto pSystem : m_pSystems )
+        m_CurrentTick = application::Timer::GetInstance().GetTicks();
+
+        for ( auto system : m_pSystems )
         {
-            pSystem->OnUpdate();
+            system->OnUpdate();
         }
 
         for ( auto deadHandle : m_DeadHandles )
@@ -45,6 +47,8 @@ namespace smile::ecs
         }
 
         m_DeadHandles.Clear();
+
+        m_LastTick = m_CurrentTick;
     }
 
     void ECSEngine::RemoveComponent( ComponentPool *pCPool, EntityHandle entityHandle )

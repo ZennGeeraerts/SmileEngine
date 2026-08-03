@@ -631,6 +631,16 @@ namespace smile::ecs
             return m_Context;
         }
 
+        Uint64 GetCurrentTick() const noexcept
+        {
+            return m_CurrentTick;
+        }
+
+        Uint64 GetLastTick() const noexcept
+        {
+            return m_LastTick;
+        }
+
       private:
         template < typename ComponentType >
         ComponentPool *GetComponentPool( const foundation::TypeID typeID = foundation::TypeIDOf< ComponentType >() )
@@ -657,5 +667,8 @@ namespace smile::ecs
         primitive::Vector< GroupBase * > m_pGroups{};
         primitive::Vector< memory::Ref< BaseSystem > > m_pSystems{};
         primitive::Vector< EntityHandle > m_DeadHandles{};
+
+        Uint64 m_CurrentTick = 0;
+        Uint64 m_LastTick = 0;
     };
 }
