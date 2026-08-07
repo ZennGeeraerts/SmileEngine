@@ -130,9 +130,9 @@ namespace smile::graphic
         return *m_Renderers.GetLastItem().GetPointer();
     }
 
-    RenderWorld &RenderEngine::CreateWorld()
+    RenderWorld &RenderEngine::CreateWorld( smile::ecs::ECSEngine &ecsEngine )
     {
-        auto world = memory::CreateScope< RenderWorld >();
+        auto world = memory::CreateScope< RenderWorld >( ecsEngine );
         m_Worlds.PushBack( std::move( world ) );
 
         return *m_Worlds.GetLastItem().GetPointer();

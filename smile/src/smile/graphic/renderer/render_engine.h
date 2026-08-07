@@ -34,7 +34,7 @@ namespace smile::graphic
 
         rhi::SwapChain &CreateSwapChain( const window::Window *window );
         Renderer &CreateRenderer();
-        RenderWorld &CreateWorld();
+        RenderWorld &CreateWorld( smile::ecs::ECSEngine &ecsEngine );
 
         RenderContext &GetRenderContext() noexcept
         {

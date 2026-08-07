@@ -35,7 +35,7 @@ namespace smile::graphic
 
         const auto &shaderLibrary = m_RenderEngine->GetShaderLibrary();
 
-        m_RenderWorld = &m_RenderEngine->CreateWorld();
+        m_RenderWorld = &m_RenderEngine->CreateWorld( m_ECSEngine );
 
         SceneCamera camera;
         camera.SetViewportSize( window.GetWidth(), window.GetHeight() );

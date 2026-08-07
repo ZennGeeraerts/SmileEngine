@@ -18,6 +18,7 @@
 
 #include "smile/core/application/layer.h"
 #include "smile/core/window/events/application_event.h"
+#include "smile/core/ecs/ecs_engine.h"
 #include "smile/graphic/renderer/render_engine.h"
 
 namespace smile::graphic
@@ -37,6 +38,7 @@ namespace smile::graphic
         memory::Scope< RenderEngine > m_RenderEngine;
         Renderer *m_Renderer = nullptr;
         rhi::SwapChain *m_SwapChain = nullptr;
+        smile::ecs::ECSEngine m_ECSEngine;
         RenderWorld *m_RenderWorld = nullptr;
 
         smile::ecs::EntityHandle m_MeshEntity;

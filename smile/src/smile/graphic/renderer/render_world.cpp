@@ -26,7 +26,6 @@ namespace smile::graphic
         const auto handle = m_ECSEngine.CreateEntity();
         m_ECSEngine.AddComponent< world::ecs::IDComponent >( handle, uuid );
         m_ECSEngine.AddComponent< world::ecs::TransformComponent >( handle );
-        m_EntityMap[uuid] = handle;
 
         return handle;
     }

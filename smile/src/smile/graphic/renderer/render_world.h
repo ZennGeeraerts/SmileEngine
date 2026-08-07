@@ -43,7 +43,10 @@ namespace smile::graphic
     class RenderWorld final
     {
       public:
-        RenderWorld() = default;
+        explicit RenderWorld( smile::ecs::ECSEngine &ecsEngine ) noexcept : m_ECSEngine{ ecsEngine }
+        {
+        }
+
         ~RenderWorld() = default;
 
         smile::ecs::EntityHandle CreateEntity();
@@ -118,7 +121,6 @@ namespace smile::graphic
             const MaterialData &materialData,
             ResourceManager &resourceManager );
 
-        smile::ecs::ECSEngine m_ECSEngine;
-        primitive::HashMap< primitive::UUID, smile::ecs::EntityHandle > m_EntityMap;
+        smile::ecs::ECSEngine &m_ECSEngine;
     };
 }
