@@ -157,4 +157,10 @@ namespace smile::primitive::array
         SM_ASSERT( firstIndex == first.GetItemCount() );
         SM_ASSERT( secondIndex == second.GetItemCount() );
     }
+
+    template < typename ArrayType >
+    inline void Swap( ArrayType &array, const Index firstIndex, const Index secondIndex ) noexcept
+    {
+        std::swap( array[firstIndex], array[secondIndex] );
+    }
 }

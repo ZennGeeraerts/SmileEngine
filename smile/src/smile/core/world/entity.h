@@ -49,7 +49,7 @@ namespace smile::world
         }
 
         template < typename ComponentType >
-        ComponentType &GetComponent() const
+        ComponentType &GetComponent()
         {
             SM_ASSERT_MSG( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
 
@@ -57,19 +57,42 @@ namespace smile::world
         }
 
         template < typename ComponentType >
-        ComponentType *TryGetComponent() const
+        const ComponentType &GetComponent() const
+        {
+            SM_ASSERT_MSG( HasComponent< ComponentType >(), "Entity::GetComponent > Entity does not have component" );
+
+            return m_pWorld->m_ECSEngine.GetComponent< ComponentType >( m_EntityHandle );
+        }
+
+        template < typename ComponentType >
+        ComponentType *TryGetComponent()
         {
             return m_pWorld->m_ECSEngine.TryGetComponent< ComponentType >( m_EntityHandle );
+        }
+
+        template < typename ComponentType >
+        const ComponentType *TryGetComponent() const
+        {
+            return m_pWorld->m_ECSEngine.TryGetComponent< ComponentType >( m_EntityHandle );
+        }
+
+        template < typename ComponentType, typename... Func >
+        ComponentType &PatchComponent( Func &&...func )
+        {
+            return m_pWorld->m_ECSEngine.PatchComponent< ComponentType >(
+                m_EntityHandle, std::forward< Func >( func )... );
         }
 
         primitive::UUID GetUUID() const
         {
             return GetComponent< ecs::IDComponent >().ID;
         }
+
         const primitive::String &GetName() const
         {
             return GetComponent< ecs::TagComponent >().Tag;
         }
+
         DirectX::XMFLOAT4X4 GetTransform() const
         {
             return GetComponent< ecs::TransformComponent >().GetWorldTransform();
@@ -94,14 +117,17 @@ namespace smile::world
         {
             return m_EntityHandle != smile::ecs::EntityHandle::NullHandle();
         }
+
         operator smile::ecs::EntityHandle() const
         {
             return m_EntityHandle;
         }
+
         operator Uint32() const
         {
             return static_cast< Uint32 >( m_EntityHandle.Hash() );
         }
+
         operator Uint64() const
         {
             return m_EntityHandle.Hash();
@@ -111,6 +137,7 @@ namespace smile::world
         {
             return ( m_EntityHandle == other.m_EntityHandle ) && ( m_pWorld == other.m_pWorld );
         }
+
         bool operator!=( Entity other ) const
         {
             return !( *this == other );

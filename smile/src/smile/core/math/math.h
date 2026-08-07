@@ -16,9 +16,9 @@
 
 namespace smile::math
 {
-    using Vector2 = Vector< 2, float >;
-    using Vector3 = Vector< 3, float >;
-    using Vector4 = Vector< 4, float >;
+    using Vector2 = Vector< 2, Real >;
+    using Vector3 = Vector< 3, Real >;
+    using Vector4 = Vector< 4, Real >;
 
-    using Matrix2 = Matrix< 2, 2, float >;
+    using Matrix2 = Matrix< 2, 2, Real >;
 }

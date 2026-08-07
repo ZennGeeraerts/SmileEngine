@@ -8,7 +8,7 @@
 
 namespace smile::math
 {
-    using Angle = float;
+    using Angle = Real;
 
     inline Angle GetFromDegrees( const Angle degrees )
     {

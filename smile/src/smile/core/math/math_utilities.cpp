@@ -15,13 +15,13 @@ namespace smile
 
 namespace smile::math
 {
-    float GenerateRandom( float min, float max )
+    float GenerateRandom( float min, float max ) noexcept
     {
         std::uniform_real_distribution< float > distribution{ min, max };
         return distribution( g_GlobalGenerator );
     }
 
-    Int32 GenerateRandomInt( Int32 min, Int32 max )
+    Int32 GenerateRandomInt( Int32 min, Int32 max ) noexcept
     {
         std::uniform_int_distribution< Int32 > distribution{ min, max };
         return distribution( g_GlobalGenerator );

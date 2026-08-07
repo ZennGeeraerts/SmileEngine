@@ -9,15 +9,23 @@
 namespace smile::math
 {
     template < Uint8 Size, Numeric Type >
-    struct Vector final
+    class Vector final
     {
-        inline Type operator[]( Uint8 index ) const
+      public:
+        constexpr Vector() noexcept = default;
+        constexpr Vector( const Vector & ) noexcept = default;
+        constexpr Vector( Vector && ) noexcept = default;
+        constexpr Vector &operator=( const Vector & ) noexcept = default;
+        constexpr Vector &operator=( Vector && ) noexcept = default;
+        ~Vector() noexcept = default;
+
+        Type operator[]( Uint8 index ) const
         {
             SM_ASSERT_MSG( index < Size, "Vector > index of Vector [] operator is out of bounds!" );
             return Data[index];
         }
 
-        inline Type &operator[]( Uint8 index )
+        Type &operator[]( Uint8 index )
         {
             SM_ASSERT_MSG( index < Size, "Vector > index of Vector [] operator is out of bounds!" );
             return Data[index];

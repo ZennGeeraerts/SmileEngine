@@ -18,123 +18,129 @@ namespace smile::math
     template < typename Type >
     concept Numeric = std::integral< Type > || std::floating_point< Type >;
 
-    template < typename Type >
-    inline Type SquareRoot( Type value )
+    template < Numeric Type >
+    inline Type SquareRoot( Type value ) noexcept
     {
         return static_cast< Type >( sqrt( value ) );
     }
 
-    template < typename Type >
-    inline Type Sinus( Type value )
+    template < Numeric Type >
+    inline Type Sinus( Type value ) noexcept
     {
         return static_cast< Type >( sin( value ) );
     }
 
-    template < typename Type >
-    inline Type Cosinus( Type value )
+    template < Numeric Type >
+    inline Type Cosinus( Type value ) noexcept
     {
         return static_cast< Type >( cos( value ) );
     }
 
-    template < typename Type >
-    inline Type Tangent( Type value )
+    template < Numeric Type >
+    inline Type ArcCosinus( Type value ) noexcept
+    {
+        return static_cast< Type >( acos( value ) );
+    }
+
+    template < Numeric Type >
+    inline Type Tangent( Type value ) noexcept
     {
         return static_cast< Type >( tan( value ) );
     }
 
-    template < typename Type >
-    inline Type ArcTangent( Type y, Type x )
+    template < Numeric Type >
+    inline Type ArcTangent( Type y, Type x ) noexcept
     {
         return static_cast< Type >( atan2( y, x ) );
     }
 
-    template < typename Type >
-    inline constexpr Type Sign( Type value )
+    template < Numeric Type >
+    constexpr Type Sign( Type value ) noexcept
     {
         return value == 0 ? Type{ 0 } : value > 0 ? Type{ 1 } : Type{ -1 };
     }
 
-    template < typename Type >
-    inline constexpr Type Square( Type value )
+    template < Numeric Type >
+    constexpr Type Square( Type value ) noexcept
     {
         return value * value;
     }
 
-    template < typename Type >
-    inline Type AbsoluteValue( Type value )
+    template < Numeric Type >
+    inline Type AbsoluteValue( Type value ) noexcept
     {
         return static_cast< Type >( std::abs( value ) );
     }
 
-    template< typename Type >
-    inline int Floor( Type value )
+    template < Numeric Type >
+    inline int Floor( Type value ) noexcept
     {
         return static_cast< int >( std::floor( value ) );
     }
 
-    template < typename Type >
-    inline int Ceil( Type value )
+    template < Numeric Type >
+    inline int Ceil( Type value ) noexcept
     {
         return static_cast< int >( std::ceil( value ) );
     }
 
-    template < typename Type >
-    inline Type Round( Type value )
+    template < Numeric Type >
+    inline Type Round( Type value ) noexcept
     {
         return static_cast< Type >( std::round( value ) );
     }
 
-    template < typename Type >
-    inline constexpr Type ToDegrees( Type radians )
+    template < Numeric Type >
+    constexpr Type ToDegrees( Type radians ) noexcept
     {
         return radians * static_cast< Type >( 180.0f ) / static_cast< Type >( g_PI );
     }
 
-    template < typename Type >
-    inline constexpr Type ToRadians( Type degrees )
+    template < Numeric Type >
+    constexpr Type ToRadians( Type degrees ) noexcept
     {
         return degrees * static_cast< Type >( g_PI ) / static_cast< Type >( 180.0f );
     }
 
-    template < typename Type >
-    inline bool AreEqual( Type a, Type b )
+    template < Numeric Type >
+    inline bool AreEqual( Type a, Type b ) noexcept
     {
         const Type delta = AbsoluteValue( a - b );
         return delta <= std::numeric_limits< Type >::epsilon();
     }
 
-    inline constexpr bool IsSquareOne( float value, float precision = g_Epsilon )
+    constexpr bool IsSquareOne( float value, float precision = g_Epsilon ) noexcept
     {
         return value >= 1.0f - 2.0f * precision + precision * precision &&
                value <= 1.0f + 2.0f * precision + precision * precision;
     }
 
-    inline constexpr bool IsSquareZero( float value, float precision = g_Epsilon )
+    constexpr bool IsSquareZero( float value, float precision = g_Epsilon ) noexcept
     {
         return value >= -precision * precision && value <= precision * precision;
     }
 
-    inline constexpr bool IsZero( float value, float precision = g_Epsilon )
+    constexpr bool IsZero( float value, float precision = g_Epsilon ) noexcept
     {
         return ( value * value ) < ( precision * precision );
     }
 
-    inline constexpr bool IsOne( float value, float precision = g_Epsilon )
+    constexpr bool IsOne( float value, float precision = g_Epsilon ) noexcept
     {
         return IsZero( value - 1.0f, precision );
     }
 
-    float GenerateRandom( float min, float max );
-    Int32 GenerateRandomInt( Int32 min, Int32 max );
+    float GenerateRandom( float min, float max ) noexcept;
+    Int32 GenerateRandomInt( Int32 min, Int32 max ) noexcept;
 
-    template< typename Type >
-    inline Type Minimum( Type a, Type b )
+    template < Numeric Type >
+    constexpr Type Minimum( Type a, Type b ) noexcept
     {
         return a < b ? a : b;
     }
 
-    template < typename Type >
-    inline Type Maximum( Type a, Type b )
+    template < Numeric Type >
+    constexpr Type Maximum( Type a, Type b ) noexcept
     {
         return a > b ? a : b;
     }

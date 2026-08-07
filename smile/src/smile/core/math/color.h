@@ -8,28 +8,29 @@
 
 namespace smile::math
 {
-    struct Color final
+    class Color final
     {
-        Color() = default;
+      public:
+        Color() noexcept = default;
 
-        constexpr Color( const float red, const float green, const float blue, const float alpha )
+        constexpr Color( const Real red, const Real green, const Real blue, const Real alpha ) noexcept
             : Red{ red }, Green{ green }, Blue{ blue }, Alpha{ alpha }
         {
         }
 
-        constexpr Color &operator=( const Color & ) = default;
+        constexpr Color &operator=( const Color & ) noexcept = default;
 
-        constexpr bool operator==( const Color &other ) const
+        constexpr bool operator==( const Color &other ) const noexcept
         {
             return Red == other.Red && Green == other.Green && Blue == other.Blue && Alpha == other.Alpha;
         }
 
-        constexpr bool operator!=( const Color &other ) const
+        constexpr bool operator!=( const Color &other ) const noexcept
         {
             return !( *this == other );
         }
 
-        constexpr inline void Set( const float red, const float green, const float blue, const float alpha )
+        constexpr void Set( const Real red, const Real green, const Real blue, const Real alpha ) noexcept
         {
             Red = red;
             Green = green;
@@ -37,7 +38,7 @@ namespace smile::math
             Alpha = alpha;
         }
 
-        constexpr Uint32 GetABGR() const
+        constexpr Uint32 GetABGR() const noexcept
         {
             int r = static_cast< int >( Red * 255 );
             int g = static_cast< int >( Green * 255 );
@@ -47,17 +48,17 @@ namespace smile::math
             return a << 24 | b << 16 | g << 8 | r;
         }
 
-        static constexpr Color GetRed()
+        static constexpr Color GetRed() noexcept
         {
             return { 1.0f, 0.0f, 0.0f, 1.0f };
         }
 
-        static constexpr Color GetGreen()
+        static constexpr Color GetGreen() noexcept
         {
             return { 0.0f, 1.0f, 0.0f, 1.0f };
         }
 
-        static constexpr Color GetBlue()
+        static constexpr Color GetBlue() noexcept
         {
             return { 0.0f, 0.0f, 1.0f, 1.0f };
         }
@@ -66,22 +67,22 @@ namespace smile::math
         {
             struct
             {
-                float Red, Green, Blue, Alpha;
+                Real Red, Green, Blue, Alpha;
             };
             struct
             {
-                float r, g, b, a;
+                Real r, g, b, a;
             };
         };
     };
 
-    inline Color operator+( const Color &first, const Color &second )
+    constexpr Color operator+( const Color &first, const Color &second ) noexcept
     {
         return {
             first.Red + second.Red, first.Green + second.Green, first.Blue + second.Blue, first.Alpha + second.Alpha };
     }
 
-    inline Color &operator+=( Color &first, const Color &second )
+    constexpr Color &operator+=( Color &first, const Color &second ) noexcept
     {
         first.Red += second.Red;
         first.Green += second.Green;
@@ -91,13 +92,13 @@ namespace smile::math
         return first;
     }
 
-    inline Color operator-( const Color &first, const Color &second )
+    constexpr Color operator-( const Color &first, const Color &second ) noexcept
     {
         return {
             first.Red - second.Red, first.Green - second.Green, first.Blue - second.Blue, first.Alpha - second.Alpha };
     }
 
-    inline Color operator-=( Color &first, const Color &second )
+    constexpr Color &operator-=( Color &first, const Color &second ) noexcept
     {
         first.Red -= second.Red;
         first.Green -= second.Green;
@@ -107,13 +108,13 @@ namespace smile::math
         return first;
     }
 
-    inline Color operator*( const Color &first, const Color &second )
+    constexpr Color operator*( const Color &first, const Color &second ) noexcept
     {
         return {
             first.Red * second.Red, first.Green * second.Green, first.Blue * second.Blue, first.Alpha * second.Alpha };
     }
 
-    inline Color &operator*=( Color &first, const Color &second )
+    constexpr Color &operator*=( Color &first, const Color &second ) noexcept
     {
         first.Red *= second.Red;
         first.Green *= second.Green;
@@ -123,17 +124,17 @@ namespace smile::math
         return first;
     }
 
-    inline Color operator*( const Color &color, const float scalar )
+    constexpr Color operator*( const Color &color, const Real scalar ) noexcept
     {
         return { color.Red * scalar, color.Green * scalar, color.Blue * scalar, color.Alpha * scalar };
     }
 
-    inline Color operator*( const float scalar, const Color &color )
+    constexpr Color operator*( const Real scalar, const Color &color ) noexcept
     {
         return { color.Red * scalar, color.Green * scalar, color.Blue * scalar, color.Alpha * scalar };
     }
 
-    inline Color &operator*=( Color &first, const float scalar )
+    constexpr Color &operator*=( Color &first, const Real scalar ) noexcept
     {
         first.Red *= scalar;
         first.Green *= scalar;
@@ -143,13 +144,13 @@ namespace smile::math
         return first;
     }
 
-    inline Color operator/( const Color &first, const Color &second )
+    constexpr Color operator/( const Color &first, const Color &second ) noexcept
     {
         return {
             first.Red / second.Red, first.Green / second.Green, first.Blue / second.Blue, first.Alpha / second.Alpha };
     }
 
-    inline Color &operator/=( Color &first, const Color &second )
+    constexpr Color &operator/=( Color &first, const Color &second ) noexcept
     {
         first.Red /= second.Red;
         first.Green /= second.Green;
@@ -159,17 +160,17 @@ namespace smile::math
         return first;
     }
 
-    inline Color operator/( const Color &color, const float scalar )
+    constexpr Color operator/( const Color &color, const Real scalar ) noexcept
     {
         return { color.Red / scalar, color.Green / scalar, color.Blue / scalar, color.Alpha / scalar };
     }
 
-    inline Color operator/( const float scalar, const Color &color )
+    constexpr Color operator/( const Real scalar, const Color &color ) noexcept
     {
         return { color.Red / scalar, color.Green / scalar, color.Blue / scalar, color.Alpha / scalar };
     }
 
-    inline Color &operator/=( Color &first, const float scalar )
+    constexpr Color &operator/=( Color &first, const Real scalar ) noexcept
     {
         first.Red /= scalar;
         first.Green /= scalar;
@@ -179,5 +180,5 @@ namespace smile::math
         return first;
     }
 
-    static_assert( sizeof( Color ) == 4 * sizeof( float ) );
+    static_assert( sizeof( Color ) == 4 * sizeof( Real ) );
 }

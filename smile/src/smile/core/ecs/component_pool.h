@@ -5,6 +5,9 @@
 #pragma once
 
 #include "smile/common/primitive/collection/sparse_set.h"
+#include "smile/common/memory/scope.h"
+#include "smile/common/primitive/collection/array_utils.h"
+#include "smile/core/application/timer.h"
 #include "component_storage_handler.h"
 
 #include <functional>
@@ -24,16 +27,22 @@ namespace smile::ecs
         using ListenerType = std::function< void( ECSEngine &, EntityHandle ) >;
         using ListenerContainer = std::vector< ListenerType >;
 
+        struct Metadata final
+        {
+            Uint64 Created;
+            Uint64 LastModified;
+        };
+
       public:
-        ComponentPool( ECSEngine &ecsEngine );
-        ~ComponentPool();
+        explicit ComponentPool( ECSEngine &ecsEngine ) noexcept;
+        ~ComponentPool() noexcept = default;
 
         template < typename ComponentType >
         void Initialize()
         {
-            SM_ASSERT_MSG( !m_pComponentStorage, "ComponentPool::Initialize > Storage already created" );
+            SM_ASSERT_MSG( !m_ComponentStorage, "ComponentPool::Initialize > Storage already created" );
 
-            m_pComponentStorage = new ComponentStorageHandler< ComponentType >{};
+            m_ComponentStorage = memory::CreateScope< ComponentStorageHandler< ComponentType > >();
         }
 
         template < typename ComponentType, typename... ConstructorArgs >
@@ -41,10 +50,13 @@ namespace smile::ecs
         {
             [[maybe_unused]] const IndexType index = m_SparseSet.Insert( entityHandle.GetIndex() );
 
-            SM_ASSERT_MSG( index == m_pComponentStorage->GetSize(), "ComponentPool::Add > Failed to add component" );
+            SM_ASSERT_MSG( index == m_ComponentStorage->GetSize(), "ComponentPool::Add > Failed to add component" );
 
-            auto &component = m_pComponentStorage->Append< ComponentType >(
+            auto &component = m_ComponentStorage->Append< ComponentType >(
                 entityHandle.GetIndex(), std::forward< ConstructorArgs >( constructorArgs )... );
+
+            const Uint64 currentTick = application::Timer::GetInstance().GetTicks();
+            m_ComponentMetadata.PushBack( { currentTick, currentTick } );
 
             PublishOnConstruction( entityHandle );
 
@@ -54,24 +66,30 @@ namespace smile::ecs
         template < typename ComponentType, typename... ConstructorArgs >
         ComponentType &Replace( EntityHandle entityHandle, ConstructorArgs &&...constructorArgs )
         {
-            SM_ASSERT( Contains( entityHandle ) )
+            SM_ASSERT( Contains( entityHandle ) );
 
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
 
-            auto &component = m_pComponentStorage->Replace< ComponentType >(
+            auto &component = m_ComponentStorage->Replace< ComponentType >(
                 index, std::forward< ConstructorArgs >( constructorArgs )... );
 
-            Patch( entityHandle );
+            Patch< ComponentType >( entityHandle );
 
             return component;
         }
 
         void Remove( EntityHandle entityHandle );
 
-        template < typename... Func >
+        template < typename ComponentType, typename... Func >
         void Patch( EntityHandle entityHandle, Func &&...func )
         {
-            ( std::invoke( std::forward< Func >( func ), m_ECSEngine, entityHandle ), ... );
+            SM_ASSERT( Contains( entityHandle ) );
+
+            const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
+            m_ComponentMetadata[index].LastModified = application::Timer::GetInstance().GetTicks();
+
+            auto &component = m_ComponentStorage->Get< ComponentType >( index );
+            ( std::invoke( std::forward< Func >( func ), component ), ... );
             PublishOnPatch( entityHandle );
         }
 
@@ -82,14 +100,14 @@ namespace smile::ecs
 
             SM_ASSERT_MSG( index != EntityHandle::NullHandle().GetIndex(), "ComponentPool::Get > Invalid index" );
 
-            return m_pComponentStorage->Get< ComponentType >( index );
+            return m_ComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
         const ComponentType &Get( EntityHandle entityHandle ) const
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
-            return m_pComponentStorage->Get< ComponentType >( index );
+            return m_ComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
@@ -103,7 +121,7 @@ namespace smile::ecs
             if ( index == EntityHandle::NullHandle().GetIndex() )
                 return nullptr;
 
-            return &m_pComponentStorage->Get< ComponentType >( index );
+            return &m_ComponentStorage->Get< ComponentType >( index );
         }
 
         template < typename ComponentType >
@@ -117,25 +135,28 @@ namespace smile::ecs
             if ( index == EntityHandle::NullHandle().GetIndex() )
                 return nullptr;
 
-            return &m_pComponentStorage->Get< ComponentType >( index );
+            return &m_ComponentStorage->Get< ComponentType >( index );
         }
 
         void *GetRaw( EntityHandle entityHandle )
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
-            return m_pComponentStorage->GetRaw( index );
+            return m_ComponentStorage->GetRaw( index );
         }
 
         const void *GetRaw( EntityHandle entityHandle ) const
         {
             const IndexType index = m_SparseSet.GetIndex( entityHandle.GetIndex() );
-            return m_pComponentStorage->GetRaw( index );
+            return m_ComponentStorage->GetRaw( index );
         }
 
-        void Clear()
+        bool HasChanged( EntityHandle entityHandle ) const;
+
+        void Clear() noexcept
         {
-            m_pComponentStorage->Clear();
+            m_ComponentStorage->Clear();
             m_SparseSet.Clear();
+            m_ComponentMetadata.Clear();
         }
 
         bool Contains( EntityHandle entityHandle ) const
@@ -146,7 +167,8 @@ namespace smile::ecs
         void Swap( IndexType lhs, IndexType rhs )
         {
             m_SparseSet.Swap( m_SparseSet.GetElement( lhs ), m_SparseSet.GetElement( rhs ) );
-            m_pComponentStorage->Swap( lhs, rhs );
+            m_ComponentStorage->Swap( lhs, rhs );
+            primitive::array::Swap( m_ComponentMetadata, lhs, rhs );
         }
 
         Count GetItemCount() const noexcept
@@ -164,7 +186,7 @@ namespace smile::ecs
 
         ListenerContainer &OnConstruction()
         {
-            return m_ContructionListeners;
+            return m_ConstructionListeners;
         }
 
         ListenerContainer &OnDestruction()
@@ -195,9 +217,10 @@ namespace smile::ecs
       private:
         ECSEngine &m_ECSEngine;
         SparseSetType m_SparseSet{};
-        ComponentStorage *m_pComponentStorage = nullptr;
+        memory::Scope< ComponentStorage > m_ComponentStorage;
+        primitive::Vector< Metadata > m_ComponentMetadata;
 
-        ListenerContainer m_ContructionListeners;
+        ListenerContainer m_ConstructionListeners;
         ListenerContainer m_DestructionListeners;
         ListenerContainer m_PatchListeners;
     };

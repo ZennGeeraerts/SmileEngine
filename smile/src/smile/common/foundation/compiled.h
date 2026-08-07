@@ -70,6 +70,10 @@ namespace smile
     using Int16 = int16_t;
     using Int8 = int8_t;
 
+    using Real32 = float;
+    using Real64 = double;
+    using Real = Real32;
+
     using Byte = unsigned char;
 
     using VoidPointer = void *;

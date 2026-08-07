@@ -12,37 +12,18 @@ namespace smile::math
     class Vector< 4, Type > final
     {
       public:
-        Vector< 4, Type >() noexcept = default;
+        constexpr Vector< 4, Type >() noexcept = default;
 
-        Vector< 4, Type >( Type x, Type y, Type z, Type w ) noexcept : x{ x }, y{ y }, z{ z }, w{ w }
+        constexpr Vector< 4, Type >( Type x, Type y, Type z, Type w ) noexcept : x{ x }, y{ y }, z{ z }, w{ w }
         {
         }
 
-        Vector< 4, Type >( const Vector< 4, Type > &other ) noexcept
-            : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w }
-        {
-        }
-
-        Vector< 4, Type >( Vector< 3, Type > &&other ) noexcept
-            : x{ std::move( other.x ) }, y{ std::move( other.y ) }, z{ std::move( other.z ) }, w{ std::move( other.w ) }
-        {
-        }
-
-        inline Vector< 4, Type > &operator=( const Vector< 4, Type > &other ) noexcept
-        {
-            x = other.x;
-            y = other.y;
-            z = other.z;
-            w = other.w;
-            return *this;
-        }
-
-        static constexpr Vector< 4, Type > ZeroVector();
-        static constexpr Vector< 4, Type > XAxis();
-        static constexpr Vector< 4, Type > YAxis();
-        static constexpr Vector< 4, Type > ZAxis();
-        static constexpr Vector< 4, Type > WAxis();
-        static constexpr Vector< 4, Type > OneVector();
+        static constexpr Vector< 4, Type > ZeroVector() noexcept;
+        static constexpr Vector< 4, Type > XAxis() noexcept;
+        static constexpr Vector< 4, Type > YAxis() noexcept;
+        static constexpr Vector< 4, Type > ZAxis() noexcept;
+        static constexpr Vector< 4, Type > WAxis() noexcept;
+        static constexpr Vector< 4, Type > OneVector() noexcept;
 
         union
         {
@@ -59,7 +40,7 @@ namespace smile::math
     };
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator+( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    constexpr Vector< 4, T > operator+( const Vector< 4, T > &first, const Vector< 4, U > &second ) noexcept
     {
         return Vector< 4, T >{ first.x + static_cast< T >( second.x ),
             first.y + static_cast< T >( second.y ),
@@ -68,7 +49,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator-( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    constexpr Vector< 4, T > operator-( const Vector< 4, T > &first, const Vector< 4, U > &second ) noexcept
     {
         return Vector< 4, T >{ first.x - static_cast< T >( second.x ),
             first.y - static_cast< T >( second.y ),
@@ -77,7 +58,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator*( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    constexpr Vector< 4, T > operator*( const Vector< 4, T > &first, const Vector< 4, U > &second ) noexcept
     {
         return Vector< 4, T >{ first.x * static_cast< T >( second.x ),
             first.y * static_cast< T >( second.y ),
@@ -86,21 +67,21 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator*( const Vector< 4, T > &vector, const U scale )
+    constexpr Vector< 4, T > operator*( const Vector< 4, T > &vector, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
         return Vector< 4, T >{ vector.x * s, vector.y * s, vector.z * s, vector.w * s };
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator*( const U scale, const Vector< 4, T > &vector )
+    constexpr Vector< 4, T > operator*( const U scale, const Vector< 4, T > &vector ) noexcept
     {
         const T s = static_cast< T >( scale );
         return Vector< 4, T >{ vector.x * s, vector.y * s, vector.z * s, vector.w * s };
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator/( const Vector< 4, T > &first, const Vector< 4, U > &second )
+    constexpr Vector< 4, T > operator/( const Vector< 4, T > &first, const Vector< 4, U > &second ) noexcept
     {
         return Vector< 4, T >{ first.x / static_cast< T >( second.x ),
             first.y / static_cast< T >( second.y ),
@@ -109,14 +90,14 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > operator/( const Vector< 4, T > &vector, const U scale )
+    constexpr Vector< 4, T > operator/( const Vector< 4, T > &vector, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
         return Vector< 4, T >{ vector.x / s, vector.y / s, vector.z / s, vector.w / s };
     }
 
     template < Numeric T >
-    inline Vector< 4, T > &operator+=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    constexpr Vector< 4, T > &operator+=( Vector< 4, T > &first, const Vector< 4, T > &second ) noexcept
     {
         first.x += second.x;
         first.y += second.y;
@@ -126,7 +107,7 @@ namespace smile::math
     }
 
     template < Numeric T >
-    inline Vector< 4, T > &operator-=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    constexpr Vector< 4, T > &operator-=( Vector< 4, T > &first, const Vector< 4, T > &second ) noexcept
     {
         first.x -= second.x;
         first.y -= second.y;
@@ -136,7 +117,7 @@ namespace smile::math
     }
 
     template < Numeric T >
-    inline Vector< 4, T > &operator*=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    constexpr Vector< 4, T > &operator*=( Vector< 4, T > &first, const Vector< 4, T > &second ) noexcept
     {
         first.x *= second.x;
         first.y *= second.y;
@@ -146,7 +127,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > &operator*=( Vector< 4, T > &vector, const U scale )
+    constexpr Vector< 4, T > &operator*=( Vector< 4, T > &vector, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
         vector.x *= s;
@@ -157,7 +138,7 @@ namespace smile::math
     }
 
     template < Numeric T >
-    inline Vector< 4, T > &operator/=( Vector< 4, T > &first, const Vector< 4, T > &second )
+    constexpr Vector< 4, T > &operator/=( Vector< 4, T > &first, const Vector< 4, T > &second ) noexcept
     {
         first.x /= second.x;
         first.y /= second.y;
@@ -167,7 +148,7 @@ namespace smile::math
     }
 
     template < Numeric T, Numeric U >
-    inline Vector< 4, T > &operator/=( Vector< 4, T > &first, const U scale )
+    constexpr Vector< 4, T > &operator/=( Vector< 4, T > &first, const U scale ) noexcept
     {
         const T s = static_cast< T >( scale );
         first.x /= s;
@@ -178,33 +159,33 @@ namespace smile::math
     }
 
     template < Numeric T >
-    inline Vector< 4, T > operator-( const Vector< 4, T > &vector )
+    constexpr Vector< 4, T > operator-( const Vector< 4, T > &vector ) noexcept
     {
         return Vector< 4, T >{ -vector.x, -vector.y, -vector.z, -vector.w };
     }
 
     template < Numeric T >
-    inline bool operator==( const Vector< 4, T > &first, const Vector< 4, T > &second )
+    inline bool operator==( const Vector< 4, T > &first, const Vector< 4, T > &second ) noexcept
     {
         return AreEqual< T >( first.x, second.x ) && AreEqual< T >( first.y, second.y ) &&
                AreEqual< T >( first.z, second.z ) && AreEqual< T >( first.w, second.w );
     }
 
     template < Numeric T >
-    inline bool operator!=( const Vector< 4, T > &first, const Vector< 4, T > &second )
+    inline bool operator!=( const Vector< 4, T > &first, const Vector< 4, T > &second ) noexcept
     {
         return !( first == second );
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 4, Type > Vector< 4, Type >::ZeroVector()
+    constexpr Vector< 4, Type > Vector< 4, Type >::ZeroVector() noexcept
     {
         const Type zero = static_cast< Type >( 0 );
         return Vector< 4, Type >{ zero, zero, zero, zero };
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 4, Type > Vector< 4, Type >::XAxis()
+    constexpr Vector< 4, Type > Vector< 4, Type >::XAxis() noexcept
     {
         const Type zero = static_cast< Type >( 0 );
         const Type one = static_cast< Type >( 1 );
@@ -212,7 +193,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 4, Type > Vector< 4, Type >::YAxis()
+    constexpr Vector< 4, Type > Vector< 4, Type >::YAxis() noexcept
     {
         const Type zero = static_cast< Type >( 0 );
         const Type one = static_cast< Type >( 1 );
@@ -220,7 +201,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 4, Type > Vector< 4, Type >::ZAxis()
+    constexpr Vector< 4, Type > Vector< 4, Type >::ZAxis() noexcept
     {
         const Type zero = static_cast< Type >( 0 );
         const Type one = static_cast< Type >( 1 );
@@ -228,7 +209,7 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 4, Type > Vector< 4, Type >::WAxis()
+    constexpr Vector< 4, Type > Vector< 4, Type >::WAxis() noexcept
     {
         const Type zero = static_cast< Type >( 0 );
         const Type one = static_cast< Type >( 1 );
@@ -236,47 +217,47 @@ namespace smile::math
     }
 
     template < Numeric Type >
-    inline constexpr Vector< 4, Type > Vector< 4, Type >::OneVector()
+    constexpr Vector< 4, Type > Vector< 4, Type >::OneVector() noexcept
     {
         const Type one = static_cast< Type >( 1 );
         return Vector< 4, Type >{ one, one, one, one };
     }
 
     template < Numeric Type >
-    inline float DotProduct( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 )
+    constexpr float DotProduct( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 ) noexcept
     {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
     }
 
     template < Numeric Type >
-    inline float DistanceSqr( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 )
+    constexpr float DistanceSqr( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 ) noexcept
     {
         return ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                ( v1.z - v2.z ) * ( v1.z - v2.z ) + ( v1.w - v2.w ) * ( v1.w - v2.w );
     }
 
     template < Numeric Type >
-    inline float Distance( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 )
+    inline float Distance( const Vector< 4, Type > &v1, const Vector< 4, Type > &v2 ) noexcept
     {
         return SquareRoot( ( v1.x - v2.x ) * ( v1.x - v2.x ) + ( v1.y - v2.y ) * ( v1.y - v2.y ) +
                            ( v1.z - v2.z ) * ( v1.z - v2.z ) + ( v1.w - v2.w ) * ( v1.w - v2.w ) );
     }
 
     template < Numeric Type >
-    inline bool IsUnitVector( const Vector< 4, Type > &vector )
+    constexpr bool IsUnitVector( const Vector< 4, Type > &vector ) noexcept
     {
         return IsOne( vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w );
     }
 
     template < Numeric Type >
-    inline bool HasZeroLength( const Vector< 4, Type > &vector, float precision = g_Epsilon )
+    constexpr bool HasZeroLength( const Vector< 4, Type > &vector, float precision = g_Epsilon ) noexcept
     {
         return IsSquareZero(
             vector.x * vector.x + vector.y * vector.y + vector.z * vector.z + vector.w * vector.w, precision );
     }
 
     template < Numeric Type >
-    inline bool IsZeroVector( const Vector< 4, Type > &vector, float precision = g_Epsilon )
+    constexpr bool IsZeroVector( const Vector< 4, Type > &vector, float precision = g_Epsilon ) noexcept
     {
         return IsZero( vector.x, precision ) && IsZero( vector.y, precision ) && IsZero( vector.z, precision ) &&
                IsZero( vector.w, precision );
