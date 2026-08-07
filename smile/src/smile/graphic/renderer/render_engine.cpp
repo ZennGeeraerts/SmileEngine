@@ -71,6 +71,7 @@ namespace smile::graphic
         m_ShaderLibrary->Load( "resources/shaders/debug_renderer.vs.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/pos_col.ps.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/pos_tex.vs.smshader" );
+        m_ShaderLibrary->Load( "resources/shaders/pos_tex_instanced.vs.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/col_tex.ps.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/skybox.vs.smshader" );
         m_ShaderLibrary->Load( "resources/shaders/skybox.ps.smshader" );

@@ -75,7 +75,7 @@ namespace smile::graphic
         auto &materialInstanceManager = m_RenderEngine->GetMaterialInstanceManager();
 
         MaterialAsset::Ref materialAsset = materialManager.CreateMaterial(
-            "DefaultMeshMaterial", shaderLibrary.Get( "pos_tex.vs" ), shaderLibrary.Get( "col_tex.ps" ) );
+            "DefaultMeshMaterial", shaderLibrary.Get( "pos_tex_instanced.vs" ), shaderLibrary.Get( "col_tex.ps" ) );
 
         MaterialInstanceAsset::Ref materialInstance = materialInstanceManager.CreateMaterialInstance(
             "DefaultMeshMaterialInstance", materialAsset, materialAsset->GetDescriptor() );

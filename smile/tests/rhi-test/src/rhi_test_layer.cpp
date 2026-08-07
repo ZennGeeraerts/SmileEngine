@@ -109,7 +109,7 @@ namespace smile::graphic
             psoDesc.State.DepthStencilState.DepthEnable = false;
 
             m_PipelineHandle = m_PipelineHandleManager.CreateHandle();
-            m_pDevice->CreateGraphicsPipeline( m_PipelineHandle, psoDesc );
+            m_pDevice->CreateGraphicsPipeline( m_PipelineHandle, psoDesc, m_FramebufferInfo );
         }
 
         {
@@ -226,7 +226,7 @@ namespace smile::graphic
         rhi::GraphicsState state{};
         state.Pipeline = m_PipelineHandle;
         state.Framebuffer = m_Framebuffer;
-        state.Viewport.Viewports.PushBack( m_FramebufferInfo.GetViewport() );
+        state.Viewport.Viewports.PushBack( m_FramebufferInfo.GetViewport( 0.0f, 1.0f ) );
         state.Bindings.PushBack( m_VSBindingSetHandle );
         state.Bindings.PushBack( m_PSBindingSetHandle );
         state.VertexBuffers.PushBack( rhi::VertexBufferBinding{ m_VertexBufferHandle, 0, 0 } );
