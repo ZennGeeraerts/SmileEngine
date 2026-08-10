@@ -27,6 +27,34 @@ namespace smile::graphic
     using MeshSlotMap = typename primitive::SlotMap< Mesh, s_MaxMeshCount, Uint64, 32u, 32u, struct Mesh >;
     using MeshHandle = MeshSlotMap::HandleType;
 
+    struct MeshKey final
+    {
+        MeshKey( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout ) noexcept
+            : MeshSource{ meshSource }, VertexLayout{ vertexLayout }
+        {
+        }
+
+        bool operator==( const MeshKey &other ) const noexcept
+        {
+            return MeshSource == other.MeshSource && VertexLayout == other.VertexLayout;
+        }
+
+        bool operator!=( const MeshKey &other ) const noexcept
+        {
+            return !( *this == other );
+        }
+
+        foundation::HashCode GetHashCode() const noexcept
+        {
+            foundation::HashCode hash = std::hash< MeshSource::Ref >{}( MeshSource );
+            hash = foundation::HashCombine( hash, VertexLayout.GetHashCode() );
+            return hash;
+        }
+
+        MeshSource::Ref MeshSource;
+        rhi::BufferLayout VertexLayout;
+    };
+
     class MeshManager final
     {
       public:
@@ -34,13 +62,26 @@ namespace smile::graphic
 
         MeshHandle CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
         MeshHandle CreateMeshIfNotExists( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
+
         const Mesh &GetMesh( MeshHandle meshHandle ) const;
 
       private:
         MeshSlotMap m_Meshes;
-        ResourceCache< MeshSource::Ref, MeshHandle > m_MeshCache;
+        ResourceCache< MeshKey, MeshHandle > m_MeshCache;
 
         MeshFactory m_MeshFactory;
         ResourceManager &m_ResourceManager;
+    };
+}
+
+namespace std
+{
+    template <>
+    struct hash< smile::graphic::MeshKey >
+    {
+        smile::foundation::HashCode operator()( const smile::graphic::MeshKey &key ) const noexcept
+        {
+            return key.GetHashCode();
+        }
     };
 }

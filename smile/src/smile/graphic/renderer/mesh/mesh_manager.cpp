@@ -29,14 +29,16 @@ namespace smile::graphic
         const Mesh mesh = m_MeshFactory.CreateMesh( meshSource, vertexLayout );
 
         const auto meshHandle = m_Meshes.Insert( mesh );
-        m_MeshCache.Add( meshSource, meshHandle );
+        const MeshKey key{ meshSource, vertexLayout };
+        m_MeshCache.Add( key, meshHandle );
 
         return meshHandle;
     }
 
     MeshHandle MeshManager::CreateMeshIfNotExists( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout )
     {
-        const auto meshHandle = m_MeshCache.Find( meshSource );
+        const MeshKey key{ meshSource, vertexLayout };
+        const auto meshHandle = m_MeshCache.Find( key );
 
         if ( meshHandle )
         {
