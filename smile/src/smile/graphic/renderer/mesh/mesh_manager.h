@@ -20,6 +20,8 @@
 #include "mesh_factory.h"
 #include "smile/graphic/renderer/resource/resource_cache.h"
 
+#include <variant>
+
 namespace smile::graphic
 {
     static constexpr Uint16 s_MaxMeshCount = ( 12 << 10 );
@@ -27,16 +29,30 @@ namespace smile::graphic
     using MeshSlotMap = typename primitive::SlotMap< Mesh, s_MaxMeshCount, Uint64, 32u, 32u, struct Mesh >;
     using MeshHandle = MeshSlotMap::HandleType;
 
+    enum class PrimitiveMeshShape
+    {
+        Cube,
+        Sphere,
+        Plane
+    };
+
+    using MeshGeometry = std::variant< PrimitiveMeshShape, MeshSource::Ref >;
+
     struct MeshKey final
     {
         MeshKey( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout ) noexcept
-            : MeshSource{ meshSource }, VertexLayout{ vertexLayout }
+            : Geometry{ std::move( meshSource ) }, VertexLayout{ vertexLayout }
+        {
+        }
+
+        MeshKey( PrimitiveMeshShape shape, const rhi::BufferLayout &vertexLayout ) noexcept
+            : Geometry{ shape }, VertexLayout{ vertexLayout }
         {
         }
 
         bool operator==( const MeshKey &other ) const noexcept
         {
-            return MeshSource == other.MeshSource && VertexLayout == other.VertexLayout;
+            return Geometry == other.Geometry && VertexLayout == other.VertexLayout;
         }
 
         bool operator!=( const MeshKey &other ) const noexcept
@@ -46,12 +62,16 @@ namespace smile::graphic
 
         foundation::HashCode GetHashCode() const noexcept
         {
-            foundation::HashCode hash = std::hash< MeshSource::Ref >{}( MeshSource );
+            foundation::HashCode hash = std::visit( []( const auto &geometry )
+                { return std::hash< std::decay_t< decltype( geometry ) > >{}( geometry ); },
+                Geometry );
+
             hash = foundation::HashCombine( hash, VertexLayout.GetHashCode() );
+
             return hash;
         }
 
-        MeshSource::Ref MeshSource;
+        MeshGeometry Geometry;
         rhi::BufferLayout VertexLayout;
     };
 
@@ -62,6 +82,9 @@ namespace smile::graphic
 
         MeshHandle CreateMesh( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
         MeshHandle CreateMeshIfNotExists( MeshSource::Ref meshSource, const rhi::BufferLayout &vertexLayout );
+
+        MeshHandle CreateCube( const rhi::BufferLayout &vertexLayout );
+        MeshHandle CreateCubeIfNotExists( const rhi::BufferLayout &vertexLayout );
 
         const Mesh &GetMesh( MeshHandle meshHandle ) const;
 

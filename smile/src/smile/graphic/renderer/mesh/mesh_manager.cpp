@@ -48,6 +48,30 @@ namespace smile::graphic
         return CreateMesh( meshSource, vertexLayout );
     }
 
+    MeshHandle MeshManager::CreateCube( const rhi::BufferLayout &vertexLayout )
+    {
+        const Mesh mesh = m_MeshFactory.CreateCube( vertexLayout );
+
+        const auto meshHandle = m_Meshes.Insert( mesh );
+        const MeshKey key{ PrimitiveMeshShape::Cube, vertexLayout };
+        m_MeshCache.Add( key, meshHandle );
+
+        return meshHandle;
+    }
+
+    MeshHandle MeshManager::CreateCubeIfNotExists( const rhi::BufferLayout &vertexLayout )
+    {
+        const MeshKey key{ PrimitiveMeshShape::Cube, vertexLayout };
+        const auto meshHandle = m_MeshCache.Find( key );
+
+        if ( meshHandle )
+        {
+            return *meshHandle;
+        }
+
+        return CreateCube( vertexLayout );
+    }
+
     const Mesh &MeshManager::GetMesh( MeshHandle meshHandle ) const
     {
         return m_Meshes.GetItemAtSlot( meshHandle );
